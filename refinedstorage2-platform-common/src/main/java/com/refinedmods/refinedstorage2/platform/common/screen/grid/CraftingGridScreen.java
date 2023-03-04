@@ -2,10 +2,12 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridResultSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.ImageButton;
@@ -14,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -23,6 +26,8 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
 
     @Nullable
     private ImageButton clearToNetworkButton;
+
+    private boolean filteringBasedOnCraftingMatrixItems;
 
     public CraftingGridScreen(final CraftingGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title, 156);
@@ -44,6 +49,48 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
         getMenu().setActivenessListener(this::setClearToNetworkButtonActive);
         addRenderableWidget(clearToNetworkButton);
         addRenderableWidget(createClearButton(clearToInventoryButtonX, clearButtonY, 249, true));
+    }
+
+    @Override
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
+        super.renderBg(poseStack, delta, mouseX, mouseY);
+        if (filteringBasedOnCraftingMatrixItems) {
+            renderCraftingMatrixFilteringHighlights(poseStack);
+        }
+    }
+
+    private void renderCraftingMatrixFilteringHighlights(final PoseStack poseStack) {
+        for (final Slot slot : getMenu().getCraftingMatrixSlots()) {
+            if (!slot.hasItem()) {
+                continue;
+            }
+            renderCraftingMatrixFilteringHighlight(poseStack, slot);
+        }
+    }
+
+    private void renderCraftingMatrixFilteringHighlight(final PoseStack poseStack, final Slot slot) {
+        blit(poseStack, leftPos + slot.x - 1, topPos + slot.y - 1, 224, 238, 18, 18);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        final boolean mayFilterOnCraftingMatrixItems = hoveredSlot instanceof CraftingGridResultSlot
+            && hasShiftDown()
+            && hasControlDown();
+        if (mayFilterOnCraftingMatrixItems && !filteringBasedOnCraftingMatrixItems) {
+            filteringBasedOnCraftingMatrixItems = true;
+            getMenu().filterBasedOnCraftingMatrixItems();
+            if (searchField != null) {
+                searchField.setEditable(false);
+            }
+        } else if (!mayFilterOnCraftingMatrixItems && filteringBasedOnCraftingMatrixItems) {
+            getMenu().stopFilteringBasedOnCraftingMatrixItems();
+            filteringBasedOnCraftingMatrixItems = false;
+            if (searchField != null) {
+                searchField.setEditable(true);
+            }
+        }
     }
 
     private void setClearToNetworkButtonActive(final boolean active) {

@@ -22,9 +22,9 @@ public class GridResourceIngredientConverter implements IngredientConverter {
         }
         if (resource instanceof FluidGridResource fluidGridResource) {
             final FluidStack fluidStack = FluidStack.create(
-                fluidGridResource.getFluidResource().fluid(),
+                fluidGridResource.getResource().fluid(),
                 FluidStack.bucketAmount(),
-                fluidGridResource.getFluidResource().tag()
+                fluidGridResource.getResource().tag()
             );
             return Optional.of(EntryStacks.of(fluidStack));
         }

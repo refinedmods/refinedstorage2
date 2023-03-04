@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,8 @@ class GridViewImplTest {
     void setUp() {
         viewBuilder = new GridViewBuilderImpl(
             resourceAmount -> Optional.of(new GridResourceImpl(resourceAmount)),
-            (view) -> Comparator.comparing(GridResource::getName),
-            (view) -> Comparator.comparing(GridResource::getAmount)
+            view -> Comparator.comparing(GridResource::getName),
+            view -> Comparator.comparing(GridResource::getAmount)
         );
     }
 
@@ -147,6 +148,29 @@ class GridViewImplTest {
                 new ResourceAmount<>("B", 15)
             );
         verify(listener, times(1)).run();
+    }
+
+    @Test
+    void shouldSetFilterAndSort() {
+        // Arrange
+        final GridView view = viewBuilder
+            .withResource("A", 10, null)
+            .withResource("B", 10, null)
+            .build();
+
+        final Predicate<GridResource> filterA = resource -> resource.getName().equals("A");
+        final Predicate<GridResource> filterB = resource -> resource.getName().equals("B");
+
+        // Act
+        final Predicate<GridResource> previousFilter1 = view.setFilterAndSort(filterA);
+        final Predicate<GridResource> previousFilter2 = view.setFilterAndSort(filterB);
+
+        // Assert
+        assertThat(previousFilter1).isNotNull();
+        assertThat(previousFilter2).isEqualTo(filterA);
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new GridResourceImpl("B", 10)
+        );
     }
 
     @Test

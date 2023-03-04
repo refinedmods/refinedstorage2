@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -48,13 +47,13 @@ public class ItemTagGenerator extends ItemTagsProvider {
         addAllToTag(CREATIVE_CONTROLLERS, Blocks.INSTANCE.getCreativeController().values().stream()
             .map(Block::asItem)
             .map(c -> (Supplier<Item>) () -> c)
-            .collect(Collectors.toList()));
+            .toList());
         addAllToTag(FLUID_STORAGE_DISKS,
             Arrays.stream(FluidStorageType.Variant.values())
                 .filter(variant -> variant != FluidStorageType.Variant.CREATIVE)
                 .map(Items.INSTANCE::getFluidStorageDisk)
                 .map(t -> (Supplier<Item>) () -> t)
-                .collect(Collectors.toList()));
+                .toList());
         addAllToTag(GRIDS,
             Blocks.INSTANCE.getGrid().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
@@ -68,7 +67,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .filter(variant -> variant != ItemStorageType.Variant.CREATIVE)
                 .map(Items.INSTANCE::getItemStorageDisk)
                 .map(t -> (Supplier<Item>) () -> t)
-                .collect(Collectors.toList()));
+                .toList());
         addAllToTag(IMPORTERS,
             Blocks.INSTANCE.getImporter().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)

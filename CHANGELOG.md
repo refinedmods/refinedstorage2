@@ -24,6 +24,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     The keybinding is only available on Forge.
 -   A config option to clear items from the Crafting Grid crafting matrix to the player or network inventory.
 -   Support for collapsable entries for REI.
+-   Pressing CTRL + SHIFT on the crafting result slot filters the Grid view based on the items in the crafting matrix.
+    The reason for this is that you can quickly see how much you have left in the storage network.
 
 ### Changed
 

@@ -1,12 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,9 +27,12 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
 
     private final Player player;
     private final CraftingGridSource source;
+    private final List<Slot> craftingMatrixSlots = new ArrayList<>();
 
     @Nullable
     private Consumer<Boolean> activenessListener;
+    @Nullable
+    private Predicate<GridResource> filterBeforeFilteringBasedOnCraftingMatrixItems;
 
     public CraftingGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getCraftingGrid(), syncId, playerInventory, buf);
@@ -72,13 +81,14 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
     @Override
     public void addSlots(final int playerInventoryY) {
         super.addSlots(playerInventoryY);
+        craftingMatrixSlots.clear();
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 3; ++x) {
                 final int slotX = 26 + ((x % 3) * 18);
                 final int slotY = playerInventoryY
                     - Y_OFFSET_BETWEEN_PLAYER_INVENTORY_AND_FIRST_CRAFTING_MATRIX_SLOT
                     + ((y % 3) * 18);
-                addSlot(new Slot(source.getCraftingMatrix(), x + y * 3, slotX, slotY));
+                craftingMatrixSlots.add(addSlot(new Slot(source.getCraftingMatrix(), x + y * 3, slotX, slotY)));
             }
         }
         addSlot(new CraftingGridResultSlot(
@@ -87,6 +97,10 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
             130 + 4,
             playerInventoryY - Y_OFFSET_BETWEEN_PLAYER_INVENTORY_AND_FIRST_CRAFTING_MATRIX_SLOT + 18
         ));
+    }
+
+    public List<Slot> getCraftingMatrixSlots() {
+        return craftingMatrixSlots;
     }
 
     public void clear(final boolean toPlayerInventory) {
@@ -112,5 +126,33 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
 
     public void transferRecipe(final List<List<ItemResource>> recipe) {
         source.transferRecipe(player, recipe);
+    }
+
+    public void filterBasedOnCraftingMatrixItems() {
+        final Set<ItemResource> craftingMatrixItems = getCraftingMatrixItems();
+        filterBeforeFilteringBasedOnCraftingMatrixItems = getView().setFilterAndSort(
+            gridResource -> gridResource instanceof ItemGridResource itemGridResource
+                && craftingMatrixItems.contains(itemGridResource.getResource())
+        );
+    }
+
+    private Set<ItemResource> getCraftingMatrixItems() {
+        final Set<ItemResource> craftingMatrixItems = new HashSet<>();
+        for (int i = 0; i < source.getCraftingMatrix().getContainerSize(); ++i) {
+            final ItemStack craftingMatrixStack = source.getCraftingMatrix().getItem(i);
+            if (craftingMatrixStack.isEmpty()) {
+                continue;
+            }
+            craftingMatrixItems.add(ItemResource.ofItemStack(craftingMatrixStack));
+        }
+        return craftingMatrixItems;
+    }
+
+    public void stopFilteringBasedOnCraftingMatrixItems() {
+        if (filterBeforeFilteringBasedOnCraftingMatrixItems == null) {
+            return;
+        }
+        getView().setFilterAndSort(filterBeforeFilteringBasedOnCraftingMatrixItems);
+        filterBeforeFilteringBasedOnCraftingMatrixItems = null;
     }
 }

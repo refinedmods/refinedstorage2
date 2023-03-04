@@ -58,11 +58,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
     protected final int bottomHeight;
+    @Nullable
+    protected GridSearchBoxWidget searchField;
 
     @Nullable
     private ScrollbarWidget scrollbar;
-    @Nullable
-    private GridSearchBoxWidget searchField;
     private int totalRows;
     private int visibleRows;
     private int gridSlotNumber;

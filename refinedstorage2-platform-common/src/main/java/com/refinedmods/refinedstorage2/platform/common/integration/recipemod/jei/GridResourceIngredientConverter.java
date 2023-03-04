@@ -27,9 +27,9 @@ public class GridResourceIngredientConverter implements IngredientConverter {
         }
         if (resource instanceof FluidGridResource fluidGridResource) {
             return Optional.of(fluidHelper.create(
-                fluidGridResource.getFluidResource().fluid(),
+                fluidGridResource.getResource().fluid(),
                 fluidHelper.bucketVolume(),
-                fluidGridResource.getFluidResource().tag()
+                fluidGridResource.getResource().tag()
             ));
         }
         return Optional.empty();

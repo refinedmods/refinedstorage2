@@ -42,8 +42,8 @@ public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
         return FluidVariantRendering.getTooltip(
             getFluidVariantFromCache(fluidResource),
             Minecraft.getInstance().options.advancedItemTooltips
-                ? TooltipFlag.Default.ADVANCED
-                : TooltipFlag.Default.NORMAL
+                ? TooltipFlag.ADVANCED
+                : TooltipFlag.NORMAL
         );
     }
 }
