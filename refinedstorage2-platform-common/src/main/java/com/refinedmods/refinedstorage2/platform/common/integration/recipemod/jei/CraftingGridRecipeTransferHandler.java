@@ -48,7 +48,7 @@ public class CraftingGridRecipeTransferHandler
                                                final boolean maxTransfer,
                                                final boolean doTransfer) {
         if (doTransfer) {
-            doTransfer(recipeSlots);
+            doTransfer(recipeSlots, containerMenu);
             return null;
         }
         final ResourceList<Object> available = containerMenu.getAvailableListForRecipeTransfer();
@@ -56,10 +56,9 @@ public class CraftingGridRecipeTransferHandler
         return missingSlots.isEmpty() ? null : new MissingItemRecipeTransferError(missingSlots);
     }
 
-    private void doTransfer(final IRecipeSlotsView recipeSlots) {
-        final List<List<ItemStack>> inputs = getInputs(recipeSlots);
-        System.out.println(inputs);
-        // TODO - Implementation
+    private void doTransfer(final IRecipeSlotsView recipeSlots, final CraftingGridContainerMenu containerMenu) {
+        final List<List<ItemResource>> inputs = getInputs(recipeSlots);
+        containerMenu.transferRecipe(inputs);
     }
 
     private List<IRecipeSlotView> findMissingSlots(final IRecipeSlotsView recipeSlots,
@@ -83,11 +82,11 @@ public class CraftingGridRecipeTransferHandler
         return false;
     }
 
-    private List<List<ItemStack>> getInputs(final IRecipeSlotsView recipeSlots) {
+    private List<List<ItemResource>> getInputs(final IRecipeSlotsView recipeSlots) {
         return recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).stream().map(slotView -> {
             final List<ItemStack> stacks = slotView.getItemStacks().collect(Collectors.toList());
             prioritizeDisplayedStack(slotView, stacks);
-            return stacks;
+            return stacks.stream().map(ItemResource::ofItemStack).toList();
         }).toList();
     }
 

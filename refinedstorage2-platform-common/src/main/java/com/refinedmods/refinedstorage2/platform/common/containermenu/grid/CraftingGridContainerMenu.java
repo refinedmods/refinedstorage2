@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
+import java.util.List;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
@@ -60,8 +61,10 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
     @Override
     public ItemStack quickMoveStack(final Player actor, final int slotIndex) {
         final Slot slot = getSlot(slotIndex);
-        if (slot instanceof CraftingGridResultSlot resultSlot) {
-            return resultSlot.onQuickCraft(actor);
+        if (!actor.getLevel().isClientSide() && slot instanceof CraftingGridResultSlot resultSlot) {
+            final ItemStack craftedStack = resultSlot.onQuickCraft(actor);
+            source.acceptQuickCraft(actor, craftedStack);
+            return ItemStack.EMPTY;
         }
         return super.quickMoveStack(actor, slotIndex);
     }
@@ -105,5 +108,9 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
             }
             available.add(ItemResource.ofItemStack(stack), stack.getCount());
         }
+    }
+
+    public void transferRecipe(final List<List<ItemResource>> recipe) {
+        source.transferRecipe(player, recipe);
     }
 }

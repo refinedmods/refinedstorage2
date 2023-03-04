@@ -1,14 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingMatrix;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+
+import java.util.Comparator;
+import java.util.List;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
@@ -48,27 +50,19 @@ public class CraftingGridSourceImpl implements CraftingGridSource {
     }
 
     @Override
-    public ItemStack insert(final ItemStack stack, final Player player) {
-        final GridNetworkNode node = blockEntity.getNode();
-        if (!node.isActive()) {
-            return stack;
+    public void acceptQuickCraft(final Player player, final ItemStack craftedStack) {
+        if (player.getInventory().add(craftedStack)) {
+            return;
         }
-        final Network network = node.getNetwork();
-        if (network == null) {
-            return stack;
+        final ItemStack remainder = blockEntity.insert(craftedStack, player);
+        if (!remainder.isEmpty()) {
+            player.drop(remainder, false);
         }
-        final long inserted = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM)
-            .insert(ItemResource.ofItemStack(stack), stack.getCount(), Action.EXECUTE, new PlayerActor(player));
-        final long remainder = stack.getCount() - inserted;
-        if (remainder == 0) {
-            return ItemStack.EMPTY;
-        }
-        return stack.copyWithCount((int) remainder);
     }
 
     @Override
-    public void clearMatrix(final Player player, final boolean toPlayerInventory) {
+    public boolean clearMatrix(final Player player, final boolean toPlayerInventory) {
+        boolean success = true;
         for (int i = 0; i < getCraftingMatrix().getContainerSize(); ++i) {
             final ItemStack matrixStack = getCraftingMatrix().getItem(i);
             if (matrixStack.isEmpty()) {
@@ -77,10 +71,92 @@ public class CraftingGridSourceImpl implements CraftingGridSource {
             if (toPlayerInventory) {
                 if (player.getInventory().add(matrixStack)) {
                     getCraftingMatrix().setItem(i, ItemStack.EMPTY);
+                } else {
+                    success = false;
                 }
             } else {
-                getCraftingMatrix().setItem(i, insert(matrixStack, player));
+                final ItemStack remainder = blockEntity.insert(matrixStack, player);
+                if (!remainder.isEmpty()) {
+                    success = false;
+                }
+                getCraftingMatrix().setItem(i, remainder);
             }
         }
+        return success;
+    }
+
+    @Override
+    public void transferRecipe(final Player player, final List<List<ItemResource>> recipe) {
+        final boolean clearToPlayerInventory = blockEntity.getNetwork().isEmpty();
+        if (!clearMatrix(player, clearToPlayerInventory)) {
+            return;
+        }
+        final ResourceList<ItemResource> available = createCombinedPlayerInventoryAndNetworkList(player);
+        final Comparator<ItemResource> sorter = sortByHighestAvailableFirst(available);
+        for (int i = 0; i < getCraftingMatrix().getContainerSize(); ++i) {
+            if (i > recipe.size() || recipe.get(i) == null) {
+                continue;
+            }
+            final List<ItemResource> possibilities = recipe.get(i);
+            possibilities.sort(sorter);
+            doTransferRecipe(i, possibilities, player);
+        }
+    }
+
+    private void doTransferRecipe(final int index, final List<ItemResource> sortedPossibilities, final Player player) {
+        for (final ItemResource possibility : sortedPossibilities) {
+            boolean extracted = blockEntity.extract(possibility, 1, player) == 1;
+            if (!extracted) {
+                extracted = extractFromPlayerInventory(player, possibility);
+            }
+            if (extracted) {
+                getCraftingMatrix().setItem(index, possibility.toItemStack());
+                return;
+            }
+        }
+    }
+
+    private boolean extractFromPlayerInventory(final Player player, final ItemResource possibility) {
+        final ItemStack possibilityStack = possibility.toItemStack();
+        for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
+            final ItemStack playerStack = player.getInventory().getItem(i);
+            if (ItemStack.isSameItemSameTags(playerStack, possibilityStack)) {
+                player.getInventory().removeItem(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ResourceList<ItemResource> createCombinedPlayerInventoryAndNetworkList(final Player player) {
+        final ResourceList<ItemResource> list = new ResourceListImpl<>();
+        addNetworkItemsIntoList(list);
+        addPlayerInventoryItemsIntoList(player, list);
+        return list;
+    }
+
+    private void addNetworkItemsIntoList(final ResourceList<ItemResource> list) {
+        blockEntity.getNetwork().ifPresent(network -> network.getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(StorageChannelTypes.ITEM)
+            .getAll()
+            .forEach(list::add));
+    }
+
+    private void addPlayerInventoryItemsIntoList(final Player player, final ResourceList<ItemResource> list) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
+            final ItemStack playerInventoryStack = player.getInventory().getItem(i);
+            if (playerInventoryStack.isEmpty()) {
+                continue;
+            }
+            list.add(ItemResource.ofItemStack(playerInventoryStack), playerInventoryStack.getCount());
+        }
+    }
+
+    private Comparator<ItemResource> sortByHighestAvailableFirst(final ResourceList<ItemResource> available) {
+        return Comparator.<ItemResource>comparingLong(resource -> getAvailableAmount(available, resource)).reversed();
+    }
+
+    private long getAvailableAmount(final ResourceList<ItemResource> available, final ItemResource resource) {
+        return available.get(resource).map(ResourceAmount::getAmount).orElse(0L);
     }
 }

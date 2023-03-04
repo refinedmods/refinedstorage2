@@ -34,17 +34,7 @@ public class CraftingGridResultSlot extends ResultSlot {
                 crafted += singleResultStack.getCount();
             }
         }
-        returnCraftedItem(player, singleResultStack.copyWithCount(crafted));
-        return ItemStack.EMPTY;
-    }
-
-    private void returnCraftedItem(final Player player, final ItemStack craftedItem) {
-        if (!player.getInventory().add(craftedItem)) {
-            final ItemStack remainder = source.insert(craftedItem, player);
-            if (!remainder.isEmpty()) {
-                player.drop(remainder, false);
-            }
-        }
+        return singleResultStack.copyWithCount(crafted);
     }
 
     @Override

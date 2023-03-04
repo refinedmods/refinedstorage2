@@ -1,7 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingMatrix;
+
+import java.util.List;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
@@ -43,12 +46,18 @@ public class ClientCraftingGridSource implements CraftingGridSource {
     }
 
     @Override
-    public ItemStack insert(final ItemStack stack, final Player player) {
-        throw new UnsupportedOperationException();
+    public boolean clearMatrix(final Player player, final boolean toPlayerInventory) {
+        Platform.INSTANCE.getClientToServerCommunications().sendCraftingGridClear(toPlayerInventory);
+        return true;
     }
 
     @Override
-    public void clearMatrix(final Player player, final boolean toPlayerInventory) {
-        Platform.INSTANCE.getClientToServerCommunications().sendCraftingGridClear(toPlayerInventory);
+    public void transferRecipe(final Player player, final List<List<ItemResource>> recipe) {
+        Platform.INSTANCE.getClientToServerCommunications().sendCraftingGridRecipeTransfer(recipe);
+    }
+
+    @Override
+    public void acceptQuickCraft(final Player player, final ItemStack craftedStack) {
+        throw new UnsupportedOperationException();
     }
 }
