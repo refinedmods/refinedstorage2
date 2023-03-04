@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Tags;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
+import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.forge.REIPluginClient;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,11 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
     public static void registerIngredientConverters() {
         PlatformApi.INSTANCE.registerIngredientConverter(new GridResourceIngredientConverter());
         PlatformApi.INSTANCE.registerIngredientConverter(new FilteredResourceIngredientConverter());
+    }
+
+    @Override
+    public void registerTransferHandlers(final TransferHandlerRegistry registry) {
+        registry.register(new CraftingGridTransferHandler());
     }
 
     @SuppressWarnings("UnstableApiUsage")

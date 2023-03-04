@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Tags;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
+import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,6 +27,11 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         final IngredientConverter converter = PlatformApi.INSTANCE.getIngredientConverter();
         registry.registerFocusedStack(new GridFocusedStackProvider(converter));
         registry.registerFocusedStack(new FilteredResourceFocusedStackProvider(converter));
+    }
+
+    @Override
+    public void registerTransferHandlers(final TransferHandlerRegistry registry) {
+        registry.register(new CraftingGridTransferHandler());
     }
 
     public static void registerIngredientConverters() {
