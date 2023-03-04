@@ -63,7 +63,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
                                  @Nullable final BooleanProperty activenessProperty) {
         final boolean newActive = isActive();
         if (newActive != lastActive && activenessChangeRateLimiter.tryAcquire()) {
-            LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
+            LOGGER.debug("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
             this.lastActive = newActive;
             activenessChanged(state, newActive, activenessProperty);
         }
@@ -78,7 +78,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
             && state.getValue(activenessProperty) != newActive;
 
         if (needToUpdateBlockState) {
-            LOGGER.info("Sending block update for block at {} due to state change to {}", getBlockPos(), newActive);
+            LOGGER.debug("Sending block update for block at {} due to state change to {}", getBlockPos(), newActive);
             updateActivenessState(state, activenessProperty, newActive);
         }
     }

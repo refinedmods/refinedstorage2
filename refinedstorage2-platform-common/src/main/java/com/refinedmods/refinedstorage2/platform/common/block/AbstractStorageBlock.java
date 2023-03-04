@@ -64,7 +64,7 @@ public abstract class AbstractStorageBlock<T extends AbstractStorageBlockBlockEn
         private void apply(final ItemStack stack, final AbstractStorageBlockBlockEntity<?> storageBlockEntity) {
             final UUID storageId = storageBlockEntity.getStorageId();
             if (storageId != null) {
-                LOGGER.info("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
+                LOGGER.debug("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
                 PlatformApi.INSTANCE.getStorageContainerHelper().setId(stack, storageId);
             } else {
                 LOGGER.warn("Storage block {} has no associated storage ID!", storageBlockEntity.getBlockPos());

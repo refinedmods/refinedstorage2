@@ -129,7 +129,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerReiGridSynchronizers() {
-        LOGGER.info("Activating REI grid synchronizers");
+        LOGGER.info("Enabling REI grid synchronizers");
         // This is so the ingredient converters are only registered once
         // see https://github.com/refinedmods/refinedstorage2/pull/302#discussion_r1070015672
         RefinedStorageREIClientPlugin.registerIngredientConverters();

@@ -31,6 +31,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     the Crafting Grid is inactive.
 -   The keybinding to clear the Crafting Grid matrix to the network inventory is only available on Forge.
 -   The JEI recipe transfer integration for the Crafting Grid now only supports regular crafting recipes.
+-   Decreased amount of logging to the info level. Now most logging happens on the debug level.
 
 ### Removed
 

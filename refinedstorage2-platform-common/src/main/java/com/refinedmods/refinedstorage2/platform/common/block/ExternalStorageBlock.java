@@ -72,7 +72,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
         super.neighborChanged(state, level, pos, block, fromPos, moving);
         if (level instanceof ServerLevel serverLevel
             && level.getBlockEntity(pos) instanceof ExternalStorageBlockEntity blockEntity) {
-            LOGGER.info("External storage neighbor has changed, reloading {}", pos);
+            LOGGER.debug("External storage neighbor has changed, reloading {}", pos);
             blockEntity.loadStorage(serverLevel);
         }
     }
