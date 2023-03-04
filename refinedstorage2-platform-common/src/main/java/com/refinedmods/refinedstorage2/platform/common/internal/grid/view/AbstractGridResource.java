@@ -25,9 +25,13 @@ public abstract class AbstractGridResource<T> implements PlatformGridResource {
         this.attributes = attributes;
     }
 
+    public T getResource() {
+        return resourceAmount.getResource();
+    }
+
     @Override
     public Optional<TrackedResource> getTrackedResource(final GridView view) {
-        return view.getTrackedResource(resourceAmount.getResource());
+        return view.getTrackedResource(getResource());
     }
 
     @Override

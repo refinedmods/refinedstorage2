@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -62,7 +61,7 @@ public class ColorMap<T> {
     }
 
     public Collection<T> values() {
-        return map.values().stream().map(Supplier::get).collect(Collectors.toList());
+        return map.values().stream().map(Supplier::get).toList();
     }
 
     private record ColoredSorter<T>(DyeColor defaultColor) implements Comparator<Map.Entry<DyeColor, T>> {

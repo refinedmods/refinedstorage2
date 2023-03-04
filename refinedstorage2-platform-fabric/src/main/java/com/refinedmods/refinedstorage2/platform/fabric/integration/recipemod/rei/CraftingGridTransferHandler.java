@@ -100,16 +100,16 @@ public class CraftingGridTransferHandler implements TransferHandler {
         return (matrices, mouseX, mouseY, delta, widgets, bounds, display) -> {
             int index = 0;
             for (final Widget widget : widgets) {
-                if (widget instanceof Slot slot && slot.getNoticeMark() == Slot.INPUT) {
-                    if (missingIngredients.isMissing(index++)) {
-                        renderMissingOverlay(matrices, slot);
-                    }
+                if (widget instanceof Slot slot
+                    && slot.getNoticeMark() == Slot.INPUT
+                    && missingIngredients.isMissing(index++)) {
+                    renderMissingItemOverlay(matrices, slot);
                 }
             }
         };
     }
 
-    private void renderMissingOverlay(final PoseStack poseStack, final Slot slot) {
+    private void renderMissingItemOverlay(final PoseStack poseStack, final Slot slot) {
         poseStack.pushPose();
         poseStack.translate(0, 0, 400);
         final Rectangle innerBounds = slot.getInnerBounds();

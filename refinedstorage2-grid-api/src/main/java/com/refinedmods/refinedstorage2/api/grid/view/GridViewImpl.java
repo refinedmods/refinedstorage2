@@ -70,9 +70,11 @@ public class GridViewImpl implements GridView {
     }
 
     @Override
-    public void setFilterAndSort(final Predicate<GridResource> predicate) {
+    public Predicate<GridResource> setFilterAndSort(final Predicate<GridResource> predicate) {
+        final Predicate<GridResource> previousPredicate = filter;
         this.filter = predicate;
         sort();
+        return previousPredicate;
     }
 
     @Override

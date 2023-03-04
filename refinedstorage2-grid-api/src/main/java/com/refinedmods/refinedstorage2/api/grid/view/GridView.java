@@ -35,8 +35,9 @@ public interface GridView {
 
     /**
      * @param predicate the filter
+     * @return the previous filtering predicate
      */
-    void setFilterAndSort(Predicate<GridResource> predicate);
+    Predicate<GridResource> setFilterAndSort(Predicate<GridResource> predicate);
 
     /**
      * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
