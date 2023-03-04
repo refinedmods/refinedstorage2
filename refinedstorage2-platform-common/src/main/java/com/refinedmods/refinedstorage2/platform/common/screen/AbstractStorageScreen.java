@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
@@ -77,20 +77,21 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
 
     private List<Component> createTooltip() {
         final List<Component> tooltip = new ArrayList<>();
-        StorageTooltipHelper.appendToTooltip(
-            tooltip,
-            menu.getStored(),
-            menu.getCapacity(),
-            this::formatQuantity,
-            QuantityFormatter::format,
-            menu.showCapacityAndProgress(),
-            menu.showStackingInfo()
-        );
+        if (menu.hasCapacity()) {
+            StorageTooltipHelper.addAmountStoredWithCapacity(
+                tooltip,
+                menu.getStored(),
+                menu.getCapacity(),
+                this::formatQuantity
+            );
+        } else {
+            StorageTooltipHelper.addAmountStoredWithoutCapacity(tooltip, menu.getStored(), this::formatQuantity);
+        }
         return tooltip;
     }
 
     protected String formatQuantity(final long qty) {
-        return QuantityFormatter.format(qty);
+        return AmountFormatting.format(qty);
     }
 
     @Override

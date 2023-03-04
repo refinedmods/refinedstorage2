@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ProgressWidget;
@@ -63,8 +63,8 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
         return Collections.singletonList(createTranslation(
             "misc",
             "stored_with_capacity",
-            QuantityFormatter.format(getMenu().getStored()),
-            QuantityFormatter.format(getMenu().getCapacity())
+            AmountFormatting.format(getMenu().getStored()),
+            AmountFormatting.format(getMenu().getCapacity())
         ));
     }
 

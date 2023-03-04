@@ -35,12 +35,12 @@ dependencies {
     minecraft fabric.minecraft
     mappings loom.layered() {
         officialMojangMappings()
-        // TODO: the parchment function is unable to take a version catalog (https://github.com/FabricMC/fabric-loom/issues/782)
-        def minecraftVersion = fabric.versions.minecraft.get()
-        def parchmentVersion = fabric.versions.parchment.get()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${parchmentVersion}@zip")
+        parchment variantOf(fabric.parchment) {
+            artifactType("zip")
+        }
     }
-    modImplementation fabric.bundles.fabric
+    modImplementation fabric.fabric.loader
+    modImplementation fabric.fabric.api
 
     project.ext.apis.collect {
         implementation project(it)
@@ -49,8 +49,6 @@ dependencies {
     project.ext.compileApis.collect {
         implementation project(it)
     }
-
-    implementation libs.apiguardian // mandatory as it's imported through platform-api
 
     modImplementation(fabric.cloth.config) {
         exclude(group: 'net.fabricmc.fabric-api')
@@ -62,20 +60,26 @@ dependencies {
     }
     include fabric.teamreborn.energy
 
-    modCompileOnly(fabric.rei.api) {
-        exclude(group: 'me.shedaniel.cloth')
-    }
-    // We test with REI on Fabric.
-    modRuntimeOnly fabric.bundles.rei.runtime
-
-    modCompileOnly fabric.bundles.jei
+    modImplementation fabric.noIndium
+    include fabric.noIndium
 
     modImplementation fabric.modmenu
 
-    modRuntimeOnly fabric.wthit
+    modCompileOnly(fabric.rei.api) {
+        exclude(group: 'me.shedaniel.cloth')
+        exclude(group: 'dev.architectury')
+    }
+    modCompileOnly(fabric.rei.plugin) {
+        exclude(group: 'me.shedaniel.cloth')
+        exclude(group: 'dev.architectury')
+    }
+    modCompileOnly(fabric.architectury)
+    modRuntimeOnly fabric.bundles.rei.runtime
 
-    modImplementation fabric.noIndium
-    include fabric.noIndium
+    modCompileOnly fabric.jei.common.api
+    // modRuntimeOnly fabric.jei.fabric.impl
+
+    modRuntimeOnly fabric.wthit
 }
 
 loom {

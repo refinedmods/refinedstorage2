@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerExtractableStorage;
 
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.RangedWrapper;
@@ -21,7 +21,6 @@ import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
-    private final Inventory playerInventory;
     private final CursorStorage playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
@@ -29,7 +28,6 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
                                      final PlatformGridServiceFactory gridServiceFactory) {
         this.containerMenu = containerMenu;
         this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
-        this.playerInventory = player.getInventory();
         this.playerCursorStorage = new CursorStorage(containerMenu);
     }
 
@@ -50,10 +48,11 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
 
     @Override
     public boolean onTransfer(final int slotIndex) {
+        final Slot slot = containerMenu.getSlot(slotIndex);
         final RangedWrapper storage = new RangedWrapper(
-            new InvWrapper(playerInventory),
-            slotIndex,
-            slotIndex + 1
+            new InvWrapper(slot.container),
+            slot.getContainerSlot(),
+            slot.getContainerSlot() + 1
         );
         final ItemStack itemStackInSlot = storage.getStackInSlot(0);
         if (itemStackInSlot.isEmpty()) {

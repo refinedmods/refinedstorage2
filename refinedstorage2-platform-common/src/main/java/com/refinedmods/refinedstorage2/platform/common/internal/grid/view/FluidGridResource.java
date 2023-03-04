@@ -22,7 +22,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final FluidResource fluidResource;
     private final int id;
 
-    @SuppressWarnings("deprecation") // forge deprecates Registry access
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,
                              final String name,
                              final String modId,
@@ -74,12 +74,12 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     @Override
     public String getDisplayedAmount() {
-        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(getAmount());
+        return Platform.INSTANCE.getBucketAmountFormatter().formatWithUnits(getAmount());
     }
 
     @Override
     public String getAmountInTooltip() {
-        return Platform.INSTANCE.getBucketQuantityFormatter().format(getAmount());
+        return Platform.INSTANCE.getBucketAmountFormatter().format(getAmount());
     }
 
     @Override

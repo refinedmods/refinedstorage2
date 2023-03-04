@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageProviderFactory;
@@ -9,28 +8,30 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.LongSupplier;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private final long energyUsage;
-    private final Map<StorageChannelType<?>, DynamicStorage<?>> storages = new HashMap<>();
+    private Map<? extends StorageChannelType<?>, DynamicStorage<?>> storages = Collections.emptyMap();
 
     public ExternalStorageNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
-    public void initialize(final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry,
+    public void initialize(final Collection<? extends StorageChannelType<?>> storageChannelTypes,
                            final LongSupplier clock,
                            final TrackedStorageRepositoryProvider trackedStorageRepositoryProvider) {
-        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new DynamicStorage<>(
-            trackedStorageRepositoryProvider.getRepository(type),
-            clock
-        )));
+        this.storages = storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
+            type -> type,
+            type -> new DynamicStorage<>(trackedStorageRepositoryProvider.getRepository(type), clock)
+        ));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -68,7 +69,7 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     }
 
     @Override
-    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
         return storages.keySet();
     }
 

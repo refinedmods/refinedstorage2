@@ -7,7 +7,5 @@ public interface StorageAccessor {
 
     double getProgress();
 
-    boolean showCapacityAndProgress();
-
-    boolean showStackingInfo();
+    boolean hasCapacity();
 }

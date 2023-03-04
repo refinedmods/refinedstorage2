@@ -24,12 +24,7 @@ public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContaine
     }
 
     @Override
-    public boolean showCapacityAndProgress() {
+    public boolean hasCapacity() {
         return getCapacity() > 0;
-    }
-
-    @Override
-    public boolean showStackingInfo() {
-        return false;
     }
 }

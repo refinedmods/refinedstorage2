@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
@@ -15,10 +14,12 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFa
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
@@ -29,7 +30,6 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
@@ -39,17 +39,17 @@ import org.apiguardian.api.API;
 public interface PlatformApi {
     PlatformApi INSTANCE = new PlatformApiProxy();
 
-    OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry();
+    PlatformRegistry<StorageType<?>> getStorageTypeRegistry();
 
     StorageRepository getStorageRepository(Level level);
 
     StorageContainerHelper getStorageContainerHelper();
 
-    OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry();
+    PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry();
 
-    OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
+    PlatformRegistry<ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
 
-    OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
+    PlatformRegistry<ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
 
     <T> void addExternalStorageProviderFactory(StorageChannelType<T> channelType,
                                                int priority,
@@ -63,7 +63,7 @@ public interface PlatformApi {
 
     ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory();
 
-    OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry();
+    PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry();
 
     UpgradeRegistry getUpgradeRegistry();
 
@@ -95,4 +95,8 @@ public interface PlatformApi {
     void addFilteredResourceFactory(FilteredResourceFactory factory);
 
     FilteredResourceFactory getFilteredResourceFactory();
+
+    void registerIngredientConverter(IngredientConverter converter);
+
+    IngredientConverter getIngredientConverter();
 }

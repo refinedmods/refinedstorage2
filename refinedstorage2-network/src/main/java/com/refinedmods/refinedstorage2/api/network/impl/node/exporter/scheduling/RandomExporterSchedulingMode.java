@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling;
 
-import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
@@ -27,5 +26,9 @@ public class RandomExporterSchedulingMode implements ExporterSchedulingMode {
         final List<Object> shuffledTemplates = new ArrayList<>(templates);
         randomizer.shuffle(shuffledTemplates);
         FirstAvailableExporterSchedulingMode.INSTANCE.execute(shuffledTemplates, strategy, network, actor);
+    }
+
+    public interface Randomizer {
+        <T> void shuffle(List<T> list);
     }
 }

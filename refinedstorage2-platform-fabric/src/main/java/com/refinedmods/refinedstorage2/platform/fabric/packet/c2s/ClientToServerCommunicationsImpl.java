@@ -4,11 +4,14 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -55,6 +58,24 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
         sendToServer(PacketIds.GRID_INSERT, buf -> {
             buf.writeBoolean(mode == GridInsertMode.SINGLE_RESOURCE);
             buf.writeBoolean(tryAlternatives);
+        });
+    }
+
+    @Override
+    public void sendCraftingGridClear(final boolean toPlayerInventory) {
+        sendToServer(PacketIds.CRAFTING_GRID_CLEAR, buf -> buf.writeBoolean(toPlayerInventory));
+    }
+
+    @Override
+    public void sendCraftingGridRecipeTransfer(final List<List<ItemResource>> recipe) {
+        sendToServer(PacketIds.CRAFTING_GRID_RECIPE_TRANSFER, buf -> {
+            buf.writeInt(recipe.size());
+            for (final List<ItemResource> slotPossibilities : recipe) {
+                buf.writeInt(slotPossibilities.size());
+                for (final ItemResource slotPossibility : slotPossibilities) {
+                    PacketUtil.writeItemResource(buf, slotPossibility);
+                }
+            }
         });
     }
 

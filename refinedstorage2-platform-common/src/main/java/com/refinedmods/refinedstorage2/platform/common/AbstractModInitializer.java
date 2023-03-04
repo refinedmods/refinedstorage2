@@ -58,7 +58,9 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,
-            network -> new StorageNetworkComponentImpl(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
+            network -> new StorageNetworkComponentImpl(
+                PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
+            )
         );
     }
 

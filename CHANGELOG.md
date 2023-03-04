@@ -7,6 +7,40 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.8] - 2023-03-04
+
+### Fixed
+
+-   Fixed Disk Drive having 9 slots instead of 8.
+-   Fixed slow world loading.
+
+### Added
+
+-   The upgrade slots now show their supported upgrades.
+-   Different Cable colors. They only connect to same colored cables or the default cable.
+-   Colored variant of exporters, importers and external storages. They connect the same way as colored cables.
+-   Support for using the R/U keys in JEI and REI on Grid slots and filtering slots
+-   Crafting Grid.
+-   JEI and REI recipe transfer integration for the Crafting Grid.
+-   The crafting matrix in the Crafting Grid now has a button and keybinding to clear to the player inventory.
+    The keybinding is only available on Forge.
+-   A config option to clear items from the Crafting Grid crafting matrix to the player or network inventory.
+-   Support for collapsable entries for REI.
+-   Pressing CTRL + SHIFT on the crafting result slot filters the Grid view based on the items in the crafting matrix.
+    The reason for this is that you can quickly see how much you have left in the storage network.
+
+### Changed
+
+-   The button to clear to the network inventory next to the crafting matrix in the Crafting Grid is now disabled if
+    the Crafting Grid is inactive.
+-   The keybinding to clear the Crafting Grid matrix to the network inventory is only available on Forge.
+-   The JEI recipe transfer integration for the Crafting Grid now only supports regular crafting recipes.
+-   Decreased amount of logging to the info level. Now most logging happens on the debug level.
+
+### Removed
+
+-   Removed amount of stacks and max stacks stored on item storage tooltips.
+
 ## [2.0.0-milestone.2.7] - 2023-01-31
 
 ### Added
@@ -294,7 +328,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...HEAD
+
+[2.0.0-milestone.2.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...v2.0.0-milestone.2.8
 
 [2.0.0-milestone.2.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...v2.0.0-milestone.2.7
 

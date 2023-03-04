@@ -17,14 +17,10 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.Platform
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidResource> {
     private final FluidStorageType.Variant variant;
@@ -39,31 +35,13 @@ public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidReso
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                @Nullable final Level level,
-                                final List<Component> tooltip,
-                                final TooltipFlag context) {
-        super.appendHoverText(stack, level, tooltip, context);
-        if (level == null) {
-            return;
-        }
-        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != FluidStorageType.Variant.CREATIVE;
-        helper.appendToTooltip(
-            stack,
-            storageRepository,
-            tooltip,
-            context,
-            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
-            Platform.INSTANCE.getBucketQuantityFormatter()::format,
-            showCapacityAndProgress,
-            false
-        );
+    protected boolean hasCapacity() {
+        return variant.hasCapacity();
     }
 
     @Override
-    public boolean hasStacking() {
-        return false;
+    protected String formatAmount(final long amount) {
+        return Platform.INSTANCE.getBucketAmountFormatter().format(amount);
     }
 
     @Override

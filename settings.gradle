@@ -23,23 +23,25 @@ dependencyResolutionManagement {
         def jeiVersion = "12.0.2.2"
         // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
         def reiVersion = "10.0.581"
+        def architecturyVersion = "7.1.70" // dependency of rei
+        def clothMathVersion = "0.6.1" // dependency of rei
+        def clothConfigVersion = "9.0.94" // dependency of rei
         fabric {
             def minecraft = version("minecraft", minecraftVersion)
             library("minecraft", "com.mojang", "minecraft").versionRef(minecraft)
 
-            plugin("fabric-loom", "fabric-loom").version("1.0-SNAPSHOT")
+            plugin("fabric-loom", "fabric-loom").version("1.1-SNAPSHOT")
 
-            def fabricLoader = version("fabric-loader", "0.14.12")
+            def fabricLoader = version("fabric-loader", "0.14.14")
             library("fabric-loader", "net.fabricmc", "fabric-loader").versionRef(fabricLoader)
-            def fabricApi = version("fabric-api", "0.72.0+1.19.3")
+            def fabricApi = version("fabric-api", "0.73.2+1.19.3")
             library("fabric-api", "net.fabricmc.fabric-api", "fabric-api").versionRef(fabricApi)
-            bundle("fabric", ["fabric-loader", "fabric-api"])
 
             def parchment = version("parchment", "2022.12.18")
             library("parchment", "org.parchmentmc.data", "parchment-${minecraftVersion}").versionRef(parchment)
 
             // https://www.curseforge.com/minecraft/mc-mods/cloth-config/files
-            def clothConfig = version("clothConfig", "9.0.94")
+            def clothConfig = version("clothConfig", clothConfigVersion)
             library("cloth-config", "me.shedaniel.cloth", "cloth-config-fabric").versionRef(clothConfig)
 
             // https://github.com/TechReborn/Energy
@@ -47,10 +49,11 @@ dependencyResolutionManagement {
             library("teamreborn-energy", "teamreborn", "energy").versionRef(energy)
 
             def rei = version("rei", reiVersion)
-            def architectury = version("architectury", "7.0.63") // dependency of rei
+            def architectury = version("architectury", architecturyVersion) // dependency of rei
             library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").versionRef(rei)
             library("architectury", "dev.architectury", "architectury-fabric").versionRef(architectury)
             library("rei-fabric", "me.shedaniel", "RoughlyEnoughItems-fabric").versionRef(rei)
+            library("rei-plugin", "me.shedaniel", "RoughlyEnoughItems-default-plugin").version(reiVersion)
             bundle("rei-runtime", ["architectury", "rei-fabric"])
 
             def jei = version("jei", jeiVersion)
@@ -83,6 +86,9 @@ dependencyResolutionManagement {
 
             def rei = version("rei", reiVersion)
             library("rei-forge", "me.shedaniel", "RoughlyEnoughItems-forge").versionRef(rei)
+            library("rei-architectury", "dev.architectury", "architectury-forge").version(architecturyVersion)
+            library("rei-cloth-math", "me.shedaniel.cloth", "basic-math").version(clothMathVersion)
+            library("rei-cloth-config", "me.shedaniel.cloth", "cloth-config-forge").version(clothConfigVersion)
 
             plugin('forgeGradle', 'net.minecraftforge.gradle').version('5.1.+')
         }
@@ -104,6 +110,10 @@ dependencyResolutionManagement {
             def jsr305 = version("jsr305", "3.0.2")
             library("jsr305", "com.google.code.findbugs", "jsr305").versionRef(jsr305)
             version("minecraft", minecraftVersion)
+
+            def jei = version("jei", jeiVersion)
+            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
+            library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").version(reiVersion)
         }
         testLibs {
             def junit5 = version("junit5", "5.9.2")

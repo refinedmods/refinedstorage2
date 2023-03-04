@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
@@ -11,20 +10,17 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResource> {
     private final ItemStorageType.Variant variant;
@@ -39,31 +35,13 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                @Nullable final Level level,
-                                final List<Component> tooltip,
-                                final TooltipFlag context) {
-        super.appendHoverText(stack, level, tooltip, context);
-        if (level == null) {
-            return;
-        }
-        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != ItemStorageType.Variant.CREATIVE;
-        helper.appendToTooltip(
-            stack,
-            storageRepository,
-            tooltip,
-            context,
-            QuantityFormatter::formatWithUnits,
-            QuantityFormatter::format,
-            showCapacityAndProgress,
-            true
-        );
+    protected boolean hasCapacity() {
+        return variant.hasCapacity();
     }
 
     @Override
-    public boolean hasStacking() {
-        return true;
+    protected String formatAmount(final long amount) {
+        return AmountFormatting.format(amount);
     }
 
     @Override

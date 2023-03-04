@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 

@@ -3,13 +3,19 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -21,14 +27,25 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExternalStorageBlock extends AbstractDirectionalCableBlock implements EntityBlock {
+public class ExternalStorageBlock extends AbstractDirectionalCableBlock
+    implements ColorableBlock<ExternalStorageBlock>, EntityBlock {
+    private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExternalStorage);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalStorageBlock.class);
+    private final DyeColor color;
+    private final MutableComponent name;
 
-    public ExternalStorageBlock() {
-        super(BlockConstants.CABLE_PROPERTIES);
+    public ExternalStorageBlock(final DyeColor color, final MutableComponent name) {
+        super(BlockConstants.CABLE_PROPERTIES, SHAPE_CACHE);
+        this.color = color;
+        this.name = name;
+    }
+
+    @Override
+    public DyeColor getColor() {
+        return color;
     }
 
     @Override
@@ -55,9 +72,14 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock implemen
         super.neighborChanged(state, level, pos, block, fromPos, moving);
         if (level instanceof ServerLevel serverLevel
             && level.getBlockEntity(pos) instanceof ExternalStorageBlockEntity blockEntity) {
-            LOGGER.info("External storage neighbor has changed, reloading {}", pos);
+            LOGGER.debug("External storage neighbor has changed, reloading {}", pos);
             blockEntity.loadStorage(serverLevel);
         }
+    }
+
+    @Override
+    public BlockColorMap<ExternalStorageBlock> getBlockColorMap() {
+        return Blocks.INSTANCE.getExternalStorage();
     }
 
     @Override
@@ -70,5 +92,10 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock implemen
             case UP -> DirectionalCableBlockShapes.EXTERNAL_STORAGE_UP;
             case DOWN -> DirectionalCableBlockShapes.EXTERNAL_STORAGE_DOWN;
         };
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return name;
     }
 }

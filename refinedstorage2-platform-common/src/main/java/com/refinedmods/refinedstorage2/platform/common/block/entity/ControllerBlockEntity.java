@@ -69,8 +69,8 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
 
         if (currentEnergyType != inLevelEnergyType && energyStateChangeRateLimiter.tryAcquire()) {
-            LOGGER.info(
-                "Energy type state change for Controller at {}: {} -> {}",
+            LOGGER.debug(
+                "Energy type state change for controller at {}: {} -> {}",
                 getBlockPos(),
                 inLevelEnergyType,
                 currentEnergyType

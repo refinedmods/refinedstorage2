@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.List;
@@ -34,8 +35,9 @@ public interface GridView {
 
     /**
      * @param predicate the filter
+     * @return the previous filtering predicate
      */
-    void setFilterAndSort(Predicate<GridResource> predicate);
+    Predicate<GridResource> setFilterAndSort(Predicate<GridResource> predicate);
 
     /**
      * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
@@ -82,5 +84,10 @@ public interface GridView {
     /**
      * @return the view list
      */
-    List<GridResource> getAll();
+    List<GridResource> getViewList();
+
+    /**
+     * @return a copy of the backing list
+     */
+    ResourceList<Object> copyBackingList();
 }

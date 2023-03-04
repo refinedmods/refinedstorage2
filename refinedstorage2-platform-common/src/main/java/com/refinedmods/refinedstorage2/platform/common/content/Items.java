@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.Flu
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,10 @@ public final class Items {
         = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<Supplier<ControllerBlockItem>> regularControllers = new ArrayList<>();
     private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allCables = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allExporters = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allImporters = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allExternalStorages = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -157,6 +162,38 @@ public final class Items {
 
     public List<Supplier<ControllerBlockItem>> getRegularControllers() {
         return Collections.unmodifiableList(regularControllers);
+    }
+
+    public void addCable(final Supplier<NamedBlockItem> supplier) {
+        allCables.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getCables() {
+        return Collections.unmodifiableList(allCables);
+    }
+
+    public void addExporter(final Supplier<NamedBlockItem> supplier) {
+        allExporters.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getExporters() {
+        return Collections.unmodifiableList(allExporters);
+    }
+
+    public void addImporter(final Supplier<NamedBlockItem> supplier) {
+        allImporters.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getImporters() {
+        return Collections.unmodifiableList(allImporters);
+    }
+
+    public void addExternalStorage(final Supplier<NamedBlockItem> supplier) {
+        allExternalStorages.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getExternalStorages() {
+        return Collections.unmodifiableList(allExternalStorages);
     }
 
     public Item getStorageHousing() {

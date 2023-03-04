@@ -50,9 +50,9 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
     implements BlockEntityWithDrops, MultiStorageListener, ExtendedMenuProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
+    public static final int AMOUNT_OF_DISKS = 8;
 
-    private static final int AMOUNT_OF_DISKS = 9;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
 
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_STATES = "states";
@@ -71,7 +71,7 @@ public abstract class AbstractDiskDriveBlockEntity
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
@@ -98,7 +98,7 @@ public abstract class AbstractDiskDriveBlockEntity
             return;
         }
         if (diskStateChangeRateLimiter.tryAcquire()) {
-            LOGGER.info("Disk state change for block at {}", getBlockPos());
+            LOGGER.debug("Disk state change for block at {}", getBlockPos());
             this.syncRequested = false;
             sync();
         }

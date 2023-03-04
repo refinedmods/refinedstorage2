@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.exporter;
 
-import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
@@ -65,7 +65,7 @@ public class ExporterBlockEntity
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         final ExporterTransferStrategy strategy = createStrategy(level, direction);
-        LOGGER.info("Initialized exporter at {} with strategy {}", worldPosition, strategy);
+        LOGGER.debug("Initialized exporter at {} with strategy {}", worldPosition, strategy);
         getNode().setTransferStrategy(strategy);
     }
 
@@ -123,7 +123,7 @@ public class ExporterBlockEntity
     private void setSchedulingMode(@Nullable final CompoundTag tag,
                                    final ExporterSchedulingModeSettings modeSettings) {
         this.schedulingModeSettings = modeSettings;
-        this.schedulingMode = modeSettings.create(tag, new Randomizer() {
+        this.schedulingMode = modeSettings.create(tag, new RandomExporterSchedulingMode.Randomizer() {
             @Override
             public <T> void shuffle(final List<T> list) {
                 Collections.shuffle(list, new Random());

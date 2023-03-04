@@ -16,3 +16,4 @@ refinedstorage2-platform-forge/run/
 out/
 /bin/
 logs/
+.cache/

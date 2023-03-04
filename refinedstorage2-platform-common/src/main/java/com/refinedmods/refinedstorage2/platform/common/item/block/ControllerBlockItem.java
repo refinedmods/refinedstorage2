@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
 import java.util.List;
@@ -64,8 +64,8 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
             tooltip.add(createTranslation(
                 "misc",
                 "stored_with_capacity",
-                QuantityFormatter.format(stored),
-                QuantityFormatter.format(capacity)
+                AmountFormatting.format(stored),
+                AmountFormatting.format(capacity)
             ).withStyle(ChatFormatting.GRAY));
         }
     }

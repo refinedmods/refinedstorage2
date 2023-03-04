@@ -6,11 +6,12 @@ import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
@@ -20,14 +21,19 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.DyeColor;
+
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
 
+    private final BlockColorMap<CableBlock> cable = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
+    private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
-    @Nullable
-    private Supplier<CableBlock> cable;
+    private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(DyeColor.GRAY);
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -39,19 +45,13 @@ public final class Blocks {
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
         new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
-    private Supplier<ImporterBlock> importer;
-    @Nullable
-    private Supplier<ExporterBlock> exporter;
-    @Nullable
     private Supplier<InterfaceBlock> iface;
-    @Nullable
-    private Supplier<ExternalStorageBlock> externalStorage;
 
     private Blocks() {
     }
 
-    public CableBlock getCable() {
-        return Objects.requireNonNull(cable).get();
+    public BlockColorMap<CableBlock> getCable() {
+        return cable;
     }
 
     public SimpleBlock getQuartzEnrichedIronBlock() {
@@ -70,16 +70,16 @@ public final class Blocks {
         return grid;
     }
 
+    public BlockColorMap<CraftingGridBlock> getCraftingGrid() {
+        return craftingGrid;
+    }
+
     public BlockColorMap<ControllerBlock> getController() {
         return controller;
     }
 
     public BlockColorMap<ControllerBlock> getCreativeController() {
         return creativeController;
-    }
-
-    public void setCable(final Supplier<CableBlock> cableSupplier) {
-        this.cable = cableSupplier;
     }
 
     public void setQuartzEnrichedIronBlock(final Supplier<SimpleBlock> quartzEnrichedIronBlockSupplier) {
@@ -111,20 +111,12 @@ public final class Blocks {
         return fluidStorageBlocks.get(variant).get();
     }
 
-    public void setImporter(final Supplier<ImporterBlock> importerSupplier) {
-        this.importer = importerSupplier;
+    public BlockColorMap<ImporterBlock> getImporter() {
+        return importer;
     }
 
-    public ImporterBlock getImporter() {
-        return Objects.requireNonNull(importer).get();
-    }
-
-    public void setExporter(final Supplier<ExporterBlock> exporterSupplier) {
-        this.exporter = exporterSupplier;
-    }
-
-    public ExporterBlock getExporter() {
-        return Objects.requireNonNull(exporter).get();
+    public BlockColorMap<ExporterBlock> getExporter() {
+        return exporter;
     }
 
     public void setInterface(final Supplier<InterfaceBlock> interfaceSupplier) {
@@ -135,11 +127,7 @@ public final class Blocks {
         return Objects.requireNonNull(iface).get();
     }
 
-    public void setExternalStorage(final Supplier<ExternalStorageBlock> externalStorageSupplier) {
-        this.externalStorage = externalStorageSupplier;
-    }
-
-    public ExternalStorageBlock getExternalStorage() {
-        return Objects.requireNonNull(externalStorage).get();
+    public BlockColorMap<ExternalStorageBlock> getExternalStorage() {
+        return externalStorage;
     }
 }

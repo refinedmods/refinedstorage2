@@ -22,12 +22,7 @@ public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainer
     }
 
     @Override
-    public boolean showCapacityAndProgress() {
+    public boolean hasCapacity() {
         return getCapacity() > 0;
-    }
-
-    @Override
-    public boolean showStackingInfo() {
-        return true;
     }
 }

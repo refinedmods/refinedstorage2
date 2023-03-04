@@ -28,7 +28,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
     }
 
     public void setStorage(final Storage<T> storage) {
-        LOGGER.info("Loading storage {}", storage);
+        LOGGER.debug("Loading storage {}", storage);
         this.internalStorage = storage;
     }
 
@@ -38,7 +38,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
         if (network == null || internalStorage == null) {
             return;
         }
-        LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", newActive);
+        LOGGER.debug("Storage activeness got changed to '{}', updating underlying storage", newActive);
         if (newActive) {
             exposedStorage.setDelegate(internalStorage);
         } else {
@@ -60,7 +60,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
     }
 
     @Override
-    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
         return Set.of(type);
     }
 

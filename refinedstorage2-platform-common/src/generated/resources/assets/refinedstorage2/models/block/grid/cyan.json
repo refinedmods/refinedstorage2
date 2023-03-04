@@ -1,13 +1,13 @@
 {
   "parent": "refinedstorage2:block/emissive_north_cutout",
   "textures": {
-    "particle": "refinedstorage2:block/grid/right",
-    "north": "refinedstorage2:block/grid/front",
-    "east": "refinedstorage2:block/grid/right",
-    "south": "refinedstorage2:block/grid/back",
-    "west": "refinedstorage2:block/grid/left",
-    "up": "refinedstorage2:block/grid/top",
+    "cutout": "refinedstorage2:block/grid/cutouts/cyan",
     "down": "refinedstorage2:block/bottom",
-    "cutout": "refinedstorage2:block/grid/cutouts/cyan"
+    "east": "refinedstorage2:block/grid/right",
+    "north": "refinedstorage2:block/grid/front",
+    "particle": "refinedstorage2:block/grid/right",
+    "south": "refinedstorage2:block/grid/back",
+    "up": "refinedstorage2:block/grid/top",
+    "west": "refinedstorage2:block/grid/left"
   }
 }

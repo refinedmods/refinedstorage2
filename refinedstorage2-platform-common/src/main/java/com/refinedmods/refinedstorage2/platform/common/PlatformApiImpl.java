@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
@@ -21,16 +19,19 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.integration.recipemod.CompositeIngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
@@ -38,6 +39,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSyn
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.PlatformGridServiceFactoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.CompositeFilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
@@ -60,7 +62,6 @@ import java.util.TreeSet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -77,21 +78,22 @@ public class PlatformApiImpl implements PlatformApi {
         new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder =
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
-    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry =
-        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
-    private final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry =
-        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
-    private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry =
-        new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
-    private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
-        new OrderedRegistryImpl<>(createIdentifier("noop"),
+    private final PlatformRegistry<StorageType<?>> storageTypeRegistry =
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
+    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry =
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
+    private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
+        new PlatformRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
+    private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
+        new PlatformRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
-    private final OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
-        new OrderedRegistryImpl<>(createIdentifier("noop"),
+    private final PlatformRegistry<ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
+        new PlatformRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
     private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();
+    private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
@@ -101,7 +103,7 @@ public class PlatformApiImpl implements PlatformApi {
     );
 
     @Override
-    public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
+    public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
         return storageTypeRegistry;
     }
 
@@ -136,17 +138,17 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
+    public PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
         return storageChannelTypeRegistry;
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
+    public PlatformRegistry<ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
         return importerTransferStrategyRegistry;
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
+    public PlatformRegistry<ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
         return exporterTransferStrategyRegistry;
     }
 
@@ -181,7 +183,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
+    public PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry() {
         return gridSynchronizerRegistry;
     }
 
@@ -287,5 +289,15 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public FilteredResourceFactory getFilteredResourceFactory() {
         return filteredResourceFactory;
+    }
+
+    @Override
+    public void registerIngredientConverter(final IngredientConverter converter) {
+        this.compositeConverter.addConverter(converter);
+    }
+
+    @Override
+    public IngredientConverter getIngredientConverter() {
+        return compositeConverter;
     }
 }

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 
@@ -10,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public interface Config {
     GridEntry getGrid();
+
+    CraftingGridEntry getCraftingGrid();
 
     ControllerEntry getController();
 
@@ -75,6 +78,10 @@ public interface Config {
         void setStorageChannelType(ResourceLocation storageChannelTypeId);
 
         void clearStorageChannelType();
+    }
+
+    interface CraftingGridEntry extends SimpleEnergyUsageEntry {
+        CraftingGridMatrixCloseBehavior getCraftingMatrixCloseBehavior();
     }
 
     interface DiskDriveEntry extends SimpleEnergyUsageEntry {

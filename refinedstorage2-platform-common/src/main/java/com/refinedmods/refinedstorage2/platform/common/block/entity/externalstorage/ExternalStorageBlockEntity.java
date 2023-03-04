@@ -58,7 +58,7 @@ public class ExternalStorageBlockEntity
         );
         getNode().setNormalizer(filter.createNormalizer());
         getNode().initialize(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             System::currentTimeMillis,
             trackedStorageRepositoryProvider
         );
@@ -76,7 +76,7 @@ public class ExternalStorageBlockEntity
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
         if (level instanceof ServerLevel serverLevel) {
-            LOGGER.info("Reloading external storage @ {} as block state has changed", worldPosition);
+            LOGGER.debug("Reloading external storage @ {} as block state has changed", worldPosition);
             loadStorage(serverLevel);
         }
     }
@@ -87,7 +87,7 @@ public class ExternalStorageBlockEntity
                                      @Nullable final BooleanProperty activenessProperty) {
         super.activenessChanged(state, newActive, activenessProperty);
         if (!initialized && level instanceof ServerLevel serverLevel) {
-            LOGGER.info("Triggering initial load of external storage {}", worldPosition);
+            LOGGER.debug("Triggering initial load of external storage {}", worldPosition);
             loadStorage(serverLevel);
             initialized = true;
         }
@@ -95,7 +95,7 @@ public class ExternalStorageBlockEntity
 
     public void loadStorage(final ServerLevel serverLevel) {
         final Direction direction = getDirection();
-        LOGGER.info("Loading storage for external storage with direction {} @ {}", direction, worldPosition);
+        LOGGER.debug("Loading storage for external storage with direction {} @ {}", direction, worldPosition);
         if (direction == null) {
             return;
         }
@@ -119,7 +119,7 @@ public class ExternalStorageBlockEntity
         if (workRate.canDoWork()) {
             final boolean hasChanges = getNode().detectChanges();
             if (hasChanges) {
-                LOGGER.info("External storage @ {} has changed!", worldPosition);
+                LOGGER.debug("External storage @ {} has changed!", worldPosition);
                 workRate.faster();
             } else {
                 workRate.slower();

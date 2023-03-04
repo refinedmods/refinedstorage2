@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
@@ -26,9 +27,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public abstract class AbstractDirectionalCableBlock
     extends AbstractDirectionalBlock<Direction>
     implements SimpleWaterloggedBlock {
+    private final Map<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache;
 
-    protected AbstractDirectionalCableBlock(final Properties properties) {
+    protected AbstractDirectionalCableBlock(final Properties properties,
+                                            final Map<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache) {
         super(properties);
+        this.shapeCache = shapeCache;
     }
 
     @Override
@@ -98,16 +102,28 @@ public abstract class AbstractDirectionalCableBlock
                                final BlockGetter world,
                                final BlockPos pos,
                                final CollisionContext context) {
-        return Shapes.or(CableBlockSupport.getShape(state), getExtensionShape(state));
+        final CableShapeCacheKey cableShapeCacheKey = CableShapeCacheKey.of(state);
+        final Direction direction = getDirection(state);
+        if (direction == null) {
+            return CableBlockSupport.getShape(cableShapeCacheKey);
+        }
+        final DirectionalCacheShapeCacheKey directionalCacheShapeCacheKey = new DirectionalCacheShapeCacheKey(
+            cableShapeCacheKey,
+            direction
+        );
+        return shapeCache.computeIfAbsent(directionalCacheShapeCacheKey, this::calculateShape);
+    }
+
+    private VoxelShape calculateShape(final DirectionalCacheShapeCacheKey cacheKey) {
+        return Shapes.or(
+            CableBlockSupport.getShape(cacheKey.cableShapeCacheKey),
+            getExtensionShape(cacheKey.direction)
+        );
     }
 
     @Override
     @Nullable
     protected VoxelShape getScreenOpenableShape(final BlockState state) {
-        return getExtensionShape(state);
-    }
-
-    private VoxelShape getExtensionShape(final BlockState state) {
         final Direction direction = getDirection(state);
         if (direction == null) {
             return Shapes.empty();
@@ -116,4 +132,7 @@ public abstract class AbstractDirectionalCableBlock
     }
 
     protected abstract VoxelShape getExtensionShape(Direction direction);
+
+    protected record DirectionalCacheShapeCacheKey(CableShapeCacheKey cableShapeCacheKey, Direction direction) {
+    }
 }

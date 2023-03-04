@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
@@ -22,11 +22,11 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<Component> ALL_TOOLTIP = calculateTooltip(null);
 
-    private final GridContainerMenu menu;
+    private final AbstractGridContainerMenu menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<PlatformStorageChannelType<?>, List<Component>> tooltips = new HashMap<>();
 
-    public StorageChannelTypeSideButtonWidget(final GridContainerMenu menu,
+    public StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu,
                                               final TooltipRenderer tooltipRenderer,
                                               final List<PlatformStorageChannelType<?>> storageChannelTypes) {
         super(createPressAction(menu));
@@ -37,7 +37,7 @@ public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget
         );
     }
 
-    private static OnPress createPressAction(final GridContainerMenu menu) {
+    private static OnPress createPressAction(final AbstractGridContainerMenu menu) {
         return btn -> menu.toggleStorageChannelType();
     }
 

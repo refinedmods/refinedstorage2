@@ -43,13 +43,13 @@ public abstract class AbstractItemGridResourceFactory implements GridResourceFac
 
     private String getTooltip(final ItemStack itemStack) {
         return itemStack
-            .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
+            .getTooltipLines(null, TooltipFlag.ADVANCED)
             .stream()
             .map(Component::getString)
             .collect(Collectors.joining("\n"));
     }
 
-    @SuppressWarnings("deprecation") // forge deprecates Registry access
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     private Set<String> getTags(final Item item) {
         return BuiltInRegistries.ITEM.getResourceKey(item)
             .flatMap(BuiltInRegistries.ITEM::getHolder)

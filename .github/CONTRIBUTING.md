@@ -257,7 +257,7 @@ with `refinedstorage2-platform-*` have dependencies on Minecraft.
 | `refinedstorage2-resource-api`    | ✔️            | Contains API for handling resources.                                                  |
 | `refinedstorage2-storage-api`     | ✔️            | Contains storage related functionality.                                               |
 | `refinedstorage2-platform-api`    | ✔️            | Implements the various Refined Storage API modules for use in Minecraft.              |
+| `refinedstorage2-platform-test`   | ✔️             | This module is used in platform tests for various Minecraft related helpers.          |
 | `refinedstorage2-platform-fabric` | ❌             | The platform module for Fabric. This module contains Fabric specific code.            |
 | `refinedstorage2-platform-forge`  | ❌             | The platform module for Forge. This module contains Forge specific code.              |
 | `refinedstorage2-platform-common` | ❌             | Common mod code. Most gameplay code is in here.                                       |
-| `refinedstorage2-platform-test`   | ❌             | This module is used in platform tests for various Minecraft related helpers.          |

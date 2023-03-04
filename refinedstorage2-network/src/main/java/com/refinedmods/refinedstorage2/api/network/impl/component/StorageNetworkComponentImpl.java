@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.api.network.impl.component;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +16,13 @@ import org.slf4j.LoggerFactory;
 public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkComponentImpl.class);
 
-    private final Map<StorageChannelType<?>, StorageChannel<?>> channels = new HashMap<>();
+    private final Map<StorageChannelType<?>, StorageChannel<?>> channels;
 
-    public StorageNetworkComponentImpl(
-        final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry
-    ) {
-        for (final StorageChannelType<?> type : storageChannelTypeRegistry.getAll()) {
-            channels.put(type, type.create());
-        }
+    public StorageNetworkComponentImpl(final Collection<? extends StorageChannelType<?>> storageChannelTypes) {
+        this.channels = storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
+            type -> type,
+            StorageChannelType::create
+        ));
     }
 
     @Override
@@ -40,7 +39,7 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
                                                         final StorageChannelType<T> type,
                                                         final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Adding source {} to channel {} from provider {}", storage, type, provider);
+            LOGGER.debug("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
         });
     }
@@ -61,7 +60,7 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
                                                              final StorageChannelType<T> type,
                                                              final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Removing source {} from channel {} of provider {}", storage, type, provider);
+            LOGGER.debug("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);
         });
     }

@@ -22,7 +22,8 @@ public final class CreativeModeTabItems {
     private static void appendBlocks(final Consumer<ItemLike> consumer) {
         Items.INSTANCE.getAllControllers().stream().map(Supplier::get).forEach(consumer);
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
-        consumer.accept(Blocks.INSTANCE.getCable());
+        appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
+        Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(consumer);
         consumer.accept(Blocks.INSTANCE.getDiskDrive());
         Arrays.stream(ItemStorageType.Variant.values()).forEach(variant -> consumer.accept(
             Blocks.INSTANCE.getItemStorageBlock(variant)
@@ -30,9 +31,9 @@ public final class CreativeModeTabItems {
         Arrays.stream(FluidStorageType.Variant.values()).forEach(variant -> consumer.accept(
             Blocks.INSTANCE.getFluidStorageBlock(variant)
         ));
-        consumer.accept(Blocks.INSTANCE.getImporter());
-        consumer.accept(Blocks.INSTANCE.getExporter());
-        consumer.accept(Blocks.INSTANCE.getExternalStorage());
+        Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(consumer);
         consumer.accept(Blocks.INSTANCE.getInterface());
         consumer.accept(Blocks.INSTANCE.getMachineCasing());
         consumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());

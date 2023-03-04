@@ -8,6 +8,4 @@ import net.minecraft.world.item.ItemStack;
 
 public interface StorageDiskInfoAccessor {
     Optional<StorageInfo> getInfo(ItemStack stack);
-
-    boolean hasStacking(ItemStack stack);
 }

@@ -27,24 +27,24 @@ public class GraphNetworkComponent implements NetworkComponent {
 
     @Override
     public void onContainerAdded(final NetworkNodeContainer container) {
-        LOGGER.info("Container {} added to network {}", container, network.hashCode());
+        LOGGER.debug("Container {} added to network {}", container, network.hashCode());
         containers.add(container);
     }
 
     @Override
     public void onContainerRemoved(final NetworkNodeContainer container) {
-        LOGGER.info("Container {} removed from network {}", container, network.hashCode());
+        LOGGER.debug("Container {} removed from network {}", container, network.hashCode());
         containers.remove(container);
     }
 
     @Override
     public void onNetworkRemoved() {
-        LOGGER.info("Network {} is removed", network.hashCode());
+        LOGGER.debug("Network {} is removed", network.hashCode());
     }
 
     @Override
     public void onNetworkSplit(final Set<Network> networks) {
-        LOGGER.info(
+        LOGGER.debug(
             "Network {} has been split into {} other networks ({})",
             network.hashCode(),
             networks.size(),
@@ -54,6 +54,6 @@ public class GraphNetworkComponent implements NetworkComponent {
 
     @Override
     public void onNetworkMergedWith(final Network newMainNetwork) {
-        LOGGER.info("Network {} has merged with network {}", newMainNetwork.hashCode(), this.network.hashCode());
+        LOGGER.debug("Network {} has merged with network {}", newMainNetwork.hashCode(), this.network.hashCode());
     }
 }

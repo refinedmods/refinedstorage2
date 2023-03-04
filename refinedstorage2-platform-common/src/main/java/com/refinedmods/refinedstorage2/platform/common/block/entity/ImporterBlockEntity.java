@@ -56,7 +56,7 @@ public class ImporterBlockEntity
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         final CompositeImporterTransferStrategy strategy = createStrategy(level, direction);
-        LOGGER.info("Initialized importer at {} with strategy {}", worldPosition, strategy);
+        LOGGER.debug("Initialized importer at {} with strategy {}", worldPosition, strategy);
         getNode().setTransferStrategy(strategy);
     }
 

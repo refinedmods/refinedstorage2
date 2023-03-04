@@ -73,28 +73,28 @@ class GridSortingTypesTest {
 
         // Assert
         switch (sortingType) {
-            case QUANTITY -> assertThat(view.getAll())
+            case QUANTITY -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Stone",
                     "Gold Ingot",
                     "Dirt"
                 );
-            case NAME -> assertThat(view.getAll())
+            case NAME -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Dirt",
                     "Gold Ingot",
                     "Stone"
                 );
-            case ID -> assertThat(view.getAll())
+            case ID -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Stone",
                     "Dirt",
                     "Gold Ingot"
                 );
-            case LAST_MODIFIED -> assertThat(view.getAll())
+            case LAST_MODIFIED -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Gold Ingot",
@@ -124,28 +124,28 @@ class GridSortingTypesTest {
 
         // Assert
         switch (sortingType) {
-            case QUANTITY -> assertThat(view.getAll())
+            case QUANTITY -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Dirt",
                     "Gold Ingot",
                     "Stone"
                 );
-            case NAME -> assertThat(view.getAll())
+            case NAME -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Stone",
                     "Gold Ingot",
                     "Dirt"
                 );
-            case ID -> assertThat(view.getAll())
+            case ID -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Gold Ingot",
                     "Dirt",
                     "Stone"
                 );
-            case LAST_MODIFIED -> assertThat(view.getAll())
+            case LAST_MODIFIED -> assertThat(view.getViewList())
                 .extracting(GridResource::getName)
                 .containsExactly(
                     "Dirt",

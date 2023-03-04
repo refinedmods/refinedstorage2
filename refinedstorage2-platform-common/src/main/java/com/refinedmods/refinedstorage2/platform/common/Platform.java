@@ -12,18 +12,21 @@ import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 import java.util.Optional;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.NonNullList;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -41,7 +44,7 @@ public interface Platform {
 
     TagKey<Item> getWrenchTag();
 
-    BucketQuantityFormatter getBucketQuantityFormatter();
+    BucketAmountFormatting getBucketAmountFormatter();
 
     Config getConfig();
 
@@ -68,4 +71,10 @@ public interface Platform {
     long insertIntoContainer(Container container, ItemResource itemResource, long amount, Action action);
 
     ItemStack getCloneItemStack(BlockState state, Level level, BlockHitResult hitResult, Player player);
+
+    NonNullList<ItemStack> getRemainingCraftingItems(Player player,
+                                                     CraftingRecipe craftingRecipe,
+                                                     CraftingContainer container);
+
+    void onItemCrafted(Player player, ItemStack craftedStack, CraftingContainer container);
 }

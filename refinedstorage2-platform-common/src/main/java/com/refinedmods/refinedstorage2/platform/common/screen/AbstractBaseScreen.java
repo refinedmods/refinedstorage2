@@ -1,13 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.ApplicableUpgrade;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,10 +20,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private final Inventory playerInventory;
@@ -155,15 +163,34 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     @Override
     protected void renderTooltip(final PoseStack poseStack, final int x, final int y) {
-        super.renderTooltip(poseStack, x, y);
-        if (minecraft != null
-            && menu.getCarried().isEmpty()
-            && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
+        if (menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
             final List<Component> lines = resourceFilterSlot.getTooltip();
             if (!lines.isEmpty()) {
-                this.renderComponentTooltip(poseStack, lines, x, y);
+                renderComponentTooltip(poseStack, lines, x, y);
             }
+        } else if (menu.getCarried().isEmpty()
+            && hoveredSlot instanceof UpgradeSlot upgradeSlot
+            && !hoveredSlot.hasItem()) {
+            final List<Component> lines = getUpgradeSlotTooltip(upgradeSlot);
+            renderComponentTooltip(poseStack, lines, x, y);
+        } else {
+            super.renderTooltip(poseStack, x, y);
         }
+    }
+
+    private List<Component> getUpgradeSlotTooltip(final UpgradeSlot upgradeSlot) {
+        final List<Component> lines = new ArrayList<>();
+        lines.add(PlatformApi.INSTANCE.createTranslation(
+            "gui",
+            "applicable_upgrades"
+        ).withStyle(ChatFormatting.WHITE));
+        for (final ApplicableUpgrade applicableUpgrade : upgradeSlot.getApplicableUpgrades()) {
+            final Item upgradeItem = applicableUpgrade.itemSupplier().get();
+            final MutableComponent name = upgradeItem.getName(new ItemStack(upgradeItem)).copy();
+            final MutableComponent amount = Component.literal("(" + applicableUpgrade.maxAmount() + ")");
+            lines.add(name.append(" ").append(amount).withStyle(ChatFormatting.GRAY));
+        }
+        return lines;
     }
 
     @Override
@@ -190,5 +217,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, (ResourceFilterSlot) slot));
         }
         return canChangeAmount;
+    }
+
+    @Nullable
+    public FilteredResource<?> getFilteredResource() {
+        return hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot
+            ? resourceFilterSlot.getFilteredResource()
+            : null;
     }
 }

@@ -14,6 +14,4 @@ public interface StorageContainerItem {
     Optional<TypedStorage<?>> resolve(StorageRepository storageRepository, ItemStack stack);
 
     Optional<StorageInfo> getInfo(StorageRepository storageRepository, ItemStack stack);
-
-    boolean hasStacking();
 }

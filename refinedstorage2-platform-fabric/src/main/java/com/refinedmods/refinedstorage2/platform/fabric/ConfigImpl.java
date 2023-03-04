@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -18,6 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.platform.common.Config {
     @ConfigEntry.Gui.CollapsibleObject
     private GridEntryImpl grid = new GridEntryImpl();
+
+    @ConfigEntry.Gui.CollapsibleObject
+    private CraftingGridEntryImpl craftingGrid = new CraftingGridEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
     private ControllerEntryImpl controller = new ControllerEntryImpl();
@@ -58,6 +62,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public GridEntry getGrid() {
         return grid;
+    }
+
+    @Override
+    public CraftingGridEntry getCraftingGrid() {
+        return craftingGrid;
     }
 
     @Override
@@ -259,6 +268,22 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private static void save() {
             AutoConfig.getConfigHolder(ConfigImpl.class).save();
+        }
+    }
+
+    private static class CraftingGridEntryImpl implements CraftingGridEntry {
+        private long energyUsage = DefaultEnergyUsage.CRAFTING_GRID;
+
+        private CraftingGridMatrixCloseBehavior craftingMatrixCloseBehavior = CraftingGridMatrixCloseBehavior.NONE;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
+        }
+
+        @Override
+        public CraftingGridMatrixCloseBehavior getCraftingMatrixCloseBehavior() {
+            return craftingMatrixCloseBehavior;
         }
     }
 

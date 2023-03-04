@@ -13,27 +13,30 @@ import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -59,8 +62,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.GridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
@@ -73,6 +76,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exp
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
@@ -119,6 +124,7 @@ import team.reborn.energy.api.EnergyStorage;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -295,10 +301,16 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerBlocks() {
-        Blocks.INSTANCE.setCable(register(
+        Blocks.INSTANCE.getCable().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            CABLE,
-            new CableBlock()
+            Blocks.INSTANCE.getCable().getId(color, CABLE),
+            new CableBlock(color, Blocks.INSTANCE.getCable().getName(
+                color,
+                createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "cable"
+                )
+            ))
         ));
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
             BuiltInRegistries.BLOCK,
@@ -319,10 +331,24 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getGrid().putAll(color -> register(
             BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new GridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(
-                BLOCK_TRANSLATION_CATEGORY,
-                "grid"
-            )))
+            new GridBlock(
+                Blocks.INSTANCE.getGrid().getName(color, createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "grid"
+                )),
+                color
+            )
+        ));
+        Blocks.INSTANCE.getCraftingGrid().putAll(color -> register(
+            BuiltInRegistries.BLOCK,
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
+            new CraftingGridBlock(
+                Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "crafting_grid"
+                )),
+                color
+            )
         ));
         Blocks.INSTANCE.getController().putAll(color -> register(
             BuiltInRegistries.BLOCK,
@@ -333,7 +359,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
+                color
             )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> register(
@@ -345,7 +372,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
+                color
             )
         ));
 
@@ -365,42 +393,50 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ));
         }
 
-        Blocks.INSTANCE.setImporter(register(
+        Blocks.INSTANCE.getImporter().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            IMPORTER,
-            new ImporterBlock()
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
+            new ImporterBlock(color, Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
         ));
-        Blocks.INSTANCE.setExporter(register(
+        Blocks.INSTANCE.getExporter().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            EXPORTER,
-            new ExporterBlock()
+            Blocks.INSTANCE.getExporter().getId(color, EXPORTER),
+            new ExporterBlock(color, Blocks.INSTANCE.getExporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
         ));
         Blocks.INSTANCE.setInterface(register(
             BuiltInRegistries.BLOCK,
             INTERFACE,
             new InterfaceBlock()
         ));
-        Blocks.INSTANCE.setExternalStorage(register(
+        Blocks.INSTANCE.getExternalStorage().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            EXTERNAL_STORAGE,
-            new ExternalStorageBlock()
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
+            new ExternalStorageBlock(color, Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
         ));
     }
 
     private void registerItems() {
         registerSimpleItems();
         registerGridItems();
+        registerCableItems();
+        registerExporterItems();
+        registerImporterItems();
+        registerExternalStorages();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
     }
 
     private void registerSimpleItems() {
-        register(
-            BuiltInRegistries.ITEM,
-            CABLE,
-            new SimpleBlockItem(Blocks.INSTANCE.getCable())
-        );
         Items.INSTANCE.setQuartzEnrichedIron(register(
             BuiltInRegistries.ITEM,
             QUARTZ_ENRICHED_IRON,
@@ -442,13 +478,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
         );
 
-        register(BuiltInRegistries.ITEM, IMPORTER,
-            new SimpleBlockItem(Blocks.INSTANCE.getImporter()));
-        register(BuiltInRegistries.ITEM, EXPORTER,
-            new SimpleBlockItem(Blocks.INSTANCE.getExporter()));
         register(BuiltInRegistries.ITEM, INTERFACE,
             new SimpleBlockItem(Blocks.INSTANCE.getInterface()));
-        register(BuiltInRegistries.ITEM, EXTERNAL_STORAGE, new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage()));
 
         Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
         Items.INSTANCE.setDestructionCore(register(BuiltInRegistries.ITEM, DESTRUCTION_CORE, new SimpleItem()));
@@ -465,13 +496,65 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         }
     }
 
+    private void registerCableItems() {
+        Blocks.INSTANCE.getCable().forEach((color, block) -> Items.INSTANCE.addCable(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getCable().getId(color, CABLE),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getCable().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
+            ))
+        )));
+    }
+
+    private void registerExporterItems() {
+        Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getExporter().getId(color, EXPORTER),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
+        )));
+    }
+
+    private void registerImporterItems() {
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        )));
+    }
+
+    private void registerExternalStorages() {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
+        )));
+    }
+
     private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new GridBlockItem(block.get(), Blocks.INSTANCE.getGrid().getName(
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getGrid().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
+            ))
+        ));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getCraftingGrid().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "crafting_grid")
             ))
         ));
     }
@@ -574,9 +657,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             CABLE,
             FabricBlockEntityTypeBuilder.create(
                 CableBlockEntity::new,
-                Blocks.INSTANCE.getCable()
-            ).build())
-        );
+                Blocks.INSTANCE.getCable().toArray()
+            ).build()
+        ));
         BlockEntities.INSTANCE.setDiskDrive(register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             DISK_DRIVE,
@@ -591,6 +674,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             FabricBlockEntityTypeBuilder.create(
                 GridBlockEntity::new,
                 Blocks.INSTANCE.getGrid().toArray()
+            ).build()
+        ));
+        BlockEntities.INSTANCE.setCraftingGrid(register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            CRAFTING_GRID,
+            FabricBlockEntityTypeBuilder.create(
+                CraftingGridBlockEntity::new,
+                Blocks.INSTANCE.getCraftingGrid().toArray()
             ).build()
         ));
         BlockEntities.INSTANCE.setController(register(
@@ -637,7 +728,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             IMPORTER,
             FabricBlockEntityTypeBuilder.create(
                 ImporterBlockEntity::new,
-                Blocks.INSTANCE.getImporter()
+                Blocks.INSTANCE.getImporter().toArray()
             ).build()
         ));
         BlockEntities.INSTANCE.setExporter(register(
@@ -645,7 +736,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             EXPORTER,
             FabricBlockEntityTypeBuilder.create(
                 ExporterBlockEntity::new,
-                Blocks.INSTANCE.getExporter()
+                Blocks.INSTANCE.getExporter().toArray()
             ).build()
         ));
         BlockEntities.INSTANCE.setInterface(register(
@@ -661,7 +752,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             EXTERNAL_STORAGE,
             FabricBlockEntityTypeBuilder.create(
                 ExternalStorageBlockEntity::new,
-                Blocks.INSTANCE.getExternalStorage()
+                Blocks.INSTANCE.getExternalStorage().toArray()
             ).build()
         ));
     }
@@ -676,6 +767,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BuiltInRegistries.MENU,
             GRID,
             new ExtendedScreenHandlerType<>(GridContainerMenu::new)
+        ));
+        Menus.INSTANCE.setCraftingGrid(register(
+            BuiltInRegistries.MENU,
+            CRAFTING_GRID,
+            new ExtendedScreenHandlerType<>(CraftingGridContainerMenu::new)
         ));
         Menus.INSTANCE.setController(register(
             BuiltInRegistries.MENU,
@@ -725,7 +821,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerCreativeModeTab() {
         FabricItemGroup.builder(createIdentifier("general"))
             .title(createTranslation("itemGroup", "general"))
-            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getNormal()))
+            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
             .displayItems((enabledFeatures, entries, operatorEnabled) -> CreativeModeTabItems.append(entries::accept))
             .build();
     }
@@ -735,6 +831,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT, new GridInsertPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_SCROLL, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.CRAFTING_GRID_CLEAR, new CraftingGridClearPacket());
+        ServerPlayNetworking.registerGlobalReceiver(
+            PacketIds.CRAFTING_GRID_RECIPE_TRANSFER,
+            new CraftingGridRecipeTransferPacket()
+        );
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
         ServerPlayNetworking.registerGlobalReceiver(
             PacketIds.RESOURCE_FILTER_SLOT_AMOUNT_CHANGE,

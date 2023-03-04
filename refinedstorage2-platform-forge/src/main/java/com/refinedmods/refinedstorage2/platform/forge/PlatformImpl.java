@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridInsertionStrategy;
@@ -28,17 +28,22 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -59,7 +64,7 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(networkManager),
             new ClientToServerCommunicationsImpl(networkManager),
             new MenuOpenerImpl(),
-            new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
+            new BucketAmountFormatting(FluidType.BUCKET_VOLUME),
             new FluidStackFluidRenderer(),
             ItemGridInsertionStrategy::new
         );
@@ -88,7 +93,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(
+        return !keyMapping.isUnbound() && InputConstants.isKeyDown(
             Minecraft.getInstance().getWindow().getWindow(),
             keyMapping.getKey().getValue()
         );
@@ -149,5 +154,20 @@ public final class PlatformImpl extends AbstractPlatform {
                                        final BlockHitResult hitResult,
                                        final Player player) {
         return state.getCloneItemStack(hitResult, level, hitResult.getBlockPos(), player);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
+                                                            final CraftingRecipe craftingRecipe,
+                                                            final CraftingContainer container) {
+        ForgeHooks.setCraftingPlayer(player);
+        final NonNullList<ItemStack> remainingItems = craftingRecipe.getRemainingItems(container);
+        ForgeHooks.setCraftingPlayer(null);
+        return remainingItems;
+    }
+
+    @Override
+    public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
+        ForgeEventFactory.firePlayerCraftingEvent(player, craftedStack, container);
     }
 }
