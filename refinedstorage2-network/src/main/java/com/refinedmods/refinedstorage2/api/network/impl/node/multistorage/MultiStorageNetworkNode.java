@@ -130,7 +130,7 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         if (network == null) {
             return;
         }
-        LOGGER.info("Activeness got changed to {}, updating underlying internal storages", newActive);
+        LOGGER.debug("Activeness got changed to {}, updating underlying internal storages", newActive);
         if (newActive) {
             enableAllStorages();
         } else {

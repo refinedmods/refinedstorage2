@@ -39,7 +39,7 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
                                                         final StorageChannelType<T> type,
                                                         final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Adding source {} to channel {} from provider {}", storage, type, provider);
+            LOGGER.debug("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
         });
     }
@@ -60,7 +60,7 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
                                                              final StorageChannelType<T> type,
                                                              final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Removing source {} from channel {} of provider {}", storage, type, provider);
+            LOGGER.debug("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);
         });
     }

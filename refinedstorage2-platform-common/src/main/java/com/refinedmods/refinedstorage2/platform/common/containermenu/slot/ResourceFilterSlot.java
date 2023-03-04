@@ -100,7 +100,7 @@ public class ResourceFilterSlot extends Slot {
     public void broadcastChanges(final Player player) {
         final FilteredResource<?> currentResource = resourceFilterContainer.get(containerIndex);
         if (!Objects.equals(currentResource, cachedResource)) {
-            LOGGER.info("Resource filter slot {} has changed", containerIndex);
+            LOGGER.debug("Resource filter slot {} has changed", containerIndex);
             this.cachedResource = currentResource;
             broadcastChange((ServerPlayer) player, currentResource);
         }

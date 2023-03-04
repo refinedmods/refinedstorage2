@@ -62,7 +62,7 @@ public class ItemStorageBlockBlockItem extends AbstractStorageContainerBlockItem
                                                   @Nullable final BlockEntity blockEntity,
                                                   final UUID id) {
         if (blockEntity instanceof AbstractStorageBlockBlockEntity<?> storageBlockEntity) {
-            LOGGER.info("Transferred storage {} to block at {}", id, pos);
+            LOGGER.debug("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);
         } else {
             LOGGER.warn("Storage {} could not be set, block entity does not exist yet at {}", id, pos);

@@ -98,7 +98,7 @@ public abstract class AbstractDiskDriveBlockEntity
             return;
         }
         if (diskStateChangeRateLimiter.tryAcquire()) {
-            LOGGER.info("Disk state change for block at {}", getBlockPos());
+            LOGGER.debug("Disk state change for block at {}", getBlockPos());
             this.syncRequested = false;
             sync();
         }

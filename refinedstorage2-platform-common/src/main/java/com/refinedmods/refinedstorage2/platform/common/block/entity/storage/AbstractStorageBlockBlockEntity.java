@@ -92,7 +92,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     }
 
     public void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
-        LOGGER.info(
+        LOGGER.debug(
             "Storage {} got placed through nbt, replacing with actual storage {}",
             storageId,
             actualStorageId
@@ -106,7 +106,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (tag.contains(TAG_STORAGE_ID)) {
             final UUID actualStorageId = tag.getUUID(TAG_STORAGE_ID);
             if (isPlacedThroughNbtPlacement(actualStorageId)) {
-                LOGGER.info(
+                LOGGER.debug(
                     "Storage {} got placed through nbt, replacing with actual storage {}",
                     storageId,
                     actualStorageId
