@@ -12,123 +12,31 @@ pluginManagement {
     }
 }
 
+def refinedArchitectVersion = "0.0.0+4aa2a08"
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven {
+            url = "https://maven.pkg.github.com/refinedmods/refinedarchitect"
+            credentials {
+                username = "anything"
+                password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+            }
+        }
     }
     versionCatalogs {
-        def minecraftVersion = "1.19.3"
-
-        // https://www.curseforge.com/minecraft/mc-mods/jei/files
-        def jeiVersion = "12.0.2.2"
-        // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
-        def reiVersion = "10.0.581"
-        def architecturyVersion = "7.1.70" // dependency of rei
-        def clothMathVersion = "0.6.1" // dependency of rei
-        def clothConfigVersion = "9.0.94" // dependency of rei
-        fabric {
-            def minecraft = version("minecraft", minecraftVersion)
-            library("minecraft", "com.mojang", "minecraft").versionRef(minecraft)
-
-            plugin("fabric-loom", "fabric-loom").version("1.1-SNAPSHOT")
-
-            def fabricLoader = version("fabric-loader", "0.14.14")
-            library("fabric-loader", "net.fabricmc", "fabric-loader").versionRef(fabricLoader)
-            def fabricApi = version("fabric-api", "0.73.2+1.19.3")
-            library("fabric-api", "net.fabricmc.fabric-api", "fabric-api").versionRef(fabricApi)
-
-            def parchment = version("parchment", "2022.12.18")
-            library("parchment", "org.parchmentmc.data", "parchment-${minecraftVersion}").versionRef(parchment)
-
-            // https://www.curseforge.com/minecraft/mc-mods/cloth-config/files
-            def clothConfig = version("clothConfig", clothConfigVersion)
-            library("cloth-config", "me.shedaniel.cloth", "cloth-config-fabric").versionRef(clothConfig)
-
-            // https://github.com/TechReborn/Energy
-            def energy = version("teamreborn-energy", "2.1.0")
-            library("teamreborn-energy", "teamreborn", "energy").versionRef(energy)
-
-            def rei = version("rei", reiVersion)
-            def architectury = version("architectury", architecturyVersion) // dependency of rei
-            library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").versionRef(rei)
-            library("architectury", "dev.architectury", "architectury-fabric").versionRef(architectury)
-            library("rei-fabric", "me.shedaniel", "RoughlyEnoughItems-fabric").versionRef(rei)
-            library("rei-plugin", "me.shedaniel", "RoughlyEnoughItems-default-plugin").version(reiVersion)
-            bundle("rei-runtime", ["architectury", "rei-fabric"])
-
-            def jei = version("jei", jeiVersion)
-            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
-            library("jei-fabric-api", "mezz.jei", "jei-${minecraftVersion}-fabric-api").versionRef(jei)
-            library("jei-fabric-impl", "mezz.jei", "jei-${minecraftVersion}-fabric").versionRef(jei)
-            bundle("jei", ["jei-common-api", "jei-fabric-api"])
-
-            // https://www.curseforge.com/minecraft/mc-mods/modmenu/files
-            def modmenu = version("modmenu", "5.0.2")
-            library("modmenu", "com.terraformersmc", "modmenu").versionRef(modmenu)
-
-            // https://www.curseforge.com/minecraft/mc-mods/wthit/files
-            def wthit = version("wthit", "fabric-6.1.2")
-            library("wthit", "mcp.mobius.waila", "wthit").versionRef(wthit)
-
-            // https://www.curseforge.com/minecraft/mc-mods/no-indium/files
-            def noIndium = version("noIndium", "1.1.0+1.19")
-            library("noIndium", "me.luligabi", "NoIndium").versionRef(noIndium)
+        create("common") {
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-common:${refinedArchitectVersion}")
         }
-        forge {
-            version("minecraft", minecraftVersion)
-            def minecraft = version("minecraftForge", "${minecraftVersion}-44.1.5")
-            library("minecraft", "net.minecraftforge", "forge").versionRef(minecraft)
-
-            def jei = version("jei", jeiVersion)
-            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
-            library("jei-forge-api", "mezz.jei", "jei-${minecraftVersion}-forge-api").versionRef(jei)
-            library("jei-forge-impl", "mezz.jei", "jei-${minecraftVersion}-forge").versionRef(jei)
-
-            def rei = version("rei", reiVersion)
-            library("rei-forge", "me.shedaniel", "RoughlyEnoughItems-forge").versionRef(rei)
-            library("rei-architectury", "dev.architectury", "architectury-forge").version(architecturyVersion)
-            library("rei-cloth-math", "me.shedaniel.cloth", "basic-math").version(clothMathVersion)
-            library("rei-cloth-config", "me.shedaniel.cloth", "cloth-config-forge").version(clothConfigVersion)
-
-            plugin('forgeGradle', 'net.minecraftforge.gradle').version('5.1.+')
+        create("fabric") {
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-fabric:${refinedArchitectVersion}")
         }
-        libs {
-            // Use the same slf4j API as MC to not break logging in the development environment.
-            def slf4j = version("slf4j", "2.0.1")
-            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4j)
-            library("slf4j-impl", "org.slf4j", "slf4j-simple").versionRef(slf4j)
-            def mixin = version("mixin", "0.8.4")
-            library("mixin", "org.spongepowered", "mixin").versionRef(mixin)
-            plugin("mixin", "org.spongepowered.gradle.vanilla").version("0.2.1-SNAPSHOT")
-            plugin("pitest", "info.solidsoft.pitest").version("1.9.11")
-            version("pitest", "1.10.4")
-            version("pitestJUnit5Plugin", "1.1.2")
-            plugin("sonarqube", "org.sonarqube").version("3.3")
-            version("checkstyle", "10.6.0")
-            def apiGuardian = version("apiGuardian", "1.1.2")
-            library("apiguardian", "org.apiguardian", "apiguardian-api").versionRef(apiGuardian)
-            def jsr305 = version("jsr305", "3.0.2")
-            library("jsr305", "com.google.code.findbugs", "jsr305").versionRef(jsr305)
-            version("minecraft", minecraftVersion)
-
-            def jei = version("jei", jeiVersion)
-            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
-            library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").version(reiVersion)
+        create("forge") {
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-forge:${refinedArchitectVersion}")
         }
-        testLibs {
-            def junit5 = version("junit5", "5.9.2")
-            library("junit-api", "org.junit.jupiter", "junit-jupiter-api").versionRef(junit5)
-            library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef(junit5)
-            library("junit-params", "org.junit.jupiter", "junit-jupiter-params").versionRef(junit5)
-
-            def assertJ = version("assertJ", "3.24.1")
-            library("assertJ", "org.assertj", "assertj-core").versionRef(assertJ)
-
-            def mockito = version("mockito", "5.0.0")
-            library("mockito", "org.mockito", "mockito-core").versionRef(mockito)
-
-            def equalsVerifier = version("equalsverifier", "3.12.3")
-            library("equalsverifier", "nl.jqno.equalsverifier", "equalsverifier").versionRef(equalsVerifier)
+        create("libs") {
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog:${refinedArchitectVersion}")
         }
     }
 }

@@ -24,7 +24,7 @@ repositories {
 archivesBaseName = 'refinedstorage2-platform-forge'
 
 minecraft {
-    mappings channel: 'official', version: forge.versions.minecraft.get()
+    mappings channel: 'official', version: common.versions.minecraft.get()
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -80,17 +80,16 @@ dependencies {
         implementation project(it)
     }
 
-    compileOnly fg.deobf(forge.jei.common.api.get())
-    testCompileOnly fg.deobf(forge.jei.common.api.get())
-    compileOnly fg.deobf(forge.jei.forge.api.get())
-    runtimeOnly fg.deobf(forge.jei.forge.impl.get())
+    compileOnly fg.deobf(common.jei.api.get())
+    testCompileOnly fg.deobf(common.jei.api.get())
+    compileOnly fg.deobf(forge.jei.api.get())
+    runtimeOnly fg.deobf(forge.jei.impl.get())
 
-    compileOnly fg.deobf(forge.rei.forge.get())
+    compileOnly fg.deobf(forge.rei.impl.get())
     compileOnly fg.deobf(forge.rei.architectury.get())
     compileOnly fg.deobf(forge.rei.cloth.math.get())
-//    runtimeOnly fg.deobf(forge.rei.forge.get())
+//    runtimeOnly fg.deobf(forge.rei.impl.get())
 //    runtimeOnly fg.deobf(forge.rei.architectury.get())
-//    runtimeOnly fg.deobf(forge.rei.cloth.config.get())
 }
 
 processResources {

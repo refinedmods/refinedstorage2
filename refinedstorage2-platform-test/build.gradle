@@ -6,9 +6,9 @@ plugins {
 archivesBaseName = 'refinedstorage2-platform-test'
 
 minecraft {
-    version(libs.versions.minecraft.get())
+    version(common.versions.minecraft.get())
 }
 
 dependencies {
-    implementation testLibs.junit.api
+    implementation libs.junit.api
 }

@@ -7,12 +7,12 @@ archivesBaseName = 'refinedstorage2-storage-api'
 dependencies {
     api libs.apiguardian
     implementation libs.slf4j.api
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
     testRuntimeOnly libs.slf4j.impl
-    testImplementation testLibs.assertJ
-    testImplementation testLibs.mockito
+    testImplementation libs.assertj
+    testImplementation libs.mockito
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-core-api')
 }

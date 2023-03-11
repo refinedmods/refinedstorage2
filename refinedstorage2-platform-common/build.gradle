@@ -13,7 +13,7 @@ repositories {
 }
 
 minecraft {
-    version(libs.versions.minecraft.get())
+    version(common.versions.minecraft.get())
 }
 
 sourceSets {
@@ -22,7 +22,7 @@ sourceSets {
 
 dependencies {
     compileOnly libs.mixin
-    implementation libs.jei.common.api
+    compileOnly common.jei.api
     implementation project(':refinedstorage2-platform-api')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-resource-api')
@@ -31,12 +31,12 @@ dependencies {
     implementation project(':refinedstorage2-network')
     implementation project(':refinedstorage2-query-parser')
     implementation project(':refinedstorage2-grid-api')
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
     testImplementation project(':refinedstorage2-platform-test')
-    testImplementation testLibs.equalsverifier
+    testImplementation libs.equalsverifier
 }
 
 test {

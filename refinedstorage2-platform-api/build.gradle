@@ -14,7 +14,7 @@ repositories {
 archivesBaseName = 'refinedstorage2-platform-api'
 
 minecraft {
-    version(libs.versions.minecraft.get())
+    version(common.versions.minecraft.get())
 }
 
 dependencies {
@@ -24,12 +24,12 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-network-api')
     implementation project(':refinedstorage2-grid-api')
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
     testImplementation project(':refinedstorage2-platform-test')
-    testImplementation testLibs.equalsverifier
+    testImplementation libs.equalsverifier
 }
 
 test {
