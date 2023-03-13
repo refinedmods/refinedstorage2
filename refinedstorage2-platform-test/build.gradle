@@ -12,3 +12,5 @@ minecraft {
 dependencies {
     implementation libs.junit.api
 }
+
+enableJavadoc()

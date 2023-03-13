@@ -10,3 +10,5 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
 }
+
+enableJavadoc()

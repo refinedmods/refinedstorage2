@@ -1,25 +1,7 @@
-plugins {
-    id 'maven-publish'
-    alias(libs.plugins.sonarqube)
-    id 'checkstyle'
-    alias(libs.plugins.pitest)
-}
-
-allprojects {
-    apply plugin: 'jacoco'
-}
+apply from: 'https://raw.githubusercontent.com/refinedmods/refinedarchitect/develop/helper.gradle'
 
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
-    version = '0.0.0'
-
-    if (System.getenv('GITHUB_SHA') != null) {
-        version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
-    }
-
-    if (System.getenv('RELEASE_VERSION') != null) {
-        version = System.getenv('RELEASE_VERSION')
-    }
 
     project.ext.apis = [
             ':refinedstorage2-core-api',
@@ -35,127 +17,12 @@ subprojects {
             ':refinedstorage2-platform-api',
             ':refinedstorage2-platform-common',
     ]
-
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
-    apply plugin: 'checkstyle'
-
-    checkstyle {
-        toolVersion = libs.versions.checkstyle.get()
-    }
-
-    if (!(project.name in [
-            // These project have less tests because they depend on Minecraft a lot, making it difficult to test.
-            'refinedstorage2-platform-api',
-            'refinedstorage2-platform-common',
-            // These projects don't have tests or JUnit, so omit these to avoid failing
-            'refinedstorage2-platform-fabric',
-            'refinedstorage2-platform-forge',
-            'refinedstorage2-platform-test',
-            'refinedstorage2-network-api' // only contains interfaces
-    ])) {
-        apply plugin: 'info.solidsoft.pitest'
-        pitest {
-            junit5PluginVersion = libs.versions.pitestJUnit5Plugin
-            pitestVersion = libs.versions.pitest
-            outputFormats.set(['HTML'])
-            mutationThreshold.set(90)
-            coverageThreshold.set(80)
-        }
-    }
-
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-    tasks.withType(JavaCompile).configureEach {
-        it.options.encoding = 'UTF-8'
-        it.options.release.set(17)
-        it.options.deprecation = true
-    }
-
-    processResources {
-        inputs.property 'version', project.version
-
-        filesMatching(['fabric.mod.json', 'META-INF/mods.toml']) {
-            expand 'version': project.version
-        }
-    }
-
-    if (!(project.name in [
-            'refinedstorage2-platform-common',
-            'refinedstorage2-platform-fabric',
-            'refinedstorage2-platform-forge',
-            'refinedstorage2-network'
-    ])) {
-        apply plugin: "maven-publish"
-        publishing {
-            repositories {
-                maven {
-                    name = "GitHubPackages"
-                    url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
-                    credentials {
-                        username = System.getenv("GITHUB_ACTOR")
-                        password = System.getenv("GITHUB_TOKEN")
-                    }
-                }
-                maven {
-                    name = "CreeperHost"
-                    url = uri("https://maven.creeperhost.net/release")
-                    credentials {
-                        username = System.getenv("CREEPERHOST_MAVEN_USERNAME")
-                        password = System.getenv("CREEPERHOST_MAVEN_TOKEN")
-                    }
-                }
-            }
-            publications {
-                gpr(MavenPublication) {
-                    from(components.java)
-                }
-            }
-        }
-    }
-
-    dependencies {
-        implementation libs.jsr305
-    }
 }
 
-task allJavadoc(type: Javadoc) {
-    // platform modules (besides API) doesn't need Javadoc.
-    // For Fabric it even fails due to a mixin target being private.
-    def projects = getSubprojects()
-            .stream()
-            .filter { p -> p.name != "refinedstorage2-platform-fabric" && p.name != "refinedstorage2-platform-forge" && p.name != "refinedstorage2-platform-common" }
-            .toList()
-    source projects*.sourceSets.main.allJava
-    classpath += files(projects*.sourceSets.main.compileClasspath)
-    destinationDir = file("build/docs/javadoc")
-}
+enableSonarQube("refinedmods_refinedstorage2")
 
-// http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-    subprojects.each {
-        sourceSets it.sourceSets.main
-    }
-    reports {
-        html.required = true
-        xml.required = true
-    }
-}
-
-// always run the tests before generating the report
-codeCoverageReport.dependsOn {
-    subprojects*.test
-}
-
-// https://docs.sonarqube.org/latest/analysis/github-integration/
 sonarqube {
     properties {
-        property "sonar.projectKey", "refinedmods_refinedstorage2"
-        property "sonar.organization", "refinedmods"
-        property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
-        // These project have less tests because they depend on Minecraft a lot, making it difficult to test.
         property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*,refinedstorage2-platform-api/**/*"
         // TODO: REI code is duplicated as reusing it in a common module isn't possible/too difficult. Fix this.
         property "sonar.cpd.exclusions", "refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/recipemod/rei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/recipemod/rei/*"

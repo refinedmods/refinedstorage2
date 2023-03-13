@@ -11,3 +11,6 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+enablePitest()
+enableJavadoc()
