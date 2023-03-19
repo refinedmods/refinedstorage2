@@ -1,4 +1,6 @@
-def refinedArchitectVersion = "0.0.0+4aa2a08"
+ext {
+    refinedArchitectVersion = "0.0.1"
+}
 
 dependencyResolutionManagement {
     repositories {
