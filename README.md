@@ -1,9 +1,13 @@
-# Refined Storage 2 [![Build Status](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=coverage)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Downloads on CurseForge](http://cf.way2muchnoise.eu/full_243076_downloads.svg)](http://minecraft.curseforge.com/projects/refined-storage) [![Discord](https://img.shields.io/discord/342942776494653441)](https://discordapp.com/invite/VYzsydb) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+<div align="center">
+  <img width="280" alt="Refined Storage logo" src="https://raw.githubusercontent.com/refinedmods/refinedstorage/develop/images/logo.png" />
+  <h1 style="margin-top: 0">Refined Storage 2</h1>
+  <p>Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing
+them to store items and fluids on a massively expandable device network.</p>
+
+  [![Build Status](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=coverage)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=refinedmods_refinedstorage2&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=refinedmods_refinedstorage2) [![Downloads on CurseForge](http://cf.way2muchnoise.eu/full_243076_downloads.svg)](http://minecraft.curseforge.com/projects/refined-storage) [![Discord](https://img.shields.io/discord/342942776494653441)](https://discordapp.com/invite/VYzsydb) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+</div>
 
 ## About
-
-**Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing
-them to store items and fluids on a massively expandable device network.**
 
 Items and fluids can be stored in one of the many storage capabilities that the mod offers. Any storage devices
 connected to the same network are accessible to the player through one simple Grid interface, allowing the player to
@@ -24,6 +28,7 @@ this mod that allow the player to setup auto-crafting, allowing the crafting of 
     - [Refined Mods on GitHub](https://github.com/refinedmods)
 - [Discord](https://discordapp.com/invite/VYzsydb)
 - [Twitter](https://twitter.com/refinedmods)
+- [Mastodon](https://anvil.social/@refinedmods)
 
 ## Building
 

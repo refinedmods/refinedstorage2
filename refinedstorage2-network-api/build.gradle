@@ -12,3 +12,4 @@ dependencies {
 }
 
 enableJavadoc()
+enablePublishing()

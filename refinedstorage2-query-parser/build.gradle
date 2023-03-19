@@ -12,5 +12,6 @@ test {
     useJUnitPlatform()
 }
 
-enablePitest()
+enableMutationTesting()
 enableJavadoc()
+enablePublishing()

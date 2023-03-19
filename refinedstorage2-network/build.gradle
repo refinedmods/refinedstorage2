@@ -20,4 +20,5 @@ test {
     useJUnitPlatform()
 }
 
-enablePitest()
+enableMutationTesting()
+enablePublishing()

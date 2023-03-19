@@ -1,4 +1,4 @@
-apply from: 'https://raw.githubusercontent.com/refinedmods/refinedarchitect/develop/helper.gradle'
+apply from: "https://raw.githubusercontent.com/refinedmods/refinedarchitect/v${gradle.ext.refinedArchitectVersion}/helper.gradle"
 
 subprojects {
     group = 'com.refinedmods.refinedstorage2'

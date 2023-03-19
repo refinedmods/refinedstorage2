@@ -4,13 +4,4 @@ on:
     types: [ labeled, unlabeled, reopened ]
 jobs:
   unsupported-labeler:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dessant/support-requests@v3
-        with:
-          github-token: ${{ github.token }}
-          support-label: 'unsupported'
-          issue-comment: >
-            :wave: @{issue-author}, we no longer support this version of Refined Storage.
-          close-issue: true
-          lock-issue: false
+    uses: refinedmods/refinedarchitect/.github/workflows/issue-for-unsupported-version.yml@v0.1.0
