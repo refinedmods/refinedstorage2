@@ -3,7 +3,8 @@ apply from: 'https://raw.githubusercontent.com/refinedmods/refinedarchitect/deve
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
 
-    project.ext.apis = [
+    ext {
+        apis = [
             ':refinedstorage2-core-api',
             ':refinedstorage2-resource-api',
             ':refinedstorage2-storage-api',
@@ -11,12 +12,12 @@ subprojects {
             ':refinedstorage2-network',
             ':refinedstorage2-grid-api',
             ':refinedstorage2-query-parser'
-    ]
-
-    project.ext.compileApis = [
+        ]
+        compileApis = [
             ':refinedstorage2-platform-api',
             ':refinedstorage2-platform-common',
-    ]
+        ]
+    }
 }
 
 enableSonarQube("refinedmods_refinedstorage2")
