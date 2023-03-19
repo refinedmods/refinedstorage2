@@ -1,8 +1,3 @@
-plugins {
-    id 'java'
-    alias(libs.plugins.mixin)
-}
-
 archivesBaseName = 'refinedstorage2-platform-common'
 
 repositories {
@@ -12,16 +7,9 @@ repositories {
     }
 }
 
-minecraft {
-    version(common.versions.minecraft.get())
-}
-
-sourceSets {
-    main.resources.srcDirs += 'src/generated/resources'
-}
+commonProject()
 
 dependencies {
-    compileOnly libs.mixin
     compileOnly common.jei.api
     implementation project(':refinedstorage2-platform-api')
     implementation project(':refinedstorage2-core-api')
@@ -42,4 +30,3 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-

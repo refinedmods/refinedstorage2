@@ -1,21 +1,10 @@
 plugins {
-    id 'java'
     id 'java-library'
-    alias(libs.plugins.mixin)
 }
 
-repositories {
-    maven {
-        name = 'Cloth Config'
-        url 'https://maven.shedaniel.me/'
-    }
-}
+commonProject()
 
 archivesBaseName = 'refinedstorage2-platform-api'
-
-minecraft {
-    version(common.versions.minecraft.get())
-}
 
 dependencies {
     api libs.apiguardian
