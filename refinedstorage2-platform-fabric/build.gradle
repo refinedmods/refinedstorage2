@@ -57,3 +57,5 @@ dependencies {
 
     modRuntimeOnly fabric.wthit
 }
+
+enablePublishing()

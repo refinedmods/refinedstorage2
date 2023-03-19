@@ -1,6 +1,4 @@
-ext {
-    refinedArchitectVersion = "0.0.1"
-}
+gradle.ext.refinedArchitectVersion = "0.1.0"
 
 dependencyResolutionManagement {
     repositories {
@@ -14,16 +12,16 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("common") {
-            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-common:${refinedArchitectVersion}")
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-common:${gradle.ext.refinedArchitectVersion}")
         }
         create("fabric") {
-            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-fabric:${refinedArchitectVersion}")
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-fabric:${gradle.ext.refinedArchitectVersion}")
         }
         create("forge") {
-            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-forge:${refinedArchitectVersion}")
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog-platform-forge:${gradle.ext.refinedArchitectVersion}")
         }
         create("libs") {
-            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog:${refinedArchitectVersion}")
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog:${gradle.ext.refinedArchitectVersion}")
         }
     }
 }
