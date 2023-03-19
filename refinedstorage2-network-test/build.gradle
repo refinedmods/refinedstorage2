@@ -1,7 +1,3 @@
-plugins {
-    id 'java-library'
-}
-
 archivesBaseName = 'refinedstorage2-network-test'
 
 dependencies {
@@ -11,11 +7,14 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-grid-api')
-    implementation testLibs.junit.api
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    implementation libs.junit.api
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
 }
 
 test {
     useJUnitPlatform()
 }
+
+enablePitest()
+enableJavadoc()

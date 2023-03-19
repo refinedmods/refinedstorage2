@@ -1,21 +1,10 @@
 plugins {
-    id 'java'
     id 'java-library'
-    alias(libs.plugins.mixin)
 }
 
-repositories {
-    maven {
-        name = 'Cloth Config'
-        url 'https://maven.shedaniel.me/'
-    }
-}
+commonProject()
 
 archivesBaseName = 'refinedstorage2-platform-api'
-
-minecraft {
-    version(libs.versions.minecraft.get())
-}
 
 dependencies {
     api libs.apiguardian
@@ -24,14 +13,16 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-network-api')
     implementation project(':refinedstorage2-grid-api')
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
     testImplementation project(':refinedstorage2-platform-test')
-    testImplementation testLibs.equalsverifier
+    testImplementation libs.equalsverifier
 }
 
 test {
     useJUnitPlatform()
 }
+
+enableJavadoc()

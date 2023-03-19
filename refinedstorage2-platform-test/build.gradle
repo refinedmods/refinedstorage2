@@ -1,14 +1,9 @@
-plugins {
-    id 'java-library'
-    alias(libs.plugins.mixin)
-}
-
 archivesBaseName = 'refinedstorage2-platform-test'
 
-minecraft {
-    version(libs.versions.minecraft.get())
-}
+commonProject()
 
 dependencies {
-    implementation testLibs.junit.api
+    implementation libs.junit.api
 }
+
+enableJavadoc()

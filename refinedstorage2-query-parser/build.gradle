@@ -1,13 +1,16 @@
 archivesBaseName = 'refinedstorage2-query-parser'
 
 dependencies {
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
     implementation project(':refinedstorage2-core-api')
 }
 
 test {
     useJUnitPlatform()
 }
+
+enablePitest()
+enableJavadoc()

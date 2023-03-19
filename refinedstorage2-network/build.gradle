@@ -3,11 +3,11 @@ archivesBaseName = 'refinedstorage2-network'
 dependencies {
     implementation libs.slf4j.api
     testRuntimeOnly libs.slf4j.impl
-    testImplementation testLibs.junit.api
-    testImplementation testLibs.junit.params
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
-    testImplementation testLibs.mockito
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
+    testImplementation libs.mockito
     testImplementation project(':refinedstorage2-network-test')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-network-api')
@@ -19,3 +19,5 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+enablePitest()

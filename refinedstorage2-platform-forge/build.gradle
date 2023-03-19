@@ -1,15 +1,3 @@
-buildscript {
-    repositories {
-        maven {
-            url = 'https://maven.minecraftforge.net'
-        }
-    }
-}
-
-plugins {
-    alias(forge.plugins.forgeGradle)
-}
-
 repositories {
     maven {
         name = 'JEI'
@@ -21,90 +9,19 @@ repositories {
     }
 }
 
+forgeProject("refinedstorage2", project(":refinedstorage2-platform-common"), apis, compileApis)
+
 archivesBaseName = 'refinedstorage2-platform-forge'
 
-minecraft {
-    mappings channel: 'official', version: forge.versions.minecraft.get()
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Client'
-            mods {
-                modClientRun {
-                    source sourceSets.main
-                    project.ext.apis.collect {
-                        source(project(it).sourceSets.main)
-                    }
-                    project.ext.compileApis.collect {
-                        source(project(it).sourceSets.main)
-                    }
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Server'
-            mods {
-                modServerRun {
-                    source sourceSets.main
-                    project.ext.apis.collect {
-                        source(project(it).sourceSets.main)
-                    }
-                    project.ext.compileApis.collect {
-                        source(project(it).sourceSets.main)
-                    }
-                }
-            }
-        }
-
-        data {
-            args '--mod', 'refinedstorage2', '--all', '--output', file('../refinedstorage2-platform-common/src/generated/resources/'), "--existing", file("../refinedstorage2-platform-common/src/main/resources")
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Data'
-        }
-    }
-}
-
 dependencies {
-    minecraft forge.minecraft
+    compileOnly fg.deobf(common.jei.api.get())
+    testCompileOnly fg.deobf(common.jei.api.get())
+    compileOnly fg.deobf(forge.jei.api.get())
+    runtimeOnly fg.deobf(forge.jei.impl.get())
 
-    project.ext.apis.collect {
-        implementation project(it)
-    }
-    project.ext.compileApis.collect {
-        implementation project(it)
-    }
-
-    compileOnly fg.deobf(forge.jei.common.api.get())
-    testCompileOnly fg.deobf(forge.jei.common.api.get())
-    compileOnly fg.deobf(forge.jei.forge.api.get())
-    runtimeOnly fg.deobf(forge.jei.forge.impl.get())
-
-    compileOnly fg.deobf(forge.rei.forge.get())
+    compileOnly fg.deobf(forge.rei.impl.get())
     compileOnly fg.deobf(forge.rei.architectury.get())
     compileOnly fg.deobf(forge.rei.cloth.math.get())
-//    runtimeOnly fg.deobf(forge.rei.forge.get())
+//    runtimeOnly fg.deobf(forge.rei.impl.get())
 //    runtimeOnly fg.deobf(forge.rei.architectury.get())
-//    runtimeOnly fg.deobf(forge.rei.cloth.config.get())
 }
-
-processResources {
-    from project(":refinedstorage2-platform-common").sourceSets.main.resources
-}
-
-tasks.withType(JavaCompile) {
-    project.ext.apis.collect {
-        source(project(it).sourceSets.main.allSource)
-    }
-    project.ext.compileApis.collect {
-        source(project(it).sourceSets.main.allSource)
-    }
-}
-
-jar.finalizedBy('reobfJar')
-
