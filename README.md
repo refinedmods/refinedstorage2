@@ -24,6 +24,7 @@ this mod that allow the player to setup auto-crafting, allowing the crafting of 
     - [Refined Mods on GitHub](https://github.com/refinedmods)
 - [Discord](https://discordapp.com/invite/VYzsydb)
 - [Twitter](https://twitter.com/refinedmods)
+- [Mastodon](https://anvil.social/@refinedmods)
 
 ## Building
 

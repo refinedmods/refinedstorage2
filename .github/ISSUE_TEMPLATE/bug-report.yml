@@ -45,11 +45,11 @@ body:
         validations:
             required: true
     -   type: input
-        id: rs
+        id: version
         attributes:
             label: What Refined Storage version is this happening on?
             description: |
-                Ensure that you are running on the latest Refined Storage version.
+                Ensure that you are using the latest version.
         validations:
             required: true
     -   type: textarea

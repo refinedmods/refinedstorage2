@@ -1,5 +1,5 @@
 name: Enhancement
-description: Do you have a suggestion for a new feature or a way to improve Refined Storage? Let us know.
+description: Do you have a suggestion for a new feature or improvement? Let us know.
 labels: [ enhancement ]
 body:
     -   type: markdown
@@ -8,7 +8,7 @@ body:
                 Provide a summary of the enhancement in the title above.
 
                 Please follow following guidelines before proposing an enchancement:
-                1) Ensure that you are running on the latest Refined Storage 2 version (to ensure that the enhancement does not exist yet).
+                1) Ensure that you are running on the latest version (to ensure that the enhancement does not exist yet).
                 2) Ensure that your enhancement hasn't already been posted. Please look in the closed issues as well (for enhancements that have been denied).
 
                 We might close your issue, without explanation, if you do not follow these guidelines.

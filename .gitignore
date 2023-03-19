@@ -7,8 +7,6 @@ eclipse/
 .nb-gradle-properties
 .project
 *.launch
-refinedstorage2-platform-fabric/run/
-refinedstorage2-platform-forge/run/
 *.iml
 *.ipr
 *.iws
