@@ -1,22 +1,7 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        maven {
-            name = 'Sponge / Mixin'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-    }
-}
-
 def refinedArchitectVersion = "0.0.0+4aa2a08"
 
 dependencyResolutionManagement {
     repositories {
-        mavenCentral()
         maven {
             url = "https://maven.pkg.github.com/refinedmods/refinedarchitect"
             credentials {
