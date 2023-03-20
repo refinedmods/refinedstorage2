@@ -13,10 +13,7 @@ subprojects {
             ':refinedstorage2-grid-api',
             ':refinedstorage2-query-parser'
         ]
-        compileApis = [
-            ':refinedstorage2-platform-api',
-            ':refinedstorage2-platform-common',
-        ]
+        compileApis = [':refinedstorage2-platform-api']
     }
 }
 
