@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
@@ -35,18 +36,12 @@ class NetworkNodeFactoryTest {
     InterfaceNetworkNode<String> interfaceNode;
     @AddNetworkNode
     ExternalStorageNetworkNode externalStorage;
+    @AddNetworkNode
+    DetectorNetworkNode detector;
 
     @Test
     void testInitialization() {
         // Assert
-        assertThat(controller).isNotNull();
-        assertThat(multiStorage).isNotNull();
-        assertThat(exporter).isNotNull();
-        assertThat(grid).isNotNull();
-        assertThat(importer).isNotNull();
-        assertThat(simple).isNotNull();
-        assertThat(storage).isNotNull();
-        assertThat(interfaceNode).isNotNull();
-        assertThat(externalStorage).isNotNull();
+        assertThat(this).hasNoNullFieldsOrProperties();
     }
 }

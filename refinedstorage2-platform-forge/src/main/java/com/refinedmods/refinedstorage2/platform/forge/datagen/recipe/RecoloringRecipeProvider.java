@@ -45,6 +45,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getCraftingGrid().forEach((color, block) ->
             recolorItems(Tags.CRAFTING_GRIDS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_crafting_grid")));
+        Blocks.INSTANCE.getDetector().forEach((color, block) ->
+            recolorItems(Tags.DETECTORS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_detector")));
     }
 
     private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {

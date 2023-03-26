@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -14,6 +15,7 @@ import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -48,8 +50,11 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         this.filter = new FilterWithFuzzyMode(
             storageChannelType,
             this::setChanged,
-            getNode()::setFilterTemplates, value -> {
-        }
+            value -> getNode().setFilterTemplates(
+                value.stream().map(TypedTemplate::template).collect(Collectors.toSet())
+            ),
+            value -> {
+            }
         );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),

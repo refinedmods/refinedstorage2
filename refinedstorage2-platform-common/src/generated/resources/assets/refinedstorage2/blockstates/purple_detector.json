@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "direction=down,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered"
+    },
+    "direction=down,powered=true": {
+      "model": "refinedstorage2:block/detector/purple"
+    },
+    "direction=east,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered",
+      "x": 90,
+      "y": 270
+    },
+    "direction=east,powered=true": {
+      "model": "refinedstorage2:block/detector/purple",
+      "x": 90,
+      "y": 270
+    },
+    "direction=north,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered",
+      "x": 90,
+      "y": 180
+    },
+    "direction=north,powered=true": {
+      "model": "refinedstorage2:block/detector/purple",
+      "x": 90,
+      "y": 180
+    },
+    "direction=south,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered",
+      "x": 90
+    },
+    "direction=south,powered=true": {
+      "model": "refinedstorage2:block/detector/purple",
+      "x": 90
+    },
+    "direction=up,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered",
+      "x": 180
+    },
+    "direction=up,powered=true": {
+      "model": "refinedstorage2:block/detector/purple",
+      "x": 180
+    },
+    "direction=west,powered=false": {
+      "model": "refinedstorage2:block/detector/unpowered",
+      "x": 90,
+      "y": 90
+    },
+    "direction=west,powered=true": {
+      "model": "refinedstorage2:block/detector/purple",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

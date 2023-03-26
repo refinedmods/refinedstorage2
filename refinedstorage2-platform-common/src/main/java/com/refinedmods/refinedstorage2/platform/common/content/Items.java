@@ -34,6 +34,7 @@ public final class Items {
     private final List<Supplier<NamedBlockItem>> allExporters = new ArrayList<>();
     private final List<Supplier<NamedBlockItem>> allImporters = new ArrayList<>();
     private final List<Supplier<NamedBlockItem>> allExternalStorages = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allDetectors = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -194,6 +195,14 @@ public final class Items {
 
     public List<Supplier<NamedBlockItem>> getExternalStorages() {
         return Collections.unmodifiableList(allExternalStorages);
+    }
+
+    public void addDetector(final Supplier<NamedBlockItem> supplier) {
+        allDetectors.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getDetectors() {
+        return Collections.unmodifiableList(allDetectors);
     }
 
     public Item getStorageHousing() {

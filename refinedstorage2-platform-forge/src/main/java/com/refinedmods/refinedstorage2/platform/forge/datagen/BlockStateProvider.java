@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
+import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
@@ -15,6 +16,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -40,6 +42,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerExternalStorages();
         registerControllers();
         registerGrids();
+        registerDetectors();
     }
 
     private void registerCables() {
@@ -172,11 +175,45 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         );
     }
 
-    private void addRotation(final ConfiguredModel.Builder<?> model, final BiDirection block) {
-        final int x = (int) block.getVec().x();
-        final int y = (int) block.getVec().y();
-        final int z = (int) block.getVec().z();
-        switch (block) {
+    private void registerDetectors() {
+        final ModelFile unpowered = modelFile(createIdentifier("block/detector/unpowered"));
+        Blocks.INSTANCE.getDetector().forEach((color, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> registerDetector(unpowered, block.get(), blockState));
+        });
+    }
+
+    private ConfiguredModel[] registerDetector(final ModelFile unpowered,
+                                               final DetectorBlock block,
+                                               final BlockState blockState) {
+        final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+        if (!blockState.getValue(DetectorBlock.POWERED)) {
+            model.modelFile(unpowered);
+        } else {
+            model.modelFile(modelFile(createIdentifier("block/detector/" + block.getColor().getName())));
+        }
+        final Direction direction = blockState.getValue(DirectionTypeImpl.INSTANCE.getProperty());
+        addRotation(model, direction);
+        return model.build();
+    }
+
+    private void addRotation(final ConfiguredModel.Builder<?> model, final Direction direction) {
+        final int rotationX;
+        if (direction.getAxis() == Direction.Axis.Y) {
+            rotationX = direction == Direction.UP ? 180 : 0;
+        } else {
+            rotationX = direction.getAxis().isHorizontal() ? 90 : 0;
+        }
+        final int rotationY = direction.getAxis().isVertical() ? 0 : ((int) direction.toYRot()) % 360;
+        model.rotationX(rotationX);
+        model.rotationY(rotationY);
+    }
+
+    private void addRotation(final ConfiguredModel.Builder<?> model, final BiDirection direction) {
+        final int x = (int) direction.getVec().x();
+        final int y = (int) direction.getVec().y();
+        final int z = (int) direction.getVec().z();
+        switch (direction) {
             case UP_EAST, UP_NORTH, UP_SOUTH, UP_WEST, DOWN_EAST, DOWN_WEST, DOWN_SOUTH, DOWN_NORTH ->
                 model.rotationX(x * -1).rotationY(z);
             case EAST, WEST -> model.rotationY(y + 180);

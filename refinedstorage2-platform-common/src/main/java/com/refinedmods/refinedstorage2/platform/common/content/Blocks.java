@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
@@ -28,6 +29,7 @@ public final class Blocks {
 
     private final BlockColorMap<CableBlock> cable = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
+    private final BlockColorMap<DetectorBlock> detector = new BlockColorMap<>();
     private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
@@ -129,5 +131,9 @@ public final class Blocks {
 
     public BlockColorMap<ExternalStorageBlock> getExternalStorage() {
         return externalStorage;
+    }
+
+    public BlockColorMap<DetectorBlock> getDetector() {
+        return detector;
     }
 }

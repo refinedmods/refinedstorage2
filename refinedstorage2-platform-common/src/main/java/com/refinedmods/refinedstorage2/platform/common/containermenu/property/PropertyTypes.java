@@ -1,10 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.property;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
@@ -45,6 +47,12 @@ public final class PropertyTypes {
         createIdentifier("fuzzy_mode"),
         value -> Boolean.TRUE.equals(value) ? 1 : 0,
         value -> value == 1
+    );
+
+    public static final PropertyType<DetectorMode> DETECTOR_MODE = new PropertyType<>(
+        createIdentifier("detector_mode"),
+        DetectorModeSettings::getDetectorMode,
+        DetectorModeSettings::getDetectorMode
     );
 
     private PropertyTypes() {

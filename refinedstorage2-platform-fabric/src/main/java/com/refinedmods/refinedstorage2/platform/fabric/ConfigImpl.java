@@ -55,6 +55,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         DefaultEnergyUsage.EXTERNAL_STORAGE
     );
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl detector = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.DETECTOR);
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -117,6 +120,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getExternalStorage() {
         return externalStorage;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getDetector() {
+        return detector;
     }
 
     private static class GridEntryImpl implements GridEntry {

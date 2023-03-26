@@ -125,7 +125,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         return true;
     }
 
-    private boolean colorsAllowConnecting(final BlockState other) {
+    protected final boolean colorsAllowConnecting(final BlockState other) {
         if (!(other.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
             return true;
         }

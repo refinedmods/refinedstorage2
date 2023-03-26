@@ -23,6 +23,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CABLE
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONTROLLERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CRAFTING_GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CREATIVE_CONTROLLERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.DETECTORS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXPORTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXTERNAL_STORAGES;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID_STORAGE_DISKS;
@@ -78,6 +79,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(EXTERNAL_STORAGES,
             Blocks.INSTANCE.getExternalStorage().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(DETECTORS,
+            Blocks.INSTANCE.getDetector().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }
