@@ -42,4 +42,6 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
     int getXTexture();
 
     int getYTexture();
+
+    long normalizeAmount(double amount);
 }

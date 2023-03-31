@@ -35,5 +35,5 @@ public interface ClientToServerCommunications {
 
     void sendResourceFilterSlotAmountChange(int slotIndex, long amount);
 
-    void sendDetectorAmountChange(long amount);
+    void sendDetectorAmountChange(double amount);
 }

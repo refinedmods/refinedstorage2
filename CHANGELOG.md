@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Detectors can now be placed sideways or upside down.
 -   Detectors no longer detect all resources when unconfigured.
 -   Redstone updates by Detectors are now rate-limited to once per second.
+-   For fluids, the Detector now always accepts the amount in buckets.
 
 ## [2.0.0-milestone.2.8] - 2023-03-04
 

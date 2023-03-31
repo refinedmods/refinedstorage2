@@ -20,13 +20,13 @@ import net.minecraft.world.entity.player.Player;
 public class DetectorContainerMenu extends AbstractResourceFilterContainerMenu {
     private final Player player;
 
-    private long amount;
+    private double amount;
     @Nullable
     private DetectorBlockEntity detector;
 
     public DetectorContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDetector(), syncId, playerInventory.player);
-        this.amount = buf.readLong();
+        this.amount = buf.readDouble();
         this.player = playerInventory.player;
         addSlots(new ResourceFilterContainer(1));
         initializeResourceFilterSlots(buf);
@@ -61,16 +61,16 @@ public class DetectorContainerMenu extends AbstractResourceFilterContainerMenu {
         transferManager.addFilterTransfer(player.getInventory());
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void changeAmountOnClient(final long newAmount) {
+    public void changeAmountOnClient(final double newAmount) {
         Platform.INSTANCE.getClientToServerCommunications().sendDetectorAmountChange(newAmount);
         this.amount = newAmount;
     }
 
-    public void changeAmountOnServer(final long newAmount) {
+    public void changeAmountOnServer(final double newAmount) {
         if (detector == null) {
             return;
         }

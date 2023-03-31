@@ -17,7 +17,7 @@ public class DetectorAmountChangePacket implements ServerPlayNetworking.PlayChan
                         final ServerGamePacketListenerImpl handler,
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
-        final long amount = buf.readLong();
+        final double amount = buf.readDouble();
         server.execute(() -> {
             final AbstractContainerMenu menu = player.containerMenu;
             if (menu instanceof DetectorContainerMenu containerMenu) {
