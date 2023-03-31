@@ -94,7 +94,7 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         final long normalizedAmount = filteredResource == null
             ? (long) amount
             : filteredResource.getStorageChannelType().normalizeAmount(amount);
-        LOGGER.info("Updating detector amount of {} normalized as {}", amount, normalizedAmount);
+        LOGGER.debug("Updating detector amount of {} normalized as {}", amount, normalizedAmount);
         getNode().setAmount(normalizedAmount);
     }
 

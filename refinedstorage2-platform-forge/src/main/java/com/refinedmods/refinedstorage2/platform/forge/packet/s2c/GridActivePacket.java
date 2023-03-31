@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
 import java.util.function.Supplier;
 

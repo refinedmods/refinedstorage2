@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
+package com.refinedmods.refinedstorage2.platform.common.util;
 
 import java.util.Optional;
 
