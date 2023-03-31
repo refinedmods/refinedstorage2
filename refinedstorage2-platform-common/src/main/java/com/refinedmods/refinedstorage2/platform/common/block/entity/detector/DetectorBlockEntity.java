@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -41,8 +42,12 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         super(BlockEntities.INSTANCE.getDetector(), pos, state, new DetectorNetworkNode(
             Platform.INSTANCE.getConfig().getDetector().getEnergyUsage()
         ));
-        this.filter = new FilterWithFuzzyMode(this::setChanged, templates -> {
-        }, templates -> getNode().setTemplate(templates.isEmpty() ? null : templates.get(0)));
+        this.filter = FilterWithFuzzyModeBuilder.of(1)
+            .listener(this::setChanged)
+            .templatesAcceptor(templates -> getNode().setFilterTemplate(
+                templates.isEmpty() ? null : templates.get(0)
+            ))
+            .build();
         initialize();
     }
 

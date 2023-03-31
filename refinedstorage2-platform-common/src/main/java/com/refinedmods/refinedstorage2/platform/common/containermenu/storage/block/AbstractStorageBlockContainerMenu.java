@@ -21,15 +21,15 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
     private long stored;
     private long capacity;
 
-    protected AbstractStorageBlockContainerMenu(final MenuType<?> type,
-                                                final int syncId,
-                                                final Player player,
-                                                final FriendlyByteBuf buf,
-                                                final PlatformStorageChannelType<?> storageChannelType) {
+    protected <T> AbstractStorageBlockContainerMenu(final MenuType<?> type,
+                                                    final int syncId,
+                                                    final Player player,
+                                                    final FriendlyByteBuf buf,
+                                                    final PlatformStorageChannelType<T> storageChannelType) {
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-        addSlots(player, new FilteredResourceFilterContainer(9, storageChannelType));
+        addSlots(player, new FilteredResourceFilterContainer<>(9, storageChannelType));
         initializeResourceFilterSlots(buf);
     }
 

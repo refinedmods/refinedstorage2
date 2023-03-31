@@ -40,7 +40,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         schedulingMode.execute(templates, transferStrategy, network, actor);
     }
 
-    public void setTemplates(final List<Object> newTemplates) {
+    public void setFilterTemplates(final List<Object> newTemplates) {
         templates.clear();
         templates.addAll(newTemplates);
     }

@@ -20,30 +20,16 @@ import net.minecraft.util.Mth;
 
 public class ResourceFilterContainer {
     private final FilteredResource<?>[] items;
-    private final Runnable listener;
     private final long maxAmount;
-
-    public ResourceFilterContainer(final int size,
-                                   final long maxAmount) {
-        this(size, () -> {
-        }, maxAmount);
-    }
+    @Nullable
+    private Runnable listener;
 
     public ResourceFilterContainer(final int size) {
-        this(size, () -> {
-        }, -1);
+        this(size, -1);
     }
 
-    public ResourceFilterContainer(final int size,
-                                   final Runnable listener) {
-        this(size, listener, -1);
-    }
-
-    public ResourceFilterContainer(final int size,
-                                   final Runnable listener,
-                                   final long maxAmount) {
+    public ResourceFilterContainer(final int size, final long maxAmount) {
         this.items = new FilteredResource[size];
-        this.listener = listener;
         this.maxAmount = maxAmount;
     }
 
@@ -51,9 +37,15 @@ public class ResourceFilterContainer {
         return maxAmount >= 0;
     }
 
+    public void setListener(@Nullable final Runnable listener) {
+        this.listener = listener;
+    }
+
     public void set(final int index, final FilteredResource<?> resource) {
         setSilently(index, resource);
-        listener.run();
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     private void setSilently(final int index, final FilteredResource<?> resource) {
@@ -78,7 +70,9 @@ public class ResourceFilterContainer {
 
     public void remove(final int index) {
         removeSilently(index);
-        listener.run();
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     private void removeSilently(final int index) {

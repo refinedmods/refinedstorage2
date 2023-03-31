@@ -23,7 +23,8 @@ class ResourceFilterContainerTest {
     @BeforeEach
     void setUp() {
         listener = new SimpleListener();
-        sut = new ResourceFilterContainer(3, listener, 64);
+        sut = new ResourceFilterContainer(3, 64);
+        sut.setListener(listener);
     }
 
     @Test
@@ -158,7 +159,8 @@ class ResourceFilterContainerTest {
     @Test
     void shouldNotChangeAmountIfAmountIsUnsupported() {
         // Arrange
-        sut = new ResourceFilterContainer(3, listener);
+        sut = new ResourceFilterContainer(3);
+        sut.setListener(listener);
         final ItemResource value = new ItemResource(Items.DIRT, null);
         sut.set(1, new ItemFilteredResource(value, 1));
 

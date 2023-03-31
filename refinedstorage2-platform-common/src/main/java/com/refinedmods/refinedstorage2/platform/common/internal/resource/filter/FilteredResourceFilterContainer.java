@@ -3,33 +3,19 @@ package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
-public class FilteredResourceFilterContainer extends ResourceFilterContainer {
-    private final PlatformStorageChannelType<?> allowedType;
+public class FilteredResourceFilterContainer<T> extends ResourceFilterContainer {
+    private final PlatformStorageChannelType<T> allowedType;
 
     public FilteredResourceFilterContainer(final int size,
-                                           final PlatformStorageChannelType<?> allowedType) {
-        this(size, () -> {
-        }, allowedType, -1);
+                                           final PlatformStorageChannelType<T> allowedType) {
+        this(size, allowedType, -1);
     }
 
+
     public FilteredResourceFilterContainer(final int size,
-                                           final PlatformStorageChannelType<?> allowedType,
+                                           final PlatformStorageChannelType<T> allowedType,
                                            final long maxAmount) {
-        this(size, () -> {
-        }, allowedType, maxAmount);
-    }
-
-    public FilteredResourceFilterContainer(final int size,
-                                           final Runnable listener,
-                                           final PlatformStorageChannelType<?> allowedType) {
-        this(size, listener, allowedType, -1);
-    }
-
-    public FilteredResourceFilterContainer(final int size,
-                                           final Runnable listener,
-                                           final PlatformStorageChannelType<?> allowedType,
-                                           final long maxAmount) {
-        super(size, listener, maxAmount);
+        super(size, maxAmount);
         this.allowedType = allowedType;
     }
 
