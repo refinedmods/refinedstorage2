@@ -5,7 +5,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredReso
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -50,10 +52,10 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
     @Override
     public List<Component> getTooltip() {
         final Minecraft minecraft = Minecraft.getInstance();
-        return value.toItemStack().getTooltipLines(
-            minecraft.player,
+        return ClientProxy.getPlayer().map(player -> value.toItemStack().getTooltipLines(
+            player,
             minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
-        );
+        )).orElse(Collections.emptyList());
     }
 
     @Override

@@ -61,16 +61,9 @@ public class InterfaceBlockEntity
         );
         getNode().setExportState(this);
         getNode().setTransferQuota(64);
-        this.filter = new FilterWithFuzzyMode(
-            StorageChannelTypes.ITEM,
-            this::setChanged,
-            value -> {
-            },
-            value -> {
-            },
-            EXPORT_SLOTS,
-            64
-        );
+        this.filter = FilterWithFuzzyModeBuilder.of(EXPORT_SLOTS, 64, StorageChannelTypes.ITEM)
+            .listener(this::setChanged)
+            .build();
         this.exportedItems.addListener(c -> setChanged());
         this.externalStorageProvider = new InterfaceExternalStorageProviderImpl<>(getNode());
     }

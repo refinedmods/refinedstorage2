@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.9] - 2023-03-31
+
+### Fixed
+
+-   Fixed not being able to update filter slots on servers.
+
+### Added
+
+-   Detector
+
+### Changed
+
+-   Detectors can now be placed sideways or upside down.
+-   Detectors no longer detect all resources when unconfigured.
+-   Redstone updates by Detectors are now rate-limited to once per second.
+-   For fluids, the Detector now always accepts the amount in buckets.
+
 ## [2.0.0-milestone.2.8] - 2023-03-04
 
 ### Fixed
@@ -328,7 +345,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...HEAD
+
+[2.0.0-milestone.2.9]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...v2.0.0-milestone.2.9
 
 [2.0.0-milestone.2.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...v2.0.0-milestone.2.8
 

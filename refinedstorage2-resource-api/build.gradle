@@ -6,12 +6,16 @@ archivesBaseName = 'refinedstorage2-resource-api'
 
 dependencies {
     api libs.apiguardian
-    testImplementation testLibs.junit.api
-    testRuntimeOnly testLibs.junit.engine
-    testImplementation testLibs.assertJ
+    testImplementation libs.junit.api
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
     implementation project(":refinedstorage2-core-api")
 }
 
 test {
     useJUnitPlatform()
 }
+
+enableMutationTesting()
+enableJavadoc()
+enablePublishing()

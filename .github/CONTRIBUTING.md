@@ -1,4 +1,4 @@
-# Contributing to Refined Storage
+# Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via
 [GitHub issues](https://github.com/refinedmods/refinedstorage2/issues), [Discord](https://discordapp.com/invite/VYzsydb),
@@ -48,8 +48,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Version metadata
 
-The code doesn't contain version metadata: `build.gradle` specifies a version of `0.0.0`. The versioning information is
-entirely contained in Git by using tags.
+The code doesn't contain version metadata: `build.gradle` specifies a version of `0.0.0` (via Refined Architect).
+The versioning information is entirely contained in Git by using tags.
 
 Per [Semantic Versioning](https://semver.org/spec/v2.0.0.html), the version number being released depends on the changes
 in that release. We usually can't predict those
@@ -64,8 +64,7 @@ release cycle of the new version, which isn't correct.
 
 Whenever we port to a new Minecraft version, at least the minor version should be incremented.
 
-This is needed so that we can still support older Minecraft versions without the Refined Storage version numbers
-conflicting.
+This is needed so that we can still support older Minecraft versions without the version numbers conflicting.
 
 ## Changelog
 

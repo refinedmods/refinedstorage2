@@ -5,11 +5,13 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
@@ -18,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -57,8 +60,14 @@ public class ExporterBlockEntity
             new ExporterNetworkNode(0),
             UpgradeDestinations.EXPORTER
         );
-        this.filter = new FilterWithFuzzyMode(this::setChanged, value -> {
-        }, getNode()::setTemplates);
+
+        this.filter = FilterWithFuzzyModeBuilder.of()
+            .listener(this::setChanged)
+            .templatesAcceptor(templates -> getNode().setFilterTemplates(
+                templates.stream().map(TypedTemplate::template).collect(Collectors.toList())
+            ))
+            .build();
+
         this.setSchedulingMode(null, schedulingModeSettings);
     }
 

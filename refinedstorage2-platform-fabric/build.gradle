@@ -1,7 +1,3 @@
-plugins {
-    alias(fabric.plugins.fabric.loom)
-}
-
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
@@ -18,10 +14,6 @@ repositories {
         url 'https://maven.shedaniel.me/'
     }
     maven {
-        name = 'Parchment'
-        url 'https://maven.parchmentmc.org'
-    }
-    maven {
         name = 'wthit'
         url "https://maven.bai.lol"
     }
@@ -31,25 +23,9 @@ repositories {
     }
 }
 
+fabricProject("refinedstorage2", project(":refinedstorage2-platform-common"), apis, compileApis)
+
 dependencies {
-    minecraft fabric.minecraft
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment variantOf(fabric.parchment) {
-            artifactType("zip")
-        }
-    }
-    modImplementation fabric.fabric.loader
-    modImplementation fabric.fabric.api
-
-    project.ext.apis.collect {
-        implementation project(it)
-        include project(it)
-    }
-    project.ext.compileApis.collect {
-        implementation project(it)
-    }
-
     modImplementation(fabric.cloth.config) {
         exclude(group: 'net.fabricmc.fabric-api')
     }
@@ -65,7 +41,7 @@ dependencies {
 
     modImplementation fabric.modmenu
 
-    modCompileOnly(fabric.rei.api) {
+    modCompileOnly(common.rei.api) {
         exclude(group: 'me.shedaniel.cloth')
         exclude(group: 'dev.architectury')
     }
@@ -73,50 +49,13 @@ dependencies {
         exclude(group: 'me.shedaniel.cloth')
         exclude(group: 'dev.architectury')
     }
-    modCompileOnly(fabric.architectury)
-    modRuntimeOnly fabric.bundles.rei.runtime
+    modCompileOnly fabric.rei.architectury
+    modRuntimeOnly fabric.rei.impl
 
-    modCompileOnly fabric.jei.common.api
-    // modRuntimeOnly fabric.jei.fabric.impl
+    modCompileOnly common.jei.api
+    // modRuntimeOnly fabric.jei.impl
 
     modRuntimeOnly fabric.wthit
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/refinedstorage2.accesswidener")
-    runs {
-        client {
-            client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-    }
-    mixin {
-        showMessageTypes = true
-        messages {
-            // silence the warning from shadowing a synthetic field in AbstractModelBakerImplMixin
-            TARGET_ELEMENT_NOT_FOUND = 'disabled'
-        }
-    }
-}
-
-processResources {
-    from project(":refinedstorage2-platform-common").sourceSets.main.resources
-}
-
-tasks.withType(JavaCompile) {
-    project.ext.compileApis.collect {
-        source(project(it).sourceSets.main.allSource)
-    }
-}
-
-jar {
-    from '../LICENSE.md'
-}
+enablePublishing()

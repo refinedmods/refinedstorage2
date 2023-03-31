@@ -86,4 +86,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     public void sendResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
         networkManager.send(new ResourceFilterSlotAmountChangePacket(slotIndex, amount));
     }
+
+    @Override
+    public void sendDetectorAmountChange(final double amount) {
+        networkManager.send(new DetectorAmountChangePacket(amount));
+    }
 }

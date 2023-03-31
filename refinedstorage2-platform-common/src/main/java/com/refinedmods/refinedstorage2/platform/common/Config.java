@@ -34,6 +34,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getExternalStorage();
 
+    SimpleEnergyUsageEntry getDetector();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

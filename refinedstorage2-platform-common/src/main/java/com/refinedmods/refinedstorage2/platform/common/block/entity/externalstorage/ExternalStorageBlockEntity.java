@@ -2,18 +2,21 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.externalsto
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -50,8 +53,12 @@ public class ExternalStorageBlockEntity
         super(BlockEntities.INSTANCE.getExternalStorage(), pos, state, new ExternalStorageNetworkNode(
             Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage()
         ));
-        this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
-        });
+        this.filter = FilterWithFuzzyModeBuilder.of()
+            .listener(this::setChanged)
+            .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
+                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
+            ))
+            .build();
         this.trackedStorageRepositoryProvider = new ExternalStorageTrackedStorageRepositoryProvider(
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
             this::setChanged

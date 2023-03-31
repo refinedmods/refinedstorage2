@@ -22,6 +22,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         registerController();
         registerGrid(Blocks.INSTANCE.getGrid(), "grid");
         registerGrid(Blocks.INSTANCE.getCraftingGrid(), "crafting_grid");
+        registerDetectors();
     }
 
     private void registerCables() {
@@ -83,5 +84,22 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
 
     private void registerEmissiveGrid(final String name, final String variantName, final ResourceLocation cutout) {
         registerGrid(name, variantName, cutout, createIdentifier("block/emissive_north_cutout"));
+    }
+
+    private void registerDetectors() {
+        final ResourceLocation parent = createIdentifier("block/detector/powered");
+        final ResourceLocation side = createIdentifier("block/detector/side");
+        final ResourceLocation bottom = createIdentifier("block/detector/bottom");
+        final ResourceLocation top = createIdentifier("block/detector/top");
+        final ResourceLocation particle = createIdentifier("block/detector/side");
+        Blocks.INSTANCE.getDetector().forEach((color, block) -> {
+            final ResourceLocation torch = createIdentifier("block/detector/cutouts/" + color.getName());
+            withExistingParent("block/detector/" + color.getName(), parent)
+                .texture("side", side)
+                .texture("bottom", bottom)
+                .texture("top", top)
+                .texture("particle", particle)
+                .texture("torch", torch);
+        });
     }
 }

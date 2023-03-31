@@ -17,6 +17,7 @@ public final class Tags {
     public static final TagKey<Item> IMPORTERS = createTag("importers");
     public static final TagKey<Item> EXPORTERS = createTag("exporters");
     public static final TagKey<Item> EXTERNAL_STORAGES = createTag("external_storages");
+    public static final TagKey<Item> DETECTORS = createTag("detectors");
 
     private Tags() {
     }

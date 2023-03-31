@@ -42,7 +42,7 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("B", "A"));
+        sut.setFilterTemplates(List.of("B", "A"));
 
         // Act & assert
         sut.doWork();
@@ -78,7 +78,7 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act & assert
         sut.doWork();

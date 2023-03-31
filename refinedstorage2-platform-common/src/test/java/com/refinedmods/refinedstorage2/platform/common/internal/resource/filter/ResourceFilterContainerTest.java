@@ -1,8 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
 
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.SimpleListener;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import net.minecraft.world.item.Items;
@@ -21,7 +23,8 @@ class ResourceFilterContainerTest {
     @BeforeEach
     void setUp() {
         listener = new SimpleListener();
-        sut = new ResourceFilterContainer(3, listener, 64);
+        sut = new ResourceFilterContainer(3, 64);
+        sut.setListener(listener);
     }
 
     @Test
@@ -50,8 +53,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @ParameterizedTest
@@ -70,8 +73,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, newAmount));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @ParameterizedTest
@@ -90,8 +93,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @ParameterizedTest
@@ -110,8 +113,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 64));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @ParameterizedTest
@@ -130,8 +133,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 16));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @Test
@@ -149,14 +152,15 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @Test
     void shouldNotChangeAmountIfAmountIsUnsupported() {
         // Arrange
-        sut = new ResourceFilterContainer(3, listener);
+        sut = new ResourceFilterContainer(3);
+        sut.setListener(listener);
         final ItemResource value = new ItemResource(Items.DIRT, null);
         sut.set(1, new ItemFilteredResource(value, 1));
 
@@ -169,8 +173,8 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @Test
@@ -188,8 +192,11 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.get(2)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value, 1));
         assertThat(sut.size()).isEqualTo(3);
-        assertThat(sut.getTemplates()).containsExactly(value, value);
-        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.getTemplates()).containsExactly(
+            new TypedTemplate<>(value, StorageChannelTypes.ITEM),
+            new TypedTemplate<>(value, StorageChannelTypes.ITEM)
+        );
+        assertThat(sut.getUniqueTemplates()).containsExactly(new TypedTemplate<>(value, StorageChannelTypes.ITEM));
     }
 
     @Test

@@ -1,22 +1,5 @@
 name: Validate branch name
 on: [ pull_request ]
 jobs:
-  branch-name:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Validate if branch name is valid
-        if: (!startsWith(github.event.pull_request.head.ref, 'release/')) && (!startsWith(github.event.pull_request.head.ref, 'hotfix/'))
-        uses: deepakputhraya/action-branch-name@master
-        with:
-          regex: '^([a-z])+\/GH-\d*\/([a-z-])+$'
-          allowed_prefixes: 'build,chore,ci,docs,feat,fix,perf,refactor,revert,style,test'
-          ignore: main,develop
-          min_length: 5
-          max_length: 50
-      - name: Validate if release or hotfix branch name is valid
-        if: startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/')
-        uses: deepakputhraya/action-branch-name@master
-        with:
-          regex: '^([a-z])+\/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
-          allowed_prefixes: 'release,hotfix'
-          ignore: main,develop
+  validate-branch-name:
+    uses: refinedmods/refinedarchitect/.github/workflows/validate-branch-name.yml@v0.2.0
