@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
@@ -77,14 +78,12 @@ public abstract class AbstractDiskDriveBlockEntity
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
-        this.filter = new FilterWithFuzzyMode(
-            this::setChanged,
-            value -> getNode().setFilterTemplates(
-                value.stream().map(TypedTemplate::template).collect(Collectors.toSet())
-            ),
-            value -> {
-            }
-        );
+        this.filter = FilterWithFuzzyModeBuilder.of()
+            .listener(this::setChanged)
+            .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
+                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
+            ))
+            .build();
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
             filter,

@@ -67,7 +67,7 @@ abstract class AbstractExporterNetworkNodeTest {
             createTransferStrategy(destination, 10),
             createTransferStrategy(destination, 10)
         )));
-        sut.setTemplates(List.of("A"));
+        sut.setFilterTemplates(List.of("A"));
 
         // Act
         sut.doWork();
@@ -110,7 +110,7 @@ abstract class AbstractExporterNetworkNodeTest {
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
 
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
         sut.setTransferStrategy(createTransferStrategy(destination, 1));
         sut.setSchedulingMode(null);
 
@@ -134,7 +134,7 @@ abstract class AbstractExporterNetworkNodeTest {
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
 
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act
         sut.doWork();
@@ -158,7 +158,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
         sut.setActive(false);
 
         // Act
@@ -183,7 +183,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of());
+        sut.setFilterTemplates(List.of());
 
         // Act
         sut.doWork();
@@ -205,7 +205,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act
         sut.doWork();
@@ -233,8 +233,8 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("C"));
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("C"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act & assert
         sut.doWork();
@@ -277,7 +277,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act
         sut.doWork();
@@ -305,7 +305,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act
         sut.doWork();

@@ -48,7 +48,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act & assert
         sut.doWork();
@@ -97,7 +97,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act & assert
         sut.doWork();
@@ -117,7 +117,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B", "C", "D"));
+        sut.setFilterTemplates(List.of("A", "B", "C", "D"));
 
         // Act & assert
         sut.doWork();
@@ -194,7 +194,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B", "C"));
+        sut.setFilterTemplates(List.of("A", "B", "C"));
 
         // Act & assert
         sut.doWork();
@@ -221,7 +221,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         );
 
         // Now C would be the next one, but we expect to go back to A.
-        sut.setTemplates(List.of("A", "C"));
+        sut.setFilterTemplates(List.of("A", "C"));
         sut.doWork();
 
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(

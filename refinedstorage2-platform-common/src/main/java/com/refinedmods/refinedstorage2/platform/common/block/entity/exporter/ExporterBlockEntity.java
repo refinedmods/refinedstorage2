@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
@@ -59,10 +60,14 @@ public class ExporterBlockEntity
             new ExporterNetworkNode(0),
             UpgradeDestinations.EXPORTER
         );
-        this.filter = new FilterWithFuzzyMode(this::setChanged, value -> {
-        }, value -> getNode().setTemplates(
-            value.stream().map(TypedTemplate::template).collect(Collectors.toList())
-        ));
+
+        this.filter = FilterWithFuzzyModeBuilder.of()
+            .listener(this::setChanged)
+            .templatesAcceptor(templates -> getNode().setFilterTemplates(
+                templates.stream().map(TypedTemplate::template).collect(Collectors.toList())
+            ))
+            .build();
+
         this.setSchedulingMode(null, schedulingModeSettings);
     }
 

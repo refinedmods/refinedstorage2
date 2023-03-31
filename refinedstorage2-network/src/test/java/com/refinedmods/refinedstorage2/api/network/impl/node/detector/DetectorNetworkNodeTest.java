@@ -42,7 +42,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutNetwork() {
         // Act
-        sut.setTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setNetwork(null);
 
         // Assert
@@ -55,7 +55,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutActiveness() {
         // Act
-        sut.setTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setActive(false);
 
         // Assert
@@ -78,7 +78,7 @@ class DetectorNetworkNodeTest {
     @EnumSource(DetectorMode.class)
     void testWithTemplateButWithoutResourceInNetwork(final DetectorMode mode) {
         // Arrange
-        sut.setTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
 
         // Act
@@ -121,7 +121,7 @@ class DetectorNetworkNodeTest {
                    final boolean expectedActivated,
                    @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
-        sut.setTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
         sut.setAmount(comparisonAmount);
 

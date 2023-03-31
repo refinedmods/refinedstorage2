@@ -2,72 +2,46 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 
-// TODO: Refactor constructors.
 public final class FilterWithFuzzyMode {
     private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
     private final ResourceFilterContainer filterContainer;
+    @Nullable
     private final Runnable listener;
-    private final Consumer<Set<TypedTemplate<?>>> templatesAcceptor;
-    private final Consumer<List<TypedTemplate<?>>> orderedTemplatesAcceptor;
+    @Nullable
+    private final Consumer<Set<TypedTemplate<?>>> uniqueTemplatesAcceptor;
+    @Nullable
+    private final Consumer<List<TypedTemplate<?>>> templatesAcceptor;
 
     private boolean fuzzyMode;
 
-    public FilterWithFuzzyMode(final PlatformStorageChannelType<?> storageChannelType,
-                               final Runnable listener,
-                               final Consumer<Set<TypedTemplate<?>>> templatesAcceptor,
-                               final Consumer<List<TypedTemplate<?>>> orderedTemplatesAcceptor) {
-        this.filterContainer = new FilteredResourceFilterContainer(
-            9,
-            this::filterContainerChanged,
-            storageChannelType
-        );
+    public FilterWithFuzzyMode(final ResourceFilterContainer filterContainer,
+                               @Nullable final Runnable listener,
+                               @Nullable final Consumer<Set<TypedTemplate<?>>> uniqueTemplatesAcceptor,
+                               @Nullable final Consumer<List<TypedTemplate<?>>> templatesAcceptor) {
+        this.filterContainer = filterContainer;
         this.listener = listener;
+        this.uniqueTemplatesAcceptor = uniqueTemplatesAcceptor;
         this.templatesAcceptor = templatesAcceptor;
-        this.orderedTemplatesAcceptor = orderedTemplatesAcceptor;
-    }
-
-    public FilterWithFuzzyMode(final PlatformStorageChannelType<?> storageChannelType,
-                               final Runnable listener,
-                               final Consumer<Set<TypedTemplate<?>>> templatesAcceptor,
-                               final Consumer<List<TypedTemplate<?>>> orderedTemplatesAcceptor,
-                               final int size,
-                               final long maxAmount) {
-        this.filterContainer = new FilteredResourceFilterContainer(
-            size,
-            this::filterContainerChanged,
-            storageChannelType,
-            maxAmount
-        );
-        this.listener = listener;
-        this.templatesAcceptor = templatesAcceptor;
-        this.orderedTemplatesAcceptor = orderedTemplatesAcceptor;
-    }
-
-    public FilterWithFuzzyMode(final Runnable listener,
-                               final Consumer<Set<TypedTemplate<?>>> templatesAcceptor,
-                               final Consumer<List<TypedTemplate<?>>> orderedTemplatesAcceptor) {
-        this.filterContainer = new ResourceFilterContainer(9, this::filterContainerChanged);
-        this.listener = listener;
-        this.templatesAcceptor = templatesAcceptor;
-        this.orderedTemplatesAcceptor = orderedTemplatesAcceptor;
+        this.filterContainer.setListener(this::filterContainerChanged);
     }
 
     private void filterContainerChanged() {
         loadTemplates();
-        listener.run();
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     public ResourceFilterContainer getFilterContainer() {
@@ -80,8 +54,11 @@ public final class FilterWithFuzzyMode {
 
     public void setFuzzyMode(final boolean fuzzyMode) {
         this.fuzzyMode = fuzzyMode;
-        loadTemplates(); // we need to reload the templates as the normalizer will give different outputs now.
-        listener.run();
+        // We need to reload the templates as the normalizer will give different outputs now.
+        loadTemplates();
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     public void load(final CompoundTag tag) {
@@ -95,8 +72,12 @@ public final class FilterWithFuzzyMode {
     }
 
     private void loadTemplates() {
-        templatesAcceptor.accept(filterContainer.getUniqueTemplates());
-        orderedTemplatesAcceptor.accept(filterContainer.getTemplates());
+        if (uniqueTemplatesAcceptor != null) {
+            uniqueTemplatesAcceptor.accept(filterContainer.getUniqueTemplates());
+        }
+        if (templatesAcceptor != null) {
+            templatesAcceptor.accept(filterContainer.getTemplates());
+        }
     }
 
     public void save(final CompoundTag tag) {

@@ -50,14 +50,14 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-        this.filter = new FilterWithFuzzyMode(
-            this::setChanged,
-            value -> getNode().setFilterTemplates(
-                value.stream().map(TypedTemplate::template).collect(Collectors.toSet())
-            ),
-            value -> {
-            }
-        );
+
+        this.filter = FilterWithFuzzyModeBuilder.of()
+            .listener(this::setChanged)
+            .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
+                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
+            ))
+            .build();
+
         getNode().setNormalizer(filter.createNormalizer());
     }
 

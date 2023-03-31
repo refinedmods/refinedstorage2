@@ -24,8 +24,8 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public <T> void setTemplate(@Nullable final TypedTemplate<T> template) {
-        this.template = template;
+    public <T> void setFilterTemplate(@Nullable final TypedTemplate<T> filterTemplate) {
+        this.template = filterTemplate;
     }
 
     public DetectorMode getMode() {

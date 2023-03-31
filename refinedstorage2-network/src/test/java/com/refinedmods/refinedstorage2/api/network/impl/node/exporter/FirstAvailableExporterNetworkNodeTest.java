@@ -38,7 +38,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A"));
+        sut.setFilterTemplates(List.of("A"));
 
         // Act
         sut.doWork();
@@ -70,7 +70,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of("A", "B"));
 
         // Act
         sut.doWork();
@@ -104,7 +104,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 20);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B", "C"));
+        sut.setFilterTemplates(List.of("A", "B", "C"));
 
         // Act & assert
         sut.doWork();
