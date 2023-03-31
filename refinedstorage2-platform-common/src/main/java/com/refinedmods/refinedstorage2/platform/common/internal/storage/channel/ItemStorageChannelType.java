@@ -68,6 +68,11 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
+    public long normalizeAmount(final double amount) {
+        return (long) amount;
+    }
+
+    @Override
     public CompoundTag toTag(final ItemResource resource) {
         return ItemResource.toTag(resource);
     }

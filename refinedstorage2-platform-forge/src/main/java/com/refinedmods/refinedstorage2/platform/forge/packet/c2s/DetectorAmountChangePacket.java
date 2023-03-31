@@ -10,18 +10,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class DetectorAmountChangePacket {
-    private final long amount;
+    private final double amount;
 
-    public DetectorAmountChangePacket(final long amount) {
+    public DetectorAmountChangePacket(final double amount) {
         this.amount = amount;
     }
 
     public static DetectorAmountChangePacket decode(final FriendlyByteBuf buf) {
-        return new DetectorAmountChangePacket(buf.readLong());
+        return new DetectorAmountChangePacket(buf.readDouble());
     }
 
     public static void encode(final DetectorAmountChangePacket packet, final FriendlyByteBuf buf) {
-        buf.writeLong(packet.amount);
+        buf.writeDouble(packet.amount);
     }
 
     public static void handle(final DetectorAmountChangePacket packet, final Supplier<NetworkEvent.Context> ctx) {

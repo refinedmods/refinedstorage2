@@ -109,8 +109,8 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendDetectorAmountChange(final long amount) {
-        sendToServer(PacketIds.DETECTOR_AMOUNT_CHANGE, buf -> buf.writeLong(amount));
+    public void sendDetectorAmountChange(final double amount) {
+        sendToServer(PacketIds.DETECTOR_AMOUNT_CHANGE, buf -> buf.writeDouble(amount));
     }
 
     private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {

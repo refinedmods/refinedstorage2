@@ -68,6 +68,11 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
+    public long normalizeAmount(final double amount) {
+        return (long) (amount * (double) Platform.INSTANCE.getBucketAmount());
+    }
+
+    @Override
     public CompoundTag toTag(final FluidResource resource) {
         return FluidResource.toTag(resource);
     }

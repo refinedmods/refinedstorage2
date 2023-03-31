@@ -5,6 +5,11 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.DetectorModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,6 +22,15 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class DetectorScreen extends AbstractBaseScreen<DetectorContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/detector.png");
+    private static final Predicate<String> DECIMAL_PATTERN = Pattern.compile("\\d*\\.?\\d*").asMatchPredicate();
+    private static final DecimalFormat DECIMAL_FORMAT;
+
+    static {
+        final DecimalFormatSymbols initialAmountSymbols = new DecimalFormatSymbols(Locale.ROOT);
+        initialAmountSymbols.setDecimalSeparator('.');
+        DECIMAL_FORMAT = new DecimalFormat("##.###", initialAmountSymbols);
+        DECIMAL_FORMAT.setGroupingUsed(false);
+    }
 
     @Nullable
     private EditBox amountBox;
@@ -47,11 +61,13 @@ public class DetectorScreen extends AbstractBaseScreen<DetectorContainerMenu> {
         amountBox.setFocus(false);
         amountBox.setCanLoseFocus(true);
         amountBox.setBordered(false);
-        amountBox.setFilter(value -> value.matches("\\d*"));
-        amountBox.setValue(String.valueOf(menu.getAmount()));
+        amountBox.setFilter(DECIMAL_PATTERN);
+        amountBox.setValue(DECIMAL_FORMAT.format(menu.getAmount()));
         amountBox.setResponder(value -> {
             try {
-                final long amount = value.trim().isEmpty() ? 0 : Long.parseLong(value);
+                final double amount = value.trim().isEmpty()
+                    ? 0
+                    : Double.parseDouble(value);
                 menu.changeAmountOnClient(amount);
             } catch (final NumberFormatException e) {
                 // do nothing
