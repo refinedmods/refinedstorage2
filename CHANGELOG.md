@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed not being able to update filter slots on servers.
+
 ### Added
 
 -   Detector
