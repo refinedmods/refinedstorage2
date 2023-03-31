@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
@@ -34,6 +35,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerCreativeController();
         registerGrid();
         registerCraftingGrid();
+        registerDetector();
     }
 
     private void registerCables() {
@@ -129,6 +131,14 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         grids.forEach((color, grid) -> withExistingParent(
             grids.getId(color, createIdentifier("crafting_grid")).getPath(),
             createIdentifier("block/crafting_grid/" + color.getName())
+        ));
+    }
+
+    private void registerDetector() {
+        final BlockColorMap<DetectorBlock> detectors = Blocks.INSTANCE.getDetector();
+        detectors.forEach((color, grid) -> withExistingParent(
+            detectors.getId(color, createIdentifier("detector")).getPath(),
+            createIdentifier("block/detector/" + color.getName())
         ));
     }
 

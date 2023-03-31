@@ -30,6 +30,7 @@ public class ConfigImpl implements Config {
     private final UpgradeEntry upgrade;
     private final SimpleEnergyUsageEntry iface;
     private final SimpleEnergyUsageEntry externalStorage;
+    private final SimpleEnergyUsageEntry detector;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -48,6 +49,7 @@ public class ConfigImpl implements Config {
             "External Storage",
             DefaultEnergyUsage.EXTERNAL_STORAGE
         );
+        detector = new SimpleEnergyUsageEntryImpl("detector", "Detector", DefaultEnergyUsage.DETECTOR);
         spec = builder.build();
     }
 
@@ -113,6 +115,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getExternalStorage() {
         return externalStorage;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getDetector() {
+        return detector;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {

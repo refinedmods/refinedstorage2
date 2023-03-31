@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet;
 
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.CraftingGridRecipeTransferPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.DetectorAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridScrollPacket;
@@ -133,6 +134,13 @@ public class NetworkManager {
             CraftingGridRecipeTransferPacket::encode,
             CraftingGridRecipeTransferPacket::decode,
             CraftingGridRecipeTransferPacket::handle
+        );
+        handler.registerMessage(
+            id++,
+            DetectorAmountChangePacket.class,
+            DetectorAmountChangePacket::encode,
+            DetectorAmountChangePacket::decode,
+            DetectorAmountChangePacket::handle
         );
     }
 

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -93,23 +94,30 @@ public class ResourceFilterContainer {
         return items[index];
     }
 
-    public Set<Object> getUniqueTemplates() {
+    public Set<TypedTemplate<?>> getUniqueTemplates() {
         return getTemplates(new HashSet<>());
     }
 
-    public List<Object> getTemplates() {
+    public List<TypedTemplate<?>> getTemplates() {
         return getTemplates(new ArrayList<>());
     }
 
-    private <C extends Collection<Object>> C getTemplates(final C result) {
+    private <C extends Collection<TypedTemplate<?>>> C getTemplates(final C result) {
         for (int i = 0; i < size(); ++i) {
             final FilteredResource<?> item = items[i];
             if (item == null) {
                 continue;
             }
-            result.add(item.getValue());
+            result.add(createTemplate(item));
         }
         return result;
+    }
+
+    private <T> TypedTemplate<T> createTemplate(final FilteredResource<T> item) {
+        return new TypedTemplate<>(
+            item.getValue(),
+            item.getStorageChannelType()
+        );
     }
 
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {

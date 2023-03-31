@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
@@ -40,6 +41,8 @@ public final class Menus {
     private Supplier<MenuType<InterfaceContainerMenu>> iface;
     @Nullable
     private Supplier<MenuType<ExternalStorageContainerMenu>> externalStorage;
+    @Nullable
+    private Supplier<MenuType<DetectorContainerMenu>> detector;
 
     private Menus() {
     }
@@ -122,5 +125,13 @@ public final class Menus {
 
     public void setExternalStorage(final Supplier<MenuType<ExternalStorageContainerMenu>> supplier) {
         this.externalStorage = supplier;
+    }
+
+    public MenuType<DetectorContainerMenu> getDetector() {
+        return Objects.requireNonNull(detector).get();
+    }
+
+    public void setDetector(final Supplier<MenuType<DetectorContainerMenu>> supplier) {
+        this.detector = supplier;
     }
 }

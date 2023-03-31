@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
@@ -79,6 +80,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         setCutout(Blocks.INSTANCE.getCraftingGrid());
         setCutout(Blocks.INSTANCE.getController());
         setCutout(Blocks.INSTANCE.getCreativeController());
+        setCutout(Blocks.INSTANCE.getDetector());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -94,6 +96,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             registerEmissiveControllerModels(color);
             registerEmissiveGridModels(color);
             registerEmissiveCraftingGridModels(color);
+            registerEmissiveDetectorModels(color);
         }
     }
 
@@ -141,6 +144,19 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         );
     }
 
+    private void registerEmissiveDetectorModels(final DyeColor color) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/detector/" + color.getName()),
+            createIdentifier("block/detector/cutouts/" + color.getName())
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            Blocks.INSTANCE.getDetector().getId(color, createIdentifier("detector")),
+            createIdentifier("block/detector/cutouts/" + color.getName())
+        );
+    }
+
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
@@ -180,6 +196,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
         MenuScreens.register(Menus.INSTANCE.getInterface(), InterfaceScreen::new);
         MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
     }
 
     private void registerKeyBindings() {

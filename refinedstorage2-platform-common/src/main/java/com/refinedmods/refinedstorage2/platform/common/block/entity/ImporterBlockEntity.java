@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.CompositeImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -13,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeD
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -48,8 +50,14 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-        this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
-        });
+        this.filter = new FilterWithFuzzyMode(
+            this::setChanged,
+            value -> getNode().setFilterTemplates(
+                value.stream().map(TypedTemplate::template).collect(Collectors.toSet())
+            ),
+            value -> {
+            }
+        );
         getNode().setNormalizer(filter.createNormalizer());
     }
 

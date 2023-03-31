@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBloc
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
@@ -21,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
@@ -35,6 +37,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
@@ -78,6 +81,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.imp
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.DetectorAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
@@ -127,6 +131,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DETECTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
@@ -422,6 +427,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
             ))
         ));
+        Blocks.INSTANCE.getDetector().putAll(color -> register(
+            BuiltInRegistries.BLOCK,
+            Blocks.INSTANCE.getDetector().getId(color, DETECTOR),
+            new DetectorBlock(color, Blocks.INSTANCE.getDetector().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "detector")
+            ))
+        ));
     }
 
     private void registerItems() {
@@ -434,6 +447,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
+        registerDetector();
     }
 
     private void registerSimpleItems() {
@@ -651,6 +665,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         addApplicableUpgrades(speedUpgrade, stackUpgrade);
     }
 
+    private void registerDetector() {
+        Blocks.INSTANCE.getDetector().forEach((color, block) -> Items.INSTANCE.addDetector(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getDetector().getId(color, DETECTOR),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getDetector().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "detector")
+            ))
+        )));
+    }
+
     private void registerBlockEntities() {
         BlockEntities.INSTANCE.setCable(register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
@@ -755,6 +780,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 Blocks.INSTANCE.getExternalStorage().toArray()
             ).build()
         ));
+        BlockEntities.INSTANCE.setDetector(register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            DETECTOR,
+            FabricBlockEntityTypeBuilder.create(
+                DetectorBlockEntity::new,
+                Blocks.INSTANCE.getDetector().toArray()
+            ).build()
+        ));
     }
 
     private void registerMenus() {
@@ -808,6 +841,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             EXTERNAL_STORAGE,
             new ExtendedScreenHandlerType<>(ExternalStorageContainerMenu::new)
         ));
+        Menus.INSTANCE.setDetector(register(
+            BuiltInRegistries.MENU,
+            DETECTOR,
+            new ExtendedScreenHandlerType<>(DetectorContainerMenu::new)
+        ));
     }
 
     private void registerLootFunctions() {
@@ -845,6 +883,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             PacketIds.RESOURCE_FILTER_SLOT_CHANGE,
             new ResourceFilterSlotChangePacket()
         );
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.DETECTOR_AMOUNT_CHANGE, new DetectorAmountChangePacket());
     }
 
     private void registerSounds() {

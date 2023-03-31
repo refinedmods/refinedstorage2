@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Detector
+
+### Changed
+
+-   Detectors can now be placed sideways or upside down.
+-   Detectors no longer detect all resources when unconfigured.
+-   Redstone updates by Detectors are now rate-limited to once per second.
+
 ## [2.0.0-milestone.2.8] - 2023-03-04
 
 ### Fixed
