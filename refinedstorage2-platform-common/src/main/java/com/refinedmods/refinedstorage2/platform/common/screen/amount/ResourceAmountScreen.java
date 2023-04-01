@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ResourceAmountScreen extends AbstractAmountScreen {
+public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScreen.DummyContainerMenu, Long> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "amount");
 
@@ -31,32 +31,34 @@ public class ResourceAmountScreen extends AbstractAmountScreen {
             parent,
             playerInventory,
             TITLE,
-            AmountScreenConfiguration.AmountScreenConfigurationBuilder.create()
+            AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Long>create()
                 .withInitialAmount(getInitialAmount(slot))
                 .withIncrementsTop(1, 10, 64)
                 .withIncrementsBottom(-1, -10, -64)
+                .withIncrementsBottomStartPosition(new Vector3f(7, 20 + 52, 0))
                 .withAmountFieldPosition(new Vector3f(9, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
-                .withMinAmount(1)
+                .withMinAmount(1L)
                 .withMaxAmount(getMaxAmount(slot))
-                .withResetAmount(1)
-                .build()
+                .withResetAmount(1L)
+                .build(),
+            LongAmountOperations.INSTANCE
         );
         this.slot = slot;
         this.imageWidth = 172;
         this.imageHeight = 99;
     }
 
-    private static int getInitialAmount(final ResourceFilterSlot slot) {
-        return slot.getFilteredResource() == null ? 0 : (int) slot.getFilteredResource().getAmount();
+    private static long getInitialAmount(final ResourceFilterSlot slot) {
+        return slot.getFilteredResource() == null ? 0 : slot.getFilteredResource().getAmount();
     }
 
-    private static int getMaxAmount(final ResourceFilterSlot slot) {
-        return slot.getFilteredResource() == null ? 0 : (int) slot.getFilteredResource().getMaxAmount();
+    private static long getMaxAmount(final ResourceFilterSlot slot) {
+        return slot.getFilteredResource() == null ? 0 : slot.getFilteredResource().getMaxAmount();
     }
 
     @Override
-    protected void accept(final int amount) {
+    protected void accept(final Long amount) {
         slot.changeAmountOnClient(amount);
     }
 
@@ -78,7 +80,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen {
         // should not render amount here
     }
 
-    private static class DummyContainerMenu extends AbstractContainerMenu {
+    public static class DummyContainerMenu extends AbstractContainerMenu {
         protected DummyContainerMenu(final ResourceFilterSlot slot) {
             super(null, 0);
             addSlot(slot.atPosition(89, 48));

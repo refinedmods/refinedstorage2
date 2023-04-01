@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class PriorityScreen extends AbstractAmountScreen {
+public class PriorityScreen extends AbstractAmountScreen<AbstractAmountScreen.DefaultDummyContainerMenu, Integer> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/priority.png");
     private static final MutableComponent PRIORITY_TEXT = createTranslation("gui", "priority");
 
@@ -21,10 +21,11 @@ public class PriorityScreen extends AbstractAmountScreen {
                           final Screen parent,
                           final Inventory playerInventory) {
         super(
+            new DefaultDummyContainerMenu(),
             parent,
             playerInventory,
             PRIORITY_TEXT,
-            AmountScreenConfiguration.AmountScreenConfigurationBuilder.create()
+            AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Integer>create()
                 .withInitialAmount(property.get())
                 .withIncrementsTop(1, 5, 10)
                 .withIncrementsBottom(-1, -5, -10)
@@ -33,7 +34,8 @@ public class PriorityScreen extends AbstractAmountScreen {
                 .withMinAmount(Integer.MIN_VALUE)
                 .withMaxAmount(Integer.MAX_VALUE)
                 .withResetAmount(0)
-                .build()
+                .build(),
+            IntegerAmountOperations.INSTANCE
         );
         this.property = property;
         this.imageWidth = 164;
@@ -41,7 +43,7 @@ public class PriorityScreen extends AbstractAmountScreen {
     }
 
     @Override
-    protected void accept(final int amount) {
+    protected void accept(final Integer amount) {
         property.setValue(amount);
     }
 
