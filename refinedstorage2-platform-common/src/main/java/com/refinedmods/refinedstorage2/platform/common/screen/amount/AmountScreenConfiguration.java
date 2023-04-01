@@ -106,7 +106,7 @@ public final class AmountScreenConfiguration<T extends Number> {
         private int[] incrementsTop = new int[] {};
         private Vector3f incrementsTopStartPosition = new Vector3f(7, 20, 0);
         private int[] incrementsBottom = new int[] {};
-        private Vector3f incrementsBottomStartPosition = new Vector3f(7, 20 + 47, 0);
+        private Vector3f incrementsBottomStartPosition = new Vector3f(7, 67, 0);
         private int amountFieldWidth = 68;
         private Vector3f amountFieldPosition = new Vector3f(0, 0, 0);
         private Vector3f actionButtonsStartPosition = new Vector3f(0, 0, 0);
@@ -190,7 +190,7 @@ public final class AmountScreenConfiguration<T extends Number> {
         }
 
         public AmountScreenConfiguration<T> build() {
-            return new AmountScreenConfiguration<T>(
+            return new AmountScreenConfiguration<>(
                 initialAmount,
                 incrementsTop,
                 incrementsTopStartPosition,
