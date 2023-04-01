@@ -56,8 +56,8 @@ public class DetectorContainerMenu extends AbstractResourceFilterContainerMenu {
     }
 
     private void addSlots(final ResourceFilterContainer config) {
-        addSlot(new ResourceFilterSlot(config, 0, 107, 20));
-        addPlayerInventory(player.getInventory(), 8, 55);
+        addSlot(new ResourceFilterSlot(config, 0, 116, 47));
+        addPlayerInventory(player.getInventory(), 8, 106);
         transferManager.addFilterTransfer(player.getInventory());
     }
 

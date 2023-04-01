@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   The Detector screen now is a proper amount screen by having increment/decrement buttons and scrollbar support.
+-   The amount in an amount screen is now colored red if the amount is invalid.
+
 ## [2.0.0-milestone.2.9] - 2023-03-31
 
 ### Fixed
