@@ -35,7 +35,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
                 .withInitialAmount(getInitialAmount(slot))
                 .withIncrementsTop(1, 10, 64)
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(new Vector3f(7, 20 + 52, 0))
+                .withIncrementsBottomStartPosition(new Vector3f(7, 72, 0))
                 .withAmountFieldPosition(new Vector3f(9, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
                 .withMinAmount(1L)
