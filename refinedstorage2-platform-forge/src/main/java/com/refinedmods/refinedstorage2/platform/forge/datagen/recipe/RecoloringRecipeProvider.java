@@ -48,13 +48,16 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getDetector().forEach((color, block) ->
             recolorItems(Tags.DETECTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_detector")));
+        Blocks.INSTANCE.getDestructor().forEach((color, block) ->
+            recolorItems(Tags.DESTRUCTORS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_destructor")));
     }
 
     private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {
         return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result)
-                .requires(dyeable)
-                .requires(getDyeItem(color))
-                .unlockedBy("has_" + dyeable.location().getPath(), has(dyeable));
+            .requires(dyeable)
+            .requires(getDyeItem(color))
+            .unlockedBy("has_" + dyeable.location().getPath(), has(dyeable));
     }
 
     private static Item getDyeItem(final DyeColor color) {

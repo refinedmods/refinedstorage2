@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
+import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
@@ -43,6 +44,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerControllers();
         registerGrids();
         registerDetectors();
+        registerDestructors();
     }
 
     private void registerCables() {
@@ -50,8 +52,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerExporters() {
-        Blocks.INSTANCE.getExporter().forEach((color, exporter) -> {
-            final MultiPartBlockStateBuilder builder = addCableWithExtensions(exporter.get(), color);
+        Blocks.INSTANCE.getExporter().forEach((color, block) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile exporterModel = modelFile(createIdentifier("block/exporter"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
@@ -62,8 +64,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerImporters() {
-        Blocks.INSTANCE.getImporter().forEach((color, exporter) -> {
-            final MultiPartBlockStateBuilder builder = addCableWithExtensions(exporter.get(), color);
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile importerModel = modelFile(createIdentifier("block/importer"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
@@ -74,13 +76,13 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerExternalStorages() {
-        Blocks.INSTANCE.getExternalStorage().forEach((color, externalStorage) -> {
-            final MultiPartBlockStateBuilder builder = addCableWithExtensions(externalStorage.get(), color);
-            final ModelFile externalStorageModel = modelFile(createIdentifier("block/external_storage"));
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
+            final ModelFile model = modelFile(createIdentifier("block/external_storage"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
                 addDirectionalRotation(direction, part);
-                part.modelFile(externalStorageModel)
+                part.modelFile(model)
                     .addModel()
                     .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
             });
@@ -150,11 +152,11 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         Blocks.INSTANCE.getCreativeController().forEach(this::configureControllerVariants);
     }
 
-    private void configureControllerVariants(final DyeColor color, final Supplier<? extends Block> controller) {
+    private void configureControllerVariants(final DyeColor color, final Supplier<? extends Block> block) {
         final ModelFile off = modelFile(createIdentifier("block/controller/off"));
         final ModelFile nearlyOff = modelFile(createIdentifier("block/controller/nearly_off"));
         final ModelFile nearlyOn = modelFile(createIdentifier("block/controller/nearly_on"));
-        final var builder = getVariantBuilder(controller.get());
+        final var builder = getVariantBuilder(block.get());
         builder.addModels(
             builder.partialState().with(ControllerBlock.ENERGY_TYPE, ControllerEnergyType.OFF),
             ConfiguredModel.builder().modelFile(off).buildLast()
@@ -180,6 +182,28 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         Blocks.INSTANCE.getDetector().forEach((color, block) -> {
             final var builder = getVariantBuilder(block.get());
             builder.forAllStates(blockState -> registerDetector(unpowered, block.get(), blockState));
+        });
+    }
+
+    private void registerDestructors() {
+        Blocks.INSTANCE.getDestructor().forEach((color, block) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
+            final ModelFile activeModel = modelFile(createIdentifier("block/destructor/active"));
+            final ModelFile inactiveModel = modelFile(createIdentifier("block/destructor/inactive"));
+            PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+                final var part = builder.part();
+                addDirectionalRotation(direction, part);
+                part.modelFile(activeModel)
+                    .addModel()
+                    .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction)
+                    .condition(DestructorBlock.ACTIVE, true)
+                    .end();
+                part.modelFile(inactiveModel)
+                    .addModel()
+                    .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction)
+                    .condition(DestructorBlock.ACTIVE, false)
+                    .end();
+            });
         });
     }
 

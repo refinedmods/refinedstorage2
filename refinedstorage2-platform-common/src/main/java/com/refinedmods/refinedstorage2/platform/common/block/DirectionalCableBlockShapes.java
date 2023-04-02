@@ -82,6 +82,13 @@ final class DirectionalCableBlockShapes {
     static final VoxelShape EXTERNAL_STORAGE_UP = Shapes.or(box(3, 14, 3, 13, 16, 13), HOLDER_UP);
     static final VoxelShape EXTERNAL_STORAGE_DOWN = Shapes.or(box(3, 0, 3, 13, 2, 13), HOLDER_DOWN);
 
+    static final VoxelShape DESTRUCTOR_NORTH = Shapes.or(box(2, 2, 0, 14, 14, 2), HOLDER_NORTH);
+    static final VoxelShape DESTRUCTOR_EAST = Shapes.or(box(14, 2, 2, 16, 14, 14), HOLDER_EAST);
+    static final VoxelShape DESTRUCTOR_SOUTH = Shapes.or(box(2, 2, 14, 14, 14, 16), HOLDER_SOUTH);
+    static final VoxelShape DESTRUCTOR_WEST = Shapes.or(box(0, 2, 2, 2, 14, 14), HOLDER_WEST);
+    static final VoxelShape DESTRUCTOR_DOWN = Shapes.or(box(2, 0, 2, 14, 2, 14), HOLDER_DOWN);
+    static final VoxelShape DESTRUCTOR_UP = Shapes.or(box(2, 14, 2, 14, 16, 14), HOLDER_UP);
+
     private DirectionalCableBlockShapes() {
     }
 }

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
@@ -36,6 +37,7 @@ public final class Blocks {
     private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<DestructorBlock> destructor = new BlockColorMap<>(DyeColor.GRAY);
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -135,5 +137,9 @@ public final class Blocks {
 
     public BlockColorMap<DetectorBlock> getDetector() {
         return detector;
+    }
+
+    public BlockColorMap<DestructorBlock> getDestructor() {
+        return destructor;
     }
 }

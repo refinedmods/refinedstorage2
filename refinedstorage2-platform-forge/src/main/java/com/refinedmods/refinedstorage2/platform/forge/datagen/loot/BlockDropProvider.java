@@ -22,6 +22,7 @@ public class BlockDropProvider extends BlockLootSubProvider {
         Blocks.INSTANCE.getController().forEach((color, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getCreativeController().forEach((color, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getDetector().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getDestructor().forEach((color, block) -> dropSelf(block.get()));
     }
 
     @Override
@@ -32,12 +33,16 @@ public class BlockDropProvider extends BlockLootSubProvider {
         final Stream<Block> controllers = Blocks.INSTANCE.getController().values().stream().map(b -> b);
         final Stream<Block> creativeControllers = Blocks.INSTANCE.getCreativeController().values().stream().map(b -> b);
         final Stream<Block> detectors = Blocks.INSTANCE.getDetector().values().stream().map(b -> b);
+        final Stream<Block> destructors = Blocks.INSTANCE.getDestructor().values().stream().map(b -> b);
         return Stream.concat(
             Stream.concat(
                 cables,
                 Stream.concat(
                     grids,
-                    Stream.concat(craftingGrids, detectors)
+                    Stream.concat(
+                        craftingGrids,
+                        Stream.concat(destructors, detectors)
+                    )
                 )
             ),
             Stream.concat(controllers, creativeControllers)

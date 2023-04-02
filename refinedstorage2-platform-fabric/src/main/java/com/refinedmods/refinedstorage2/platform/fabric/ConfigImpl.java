@@ -58,6 +58,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleEnergyUsageEntryImpl detector = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.DETECTOR);
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl destructor = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.DESTRUCTOR);
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -125,6 +128,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getDetector() {
         return detector;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getDestructor() {
+        return destructor;
     }
 
     private static class GridEntryImpl implements GridEntry {
@@ -404,6 +412,14 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private long stackUpgradeEnergyUsage = DefaultEnergyUsage.STACK_UPGRADE;
 
+        private long fortune1UpgradeEnergyUsage = DefaultEnergyUsage.FORTUNE_1_UPGRADE;
+
+        private long fortune2UpgradeEnergyUsage = DefaultEnergyUsage.FORTUNE_2_UPGRADE;
+
+        private long fortune3UpgradeEnergyUsage = DefaultEnergyUsage.FORTUNE_3_UPGRADE;
+
+        private long silkTouchUpgradeEnergyUsage = DefaultEnergyUsage.SILK_TOUCH_UPGRADE;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
@@ -412,6 +428,26 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getStackUpgradeEnergyUsage() {
             return stackUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getFortune1UpgradeEnergyUsage() {
+            return fortune1UpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getFortune2UpgradeEnergyUsage() {
+            return fortune2UpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getFortune3UpgradeEnergyUsage() {
+            return fortune3UpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getSilkTouchUpgradeEnergyUsage() {
+            return silkTouchUpgradeEnergyUsage;
         }
     }
 }

@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "refinedstorage2:destructor"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage2.destruction"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage2.destruction.description"
+    }
+  },
+  "parent": "refinedstorage2:importing",
+  "criteria": {
+    "destructor_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "refinedstorage2:destructors"
+          }
+        ]
+      }
+    }
+  }
+}

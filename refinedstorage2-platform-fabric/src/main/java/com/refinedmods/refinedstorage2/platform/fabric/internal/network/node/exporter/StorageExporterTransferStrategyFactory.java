@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.A
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
@@ -40,7 +42,7 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
     public ExporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade,
+                                           final UpgradeState upgradeState,
                                            final boolean fuzzyMode) {
         final StorageInsertableStorage<T, P> insertTarget = new StorageInsertableStorage<>(
             lookup,
@@ -49,7 +51,9 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
             pos,
             direction
         );
-        final long transferQuota = hasStackUpgrade ? singleAmount * 64 : singleAmount;
+        final long transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
+            ? singleAmount * 64
+            : singleAmount;
         return create(fuzzyMode, insertTarget, transferQuota);
     }
 

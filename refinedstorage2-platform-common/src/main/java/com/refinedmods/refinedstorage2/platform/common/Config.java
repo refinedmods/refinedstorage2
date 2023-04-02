@@ -36,6 +36,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getDetector();
 
+    SimpleEnergyUsageEntry getDestructor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -122,5 +124,13 @@ public interface Config {
         long getSpeedUpgradeEnergyUsage();
 
         long getStackUpgradeEnergyUsage();
+
+        long getFortune1UpgradeEnergyUsage();
+
+        long getFortune2UpgradeEnergyUsage();
+
+        long getFortune3UpgradeEnergyUsage();
+
+        long getSilkTouchUpgradeEnergyUsage();
     }
 }

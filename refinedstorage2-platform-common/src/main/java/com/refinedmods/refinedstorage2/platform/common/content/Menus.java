@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
@@ -43,6 +44,8 @@ public final class Menus {
     private Supplier<MenuType<ExternalStorageContainerMenu>> externalStorage;
     @Nullable
     private Supplier<MenuType<DetectorContainerMenu>> detector;
+    @Nullable
+    private Supplier<MenuType<DestructorContainerMenu>> destructor;
 
     private Menus() {
     }
@@ -133,5 +136,13 @@ public final class Menus {
 
     public void setDetector(final Supplier<MenuType<DetectorContainerMenu>> supplier) {
         this.detector = supplier;
+    }
+
+    public MenuType<DestructorContainerMenu> getDestructor() {
+        return Objects.requireNonNull(destructor).get();
+    }
+
+    public void setDestructor(final Supplier<MenuType<DestructorContainerMenu>> supplier) {
+        this.destructor = supplier;
     }
 }

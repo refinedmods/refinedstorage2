@@ -10,6 +10,7 @@ public final class DefaultEnergyUsage {
     public static final long GRID = 10;
     public static final long CRAFTING_GRID = 14;
     public static final long DISK_DRIVE = 10;
+    public static final long DESTRUCTOR = 3;
     public static final long DISK_DRIVE_PER_DISK = 4;
     public static final long CONTROLLER_CAPACITY = 1000;
 
@@ -27,6 +28,10 @@ public final class DefaultEnergyUsage {
 
     public static final long SPEED_UPGRADE = 4;
     public static final long STACK_UPGRADE = 16;
+    public static final long FORTUNE_1_UPGRADE = 10;
+    public static final long FORTUNE_2_UPGRADE = 12;
+    public static final long FORTUNE_3_UPGRADE = 14;
+    public static final long SILK_TOUCH_UPGRADE = 16;
 
     private DefaultEnergyUsage() {
     }

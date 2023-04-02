@@ -23,13 +23,19 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientC
 import com.refinedmods.refinedstorage2.platform.forge.render.FluidStackFluidRenderer;
 
 import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -38,12 +44,19 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -169,5 +182,40 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
         ForgeEventFactory.firePlayerCraftingEvent(player, craftedStack, container);
+    }
+
+    @Override
+    public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
+        return Optional.ofNullable(playerId)
+            .flatMap(id -> level.getServer().getProfileCache().get(id))
+            .map(profile -> FakePlayerFactory.get(level, profile))
+            .orElseGet(() -> FakePlayerFactory.getMinecraft(level));
+    }
+
+    @Override
+    public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
+        final BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, pos, state, player);
+        return !MinecraftForge.EVENT_BUS.post(e);
+    }
+
+    @Override
+    public ItemStack getBlockAsItemStack(final Block block,
+                                         final BlockState state,
+                                         final Direction direction,
+                                         final BlockGetter level,
+                                         final BlockPos position,
+                                         final Player player) {
+        return block.getCloneItemStack(
+            state,
+            new BlockHitResult(Vec3.ZERO, direction, position, false),
+            level,
+            position,
+            player
+        );
+    }
+
+    @Override
+    public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
+        return liquidBlock.getPickupSound(state);
     }
 }

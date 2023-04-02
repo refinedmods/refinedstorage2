@@ -79,7 +79,6 @@ public class ExporterBlockEntity
     }
 
     private ExporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
-        final boolean hasStackUpgrade = hasStackUpgrade();
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ExporterTransferStrategyFactory> factories =
@@ -90,7 +89,7 @@ public class ExporterBlockEntity
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                hasStackUpgrade,
+                this::hasUpgrade,
                 filter.isFuzzyMode()
             ))
             .toList();

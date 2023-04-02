@@ -15,11 +15,16 @@ import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 import java.util.Optional;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +33,10 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -154,6 +162,31 @@ public class PlatformProxy implements Platform {
     @Override
     public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
         ensureLoaded().onItemCrafted(player, craftedStack, container);
+    }
+
+    @Override
+    public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
+        return ensureLoaded().getFakePlayer(level, playerId);
+    }
+
+    @Override
+    public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
+        return ensureLoaded().canBreakBlock(level, pos, state, player);
+    }
+
+    @Override
+    public ItemStack getBlockAsItemStack(final Block block,
+                                         final BlockState state,
+                                         final Direction direction,
+                                         final BlockGetter level,
+                                         final BlockPos pos,
+                                         final Player player) {
+        return ensureLoaded().getBlockAsItemStack(block, state, direction, level, pos, player);
+    }
+
+    @Override
+    public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
+        return ensureLoaded().getBucketPickupSound(liquidBlock, state);
     }
 
     private Platform ensureLoaded() {
