@@ -3,16 +3,20 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -20,14 +24,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-    extends AbstractNetworkNodeContainerBlockEntity<T> {
+    extends AbstractNetworkNodeContainerBlockEntity<T>
+    implements PlayerAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractInternalNetworkNodeContainerBlockEntity.class);
 
     private static final String TAG_REDSTONE_MODE = "rm";
+    private static final String TAG_PLACED_BY_PLAYER_ID = "pbpid";
 
     private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
     private boolean lastActive;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
+    @Nullable
+    private UUID placedByPlayerId;
 
     protected AbstractInternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
                                                               final BlockPos pos,
@@ -49,6 +57,9 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+        if (placedByPlayerId != null) {
+            tag.putUUID(TAG_PLACED_BY_PLAYER_ID, placedByPlayerId);
+        }
     }
 
     @Override
@@ -56,6 +67,9 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         super.load(tag);
         if (tag.contains(TAG_REDSTONE_MODE)) {
             redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
+        }
+        if (tag.hasUUID(TAG_PLACED_BY_PLAYER_ID)) {
+            placedByPlayerId = tag.getUUID(TAG_PLACED_BY_PLAYER_ID);
         }
     }
 
@@ -153,5 +167,15 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
             return null;
         }
         return directionalBlock.extractDirection(blockState);
+    }
+
+    @Override
+    public void setPlacedBy(final UUID playerId) {
+        this.placedByPlayerId = playerId;
+        setChanged();
+    }
+
+    protected final Player getFakePlayer(final ServerLevel serverLevel) {
+        return Platform.INSTANCE.getFakePlayer(serverLevel, placedByPlayerId);
     }
 }

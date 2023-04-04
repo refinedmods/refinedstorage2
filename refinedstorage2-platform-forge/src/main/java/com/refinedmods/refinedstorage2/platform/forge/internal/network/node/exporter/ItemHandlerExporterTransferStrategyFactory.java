@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.Export
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinatesImpl;
@@ -21,12 +23,12 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
     public ExporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade,
+                                           final UpgradeState upgradeState,
                                            final boolean fuzzyMode) {
         final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(
             new InteractionCoordinatesImpl(level, pos, direction)
         );
-        final int transferQuota = hasStackUpgrade ? 64 : 1;
+        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.ITEM, transferQuota) {
                 @Nullable

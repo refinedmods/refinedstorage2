@@ -7,14 +7,14 @@ import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkCo
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.BlockBreakDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.FluidBreakDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.ItemPickupDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
-
-import java.util.function.Supplier;
-
-import net.minecraft.world.item.Item;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -47,6 +47,12 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addFilteredResourceFactory(new FluidFilteredResourceFactory());
     }
 
+    protected void registerDestructorStrategyFactories() {
+        PlatformApi.INSTANCE.addDestructorStrategyFactory(new BlockBreakDestructorStrategyFactory());
+        PlatformApi.INSTANCE.addDestructorStrategyFactory(new FluidBreakDestructorStrategyFactory());
+        PlatformApi.INSTANCE.addDestructorStrategyFactory(new ItemPickupDestructorStrategyFactory());
+    }
+
     protected void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             EnergyNetworkComponent.class,
@@ -64,26 +70,50 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    protected void addApplicableUpgrades(final Supplier<Item> speedUpgrade,
-                                         final Supplier<Item> stackUpgrade) {
+    protected void addApplicableUpgrades() {
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.IMPORTER,
-            speedUpgrade,
+            Items.INSTANCE::getSpeedUpgrade,
             4
         );
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.IMPORTER,
-            stackUpgrade,
+            Items.INSTANCE::getStackUpgrade,
             1
         );
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.EXPORTER,
-            speedUpgrade,
+            Items.INSTANCE::getSpeedUpgrade,
             4
         );
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.EXPORTER,
-            stackUpgrade,
+            Items.INSTANCE::getStackUpgrade,
+            1
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.DESTRUCTOR,
+            Items.INSTANCE::getSpeedUpgrade,
+            4
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.DESTRUCTOR,
+            Items.INSTANCE::getFortune1Upgrade,
+            1
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.DESTRUCTOR,
+            Items.INSTANCE::getFortune2Upgrade,
+            1
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.DESTRUCTOR,
+            Items.INSTANCE::getFortune3Upgrade,
+            1
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.DESTRUCTOR,
+            Items.INSTANCE::getSilkTouchUpgrade,
             1
         );
     }

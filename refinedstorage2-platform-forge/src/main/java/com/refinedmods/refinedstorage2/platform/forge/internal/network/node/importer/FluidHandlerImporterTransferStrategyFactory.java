@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransfe
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinatesImpl;
 
@@ -18,13 +20,15 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade) {
+                                           final UpgradeState upgradeState) {
         final ImporterSource<FluidResource> source = new FluidHandlerImporterSource(new InteractionCoordinatesImpl(
             level,
             pos,
             direction
         ));
-        final int transferQuota = hasStackUpgrade ? FluidType.BUCKET_VOLUME * 64 : FluidType.BUCKET_VOLUME;
+        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
+            ? FluidType.BUCKET_VOLUME * 64
+            : FluidType.BUCKET_VOLUME;
         return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.FLUID, transferQuota);
     }
 }

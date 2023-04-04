@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
@@ -27,7 +28,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
-import java.util.Set;
+import java.util.Collection;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -52,12 +53,15 @@ public interface PlatformApi {
     PlatformRegistry<ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
 
     <T> void addExternalStorageProviderFactory(StorageChannelType<T> channelType,
-                                               int priority,
                                                PlatformExternalStorageProviderFactory factory);
 
-    <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
+    <T> Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         StorageChannelType<T> channelType
     );
+
+    Collection<DestructorStrategyFactory> getDestructorStrategyFactories();
+
+    void addDestructorStrategyFactory(DestructorStrategyFactory factory);
 
     MutableComponent createTranslation(String category, String value, Object... args);
 

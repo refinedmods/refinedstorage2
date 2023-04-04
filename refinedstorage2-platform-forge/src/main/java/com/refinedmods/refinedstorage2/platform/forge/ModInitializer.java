@@ -2,11 +2,13 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
@@ -20,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
@@ -32,6 +35,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBl
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
@@ -53,6 +57,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
@@ -64,6 +69,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBl
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -93,6 +99,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -126,11 +133,15 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DETECTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FORTUNE_1_UPGRADE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FORTUNE_2_UPGRADE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FORTUNE_3_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
@@ -140,6 +151,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILK_TOUCH_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SPEED_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STACK_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
@@ -170,6 +182,8 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(ForgeRegistries.MENU_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<SoundEvent> soundEventRegistry =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<RecipeSerializer<?>> recipeSerializerRegistry =
+        DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
@@ -177,6 +191,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
         registerAdditionalFilteredResourceFactories();
+        registerDestructorStrategyFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -186,6 +201,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerExternalStorageProviderFactories();
         registerContent();
         registerSounds();
+        registerRecipeSerializers();
         registerTickHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
@@ -241,12 +257,10 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerExternalStorageProviderFactories() {
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.ITEM,
-            0,
             new ItemHandlerPlatformExternalStorageProviderFactory()
         );
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.FLUID,
-            0,
             new FluidHandlerPlatformExternalStorageProviderFactory()
         );
     }
@@ -369,6 +383,13 @@ public class ModInitializer extends AbstractModInitializer {
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
             ))
         ));
+        Blocks.INSTANCE.getDestructor().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR).getPath(),
+            () -> new DestructorBlock(color, Blocks.INSTANCE.getDestructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
+            ))
+        ));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -379,6 +400,10 @@ public class ModInitializer extends AbstractModInitializer {
         registerCableItems();
         registerControllerItems();
         registerDetectorItems();
+        registerImporterItems();
+        registerExporterItems();
+        registerExternalStorageItems();
+        registerDestructorItems();
         registerStorageItems();
         registerUpgrades();
 
@@ -410,7 +435,6 @@ public class ModInitializer extends AbstractModInitializer {
             WRENCH.getPath(),
             WrenchItem::new
         ));
-
         Items.INSTANCE.setStorageHousing(itemRegistry.register(
             STORAGE_HOUSING.getPath(),
             SimpleItem::new
@@ -419,44 +443,16 @@ public class ModInitializer extends AbstractModInitializer {
             MACHINE_CASING.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
         );
-
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Items.INSTANCE.setProcessor(
                 type,
                 itemRegistry.register(forProcessor(type).getPath(), ProcessorItem::new)
             );
         }
-
-        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(itemRegistry.register(
-            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
-            ))
-        )));
-        Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(itemRegistry.register(
-            Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
-            ))
-        )));
         itemRegistry.register(
             INTERFACE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface())
         );
-        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(
-            itemRegistry.register(
-                Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
-                () -> new NamedBlockItem(block.get(), new Item.Properties(),
-                    Blocks.INSTANCE.getExternalStorage().getName(
-                        color,
-                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
-                    )
-                )
-            )
-        ));
-
         Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
         Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
     }
@@ -535,6 +531,50 @@ public class ModInitializer extends AbstractModInitializer {
         )));
     }
 
+    private void registerImporterItems() {
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(itemRegistry.register(
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        )));
+    }
+
+    private void registerExporterItems() {
+        Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(itemRegistry.register(
+            Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
+        )));
+    }
+
+    private void registerExternalStorageItems() {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(
+            itemRegistry.register(
+                Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
+                () -> new NamedBlockItem(block.get(), new Item.Properties(),
+                    Blocks.INSTANCE.getExternalStorage().getName(
+                        color,
+                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+                    )
+                )
+            )
+        ));
+    }
+
+    private void registerDestructorItems() {
+        Blocks.INSTANCE.getDestructor().forEach((color, block) -> Items.INSTANCE.addDestructor(itemRegistry.register(
+            Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getDestructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
+            ))
+        )));
+    }
+
     private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             registerItemStorageItems(variant);
@@ -593,19 +633,51 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerUpgrades() {
         Items.INSTANCE.setUpgrade(itemRegistry.register(
             UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
+            SimpleItem::new
         ));
-        final Supplier<Item> speedUpgrade = itemRegistry.register(
+        final Supplier<SimpleUpgradeItem> speedUpgrade = itemRegistry.register(
             SPEED_UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
+            () -> new SimpleUpgradeItem(
+                PlatformApi.INSTANCE.getUpgradeRegistry(),
+                Platform.INSTANCE.getConfig().getUpgrade()::getSpeedUpgradeEnergyUsage,
+                false
+            )
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
-        final Supplier<Item> stackUpgrade = itemRegistry.register(
+        final Supplier<SimpleUpgradeItem> stackUpgrade = itemRegistry.register(
             STACK_UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
+            () -> new SimpleUpgradeItem(
+                PlatformApi.INSTANCE.getUpgradeRegistry(),
+                Platform.INSTANCE.getConfig().getUpgrade()::getStackUpgradeEnergyUsage,
+                false
+            )
         );
         Items.INSTANCE.setStackUpgrade(stackUpgrade);
-        addApplicableUpgrades(speedUpgrade, stackUpgrade);
+        final Supplier<FortuneUpgradeItem> fortune1Upgrade = itemRegistry.register(
+            FORTUNE_1_UPGRADE.getPath(),
+            () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 1)
+        );
+        Items.INSTANCE.setFortune1Upgrade(fortune1Upgrade);
+        final Supplier<FortuneUpgradeItem> fortune2Upgrade = itemRegistry.register(
+            FORTUNE_2_UPGRADE.getPath(),
+            () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 2)
+        );
+        Items.INSTANCE.setFortune2Upgrade(fortune2Upgrade);
+        final Supplier<FortuneUpgradeItem> fortune3Upgrade = itemRegistry.register(
+            FORTUNE_3_UPGRADE.getPath(),
+            () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 3)
+        );
+        Items.INSTANCE.setFortune3Upgrade(fortune3Upgrade);
+        final Supplier<SimpleUpgradeItem> silkTouchUpgrade = itemRegistry.register(
+            SILK_TOUCH_UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(
+                PlatformApi.INSTANCE.getUpgradeRegistry(),
+                Platform.INSTANCE.getConfig().getUpgrade()::getSilkTouchUpgradeEnergyUsage,
+                true
+            )
+        );
+        Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
+        addApplicableUpgrades();
     }
 
     private void registerBlockEntities() {
@@ -704,6 +776,13 @@ public class ModInitializer extends AbstractModInitializer {
                 Blocks.INSTANCE.getDetector().toArray()
             ).build(null)
         ));
+        BlockEntities.INSTANCE.setDestructor(blockEntityTypeRegistry.register(
+            DESTRUCTOR.getPath(),
+            () -> BlockEntityType.Builder.of(
+                DestructorBlockEntity::new,
+                Blocks.INSTANCE.getDestructor().toArray()
+            ).build(null)
+        ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -753,6 +832,10 @@ public class ModInitializer extends AbstractModInitializer {
             DETECTOR.getPath(),
             () -> IForgeMenuType.create(DetectorContainerMenu::new)
         ));
+        Menus.INSTANCE.setDestructor(menuTypeRegistry.register(
+            DESTRUCTOR.getPath(),
+            () -> IForgeMenuType.create(DestructorContainerMenu::new)
+        ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -764,6 +847,11 @@ public class ModInitializer extends AbstractModInitializer {
         ));
 
         soundEventRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerRecipeSerializers() {
+        recipeSerializerRegistry.register("upgrade_with_enchanted_book", UpgradeWithEnchantedBookRecipeSerializer::new);
+        recipeSerializerRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerTickHandler() {

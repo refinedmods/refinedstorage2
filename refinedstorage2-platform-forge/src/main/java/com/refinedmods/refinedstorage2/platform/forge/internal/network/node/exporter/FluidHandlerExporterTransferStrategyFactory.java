@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.Export
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.FluidHandlerInsertableStorage;
@@ -22,7 +24,7 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
     public ExporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade,
+                                           final UpgradeState upgradeState,
                                            final boolean fuzzyMode) {
         final InteractionCoordinates coords = new InteractionCoordinatesImpl(
             level,
@@ -30,7 +32,7 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
             direction
         );
         final InsertableStorage<FluidResource> destination = new FluidHandlerInsertableStorage(coords);
-        final int transferQuota = hasStackUpgrade ? 64 : 1;
+        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.FLUID, transferQuota) {
                 @Nullable

@@ -29,9 +29,8 @@ public abstract class AbstractDirectionalCableBlock
     implements SimpleWaterloggedBlock {
     private final Map<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache;
 
-    protected AbstractDirectionalCableBlock(final Properties properties,
-                                            final Map<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache) {
-        super(properties);
+    protected AbstractDirectionalCableBlock(final Map<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache) {
+        super(BlockConstants.CABLE_PROPERTIES);
         this.shapeCache = shapeCache;
     }
 

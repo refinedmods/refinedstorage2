@@ -1,0 +1,180 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/core/light_blue"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue",
+        "x": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/light_blue",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active",
+        "x": 90
+      },
+      "when": {
+        "active": "true",
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive",
+        "x": 90
+      },
+      "when": {
+        "active": "false",
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active",
+        "x": 270
+      },
+      "when": {
+        "active": "true",
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive",
+        "x": 270
+      },
+      "when": {
+        "active": "false",
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active"
+      },
+      "when": {
+        "active": "true",
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive"
+      },
+      "when": {
+        "active": "false",
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active",
+        "x": 180
+      },
+      "when": {
+        "active": "true",
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive",
+        "x": 180
+      },
+      "when": {
+        "active": "false",
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active",
+        "y": 270
+      },
+      "when": {
+        "active": "true",
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive",
+        "y": 270
+      },
+      "when": {
+        "active": "false",
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/active",
+        "y": 90
+      },
+      "when": {
+        "active": "true",
+        "direction": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/destructor/inactive",
+        "y": 90
+      },
+      "when": {
+        "active": "false",
+        "direction": "east"
+      }
+    }
+  ]
+}
