@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -30,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -112,20 +112,16 @@ class GridNetworkNodeTest {
         networkStorage.insert("A", 1, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
-        final ArgumentCaptor<ResourceListOperationResult<String>> operationResults = ArgumentCaptor.forClass(
-            ResourceListOperationResult.class
-        );
+        final ArgumentCaptor<String> resources = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<TrackedResource> trackedResources = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(2)).onChanged(
             eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
-            operationResults.capture(),
+            resources.capture(),
+            anyLong(),
             trackedResources.capture()
         );
 
-        assertThat(operationResults.getAllValues())
-            .extracting(ResourceListOperationResult::resourceAmount)
-            .extracting(ResourceAmount::getResource)
-            .containsExactly("A", "A");
+        assertThat(resources.getAllValues()).containsExactly("A", "A");
         assertThat(trackedResources.getAllValues())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(null, new TrackedResource("Fake", 2));

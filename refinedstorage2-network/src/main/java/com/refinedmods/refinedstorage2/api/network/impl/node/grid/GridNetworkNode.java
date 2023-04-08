@@ -73,7 +73,8 @@ public class GridNetworkNode extends AbstractNetworkNode implements GridServiceF
         final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);
         final ResourceListListener<T> listener = change -> watcher.onChanged(
             storageChannelType,
-            change,
+            change.resourceAmount().getResource(),
+            change.change(),
             storageChannel.findTrackedResourceByActorType(
                 change.resourceAmount().getResource(),
                 actorType

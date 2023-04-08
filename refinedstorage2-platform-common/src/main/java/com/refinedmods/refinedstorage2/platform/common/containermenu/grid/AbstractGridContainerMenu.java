@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -295,19 +294,19 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     @Override
     public <T> void onChanged(
         final StorageChannelType<T> storageChannelType,
-        final ResourceListOperationResult<T> change,
+        final T resource,
+        final long change,
         @Nullable final TrackedResource trackedResource
     ) {
         if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
             return;
         }
-        final T resource = change.resourceAmount().getResource();
-        LOGGER.debug("Received a change of {} for {}", change.change(), resource);
+        LOGGER.debug("Received a change of {} for {}", change, resource);
         Platform.INSTANCE.getServerToClientCommunications().sendGridUpdate(
             (ServerPlayer) playerInventory.player,
             platformStorageChannelType,
             resource,
-            change.change(),
+            change,
             trackedResource
         );
     }
