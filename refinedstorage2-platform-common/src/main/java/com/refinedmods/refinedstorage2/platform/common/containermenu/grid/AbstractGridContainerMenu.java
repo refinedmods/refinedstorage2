@@ -301,7 +301,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
             return;
         }
-        LOGGER.debug("Received a change of {} for {}", change, resource);
+        LOGGER.info("{} received a change of {} for {}", this, change, resource);
         Platform.INSTANCE.getServerToClientCommunications().sendGridUpdate(
             (ServerPlayer) playerInventory.player,
             platformStorageChannelType,
