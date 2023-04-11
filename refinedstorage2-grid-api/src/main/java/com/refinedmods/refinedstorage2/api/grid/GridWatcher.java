@@ -28,8 +28,15 @@ public interface GridWatcher {
      * @param change             the changed amount
      * @param trackedResource    the tracked resource, if present
      */
-    <T> void onChanged(StorageChannelType<T> storageChannelType,
-                       T resource,
-                       long change,
-                       @Nullable TrackedResource trackedResource);
+    <T> void onChanged(
+        StorageChannelType<T> storageChannelType,
+        T resource,
+        long change,
+        @Nullable TrackedResource trackedResource
+    );
+
+    /**
+     * Called when the grid network has been changed.
+     */
+    void onNetworkChanged();
 }

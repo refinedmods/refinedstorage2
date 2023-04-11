@@ -311,6 +311,13 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         );
     }
 
+    @Override
+    public void onNetworkChanged() {
+        if (playerInventory.player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.closeContainer();
+        }
+    }
+
     public boolean isActive() {
         return active;
     }

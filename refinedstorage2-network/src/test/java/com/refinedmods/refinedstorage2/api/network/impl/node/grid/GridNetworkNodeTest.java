@@ -31,7 +31,6 @@ import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -162,7 +161,7 @@ class GridNetworkNodeTest {
     }
 
     @Test
-    void shouldDetachListenersOfWatcherFromStorageChannelsAndAttachToNewStorageChannelsWhenNetworkChanges(
+    void shouldDetachListenersOfWatcherFromStorageChannelsWhenNetworkChanges(
         @InjectNetwork("other") final Network otherNetwork,
         @InjectNetwork final Network network,
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
@@ -183,14 +182,8 @@ class GridNetworkNodeTest {
         storageChannel.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        final ArgumentCaptor<String> resources = ArgumentCaptor.forClass(String.class);
-        verify(watcher, times(1)).onChanged(
-            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
-            resources.capture(),
-            anyLong(),
-            any()
-        );
-        assertThat(resources.getAllValues()).containsExactly("A");
+        verify(watcher, times(1)).onNetworkChanged();
+        verifyNoMoreInteractions(watcher);
     }
 
     @Test
