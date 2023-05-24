@@ -601,6 +601,26 @@ class GridViewImplTest {
         );
     }
 
+    @Test
+    void shouldClear() {
+        // Arrange
+        final GridView view = viewBuilder
+            .withResource("A", 15, new TrackedResource("Source", 0))
+            .withResource("B", 20, new TrackedResource("Source", 0))
+            .withResource("D", 10, new TrackedResource("Source", 0))
+            .build();
+
+        // Act
+        view.clear();
+
+        // Assert
+        assertThat(view.getViewList()).isEmpty();
+        assertThat(view.copyBackingList().getAll()).isEmpty();
+        assertThat(view.getTrackedResource("A")).isEmpty();
+        assertThat(view.getTrackedResource("B")).isEmpty();
+        assertThat(view.getTrackedResource("D")).isEmpty();
+    }
+
     private record ResourceWithMetadata(String name, int metadata) {
     }
 

@@ -107,13 +107,15 @@ public class GridNetworkNode extends AbstractNetworkNode implements GridServiceF
     public void setNetwork(@Nullable final Network network) {
         LOGGER.info("Network has changed to {}, detaching {} watchers", network, watchers.size());
         if (this.network != null) {
-            watchers.forEach((watcher, registration) -> {
-                detachAll(registration);
-                watcher.onNetworkChanged();
-            });
-            watchers.clear();
+            watchers.values().forEach(this::detachAll);
         }
         super.setNetwork(network);
+        if (this.network != null) {
+            watchers.forEach((watcher, registration) -> {
+                watcher.onNetworkChanged();
+                attachAll(registration);
+            });
+        }
     }
 
     @Override

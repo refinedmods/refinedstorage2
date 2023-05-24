@@ -42,6 +42,7 @@ import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -77,9 +78,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     @Nullable
     private AbstractGridBlockEntity grid;
 
-    private final GridInsertionStrategy insertionStrategy;
-    private final GridExtractionStrategy extractionStrategy;
-    private final GridScrollingStrategy scrollingStrategy;
+    private GridInsertionStrategy insertionStrategy;
+    private GridExtractionStrategy extractionStrategy;
+    private GridScrollingStrategy scrollingStrategy;
 
     @Nullable
     private Runnable sizeChangedListener;
@@ -151,22 +152,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.grid.addWatcher(this, PlayerActor.class);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
-        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode()
-        );
-        this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode(),
-            grid.getContainerExtractionSource()
-        );
-        this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode()
-        );
+        initStrategies();
     }
 
     private Predicate<GridResource> filterStorageChannel() {
@@ -314,8 +300,28 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     @Override
     public void onNetworkChanged() {
         if (playerInventory.player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.closeContainer();
+            initStrategies();
+            Platform.INSTANCE.getServerToClientCommunications().sendGridClear(serverPlayer);
         }
+    }
+
+    private void initStrategies() {
+        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode()
+        );
+        this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode(),
+            grid.getContainerExtractionSource()
+        );
+        this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode()
+        );
     }
 
     public boolean isActive() {
@@ -441,5 +447,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
             final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
             viewBuilder.withResource(resource, amount, trackedResource);
         }
+    }
+
+    public void onClear() {
+        view.clear();
     }
 }

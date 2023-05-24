@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
@@ -22,8 +23,10 @@ abstract class AbstractNetworkBuilderImplTest {
     @BeforeEach
     void setUp() {
         componentMapFactory = NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY.copy();
-        componentMapFactory.addFactory(InterceptingNetworkComponent.class,
-            network -> new InterceptingNetworkComponent());
+        componentMapFactory.addFactory(
+            InterceptingNetworkComponent.class,
+            network -> new InterceptingNetworkComponent()
+        );
         sut = new NetworkBuilderImpl(new NetworkFactory(componentMapFactory));
     }
 
@@ -38,8 +41,27 @@ abstract class AbstractNetworkBuilderImplTest {
     }
 
     protected static NetworkNodeContainer createContainerWithNetwork(
-        final Function<NetworkNodeContainer, Network> networkFactory) {
-        final NetworkNodeContainer container = createContainer();
+        final Function<NetworkNodeContainer, Network> networkFactory
+    ) {
+        return createContainerWithNetwork(createNode(), networkFactory, 0);
+    }
+
+    protected static NetworkNodeContainer createContainerWithNetwork(
+        final NetworkNode networkNode,
+        final Function<NetworkNodeContainer, Network> networkFactory,
+        final int priority
+    ) {
+        final NetworkNodeContainer container = new NetworkNodeContainer() {
+            @Override
+            public NetworkNode getNode() {
+                return networkNode;
+            }
+
+            @Override
+            public int getPriority() {
+                return priority;
+            }
+        };
         final Network network = networkFactory.apply(container);
         container.getNode().setNetwork(network);
         network.addContainer(container);
@@ -47,8 +69,12 @@ abstract class AbstractNetworkBuilderImplTest {
     }
 
     protected static NetworkNodeContainer createContainer() {
-        final SpyingNetworkNode node = new SpyingNetworkNode(0);
+        final NetworkNode node = createNode();
         return () -> node;
+    }
+
+    private static NetworkNode createNode() {
+        return new SpyingNetworkNode(0);
     }
 
     protected static List<NetworkNodeContainer> getAddedContainers(final Network network) {

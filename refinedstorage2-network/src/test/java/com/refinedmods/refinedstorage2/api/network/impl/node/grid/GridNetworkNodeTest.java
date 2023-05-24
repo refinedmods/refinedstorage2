@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -56,7 +57,7 @@ class GridNetworkNodeTest {
         storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         storage.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        otherStorageChannel.addSource(new InMemoryStorageImpl<>());
+        otherStorageChannel.addSource(new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), () -> 3L));
     }
 
     @Test
@@ -161,7 +162,7 @@ class GridNetworkNodeTest {
     }
 
     @Test
-    void shouldDetachListenersOfWatcherFromStorageChannelsWhenNetworkChanges(
+    void shouldDetachWatchersFromOldNetworkAndReattachToNewNetwork(
         @InjectNetwork("other") final Network otherNetwork,
         @InjectNetwork final Network network,
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
@@ -169,20 +170,41 @@ class GridNetworkNodeTest {
     ) {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        sut.addWatcher(watcher, EmptyActor.class);
+        sut.addWatcher(watcher, FakeActor.class);
 
         // Act
-        otherStorageChannel.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        otherStorageChannel.insert("C", 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         sut.setNetwork(otherNetwork);
         network.removeContainer(() -> sut);
         otherNetwork.addContainer(() -> sut);
 
-        otherStorageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageChannel.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        otherStorageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        otherStorageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("B", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         verify(watcher, times(1)).onNetworkChanged();
+
+        final ArgumentCaptor<TrackedResource> trackedResources1 = ArgumentCaptor.forClass(TrackedResource.class);
+        verify(watcher, times(1)).onChanged(
+            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
+            eq("A"),
+            eq(10L),
+            trackedResources1.capture()
+        );
+        assertThat(trackedResources1.getAllValues())
+            .hasSize(1)
+            .allMatch(t -> FakeActor.INSTANCE.getName().equals(t.getSourceName()));
+
+        verify(watcher, times(1)).onChanged(
+            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
+            eq("D"),
+            eq(10L),
+            isNull()
+        );
+
         verifyNoMoreInteractions(watcher);
     }
 

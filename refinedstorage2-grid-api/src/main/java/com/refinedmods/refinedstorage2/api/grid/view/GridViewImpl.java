@@ -250,4 +250,12 @@ public class GridViewImpl implements GridView {
         backingList.getAll().forEach(copy::add);
         return copy;
     }
+
+    @Override
+    public void clear() {
+        backingList.clear();
+        viewListIndex.clear();
+        trackedResources.clear();
+        viewList.clear();
+    }
 }

@@ -8,4 +8,15 @@ import org.apiguardian.api.API;
 @FunctionalInterface
 public interface NetworkNodeContainer {
     NetworkNode getNode();
+
+    /**
+     * The container priority determines the order in which the remainder containers as the result of a network split
+     * are re-initialized with a new network.
+     * A container with the highest priority will be re-initialized first.
+     *
+     * @return the priority
+     */
+    default int getPriority() {
+        return 0;
+    }
 }

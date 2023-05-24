@@ -9,4 +9,5 @@
     <suppress checks="FileLength" files="ModInitializer.*.java"/>
     <!-- Shadow target contains underscore -->
     <suppress checks="MemberName" files="ModelBakerImplMixin.java"/>
+    <suppress checks="HideUtilityClassConstructor" files="GridClearPacket.java"/>
 </suppressions>
