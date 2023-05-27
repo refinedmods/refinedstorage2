@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.node.container.NetworkNodeContainerPriorities;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
@@ -81,5 +82,10 @@ public abstract class AbstractGridBlockEntity
 
     public void removeWatcher(final GridWatcher watcher) {
         getNode().removeWatcher(watcher);
+    }
+
+    @Override
+    public final int getPriority() {
+        return NetworkNodeContainerPriorities.GRID;
     }
 }

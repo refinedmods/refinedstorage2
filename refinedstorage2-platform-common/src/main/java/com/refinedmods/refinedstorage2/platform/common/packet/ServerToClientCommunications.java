@@ -20,6 +20,8 @@ public interface ServerToClientCommunications {
                             long change,
                             @Nullable TrackedResource trackedResource);
 
+    void sendGridClear(ServerPlayer player);
+
     <T> void sendResourceFilterSlotUpdate(ServerPlayer player,
                                           @Nullable PlatformStorageChannelType<T> storageChannelType,
                                           @Nullable T resource,

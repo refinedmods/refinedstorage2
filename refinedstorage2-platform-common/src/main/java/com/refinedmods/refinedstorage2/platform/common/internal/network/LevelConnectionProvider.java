@@ -59,7 +59,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     @Override
-    public List<NetworkNodeContainer> sort(final Set<NetworkNodeContainer> containers) {
+    public List<NetworkNodeContainer> sortDeterministically(final Set<NetworkNodeContainer> containers) {
         return containers
             .stream()
             .sorted(Comparator.comparing(container -> ((BlockEntity) container).getBlockPos()))

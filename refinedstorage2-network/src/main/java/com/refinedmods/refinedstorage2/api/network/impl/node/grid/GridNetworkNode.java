@@ -1,14 +1,13 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
 
-import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
+import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -16,18 +15,19 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GridNetworkNode extends AbstractNetworkNode implements GridServiceFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridNetworkNode.class);
+
     private final Collection<? extends StorageChannelType<?>> storageChannelTypes;
-    private final Set<GridWatcher> watchers = new HashSet<>();
-    private final Map<GridWatcher, Map<StorageChannelType<?>, ResourceListListener<?>>> storageChannelListeners =
-        new HashMap<>();
+    private final Map<GridWatcher, GridWatcherRegistration> watchers = new HashMap<>();
     private final long energyUsage;
 
     public GridNetworkNode(final long energyUsage,
@@ -58,52 +58,64 @@ public class GridNetworkNode extends AbstractNetworkNode implements GridServiceF
     }
 
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
-        CoreValidations.validateNotContains(watchers, watcher, "Watcher is already registered");
-        storageChannelTypes.forEach(storageChannelType -> attachWatcherToStorageChannel(
-            watcher,
-            actorType,
-            storageChannelType
-        ));
-        watchers.add(watcher);
+        if (watchers.containsKey(watcher)) {
+            throw new IllegalArgumentException("Watcher is already registered");
+        }
+        final GridWatcherRegistration registration = new GridWatcherRegistration(watcher, actorType);
+        attachAll(registration);
+        watchers.put(watcher, registration);
+        LOGGER.info("Added watcher {}, new count is {}", watcher, watchers.size());
     }
 
-    private <T> void attachWatcherToStorageChannel(final GridWatcher watcher,
-                                                   final Class<? extends Actor> actorType,
-                                                   final StorageChannelType<T> storageChannelType) {
-        final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);
-        final ResourceListListener<T> listener = change -> watcher.onChanged(
-            storageChannelType,
-            change,
-            storageChannel.findTrackedResourceByActorType(
-                change.resourceAmount().getResource(),
-                actorType
-            ).orElse(null)
-        );
-        storageChannel.addListener(listener);
-        storageChannelListeners.computeIfAbsent(watcher, k -> new HashMap<>()).put(storageChannelType, listener);
+    private void attachAll(final GridWatcherRegistration registration) {
+        storageChannelTypes.forEach(storageChannelType -> attach(registration, storageChannelType));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    private <T> void attach(final GridWatcherRegistration registration,
+                            final StorageChannelType<T> storageChannelType) {
+        LOGGER.info("Attaching {} to {}", registration, storageChannelType);
+        registration.attach(getStorageChannel(storageChannelType), storageChannelType);
+    }
+
     public void removeWatcher(final GridWatcher watcher) {
-        CoreValidations.validateContains(watchers, watcher, "Watcher is not registered");
-        storageChannelListeners.get(watcher).forEach((type, listener) -> removeAttachedWatcherFromStorageChannel(
-            (StorageChannelType) type,
-            (ResourceListListener) listener
-        ));
-        storageChannelListeners.remove(watcher);
+        final GridWatcherRegistration registration = watchers.get(watcher);
+        if (registration == null) {
+            throw new IllegalArgumentException("Watcher is not registered");
+        }
+        detachAll(registration);
         watchers.remove(watcher);
+        LOGGER.info("Removed watcher {}, remaining {}", watcher, watchers.size());
     }
 
-    private <T> void removeAttachedWatcherFromStorageChannel(final StorageChannelType<T> type,
-                                                             final ResourceListListener<T> listener) {
-        final StorageChannel<T> storageChannel = getStorageChannel(type);
-        storageChannel.removeListener(listener);
+    private void detachAll(final GridWatcherRegistration registration) {
+        storageChannelTypes.forEach(storageChannelType -> detach(registration, storageChannelType));
+    }
+
+    private <T> void detach(final GridWatcherRegistration registration,
+                            final StorageChannelType<T> storageChannelType) {
+        LOGGER.info("Detaching {} from {}", registration, storageChannelType);
+        registration.detach(getStorageChannel(storageChannelType), storageChannelType);
     }
 
     @Override
     protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
-        watchers.forEach(watcher -> watcher.onActiveChanged(newActive));
+        watchers.keySet().forEach(watcher -> watcher.onActiveChanged(newActive));
+    }
+
+    @Override
+    public void setNetwork(@Nullable final Network network) {
+        LOGGER.info("Network has changed to {}, detaching {} watchers", network, watchers.size());
+        if (this.network != null) {
+            watchers.values().forEach(this::detachAll);
+        }
+        super.setNetwork(network);
+        if (this.network != null) {
+            watchers.forEach((watcher, registration) -> {
+                watcher.onNetworkChanged();
+                attachAll(registration);
+            });
+        }
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAcces
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
@@ -176,6 +177,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_CLEAR, new GridClearPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE,

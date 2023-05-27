@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,6 +19,11 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class NetworkBuilderImpl implements NetworkBuilder {
+    private static final Comparator<NetworkNodeContainer> LOWEST_PRIORITY_FIRST = Comparator.comparingInt(
+        NetworkNodeContainer::getPriority
+    );
+    private static final Comparator<NetworkNodeContainer> HIGHEST_PRIORITY_FIRST = LOWEST_PRIORITY_FIRST.reversed();
+
     private final NetworkFactory networkFactory;
 
     public NetworkBuilderImpl(final NetworkFactory networkFactory) {
@@ -48,7 +54,7 @@ public class NetworkBuilderImpl implements NetworkBuilder {
 
         final Set<Network> mergedNetworks = new HashSet<>();
 
-        for (final NetworkNodeContainer entry : foundEntries) {
+        for (final NetworkNodeContainer entry : connectionProvider.sortDeterministically(foundEntries)) {
             final NetworkNode entryNode = entry.getNode();
             final boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class)
                 .getContainers().contains(entry);
@@ -83,7 +89,7 @@ public class NetworkBuilderImpl implements NetworkBuilder {
     private Optional<Network> findPivotNetworkForMerge(final ConnectionProvider connectionProvider,
                                                        final NetworkNodeContainer addedContainer,
                                                        final Set<NetworkNodeContainer> foundEntries) {
-        for (final NetworkNodeContainer entry : connectionProvider.sort(foundEntries)) {
+        for (final NetworkNodeContainer entry : connectionProvider.sortDeterministically(foundEntries)) {
             if (entry == addedContainer) {
                 continue;
             }
@@ -139,7 +145,7 @@ public class NetworkBuilderImpl implements NetworkBuilder {
     private NetworkNodeContainer findPivotNodeForRemove(final ConnectionProvider connectionProvider,
                                                         final NetworkNodeContainer removedContainer,
                                                         final Set<NetworkNodeContainer> containers) {
-        for (final NetworkNodeContainer entry : connectionProvider.sort(containers)) {
+        for (final NetworkNodeContainer entry : connectionProvider.sortDeterministically(containers)) {
             if (!entry.equals(removedContainer)) {
                 return entry;
             }
@@ -155,7 +161,7 @@ public class NetworkBuilderImpl implements NetworkBuilder {
             throw new IllegalStateException("Network of removed node cannot be empty");
         }
 
-        removedEntries.forEach(e -> {
+        connectionProvider.sortDeterministically(removedEntries).forEach(e -> {
             if (e.getNode().getNetwork() == null) {
                 throw new IllegalStateException("Network of resulting removed node cannot be empty");
             }
@@ -163,9 +169,10 @@ public class NetworkBuilderImpl implements NetworkBuilder {
             e.getNode().setNetwork(null);
         });
 
-        final Set<Network> networksResultingOfSplit = removedEntries
+        final Set<Network> networksResultingOfSplit = connectionProvider.sortDeterministically(removedEntries)
             .stream()
             .filter(e -> !e.equals(removedEntry))
+            .sorted(HIGHEST_PRIORITY_FIRST)
             .map(e -> {
                 final boolean establishedNetwork = initialize(e, connectionProvider);
                 if (establishedNetwork) {

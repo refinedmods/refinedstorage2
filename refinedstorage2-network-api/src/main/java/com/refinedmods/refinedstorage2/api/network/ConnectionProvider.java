@@ -11,5 +11,5 @@ import org.apiguardian.api.API;
 public interface ConnectionProvider {
     Connections findConnections(NetworkNodeContainer pivot, Set<NetworkNodeContainer> existingConnections);
 
-    List<NetworkNodeContainer> sort(Set<NetworkNodeContainer> containers);
+    List<NetworkNodeContainer> sortDeterministically(Set<NetworkNodeContainer> containers);
 }

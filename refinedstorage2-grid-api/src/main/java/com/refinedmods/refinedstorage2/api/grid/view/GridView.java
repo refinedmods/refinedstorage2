@@ -90,4 +90,9 @@ public interface GridView {
      * @return a copy of the backing list
      */
     ResourceList<Object> copyBackingList();
+
+    /**
+     * Clears the backing list, view list and tracked resources index.
+     */
+    void clear();
 }
