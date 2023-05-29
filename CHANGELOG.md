@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Fixed missing Speed Upgrade energy usage config on Forge.
 -   Fixed Grid screen not handling network changes properly.
+-   Fixed Grid scrollbar scrolling when using SHIFT or CTRL.
 
 ### Removed
 

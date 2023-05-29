@@ -495,7 +495,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             mouseScrolledInInventory(up, hoveredSlot);
         }
 
-        return (scrollbar != null && scrollbar.mouseScrolled(x, y, delta)) || super.mouseScrolled(x, y, delta);
+        final boolean didScrollbar =
+            scrollbar != null && !hasShiftDown() && !hasControlDown() && scrollbar.mouseScrolled(x, y, delta);
+        return didScrollbar || super.mouseScrolled(x, y, delta);
     }
 
     private void mouseScrolledInInventory(final boolean up, final Slot slot) {
