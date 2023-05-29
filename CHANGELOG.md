@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.10] - 2023-05-29
+
 ### Added
 
 -   Ported to Minecraft 1.19.4
@@ -369,7 +371,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...HEAD
+
+[2.0.0-milestone.2.10]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...v2.0.0-milestone.2.10
 
 [2.0.0-milestone.2.9]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...v2.0.0-milestone.2.9
 
