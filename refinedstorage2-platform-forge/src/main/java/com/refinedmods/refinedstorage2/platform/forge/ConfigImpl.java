@@ -31,6 +31,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry iface;
     private final SimpleEnergyUsageEntry externalStorage;
     private final SimpleEnergyUsageEntry detector;
+    private final SimpleEnergyUsageEntry destructor;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -50,6 +51,7 @@ public class ConfigImpl implements Config {
             DefaultEnergyUsage.EXTERNAL_STORAGE
         );
         detector = new SimpleEnergyUsageEntryImpl("detector", "Detector", DefaultEnergyUsage.DETECTOR);
+        destructor = new SimpleEnergyUsageEntryImpl("destructor", "Destructor", DefaultEnergyUsage.DESTRUCTOR);
         spec = builder.build();
     }
 
@@ -120,6 +122,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getDetector() {
         return detector;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getDestructor() {
+        return destructor;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
@@ -510,15 +517,31 @@ public class ConfigImpl implements Config {
     private class UpgradeEntryImpl implements UpgradeEntry {
         private final ForgeConfigSpec.LongValue speedUpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue stackUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue fortune1UpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue fortune2UpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue fortune3UpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue silkTouchUpgradeEnergyUsage;
 
         UpgradeEntryImpl() {
             builder.push("upgrade");
             speedUpgradeEnergyUsage = builder
                 .comment("The additional energy used per Speed Upgrade")
-                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.SPEED_UPGRADE, 0, Long.MAX_VALUE);
+                .defineInRange("speedUpgradeEnergyUsage", DefaultEnergyUsage.SPEED_UPGRADE, 0, Long.MAX_VALUE);
             stackUpgradeEnergyUsage = builder
                 .comment("The additional energy used by the Stack Upgrade")
-                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.STACK_UPGRADE, 0, Long.MAX_VALUE);
+                .defineInRange("stackUpgradeEnergyUsage", DefaultEnergyUsage.STACK_UPGRADE, 0, Long.MAX_VALUE);
+            fortune1UpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Fortune 1 Upgrade")
+                .defineInRange("fortune1UpgradeEnergyUsage", DefaultEnergyUsage.FORTUNE_1_UPGRADE, 0, Long.MAX_VALUE);
+            fortune2UpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Fortune 2 Upgrade")
+                .defineInRange("fortune2UpgradeEnergyUsage", DefaultEnergyUsage.FORTUNE_2_UPGRADE, 0, Long.MAX_VALUE);
+            fortune3UpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Fortune 3 Upgrade")
+                .defineInRange("fortune3UpgradeEnergyUsage", DefaultEnergyUsage.FORTUNE_3_UPGRADE, 0, Long.MAX_VALUE);
+            silkTouchUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Silk Touch Upgrade")
+                .defineInRange("silkTouchUpgradeEnergyUsage", DefaultEnergyUsage.SILK_TOUCH_UPGRADE, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -530,6 +553,26 @@ public class ConfigImpl implements Config {
         @Override
         public long getStackUpgradeEnergyUsage() {
             return stackUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getFortune1UpgradeEnergyUsage() {
+            return fortune1UpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getFortune2UpgradeEnergyUsage() {
+            return fortune2UpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getFortune3UpgradeEnergyUsage() {
+            return fortune3UpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getSilkTouchUpgradeEnergyUsage() {
+            return silkTouchUpgradeEnergyUsage.get();
         }
     }
 }

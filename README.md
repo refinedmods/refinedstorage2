@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="280" alt="Refined Storage logo" src="https://raw.githubusercontent.com/refinedmods/refinedstorage/develop/images/logo.png" />
+  <img width="280" alt="Refined Storage logo" src="https://raw.githubusercontent.com/refinedmods/refinedstorage2/develop/images/logo.png" />
   <h1 style="margin-top: 0">Refined Storage 2</h1>
   <p>Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing
 them to store items and fluids on a massively expandable device network.</p>

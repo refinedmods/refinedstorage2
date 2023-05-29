@@ -92,7 +92,6 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             poseStack,
             leftPos + slot.x,
             topPos + slot.y,
-            getBlitOffset(),
             filteredResource,
             resourceFilterSlot.supportsAmount()
         );
@@ -101,10 +100,9 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     private void renderResourceFilterSlot(final PoseStack poseStack,
                                           final int x,
                                           final int y,
-                                          final int z,
                                           final FilteredResource<?> filteredResource,
                                           final boolean supportsAmount) {
-        filteredResource.render(poseStack, x, y, z);
+        filteredResource.render(poseStack, x, y);
         if (supportsAmount) {
             renderResourceFilterSlotAmount(poseStack, x, y, filteredResource);
         }
@@ -147,18 +145,6 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         sideButtonY += button.getHeight() + 2;
 
         addRenderableWidget(button);
-    }
-
-    protected final void setScissor(final int x, final int y, final int w, final int h) {
-        if (minecraft == null) {
-            return;
-        }
-        final double scale = minecraft.getWindow().getGuiScale();
-        final int sx = (int) (x * scale);
-        final int sy = (int) ((minecraft.getWindow().getGuiScaledHeight() - (y + h)) * scale);
-        final int sw = (int) (w * scale);
-        final int sh = (int) (h * scale);
-        RenderSystem.enableScissor(sx, sy, sw, sh);
     }
 
     @Override

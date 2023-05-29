@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -43,6 +42,7 @@ import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -78,9 +78,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     @Nullable
     private AbstractGridBlockEntity grid;
 
-    private final GridInsertionStrategy insertionStrategy;
-    private final GridExtractionStrategy extractionStrategy;
-    private final GridScrollingStrategy scrollingStrategy;
+    private GridInsertionStrategy insertionStrategy;
+    private GridExtractionStrategy extractionStrategy;
+    private GridScrollingStrategy scrollingStrategy;
 
     @Nullable
     private Runnable sizeChangedListener;
@@ -152,22 +152,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.grid.addWatcher(this, PlayerActor.class);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
-        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode()
-        );
-        this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode(),
-            grid.getContainerExtractionSource()
-        );
-        this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
-            this,
-            playerInventory.player,
-            grid.getNode()
-        );
+        initStrategies();
     }
 
     private Predicate<GridResource> filterStorageChannel() {
@@ -295,20 +280,47 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     @Override
     public <T> void onChanged(
         final StorageChannelType<T> storageChannelType,
-        final ResourceListOperationResult<T> change,
+        final T resource,
+        final long change,
         @Nullable final TrackedResource trackedResource
     ) {
         if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
             return;
         }
-        final T resource = change.resourceAmount().getResource();
-        LOGGER.debug("Received a change of {} for {}", change.change(), resource);
+        LOGGER.info("{} received a change of {} for {}", this, change, resource);
         Platform.INSTANCE.getServerToClientCommunications().sendGridUpdate(
             (ServerPlayer) playerInventory.player,
             platformStorageChannelType,
             resource,
-            change.change(),
+            change,
             trackedResource
+        );
+    }
+
+    @Override
+    public void onNetworkChanged() {
+        if (playerInventory.player instanceof ServerPlayer serverPlayer) {
+            initStrategies();
+            Platform.INSTANCE.getServerToClientCommunications().sendGridClear(serverPlayer);
+        }
+    }
+
+    private void initStrategies() {
+        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode()
+        );
+        this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode(),
+            grid.getContainerExtractionSource()
+        );
+        this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
+            this,
+            playerInventory.player,
+            Objects.requireNonNull(grid).getNode()
         );
     }
 
@@ -435,5 +447,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
             final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
             viewBuilder.withResource(resource, amount, trackedResource);
         }
+    }
+
+    public void onClear() {
+        view.clear();
     }
 }

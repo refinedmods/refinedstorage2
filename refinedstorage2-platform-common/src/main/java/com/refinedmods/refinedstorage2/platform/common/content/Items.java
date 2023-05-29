@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
@@ -35,6 +36,7 @@ public final class Items {
     private final List<Supplier<NamedBlockItem>> allImporters = new ArrayList<>();
     private final List<Supplier<NamedBlockItem>> allExternalStorages = new ArrayList<>();
     private final List<Supplier<NamedBlockItem>> allDetectors = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allDestructors = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -53,9 +55,17 @@ public final class Items {
     @Nullable
     private Supplier<Item> upgrade;
     @Nullable
-    private Supplier<Item> speedUpgrade;
+    private Supplier<? extends AbstractUpgradeItem> speedUpgrade;
     @Nullable
-    private Supplier<Item> stackUpgrade;
+    private Supplier<? extends AbstractUpgradeItem> stackUpgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> fortune1Upgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> fortune2Upgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> fortune3Upgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade;
 
     private Items() {
     }
@@ -205,6 +215,14 @@ public final class Items {
         return Collections.unmodifiableList(allDetectors);
     }
 
+    public void addDestructor(final Supplier<NamedBlockItem> supplier) {
+        allDestructors.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getDestructors() {
+        return Collections.unmodifiableList(allDestructors);
+    }
+
     public Item getStorageHousing() {
         return Objects.requireNonNull(storageHousing).get();
     }
@@ -221,19 +239,51 @@ public final class Items {
         return Objects.requireNonNull(upgrade).get();
     }
 
-    public Item getSpeedUpgrade() {
+    public AbstractUpgradeItem getSpeedUpgrade() {
         return Objects.requireNonNull(speedUpgrade).get();
     }
 
-    public void setSpeedUpgrade(final Supplier<Item> supplier) {
+    public void setSpeedUpgrade(final Supplier<? extends AbstractUpgradeItem> supplier) {
         this.speedUpgrade = supplier;
     }
 
-    public Item getStackUpgrade() {
+    public AbstractUpgradeItem getStackUpgrade() {
         return Objects.requireNonNull(stackUpgrade).get();
     }
 
-    public void setStackUpgrade(final Supplier<Item> supplier) {
+    public void setStackUpgrade(final Supplier<? extends AbstractUpgradeItem> supplier) {
         this.stackUpgrade = supplier;
+    }
+
+    public AbstractUpgradeItem getFortune1Upgrade() {
+        return Objects.requireNonNull(fortune1Upgrade).get();
+    }
+
+    public void setFortune1Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune1Upgrade) {
+        this.fortune1Upgrade = fortune1Upgrade;
+    }
+
+    public AbstractUpgradeItem getFortune2Upgrade() {
+        return Objects.requireNonNull(fortune2Upgrade).get();
+    }
+
+    public void setFortune2Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune2Upgrade) {
+        this.fortune2Upgrade = fortune2Upgrade;
+    }
+
+    public AbstractUpgradeItem getFortune3Upgrade() {
+        return Objects.requireNonNull(fortune3Upgrade).get();
+    }
+
+    public void setFortune3Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune3Upgrade) {
+        this.fortune3Upgrade = fortune3Upgrade;
+    }
+
+    public AbstractUpgradeItem getSilkTouchUpgrade() {
+        return Objects.requireNonNull(silkTouchUpgrade).get();
+    }
+
+    public void setSilkTouchUpgrade(final Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade) {
+        this.silkTouchUpgrade = silkTouchUpgrade;
     }
 }

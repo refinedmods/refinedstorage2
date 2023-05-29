@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
@@ -52,6 +53,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<ExternalStorageBlockEntity>> externalStorage;
     @Nullable
     private Supplier<BlockEntityType<DetectorBlockEntity>> detector;
+    @Nullable
+    private Supplier<BlockEntityType<DestructorBlockEntity>> destructor;
 
     private BlockEntities() {
     }
@@ -160,5 +163,13 @@ public final class BlockEntities {
 
     public void setDetector(final Supplier<BlockEntityType<DetectorBlockEntity>> supplier) {
         this.detector = supplier;
+    }
+
+    public BlockEntityType<DestructorBlockEntity> getDestructor() {
+        return Objects.requireNonNull(destructor).get();
+    }
+
+    public void setDestructor(final Supplier<BlockEntityType<DestructorBlockEntity>> supplier) {
+        this.destructor = supplier;
     }
 }

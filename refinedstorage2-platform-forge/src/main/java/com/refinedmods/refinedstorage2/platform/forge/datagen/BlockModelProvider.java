@@ -19,9 +19,9 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
     @Override
     protected void registerModels() {
         registerCables();
-        registerController();
-        registerGrid(Blocks.INSTANCE.getGrid(), "grid");
-        registerGrid(Blocks.INSTANCE.getCraftingGrid(), "crafting_grid");
+        registerControllers();
+        registerGrids(Blocks.INSTANCE.getGrid(), "grid");
+        registerGrids(Blocks.INSTANCE.getCraftingGrid(), "crafting_grid");
         registerDetectors();
     }
 
@@ -39,7 +39,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         });
     }
 
-    private void registerController() {
+    private void registerControllers() {
         final ResourceLocation base = createIdentifier("block/emissive_all_cutout");
         final ResourceLocation off = createIdentifier("block/controller/off");
         final ResourceLocation on = createIdentifier("block/controller/on");
@@ -52,19 +52,19 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         });
     }
 
-    private void registerGrid(final BlockColorMap<? extends AbstractGridBlock<?>> blockMap, final String name) {
+    private void registerGrids(final BlockColorMap<? extends AbstractGridBlock<?>> blockMap, final String name) {
         blockMap.forEach((color, block) -> {
             final ResourceLocation cutout = createIdentifier("block/" + name + "/cutouts/" + color.getName());
-            registerEmissiveGrid(name, color.getName(), cutout);
+            registerEmissiveGrids(name, color.getName(), cutout);
         });
         final ResourceLocation inactiveCutout = createIdentifier("block/" + name + "/cutouts/inactive");
-        registerGrid(name, "inactive", inactiveCutout, createIdentifier("block/north_cutout"));
+        registerGrids(name, "inactive", inactiveCutout, createIdentifier("block/north_cutout"));
     }
 
-    private void registerGrid(final String name,
-                              final String variantName,
-                              final ResourceLocation cutout,
-                              final ResourceLocation baseModel) {
+    private void registerGrids(final String name,
+                               final String variantName,
+                               final ResourceLocation cutout,
+                               final ResourceLocation baseModel) {
         final ResourceLocation right = createIdentifier("block/" + name + "/right");
         final ResourceLocation left = createIdentifier("block/" + name + "/left");
         final ResourceLocation back = createIdentifier("block/" + name + "/back");
@@ -82,8 +82,8 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
             .texture("cutout", cutout);
     }
 
-    private void registerEmissiveGrid(final String name, final String variantName, final ResourceLocation cutout) {
-        registerGrid(name, variantName, cutout, createIdentifier("block/emissive_north_cutout"));
+    private void registerEmissiveGrids(final String name, final String variantName, final ResourceLocation cutout) {
+        registerGrids(name, variantName, cutout, createIdentifier("block/emissive_north_cutout"));
     }
 
     private void registerDetectors() {

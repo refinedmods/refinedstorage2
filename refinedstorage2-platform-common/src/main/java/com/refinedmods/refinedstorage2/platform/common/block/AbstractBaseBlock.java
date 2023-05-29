@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.PlayerAware;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 
@@ -15,6 +16,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -111,6 +113,18 @@ public abstract class AbstractBaseBlock extends Block {
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, moved);
+        }
+    }
+
+    @Override
+    public void setPlacedBy(final Level level,
+                            final BlockPos pos,
+                            final BlockState state,
+                            @Nullable final LivingEntity entity,
+                            final ItemStack stack) {
+        super.setPlacedBy(level, pos, state, entity, stack);
+        if (entity instanceof Player player && level.getBlockEntity(pos) instanceof PlayerAware playerAware) {
+            playerAware.setPlacedBy(player.getGameProfile().getId());
         }
     }
 

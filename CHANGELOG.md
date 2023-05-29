@@ -7,6 +7,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.10] - 2023-05-29
+
+### Added
+
+-   Ported to Minecraft 1.19.4
+-   Destructor
+-   Fortune Upgrade (I, II and III)
+-   Silk Touch Upgrade
+
+### Changed
+
+-   The Detector screen now is a proper amount screen by having increment/decrement buttons and scrollbar support.
+-   The amount in an amount screen is now colored red if the amount is invalid.
+-   The Destructor crafting recipe now takes 2 diamonds instead of 2 redstone.
+
+### Fixed
+
+-   Fixed missing Speed Upgrade energy usage config on Forge.
+-   Fixed Grid screen not handling network changes properly.
+-   Fixed Grid scrollbar scrolling when using SHIFT or CTRL.
+-   Fixed wrong Controller tooltip.
+
+### Removed
+
+-   Removed "Fuzzy mode" from the Destructor as the filter in the Destructor compares with the block anyway.
+
 ## [2.0.0-milestone.2.9] - 2023-03-31
 
 ### Fixed
@@ -345,7 +371,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...HEAD
+
+[2.0.0-milestone.2.10]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...v2.0.0-milestone.2.10
 
 [2.0.0-milestone.2.9]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...v2.0.0-milestone.2.9
 

@@ -31,7 +31,7 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Colo
     private final MutableComponent name;
 
     public ExporterBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.CABLE_PROPERTIES, SHAPE_CACHE);
+        super(SHAPE_CACHE);
         this.color = color;
         this.name = name;
     }

@@ -15,7 +15,6 @@ public abstract class AbstractFluidRenderer implements FluidRenderer {
     protected void render(final PoseStack poseStack,
                           final int x,
                           final int y,
-                          final int z,
                           final int packedRgb,
                           final TextureAtlasSprite sprite) {
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
@@ -31,16 +30,16 @@ public abstract class AbstractFluidRenderer implements FluidRenderer {
         final Tesselator tesselator = Tesselator.getInstance();
         final BufferBuilder bufferBuilder = tesselator.getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.vertex(poseStack.last().pose(), x, slotYEnd, z)
+        bufferBuilder.vertex(poseStack.last().pose(), x, slotYEnd, 0)
             .uv(sprite.getU0(), sprite.getV1())
             .color(r, g, b, 255).endVertex();
-        bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z)
+        bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, slotYEnd, 0)
             .uv(sprite.getU1(), sprite.getV1())
             .color(r, g, b, 255).endVertex();
-        bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, y, z)
+        bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, y, 0)
             .uv(sprite.getU1(), sprite.getV0())
             .color(r, g, b, 255).endVertex();
-        bufferBuilder.vertex(poseStack.last().pose(), x, y, z)
+        bufferBuilder.vertex(poseStack.last().pose(), x, y, 0)
             .uv(sprite.getU0(), sprite.getV0())
             .color(r, g, b, 255).endVertex();
         tesselator.end();

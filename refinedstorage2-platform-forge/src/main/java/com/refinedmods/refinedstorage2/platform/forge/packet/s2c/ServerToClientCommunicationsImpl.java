@@ -48,6 +48,11 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
+    public void sendGridClear(final ServerPlayer player) {
+        networkManager.send(player, new GridClearPacket());
+    }
+
+    @Override
     public <T> void sendResourceFilterSlotUpdate(final ServerPlayer player,
                                                  @Nullable final PlatformStorageChannelType<T> storageChannelType,
                                                  @Nullable final T resource,

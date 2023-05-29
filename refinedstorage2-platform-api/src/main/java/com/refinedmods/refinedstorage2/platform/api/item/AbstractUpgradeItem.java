@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeInDestination;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.2")
-public abstract class AbstractUpgradeItem extends Item {
+public abstract class AbstractUpgradeItem extends Item implements UpgradeItem {
     private final UpgradeRegistry registry;
 
     protected AbstractUpgradeItem(final Properties properties, final UpgradeRegistry registry) {

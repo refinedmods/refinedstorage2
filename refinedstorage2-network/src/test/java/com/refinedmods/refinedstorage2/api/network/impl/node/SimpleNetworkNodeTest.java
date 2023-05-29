@@ -62,4 +62,17 @@ class SimpleNetworkNodeTest {
         // Assert
         assertThat(energy.getStored()).isZero();
     }
+
+    @Test
+    void shouldSetEnergyUsage(@InjectNetworkEnergyComponent final EnergyNetworkComponent energy) {
+        // Arrange
+        sut.setActive(true);
+        sut.setEnergyUsage(2);
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(energy.getStored()).isEqualTo(8);
+    }
 }

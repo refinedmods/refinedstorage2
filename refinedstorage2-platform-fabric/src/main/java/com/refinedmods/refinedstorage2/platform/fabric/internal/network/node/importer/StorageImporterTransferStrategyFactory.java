@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransfe
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
 import java.util.function.Function;
 
@@ -37,7 +39,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade) {
+                                           final UpgradeState upgradeState) {
         final ImporterSource<T> source = new StorageImporterSource<>(
             lookup,
             fromPlatformMapper,
@@ -49,7 +51,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
         return new ImporterTransferStrategyImpl<>(
             source,
             storageChannelType,
-            hasStackUpgrade ? singleAmount * 64 : singleAmount
+            upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? singleAmount * 64 : singleAmount
         );
     }
 }

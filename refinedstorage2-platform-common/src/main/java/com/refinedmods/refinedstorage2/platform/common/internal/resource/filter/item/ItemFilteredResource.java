@@ -17,8 +17,8 @@ import net.minecraft.world.item.TooltipFlag;
 
 public record ItemFilteredResource(ItemResource value, long amount) implements FilteredResource<ItemResource> {
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
-        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(value.toItemStack(), x, y);
+    public void render(final PoseStack poseStack, final int x, final int y) {
+        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(poseStack, value.toItemStack(), x, y);
     }
 
     @Override

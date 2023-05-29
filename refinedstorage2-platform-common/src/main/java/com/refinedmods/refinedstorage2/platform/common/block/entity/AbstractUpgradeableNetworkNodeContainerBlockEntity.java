@@ -2,18 +2,19 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
-import java.util.Set;
-
 import com.google.common.util.concurrent.RateLimiter;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +25,7 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
     private static final String TAG_UPGRADES = "u";
 
     protected final UpgradeContainer upgradeContainer;
+    private final Object2IntMap<UpgradeItem> upgradeState = new Object2IntOpenHashMap<>();
     private RateLimiter rateLimiter = createRateLimiter(0);
 
     protected AbstractUpgradeableNetworkNodeContainerBlockEntity(
@@ -42,10 +44,14 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
     }
 
     @Override
-    public void doWork() {
+    public final void doWork() {
         if (rateLimiter.tryAcquire()) {
             super.doWork();
+            postDoWork();
         }
+    }
+
+    protected void postDoWork() {
     }
 
     private void upgradeContainerChanged() {
@@ -72,20 +78,34 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
     }
 
     private void configureAccordingToUpgrades() {
-        final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
-        final boolean hasStackUpgrade = hasStackUpgrade();
-        final long upgradeEnergyUsage = calculateUpgradeEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade);
+        updateUpgradeState();
+        final int amountOfSpeedUpgrades = upgradeState.getInt(Items.INSTANCE.getSpeedUpgrade());
         this.rateLimiter = createRateLimiter(amountOfSpeedUpgrades);
+        final long upgradeEnergyUsage = upgradeState.keySet().stream().mapToLong(UpgradeItem::getEnergyUsage).sum();
         this.setEnergyUsage(upgradeEnergyUsage);
     }
 
-    protected final boolean hasStackUpgrade() {
-        return upgradeContainer.hasAnyOf(Set.of(Items.INSTANCE.getStackUpgrade()));
+    private void updateUpgradeState() {
+        this.upgradeState.clear();
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
+            updateUpgradeState(i);
+        }
     }
 
-    private long calculateUpgradeEnergyUsage(final long amountOfSpeedUpgrades, final boolean hasStackUpgrade) {
-        return (Platform.INSTANCE.getConfig().getUpgrade().getSpeedUpgradeEnergyUsage() * amountOfSpeedUpgrades)
-            + (hasStackUpgrade ? Platform.INSTANCE.getConfig().getUpgrade().getStackUpgradeEnergyUsage() : 0L);
+    private void updateUpgradeState(final int index) {
+        final ItemStack stack = upgradeContainer.getItem(index);
+        if (stack.isEmpty()) {
+            return;
+        }
+        final Item item = stack.getItem();
+        if (!(item instanceof UpgradeItem upgradeItem)) {
+            return;
+        }
+        upgradeState.put(upgradeItem, upgradeState.getInt(upgradeItem) + 1);
+    }
+
+    public final boolean hasUpgrade(final UpgradeItem item) {
+        return upgradeState.containsKey(item);
     }
 
     protected abstract void setEnergyUsage(long upgradeEnergyUsage);

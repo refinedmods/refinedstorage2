@@ -38,7 +38,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     private final MutableComponent name;
 
     public ExternalStorageBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.CABLE_PROPERTIES, SHAPE_CACHE);
+        super(SHAPE_CACHE);
         this.color = color;
         this.name = name;
     }

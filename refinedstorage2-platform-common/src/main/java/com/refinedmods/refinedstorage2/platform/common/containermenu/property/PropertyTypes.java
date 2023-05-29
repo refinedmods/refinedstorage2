@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.Det
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import net.minecraft.resources.ResourceLocation;
+
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public final class PropertyTypes {
@@ -25,11 +27,7 @@ public final class PropertyTypes {
         FilterModeSettings::getFilterMode
     );
 
-    public static final PropertyType<Integer> PRIORITY = new PropertyType<>(
-        createIdentifier("priority"),
-        value -> value,
-        value -> value
-    );
+    public static final PropertyType<Integer> PRIORITY = integer(createIdentifier("priority"));
 
     public static final PropertyType<AccessMode> ACCESS_MODE = new PropertyType<>(
         createIdentifier("access_mode"),
@@ -43,11 +41,7 @@ public final class PropertyTypes {
         ExporterSchedulingModeSettings::getById
     );
 
-    public static final PropertyType<Boolean> FUZZY_MODE = new PropertyType<>(
-        createIdentifier("fuzzy_mode"),
-        value -> Boolean.TRUE.equals(value) ? 1 : 0,
-        value -> value == 1
-    );
+    public static final PropertyType<Boolean> FUZZY_MODE = bool(createIdentifier("fuzzy_mode"));
 
     public static final PropertyType<DetectorMode> DETECTOR_MODE = new PropertyType<>(
         createIdentifier("detector_mode"),
@@ -55,6 +49,24 @@ public final class PropertyTypes {
         DetectorModeSettings::getDetectorMode
     );
 
+    public static final PropertyType<Boolean> DESTRUCTOR_PICKUP_ITEMS = bool(createIdentifier("pickup_items"));
+
     private PropertyTypes() {
+    }
+
+    private static PropertyType<Boolean> bool(final ResourceLocation id) {
+        return new PropertyType<>(
+            id,
+            value -> Boolean.TRUE.equals(value) ? 1 : 0,
+            value -> value == 1
+        );
+    }
+
+    private static PropertyType<Integer> integer(final ResourceLocation id) {
+        return new PropertyType<>(
+            id,
+            value -> value,
+            value -> value
+        );
     }
 }

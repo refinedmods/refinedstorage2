@@ -79,8 +79,8 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     public void render(final PoseStack poseStack, final int x, final int y) {
         final ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         final Font font = Minecraft.getInstance().font;
-        itemRenderer.renderGuiItem(itemStack, x, y);
-        itemRenderer.renderGuiItemDecorations(font, itemStack, x, y, null);
+        itemRenderer.renderGuiItem(poseStack, itemStack, x, y);
+        itemRenderer.renderGuiItemDecorations(poseStack, font, itemStack, x, y, null);
     }
 
     @Override

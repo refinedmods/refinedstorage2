@@ -63,13 +63,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     @Override
     public void render(final PoseStack poseStack, final int x, final int y) {
-        Platform.INSTANCE.getFluidRenderer().render(
-            poseStack,
-            x,
-            y,
-            0,
-            fluidResource
-        );
+        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, fluidResource);
     }
 
     @Override

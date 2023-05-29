@@ -69,14 +69,13 @@ public class ImporterBlockEntity
     }
 
     private CompositeImporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
-        final boolean hasStackUpgrade = hasStackUpgrade();
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ImporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, hasStackUpgrade))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, this::hasUpgrade))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
     }

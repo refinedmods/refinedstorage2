@@ -2,78 +2,51 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.AbstractAmountScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.AmountScreenConfiguration;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.DoubleAmountOperations;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.DetectorModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class DetectorScreen extends AbstractBaseScreen<DetectorContainerMenu> {
+public class DetectorScreen extends AbstractAmountScreen<DetectorContainerMenu, Double> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/detector.png");
-    private static final Predicate<String> DECIMAL_PATTERN = Pattern.compile("\\d*\\.?\\d*").asMatchPredicate();
-    private static final DecimalFormat DECIMAL_FORMAT;
-
-    static {
-        final DecimalFormatSymbols initialAmountSymbols = new DecimalFormatSymbols(Locale.ROOT);
-        initialAmountSymbols.setDecimalSeparator('.');
-        DECIMAL_FORMAT = new DecimalFormat("##.###", initialAmountSymbols);
-        DECIMAL_FORMAT.setGroupingUsed(false);
-    }
-
-    @Nullable
-    private EditBox amountBox;
 
     public DetectorScreen(final DetectorContainerMenu menu, final Inventory playerInventory, final Component text) {
-        super(menu, playerInventory, text);
-        this.inventoryLabelY = 43;
+        super(
+            menu,
+            null,
+            playerInventory,
+            text,
+            AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
+                .withInitialAmount(menu.getAmount())
+                .withIncrementsTop(1, 10, 64)
+                .withIncrementsBottom(-1, -10, -64)
+                .withIncrementsTopStartPosition(new Vector3f(40, 20, 0))
+                .withIncrementsBottomStartPosition(new Vector3f(40, 70, 0))
+                .withAmountFieldWidth(59)
+                .withAmountFieldPosition(new Vector3f(45, 51, 0))
+                .withActionButtonsEnabled(false)
+                .withMinAmount(0D)
+                .withResetAmount(0D)
+                .build(),
+            DoubleAmountOperations.INSTANCE
+        );
+        this.inventoryLabelY = 94;
         this.imageWidth = 176;
-        this.imageHeight = 137;
+        this.imageHeight = 188;
     }
 
     @Override
     protected void init() {
         super.init();
-        if (amountBox == null) {
-            amountBox = new EditBox(
-                font,
-                leftPos + 41,
-                topPos + 24,
-                50,
-                font.lineHeight,
-                Component.literal("")
-            );
-        } else {
-            amountBox.setX(leftPos + 41);
-            amountBox.setY(topPos + 24);
-        }
-        amountBox.setFocus(false);
-        amountBox.setCanLoseFocus(true);
-        amountBox.setBordered(false);
-        amountBox.setFilter(DECIMAL_PATTERN);
-        amountBox.setValue(DECIMAL_FORMAT.format(menu.getAmount()));
-        amountBox.setResponder(value -> {
-            try {
-                final double amount = value.trim().isEmpty()
-                    ? 0
-                    : Double.parseDouble(value);
-                menu.changeAmountOnClient(amount);
-            } catch (final NumberFormatException e) {
-                // do nothing
-            }
-        });
-        addWidget(amountBox);
         addSideButton(new FuzzyModeSideButtonWidget(
             getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             this::renderComponentTooltip
@@ -85,26 +58,18 @@ public class DetectorScreen extends AbstractBaseScreen<DetectorContainerMenu> {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(poseStack, mouseX, mouseY, partialTicks);
-        if (amountBox != null) {
-            amountBox.render(poseStack, mouseX, mouseY, partialTicks);
-        }
-    }
-
-    @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (amountBox != null && amountBox.charTyped(unknown1, unknown2)) || super.charTyped(unknown1, unknown2);
-    }
-
-    @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        return (amountBox != null && amountBox.keyPressed(key, scanCode, modifiers))
-            || super.keyPressed(key, scanCode, modifiers);
+    protected void accept(final Double amount) {
+        getMenu().changeAmountOnClient(amount);
     }
 
     @Override
     protected ResourceLocation getTexture() {
         return TEXTURE;
+    }
+
+    @Override
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
+        super.renderLabels(poseStack, mouseX, mouseY);
+        font.draw(poseStack, this.playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752);
     }
 }

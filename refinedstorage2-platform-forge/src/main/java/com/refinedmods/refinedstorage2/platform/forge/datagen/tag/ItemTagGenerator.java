@@ -23,6 +23,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CABLE
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONTROLLERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CRAFTING_GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CREATIVE_CONTROLLERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.DESTRUCTORS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.DETECTORS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXPORTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXTERNAL_STORAGES;
@@ -33,12 +34,11 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORA
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 
 public class ItemTagGenerator extends ItemTagsProvider {
-
     public ItemTagGenerator(final PackOutput packOutput,
                             final CompletableFuture<HolderLookup.Provider> registries,
                             final TagsProvider<Block> blockTagsProvider,
                             final ExistingFileHelper existingFileHelper) {
-        super(packOutput, registries, blockTagsProvider, MOD_ID, existingFileHelper);
+        super(packOutput, registries, blockTagsProvider.contentsGetter(), MOD_ID, existingFileHelper);
     }
 
     @Override
@@ -83,6 +83,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(DETECTORS,
             Blocks.INSTANCE.getDetector().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(DESTRUCTORS,
+            Blocks.INSTANCE.getDestructor().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }

@@ -21,21 +21,22 @@ public final class CreativeModeTabItems {
 
     private static void appendBlocks(final Consumer<ItemLike> consumer) {
         Items.INSTANCE.getAllControllers().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(consumer);
+        Items.INSTANCE.getDestructors().stream().map(Supplier::get).forEach(consumer);
+        consumer.accept(Blocks.INSTANCE.getDiskDrive());
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
         appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
-        Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(consumer);
-        consumer.accept(Blocks.INSTANCE.getDiskDrive());
+        Items.INSTANCE.getDetectors().stream().map(Supplier::get).forEach(consumer);
+        consumer.accept(Blocks.INSTANCE.getInterface());
         Arrays.stream(ItemStorageType.Variant.values()).forEach(variant -> consumer.accept(
             Blocks.INSTANCE.getItemStorageBlock(variant)
         ));
         Arrays.stream(FluidStorageType.Variant.values()).forEach(variant -> consumer.accept(
             Blocks.INSTANCE.getFluidStorageBlock(variant)
         ));
-        Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(consumer);
-        Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(consumer);
-        Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(consumer);
-        Items.INSTANCE.getDetectors().stream().map(Supplier::get).forEach(consumer);
-        consumer.accept(Blocks.INSTANCE.getInterface());
         consumer.accept(Blocks.INSTANCE.getMachineCasing());
         consumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());
     }
@@ -75,5 +76,9 @@ public final class CreativeModeTabItems {
         consumer.accept(Items.INSTANCE.getUpgrade());
         consumer.accept(Items.INSTANCE.getSpeedUpgrade());
         consumer.accept(Items.INSTANCE.getStackUpgrade());
+        consumer.accept(Items.INSTANCE.getFortune1Upgrade());
+        consumer.accept(Items.INSTANCE.getFortune2Upgrade());
+        consumer.accept(Items.INSTANCE.getFortune3Upgrade());
+        consumer.accept(Items.INSTANCE.getSilkTouchUpgrade());
     }
 }

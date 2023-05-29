@@ -25,8 +25,11 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidR
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -39,9 +42,13 @@ import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +57,10 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -119,6 +129,16 @@ public final class PlatformImpl extends AbstractPlatform {
         return convertNonEmptyToFluid(stack);
     }
 
+    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
+        final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
+            stack,
+            new ConstantContainerItemContext(ItemVariant.of(stack), 1)
+        );
+        return Optional
+            .ofNullable(StorageUtil.findExtractableResource(storage, null))
+            .map(VariantUtil::ofFluidVariant);
+    }
+
     @Override
     public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return switch (controllerType) {
@@ -175,13 +195,31 @@ public final class PlatformImpl extends AbstractPlatform {
         // no op
     }
 
-    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
-        final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
-            stack,
-            new ConstantContainerItemContext(ItemVariant.of(stack), 1)
-        );
-        return Optional
-            .ofNullable(StorageUtil.findExtractableResource(storage, null))
-            .map(VariantUtil::ofFluidVariant);
+    @Override
+    public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
+        return Optional.ofNullable(playerId)
+            .flatMap(id -> level.getServer().getProfileCache().get(id))
+            .map(profile -> FakePlayer.get(level, profile))
+            .orElseGet(() -> FakePlayer.get(level));
+    }
+
+    @Override
+    public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getBlockAsItemStack(final Block block,
+                                         final BlockState state,
+                                         final Direction direction,
+                                         final BlockGetter level,
+                                         final BlockPos position,
+                                         final Player player) {
+        return block.getCloneItemStack(level, position, state);
+    }
+
+    @Override
+    public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
+        return liquidBlock.getPickupSound();
     }
 }

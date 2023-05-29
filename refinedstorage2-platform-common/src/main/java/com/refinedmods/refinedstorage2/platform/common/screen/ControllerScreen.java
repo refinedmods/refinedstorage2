@@ -64,7 +64,8 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
             "misc",
             "stored_with_capacity",
             AmountFormatting.format(getMenu().getStored()),
-            AmountFormatting.format(getMenu().getCapacity())
+            AmountFormatting.format(getMenu().getCapacity()),
+            String.valueOf((int) (getPercentageFull() * 100D))
         ));
     }
 

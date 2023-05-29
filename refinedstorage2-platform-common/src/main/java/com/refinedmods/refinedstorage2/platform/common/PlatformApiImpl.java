@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
@@ -51,14 +52,15 @@ import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -86,13 +88,16 @@ public class PlatformApiImpl implements PlatformApi {
         new PlatformRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new PlatformRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
+            (level, pos, direction, upgradeState) -> (filter, actor, network) -> false);
     private final PlatformRegistry<ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
         new PlatformRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
+            (level, pos, direction, upgradeState, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
-    private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
+    private final Map<StorageChannelType<?>, Queue<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();
+    private final Queue<DestructorStrategyFactory> destructorStrategyFactories = new PriorityQueue<>(
+        Comparator.comparingInt(DestructorStrategyFactory::getPriority)
+    );
     private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
@@ -154,22 +159,34 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
-                                                      final int priority,
                                                       final PlatformExternalStorageProviderFactory factory) {
-        final Set<PlatformExternalStorageProviderFactory> factories = externalStorageProviderFactories.computeIfAbsent(
-            channelType,
-            k -> new TreeSet<>(
-                Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority)
-            )
-        );
+        final Queue<PlatformExternalStorageProviderFactory> factories =
+            externalStorageProviderFactories.computeIfAbsent(
+                channelType,
+                k -> new PriorityQueue<>(Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority))
+            );
         factories.add(factory);
     }
 
     @Override
-    public <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
+    public <T> Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         final StorageChannelType<T> channelType
     ) {
-        return externalStorageProviderFactories.getOrDefault(channelType, Collections.emptySet());
+        final var factories = externalStorageProviderFactories.get(channelType);
+        if (factories == null) {
+            return Collections.emptyList();
+        }
+        return factories;
+    }
+
+    @Override
+    public Collection<DestructorStrategyFactory> getDestructorStrategyFactories() {
+        return destructorStrategyFactories;
+    }
+
+    @Override
+    public void addDestructorStrategyFactory(final DestructorStrategyFactory factory) {
+        destructorStrategyFactories.add(factory);
     }
 
     @Override
