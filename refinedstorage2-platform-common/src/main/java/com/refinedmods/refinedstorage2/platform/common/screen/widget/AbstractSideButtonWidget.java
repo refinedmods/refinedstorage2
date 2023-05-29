@@ -27,17 +27,12 @@ public abstract class AbstractSideButtonWidget extends Button {
     }
 
     @Override
-    public void renderButton(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
+    public void renderWidget(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTextureIdentifier());
         RenderSystem.enableDepthTest();
 
-        this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX <= getX() + width && mouseY <= getY() + height;
-
-        // Ensure that the tooltip is drawn over the side buttons (tooltips have a Z offset of 400).
-        final int originalZOffset = getBlitOffset();
-        setBlitOffset(300);
         blit(poseStack, getX(), getY(), 238, isHovered ? 35 : 16, WIDTH, HEIGHT);
         blit(poseStack, getX() + 1, getY() + 1, getXTexture(), getYTexture(), WIDTH, HEIGHT);
 
@@ -49,8 +44,6 @@ public abstract class AbstractSideButtonWidget extends Button {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.disableBlend();
         }
-
-        setBlitOffset(originalZOffset);
 
         if (isHovered) {
             onTooltip(poseStack, mouseX, mouseY); // TODO - remove use setTooltip.

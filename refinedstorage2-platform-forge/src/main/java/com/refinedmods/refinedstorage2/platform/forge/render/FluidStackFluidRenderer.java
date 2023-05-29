@@ -30,11 +30,7 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
     }
 
     @Override
-    public void render(final PoseStack poseStack,
-                       final int x,
-                       final int y,
-                       final int z,
-                       final FluidResource fluidResource) {
+    public void render(final PoseStack poseStack, final int x, final int y, final FluidResource fluidResource) {
         final FluidStack stack = getFluidStackFromCache(fluidResource);
         final Fluid fluid = fluidResource.fluid();
 
@@ -43,7 +39,7 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
         final int packedRgb = renderProperties.getTintColor(stack);
         final TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
 
-        render(poseStack, x, y, z, packedRgb, sprite);
+        render(poseStack, x, y, packedRgb, sprite);
     }
 
     private TextureAtlasSprite getStillFluidSprite(final IClientFluidTypeExtensions renderProperties,

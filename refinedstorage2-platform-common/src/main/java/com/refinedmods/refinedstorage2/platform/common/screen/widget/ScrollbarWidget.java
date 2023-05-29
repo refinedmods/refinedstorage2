@@ -45,7 +45,7 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
+    public void renderWidget(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }

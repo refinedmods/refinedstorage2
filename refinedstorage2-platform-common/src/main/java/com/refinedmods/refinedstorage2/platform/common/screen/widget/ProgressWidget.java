@@ -37,7 +37,7 @@ public class ProgressWidget extends AbstractWidget {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
+    public void renderWidget(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         final int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -45,20 +45,13 @@ public class ProgressWidget extends AbstractWidget {
         RenderSystem.setShaderTexture(0, TEXTURE);
 
         RenderSystem.enableDepthTest();
-        final int zOffset = getBlitOffset();
-        setBlitOffset(200);
         blit(poseStack, getX(), getY() + height - correctedHeight, 179, height - correctedHeight, width,
             correctedHeight);
-        setBlitOffset(zOffset);
         RenderSystem.disableDepthTest();
 
-        if (isHovered(mouseX, mouseY)) {
+        if (isHovered) {
             tooltipRenderer.render(poseStack, tooltipSupplier.get(), mouseX, mouseY);
         }
-    }
-
-    private boolean isHovered(final int mouseX, final int mouseY) {
-        return mouseX >= getX() && mouseY >= getY() && mouseX <= getX() + width && mouseY <= getY() + height;
     }
 
     @Override

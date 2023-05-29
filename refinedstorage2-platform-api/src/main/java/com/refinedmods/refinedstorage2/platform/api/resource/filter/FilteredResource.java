@@ -10,7 +10,7 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
 public interface FilteredResource<T> {
-    void render(PoseStack poseStack, int x, int y, int z);
+    void render(PoseStack poseStack, int x, int y);
 
     T getValue();
 

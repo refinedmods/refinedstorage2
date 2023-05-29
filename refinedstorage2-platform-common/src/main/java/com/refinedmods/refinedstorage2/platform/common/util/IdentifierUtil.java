@@ -18,6 +18,10 @@ public final class IdentifierUtil {
         return String.format("%s.%s.%s", category, MOD_ID, value);
     }
 
+    public static MutableComponent createTranslation(final String category, final String value) {
+        return Component.translatable(createTranslationKey(category, value));
+    }
+
     public static MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return Component.translatable(createTranslationKey(category, value), args);
     }

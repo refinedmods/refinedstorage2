@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,6 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 public class ResourceFilterContainer {
     private final FilteredResource<?>[] items;
@@ -60,7 +60,7 @@ public class ResourceFilterContainer {
         if (filteredResource == null) {
             return;
         }
-        final long newAmount = Mth.clamp(
+        final long newAmount = MathHelper.clamp(
             amount,
             1,
             Math.min(maxAmount, filteredResource.getMaxAmount())

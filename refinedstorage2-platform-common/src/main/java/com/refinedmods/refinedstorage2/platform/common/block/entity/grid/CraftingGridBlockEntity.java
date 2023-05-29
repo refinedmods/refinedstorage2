@@ -68,7 +68,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         if (currentRecipe == null) {
             setResult(ItemStack.EMPTY);
         } else {
-            setResult(currentRecipe.assemble(craftingMatrix));
+            setResult(currentRecipe.assemble(craftingMatrix, level.registryAccess()));
         }
     }
 

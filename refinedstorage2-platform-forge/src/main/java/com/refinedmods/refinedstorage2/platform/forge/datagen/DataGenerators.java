@@ -52,7 +52,7 @@ public class DataGenerators {
     }
 
     private static void registerItemModelProviders(final DataGenerator generator,
-                                                    final ExistingFileHelper existingFileHelper) {
+                                                   final ExistingFileHelper existingFileHelper) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
 
         mainPack.addProvider(output -> new ItemModelProvider(output, existingFileHelper));
@@ -76,10 +76,14 @@ public class DataGenerators {
         final ExistingFileHelper existingFileHelper
     ) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
-
-        final BlockTagsProvider blockTagsProvider = mainPack.addProvider(output ->
-            new BlockTagsProvider(output, lookupProvider, existingFileHelper));
-        mainPack.addProvider(output ->
-            new ItemTagGenerator(output, lookupProvider, blockTagsProvider, existingFileHelper));
+        final BlockTagsProvider blockTagsProvider = mainPack.addProvider(
+            output -> new BlockTagsProvider(output, lookupProvider, existingFileHelper)
+        );
+        mainPack.addProvider(output -> new ItemTagGenerator(
+            output,
+            lookupProvider,
+            blockTagsProvider,
+            existingFileHelper
+        ));
     }
 }
