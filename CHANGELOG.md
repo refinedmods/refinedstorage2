@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+-   Ported to Minecraft 1.19.4
 -   Destructor
 -   Fortune Upgrade (I, II and III)
 -   Silk Touch Upgrade

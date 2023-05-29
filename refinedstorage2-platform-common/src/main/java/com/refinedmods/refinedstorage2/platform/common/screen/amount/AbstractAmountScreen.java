@@ -97,7 +97,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         }
         amountField.setVisible(true);
         amountField.setCanLoseFocus(false);
-        amountField.setFocus(true);
+        amountField.setFocused(true);
         amountField.setResponder(value -> {
             final boolean valid = getAndValidateAmount().isPresent();
             if (confirmButton != null) {

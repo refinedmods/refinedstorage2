@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 
 public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
     private final EnchantmentInstance enchantment;
+    private final ItemStack result;
 
     public UpgradeWithEnchantedBookRecipe(final ResourceLocation recipeId,
                                           final Enchantment enchantment,
@@ -44,6 +45,11 @@ public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron()))
         ), result);
         this.enchantment = new EnchantmentInstance(enchantment, enchantmentLevel);
+        this.result = result;
+    }
+
+    public ItemStack getResult() {
+        return result;
     }
 
     @Nullable

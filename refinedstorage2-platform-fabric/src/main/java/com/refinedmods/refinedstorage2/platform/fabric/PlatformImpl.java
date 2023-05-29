@@ -22,7 +22,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.util.FakePlayer;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Optional;
@@ -30,6 +29,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -199,8 +199,8 @@ public final class PlatformImpl extends AbstractPlatform {
     public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
         return Optional.ofNullable(playerId)
             .flatMap(id -> level.getServer().getProfileCache().get(id))
-            .map(profile -> FakePlayer.getOrCreate(level, profile))
-            .orElseGet(() -> FakePlayer.getOrCreate(level));
+            .map(profile -> FakePlayer.get(level, profile))
+            .orElseGet(() -> FakePlayer.get(level));
     }
 
     @Override

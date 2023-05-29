@@ -27,13 +27,12 @@ public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
     public void render(final PoseStack poseStack,
                        final int x,
                        final int y,
-                       final int z,
                        final FluidResource fluidResource) {
         final FluidVariant fluidVariant = getFluidVariantFromCache(fluidResource);
         final TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
         if (sprite != null) {
             final int packedRgb = FluidVariantRendering.getColor(fluidVariant);
-            render(poseStack, x, y, z, packedRgb, sprite);
+            render(poseStack, x, y, packedRgb, sprite);
         }
     }
 

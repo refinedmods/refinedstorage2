@@ -13,8 +13,8 @@ import net.minecraft.network.chat.Component;
 
 public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource<FluidResource> {
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
+    public void render(final PoseStack poseStack, final int x, final int y) {
+        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, value);
     }
 
     @Override

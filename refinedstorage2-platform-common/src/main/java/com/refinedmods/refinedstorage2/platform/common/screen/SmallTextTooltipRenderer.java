@@ -77,12 +77,10 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 2,
             tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         tesselator.end();
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
         final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(
             Tesselator.getInstance().getBuilder()
         );
@@ -106,7 +104,8 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         int tooltipTextY = tooltipY;
         for (final FormattedCharSequence text : lines) {
             if (text != null) {
-                font.drawInBatch(text, tooltipX, tooltipTextY, -1, true, matrix4f, immediate, false, 0, 15728880);
+                font.drawInBatch(text, tooltipX, tooltipTextY, -1, true, matrix4f, immediate, Font.DisplayMode.NORMAL,
+                    0, 15728880);
             }
             tooltipTextY += 12;
         }
@@ -117,7 +116,8 @@ public class SmallTextTooltipRenderer extends GuiComponent {
 
             final float x = tooltipX / smallTextScale;
             final float y = tooltipTextY / smallTextScale;
-            font.drawInBatch(smallLine, x, y, -1, true, poseStack.last().pose(), immediate, false, 0, 15728880);
+            font.drawInBatch(smallLine, x, y, -1, true, poseStack.last().pose(), immediate, Font.DisplayMode.NORMAL, 0,
+                15728880);
 
             poseStack.popPose();
             tooltipTextY += 9;

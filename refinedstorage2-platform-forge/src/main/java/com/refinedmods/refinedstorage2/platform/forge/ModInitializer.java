@@ -878,8 +878,7 @@ public class ModInitializer extends AbstractModInitializer {
             builder -> builder
                 .title(createTranslation("itemGroup", "general"))
                 .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
-                .displayItems((enabledFeatures, entries, operatorEnabled)
-                    -> CreativeModeTabItems.append(entries::accept))
+                .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
                 .build()
         );
     }

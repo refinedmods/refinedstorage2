@@ -95,7 +95,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChange
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
-import com.refinedmods.refinedstorage2.platform.fabric.util.FakePlayer;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Optional;
@@ -107,7 +106,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -195,7 +193,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerRecipeSerializers();
         registerSidedHandlers();
         registerTickHandler();
-        registerFakePlayerEventHandler();
         registerEvents();
 
         LOGGER.info("Refined Storage 2 has loaded.");
@@ -938,7 +935,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         FabricItemGroup.builder(createIdentifier("general"))
             .title(createTranslation("itemGroup", "general"))
             .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
-            .displayItems((enabledFeatures, entries, operatorEnabled) -> CreativeModeTabItems.append(entries::accept))
+            .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
             .build();
     }
 
@@ -1018,9 +1015,5 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerTickHandler() {
         ServerTickEvents.START_SERVER_TICK.register(server -> TickHandler.runQueuedActions());
-    }
-
-    private void registerFakePlayerEventHandler() {
-        ServerWorldEvents.UNLOAD.register((server, world) -> FakePlayer.release(world));
     }
 }

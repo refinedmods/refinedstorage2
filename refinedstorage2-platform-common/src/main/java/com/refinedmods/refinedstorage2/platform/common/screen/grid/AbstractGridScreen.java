@@ -218,7 +218,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
         gridSlotNumber = -1;
 
-        setScissor(x + 7, y + TOP_HEIGHT, 18 * COLUMNS, visibleRows * 18);
+        enableScissor(x + 7, y + TOP_HEIGHT, x + 7 + (18 * COLUMNS), y + TOP_HEIGHT + (visibleRows * 18));
         for (int row = 0; row < Math.max(totalRows, visibleRows); ++row) {
             renderRow(poseStack, mouseX, mouseY, x, y, row);
         }

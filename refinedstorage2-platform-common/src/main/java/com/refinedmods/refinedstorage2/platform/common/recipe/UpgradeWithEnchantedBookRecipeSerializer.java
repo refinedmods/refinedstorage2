@@ -40,7 +40,7 @@ public class UpgradeWithEnchantedBookRecipeSerializer implements RecipeSerialize
 
     @Override
     public void toNetwork(final FriendlyByteBuf buf, final UpgradeWithEnchantedBookRecipe recipe) {
-        buf.writeItem(recipe.getResultItem());
+        buf.writeItem(recipe.getResult());
         buf.writeResourceLocation(Objects.requireNonNull(recipe.getEnchantmentId()));
         buf.writeInt(recipe.getEnchantmentLevel());
     }

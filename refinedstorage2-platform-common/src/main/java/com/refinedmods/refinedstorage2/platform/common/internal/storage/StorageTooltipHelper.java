@@ -36,7 +36,7 @@ public final class StorageTooltipHelper {
             "stored_with_capacity",
             Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.WHITE),
             Component.literal(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.WHITE),
-            Component.literal("" + progress)
+            Component.literal(String.valueOf(progress))
         ).withStyle(ChatFormatting.GRAY));
     }
 }

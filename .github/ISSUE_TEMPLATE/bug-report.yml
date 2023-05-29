@@ -33,9 +33,11 @@ body:
         attributes:
             label: What Minecraft version is this happening on?
             description: |
-                If your Minecraft version isn't listed here, it means that it's no longer supported. In that case, don't create an issue.
+                If your Minecraft version isn't listed here, it means that it isn't supported. In that case, don't create an issue.
             options:
+                - Minecraft 1.19.2
                 - Minecraft 1.19.3
+                - Minecraft 1.19.4
         validations:
             required: true
     -   type: input
