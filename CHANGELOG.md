@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed not firing block break event on Fabric for the Destructor.
+
 ## [2.0.0-milestone.2.10] - 2023-05-29
 
 ### Added

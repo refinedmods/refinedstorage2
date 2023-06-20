@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -205,7 +206,13 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
-        return true;
+        return PlayerBlockBreakEvents.BEFORE.invoker().beforeBlockBreak(
+            level,
+            player,
+            pos,
+            state,
+            level.getBlockEntity(pos)
+        );
     }
 
     @Override
