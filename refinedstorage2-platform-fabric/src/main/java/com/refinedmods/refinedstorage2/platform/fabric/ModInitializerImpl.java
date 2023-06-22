@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
@@ -24,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
@@ -36,6 +38,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.Item
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
@@ -133,6 +136,7 @@ import team.reborn.energy.api.EnergyStorage;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
@@ -179,6 +183,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerAdditionalStorageChannelTypes();
         registerAdditionalFilteredResourceFactories();
         registerDestructorStrategyFactories();
+        registerConstructorStrategyFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -449,6 +454,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
             ))
         ));
+        Blocks.INSTANCE.getConstructor().putAll(color -> register(
+            BuiltInRegistries.BLOCK,
+            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR),
+            new ConstructorBlock(color, Blocks.INSTANCE.getConstructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
+            ))
+        ));
     }
 
     private void registerItems() {
@@ -460,6 +473,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerImporterItems();
         registerExporterItems();
         registerExternalStorageItems();
+        registerConstructorItems();
         registerDestructorItems();
         registerStorageItems();
         registerUpgrades();
@@ -506,9 +520,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             MACHINE_CASING,
             new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
         );
-
-        register(BuiltInRegistries.ITEM, INTERFACE,
-            new SimpleBlockItem(Blocks.INSTANCE.getInterface()));
+        register(
+            BuiltInRegistries.ITEM,
+            INTERFACE,
+            new SimpleBlockItem(Blocks.INSTANCE.getInterface())
+        );
 
         Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
         Items.INSTANCE.setDestructionCore(register(BuiltInRegistries.ITEM, DESTRUCTION_CORE, new SimpleItem()));
@@ -617,6 +633,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExternalStorage().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
+        )));
+    }
+
+    private void registerConstructorItems() {
+        Blocks.INSTANCE.getConstructor().forEach((color, block) -> Items.INSTANCE.addConstructor(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getConstructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
             ))
         )));
     }
@@ -850,6 +877,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 Blocks.INSTANCE.getDetector().toArray()
             ).build()
         ));
+        BlockEntities.INSTANCE.setConstructor(register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            CONSTRUCTOR,
+            FabricBlockEntityTypeBuilder.create(
+                ConstructorBlockEntity::new,
+                Blocks.INSTANCE.getConstructor().toArray()
+            ).build()
+        ));
         BlockEntities.INSTANCE.setDestructor(register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             DESTRUCTOR,
@@ -920,6 +955,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BuiltInRegistries.MENU,
             DESTRUCTOR,
             new ExtendedScreenHandlerType<>(DestructorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setConstructor(register(
+            BuiltInRegistries.MENU,
+            CONSTRUCTOR,
+            new ExtendedScreenHandlerType<>(ConstructorContainerMenu::new)
         ));
     }
 

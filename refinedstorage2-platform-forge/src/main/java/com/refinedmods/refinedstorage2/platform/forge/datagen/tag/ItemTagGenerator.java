@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CABLES;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONSTRUCTORS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONTROLLERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CRAFTING_GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CREATIVE_CONTROLLERS;
@@ -83,6 +84,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(DETECTORS,
             Blocks.INSTANCE.getDetector().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(CONSTRUCTORS,
+            Blocks.INSTANCE.getConstructor().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
         addAllToTag(DESTRUCTORS,

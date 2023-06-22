@@ -10,7 +10,8 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public enum UpgradeDestinations implements UpgradeDestination {
     IMPORTER(createTranslation("block", ContentIds.IMPORTER.getPath())),
     EXPORTER(createTranslation("block", ContentIds.EXPORTER.getPath())),
-    DESTRUCTOR(createTranslation("block", ContentIds.DESTRUCTOR.getPath()));
+    DESTRUCTOR(createTranslation("block", ContentIds.DESTRUCTOR.getPath())),
+    CONSTRUCTOR(createTranslation("block", ContentIds.CONSTRUCTOR.getPath()));
 
     private final Component name;
 

@@ -64,6 +64,6 @@ public class DetectorScreen extends AbstractAmountScreen<DetectorContainerMenu, 
     @Override
     protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
-        graphics.drawString(font, this.playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752, false);
+        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752, false);
     }
 }

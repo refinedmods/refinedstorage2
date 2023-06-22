@@ -176,7 +176,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
 
     @Override
     protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.drawString(font, title, titleLabelX, titleLabelY, 4210752);
+        graphics.drawString(font, title, titleLabelX, titleLabelY, 4210752, false);
     }
 
     @Override

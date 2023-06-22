@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
@@ -83,6 +84,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         setCutout(Blocks.INSTANCE.getController());
         setCutout(Blocks.INSTANCE.getCreativeController());
         setCutout(Blocks.INSTANCE.getDetector());
+        setCutout(Blocks.INSTANCE.getConstructor());
         setCutout(Blocks.INSTANCE.getDestructor());
     }
 
@@ -100,6 +102,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             registerEmissiveGridModels(color);
             registerEmissiveCraftingGridModels(color);
             registerEmissiveDetectorModels(color);
+            registerEmissiveConstructorModels(color);
             registerEmissiveDestructorModels(color);
         }
     }
@@ -161,6 +164,19 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         );
     }
 
+    private void registerEmissiveConstructorModels(final DyeColor color) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/constructor/" + color.getName()),
+            createIdentifier("block/constructor/cutouts/active")
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            Blocks.INSTANCE.getConstructor().getId(color, createIdentifier("constructor")),
+            createIdentifier("block/constructor/cutouts/active")
+        );
+    }
+
     private void registerEmissiveDestructorModels(final DyeColor color) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
@@ -216,6 +232,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
     }
 
     private void registerKeyBindings() {

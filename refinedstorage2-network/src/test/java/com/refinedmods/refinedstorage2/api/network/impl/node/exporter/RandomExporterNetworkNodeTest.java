@@ -19,11 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected TaskExecutor<ExporterNetworkNode.ExporterTaskContext> createTaskExecutor() {
+    protected TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor() {
         return new RandomTaskExecutor<>(list -> {
             list.clear();
-            list.add(sut.new ExporterTask("A"));
-            list.add(sut.new ExporterTask("B"));
+            list.add(sut.new TaskImpl("A"));
+            list.add(sut.new TaskImpl("B"));
         });
     }
 

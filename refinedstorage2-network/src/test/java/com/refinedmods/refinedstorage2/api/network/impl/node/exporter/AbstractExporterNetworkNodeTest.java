@@ -36,7 +36,7 @@ abstract class AbstractExporterNetworkNodeTest {
     @AddNetworkNode(networkId = "nonexistent")
     ExporterNetworkNode sutWithoutNetwork;
 
-    protected abstract TaskExecutor<ExporterNetworkNode.ExporterTaskContext> createTaskExecutor();
+    protected abstract TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor();
 
     @BeforeEach
     void setUp() {

@@ -175,6 +175,24 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
+    public boolean placeBlock(final Level level,
+                              final BlockPos pos,
+                              final Direction direction,
+                              final Player player,
+                              final ItemStack stack) {
+        return ensureLoaded().placeBlock(level, pos, direction, player, stack);
+    }
+
+    @Override
+    public boolean placeFluid(final Level level,
+                              final BlockPos pos,
+                              final Direction direction,
+                              final Player player,
+                              final FluidResource fluidResource) {
+        return ensureLoaded().placeFluid(level, pos, direction, player, fluidResource);
+    }
+
+    @Override
     public ItemStack getBlockAsItemStack(final Block block,
                                          final BlockState state,
                                          final Direction direction,

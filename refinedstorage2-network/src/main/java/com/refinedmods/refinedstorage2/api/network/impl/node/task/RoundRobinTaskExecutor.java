@@ -33,9 +33,8 @@ public class RoundRobinTaskExecutor<C> implements TaskExecutor<C> {
     }
 
     public static class State {
-        private int index;
-
         private final Runnable callback;
+        private int index;
 
         public State(final Runnable callback, final int index) {
             this.index = index;

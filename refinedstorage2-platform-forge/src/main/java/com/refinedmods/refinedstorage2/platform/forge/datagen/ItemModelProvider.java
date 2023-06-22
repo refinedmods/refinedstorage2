@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
@@ -37,6 +38,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerGrids();
         registerCraftingGrids();
         registerDetectors();
+        registerConstructors();
         registerDestructors();
     }
 
@@ -141,6 +143,17 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, block) -> withExistingParent(
             blocks.getId(color, createIdentifier("detector")).getPath(),
             createIdentifier("block/detector/" + color.getName())
+        ));
+    }
+
+    private void registerConstructors() {
+        final ResourceLocation base = createIdentifier("item/constructor/base");
+        final ColorMap<ConstructorBlock> blocks = Blocks.INSTANCE.getConstructor();
+        blocks.forEach((color, block) -> singleTexture(
+            blocks.getId(color, createIdentifier("constructor")).getPath(),
+            base,
+            "cable",
+            createIdentifier("block/cable/" + color.getName())
         ));
     }
 
