@@ -1,10 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.exporter;
 
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -12,14 +10,14 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
@@ -44,13 +42,8 @@ public class ExporterBlockEntity
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExporterBlockEntity.class);
 
-    private static final String TAG_SCHEDULING_MODE = "sm";
-
     private final FilterWithFuzzyMode filter;
-
-    private ExporterSchedulingModeSettings schedulingModeSettings = ExporterSchedulingModeSettings.FIRST_AVAILABLE;
-    @Nullable
-    private ExporterSchedulingMode schedulingMode;
+    private final SchedulingMode<ExporterNetworkNode.ExporterTaskContext> schedulingMode;
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -60,15 +53,13 @@ public class ExporterBlockEntity
             new ExporterNetworkNode(0),
             UpgradeDestinations.EXPORTER
         );
-
         this.filter = FilterWithFuzzyModeBuilder.of()
             .listener(this::setChanged)
             .templatesAcceptor(templates -> getNode().setFilterTemplates(
                 templates.stream().map(TypedTemplate::template).collect(Collectors.toList())
             ))
             .build();
-
-        this.setSchedulingMode(null, schedulingModeSettings);
+        this.schedulingMode = new SchedulingMode<>(this::setChanged, getNode()::setTaskExecutor);
     }
 
     @Override
@@ -99,21 +90,14 @@ public class ExporterBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        if (schedulingMode != null) {
-            tag.putInt(TAG_SCHEDULING_MODE, schedulingModeSettings.getId());
-            schedulingModeSettings.writeToTag(tag, schedulingMode);
-        }
+        schedulingMode.writeToTag(tag);
         filter.save(tag);
     }
 
     @Override
     public void load(final CompoundTag tag) {
-        if (tag.contains(TAG_SCHEDULING_MODE)) {
-            setSchedulingMode(tag, ExporterSchedulingModeSettings.getById(tag.getInt(TAG_SCHEDULING_MODE)));
-        }
-
+        schedulingMode.load(tag);
         filter.load(tag);
-
         super.load(tag);
     }
 
@@ -123,25 +107,12 @@ public class ExporterBlockEntity
         getNode().setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
     }
 
-    public void setSchedulingMode(final ExporterSchedulingModeSettings modeSettings) {
-        setSchedulingMode(null, modeSettings);
-        setChanged();
+    public void setSchedulingModeType(final SchedulingModeType type) {
+        schedulingMode.setType(type);
     }
 
-    private void setSchedulingMode(@Nullable final CompoundTag tag,
-                                   final ExporterSchedulingModeSettings modeSettings) {
-        this.schedulingModeSettings = modeSettings;
-        this.schedulingMode = modeSettings.create(tag, new RandomExporterSchedulingMode.Randomizer() {
-            @Override
-            public <T> void shuffle(final List<T> list) {
-                Collections.shuffle(list, new Random());
-            }
-        }, this::setChanged);
-        getNode().setSchedulingMode(schedulingMode);
-    }
-
-    public ExporterSchedulingModeSettings getSchedulingMode() {
-        return schedulingModeSettings;
+    public SchedulingModeType getSchedulingModeType() {
+        return schedulingMode.getType();
     }
 
     public boolean isFuzzyMode() {

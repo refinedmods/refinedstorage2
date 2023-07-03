@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.node.exporter.strategy;
+package com.refinedmods.refinedstorage2.api.network.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.storage.Actor;

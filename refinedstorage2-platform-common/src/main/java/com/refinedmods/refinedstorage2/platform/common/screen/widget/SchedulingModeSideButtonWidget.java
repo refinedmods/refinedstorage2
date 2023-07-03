@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
 import java.util.ArrayList;
@@ -12,29 +12,29 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 // TODO: Textures!
-public class ExporterSchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final ClientProperty<ExporterSchedulingModeSettings> property;
+public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
+    private final ClientProperty<SchedulingModeType> property;
 
-    public ExporterSchedulingModeSideButtonWidget(final ClientProperty<ExporterSchedulingModeSettings> property) {
+    public SchedulingModeSideButtonWidget(final ClientProperty<SchedulingModeType> property) {
         super(createPressAction(property));
         this.property = property;
     }
 
-    private static OnPress createPressAction(final ClientProperty<ExporterSchedulingModeSettings> property) {
+    private static OnPress createPressAction(final ClientProperty<SchedulingModeType> property) {
         return btn -> property.setValue(toggle(property.getValue()));
     }
 
-    private static ExporterSchedulingModeSettings toggle(final ExporterSchedulingModeSettings modeSettings) {
+    private static SchedulingModeType toggle(final SchedulingModeType modeSettings) {
         return switch (modeSettings) {
-            case FIRST_AVAILABLE -> ExporterSchedulingModeSettings.ROUND_ROBIN;
-            case ROUND_ROBIN -> ExporterSchedulingModeSettings.RANDOM;
-            case RANDOM -> ExporterSchedulingModeSettings.FIRST_AVAILABLE;
+            case DEFAULT -> SchedulingModeType.ROUND_ROBIN;
+            case ROUND_ROBIN -> SchedulingModeType.RANDOM;
+            case RANDOM -> SchedulingModeType.DEFAULT;
         };
     }
 
-    private List<Component> calculateTooltip(final ExporterSchedulingModeSettings modeSettings) {
+    private List<Component> calculateTooltip(final SchedulingModeType modeSettings) {
         final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "exporter.scheduling_mode"));
+        lines.add(createTranslation("gui", "scheduling_mode"));
         lines.add(modeSettings.getName().withStyle(ChatFormatting.GRAY));
         return lines;
     }

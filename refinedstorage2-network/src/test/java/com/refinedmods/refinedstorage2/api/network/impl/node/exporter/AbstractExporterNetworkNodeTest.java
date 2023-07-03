@@ -2,10 +2,8 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.AbstractExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -38,12 +36,12 @@ abstract class AbstractExporterNetworkNodeTest {
     @AddNetworkNode(networkId = "nonexistent")
     ExporterNetworkNode sutWithoutNetwork;
 
-    protected abstract ExporterSchedulingMode createSchedulingMode();
+    protected abstract TaskExecutor<ExporterNetworkNode.ExporterTaskContext> createTaskExecutor();
 
     @BeforeEach
     void setUp() {
         sut.setEnergyUsage(5);
-        sut.setSchedulingMode(createSchedulingMode());
+        sut.setTaskExecutor(createTaskExecutor());
     }
 
     @Test
@@ -100,7 +98,7 @@ abstract class AbstractExporterNetworkNodeTest {
     }
 
     @Test
-    void shouldNotTransferWithoutSchedulingMode(
+    void shouldNotTransferWithoutTaskExecutor(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {
         // Arrange
@@ -112,7 +110,7 @@ abstract class AbstractExporterNetworkNodeTest {
 
         sut.setFilterTemplates(List.of("A", "B"));
         sut.setTransferStrategy(createTransferStrategy(destination, 1));
-        sut.setSchedulingMode(null);
+        sut.setTaskExecutor(null);
 
         // Act
         sut.doWork();
