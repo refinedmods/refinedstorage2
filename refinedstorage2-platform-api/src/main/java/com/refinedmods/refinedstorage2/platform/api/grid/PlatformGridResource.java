@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.apiguardian.api.API;
 
@@ -18,7 +18,7 @@ public interface PlatformGridResource extends GridResource {
     void onScroll(GridScrollMode scrollMode,
                   GridScrollingStrategy scrollingStrategy);
 
-    void render(PoseStack poseStack, int x, int y);
+    void render(GuiGraphics graphics, int x, int y);
 
     String getDisplayedAmount();
 

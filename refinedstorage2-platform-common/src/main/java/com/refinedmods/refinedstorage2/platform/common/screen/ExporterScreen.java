@@ -25,17 +25,10 @@ public class ExporterScreen extends AbstractBaseScreen<ExporterContainerMenu> {
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
         addSideButton(new ExporterSchedulingModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.EXPORTER_SCHEDULING_MODE),
-            this::renderComponentTooltip
+            getMenu().getProperty(PropertyTypes.EXPORTER_SCHEDULING_MODE)
         ));
     }
 

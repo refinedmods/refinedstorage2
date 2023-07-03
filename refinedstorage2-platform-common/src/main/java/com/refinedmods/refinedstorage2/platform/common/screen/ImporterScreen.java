@@ -25,18 +25,9 @@ public class ImporterScreen extends AbstractBaseScreen<ImporterContainerMenu> {
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FilterModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FILTER_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
     }
 
     @Override

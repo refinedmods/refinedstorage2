@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -19,14 +17,11 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ClientProperty<DetectorMode> property;
-    private final TooltipRenderer tooltipRenderer;
     private final Map<DetectorMode, List<Component>> tooltips = new EnumMap<>(DetectorMode.class);
 
-    public DetectorModeSideButtonWidget(final ClientProperty<DetectorMode> property,
-                                        final TooltipRenderer tooltipRenderer) {
+    public DetectorModeSideButtonWidget(final ClientProperty<DetectorMode> property) {
         super(createPressAction(property));
         this.property = property;
-        this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(DetectorMode.values()).forEach(detectorMode ->
             tooltips.put(detectorMode, calculateTooltip(detectorMode)));
     }
@@ -68,7 +63,7 @@ public class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(property.getValue()), mouseX, mouseY);
+    protected List<Component> getSideButtonTooltip() {
+        return tooltips.get(property.getValue());
     }
 }

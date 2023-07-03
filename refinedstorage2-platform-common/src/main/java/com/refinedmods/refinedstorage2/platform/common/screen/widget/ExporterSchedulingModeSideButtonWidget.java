@@ -2,12 +2,10 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -16,13 +14,10 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 // TODO: Textures!
 public class ExporterSchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ClientProperty<ExporterSchedulingModeSettings> property;
-    private final TooltipRenderer tooltipRenderer;
 
-    public ExporterSchedulingModeSideButtonWidget(final ClientProperty<ExporterSchedulingModeSettings> property,
-                                                  final TooltipRenderer tooltipRenderer) {
+    public ExporterSchedulingModeSideButtonWidget(final ClientProperty<ExporterSchedulingModeSettings> property) {
         super(createPressAction(property));
         this.property = property;
-        this.tooltipRenderer = tooltipRenderer;
     }
 
     private static OnPress createPressAction(final ClientProperty<ExporterSchedulingModeSettings> property) {
@@ -55,12 +50,7 @@ public class ExporterSchedulingModeSideButtonWidget extends AbstractSideButtonWi
     }
 
     @Override
-    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(
-            poseStack,
-            calculateTooltip(property.getValue()),
-            mouseX,
-            mouseY
-        );
+    protected List<Component> getSideButtonTooltip() {
+        return calculateTooltip(property.getValue());
     }
 }

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -19,13 +17,10 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     private final Map<RedstoneMode, List<Component>> tooltips = new EnumMap<>(RedstoneMode.class);
-    private final TooltipRenderer tooltipRenderer;
     private final ClientProperty<RedstoneMode> property;
 
-    public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property,
-                                        final TooltipRenderer tooltipRenderer) {
+    public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property) {
         super(createPressAction(property));
-        this.tooltipRenderer = tooltipRenderer;
         this.property = property;
         Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -57,7 +52,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(property.getValue()), mouseX, mouseY);
+    protected List<Component> getSideButtonTooltip() {
+        return tooltips.get(property.getValue());
     }
 }

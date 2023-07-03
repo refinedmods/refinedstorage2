@@ -6,9 +6,9 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -175,8 +175,8 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     @Override
-    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        font.draw(poseStack, title, titleLabelX, titleLabelY, 4210752);
+    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        graphics.drawString(font, title, titleLabelX, titleLabelY, 4210752);
     }
 
     @Override
