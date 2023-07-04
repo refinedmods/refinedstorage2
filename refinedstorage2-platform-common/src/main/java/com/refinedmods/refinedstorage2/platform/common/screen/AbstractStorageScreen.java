@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneMod
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -41,7 +41,6 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             16,
             70,
             menu::getProgress,
-            this::renderComponentTooltip,
             this::createTooltip
         );
         addRenderableWidget(progressWidget);
@@ -51,27 +50,14 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
     protected void init() {
         super.init();
 
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FilterModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FILTER_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new AccessModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.ACCESS_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(PropertyTypes.ACCESS_MODE)));
         addSideButton(new PrioritySideButtonWidget(
             getMenu().getProperty(PropertyTypes.PRIORITY),
             playerInventory,
-            this,
-            this::renderComponentTooltip
+            this
         ));
     }
 
@@ -95,8 +81,8 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
     }
 
     @Override
-    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        super.renderLabels(poseStack, mouseX, mouseY);
-        progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
+    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
+        progressWidget.render(graphics, mouseX - leftPos, mouseY - topPos, 0);
     }
 }

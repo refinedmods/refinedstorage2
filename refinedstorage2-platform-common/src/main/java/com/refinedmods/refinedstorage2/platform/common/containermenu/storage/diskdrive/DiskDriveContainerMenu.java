@@ -38,7 +38,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     public DiskDriveContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDiskDrive(), syncId);
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(PlatformApi.INSTANCE.getStorageRepository(
-            playerInventory.player.getLevel()
+            playerInventory.player.level()
         ));
         addSlots(
             playerInventory.player,

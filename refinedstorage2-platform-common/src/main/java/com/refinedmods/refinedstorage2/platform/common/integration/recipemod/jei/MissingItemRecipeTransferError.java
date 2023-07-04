@@ -9,6 +9,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -38,19 +39,20 @@ public class MissingItemRecipeTransferError implements IRecipeTransferError {
     }
 
     @Override
-    public void showError(final PoseStack poseStack,
+    public void showError(final GuiGraphics graphics,
                           final int mouseX,
                           final int mouseY,
                           final IRecipeSlotsView recipeSlotsView,
                           final int recipeX,
                           final int recipeY) {
+        final PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.translate(recipeX, recipeY, 0);
-        slotsWithMissingItems.forEach(slot -> slot.drawHighlight(poseStack, COLOR.getRGB()));
+        slotsWithMissingItems.forEach(slot -> slot.drawHighlight(graphics, COLOR.getRGB()));
         poseStack.popPose();
         final Screen screen = Minecraft.getInstance().screen;
         if (screen != null) {
-            screen.renderTooltip(poseStack, MISSING_MESSAGE, mouseX, mouseY);
+            graphics.renderTooltip(Minecraft.getInstance().font, MISSING_MESSAGE, mouseX, mouseY);
         }
     }
 }

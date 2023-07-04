@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -50,37 +49,29 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     protected abstract ResourceLocation getTexture();
 
     @Override
-    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        prepareBackgroundShader(getTexture());
-
+    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
 
-        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
+        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
 
-        renderResourceFilterSlots(poseStack);
-    }
-
-    protected static void prepareBackgroundShader(final ResourceLocation texture) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, texture);
+        renderResourceFilterSlots(graphics);
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
-        renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, delta);
-        renderTooltip(poseStack, mouseX, mouseY);
+    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float delta) {
+        renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, delta);
+        renderTooltip(graphics, mouseX, mouseY);
     }
 
-    protected final void renderResourceFilterSlots(final PoseStack poseStack) {
+    protected final void renderResourceFilterSlots(final GuiGraphics graphics) {
         for (final Slot slot : menu.slots) {
-            tryRenderResourceFilterSlot(poseStack, slot);
+            tryRenderResourceFilterSlot(graphics, slot);
         }
     }
 
-    private void tryRenderResourceFilterSlot(final PoseStack poseStack, final Slot slot) {
+    private void tryRenderResourceFilterSlot(final GuiGraphics graphics, final Slot slot) {
         if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
             return;
         }
@@ -89,7 +80,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             return;
         }
         renderResourceFilterSlot(
-            poseStack,
+            graphics,
             leftPos + slot.x,
             topPos + slot.y,
             filteredResource,
@@ -97,23 +88,23 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         );
     }
 
-    private void renderResourceFilterSlot(final PoseStack poseStack,
+    private void renderResourceFilterSlot(final GuiGraphics graphics,
                                           final int x,
                                           final int y,
                                           final FilteredResource<?> filteredResource,
                                           final boolean supportsAmount) {
-        filteredResource.render(poseStack, x, y);
+        filteredResource.render(graphics, x, y);
         if (supportsAmount) {
-            renderResourceFilterSlotAmount(poseStack, x, y, filteredResource);
+            renderResourceFilterSlotAmount(graphics, x, y, filteredResource);
         }
     }
 
-    protected void renderResourceFilterSlotAmount(final PoseStack poseStack,
+    protected void renderResourceFilterSlotAmount(final GuiGraphics graphics,
                                                   final int x,
                                                   final int y,
                                                   final FilteredResource<?> filteredResource) {
         renderAmount(
-            poseStack,
+            graphics,
             x,
             y,
             filteredResource.getDisplayedAmount(),
@@ -122,19 +113,20 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         );
     }
 
-    protected void renderAmount(final PoseStack poseStack,
+    protected void renderAmount(final GuiGraphics graphics,
                                 final int x,
                                 final int y,
                                 final String amount,
                                 final int color,
                                 final boolean large) {
+        final PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         // Large amounts overlap with the slot lines (see Minecraft behavior)
         poseStack.translate(x + (large ? 1D : 0D), y + (large ? 1D : 0D), 300D);
         if (!large) {
             poseStack.scale(0.5F, 0.5F, 1);
         }
-        font.drawShadow(poseStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
+        graphics.drawString(font, amount, (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color, true);
         poseStack.popPose();
     }
 
@@ -148,19 +140,19 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Override
-    protected void renderTooltip(final PoseStack poseStack, final int x, final int y) {
+    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
         if (menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
             final List<Component> lines = resourceFilterSlot.getTooltip();
             if (!lines.isEmpty()) {
-                renderComponentTooltip(poseStack, lines, x, y);
+                graphics.renderComponentTooltip(font, lines, x, y);
             }
         } else if (menu.getCarried().isEmpty()
             && hoveredSlot instanceof UpgradeSlot upgradeSlot
             && !hoveredSlot.hasItem()) {
             final List<Component> lines = getUpgradeSlotTooltip(upgradeSlot);
-            renderComponentTooltip(poseStack, lines, x, y);
+            graphics.renderComponentTooltip(font, lines, x, y);
         } else {
-            super.renderTooltip(poseStack, x, y);
+            super.renderTooltip(graphics, x, y);
         }
     }
 

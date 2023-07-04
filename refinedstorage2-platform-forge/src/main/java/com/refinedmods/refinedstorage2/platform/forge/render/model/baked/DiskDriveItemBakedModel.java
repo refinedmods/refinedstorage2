@@ -85,7 +85,7 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     public BakedModel applyTransform(final ItemDisplayContext cameraTransformType,
                                      final PoseStack poseStack,
                                      final boolean applyLeftHandTransform) {
-        baseModel.getTransforms().getTransform(cameraTransformType).apply(applyLeftHandTransform, poseStack);
+        baseModel.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
         return this;
     }
 }

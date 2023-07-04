@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -73,7 +73,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
     }
 
     @Override
-    protected void renderResourceFilterSlotAmount(final PoseStack poseStack,
+    protected void renderResourceFilterSlotAmount(final GuiGraphics graphics,
                                                   final int x,
                                                   final int y,
                                                   final FilteredResource<?> filteredResource) {

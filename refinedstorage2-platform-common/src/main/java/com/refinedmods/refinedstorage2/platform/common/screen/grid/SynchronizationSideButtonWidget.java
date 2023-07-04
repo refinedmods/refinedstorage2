@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,15 +17,12 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
     private final AbstractGridContainerMenu menu;
-    private final TooltipRenderer tooltipRenderer;
     private final Map<GridSynchronizer, List<Component>> tooltips = new HashMap<>();
 
     public SynchronizationSideButtonWidget(final AbstractGridContainerMenu menu,
-                                           final TooltipRenderer tooltipRenderer,
                                            final List<GridSynchronizer> synchronizers) {
         super(createPressAction(menu));
         this.menu = menu;
-        this.tooltipRenderer = tooltipRenderer;
         synchronizers.forEach(synchronizer -> tooltips.put(synchronizer, calculateTooltip(synchronizer)));
     }
 
@@ -58,7 +53,7 @@ public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(menu.getSynchronizer()), mouseX, mouseY);
+    protected List<Component> getSideButtonTooltip() {
+        return tooltips.get(menu.getSynchronizer());
     }
 }

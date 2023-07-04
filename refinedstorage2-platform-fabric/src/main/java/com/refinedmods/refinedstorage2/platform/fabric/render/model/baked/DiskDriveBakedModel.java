@@ -65,7 +65,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     public void emitItemQuads(final ItemStack stack,
                               final Supplier<RandomSource> randomSupplier,
                               final RenderContext context) {
-        context.bakedModelConsumer().accept(wrapped);
+        wrapped.emitItemQuads(stack, randomSupplier, context);
         final CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
             return;
@@ -75,7 +75,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            context.bakedModelConsumer().accept(diskInactiveModel);
+            diskInactiveModel.emitItemQuads(stack, randomSupplier, context);
             context.popTransform();
         }
     }
@@ -102,20 +102,25 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
             final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
             if (renderAttachment instanceof MultiStorageState states) {
-                emitDiskQuads(context, states);
+                emitDiskQuads(blockView, state, pos, randomSupplier, context, states);
             }
         }
 
         context.popTransform();
     }
 
-    private void emitDiskQuads(final RenderContext context, final MultiStorageState states) {
+    private void emitDiskQuads(final BlockAndTintGetter blockView,
+                               final BlockState state,
+                               final BlockPos pos,
+                               final Supplier<RandomSource> randomSupplier,
+                               final RenderContext context,
+                               final MultiStorageState states) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
             if (states.getState(i) == MultiStorageStorageState.NONE) {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            context.bakedModelConsumer().accept(diskModel);
+            diskModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
             context.popTransform();
         }
     }

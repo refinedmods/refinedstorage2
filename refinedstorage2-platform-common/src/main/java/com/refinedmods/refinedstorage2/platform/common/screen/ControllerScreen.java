@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneMod
 import java.util.Collections;
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,7 +35,6 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
             16,
             70,
             this::getPercentageFull,
-            this::renderComponentTooltip,
             this::createTooltip
         );
         addRenderableWidget(progressWidget);
@@ -44,10 +43,7 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
     }
 
     @Override
@@ -70,8 +66,8 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     }
 
     @Override
-    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        super.renderLabels(poseStack, mouseX, mouseY);
-        progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
+    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
+        progressWidget.render(graphics, mouseX - leftPos, mouseY - topPos, 0);
     }
 }

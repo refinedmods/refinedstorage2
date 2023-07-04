@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -52,24 +52,24 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
     }
 
     @Override
-    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(poseStack, delta, mouseX, mouseY);
+    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
+        super.renderBg(graphics, delta, mouseX, mouseY);
         if (filteringBasedOnCraftingMatrixItems) {
-            renderCraftingMatrixFilteringHighlights(poseStack);
+            renderCraftingMatrixFilteringHighlights(graphics);
         }
     }
 
-    private void renderCraftingMatrixFilteringHighlights(final PoseStack poseStack) {
+    private void renderCraftingMatrixFilteringHighlights(final GuiGraphics graphics) {
         for (final Slot slot : getMenu().getCraftingMatrixSlots()) {
             if (!slot.hasItem()) {
                 continue;
             }
-            renderCraftingMatrixFilteringHighlight(poseStack, slot);
+            renderCraftingMatrixFilteringHighlight(graphics, slot);
         }
     }
 
-    private void renderCraftingMatrixFilteringHighlight(final PoseStack poseStack, final Slot slot) {
-        blit(poseStack, leftPos + slot.x - 1, topPos + slot.y - 1, 224, 238, 18, 18);
+    private void renderCraftingMatrixFilteringHighlight(final GuiGraphics graphics, final Slot slot) {
+        graphics.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 224, 238, 18, 18);
     }
 
     @Override

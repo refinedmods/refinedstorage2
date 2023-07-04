@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingMatrix;
 
+import java.util.List;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.RecipeHolder;
@@ -22,7 +24,7 @@ public class CraftingGridResultSlot extends ResultSlot {
     }
 
     public ItemStack onQuickCraft(final Player player) {
-        if (!hasItem() || player.level.isClientSide()) {
+        if (!hasItem() || player.level().isClientSide()) {
             return ItemStack.EMPTY;
         }
         final ItemStack singleResultStack = getItem().copy();
@@ -39,7 +41,7 @@ public class CraftingGridResultSlot extends ResultSlot {
 
     @Override
     public void onTake(final Player player, final ItemStack stack) {
-        if (player.level.isClientSide()) {
+        if (player.level().isClientSide()) {
             return;
         }
         try (CraftingGridRefillContext refillContext = source.openRefillContext()) {
@@ -93,10 +95,10 @@ public class CraftingGridResultSlot extends ResultSlot {
 
     private void fireCraftingEvents(final Player player, final ItemStack crafted) {
         // reimplementation of checkTakeAchievements
-        crafted.onCraftedBy(player.level, player, crafted.getCount());
+        crafted.onCraftedBy(player.level(), player, crafted.getCount());
         Platform.INSTANCE.onItemCrafted(player, crafted, source.getCraftingMatrix());
         if (container instanceof RecipeHolder recipeHolder) {
-            recipeHolder.awardUsedRecipes(player);
+            recipeHolder.awardUsedRecipes(player, List.of(crafted));
         }
     }
 }

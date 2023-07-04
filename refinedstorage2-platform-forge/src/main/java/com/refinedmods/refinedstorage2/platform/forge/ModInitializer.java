@@ -97,6 +97,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -114,7 +115,6 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -211,7 +211,6 @@ public class ModInitializer extends AbstractModInitializer {
         });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterCreativeModeTab);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
     }
@@ -869,18 +868,17 @@ public class ModInitializer extends AbstractModInitializer {
             );
             LootFunctions.INSTANCE.setStorageBlock(() -> storageBlockLootItemFunction);
         });
-    }
 
-    @SubscribeEvent
-    public void onRegisterCreativeModeTab(final CreativeModeTabEvent.Register e) {
-        e.registerCreativeModeTab(
-            createIdentifier("general"),
-            builder -> builder
-                .title(createTranslation("itemGroup", "general"))
-                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
-                .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
-                .build()
-        );
+        e.register(Registries.CREATIVE_MODE_TAB, helper -> {
+            helper.register(
+                createIdentifier("general"),
+                CreativeModeTab.builder()
+                    .title(createTranslation("itemGroup", "general"))
+                    .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
+                    .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
+                    .build()
+            );
+        });
     }
 
     @SubscribeEvent

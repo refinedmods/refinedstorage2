@@ -19,7 +19,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.CollectionUtils;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
 public class CraftingGridTransferHandler implements TransferHandler {
@@ -97,24 +97,24 @@ public class CraftingGridTransferHandler implements TransferHandler {
     }
 
     private TransferHandlerRenderer createMissingItemsRenderer(final MissingIngredients missingIngredients) {
-        return (matrices, mouseX, mouseY, delta, widgets, bounds, display) -> {
+        return (graphics, mouseX, mouseY, delta, widgets, bounds, display) -> {
             int index = 0;
             for (final Widget widget : widgets) {
                 if (widget instanceof Slot slot
                     && slot.getNoticeMark() == Slot.INPUT
                     && missingIngredients.isMissing(index++)) {
-                    renderMissingItemOverlay(matrices, slot);
+                    renderMissingItemOverlay(graphics, slot);
                 }
             }
         };
     }
 
-    private void renderMissingItemOverlay(final PoseStack poseStack, final Slot slot) {
+    private void renderMissingItemOverlay(final GuiGraphics graphics, final Slot slot) {
+        final PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.translate(0, 0, 400);
         final Rectangle innerBounds = slot.getInnerBounds();
-        GuiComponent.fill(
-            poseStack,
+        graphics.fill(
             innerBounds.x,
             innerBounds.y,
             innerBounds.getMaxX(),

@@ -29,7 +29,7 @@ public class EmissiveBakedModel extends ForwardingBakedModel {
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context) {
         context.pushTransform(transform);
-        context.bakedModelConsumer().accept(wrapped);
+        wrapped.emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
 
     }
@@ -39,7 +39,7 @@ public class EmissiveBakedModel extends ForwardingBakedModel {
                               final Supplier<RandomSource> randomSupplier,
                               final RenderContext context) {
         context.pushTransform(transform);
-        context.bakedModelConsumer().accept(wrapped);
+        wrapped.emitItemQuads(stack, randomSupplier, context);
         context.popTransform();
     }
 

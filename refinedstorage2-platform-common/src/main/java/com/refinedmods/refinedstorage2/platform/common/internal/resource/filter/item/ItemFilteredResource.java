@@ -10,15 +10,16 @@ import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 import java.util.Collections;
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 
 public record ItemFilteredResource(ItemResource value, long amount) implements FilteredResource<ItemResource> {
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y) {
-        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(poseStack, value.toItemStack(), x, y);
+    public void render(final GuiGraphics graphics, final int x, final int y) {
+        graphics.renderItem(value.toItemStack(), x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, value.toItemStack(), x, y);
     }
 
     @Override

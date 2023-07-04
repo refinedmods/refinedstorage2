@@ -1,10 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -45,20 +43,16 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
+    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-
         final int enabledU = clicked ? 220 : 232;
         final int u = enabled ? enabledU : 244;
 
-        blit(
-            poseStack,
+        graphics.blit(
+            TEXTURE,
             getX(),
             getY() + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)),
             u,
