@@ -29,8 +29,8 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -111,17 +111,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addWidget(scrollbar);
         addWidget(searchField);
 
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new SortingDirectionSideButtonWidget(getMenu()));
+        addSideButton(new SortingTypeSideButtonWidget(getMenu()));
+        addSideButton(new SizeSideButtonWidget(getMenu()));
+        addSideButton(new AutoSelectedSideButtonWidget(getMenu()));
         addSideButton(new StorageChannelTypeSideButtonWidget(
             getMenu(),
-            this::renderComponentTooltip,
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
         ));
 
@@ -129,7 +125,6 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (!registry.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(
                 getMenu(),
-                this::renderComponentTooltip,
                 registry.getAll()
             ));
             searchField.addListener(this::trySynchronizeFromGrid);
@@ -196,13 +191,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        prepareBackgroundShader(getTexture());
-
+    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
 
-        blit(poseStack, x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
+        graphics.blit(getTexture(), x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
 
         for (int row = 0; row < visibleRows; ++row) {
             int textureY = 37;
@@ -211,25 +204,25 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             } else if (row == visibleRows - 1) {
                 textureY = 55;
             }
-            blit(poseStack, x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
+            graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
         }
 
-        blit(poseStack, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, bottomHeight);
+        graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, bottomHeight);
 
         gridSlotNumber = -1;
 
-        enableScissor(x + 7, y + TOP_HEIGHT, x + 7 + (18 * COLUMNS), y + TOP_HEIGHT + (visibleRows * 18));
+        graphics.enableScissor(x + 7, y + TOP_HEIGHT, x + 7 + (18 * COLUMNS), y + TOP_HEIGHT + (visibleRows * 18));
         for (int row = 0; row < Math.max(totalRows, visibleRows); ++row) {
-            renderRow(poseStack, mouseX, mouseY, x, y, row);
+            renderRow(graphics, mouseX, mouseY, x, y, row);
         }
-        disableScissor();
+        graphics.disableScissor();
 
         if (gridSlotNumber != -1 && isOverStorageArea(mouseX, mouseY)) {
-            renderTooltipWithMaybeSmallLines(poseStack, mouseX, mouseY);
+            renderTooltipWithMaybeSmallLines(graphics, mouseX, mouseY);
         }
     }
 
-    private void renderRow(final PoseStack poseStack,
+    private void renderRow(final GuiGraphics graphics,
                            final int mouseX,
                            final int mouseY,
                            final int x,
@@ -243,12 +236,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             return;
         }
 
-        prepareBackgroundShader(getTexture());
-
-        blit(poseStack, rowX, rowY, 0, 238, 162, 18);
+        graphics.blit(getTexture(), rowX, rowY, 0, 238, 162, 18);
 
         for (int column = 0; column < COLUMNS; ++column) {
-            renderColumnInRow(poseStack, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
+            renderColumnInRow(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
         }
     }
 
@@ -263,7 +254,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return scrollbarOffset;
     }
 
-    private void renderColumnInRow(final PoseStack poseStack,
+    private void renderColumnInRow(final GuiGraphics graphics,
                                    final int mouseX,
                                    final int mouseY,
                                    final int rowX,
@@ -278,7 +269,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         GridResource resource = null;
         if (idx < view.getViewList().size()) {
             resource = view.getViewList().get(idx);
-            renderResourceWithAmount(poseStack, slotX, slotY, resource);
+            renderResourceWithAmount(graphics, slotX, slotY, resource);
         }
 
         final boolean inBounds = mouseX >= slotX
@@ -287,26 +278,26 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             && mouseY <= slotY + 16;
 
         if (!getMenu().isActive()) {
-            renderDisabledSlot(poseStack, slotX, slotY);
+            renderDisabledSlot(graphics, slotX, slotY);
         } else if (inBounds && isOverStorageArea(mouseX, mouseY)) {
-            renderSelection(poseStack, slotX, slotY);
+            renderSelection(graphics, slotX, slotY);
             if (resource != null) {
                 gridSlotNumber = idx;
             }
         }
     }
 
-    private void renderResourceWithAmount(final PoseStack poseStack,
+    private void renderResourceWithAmount(final GuiGraphics graphics,
                                           final int slotX,
                                           final int slotY,
                                           final GridResource resource) {
         if (resource instanceof PlatformGridResource platformResource) {
-            platformResource.render(poseStack, slotX, slotY);
+            platformResource.render(graphics, slotX, slotY);
         }
-        renderAmount(poseStack, slotX, slotY, resource);
+        renderAmount(graphics, slotX, slotY, resource);
     }
 
-    private void renderAmount(final PoseStack poseStack,
+    private void renderAmount(final GuiGraphics graphics,
                               final int slotX,
                               final int slotY,
                               final GridResource resource) {
@@ -319,26 +310,32 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
         final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
-        renderAmount(poseStack, slotX, slotY, text, color, large);
+        renderAmount(graphics, slotX, slotY, text, color, large);
     }
 
-    private void renderDisabledSlot(final PoseStack poseStack, final int slotX, final int slotY) {
+    private void renderDisabledSlot(final GuiGraphics graphics, final int slotX, final int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
+        graphics.fillGradient(slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
     }
 
-    private void renderSelection(final PoseStack poseStack, final int slotX, final int slotY) {
+    private void renderSelection(final GuiGraphics graphics, final int slotX, final int slotY) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 200);
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
+        graphics.fillGradient(slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
+        graphics.pose().popPose();
     }
 
-    private void renderTooltipWithMaybeSmallLines(final PoseStack poseStack, final int mouseX, final int mouseY) {
+    private void renderTooltipWithMaybeSmallLines(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 1100);
+
         final GridView view = getMenu().getView();
         final GridResource resource = view.getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformResource)) {
@@ -351,7 +348,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             .toList();
 
         if (!Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
-            renderTooltip(poseStack, lines, mouseX, mouseY);
+            graphics.renderTooltip(font, lines, mouseX, mouseY);
         } else {
             final List<FormattedCharSequence> smallLines = new ArrayList<>();
 
@@ -366,7 +363,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             SmallTextTooltipRenderer.INSTANCE.render(
                 minecraft,
                 font,
-                poseStack,
+                graphics,
                 lines,
                 smallLines,
                 mouseX,
@@ -375,6 +372,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                 height
             );
         }
+        graphics.pose().popPose();
     }
 
     private MutableComponent getLastModifiedText(final TrackedResource trackedResource) {
@@ -411,13 +409,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
         if (scrollbar != null) {
-            scrollbar.render(poseStack, mouseX, mouseY, partialTicks);
+            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
         }
         if (searchField != null) {
-            searchField.render(poseStack, 0, 0, 0);
+            searchField.render(graphics, 0, 0, 0);
         }
     }
 

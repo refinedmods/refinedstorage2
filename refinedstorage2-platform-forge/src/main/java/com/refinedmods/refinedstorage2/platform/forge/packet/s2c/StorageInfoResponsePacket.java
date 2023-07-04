@@ -39,7 +39,7 @@ public class StorageInfoResponsePacket {
 
     private static void handle(final Player player, final StorageInfoResponsePacket packet) {
         final ClientStorageRepository storageRepository =
-            (ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(player.level);
+            (ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(player.level());
         storageRepository.setInfo(packet.id, packet.stored, packet.capacity);
     }
 }

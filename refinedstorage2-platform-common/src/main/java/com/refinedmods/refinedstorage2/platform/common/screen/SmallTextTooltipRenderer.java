@@ -3,21 +3,13 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Matrix4f;
 
-public class SmallTextTooltipRenderer extends GuiComponent {
+public class SmallTextTooltipRenderer {
     public static final SmallTextTooltipRenderer INSTANCE = new SmallTextTooltipRenderer();
 
     private SmallTextTooltipRenderer() {
@@ -25,7 +17,7 @@ public class SmallTextTooltipRenderer extends GuiComponent {
 
     public void render(@Nullable final Minecraft minecraft,
                        final Font font,
-                       final PoseStack poseStack,
+                       final GuiGraphics graphics,
                        final List<? extends FormattedCharSequence> lines,
                        final List<? extends FormattedCharSequence> smallLines,
                        final int x,
@@ -40,11 +32,11 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         final int tooltipHeight = calculateHeight(lines, smallLines);
         final int tooltipX = calculateTooltipX(x, screenWidth, tooltipWidth);
         final int tooltipY = calculateTooltipY(y, screenHeight, tooltipHeight);
-        render(font, poseStack, lines, smallLines, smallTextScale, tooltipWidth, tooltipHeight, tooltipX, tooltipY);
+        render(font, graphics, lines, smallLines, smallTextScale, tooltipWidth, tooltipHeight, tooltipX, tooltipY);
     }
 
     private void render(final Font font,
-                        final PoseStack poseStack,
+                        final GuiGraphics graphics,
                         final List<? extends FormattedCharSequence> lines,
                         final List<? extends FormattedCharSequence> smallLines,
                         final float smallTextScale,
@@ -52,72 +44,54 @@ public class SmallTextTooltipRenderer extends GuiComponent {
                         final int tooltipHeight,
                         final int tooltipX,
                         final int tooltipY) {
+        final PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
-        final Tesselator tesselator = Tesselator.getInstance();
-        final BufferBuilder bufferBuilder = tesselator.getBuilder();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        final Matrix4f matrix4f = poseStack.last().pose();
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4,
+        graphics.fillGradient(tooltipX - 3, tooltipY - 4,
             tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3,
+        graphics.fillGradient(tooltipX - 3, tooltipY + tooltipHeight + 3,
             tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
+        graphics.fillGradient(tooltipX - 3, tooltipY - 3,
             tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 4, tooltipY - 3,
+        graphics.fillGradient(tooltipX - 4, tooltipY - 3,
             tooltipX - 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 3, tooltipY - 3,
+        graphics.fillGradient(tooltipX + tooltipWidth + 3, tooltipY - 3,
             tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3 + 1,
+        graphics.fillGradient(tooltipX - 3, tooltipY - 3 + 1,
             tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 2, tooltipY - 3 + 1,
+        graphics.fillGradient(tooltipX + tooltipWidth + 2, tooltipY - 3 + 1,
             tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
+        graphics.fillGradient(tooltipX - 3, tooltipY - 3,
             tooltipX + tooltipWidth + 3, tooltipY - 3 + 1, 400, 1347420415, 1347420415);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 2,
+        graphics.fillGradient(tooltipX - 3, tooltipY + tooltipHeight + 2,
             tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
-        RenderSystem.enableDepthTest();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        tesselator.end();
-        RenderSystem.disableBlend();
-        final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(
-            Tesselator.getInstance().getBuilder()
-        );
-        poseStack.translate(0.0D, 0.0D, 400.0D);
-
-        renderText(font, poseStack, lines, smallLines, smallTextScale, tooltipX, tooltipY, matrix4f, immediate);
-
-        immediate.endBatch();
         poseStack.popPose();
+        poseStack.translate(0.0D, 0.0D, 400.0D);
+        renderText(font, graphics, lines, smallLines, smallTextScale, tooltipX, tooltipY);
     }
 
     private void renderText(final Font font,
-                            final PoseStack poseStack,
+                            final GuiGraphics graphics,
                             final List<? extends FormattedCharSequence> lines,
                             final List<? extends FormattedCharSequence> smallLines,
                             final float smallTextScale,
                             final int tooltipX,
-                            final int tooltipY,
-                            final Matrix4f matrix4f,
-                            final MultiBufferSource.BufferSource immediate) {
+                            final int tooltipY) {
         int tooltipTextY = tooltipY;
         for (final FormattedCharSequence text : lines) {
             if (text != null) {
-                font.drawInBatch(text, tooltipX, tooltipTextY, -1, true, matrix4f, immediate, Font.DisplayMode.NORMAL,
-                    0, 15728880);
+                graphics.drawString(font, text, tooltipX, tooltipTextY, 15728880);
             }
             tooltipTextY += 12;
         }
 
+        final PoseStack poseStack = graphics.pose();
         for (final FormattedCharSequence smallLine : smallLines) {
             poseStack.pushPose();
             poseStack.scale(smallTextScale, smallTextScale, 1);
 
-            final float x = tooltipX / smallTextScale;
-            final float y = tooltipTextY / smallTextScale;
-            font.drawInBatch(smallLine, x, y, -1, true, poseStack.last().pose(), immediate, Font.DisplayMode.NORMAL, 0,
-                15728880);
+            final int x = (int) (tooltipX / smallTextScale);
+            final int y = (int) (tooltipTextY / smallTextScale);
+            graphics.drawString(font, smallLine, x, y, 15728880);
 
             poseStack.popPose();
             tooltipTextY += 9;

@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 
-public class CraftingMatrix extends CraftingContainer {
+public class CraftingMatrix extends TransientCraftingContainer {
     @Nullable
     private final Runnable listener;
 

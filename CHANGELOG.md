@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.11] - 2023-07-04
+
+### Added
+
+-   Ported to Minecraft 1.20.1.
+
+### Fixed
+
+-   Fixed not firing block break event on Fabric for the Destructor.
+
 ## [2.0.0-milestone.2.10] - 2023-05-29
 
 ### Added
@@ -371,7 +381,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...HEAD
+
+[2.0.0-milestone.2.11]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...v2.0.0-milestone.2.11
 
 [2.0.0-milestone.2.10]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.9...v2.0.0-milestone.2.10
 

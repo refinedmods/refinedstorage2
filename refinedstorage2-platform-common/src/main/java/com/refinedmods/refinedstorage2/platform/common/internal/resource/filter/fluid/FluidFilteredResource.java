@@ -8,13 +8,13 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource<FluidResource> {
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y) {
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, value);
+    public void render(final GuiGraphics graphics, final int x, final int y) {
+        Platform.INSTANCE.getFluidRenderer().render(graphics.pose(), x, y, value);
     }
 
     @Override

@@ -107,7 +107,6 @@ import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -121,6 +120,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -187,7 +187,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerExporterTransferStrategyFactories();
         registerExternalStorageProviderFactories();
         registerContent();
-        registerCreativeModeTab();
         registerPackets();
         registerSounds();
         registerRecipeSerializers();
@@ -299,6 +298,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerContent() {
         registerBlocks();
         registerItems();
+        registerCreativeModeTab();
         registerBlockEntities();
         registerMenus();
         registerLootFunctions();
@@ -932,11 +932,15 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerCreativeModeTab() {
-        FabricItemGroup.builder(createIdentifier("general"))
-            .title(createTranslation("itemGroup", "general"))
-            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
-            .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
-            .build();
+        Registry.register(
+            BuiltInRegistries.CREATIVE_MODE_TAB,
+            createIdentifier("general"),
+            CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+                .title(createTranslation("itemGroup", "general"))
+                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
+                .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
+                .build()
+        );
     }
 
     private void registerPackets() {

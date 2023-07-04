@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
 public interface FilteredResource<T> {
-    void render(PoseStack poseStack, int x, int y);
+    void render(GuiGraphics graphics, int x, int y);
 
     T getValue();
 

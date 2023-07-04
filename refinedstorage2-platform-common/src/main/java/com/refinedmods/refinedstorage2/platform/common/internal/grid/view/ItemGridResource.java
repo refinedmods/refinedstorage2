@@ -14,10 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -76,11 +75,10 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y) {
-        final ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+    public void render(final GuiGraphics graphics, final int x, final int y) {
         final Font font = Minecraft.getInstance().font;
-        itemRenderer.renderGuiItem(poseStack, itemStack, x, y);
-        itemRenderer.renderGuiItemDecorations(poseStack, font, itemStack, x, y, null);
+        graphics.renderItem(itemStack, x, y);
+        graphics.renderItemDecorations(font, itemStack, x, y, null);
     }
 
     @Override

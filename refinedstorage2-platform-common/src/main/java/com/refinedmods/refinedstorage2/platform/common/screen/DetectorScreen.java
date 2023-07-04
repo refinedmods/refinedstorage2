@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.amount.DoubleAmoun
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.DetectorModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -47,14 +47,8 @@ public class DetectorScreen extends AbstractAmountScreen<DetectorContainerMenu, 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FuzzyModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new DetectorModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.DETECTOR_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new DetectorModeSideButtonWidget(getMenu().getProperty(PropertyTypes.DETECTOR_MODE)));
     }
 
     @Override
@@ -68,8 +62,8 @@ public class DetectorScreen extends AbstractAmountScreen<DetectorContainerMenu, 
     }
 
     @Override
-    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        super.renderLabels(poseStack, mouseX, mouseY);
-        font.draw(poseStack, this.playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752);
+    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
+        graphics.drawString(font, this.playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752, false);
     }
 }

@@ -27,7 +27,7 @@ public class EmissiveTransform implements RenderContext.QuadTransform {
         if (finder == null) {
             return;
         }
-        final TextureAtlasSprite sprite = finder.find(quad, 0);
+        final TextureAtlasSprite sprite = finder.find(quad);
         if (sprite == null) {
             return;
         }

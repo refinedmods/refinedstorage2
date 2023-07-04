@@ -428,7 +428,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
-        if (!playerEntity.level.isClientSide()) {
+        if (!playerEntity.level().isClientSide()) {
             final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
                 insertionStrategy.onTransfer(slot.index);

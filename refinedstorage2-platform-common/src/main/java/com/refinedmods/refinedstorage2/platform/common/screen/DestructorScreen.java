@@ -25,17 +25,10 @@ public class DestructorScreen extends AbstractBaseScreen<DestructorContainerMenu
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
-            this::renderComponentTooltip
-        ));
-        addSideButton(new FilterModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.FILTER_MODE),
-            this::renderComponentTooltip
-        ));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
         addSideButton(new DestructorPickupItemsSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.DESTRUCTOR_PICKUP_ITEMS),
-            this::renderComponentTooltip
+            getMenu().getProperty(PropertyTypes.DESTRUCTOR_PICKUP_ITEMS)
         ));
     }
 

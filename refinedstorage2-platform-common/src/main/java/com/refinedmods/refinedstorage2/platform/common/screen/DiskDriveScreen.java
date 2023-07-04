@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +25,8 @@ public class DiskDriveScreen extends AbstractStorageScreen<DiskDriveContainerMen
     }
 
     @Override
-    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        super.renderLabels(poseStack, mouseX, mouseY);
-        font.draw(poseStack, DISKS_TEXT, 60, 42, 4210752);
+    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
+        graphics.drawString(font, DISKS_TEXT, 60, 42, 4210752, false);
     }
 }

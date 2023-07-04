@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 
@@ -62,8 +62,8 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y) {
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, fluidResource);
+    public void render(final GuiGraphics graphics, final int x, final int y) {
+        Platform.INSTANCE.getFluidRenderer().render(graphics.pose(), x, y, fluidResource);
     }
 
     @Override

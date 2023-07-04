@@ -2,13 +2,11 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -16,15 +14,12 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ClientProperty<FilterMode> property;
-    private final TooltipRenderer tooltipRenderer;
     private final List<Component> blockModeTooltip;
     private final List<Component> allowModeTooltip;
 
-    public FilterModeSideButtonWidget(final ClientProperty<FilterMode> property,
-                                      final TooltipRenderer tooltipRenderer) {
+    public FilterModeSideButtonWidget(final ClientProperty<FilterMode> property) {
         super(createPressAction(property));
         this.property = property;
-        this.tooltipRenderer = tooltipRenderer;
         this.blockModeTooltip = calculateTooltip(FilterMode.BLOCK);
         this.allowModeTooltip = calculateTooltip(FilterMode.ALLOW);
     }
@@ -58,12 +53,7 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(
-            poseStack,
-            property.getValue() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
-            mouseX,
-            mouseY
-        );
+    protected List<Component> getSideButtonTooltip() {
+        return property.getValue() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip;
     }
 }
