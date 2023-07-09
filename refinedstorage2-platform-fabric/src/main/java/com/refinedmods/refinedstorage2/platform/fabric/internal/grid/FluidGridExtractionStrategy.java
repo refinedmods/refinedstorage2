@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -17,7 +17,6 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,17 +30,17 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
 
     private final GridService<FluidResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
-    private final Storage<ItemVariant> playerCursorStorage;
-    private final ExtractableStorage<ItemResource> containerExtractionSource;
+    private final net.fabricmc.fabric.api.transfer.v1.storage.Storage<ItemVariant> playerCursorStorage;
+    private final Storage<ItemResource> itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
                                        final PlatformGridServiceFactory gridServiceFactory,
-                                       final ExtractableStorage<ItemResource> containerExtractionSource) {
+                                       final Storage<ItemResource> itemStorage) {
         this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
-        this.containerExtractionSource = containerExtractionSource;
+        this.itemStorage = itemStorage;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                                             final GridExtractMode mode,
                                             final boolean cursor) {
         final FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
-        final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+        final net.fabricmc.fabric.api.transfer.v1.storage.Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)
         );
@@ -78,10 +77,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                 final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
-                    return amount;
+                    return 0;
                 }
                 if (action == Action.EXECUTE) {
-                    containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
+                    itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
                     tx.commit();
                 }
                 return inserted;
@@ -96,23 +95,23 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx);
             final FluidGridExtractionInterceptingStorage interceptingStorage
                 = new FluidGridExtractionInterceptingStorage();
-            final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+            final net.fabricmc.fabric.api.transfer.v1.storage.Storage<FluidVariant> dest = FluidStorage.ITEM.find(
                 interceptingStorage.getStack(),
                 ContainerItemContext.ofSingleSlot(interceptingStorage)
             );
-            if (destination == null) {
+            if (dest == null) {
                 return;
             }
             gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
                 try (Transaction innerTx = tx.openNested()) {
-                    final long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
+                    final long inserted = dest.insert(toFluidVariant(resource), amount, innerTx);
                     final boolean couldInsertBucket = insertResultingBucketIntoInventory(
                         interceptingStorage,
                         cursor,
                         innerTx
                     );
                     if (!couldInsertBucket) {
-                        return amount;
+                        return 0;
                     }
                     if (action == Action.EXECUTE) {
                         innerTx.commit();
@@ -127,7 +126,9 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private boolean insertResultingBucketIntoInventory(final FluidGridExtractionInterceptingStorage interceptingStorage,
                                                        final boolean cursor,
                                                        final Transaction innerTx) {
-        final Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
+        final net.fabricmc.fabric.api.transfer.v1.storage.Storage<ItemVariant> relevantStorage = cursor
+            ? playerCursorStorage
+            : playerInventoryStorage;
         final ItemVariant itemVariant = ItemVariant.of(interceptingStorage.getStack());
         return relevantStorage.insert(itemVariant, 1, innerTx) != 0;
     }
@@ -139,6 +140,6 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     private boolean hasBucketInStorage() {
-        return containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
+        return itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
     }
 }

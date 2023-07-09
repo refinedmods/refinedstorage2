@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Grid voiding fluids if there was no space in inventory on Fabric.
+-   Fixed Grid dropping fluid buckets if there was no space in inventory on Forge.
+
 ## [2.0.0-milestone.2.11] - 2023-07-04
 
 ### Added

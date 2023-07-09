@@ -41,7 +41,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (amount == 0) {
             return;
         }
-        TransferHelper.transfer(resource, amount, actor, storageChannel, destination, null);
+        TransferHelper.transfer(resource, amount, actor, storageChannel, destination, storageChannel);
     }
 
     private long getExtractableAmount(final T resource, final GridExtractMode extractMode) {

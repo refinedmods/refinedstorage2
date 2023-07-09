@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -86,7 +86,7 @@ public interface PlatformApi {
     GridExtractionStrategy createGridExtractionStrategy(AbstractContainerMenu containerMenu,
                                                         Player player,
                                                         GridServiceFactory gridServiceFactory,
-                                                        ExtractableStorage<ItemResource> containerExtractionSource);
+                                                        Storage<ItemResource> itemStorage);
 
     void addGridExtractionStrategyFactory(GridExtractionStrategyFactory extractionStrategyFactory);
 

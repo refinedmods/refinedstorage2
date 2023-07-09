@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -153,14 +153,8 @@ public class PlatformApiProxy implements PlatformApi {
     public GridExtractionStrategy createGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                                                final Player player,
                                                                final GridServiceFactory gridServiceFactory,
-                                                               final ExtractableStorage<ItemResource>
-                                                                   containerExtractionSource) {
-        return ensureLoaded().createGridExtractionStrategy(
-            containerMenu,
-            player,
-            gridServiceFactory,
-            containerExtractionSource
-        );
+                                                               final Storage<ItemResource> itemStorage) {
+        return ensureLoaded().createGridExtractionStrategy(containerMenu, player, gridServiceFactory, itemStorage);
     }
 
     @Override

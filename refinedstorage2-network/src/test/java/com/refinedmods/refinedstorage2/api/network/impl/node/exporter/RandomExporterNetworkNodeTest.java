@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.impl.node.task.RandomTaskExecutor;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -19,15 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected ExporterSchedulingMode createSchedulingMode() {
-        return new RandomExporterSchedulingMode(new RandomExporterSchedulingMode.Randomizer() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public <T> void shuffle(final List<T> list) {
-                list.clear();
-                list.add((T) "A");
-                list.add((T) "B");
-            }
+    protected TaskExecutor<ExporterNetworkNode.ExporterTaskContext> createTaskExecutor() {
+        return new RandomTaskExecutor<>(list -> {
+            list.clear();
+            list.add(sut.new ExporterTask("A"));
+            list.add(sut.new ExporterTask("B"));
         });
     }
 

@@ -212,7 +212,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerGridExtractionStrategyFactories() {
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(
-            (containerMenu, player, gridServiceFactory, containerExtractionSource) ->
+            (containerMenu, player, gridServiceFactory, itemStorage) ->
                 new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
         );
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);

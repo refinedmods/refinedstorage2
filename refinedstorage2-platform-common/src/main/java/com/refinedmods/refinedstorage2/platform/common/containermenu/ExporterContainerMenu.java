@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
@@ -46,8 +46,8 @@ public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<Exp
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         registerProperty(new ClientProperty<>(
-            PropertyTypes.EXPORTER_SCHEDULING_MODE,
-            ExporterSchedulingModeSettings.FIRST_AVAILABLE
+            PropertyTypes.SCHEDULING_MODE,
+            SchedulingModeType.DEFAULT
         ));
     }
 
@@ -64,9 +64,9 @@ public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<Exp
             blockEntity::setRedstoneMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.EXPORTER_SCHEDULING_MODE,
-            blockEntity::getSchedulingMode,
-            blockEntity::setSchedulingMode
+            PropertyTypes.SCHEDULING_MODE,
+            blockEntity::getSchedulingModeType,
+            blockEntity::setSchedulingModeType
         ));
     }
 }

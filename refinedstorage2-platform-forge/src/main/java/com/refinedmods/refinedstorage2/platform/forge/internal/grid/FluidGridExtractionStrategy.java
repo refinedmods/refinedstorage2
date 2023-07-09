@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -37,17 +36,17 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private final Inventory playerInventory;
     private final GridService<FluidResource> gridService;
     private final PlayerMainInvWrapper playerInventoryStorage;
-    private final ExtractableStorage<ItemResource> containerExtractionSource;
+    private final Storage<ItemResource> itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
                                        final PlatformGridServiceFactory gridServiceFactory,
-                                       final ExtractableStorage<ItemResource> containerExtractionSource) {
+                                       final Storage<ItemResource> itemStorage) {
         this.menu = containerMenu;
         this.playerInventory = player.getInventory();
         this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
         this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
-        this.containerExtractionSource = containerExtractionSource;
+        this.itemStorage = itemStorage;
     }
 
     @Override
@@ -86,7 +85,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             final int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
             if (action == Action.EXECUTE) {
                 extractSourceBucket(bucketFromInventory, source);
-                insertResultingBucket(cursor, destination);
+                if (!insertResultingBucket(cursor, destination)) {
+                    insertSourceBucket(bucketFromInventory, source);
+                    return 0;
+                }
             }
             return inserted;
         });
@@ -96,34 +98,34 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
-            containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
+            itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
         }
     }
 
-    private void insertResultingBucket(final boolean cursor, final IFluidHandlerItem destination) {
+    private void insertSourceBucket(final boolean bucketFromInventory, final Actor actor) {
+        if (bucketFromInventory) {
+            insertBucket(playerInventoryStorage);
+        } else {
+            itemStorage.insert(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
+        }
+    }
+
+    private boolean insertResultingBucket(final boolean cursor, final IFluidHandlerItem destination) {
         if (cursor) {
             menu.setCarried(destination.getContainer());
+            return true;
         } else {
             final ItemStack remainder = ItemHandlerHelper.insertItem(
                 playerInventoryStorage,
                 destination.getContainer(),
                 false
             );
-            if (!remainder.isEmpty()) {
-                // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it easy.
-                Containers.dropItemStack(
-                    playerInventory.player.getCommandSenderWorld(),
-                    playerInventory.player.getX(),
-                    playerInventory.player.getY(),
-                    playerInventory.player.getZ(),
-                    destination.getContainer()
-                );
-            }
+            return remainder.isEmpty();
         }
     }
 
     private boolean hasBucketInStorage() {
-        return containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
+        return itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
     }
 
     private boolean hasBucketInInventory() {
@@ -142,6 +144,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             }
         }
         return false;
+    }
+
+    private void insertBucket(final IItemHandler destination) {
+        ItemHandlerHelper.insertItem(destination, BUCKET_ITEM_RESOURCE.toItemStack(), false);
     }
 
     private boolean isSame(final ItemStack a, final ItemStack b) {

@@ -1,8 +1,8 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy;
+package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
