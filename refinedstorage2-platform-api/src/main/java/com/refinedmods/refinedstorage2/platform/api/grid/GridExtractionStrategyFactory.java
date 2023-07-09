@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.grid;
 
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +14,6 @@ public interface GridExtractionStrategyFactory {
         AbstractContainerMenu containerMenu,
         Player player,
         PlatformGridServiceFactory gridServiceFactory,
-        ExtractableStorage<ItemResource> containerExtractionSource
+        Storage<ItemResource> itemStorage
     );
 }

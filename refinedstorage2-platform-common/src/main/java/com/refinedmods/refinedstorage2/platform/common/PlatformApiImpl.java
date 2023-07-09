@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
@@ -262,14 +262,13 @@ public class PlatformApiImpl implements PlatformApi {
     public GridExtractionStrategy createGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                                                final Player player,
                                                                final GridServiceFactory gridServiceFactory,
-                                                               final ExtractableStorage<ItemResource>
-                                                                   containerExtractionSource) {
+                                                               final Storage<ItemResource> itemStorage) {
         final PlatformGridServiceFactory platformGridServiceFactory = new PlatformGridServiceFactoryImpl(
             gridServiceFactory
         );
         final List<GridExtractionStrategy> strategies = gridExtractionStrategyFactories
             .stream()
-            .map(f -> f.create(containerMenu, player, platformGridServiceFactory, containerExtractionSource))
+            .map(f -> f.create(containerMenu, player, platformGridServiceFactory, itemStorage))
             .toList();
         return new CompositeGridExtractionStrategy(strategies);
     }
