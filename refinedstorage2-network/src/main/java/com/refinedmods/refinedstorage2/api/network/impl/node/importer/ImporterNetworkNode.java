@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
-// TODO: Write a gametest.
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Filter filter = new Filter();

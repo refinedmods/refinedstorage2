@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Grid voiding fluids if there was no space in inventory on Fabric.
+
 ## [2.0.0-milestone.2.11] - 2023-07-04
 
 ### Added

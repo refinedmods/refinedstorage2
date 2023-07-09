@@ -78,7 +78,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                 final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
-                    return amount;
+                    return 0;
                 }
                 if (action == Action.EXECUTE) {
                     containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
@@ -112,7 +112,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                         innerTx
                     );
                     if (!couldInsertBucket) {
-                        return amount;
+                        return 0;
                     }
                     if (action == Action.EXECUTE) {
                         innerTx.commit();
