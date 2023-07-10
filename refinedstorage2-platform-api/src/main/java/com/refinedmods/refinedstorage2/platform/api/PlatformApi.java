@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -62,6 +63,10 @@ public interface PlatformApi {
     Collection<DestructorStrategyFactory> getDestructorStrategyFactories();
 
     void addDestructorStrategyFactory(DestructorStrategyFactory factory);
+
+    Collection<ConstructorStrategyFactory> getConstructorStrategyFactories();
+
+    void addConstructorStrategyFactory(ConstructorStrategyFactory factory);
 
     MutableComponent createTranslation(String category, String value, Object... args);
 

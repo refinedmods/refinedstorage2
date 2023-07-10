@@ -32,6 +32,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry externalStorage;
     private final SimpleEnergyUsageEntry detector;
     private final SimpleEnergyUsageEntry destructor;
+    private final SimpleEnergyUsageEntry constructor;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -52,6 +53,7 @@ public class ConfigImpl implements Config {
         );
         detector = new SimpleEnergyUsageEntryImpl("detector", "Detector", DefaultEnergyUsage.DETECTOR);
         destructor = new SimpleEnergyUsageEntryImpl("destructor", "Destructor", DefaultEnergyUsage.DESTRUCTOR);
+        constructor = new SimpleEnergyUsageEntryImpl("constructor", "Constructor", DefaultEnergyUsage.CONSTRUCTOR);
         spec = builder.build();
     }
 
@@ -127,6 +129,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getDestructor() {
         return destructor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getConstructor() {
+        return constructor;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {

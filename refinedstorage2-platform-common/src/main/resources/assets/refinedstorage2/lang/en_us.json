@@ -23,6 +23,7 @@
   "block.refinedstorage2.interface": "Interface",
   "block.refinedstorage2.external_storage": "External Storage",
   "block.refinedstorage2.detector": "Detector",
+  "block.refinedstorage2.constructor": "Constructor",
   "block.refinedstorage2.destructor": "Destructor",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.grid.sorting.direction": "Sorting direction",
@@ -55,6 +56,7 @@
   "gui.refinedstorage2.detector.mode.equal": "Emit signal when on the amount",
   "gui.refinedstorage2.detector.mode.above": "Emit signal when above the amount",
   "gui.refinedstorage2.destructor.pickup_items": "Pickup items instead of breaking",
+  "gui.refinedstorage2.constructor.drop_items": "Drop items instead of placing blocks",
   "gui.refinedstorage2.redstone_mode": "Redstone mode",
   "gui.refinedstorage2.redstone_mode.ignore": "Ignore",
   "gui.refinedstorage2.redstone_mode.high": "High",
@@ -181,6 +183,8 @@
   "text.autoconfig.refinedstorage2.option.exporter.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.detector": "Detector",
   "text.autoconfig.refinedstorage2.option.detector.energyUsage": "Energy usage",
+  "text.autoconfig.refinedstorage2.option.constructor": "Constructor",
+  "text.autoconfig.refinedstorage2.option.constructor.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.destructor": "Destructor",
   "text.autoconfig.refinedstorage2.option.destructor.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.upgrade": "Upgrade",
@@ -219,6 +223,8 @@
   "advancements.refinedstorage2.storing_externally.description": "Use an External Storage to provide the network with storage from an external block like a chest",
   "advancements.refinedstorage2.detecting": "Detecting",
   "advancements.refinedstorage2.detecting.description": "Use redstone to check resources stored in the network",
+  "advancements.refinedstorage2.construction": "Construction",
+  "advancements.refinedstorage2.construction.description": "Get blocks from the storage network into the world with a Constructor",
   "advancements.refinedstorage2.destruction": "Destruction",
   "advancements.refinedstorage2.destruction.description": "Get blocks from in the world into the storage network with a Destructor"
 }

@@ -40,6 +40,7 @@ public final class ContentIds {
     public static final ResourceLocation EXTERNAL_STORAGE = createIdentifier("external_storage");
     public static final ResourceLocation DETECTOR = createIdentifier("detector");
     public static final ResourceLocation DESTRUCTOR = createIdentifier("destructor");
+    public static final ResourceLocation CONSTRUCTOR = createIdentifier("constructor");
 
     private ContentIds() {
     }

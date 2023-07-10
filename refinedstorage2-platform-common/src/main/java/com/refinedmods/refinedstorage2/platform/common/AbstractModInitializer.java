@@ -7,6 +7,10 @@ import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkCo
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ItemDropConstructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceBlockConstructorStrategy;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceFireworksConstructorStrategy;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceFluidConstructorStrategy;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.BlockBreakDestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.FluidBreakDestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.ItemPickupDestructorStrategyFactory;
@@ -15,6 +19,8 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+
+import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -51,6 +57,16 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new BlockBreakDestructorStrategyFactory());
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new FluidBreakDestructorStrategyFactory());
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new ItemPickupDestructorStrategyFactory());
+    }
+
+    protected void registerConstructorStrategyFactories() {
+        PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
+            Optional.of(new PlaceBlockConstructorStrategy(level, pos, direction)));
+        PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
+            Optional.of(new PlaceFireworksConstructorStrategy(level, pos, direction)));
+        PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
+            Optional.of(new PlaceFluidConstructorStrategy(level, pos, direction)));
+        PlatformApi.INSTANCE.addConstructorStrategyFactory(new ItemDropConstructorStrategyFactory());
     }
 
     protected void registerNetworkComponents() {
@@ -114,6 +130,16 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.DESTRUCTOR,
             Items.INSTANCE::getSilkTouchUpgrade,
+            1
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.CONSTRUCTOR,
+            Items.INSTANCE::getSpeedUpgrade,
+            4
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.CONSTRUCTOR,
+            Items.INSTANCE::getStackUpgrade,
             1
         );
     }

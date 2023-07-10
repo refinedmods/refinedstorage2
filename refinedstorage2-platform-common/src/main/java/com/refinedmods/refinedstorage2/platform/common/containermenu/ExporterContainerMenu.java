@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
+// TODO: Make more generic?! it's duplicated atm.
 public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<ExporterBlockEntity> {
     public ExporterContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
@@ -31,24 +32,14 @@ public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<Exp
                                  final ExporterBlockEntity exporter,
                                  final ResourceFilterContainer resourceFilterContainer,
                                  final UpgradeContainer upgradeContainer) {
-        super(
-            Menus.INSTANCE.getExporter(),
-            syncId,
-            player,
-            resourceFilterContainer,
-            upgradeContainer,
-            exporter
-        );
+        super(Menus.INSTANCE.getExporter(), syncId, player, resourceFilterContainer, upgradeContainer, exporter);
     }
 
     @Override
     protected void registerClientProperties() {
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
-        registerProperty(new ClientProperty<>(
-            PropertyTypes.SCHEDULING_MODE,
-            SchedulingModeType.DEFAULT
-        ));
+        registerProperty(new ClientProperty<>(PropertyTypes.SCHEDULING_MODE, SchedulingModeType.DEFAULT));
     }
 
     @Override

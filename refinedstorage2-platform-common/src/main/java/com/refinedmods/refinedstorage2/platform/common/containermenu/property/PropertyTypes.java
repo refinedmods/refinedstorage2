@@ -50,6 +50,7 @@ public final class PropertyTypes {
     );
 
     public static final PropertyType<Boolean> DESTRUCTOR_PICKUP_ITEMS = bool(createIdentifier("pickup_items"));
+    public static final PropertyType<Boolean> CONSTRUCTOR_DROP_ITEMS = bool(createIdentifier("drop_items"));
 
     private PropertyTypes() {
     }

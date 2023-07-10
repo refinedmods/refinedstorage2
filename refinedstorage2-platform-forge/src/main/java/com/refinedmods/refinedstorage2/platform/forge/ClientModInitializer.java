@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
@@ -80,6 +81,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
     }
 
     @SubscribeEvent

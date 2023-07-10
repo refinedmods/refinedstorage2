@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
@@ -22,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
@@ -34,6 +36,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.Item
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
@@ -129,6 +132,7 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
@@ -192,6 +196,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageChannelTypes();
         registerAdditionalFilteredResourceFactories();
         registerDestructorStrategyFactories();
+        registerConstructorStrategyFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -382,6 +387,13 @@ public class ModInitializer extends AbstractModInitializer {
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
             ))
         ));
+        Blocks.INSTANCE.getConstructor().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR).getPath(),
+            () -> new ConstructorBlock(color, Blocks.INSTANCE.getConstructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
+            ))
+        ));
         Blocks.INSTANCE.getDestructor().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR).getPath(),
             () -> new DestructorBlock(color, Blocks.INSTANCE.getDestructor().getName(
@@ -402,6 +414,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerImporterItems();
         registerExporterItems();
         registerExternalStorageItems();
+        registerConstructorItems();
         registerDestructorItems();
         registerStorageItems();
         registerUpgrades();
@@ -562,6 +575,16 @@ public class ModInitializer extends AbstractModInitializer {
                 )
             )
         ));
+    }
+
+    private void registerConstructorItems() {
+        Blocks.INSTANCE.getConstructor().forEach((color, block) -> Items.INSTANCE.addConstructor(itemRegistry.register(
+            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getConstructor().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
+            ))
+        )));
     }
 
     private void registerDestructorItems() {
@@ -775,6 +798,13 @@ public class ModInitializer extends AbstractModInitializer {
                 Blocks.INSTANCE.getDetector().toArray()
             ).build(null)
         ));
+        BlockEntities.INSTANCE.setConstructor(blockEntityTypeRegistry.register(
+            CONSTRUCTOR.getPath(),
+            () -> BlockEntityType.Builder.of(
+                ConstructorBlockEntity::new,
+                Blocks.INSTANCE.getConstructor().toArray()
+            ).build(null)
+        ));
         BlockEntities.INSTANCE.setDestructor(blockEntityTypeRegistry.register(
             DESTRUCTOR.getPath(),
             () -> BlockEntityType.Builder.of(
@@ -834,6 +864,10 @@ public class ModInitializer extends AbstractModInitializer {
         Menus.INSTANCE.setDestructor(menuTypeRegistry.register(
             DESTRUCTOR.getPath(),
             () -> IForgeMenuType.create(DestructorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setConstructor(menuTypeRegistry.register(
+            CONSTRUCTOR.getPath(),
+            () -> IForgeMenuType.create(ConstructorContainerMenu::new)
         ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());

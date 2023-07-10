@@ -38,6 +38,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getDestructor();
 
+    SimpleEnergyUsageEntry getConstructor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

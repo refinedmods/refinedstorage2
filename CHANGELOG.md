@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Constructor
+
+### Changed
+
+-   The Constructor crafting recipe now takes 2 diamonds instead of 2 redstone.
+-   You can now select a "Scheduling mode" in the Constructor: first available, round robin, random.
+
 ### Fixed
 
 -   Fixed Grid voiding fluids if there was no space in inventory on Fabric.

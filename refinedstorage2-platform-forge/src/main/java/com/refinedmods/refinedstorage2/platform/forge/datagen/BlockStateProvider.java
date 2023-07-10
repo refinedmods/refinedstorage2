@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractConstructorDestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
@@ -44,7 +45,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerControllers();
         registerGrids();
         registerDetectors();
-        registerDestructors();
+        registerConstructorDestructors(Blocks.INSTANCE.getConstructor(), "constructor");
+        registerConstructorDestructors(Blocks.INSTANCE.getDestructor(), "destructor");
     }
 
     private void registerCables() {
@@ -185,23 +187,23 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         });
     }
 
-    private void registerDestructors() {
-        Blocks.INSTANCE.getDestructor().forEach((color, block) -> {
+    private void registerConstructorDestructors(final BlockColorMap<?> blockMap, final String type) {
+        blockMap.forEach((color, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
-            final ModelFile activeModel = modelFile(createIdentifier("block/destructor/active"));
-            final ModelFile inactiveModel = modelFile(createIdentifier("block/destructor/inactive"));
+            final ModelFile activeModel = modelFile(createIdentifier("block/" + type + "/active"));
+            final ModelFile inactiveModel = modelFile(createIdentifier("block/" + type + "/inactive"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
                 addDirectionalRotation(direction, part);
                 part.modelFile(activeModel)
                     .addModel()
                     .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction)
-                    .condition(DestructorBlock.ACTIVE, true)
+                    .condition(AbstractConstructorDestructorBlock.ACTIVE, true)
                     .end();
                 part.modelFile(inactiveModel)
                     .addModel()
                     .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction)
-                    .condition(DestructorBlock.ACTIVE, false)
+                    .condition(AbstractConstructorDestructorBlock.ACTIVE, false)
                     .end();
             });
         });

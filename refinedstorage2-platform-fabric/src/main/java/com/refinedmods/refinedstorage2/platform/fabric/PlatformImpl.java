@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
@@ -50,20 +51,33 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
@@ -213,6 +227,80 @@ public final class PlatformImpl extends AbstractPlatform {
             state,
             level.getBlockEntity(pos)
         );
+    }
+
+    @Override
+    public boolean placeBlock(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final ItemStack stack
+    ) {
+        final BlockPlaceContext ctx = new CustomBlockPlaceContext(
+            level,
+            player,
+            InteractionHand.MAIN_HAND,
+            stack,
+            new BlockHitResult(Vec3.ZERO, direction, pos, false)
+        );
+        final InteractionResult result = stack.useOn(ctx);
+        return result.consumesAction();
+    }
+
+    @Override
+    public boolean placeFluid(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final FluidResource fluidResource
+    ) {
+        // Stolen from BucketItem#emptyContents
+        final Fluid content = fluidResource.fluid();
+        if (!(content instanceof FlowingFluid)) {
+            return false;
+        }
+        final BlockState blockState = level.getBlockState(pos);
+        final Block block = blockState.getBlock();
+        final boolean replaceable = blockState.canBeReplaced(content);
+        final boolean canPlace = blockState.isAir()
+            || replaceable
+            || (block instanceof LiquidBlockContainer lbc && lbc.canPlaceLiquid(level, pos, blockState, content));
+        if (!canPlace || blockState.getFluidState().isSource()) {
+            return false;
+        } else if (block instanceof LiquidBlockContainer lbc && content == Fluids.WATER) {
+            lbc.placeLiquid(level, pos, blockState, ((FlowingFluid) content).getSource(false));
+            playEmptySound(content, player, level, pos);
+            return true;
+        }
+        return doPlaceFluid(level, pos, player, content, blockState, replaceable);
+    }
+
+    private boolean doPlaceFluid(final Level level,
+                                 final BlockPos pos,
+                                 final Player player,
+                                 final Fluid content,
+                                 final BlockState blockState,
+                                 final boolean replaceable) {
+        if (replaceable && !blockState.liquid()) {
+            level.destroyBlock(pos, true);
+        }
+        if (!level.setBlock(pos, content.defaultFluidState().createLegacyBlock(), 11)
+            && !blockState.getFluidState().isSource()) {
+            return false;
+        }
+        playEmptySound(content, player, level, pos);
+        return true;
+    }
+
+    private void playEmptySound(final Fluid content, final Player player, final LevelAccessor level,
+                                final BlockPos pos) {
+        final SoundEvent soundEvent = content.is(FluidTags.LAVA)
+            ? SoundEvents.BUCKET_EMPTY_LAVA
+            : SoundEvents.BUCKET_EMPTY;
+        level.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
     }
 
     @Override

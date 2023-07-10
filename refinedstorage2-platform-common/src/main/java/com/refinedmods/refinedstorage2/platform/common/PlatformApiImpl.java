@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -97,6 +98,9 @@ public class PlatformApiImpl implements PlatformApi {
         externalStorageProviderFactories = new HashMap<>();
     private final Queue<DestructorStrategyFactory> destructorStrategyFactories = new PriorityQueue<>(
         Comparator.comparingInt(DestructorStrategyFactory::getPriority)
+    );
+    private final Queue<ConstructorStrategyFactory> constructorStrategyFactories = new PriorityQueue<>(
+        Comparator.comparingInt(ConstructorStrategyFactory::getPriority)
     );
     private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
@@ -187,6 +191,16 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public void addDestructorStrategyFactory(final DestructorStrategyFactory factory) {
         destructorStrategyFactories.add(factory);
+    }
+
+    @Override
+    public Collection<ConstructorStrategyFactory> getConstructorStrategyFactories() {
+        return constructorStrategyFactories;
+    }
+
+    @Override
+    public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
+        constructorStrategyFactories.add(factory);
     }
 
     @Override

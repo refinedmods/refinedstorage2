@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridInsertionStrategy;
@@ -38,11 +39,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -57,12 +61,18 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
@@ -196,6 +206,49 @@ public final class PlatformImpl extends AbstractPlatform {
     public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
         final BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, pos, state, player);
         return !MinecraftForge.EVENT_BUS.post(e);
+    }
+
+    @Override
+    public boolean placeBlock(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final ItemStack stack
+    ) {
+        final BlockPlaceContext ctx = new CustomBlockPlaceContext(
+            level,
+            player,
+            InteractionHand.MAIN_HAND,
+            stack,
+            new BlockHitResult(Vec3.ZERO, direction, pos, false)
+        );
+        final InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(ctx);
+        return result.consumesAction();
+    }
+
+    @Override
+    public boolean placeFluid(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final FluidResource fluidResource
+    ) {
+        if (level.getBlockState(pos).getFluidState().isSource()) {
+            return false;
+        }
+        final FluidStack stack = toFluidStack(fluidResource, FluidType.BUCKET_VOLUME);
+        final FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
+        tank.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+        return FluidUtil.tryPlaceFluid(
+            player,
+            level,
+            InteractionHand.MAIN_HAND,
+            pos,
+            tank,
+            toFluidStack(fluidResource, FluidType.BUCKET_VOLUME)
+        );
     }
 
     @Override

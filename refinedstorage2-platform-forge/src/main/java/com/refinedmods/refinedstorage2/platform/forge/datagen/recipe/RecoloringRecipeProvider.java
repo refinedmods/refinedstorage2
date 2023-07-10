@@ -48,6 +48,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getDetector().forEach((color, block) ->
             recolorItems(Tags.DETECTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_detector")));
+        Blocks.INSTANCE.getConstructor().forEach((color, block) ->
+            recolorItems(Tags.CONSTRUCTORS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_constructor")));
         Blocks.INSTANCE.getDestructor().forEach((color, block) ->
             recolorItems(Tags.DESTRUCTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_destructor")));

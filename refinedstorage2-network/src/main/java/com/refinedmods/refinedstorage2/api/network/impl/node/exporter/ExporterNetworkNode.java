@@ -15,11 +15,11 @@ import javax.annotation.Nullable;
 public class ExporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Actor actor = new NetworkNodeActor(this);
-    private final List<ExporterTask> tasks = new ArrayList<>();
+    private final List<TaskImpl> tasks = new ArrayList<>();
     @Nullable
     private ExporterTransferStrategy transferStrategy;
     @Nullable
-    private TaskExecutor<ExporterTaskContext> taskExecutor;
+    private TaskExecutor<TaskContext> taskExecutor;
 
     public ExporterNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
@@ -29,7 +29,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         this.transferStrategy = transferStrategy;
     }
 
-    public void setTaskExecutor(@Nullable final TaskExecutor<ExporterTaskContext> taskExecutor) {
+    public void setTaskExecutor(@Nullable final TaskExecutor<TaskContext> taskExecutor) {
         this.taskExecutor = taskExecutor;
     }
 
@@ -39,13 +39,13 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         if (network == null || !isActive() || taskExecutor == null) {
             return;
         }
-        final ExporterTaskContext context = new ExporterTaskContext(network, actor);
+        final TaskContext context = new TaskContext(network, actor);
         taskExecutor.execute(tasks, context);
     }
 
     public void setFilterTemplates(final List<Object> templates) {
         tasks.clear();
-        tasks.addAll(templates.stream().map(ExporterTask::new).toList());
+        tasks.addAll(templates.stream().map(TaskImpl::new).toList());
     }
 
     public void setEnergyUsage(final long energyUsage) {
@@ -57,18 +57,18 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public record ExporterTaskContext(Network network, Actor actor) {
+    public record TaskContext(Network network, Actor actor) {
     }
 
-    class ExporterTask implements Task<ExporterTaskContext> {
+    class TaskImpl implements Task<TaskContext> {
         private final Object template;
 
-        ExporterTask(final Object template) {
+        TaskImpl(final Object template) {
             this.template = template;
         }
 
         @Override
-        public boolean run(final ExporterTaskContext context) {
+        public boolean run(final TaskContext context) {
             if (transferStrategy == null) {
                 return false;
             }

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -98,6 +99,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addDestructorStrategyFactory(final DestructorStrategyFactory factory) {
         ensureLoaded().addDestructorStrategyFactory(factory);
+    }
+
+    @Override
+    public Collection<ConstructorStrategyFactory> getConstructorStrategyFactories() {
+        return ensureLoaded().getConstructorStrategyFactories();
+    }
+
+    @Override
+    public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
+        ensureLoaded().addConstructorStrategyFactory(factory);
     }
 
     @Override

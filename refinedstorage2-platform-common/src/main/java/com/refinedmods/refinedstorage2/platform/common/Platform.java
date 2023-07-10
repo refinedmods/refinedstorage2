@@ -91,6 +91,10 @@ public interface Platform {
 
     boolean canBreakBlock(Level level, BlockPos pos, BlockState state, Player player);
 
+    boolean placeBlock(Level level, BlockPos pos, Direction direction, Player player, ItemStack stack);
+
+    boolean placeFluid(Level level, BlockPos pos, Direction direction, Player player, FluidResource fluidResource);
+
     ItemStack getBlockAsItemStack(Block block,
                                   BlockState state,
                                   Direction direction,

@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected TaskExecutor<ExporterNetworkNode.ExporterTaskContext> createTaskExecutor() {
+    protected TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor() {
         return new DefaultTaskExecutor<>();
     }
 
