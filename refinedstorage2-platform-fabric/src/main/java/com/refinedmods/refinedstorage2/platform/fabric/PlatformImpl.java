@@ -25,8 +25,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClient
 import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -43,11 +45,15 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -61,6 +67,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -316,5 +323,34 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
         return liquidBlock.getPickupSound();
+    }
+
+    @Override
+    public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack,
+                                                                 final GuiGraphics graphics,
+                                                                 final int mouseX,
+                                                                 final Optional<TooltipComponent> imageComponent,
+                                                                 final List<Component> components) {
+        final List<ClientTooltipComponent> processedComponents = components
+            .stream()
+            .map(Component::getVisualOrderText)
+            .map(ClientTooltipComponent::create)
+            .collect(Collectors.toList());
+        imageComponent.ifPresent(image -> processedComponents.add(1, ClientTooltipComponent.create(image)));
+        return processedComponents;
+    }
+
+    @Override
+    public void renderTooltip(final GuiGraphics graphics,
+                              final List<ClientTooltipComponent> components,
+                              final int x,
+                              final int y) {
+        graphics.renderTooltipInternal(
+            Minecraft.getInstance().font,
+            components,
+            x,
+            y,
+            DefaultTooltipPositioner.INSTANCE
+        );
     }
 }

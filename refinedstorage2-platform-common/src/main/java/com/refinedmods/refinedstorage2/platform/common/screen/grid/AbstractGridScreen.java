@@ -14,9 +14,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
@@ -31,9 +31,9 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -216,9 +216,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             renderRow(graphics, mouseX, mouseY, x, y, row);
         }
         graphics.disableScissor();
+    }
 
-        if (gridSlotNumber != -1 && isOverStorageArea(mouseX, mouseY)) {
-            renderTooltipWithMaybeSmallLines(graphics, mouseX, mouseY);
+    @Override
+    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+        super.renderTooltip(graphics, x, y);
+        if (gridSlotNumber != -1 && isOverStorageArea(x, y)) {
+            renderGridTooltip(graphics, x, y);
         }
     }
 
@@ -239,7 +243,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         graphics.blit(getTexture(), rowX, rowY, 0, 238, 162, 18);
 
         for (int column = 0; column < COLUMNS; ++column) {
-            renderColumnInRow(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
+            renderCell(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
         }
     }
 
@@ -254,13 +258,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return scrollbarOffset;
     }
 
-    private void renderColumnInRow(final GuiGraphics graphics,
-                                   final int mouseX,
-                                   final int mouseY,
-                                   final int rowX,
-                                   final int rowY,
-                                   final int idx,
-                                   final int column) {
+    private void renderCell(final GuiGraphics graphics,
+                            final int mouseX,
+                            final int mouseY,
+                            final int rowX,
+                            final int rowY,
+                            final int idx,
+                            final int column) {
         final GridView view = getMenu().getView();
 
         final int slotX = rowX + 1 + (column * 18);
@@ -332,47 +336,50 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         graphics.pose().popPose();
     }
 
-    private void renderTooltipWithMaybeSmallLines(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 1100);
-
+    private void renderGridTooltip(final GuiGraphics graphics, final int mouseX, final int mouseY) {
         final GridView view = getMenu().getView();
         final GridResource resource = view.getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
+        renderGridTooltip(graphics, mouseX, mouseY, view, platformResource);
+    }
 
-        final List<FormattedCharSequence> lines = platformResource.getTooltip()
-            .stream()
-            .map(Component::getVisualOrderText)
-            .toList();
-
-        if (!Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
-            graphics.renderTooltip(font, lines, mouseX, mouseY);
-        } else {
-            final List<FormattedCharSequence> smallLines = new ArrayList<>();
-
-            final String amountInTooltip = platformResource.isZeroed() ? "0" : platformResource.getAmountInTooltip();
-            smallLines.add(createTranslation("misc", "total", amountInTooltip)
-                .withStyle(ChatFormatting.GRAY).getVisualOrderText());
-
-            resource.getTrackedResource(view).ifPresent(entry -> smallLines.add(
-                getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
-            ));
-
-            SmallTextTooltipRenderer.INSTANCE.render(
-                minecraft,
-                font,
-                graphics,
-                lines,
-                smallLines,
-                mouseX,
-                mouseY,
-                width,
-                height
-            );
+    private void renderGridTooltip(final GuiGraphics graphics,
+                                   final int mouseX,
+                                   final int mouseY,
+                                   final GridView view,
+                                   final PlatformGridResource platformResource) {
+        final ItemStack stackContext = platformResource instanceof ItemGridResource itemGridResource
+            ? itemGridResource.getItemStack()
+            : ItemStack.EMPTY;
+        final List<Component> lines = platformResource.getTooltip();
+        final List<ClientTooltipComponent> processedLines = Platform.INSTANCE.processTooltipComponents(
+            stackContext,
+            graphics,
+            mouseX,
+            platformResource.getTooltipImage(),
+            lines
+        );
+        if (Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
+            addDetailedTooltip(view, platformResource, processedLines);
         }
-        graphics.pose().popPose();
+        Platform.INSTANCE.renderTooltip(graphics, processedLines, mouseX, mouseY);
+    }
+
+    private void addDetailedTooltip(final GridView view,
+                                    final PlatformGridResource platformResource,
+                                    final List<ClientTooltipComponent> lines) {
+        final float scale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
+        final String amountInTooltip = platformResource.isZeroed() ? "0" : platformResource.getAmountInTooltip();
+        lines.add(new SmallClientTooltipComponent(
+            createTranslation("misc", "total", amountInTooltip).withStyle(ChatFormatting.GRAY),
+            scale
+        ));
+        platformResource.getTrackedResource(view).ifPresent(entry -> lines.add(new SmallClientTooltipComponent(
+            getLastModifiedText(entry).withStyle(ChatFormatting.GRAY),
+            scale
+        )));
     }
 
     private MutableComponent getLastModifiedText(final TrackedResource trackedResource) {

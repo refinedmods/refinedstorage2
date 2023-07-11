@@ -23,6 +23,8 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ClientToServerC
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.FluidStackFluidRenderer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -30,10 +32,14 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -44,6 +50,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -55,6 +62,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -270,5 +278,38 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
         return liquidBlock.getPickupSound(state);
+    }
+
+    @Override
+    public List<ClientTooltipComponent> processTooltipComponents(
+        final ItemStack stack,
+        final GuiGraphics graphics,
+        final int mouseX,
+        final Optional<TooltipComponent> imageComponent,
+        final List<Component> components
+    ) {
+        return new ArrayList<>(ForgeHooksClient.gatherTooltipComponents(
+            stack,
+            components,
+            imageComponent,
+            mouseX,
+            graphics.guiWidth(),
+            graphics.guiHeight(),
+            Minecraft.getInstance().font
+        )); // make modifiable
+    }
+
+    @Override
+    public void renderTooltip(final GuiGraphics graphics,
+                              final List<ClientTooltipComponent> components,
+                              final int x,
+                              final int y) {
+        graphics.renderTooltipInternal(
+            Minecraft.getInstance().font,
+            components,
+            x,
+            y,
+            DefaultTooltipPositioner.INSTANCE
+        );
     }
 }
