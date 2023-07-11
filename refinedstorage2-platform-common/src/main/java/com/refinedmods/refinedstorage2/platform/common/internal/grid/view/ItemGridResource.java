@@ -12,15 +12,17 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 
 public class ItemGridResource extends AbstractGridResource<ItemResource> {
     private final int id;
@@ -41,6 +43,10 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
         ));
         this.id = Item.getId(resourceAmount.getResource().item());
         this.itemStack = itemStack;
+    }
+
+    public ItemStack getItemStack() {
+        return itemStack;
     }
 
     public ItemStack copyItemStack() {
@@ -94,9 +100,11 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     @Override
     public List<Component> getTooltip() {
         final Minecraft minecraft = Minecraft.getInstance();
-        return itemStack.getTooltipLines(
-            minecraft.player,
-            minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
-        );
+        return Screen.getTooltipFromItem(minecraft, itemStack);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage() {
+        return itemStack.getTooltipImage();
     }
 }

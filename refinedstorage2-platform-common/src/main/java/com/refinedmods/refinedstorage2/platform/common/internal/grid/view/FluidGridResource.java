@@ -12,11 +12,13 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
 public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final FluidResource fluidResource;
@@ -79,5 +81,10 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     @Override
     public List<Component> getTooltip() {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(fluidResource);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage() {
+        return Optional.empty();
     }
 }

@@ -4,9 +4,11 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 
 import java.util.List;
+import java.util.Optional;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
@@ -25,6 +27,8 @@ public interface PlatformGridResource extends GridResource {
     String getAmountInTooltip();
 
     List<Component> getTooltip();
+
+    Optional<TooltipComponent> getTooltipImage();
 
     int getRegistryId();
 }
