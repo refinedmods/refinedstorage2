@@ -134,5 +134,7 @@ public interface Config {
         long getFortune3UpgradeEnergyUsage();
 
         long getSilkTouchUpgradeEnergyUsage();
+
+        long getRegulatorUpgradeEnergyUsage();
     }
 }

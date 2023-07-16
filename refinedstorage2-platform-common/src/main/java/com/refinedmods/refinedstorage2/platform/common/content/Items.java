@@ -66,6 +66,8 @@ public final class Items {
     private Supplier<? extends AbstractUpgradeItem> fortune3Upgrade;
     @Nullable
     private Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> regulatorUpgrade;
 
     private Items() {
     }
@@ -293,5 +295,13 @@ public final class Items {
 
     public void setSilkTouchUpgrade(final Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade) {
         this.silkTouchUpgrade = silkTouchUpgrade;
+    }
+
+    public AbstractUpgradeItem getRegulatorUpgrade() {
+        return Objects.requireNonNull(regulatorUpgrade).get();
+    }
+
+    public void setRegulatorUpgrade(final Supplier<? extends AbstractUpgradeItem> regulatorUpgrade) {
+        this.regulatorUpgrade = regulatorUpgrade;
     }
 }

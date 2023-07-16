@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCal
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -189,7 +190,17 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerItems() {
-        registerItems(new ForgeRegistryCallback<>(itemRegistry));
+        registerItems(
+            new ForgeRegistryCallback<>(itemRegistry),
+            () -> new RegulatorUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry()) {
+                @Override
+                public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
+                                                           final ItemStack newStack,
+                                                           final boolean slotChanged) {
+                    return RegulatorUpgradeItem.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            }
+        );
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 

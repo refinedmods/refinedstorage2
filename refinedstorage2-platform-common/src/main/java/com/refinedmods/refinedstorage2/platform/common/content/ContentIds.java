@@ -36,6 +36,7 @@ public final class ContentIds {
     public static final ResourceLocation FORTUNE_2_UPGRADE = createIdentifier("fortune_2_upgrade");
     public static final ResourceLocation FORTUNE_3_UPGRADE = createIdentifier("fortune_3_upgrade");
     public static final ResourceLocation SILK_TOUCH_UPGRADE = createIdentifier("silk_touch_upgrade");
+    public static final ResourceLocation REGULATOR_UPGRADE = createIdentifier("regulator_upgrade");
     public static final ResourceLocation INTERFACE = createIdentifier("interface");
     public static final ResourceLocation EXTERNAL_STORAGE = createIdentifier("external_storage");
     public static final ResourceLocation DETECTOR = createIdentifier("detector");

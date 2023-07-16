@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.im
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
 import java.util.Collections;
@@ -37,7 +38,14 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
         this.toPlatformMapper = toPlatformMapper;
-        this.insertTarget = new StorageInsertableStorage<>(lookup, toPlatformMapper, serverLevel, pos, direction);
+        this.insertTarget = new StorageInsertableStorage<>(
+            lookup,
+            toPlatformMapper,
+            serverLevel,
+            pos,
+            direction,
+            AmountOverride.NONE
+        );
         this.direction = direction;
     }
 

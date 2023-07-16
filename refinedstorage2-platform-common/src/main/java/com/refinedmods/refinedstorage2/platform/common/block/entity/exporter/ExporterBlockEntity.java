@@ -5,14 +5,20 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNe
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 
 import java.util.List;
+import java.util.OptionalLong;
+import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -22,6 +28,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExporterBlockEntity
-    extends AbstractSchedulingNetworkNodeContainerBlockEntity<ExporterNetworkNode, ExporterNetworkNode.TaskContext> {
+    extends AbstractSchedulingNetworkNodeContainerBlockEntity<ExporterNetworkNode, ExporterNetworkNode.TaskContext>
+    implements AmountOverride, UpgradeState {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExporterBlockEntity.class);
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
@@ -60,7 +68,8 @@ public class ExporterBlockEntity
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                this::hasUpgrade,
+                this,
+                this,
                 filter.isFuzzyMode()
             ))
             .toList();
@@ -92,5 +101,37 @@ public class ExporterBlockEntity
     @Override
     protected void setFilterTemplates(final List<Object> templates) {
         getNode().setFilterTemplates(templates);
+    }
+
+    @Override
+    public <T> long overrideAmount(final T resource, final long amount, final LongSupplier currentAmount) {
+        if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
+            return amount;
+        }
+        return overrideAmountForRegulatorUpgrade(resource, amount, currentAmount);
+    }
+
+    private <T> long overrideAmountForRegulatorUpgrade(final T resource,
+                                                       final long amount,
+                                                       final LongSupplier currentAmount) {
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
+            final ItemStack upgradeStack = upgradeContainer.getItem(i);
+            if (!(upgradeStack.getItem() instanceof RegulatorUpgradeItem regulatorUpgrade)) {
+                continue;
+            }
+            final OptionalLong desiredAmount = regulatorUpgrade.getDesiredAmount(upgradeStack, resource);
+            if (desiredAmount.isPresent()) {
+                return getAmountStillNeeded(amount, currentAmount.getAsLong(), desiredAmount.getAsLong());
+            }
+        }
+        return amount;
+    }
+
+    private long getAmountStillNeeded(final long amount, final long currentAmount, final long desiredAmount) {
+        final long stillNeeding = desiredAmount - currentAmount;
+        if (stillNeeding <= 0) {
+            return 0;
+        }
+        return Math.min(stillNeeding, amount);
     }
 }

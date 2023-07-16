@@ -428,6 +428,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private long silkTouchUpgradeEnergyUsage = DefaultEnergyUsage.SILK_TOUCH_UPGRADE;
 
+        private long regulatorUpgradeEnergyUsage = DefaultEnergyUsage.REGULATOR_UPGRADE;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
@@ -456,6 +458,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getSilkTouchUpgradeEnergyUsage() {
             return silkTouchUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getRegulatorUpgradeEnergyUsage() {
+            return regulatorUpgradeEnergyUsage;
         }
     }
 }

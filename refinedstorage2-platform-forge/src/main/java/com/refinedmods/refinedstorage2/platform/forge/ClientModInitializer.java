@@ -3,11 +3,15 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.FilteredResourceClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
@@ -16,11 +20,14 @@ import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveGeometryLoader;
 
+import java.util.List;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -150,5 +157,24 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             HelpTooltipComponent.class,
             component -> HelpClientTooltipComponent.create(component.text())
         );
+        e.register(
+            RegulatorUpgradeItem.RegulatorTooltipComponent.class,
+            component -> {
+                final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
+                return component.filteredResource() == null
+                    ? help
+                    : createRegulatorUpgradeClientTooltipComponent(component.filteredResource(), help);
+            }
+        );
+    }
+
+    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final FilteredResource<?> filteredResource,
+        final ClientTooltipComponent help
+    ) {
+        return new CompositeClientTooltipComponent(List.of(
+            new FilteredResourceClientTooltipComponent<>(filteredResource),
+            help
+        ));
     }
 }

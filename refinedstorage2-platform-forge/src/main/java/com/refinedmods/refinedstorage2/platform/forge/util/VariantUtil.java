@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.platform.forge.util;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 
+import java.util.Objects;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.slf4j.Logger;
@@ -12,6 +14,10 @@ public final class VariantUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(VariantUtil.class);
 
     private VariantUtil() {
+    }
+
+    public static boolean isSame(final FluidResource resource, final FluidStack stack) {
+        return resource.fluid() == stack.getFluid() && Objects.equals(resource.tag(), stack.getTag());
     }
 
     public static FluidResource ofFluidStack(final FluidStack fluidStack) {

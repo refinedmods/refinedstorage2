@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.ex
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.AbstractExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -43,13 +44,15 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
                                            final BlockPos pos,
                                            final Direction direction,
                                            final UpgradeState upgradeState,
+                                           final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
         final StorageInsertableStorage<T, P> insertTarget = new StorageInsertableStorage<>(
             lookup,
             toPlatformMapper,
             level,
             pos,
-            direction
+            direction,
+            amountOverride
         );
         final long transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
             ? singleAmount * 64

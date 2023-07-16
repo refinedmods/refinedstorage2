@@ -33,6 +33,7 @@ public final class DefaultEnergyUsage {
     public static final long FORTUNE_2_UPGRADE = 12;
     public static final long FORTUNE_3_UPGRADE = 14;
     public static final long SILK_TOUCH_UPGRADE = 16;
+    public static final long REGULATOR_UPGRADE = 16;
 
     private DefaultEnergyUsage() {
     }

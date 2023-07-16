@@ -3,13 +3,17 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.FilteredResourceClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
@@ -27,6 +31,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBl
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
 
+import java.util.List;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -39,6 +45,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
@@ -227,8 +234,24 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             if (data instanceof HelpTooltipComponent component) {
                 return HelpClientTooltipComponent.create(component.text());
             }
+            if (data instanceof RegulatorUpgradeItem.RegulatorTooltipComponent component) {
+                final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
+                return component.filteredResource() == null
+                    ? help
+                    : createRegulatorUpgradeClientTooltipComponent(component.filteredResource(), help);
+            }
             return null;
         });
+    }
+
+    private CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final FilteredResource<?> filteredResource,
+        final ClientTooltipComponent help
+    ) {
+        return new CompositeClientTooltipComponent(List.of(
+            new FilteredResourceClientTooltipComponent<>(filteredResource),
+            help
+        ));
     }
 
     private void registerKeyBindings() {
