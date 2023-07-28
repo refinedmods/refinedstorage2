@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
@@ -144,21 +145,23 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
         return convertNonEmptyToFluid(stack);
     }
 
-    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
+    private Optional<ResourceAmount<FluidResource>> convertNonEmptyToFluid(final ItemStack stack) {
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
             stack,
             new ConstantContainerItemContext(ItemVariant.of(stack), 1)
         );
-        return Optional
-            .ofNullable(StorageUtil.findExtractableResource(storage, null))
-            .map(VariantUtil::ofFluidVariant);
+        return Optional.ofNullable(StorageUtil.findExtractableContent(storage, null))
+            .map(content -> new ResourceAmount<>(
+                VariantUtil.ofFluidVariant(content.resource()),
+                content.amount()
+            ));
     }
 
     @Override

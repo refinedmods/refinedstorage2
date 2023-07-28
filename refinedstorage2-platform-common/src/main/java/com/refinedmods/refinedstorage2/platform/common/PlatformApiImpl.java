@@ -15,6 +15,8 @@ import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.Cons
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHints;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -49,6 +51,9 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageR
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeRegistryImpl;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.GridInsertionHintsImpl;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.ItemGridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.SingleItemGridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
@@ -105,6 +110,10 @@ public class PlatformApiImpl implements PlatformApi {
     private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
+    private final GridInsertionHintsImpl gridInsertionHints = new GridInsertionHintsImpl(
+        new ItemGridInsertionHint(),
+        new SingleItemGridInsertionHint()
+    );
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
     private final CompositeFilteredResourceFactory filteredResourceFactory = new CompositeFilteredResourceFactory(
@@ -270,6 +279,16 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public void addGridInsertionStrategyFactory(final GridInsertionStrategyFactory insertionStrategyFactory) {
         gridInsertionStrategyFactories.add(insertionStrategyFactory);
+    }
+
+    @Override
+    public void addAlternativeGridInsertionHint(final GridInsertionHint hint) {
+        gridInsertionHints.addAlternativeHint(hint);
+    }
+
+    @Override
+    public GridInsertionHints getGridInsertionHints() {
+        return gridInsertionHints;
     }
 
     @Override

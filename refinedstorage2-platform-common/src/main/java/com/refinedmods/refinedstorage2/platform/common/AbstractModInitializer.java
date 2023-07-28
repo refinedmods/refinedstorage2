@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
 
 import java.util.Optional;
 
@@ -67,6 +68,10 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
             Optional.of(new PlaceFluidConstructorStrategy(level, pos, direction)));
         PlatformApi.INSTANCE.addConstructorStrategyFactory(new ItemDropConstructorStrategyFactory());
+    }
+
+    protected void registerAlternativeGridHints() {
+        PlatformApi.INSTANCE.addAlternativeGridInsertionHint(new FluidGridInsertionHint());
     }
 
     protected void registerNetworkComponents() {

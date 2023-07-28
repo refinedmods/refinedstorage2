@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Constructor
 -   Filter slot hints that show which resource will be put in a filter slot.
+-   Grid slot hints that show which resource will be inserted in a Grid.
 
 ### Changed
 

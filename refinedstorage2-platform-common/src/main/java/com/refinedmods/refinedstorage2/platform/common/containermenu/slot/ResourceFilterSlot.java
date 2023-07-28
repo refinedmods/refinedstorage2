@@ -4,8 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
-import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceTooltipComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +13,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -165,64 +161,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
         tooltip.add(ClientTooltipComponent.create(
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
         ));
-        if (!carried.isEmpty()) {
-            addCarriedHints(carried, tooltip);
-        }
+        tooltip.addAll(ResourceTooltipComponent.createForFilter(carried));
         return tooltip;
-    }
-
-    private void addCarriedHints(final ItemStack carried, final List<ClientTooltipComponent> tooltip) {
-        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, false)
-            .ifPresent(asItem -> tooltip.add(new FilteredResourceTooltip(true, asItem)));
-        addCarriedHintsForAlternatives(carried, tooltip);
-    }
-
-    private void addCarriedHintsForAlternatives(final ItemStack carried, final List<ClientTooltipComponent> tooltip) {
-        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, true).ifPresent(asAlternative -> {
-            if (asAlternative instanceof ItemFilteredResource) {
-                return;
-            }
-            tooltip.add(new FilteredResourceTooltip(false, asAlternative));
-        });
-    }
-
-    private static class FilteredResourceTooltip implements ClientTooltipComponent {
-        private static final int MOUSE_ICON_WIDTH = 9;
-        private static final int MOUSE_ICON_HEIGHT = 16;
-
-        private final boolean left;
-        private final FilteredResource<?> filteredResource;
-        private final Component name;
-
-        private FilteredResourceTooltip(final boolean left, final FilteredResource<?> filteredResource) {
-            this.left = left;
-            this.filteredResource = filteredResource;
-            this.name = filteredResource.getDisplayName();
-        }
-
-        @Override
-        public int getHeight() {
-            return 18;
-        }
-
-        @Override
-        public int getWidth(final Font font) {
-            return MOUSE_ICON_WIDTH + 4 + 16 + 4 + font.width(name);
-        }
-
-        @Override
-        public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
-            final int u = left ? 238 : 247;
-            final int v = 178;
-            graphics.blit(TextureIds.ICONS, x, y, u, v, MOUSE_ICON_WIDTH, MOUSE_ICON_HEIGHT);
-            filteredResource.render(graphics, x + MOUSE_ICON_WIDTH + 4, y);
-            graphics.drawString(
-                font,
-                name,
-                x + MOUSE_ICON_WIDTH + 4 + 16 + 4,
-                y + 4,
-                Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15)
-            );
-        }
     }
 }

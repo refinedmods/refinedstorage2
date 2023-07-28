@@ -218,14 +218,6 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         graphics.disableScissor();
     }
 
-    @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        super.renderTooltip(graphics, x, y);
-        if (gridSlotNumber != -1 && isOverStorageArea(x, y)) {
-            renderGridTooltip(graphics, x, y);
-        }
-    }
-
     private void renderRow(final GuiGraphics graphics,
                            final int mouseX,
                            final int mouseY,
@@ -336,20 +328,41 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         graphics.pose().popPose();
     }
 
-    private void renderGridTooltip(final GuiGraphics graphics, final int mouseX, final int mouseY) {
+    @Override
+    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+        super.renderTooltip(graphics, x, y);
+        if (isOverStorageArea(x, y)) {
+            renderOverStorageAreaTooltip(graphics, x, y);
+        }
+    }
+
+    private void renderOverStorageAreaTooltip(final GuiGraphics graphics, final int x, final int y) {
+        if (gridSlotNumber != -1) {
+            renderHoveredResourceTooltip(graphics, x, y);
+            return;
+        }
+        final ItemStack carried = getMenu().getCarried();
+        if (carried.isEmpty()) {
+            return;
+        }
+        final List<ClientTooltipComponent> hints = PlatformApi.INSTANCE.getGridInsertionHints().getHints(carried);
+        Platform.INSTANCE.renderTooltip(graphics, hints, x, y);
+    }
+
+    private void renderHoveredResourceTooltip(final GuiGraphics graphics, final int mouseX, final int mouseY) {
         final GridView view = getMenu().getView();
         final GridResource resource = view.getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
-        renderGridTooltip(graphics, mouseX, mouseY, view, platformResource);
+        renderHoveredResourceTooltip(graphics, mouseX, mouseY, view, platformResource);
     }
 
-    private void renderGridTooltip(final GuiGraphics graphics,
-                                   final int mouseX,
-                                   final int mouseY,
-                                   final GridView view,
-                                   final PlatformGridResource platformResource) {
+    private void renderHoveredResourceTooltip(final GuiGraphics graphics,
+                                              final int mouseX,
+                                              final int mouseY,
+                                              final GridView view,
+                                              final PlatformGridResource platformResource) {
         final ItemStack stackContext = platformResource instanceof ItemGridResource itemGridResource
             ? itemGridResource.getItemStack()
             : ItemStack.EMPTY;
@@ -407,6 +420,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
+
     @Nullable
     public GridResource getHoveredResource() {
         if (this.gridSlotNumber == -1) {
@@ -452,7 +466,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final GridInsertMode mode = clickedButton == 1
             ? GridInsertMode.SINGLE_RESOURCE
             : GridInsertMode.ENTIRE_RESOURCE;
-        final boolean tryAlternatives = clickedButton == 1; // TODO - Add help icon in gui for this
+        final boolean tryAlternatives = clickedButton == 1;
         getMenu().onInsert(mode, tryAlternatives);
     }
 
