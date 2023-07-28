@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -24,5 +25,12 @@ public final class IdentifierUtil {
 
     public static MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return Component.translatable(createTranslationKey(category, value), args);
+    }
+
+    public static MutableComponent createTranslationAsHeading(final String category, final String value) {
+        return Component.literal("<")
+            .append(createTranslation(category, value))
+            .append(">")
+            .withStyle(ChatFormatting.DARK_GRAY);
     }
 }

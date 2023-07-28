@@ -43,6 +43,11 @@ public record FluidFilteredResource(FluidResource value, long amount) implements
     }
 
     @Override
+    public Component getDisplayName() {
+        return Platform.INSTANCE.getFluidRenderer().getDisplayName(value);
+    }
+
+    @Override
     public List<Component> getTooltip() {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(value);
     }

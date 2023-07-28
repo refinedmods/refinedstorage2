@@ -4,13 +4,16 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceFilterSlot extends Slot {
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
+
+public class ResourceFilterSlot extends Slot implements SlotTooltip {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFilterSlot.class);
 
     private final ResourceFilterContainer resourceFilterContainer;
@@ -50,6 +56,10 @@ public class ResourceFilterSlot extends Slot {
     @Nullable
     public FilteredResource<?> getFilteredResource() {
         return resourceFilterContainer.get(containerIndex);
+    }
+
+    public boolean isEmpty() {
+        return getFilteredResource() == null;
     }
 
     private static SimpleContainer createDummyContainer() {
@@ -130,11 +140,48 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
-    public List<Component> getTooltip() {
+    @Override
+    public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
+        return getInternalTooltip(carried)
+            .stream()
+            .map(Component::getVisualOrderText)
+            .map(ClientTooltipComponent::create)
+            .toList();
+    }
+
+    private List<Component> getInternalTooltip(final ItemStack carried) {
         final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
         if (filteredResource == null) {
-            return Collections.emptyList();
+            final List<Component> tooltip = new ArrayList<>();
+            tooltip.add(createTranslationAsHeading("gui", "filter_slot.empty_filter"));
+            if (!carried.isEmpty()) {
+                addCarriedHints(carried, tooltip);
+            }
+            return tooltip;
         }
-        return filteredResource.getTooltip();
+        final List<Component> tooltip = filteredResource.getTooltip();
+        tooltip.add(createTranslationAsHeading("gui", "filter_slot.click_to_clear"));
+        return tooltip;
+    }
+
+    private void addCarriedHints(final ItemStack carried, final List<Component> tooltip) {
+        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, false).ifPresent(asItem ->
+            tooltip.add(createTranslation("gui", "filter_slot.left_click_for")
+                .withStyle(ChatFormatting.WHITE)
+                .append(" ")
+                .append(asItem.getDisplayName().copy().withStyle(ChatFormatting.YELLOW))));
+        addCarriedHintsForAlternatives(carried, tooltip);
+    }
+
+    private void addCarriedHintsForAlternatives(final ItemStack carried, final List<Component> tooltip) {
+        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, true).ifPresent(asAlternative -> {
+            if (asAlternative instanceof ItemFilteredResource) {
+                return;
+            }
+            tooltip.add(createTranslation("gui", "filter_slot.right_click_for")
+                .withStyle(ChatFormatting.WHITE)
+                .append(" ")
+                .append(asAlternative.getDisplayName().copy().withStyle(ChatFormatting.YELLOW)));
+        });
     }
 }

@@ -51,6 +51,11 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
     }
 
     @Override
+    public Component getDisplayName() {
+        return value.toItemStack().getHoverName();
+    }
+
+    @Override
     public List<Component> getTooltip() {
         final Minecraft minecraft = Minecraft.getInstance();
         return ClientProxy.getPlayer().map(player -> value.toItemStack().getTooltipLines(
