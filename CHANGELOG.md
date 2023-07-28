@@ -10,13 +10,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Constructor
--   Filter slot hints.
+-   Filter slot hints that show which resource will be put in a filter slot.
 
 ### Changed
 
 -   The Constructor crafting recipe now takes 2 diamonds instead of 2 redstone.
 -   You can now select a "Scheduling mode" in the Constructor: first available, round robin, random.
--   The "applicable upgrades" tooltip on the upgrade slot tooltip now shows the actual items instead of just text.
+-   The "applicable upgrades" tooltip on the upgrade slot tooltip now shows the upgrade items in item form.
 
 ### Fixed
 

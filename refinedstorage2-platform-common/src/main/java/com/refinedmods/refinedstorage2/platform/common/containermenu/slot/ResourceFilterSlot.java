@@ -5,14 +5,18 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredReso
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -24,7 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
 
 public class ResourceFilterSlot extends Slot implements SlotTooltip {
@@ -142,46 +145,84 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
 
     @Override
     public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
-        return getInternalTooltip(carried)
+        final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
+        if (filteredResource == null) {
+            return getTooltipForEmptySlot(carried);
+        }
+        final List<ClientTooltipComponent> tooltip = filteredResource.getTooltip()
             .stream()
             .map(Component::getVisualOrderText)
             .map(ClientTooltipComponent::create)
-            .toList();
-    }
-
-    private List<Component> getInternalTooltip(final ItemStack carried) {
-        final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
-        if (filteredResource == null) {
-            final List<Component> tooltip = new ArrayList<>();
-            tooltip.add(createTranslationAsHeading("gui", "filter_slot.empty_filter"));
-            if (!carried.isEmpty()) {
-                addCarriedHints(carried, tooltip);
-            }
-            return tooltip;
-        }
-        final List<Component> tooltip = filteredResource.getTooltip();
-        tooltip.add(createTranslationAsHeading("gui", "filter_slot.click_to_clear"));
+            .collect(Collectors.toList());
+        tooltip.add(ClientTooltipComponent.create(
+            createTranslationAsHeading("gui", "filter_slot.click_to_clear").getVisualOrderText()
+        ));
         return tooltip;
     }
 
-    private void addCarriedHints(final ItemStack carried, final List<Component> tooltip) {
-        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, false).ifPresent(asItem ->
-            tooltip.add(createTranslation("gui", "filter_slot.left_click_for")
-                .withStyle(ChatFormatting.WHITE)
-                .append(" ")
-                .append(asItem.getDisplayName().copy().withStyle(ChatFormatting.YELLOW))));
+    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
+        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
+        tooltip.add(ClientTooltipComponent.create(
+            createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
+        ));
+        if (!carried.isEmpty()) {
+            addCarriedHints(carried, tooltip);
+        }
+        return tooltip;
+    }
+
+    private void addCarriedHints(final ItemStack carried, final List<ClientTooltipComponent> tooltip) {
+        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, false)
+            .ifPresent(asItem -> tooltip.add(new FilteredResourceTooltip(true, asItem)));
         addCarriedHintsForAlternatives(carried, tooltip);
     }
 
-    private void addCarriedHintsForAlternatives(final ItemStack carried, final List<Component> tooltip) {
+    private void addCarriedHintsForAlternatives(final ItemStack carried, final List<ClientTooltipComponent> tooltip) {
         PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, true).ifPresent(asAlternative -> {
             if (asAlternative instanceof ItemFilteredResource) {
                 return;
             }
-            tooltip.add(createTranslation("gui", "filter_slot.right_click_for")
-                .withStyle(ChatFormatting.WHITE)
-                .append(" ")
-                .append(asAlternative.getDisplayName().copy().withStyle(ChatFormatting.YELLOW)));
+            tooltip.add(new FilteredResourceTooltip(false, asAlternative));
         });
+    }
+
+    private static class FilteredResourceTooltip implements ClientTooltipComponent {
+        private static final int MOUSE_ICON_WIDTH = 9;
+        private static final int MOUSE_ICON_HEIGHT = 16;
+
+        private final boolean left;
+        private final FilteredResource<?> filteredResource;
+        private final Component name;
+
+        private FilteredResourceTooltip(final boolean left, final FilteredResource<?> filteredResource) {
+            this.left = left;
+            this.filteredResource = filteredResource;
+            this.name = filteredResource.getDisplayName();
+        }
+
+        @Override
+        public int getHeight() {
+            return 18;
+        }
+
+        @Override
+        public int getWidth(final Font font) {
+            return MOUSE_ICON_WIDTH + 4 + 16 + 4 + font.width(name);
+        }
+
+        @Override
+        public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+            final int u = left ? 238 : 247;
+            final int v = 178;
+            graphics.blit(TextureIds.ICONS, x, y, u, v, MOUSE_ICON_WIDTH, MOUSE_ICON_HEIGHT);
+            filteredResource.render(graphics, x + MOUSE_ICON_WIDTH + 4, y);
+            graphics.drawString(
+                font,
+                name,
+                x + MOUSE_ICON_WIDTH + 4 + 16 + 4,
+                y + 4,
+                Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15)
+            );
+        }
     }
 }
