@@ -77,6 +77,8 @@ public interface Platform {
 
     Optional<ResourceAmount<FluidResource>> convertToFluid(ItemStack stack);
 
+    Optional<ItemStack> convertToBucket(FluidResource fluidResource);
+
     EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener);
 
     void setEnergy(EnergyStorage energyStorage, long stored);

@@ -54,6 +54,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.BlockGetter;
@@ -150,6 +151,17 @@ public final class PlatformImpl extends AbstractPlatform {
                 new FluidResource(contents.getFluid(), contents.getTag()),
                 contents.getAmount())
             );
+    }
+
+    @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        return new ItemStack(Items.BUCKET).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).map(dest -> {
+            dest.fill(
+                toFluidStack(fluidResource, FluidType.BUCKET_VOLUME),
+                IFluidHandler.FluidAction.EXECUTE
+            );
+            return dest.getContainer();
+        });
     }
 
     @Override

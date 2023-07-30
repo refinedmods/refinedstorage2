@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.apiguardian.api.API;
@@ -31,4 +32,6 @@ public interface PlatformGridResource extends GridResource {
     Optional<TooltipComponent> getTooltipImage();
 
     int getRegistryId();
+
+    List<? extends ClientTooltipComponent> getExtractionHints();
 }

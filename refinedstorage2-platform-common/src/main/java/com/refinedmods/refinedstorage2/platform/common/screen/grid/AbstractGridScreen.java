@@ -377,6 +377,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
             addDetailedTooltip(view, platformResource, processedLines);
         }
+        if (!platformResource.isZeroed()) {
+            processedLines.addAll(platformResource.getExtractionHints());
+        }
         Platform.INSTANCE.renderTooltip(graphics, processedLines, mouseX, mouseY);
     }
 

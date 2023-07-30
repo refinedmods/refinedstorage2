@@ -128,6 +128,11 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        return ensureLoaded().convertToBucket(fluidResource);
+    }
+
+    @Override
     public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return ensureLoaded().createEnergyStorage(controllerType, listener);
     }

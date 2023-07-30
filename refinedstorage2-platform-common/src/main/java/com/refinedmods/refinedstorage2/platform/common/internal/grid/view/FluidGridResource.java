@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceTooltipComponent;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -44,6 +46,17 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     @Override
     public int getRegistryId() {
         return id;
+    }
+
+    @Override
+    public List<? extends ClientTooltipComponent> getExtractionHints() {
+        return Platform.INSTANCE.convertToBucket(fluidResource).map(
+            bucket -> new ResourceTooltipComponent(
+                true,
+                (graphics, x, y) -> graphics.renderItem(bucket, x, y),
+                null
+            )
+        ).stream().toList();
     }
 
     @Override
