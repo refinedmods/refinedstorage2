@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
-public class ResourceTooltipComponent implements ClientTooltipComponent {
+public class MouseWithIconAndTextClientTooltipComponent implements ClientTooltipComponent {
     private static final int MOUSE_ICON_WIDTH = 9;
     private static final int MOUSE_ICON_HEIGHT = 16;
 
@@ -23,9 +23,9 @@ public class ResourceTooltipComponent implements ClientTooltipComponent {
     @Nullable
     private final String amount;
 
-    public ResourceTooltipComponent(final boolean left,
-                                    final IconRenderer iconRenderer,
-                                    @Nullable final String amount) {
+    public MouseWithIconAndTextClientTooltipComponent(final boolean left,
+                                                      final IconRenderer iconRenderer,
+                                                      @Nullable final String amount) {
         this.left = left;
         this.iconRenderer = iconRenderer;
         this.amount = amount;
@@ -64,7 +64,7 @@ public class ResourceTooltipComponent implements ClientTooltipComponent {
         PlatformApi.INSTANCE.getFilteredResourceFactory()
             .create(carried, false)
             .ifPresent(asItem -> lines.add(
-                new ResourceTooltipComponent(true, asItem::render, null)
+                new MouseWithIconAndTextClientTooltipComponent(true, asItem::render, null)
             ));
         PlatformApi.INSTANCE.getFilteredResourceFactory()
             .create(carried, true)
@@ -72,7 +72,7 @@ public class ResourceTooltipComponent implements ClientTooltipComponent {
                 if (asAlternative instanceof ItemFilteredResource) {
                     return;
                 }
-                lines.add(new ResourceTooltipComponent(false, asAlternative::render, null));
+                lines.add(new MouseWithIconAndTextClientTooltipComponent(false, asAlternative::render, null));
             });
         return lines;
     }

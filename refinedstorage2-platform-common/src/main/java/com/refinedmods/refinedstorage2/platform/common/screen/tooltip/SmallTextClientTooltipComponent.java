@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.screen.grid;
+package com.refinedmods.refinedstorage2.platform.common.screen.tooltip;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -6,11 +6,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix4f;
 
-public class SmallClientTooltipComponent implements ClientTooltipComponent {
+public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
     private final Component component;
     private final float scale;
 
-    public SmallClientTooltipComponent(final Component component, final float scale) {
+    public SmallTextClientTooltipComponent(final Component component, final float scale) {
         this.component = component;
         this.scale = scale;
     }

@@ -8,6 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 public final class IdentifierUtil {
     public static final String MOD_ID = "refinedstorage2";
 
+    public static final MutableComponent YES = Component.translatable("gui.yes");
+    public static final MutableComponent NO = Component.translatable("gui.no");
+
     private IdentifierUtil() {
     }
 

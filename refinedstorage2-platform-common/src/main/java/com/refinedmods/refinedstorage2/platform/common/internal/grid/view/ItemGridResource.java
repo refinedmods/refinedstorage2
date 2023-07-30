@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconAndTextClientTooltipComponent;
 
 import java.util.List;
 import java.util.Map;
@@ -65,12 +65,12 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
         final long extractableAmount = Math.min(getAmount(), itemStack.getMaxStackSize());
         final long halfExtractionAmount = extractableAmount == 1 ? 1 : extractableAmount / 2;
         return List.of(
-            new ResourceTooltipComponent(
+            new MouseWithIconAndTextClientTooltipComponent(
                 true,
                 this::render,
                 extractableAmount == 1 ? null : AmountFormatting.format(extractableAmount)
             ),
-            new ResourceTooltipComponent(
+            new MouseWithIconAndTextClientTooltipComponent(
                 false,
                 this::render,
                 halfExtractionAmount == 1 ? null : AmountFormatting.format(halfExtractionAmount)

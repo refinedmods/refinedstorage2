@@ -5,46 +5,24 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.Abstra
 import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
-    private static final List<Component> ALL_TOOLTIP = calculateTooltip(null);
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.storage_channel_type");
+    private static final MutableComponent SUBTEXT_ALL = createTranslation("gui", "grid.storage_channel_type.all");
 
     private final AbstractGridContainerMenu menu;
-    private final Map<PlatformStorageChannelType<?>, List<Component>> tooltips = new HashMap<>();
 
-    public StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu,
-                                              final List<PlatformStorageChannelType<?>> storageChannelTypes) {
+    public StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
-        storageChannelTypes.forEach(
-            storageChannelType -> tooltips.put(storageChannelType, calculateTooltip(storageChannelType))
-        );
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu menu) {
         return btn -> menu.toggleStorageChannelType();
-    }
-
-    private static List<Component> calculateTooltip(@Nullable final PlatformStorageChannelType<?> storageChannelType) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "grid.storage_channel_type"));
-        if (storageChannelType != null) {
-            lines.add(storageChannelType.getTitle().withStyle(ChatFormatting.GRAY));
-        } else {
-            lines.add(createTranslation("gui", "grid.storage_channel_type.all").withStyle(ChatFormatting.GRAY));
-        }
-        return lines;
     }
 
     @Override
@@ -54,6 +32,20 @@ public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget
             return TextureIds.ICONS;
         }
         return storageChannelType.getTextureIdentifier();
+    }
+
+    @Override
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
+        if (storageChannelType == null) {
+            return SUBTEXT_ALL;
+        }
+        return storageChannelType.getTitle();
     }
 
     @Override
@@ -72,14 +64,5 @@ public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget
             return 128;
         }
         return storageChannelType.getYTexture();
-    }
-
-    @Override
-    protected List<Component> getSideButtonTooltip() {
-        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
-        if (storageChannelType == null) {
-            return ALL_TOOLTIP;
-        }
-        return tooltips.get(storageChannelType);
     }
 }

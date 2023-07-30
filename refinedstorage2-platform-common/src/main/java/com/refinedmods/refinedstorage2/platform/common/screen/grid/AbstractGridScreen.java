@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
@@ -116,17 +117,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addSideButton(new SortingTypeSideButtonWidget(getMenu()));
         addSideButton(new SizeSideButtonWidget(getMenu()));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu()));
-        addSideButton(new StorageChannelTypeSideButtonWidget(
-            getMenu(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
-        ));
+        addSideButton(new StorageChannelTypeSideButtonWidget(getMenu()));
 
         final PlatformRegistry<GridSynchronizer> registry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         if (!registry.isEmpty()) {
-            addSideButton(new SynchronizationSideButtonWidget(
-                getMenu(),
-                registry.getAll()
-            ));
+            addSideButton(new SynchronizationSideButtonWidget(getMenu()));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
     }
@@ -388,11 +383,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                                     final List<ClientTooltipComponent> lines) {
         final float scale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
         final String amountInTooltip = platformResource.isZeroed() ? "0" : platformResource.getAmountInTooltip();
-        lines.add(new SmallClientTooltipComponent(
+        lines.add(new SmallTextClientTooltipComponent(
             createTranslation("misc", "total", amountInTooltip).withStyle(ChatFormatting.GRAY),
             scale
         ));
-        platformResource.getTrackedResource(view).ifPresent(entry -> lines.add(new SmallClientTooltipComponent(
+        platformResource.getTrackedResource(view).ifPresent(entry -> lines.add(new SmallTextClientTooltipComponent(
             getLastModifiedText(entry).withStyle(ChatFormatting.GRAY),
             scale
         )));

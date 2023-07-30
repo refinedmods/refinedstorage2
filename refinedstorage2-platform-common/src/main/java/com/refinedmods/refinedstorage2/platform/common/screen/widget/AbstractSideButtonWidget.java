@@ -5,10 +5,12 @@ import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -40,9 +42,14 @@ public abstract class AbstractSideButtonWidget extends Button {
             graphics.blit(getTextureIdentifier(), getX(), getY(), 238, 54, WIDTH, HEIGHT);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.disableBlend();
-            graphics.renderComponentTooltip(Minecraft.getInstance().font, getSideButtonTooltip(), mouseX, mouseY);
+            graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(
+                getTitle(),
+                getSubText().withStyle(ChatFormatting.GRAY)
+            ), mouseX, mouseY);
         }
     }
 
-    protected abstract List<Component> getSideButtonTooltip();
+    protected abstract MutableComponent getTitle();
+
+    protected abstract MutableComponent getSubText();
 }

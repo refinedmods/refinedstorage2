@@ -4,26 +4,23 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.Abstra
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.sorting.type");
+    private static final MutableComponent SUBTEXT_QUANTITY = createTranslation("gui", "grid.sorting.type.quantity");
+    private static final MutableComponent SUBTEXT_NAME = createTranslation("gui", "grid.sorting.type.name");
+    private static final MutableComponent SUBTEXT_ID = createTranslation("gui", "grid.sorting.type.id");
+    private static final MutableComponent SUBTEXT_LAST_MODIFIED =
+        createTranslation("gui", "grid.sorting.type.last_modified");
+
     private final AbstractGridContainerMenu menu;
-    private final Map<GridSortingTypes, List<Component>> tooltips = new EnumMap<>(GridSortingTypes.class);
 
     public SortingTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
-        Arrays.stream(GridSortingTypes.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu menu) {
@@ -37,16 +34,6 @@ public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
             case ID -> GridSortingTypes.LAST_MODIFIED;
             case LAST_MODIFIED -> GridSortingTypes.QUANTITY;
         };
-    }
-
-    private List<Component> calculateTooltip(final GridSortingTypes type) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "grid.sorting.type"));
-        lines.add(createTranslation(
-            "gui",
-            "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)
-        ).withStyle(ChatFormatting.GRAY));
-        return lines;
     }
 
     @Override
@@ -65,7 +52,17 @@ public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return tooltips.get(menu.getSortingType());
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return switch (menu.getSortingType()) {
+            case QUANTITY -> SUBTEXT_QUANTITY;
+            case NAME -> SUBTEXT_NAME;
+            case ID -> SUBTEXT_ID;
+            case LAST_MODIFIED -> SUBTEXT_LAST_MODIFIED;
+        };
     }
 }

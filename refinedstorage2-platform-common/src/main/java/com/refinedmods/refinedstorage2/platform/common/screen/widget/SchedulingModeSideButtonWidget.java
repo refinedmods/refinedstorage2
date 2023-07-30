@@ -3,16 +3,14 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 // TODO: Textures!
 public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
+    private static final MutableComponent TITLE = createTranslation("gui", "scheduling_mode");
+
     private final ClientProperty<SchedulingModeType> property;
 
     public SchedulingModeSideButtonWidget(final ClientProperty<SchedulingModeType> property) {
@@ -32,13 +30,6 @@ public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
         };
     }
 
-    private List<Component> calculateTooltip(final SchedulingModeType modeSettings) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "scheduling_mode"));
-        lines.add(modeSettings.getName().withStyle(ChatFormatting.GRAY));
-        return lines;
-    }
-
     @Override
     protected int getXTexture() {
         return -16;
@@ -50,7 +41,12 @@ public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return calculateTooltip(property.getValue());
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return property.getValue().getName();
     }
 }

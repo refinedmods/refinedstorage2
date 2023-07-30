@@ -3,27 +3,22 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
+    private static final MutableComponent TITLE = createTranslation("gui", "access_mode");
+    private static final MutableComponent SUBTEXT_INSERT = createTranslation("gui", "access_mode.insert");
+    private static final MutableComponent SUBTEXT_EXTRACT = createTranslation("gui", "access_mode.extract");
+    private static final MutableComponent SUBTEXT_INSERT_EXTRACT =
+        createTranslation("gui", "access_mode.insert_extract");
+
     private final ClientProperty<AccessMode> property;
-    private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);
 
     public AccessModeSideButtonWidget(final ClientProperty<AccessMode> property) {
         super(createPressAction(property));
         this.property = property;
-        Arrays.stream(AccessMode.values()).forEach(accessMode ->
-            tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
     private static OnPress createPressAction(final ClientProperty<AccessMode> property) {
@@ -36,16 +31,6 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
             case INSERT -> AccessMode.EXTRACT;
             case EXTRACT -> AccessMode.INSERT_EXTRACT;
         };
-    }
-
-    private List<Component> calculateTooltip(final AccessMode accessMode) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "access_mode"));
-        lines.add(createTranslation(
-            "gui",
-            "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)
-        ).withStyle(ChatFormatting.GRAY));
-        return lines;
     }
 
     @Override
@@ -63,7 +48,16 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return tooltips.get(property.getValue());
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return switch (property.getValue()) {
+            case INSERT_EXTRACT -> SUBTEXT_INSERT_EXTRACT;
+            case INSERT -> SUBTEXT_INSERT;
+            case EXTRACT -> SUBTEXT_EXTRACT;
+        };
     }
 }
