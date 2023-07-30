@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconAndTextClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +161,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
         tooltip.add(ClientTooltipComponent.create(
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
         ));
-        tooltip.addAll(MouseWithIconAndTextClientTooltipComponent.createForFilter(carried));
+        tooltip.addAll(MouseWithIconClientTooltipComponent.createForFilter(carried));
         return tooltip;
     }
 }
