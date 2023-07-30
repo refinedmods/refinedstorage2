@@ -17,6 +17,9 @@ public class ImporterScreen extends AbstractFilterScreen<ImporterContainerMenu> 
     protected void init() {
         super.init();
         addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
-        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+            FuzzyModeSideButtonWidget.Type.EXTRACTING_SOURCE
+        ));
     }
 }

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.task.RandomTaskExec
 import com.refinedmods.refinedstorage2.api.network.impl.node.task.RoundRobinTaskExecutor;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 
+import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -13,18 +14,32 @@ import net.minecraft.network.chat.MutableComponent;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public enum SchedulingModeType {
-    DEFAULT(0, createTranslation("gui", "scheduling_mode.default")),
-    ROUND_ROBIN(1, createTranslation("gui", "scheduling_mode.round_robin")),
-    RANDOM(2, createTranslation("gui", "scheduling_mode.random"));
+    DEFAULT(
+        0,
+        createTranslation("gui", "scheduling_mode.default"),
+        createTranslation("gui", "scheduling_mode.default.help")
+    ),
+    ROUND_ROBIN(
+        1,
+        createTranslation("gui", "scheduling_mode.round_robin"),
+        createTranslation("gui", "scheduling_mode.round_robin.help")
+    ),
+    RANDOM(
+        2,
+        createTranslation("gui", "scheduling_mode.random"),
+        createTranslation("gui", "scheduling_mode.random.help")
+    );
 
     private static final String TAG_ROUND_ROBIN_INDEX = "rri";
 
     private final int id;
     private final MutableComponent name;
+    private final List<MutableComponent> help;
 
-    SchedulingModeType(final int id, final MutableComponent name) {
+    SchedulingModeType(final int id, final MutableComponent name, final MutableComponent help) {
         this.id = id;
         this.name = name;
+        this.help = List.of(help);
     }
 
     public static SchedulingModeType getById(final int id) {
@@ -38,6 +53,10 @@ public enum SchedulingModeType {
 
     public MutableComponent getName() {
         return name;
+    }
+
+    public List<MutableComponent> getHelp() {
+        return help;
     }
 
     public int getId() {

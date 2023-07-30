@@ -19,7 +19,10 @@ public class ConstructorScreen extends AbstractFilterScreen<ConstructorContainer
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+            FuzzyModeSideButtonWidget.Type.EXTRACTING_STORAGE_NETWORK
+        ));
         addSideButton(new SchedulingModeSideButtonWidget(getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
         addSideButton(new ConstructorDropItemsSideButtonWidget(
             getMenu().getProperty(PropertyTypes.CONSTRUCTOR_DROP_ITEMS)

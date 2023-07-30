@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
+import java.util.List;
+
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -35,6 +37,11 @@ public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
     @Override
     protected MutableComponent getSubText() {
         return menu.getSynchronizer().getTitle();
+    }
+
+    @Override
+    protected List<MutableComponent> getHelpText() {
+        return menu.getSynchronizer().getHelp();
     }
 
     @Override

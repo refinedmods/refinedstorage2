@@ -24,7 +24,10 @@ public class ExternalStorageScreen extends AbstractFilterScreen<ExternalStorageC
     protected void init() {
         super.init();
         addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
-        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+            FuzzyModeSideButtonWidget.Type.STORAGE
+        ));
         addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(PropertyTypes.ACCESS_MODE)));
         addSideButton(new PrioritySideButtonWidget(
             getMenu().getProperty(PropertyTypes.PRIORITY),

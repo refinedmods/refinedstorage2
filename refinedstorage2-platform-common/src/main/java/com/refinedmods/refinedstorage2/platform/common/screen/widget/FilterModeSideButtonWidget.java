@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
+import java.util.List;
+
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -11,6 +13,10 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "filter_mode");
     private static final MutableComponent SUBTEXT_BLOCK = createTranslation("gui", "filter_mode.block");
     private static final MutableComponent SUBTEXT_ALLOW = createTranslation("gui", "filter_mode.allow");
+    private static final List<MutableComponent> HELP_BLOCK =
+        List.of(createTranslation("gui", "filter_mode.block.help"));
+    private static final List<MutableComponent> HELP_ALLOW =
+        List.of(createTranslation("gui", "filter_mode.allow.help"));
 
     private final ClientProperty<FilterMode> property;
 
@@ -45,5 +51,10 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     @Override
     protected MutableComponent getSubText() {
         return property.getValue() == FilterMode.BLOCK ? SUBTEXT_BLOCK : SUBTEXT_ALLOW;
+    }
+
+    @Override
+    protected List<MutableComponent> getHelpText() {
+        return property.getValue() == FilterMode.BLOCK ? HELP_BLOCK : HELP_ALLOW;
     }
 }

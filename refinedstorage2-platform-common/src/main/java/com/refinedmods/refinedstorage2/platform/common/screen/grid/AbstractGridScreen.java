@@ -381,16 +381,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private void addDetailedTooltip(final GridView view,
                                     final PlatformGridResource platformResource,
                                     final List<ClientTooltipComponent> lines) {
-        final float scale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
         final String amountInTooltip = platformResource.isZeroed() ? "0" : platformResource.getAmountInTooltip();
-        lines.add(new SmallTextClientTooltipComponent(
-            createTranslation("misc", "total", amountInTooltip).withStyle(ChatFormatting.GRAY),
-            scale
-        ));
-        platformResource.getTrackedResource(view).ifPresent(entry -> lines.add(new SmallTextClientTooltipComponent(
-            getLastModifiedText(entry).withStyle(ChatFormatting.GRAY),
-            scale
-        )));
+        final List<Component> detailedLines = new ArrayList<>();
+        detailedLines.add(createTranslation("misc", "total", amountInTooltip).withStyle(ChatFormatting.GRAY));
+        platformResource.getTrackedResource(view).ifPresent(
+            entry -> detailedLines.add(getLastModifiedText(entry).withStyle(ChatFormatting.GRAY))
+        );
+        lines.add(new SmallTextClientTooltipComponent(detailedLines));
     }
 
     private MutableComponent getLastModifiedText(final TrackedResource trackedResource) {
