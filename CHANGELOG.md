@@ -10,7 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Constructor
--   Filter slot hints that show which resource will be put in a filter slot.
+-   Filter slot hints that show which resource will be put in a filter slot and what the effect of the filter is on the device.
 -   Grid slot hints that show which resource will be inserted or extracted in a Grid.
 -   Help information to the side buttons by pressing SHIFT.
 -   A warning to the "filter mode" button on the storage screens if there is an allowlist with no configured filters.

@@ -18,6 +18,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu {
     private static final int EXPORT_CONFIG_SLOT_X = 8;
     private static final int EXPORT_CONFIG_SLOT_Y = 20;
@@ -70,7 +72,13 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
 
     private Slot createExportConfigSlot(final ResourceFilterContainer resourceFilterContainer, final int index) {
         final int x = getExportSlotX(index);
-        return new ResourceFilterSlot(resourceFilterContainer, index, x, EXPORT_CONFIG_SLOT_Y);
+        return new ResourceFilterSlot(
+            resourceFilterContainer,
+            index,
+            createTranslation("gui", "interface.filter_help"),
+            x,
+            EXPORT_CONFIG_SLOT_Y
+        );
     }
 
     private Slot createExportedItemSlot(final Container container, final int index) {

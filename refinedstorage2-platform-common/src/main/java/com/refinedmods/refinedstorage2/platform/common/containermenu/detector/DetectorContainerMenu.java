@@ -17,6 +17,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DetectorContainerMenu extends AbstractResourceFilterContainerMenu {
     private final Player player;
 
@@ -56,7 +58,7 @@ public class DetectorContainerMenu extends AbstractResourceFilterContainerMenu {
     }
 
     private void addSlots(final ResourceFilterContainer config) {
-        addSlot(new ResourceFilterSlot(config, 0, 116, 47));
+        addSlot(new ResourceFilterSlot(config, 0, createTranslation("gui", "detector.filter_help"), 116, 47));
         addPlayerInventory(player.getInventory(), 8, 106);
         transferManager.addFilterTransfer(player.getInventory());
     }

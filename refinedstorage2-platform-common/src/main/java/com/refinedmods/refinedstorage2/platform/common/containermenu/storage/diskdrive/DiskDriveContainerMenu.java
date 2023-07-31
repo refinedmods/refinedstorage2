@@ -24,6 +24,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DiskDriveContainerMenu extends AbstractStorageContainerMenu implements StorageAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
@@ -76,7 +78,13 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
+        return new ResourceFilterSlot(
+            resourceFilterContainer,
+            i,
+            createTranslation("gui", "storage.filter_help"),
+            x,
+            FILTER_SLOT_Y
+        );
     }
 
     private Slot createDiskSlot(final SimpleContainer diskInventory, final int i) {

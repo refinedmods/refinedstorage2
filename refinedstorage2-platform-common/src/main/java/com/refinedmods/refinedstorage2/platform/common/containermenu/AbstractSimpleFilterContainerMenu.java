@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -18,13 +19,17 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
+    private final MutableComponent filterHelp;
+
     protected AbstractSimpleFilterContainerMenu(final MenuType<?> type,
                                                 final int syncId,
                                                 final Player player,
                                                 final ResourceFilterContainer resourceFilterContainer,
                                                 final UpgradeContainer upgradeContainer,
-                                                final T blockEntity) {
+                                                final T blockEntity,
+                                                final MutableComponent filterHelp) {
         super(type, syncId, player);
+        this.filterHelp = filterHelp;
         registerServerProperties(blockEntity);
         addSlots(player, resourceFilterContainer, upgradeContainer);
     }
@@ -33,8 +38,10 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
                                                 final int syncId,
                                                 final Player player,
                                                 final FriendlyByteBuf buf,
-                                                final UpgradeDestinations upgradeDestination) {
+                                                final UpgradeDestinations upgradeDestination,
+                                                final MutableComponent filterHelp) {
         super(type, syncId);
+        this.filterHelp = filterHelp;
         registerClientProperties();
         addSlots(
             player,
@@ -65,6 +72,6 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
+        return new ResourceFilterSlot(resourceFilterContainer, i, filterHelp, x, FILTER_SLOT_Y);
     }
 }

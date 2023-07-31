@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -31,21 +33,24 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
+    private final List<MutableComponent> helpText;
     @Nullable
     private FilteredResource<?> cachedResource;
 
     public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer,
                               final int index,
+                              final MutableComponent helpText,
                               final int x,
                               final int y) {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
+        this.helpText = List.of(helpText);
         this.cachedResource = resourceFilterContainer.get(index);
     }
 
     public ResourceFilterSlot atPosition(final int newX, final int newY) {
-        return new ResourceFilterSlot(resourceFilterContainer, index, newX, newY);
+        return new ResourceFilterSlot(resourceFilterContainer, index, helpText.get(0), newX, newY);
     }
 
     public boolean supportsAmount() {
@@ -162,6 +167,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
         ));
         tooltip.addAll(MouseWithIconClientTooltipComponent.createForFilter(carried));
+        tooltip.add(HelpClientTooltipComponent.getHelpTooltip(helpText));
         return tooltip;
     }
 }

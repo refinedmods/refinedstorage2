@@ -20,14 +20,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
-import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
-
 public abstract class AbstractSideButtonWidget extends Button {
-    private static final ClientTooltipComponent PRESS_SHIFT_FOR_HELP = new SmallTextClientTooltipComponent(List.of(
-        createTranslationAsHeading("misc", "press_shift_for_help")
-    ));
-
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
     private static final int WARNING_SIZE = 10;
@@ -105,11 +98,7 @@ public abstract class AbstractSideButtonWidget extends Button {
         }
         final List<MutableComponent> helpText = getHelpText();
         if (!helpText.isEmpty()) {
-            if (hasShiftDown()) {
-                lines.add(new HelpClientTooltipComponent(helpText));
-            } else {
-                lines.add(PRESS_SHIFT_FOR_HELP);
-            }
+            lines.add(HelpClientTooltipComponent.getHelpTooltip(helpText));
         }
         return lines;
     }
