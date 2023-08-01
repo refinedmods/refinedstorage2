@@ -56,7 +56,6 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
                                 final List<Component> tooltip,
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-
         final CompoundTag data = getBlockEntityData(stack);
         if (ControllerBlockEntity.hasEnergy(data)) {
             final long stored = ControllerBlockEntity.getStored(data);

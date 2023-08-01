@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -21,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiProxy;
@@ -42,6 +44,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -68,6 +71,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerPackets();
         registerBlockEntityRenderers();
         registerCustomModels();
+        registerCustomTooltips();
         registerScreens();
         registerKeyBindings();
         registerModelPredicates();
@@ -214,6 +218,15 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, ctx) -> {
             if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
+            }
+            return null;
+        });
+    }
+
+    private void registerCustomTooltips() {
+        TooltipComponentCallback.EVENT.register(data -> {
+            if (data instanceof AbstractUpgradeItem.UpgradeDestinationTooltipComponent component) {
+                return new UpgradeDestinationClientTooltipComponent(component.destinations());
             }
             return null;
         });

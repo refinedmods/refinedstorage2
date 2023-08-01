@@ -157,7 +157,6 @@
   "item.refinedstorage2.stack_upgrade": "Stack Upgrade",
   "item.refinedstorage2.silk_touch_upgrade": "Silk Touch Upgrade",
   "item.refinedstorage2.fortune_upgrade": "Fortune Upgrade",
-  "item.refinedstorage2.upgrade.supported_by": "Supported by:",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s (%d%%)",
   "misc.refinedstorage2.total": "%d total",

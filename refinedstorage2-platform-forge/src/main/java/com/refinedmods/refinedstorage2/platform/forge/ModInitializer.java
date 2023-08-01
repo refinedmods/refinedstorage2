@@ -123,6 +123,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -214,8 +215,11 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModelGeometry);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterKeyMappings);
+            FMLJavaModLoadingContext.get().getModEventBus()
+                .addListener(ClientModInitializer::onRegisterTooltipFactories);
         });
 
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
@@ -700,7 +704,6 @@ public class ModInitializer extends AbstractModInitializer {
             )
         );
         Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
-        addApplicableUpgrades();
     }
 
     private void registerBlockEntities() {
@@ -890,6 +893,11 @@ public class ModInitializer extends AbstractModInitializer {
 
     private void registerTickHandler() {
         MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+    }
+
+    @SubscribeEvent
+    public void onCommonSetup(final FMLCommonSetupEvent e) {
+        addUpgradeMappings();
     }
 
     @SubscribeEvent

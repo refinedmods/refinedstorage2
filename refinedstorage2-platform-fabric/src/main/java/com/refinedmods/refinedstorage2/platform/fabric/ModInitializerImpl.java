@@ -763,7 +763,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             )
         );
         Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
-        addApplicableUpgrades();
+        addUpgradeMappings();
     }
 
     private void registerBlockEntities() {

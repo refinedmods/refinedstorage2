@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
@@ -19,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiProxy;
@@ -31,6 +33,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -147,6 +150,14 @@ public final class ClientModInitializer {
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
             createIdentifier("rei_two_way"),
             new ReiGridSynchronizer(reiProxy, true)
+        );
+    }
+
+    @SubscribeEvent
+    public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
+        e.register(
+            AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
+            component -> new UpgradeDestinationClientTooltipComponent(component.destinations())
         );
     }
 }
