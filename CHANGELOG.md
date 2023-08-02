@@ -30,6 +30,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed compatibility with custom tooltips in the Grid.
 -   Fixed bundle tooltip in the Grid.
 -   Fixed changes to access mode or fuzzy mode not being persisted.
+-   Fixed being able to put any item in the upgrade slots.
 
 ## [2.0.0-milestone.2.11] - 2023-07-04
 
