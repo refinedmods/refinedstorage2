@@ -23,6 +23,11 @@ public class UpgradeSlot extends Slot implements SlotTooltip {
     }
 
     @Override
+    public boolean mayPlace(final ItemStack stack) {
+        return upgradeContainer.canPlaceItem(getContainerSlot(), stack);
+    }
+
+    @Override
     public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
         if (!carried.isEmpty() || hasItem()) {
             return Collections.emptyList();
