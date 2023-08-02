@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -21,9 +20,9 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final Component HELP_LOW = createTranslation("gui", "redstone_mode.low.help");
 
     private final ClientProperty<RedstoneMode> property;
-    private final List<Component> helpIgnore;
-    private final List<Component> helpHigh;
-    private final List<Component> helpLow;
+    private final Component helpIgnore;
+    private final Component helpHigh;
+    private final Component helpLow;
 
     public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property) {
         this(property, null);
@@ -71,7 +70,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
+    protected Component getHelpText() {
         return switch (property.getValue()) {
             case IGNORE -> helpIgnore;
             case HIGH -> helpHigh;
@@ -79,11 +78,10 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
         };
     }
 
-    private static List<Component> getHelpText(final Component text,
-                                               @Nullable final Component extraText) {
+    private Component getHelpText(final Component text, @Nullable final Component extraText) {
         if (extraText == null) {
-            return List.of(text);
+            return text;
         }
-        return List.of(text, extraText);
+        return text.copy().append(" ").append(extraText);
     }
 }

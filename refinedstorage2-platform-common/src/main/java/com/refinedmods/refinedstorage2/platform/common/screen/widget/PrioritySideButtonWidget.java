@@ -3,8 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.PriorityScreen;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -15,7 +13,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");
-    private static final List<Component> HELP = List.of(createTranslation("gui", "priority.storage_help"));
+    private static final Component HELP = createTranslation("gui", "priority.storage_help");
 
     private final ClientProperty<Integer> property;
 
@@ -53,7 +51,7 @@ public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
+    protected Component getHelpText() {
         return HELP;
     }
 }

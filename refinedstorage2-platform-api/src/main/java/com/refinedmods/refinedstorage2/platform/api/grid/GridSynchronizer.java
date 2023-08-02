@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.api.grid;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,7 @@ import org.apiguardian.api.API;
 public interface GridSynchronizer {
     MutableComponent getTitle();
 
-    List<Component> getHelp();
+    Component getHelpText();
 
     void synchronizeFromGrid(String text);
 

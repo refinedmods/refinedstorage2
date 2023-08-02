@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 
-import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -31,6 +30,6 @@ public final class SimpleBlockItem extends BlockItem {
         if (helpText == null) {
             return Optional.empty();
         }
-        return Optional.of(new HelpTooltipComponent(List.of(helpText)));
+        return Optional.of(new HelpTooltipComponent(helpText));
     }
 }

@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.task.RandomTaskExec
 import com.refinedmods.refinedstorage2.api.network.impl.node.task.RoundRobinTaskExecutor;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -35,12 +34,12 @@ public enum SchedulingModeType {
 
     private final int id;
     private final MutableComponent name;
-    private final List<Component> help;
+    private final Component help;
 
     SchedulingModeType(final int id, final MutableComponent name, final MutableComponent help) {
         this.id = id;
         this.name = name;
-        this.help = List.of(help);
+        this.help = help;
     }
 
     public static SchedulingModeType getById(final int id) {
@@ -56,7 +55,7 @@ public enum SchedulingModeType {
         return name;
     }
 
-    public List<Component> getHelp() {
+    public Component getHelpText() {
         return help;
     }
 

@@ -163,7 +163,7 @@ public final class ClientModInitializer {
         );
         e.register(
             HelpTooltipComponent.class,
-            component -> HelpClientTooltipComponent.create(component.lines())
+            component -> HelpClientTooltipComponent.create(component.text())
         );
     }
 }

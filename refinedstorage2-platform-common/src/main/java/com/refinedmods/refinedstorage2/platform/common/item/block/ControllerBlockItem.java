@@ -40,9 +40,7 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-        return Optional.of(new HelpTooltipComponent(List.of(
-            createTranslation("item", "controller.help")
-        )));
+        return Optional.of(new HelpTooltipComponent(createTranslation("item", "controller.help")));
     }
 
     @Override

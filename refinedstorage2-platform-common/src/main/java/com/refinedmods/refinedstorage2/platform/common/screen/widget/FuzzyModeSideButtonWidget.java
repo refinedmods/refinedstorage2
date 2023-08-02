@@ -2,8 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.List;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -15,15 +13,14 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent SUBTEXT_OFF = createTranslation("gui", "fuzzy_mode.off");
 
     private final ClientProperty<Boolean> property;
-    private final List<Component> helpOn;
-    private final List<Component> helpOff;
-
+    private final Component helpOn;
+    private final Component helpOff;
 
     public FuzzyModeSideButtonWidget(final ClientProperty<Boolean> property, final Type type) {
         super(createPressAction(property));
         this.property = property;
-        this.helpOn = List.of(createTranslation("gui", "fuzzy_mode.on." + type.getHelpTranslationKey()));
-        this.helpOff = List.of(createTranslation("gui", "fuzzy_mode.off." + type.getHelpTranslationKey()));
+        this.helpOn = createTranslation("gui", "fuzzy_mode.on." + type.getHelpTranslationKey());
+        this.helpOff = createTranslation("gui", "fuzzy_mode.off." + type.getHelpTranslationKey());
     }
 
     private static OnPress createPressAction(final ClientProperty<Boolean> property) {
@@ -51,7 +48,7 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
+    protected Component getHelpText() {
         return Boolean.TRUE.equals(property.getValue()) ? helpOn : helpOff;
     }
 

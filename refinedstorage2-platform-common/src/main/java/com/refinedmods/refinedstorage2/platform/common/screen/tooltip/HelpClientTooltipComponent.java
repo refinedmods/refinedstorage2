@@ -4,35 +4,49 @@ import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
 import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
 
-public class HelpClientTooltipComponent extends SmallTextClientTooltipComponent {
-    private static final ClientTooltipComponent PRESS_SHIFT_FOR_HELP = new SmallTextClientTooltipComponent(List.of(
+public class HelpClientTooltipComponent implements ClientTooltipComponent {
+    private static final ClientTooltipComponent PRESS_SHIFT_FOR_HELP = new SmallTextClientTooltipComponent(
         createTranslationAsHeading("misc", "press_shift_for_help")
-    ));
+    );
     private static final Style STYLE = Style.EMPTY.withColor(0xFF129ED9);
+    private static final int MAX_CHARS = 200;
 
-    private HelpClientTooltipComponent(final List<Component> components) {
-        super(components.stream().map(c -> c.copy().withStyle(STYLE)).toList());
+    private final List<FormattedCharSequence> lines;
+    private final float scale;
+
+    private HelpClientTooltipComponent(final Component text) {
+        this.lines = Minecraft.getInstance().font.split(text.copy().withStyle(STYLE), MAX_CHARS);
+        this.scale = SmallTextClientTooltipComponent.getScale();
     }
 
     @Override
     public int getHeight() {
-        return Math.max(24, super.getHeight());
+        return Math.max(20 + 4, (9 * lines.size()) + 4);
     }
 
     @Override
     public int getWidth(final Font font) {
-        return super.getWidth(font) + 20 + 4;
+        int width = 0;
+        for (final FormattedCharSequence line : lines) {
+            final int lineWidth = 20 + 4 + (int) (font.width(line) * scale);
+            if (lineWidth > width) {
+                width = lineWidth;
+            }
+        }
+        return width;
     }
 
     @Override
@@ -41,7 +55,20 @@ public class HelpClientTooltipComponent extends SmallTextClientTooltipComponent 
                            final int y,
                            final Matrix4f pose,
                            final MultiBufferSource.BufferSource buffer) {
-        super.renderText(font, x + 20 + 4, y + 4, pose, buffer);
+        final int xx = x + 20 + 4;
+        int yy = y + 4;
+        for (final FormattedCharSequence line : lines) {
+            SmallTextClientTooltipComponent.render(
+                font,
+                line,
+                xx,
+                yy,
+                scale,
+                pose,
+                buffer
+            );
+            yy += 9;
+        }
     }
 
     @Override
@@ -49,9 +76,9 @@ public class HelpClientTooltipComponent extends SmallTextClientTooltipComponent 
         graphics.blit(TextureIds.ICONS, x, y + 2, 236, 158, 20, 20);
     }
 
-    public static ClientTooltipComponent create(final List<Component> lines) {
+    public static ClientTooltipComponent create(final Component text) {
         if (hasShiftDown()) {
-            return new HelpClientTooltipComponent(lines);
+            return new HelpClientTooltipComponent(text);
         } else {
             return PRESS_SHIFT_FOR_HELP;
         }

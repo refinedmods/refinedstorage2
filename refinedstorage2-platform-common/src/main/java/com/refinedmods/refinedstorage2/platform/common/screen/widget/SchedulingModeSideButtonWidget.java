@@ -3,8 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.List;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -54,7 +52,7 @@ public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
-        return property.getValue().getHelp();
+    protected Component getHelpText() {
+        return property.getValue().getHelpText();
     }
 }

@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClient
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -45,9 +44,7 @@ public abstract class AbstractSideButtonWidget extends Button {
             this.warning = null;
             return;
         }
-        this.warning = new SmallTextClientTooltipComponent(
-            List.of(text.withStyle(ChatFormatting.RED))
-        );
+        this.warning = new SmallTextClientTooltipComponent(text.withStyle(ChatFormatting.RED));
     }
 
     @Override
@@ -96,8 +93,8 @@ public abstract class AbstractSideButtonWidget extends Button {
         if (warning != null) {
             lines.add(warning);
         }
-        final List<Component> helpText = getHelpText();
-        if (!helpText.isEmpty()) {
+        final Component helpText = getHelpText();
+        if (helpText != null) {
             lines.add(HelpClientTooltipComponent.create(helpText));
         }
         return lines;
@@ -107,7 +104,8 @@ public abstract class AbstractSideButtonWidget extends Button {
 
     protected abstract MutableComponent getSubText();
 
-    protected List<Component> getHelpText() {
-        return Collections.emptyList();
+    @Nullable
+    protected Component getHelpText() {
+        return null;
     }
 }

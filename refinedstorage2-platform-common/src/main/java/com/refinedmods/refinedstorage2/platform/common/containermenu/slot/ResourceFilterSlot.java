@@ -32,7 +32,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
-    private final List<Component> helpText;
+    private final Component helpText;
     @Nullable
     private FilteredResource<?> cachedResource;
 
@@ -44,12 +44,12 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
-        this.helpText = List.of(helpText);
+        this.helpText = helpText;
         this.cachedResource = resourceFilterContainer.get(index);
     }
 
     public ResourceFilterSlot atPosition(final int newX, final int newY) {
-        return new ResourceFilterSlot(resourceFilterContainer, index, helpText.get(0), newX, newY);
+        return new ResourceFilterSlot(resourceFilterContainer, index, helpText, newX, newY);
     }
 
     public boolean supportsAmount() {

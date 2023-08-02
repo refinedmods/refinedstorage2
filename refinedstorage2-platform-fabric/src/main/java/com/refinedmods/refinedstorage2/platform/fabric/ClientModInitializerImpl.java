@@ -231,7 +231,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
                 return new UpgradeDestinationClientTooltipComponent(component.destinations());
             }
             if (data instanceof HelpTooltipComponent component) {
-                return HelpClientTooltipComponent.create(component.lines());
+                return HelpClientTooltipComponent.create(component.text());
             }
             return null;
         });

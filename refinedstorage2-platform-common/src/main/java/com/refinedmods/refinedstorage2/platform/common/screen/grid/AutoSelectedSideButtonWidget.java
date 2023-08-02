@@ -3,8 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
-import java.util.List;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -14,7 +12,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.auto_selected");
-    private static final List<Component> HELP = List.of(createTranslation("gui", "grid.auto_selected.help"));
+    private static final Component HELP = createTranslation("gui", "grid.auto_selected.help");
 
     private final AbstractGridContainerMenu menu;
 
@@ -48,7 +46,7 @@ public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
+    protected Component getHelpText() {
         return HELP;
     }
 }

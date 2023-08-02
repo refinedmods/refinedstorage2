@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.item;
 
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 
-import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.network.chat.Component;
@@ -21,6 +20,6 @@ public class WrenchItem extends Item {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-        return Optional.of(new HelpTooltipComponent(List.of(HELP)));
+        return Optional.of(new HelpTooltipComponent(HELP));
     }
 }

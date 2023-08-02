@@ -3,8 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.List;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -16,12 +14,12 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent SUBTEXT_EXTRACT = createTranslation("gui", "access_mode.extract");
     private static final MutableComponent SUBTEXT_INSERT_EXTRACT =
         createTranslation("gui", "access_mode.insert_extract");
-    private static final List<Component> HELP_INSERT =
-        List.of(createTranslation("gui", "access_mode.insert.help"));
-    private static final List<Component> HELP_EXTRACT =
-        List.of(createTranslation("gui", "access_mode.extract.help"));
-    private static final List<Component> HELP_INSERT_EXTRACT =
-        List.of(createTranslation("gui", "access_mode.insert_extract.help"));
+    private static final Component HELP_INSERT =
+        createTranslation("gui", "access_mode.insert.help");
+    private static final Component HELP_EXTRACT =
+        createTranslation("gui", "access_mode.extract.help");
+    private static final Component HELP_INSERT_EXTRACT =
+        createTranslation("gui", "access_mode.insert_extract.help");
 
     private final ClientProperty<AccessMode> property;
 
@@ -71,7 +69,7 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getHelpText() {
+    protected Component getHelpText() {
         return switch (property.getValue()) {
             case INSERT_EXTRACT -> HELP_INSERT_EXTRACT;
             case INSERT -> HELP_INSERT;

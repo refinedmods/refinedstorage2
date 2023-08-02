@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -10,7 +9,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class NoOpGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.off");
-    private static final List<Component> HELP = List.of(createTranslation("gui", "grid.synchronizer.off.help"));
+    private static final Component HELP = createTranslation("gui", "grid.synchronizer.off.help");
 
     @Override
     public MutableComponent getTitle() {
@@ -18,7 +17,7 @@ public class NoOpGridSynchronizer extends AbstractGridSynchronizer {
     }
 
     @Override
-    public List<Component> getHelp() {
+    public Component getHelpText() {
         return HELP;
     }
 
