@@ -83,6 +83,7 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
     @Override
     public void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
+        listener.run();
     }
 
     @Override
@@ -93,6 +94,7 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
     @Override
     public void setAccessMode(final AccessMode accessMode) {
         config.setAccessMode(accessMode);
+        listener.run();
     }
 
     @Override
