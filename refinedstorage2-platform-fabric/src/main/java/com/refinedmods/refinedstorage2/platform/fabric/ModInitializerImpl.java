@@ -5,20 +5,16 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
-import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
+import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
-import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -47,7 +43,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
@@ -62,26 +57,20 @@ import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
 
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -109,8 +98,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerExternalStorageProviderFactories();
         registerContent();
         registerPackets();
-        registerSounds();
-        registerRecipeSerializers();
+        registerSounds(new DirectRegistryCallback<>(BuiltInRegistries.SOUND_EVENT));
+        registerRecipeSerializers(new DirectRegistryCallback<>(BuiltInRegistries.RECIPE_SERIALIZER));
         registerSidedHandlers();
         registerTickHandler();
         registerEvents();
@@ -217,28 +206,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerContent() {
-        registerBlocks(new RegistryCallback<>() {
-            @Override
-            public <R extends Block> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return ModInitializerImpl.register(BuiltInRegistries.BLOCK, id, value.get());
-            }
-        }, FabricDiskDriveBlockEntity::new);
-        registerItems(new RegistryCallback<>() {
-            @Override
-            public <R extends Item> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return ModInitializerImpl.register(BuiltInRegistries.ITEM, id, value.get());
-            }
-        });
+        registerBlocks(new DirectRegistryCallback<>(BuiltInRegistries.BLOCK), FabricDiskDriveBlockEntity::new);
+        registerItems(new DirectRegistryCallback<>(BuiltInRegistries.ITEM));
         registerUpgradeMappings();
         registerCreativeModeTab();
         registerBlockEntities(
-            new RegistryCallback<>() {
-                @Override
-                public <R extends BlockEntityType<?>> Supplier<R> register(final ResourceLocation id,
-                                                                           final Supplier<R> value) {
-                    return ModInitializerImpl.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, value.get());
-                }
-            },
+            new DirectRegistryCallback<>(BuiltInRegistries.BLOCK_ENTITY_TYPE),
             new BlockEntityTypeFactory() {
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntitySupplier<T> factory,
@@ -248,33 +221,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             },
             FabricDiskDriveBlockEntity::new
         );
-        registerMenus(new RegistryCallback<>() {
-            @Override
-            public <R extends MenuType<?>> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return ModInitializerImpl.register(BuiltInRegistries.MENU, id, value.get());
-            }
-        }, new MenuTypeFactory() {
+        registerMenus(new DirectRegistryCallback<>(BuiltInRegistries.MENU), new MenuTypeFactory() {
             @Override
             public <T extends AbstractContainerMenu> MenuType<T> create(final MenuSupplier<T> supplier) {
                 return new ExtendedScreenHandlerType<>(supplier::create);
             }
         });
-        registerLootFunctions();
-    }
-
-    private static <T, R extends T> Supplier<R> register(final Registry<T> registry,
-                                                         final ResourceLocation id,
-                                                         final R value) {
-        final R result = Registry.register(registry, id, value);
-        return () -> result;
-    }
-
-    private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(register(
-            BuiltInRegistries.LOOT_FUNCTION_TYPE,
-            STORAGE_BLOCK,
-            new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
-        ));
+        registerLootFunctions(new DirectRegistryCallback<>(BuiltInRegistries.LOOT_FUNCTION_TYPE));
     }
 
     private void registerCreativeModeTab() {
@@ -309,22 +262,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new ResourceFilterSlotChangePacket()
         );
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.DETECTOR_AMOUNT_CHANGE, new DetectorAmountChangePacket());
-    }
-
-    private void registerSounds() {
-        Sounds.INSTANCE.setWrench(register(
-            BuiltInRegistries.SOUND_EVENT,
-            WRENCH,
-            SoundEvent.createVariableRangeEvent(WRENCH)
-        ));
-    }
-
-    private void registerRecipeSerializers() {
-        register(
-            BuiltInRegistries.RECIPE_SERIALIZER,
-            createIdentifier("upgrade_with_enchanted_book"),
-            new UpgradeWithEnchantedBookRecipeSerializer()
-        );
     }
 
     private void registerSidedHandlers() {

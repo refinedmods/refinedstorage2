@@ -3,19 +3,16 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
-import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
+import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -39,7 +36,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -55,7 +51,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -78,8 +73,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -190,34 +183,18 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerBlocks() {
-        registerBlocks(new RegistryCallback<>() {
-            @Override
-            public <R extends Block> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return blockRegistry.register(id.getPath(), value);
-            }
-        }, ForgeDiskDriveBlockEntity::new);
+        registerBlocks(new ForgeRegistryCallback<>(blockRegistry), ForgeDiskDriveBlockEntity::new);
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerItems() {
-        registerItems(new RegistryCallback<>() {
-            @Override
-            public <R extends Item> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return itemRegistry.register(id.getPath(), value);
-            }
-        });
+        registerItems(new ForgeRegistryCallback<>(itemRegistry));
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerBlockEntities() {
         registerBlockEntities(
-            new RegistryCallback<>() {
-                @Override
-                public <R extends BlockEntityType<?>> Supplier<R> register(final ResourceLocation id,
-                                                                           final Supplier<R> value) {
-                    return blockEntityTypeRegistry.register(id.getPath(), value);
-                }
-            },
+            new ForgeRegistryCallback<>(blockEntityTypeRegistry),
             new BlockEntityTypeFactory() {
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntitySupplier<T> factory,
@@ -231,12 +208,7 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerMenus() {
-        registerMenus(new RegistryCallback<>() {
-            @Override
-            public <R extends MenuType<?>> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
-                return menuTypeRegistry.register(id.getPath(), value);
-            }
-        }, new MenuTypeFactory() {
+        registerMenus(new ForgeRegistryCallback<>(menuTypeRegistry), new MenuTypeFactory() {
             @Override
             public <T extends AbstractContainerMenu> MenuType<T> create(final MenuSupplier<T> supplier) {
                 return IForgeMenuType.create(supplier::create);
@@ -246,16 +218,12 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerSounds() {
-        Sounds.INSTANCE.setWrench(soundEventRegistry.register(
-            WRENCH.getPath(),
-            () -> SoundEvent.createVariableRangeEvent(WRENCH)
-        ));
-
+        registerSounds(new ForgeRegistryCallback<>(soundEventRegistry));
         soundEventRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerRecipeSerializers() {
-        recipeSerializerRegistry.register("upgrade_with_enchanted_book", UpgradeWithEnchantedBookRecipeSerializer::new);
+        registerRecipeSerializers(new ForgeRegistryCallback<>(recipeSerializerRegistry));
         recipeSerializerRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
@@ -270,26 +238,18 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onRegister(final RegisterEvent e) {
-        e.register(Registries.LOOT_FUNCTION_TYPE, helper -> {
-            // We don't use the helper here as we need the return value.
-            final LootItemFunctionType storageBlockLootItemFunction = Registry.register(
-                BuiltInRegistries.LOOT_FUNCTION_TYPE,
-                STORAGE_BLOCK,
-                new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
-            );
-            LootFunctions.INSTANCE.setStorageBlock(() -> storageBlockLootItemFunction);
-        });
-
-        e.register(Registries.CREATIVE_MODE_TAB, helper -> {
-            helper.register(
-                createIdentifier("general"),
-                CreativeModeTab.builder()
-                    .title(createTranslation("itemGroup", "general"))
-                    .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
-                    .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
-                    .build()
-            );
-        });
+        e.register(
+            Registries.LOOT_FUNCTION_TYPE,
+            helper -> registerLootFunctions(new DirectRegistryCallback<>(BuiltInRegistries.LOOT_FUNCTION_TYPE))
+        );
+        e.register(Registries.CREATIVE_MODE_TAB, helper -> helper.register(
+            createIdentifier("general"),
+            CreativeModeTab.builder()
+                .title(createTranslation("itemGroup", "general"))
+                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
+                .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
+                .build()
+        ));
     }
 
     @SubscribeEvent
@@ -363,6 +323,13 @@ public class ModInitializer extends AbstractModInitializer {
     public void onServerTick(final TickEvent.ServerTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
             TickHandler.runQueuedActions();
+        }
+    }
+
+    private record ForgeRegistryCallback<T>(DeferredRegister<T> registry) implements RegistryCallback<T> {
+        @Override
+        public <R extends T> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+            return registry.register(id.getPath(), value);
         }
     }
 }
