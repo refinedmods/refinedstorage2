@@ -29,6 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed Grid dropping fluid buckets if there was no space in inventory on Forge.
 -   Fixed compatibility with custom tooltips in the Grid.
 -   Fixed bundle tooltip in the Grid.
+-   Fixed changes to access mode or fuzzy mode not being persisted.
 
 ## [2.0.0-milestone.2.11] - 2023-07-04
 
