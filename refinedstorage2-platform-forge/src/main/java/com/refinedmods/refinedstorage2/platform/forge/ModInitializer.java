@@ -116,8 +116,9 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModelGeometry);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterKeyMappings);
-            FMLJavaModLoadingContext.get().getModEventBus()
-                .addListener(ClientModInitializer::onRegisterTooltipFactories);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(
+                ClientModInitializer::onRegisterTooltipFactories
+            );
         });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
