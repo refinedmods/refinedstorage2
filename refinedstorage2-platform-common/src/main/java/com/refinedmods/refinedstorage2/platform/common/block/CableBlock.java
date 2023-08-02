@@ -6,13 +6,16 @@ import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeB
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -33,7 +36,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CableBlock extends AbstractBaseBlock
-    implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock {
+    implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
     private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
@@ -131,5 +134,10 @@ public class CableBlock extends AbstractBaseBlock
     @Override
     public MutableComponent getName() {
         return name;
+    }
+
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), name);
     }
 }

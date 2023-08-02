@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
@@ -27,19 +29,87 @@ import javax.annotation.Nullable;
 import net.minecraft.world.item.DyeColor;
 
 public final class Blocks {
+    public static final DyeColor COLOR = DyeColor.LIGHT_BLUE;
+    public static final DyeColor CABLE_LIKE_COLOR = DyeColor.GRAY;
     public static final Blocks INSTANCE = new Blocks();
 
-    private final BlockColorMap<CableBlock> cable = new BlockColorMap<>(DyeColor.GRAY);
-    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
-    private final BlockColorMap<DetectorBlock> detector = new BlockColorMap<>();
-    private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>();
-    private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
-    private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
-    private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
-    private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
-    private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(DyeColor.GRAY);
-    private final BlockColorMap<DestructorBlock> destructor = new BlockColorMap<>(DyeColor.GRAY);
-    private final BlockColorMap<ConstructorBlock> constructor = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<CableBlock> cable = new BlockColorMap<>(
+        CableBlock::new,
+        ContentIds.CABLE,
+        ContentNames.CABLE,
+        CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>(
+        GridBlock::new,
+        ContentIds.GRID,
+        ContentNames.GRID,
+        COLOR
+    );
+    private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>(
+        CraftingGridBlock::new,
+        ContentIds.CRAFTING_GRID,
+        ContentNames.CRAFTING_GRID,
+        COLOR
+    );
+    private final BlockColorMap<DetectorBlock> detector = new BlockColorMap<>(
+        DetectorBlock::new,
+        ContentIds.DETECTOR,
+        ContentNames.DETECTOR,
+        COLOR
+    );
+    private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>(
+        (color, name) -> new ControllerBlock(
+            ControllerType.NORMAL,
+            name,
+            new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
+            color
+        ),
+        ContentIds.CONTROLLER,
+        ContentNames.CONTROLLER,
+        COLOR
+    );
+    private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>(
+        (color, name) -> new ControllerBlock(
+            ControllerType.CREATIVE,
+            name,
+            new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
+            color
+        ),
+        ContentIds.CREATIVE_CONTROLLER,
+        ContentNames.CREATIVE_CONTROLLER,
+        COLOR
+    );
+    private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(
+        ExporterBlock::new,
+        ContentIds.EXPORTER,
+        ContentNames.EXPORTER,
+        CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(
+        ImporterBlock::new,
+        ContentIds.IMPORTER,
+        ContentNames.IMPORTER,
+        CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(
+        ExternalStorageBlock::new,
+        ContentIds.EXTERNAL_STORAGE,
+        ContentNames.EXTERNAL_STORAGE,
+        CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<DestructorBlock> destructor = new BlockColorMap<>(
+        DestructorBlock::new,
+        ContentIds.DESTRUCTOR,
+        ContentNames.DESTRUCTOR,
+        CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<ConstructorBlock> constructor = new BlockColorMap<>(
+        ConstructorBlock::new,
+        ContentIds.CONSTRUCTOR,
+        ContentNames.CONSTRUCTOR,
+        CABLE_LIKE_COLOR
+    );
+
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable

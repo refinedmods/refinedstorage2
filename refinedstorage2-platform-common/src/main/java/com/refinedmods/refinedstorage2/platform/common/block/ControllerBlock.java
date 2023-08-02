@@ -21,9 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
-
-public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock<ControllerBlock>, EntityBlock {
+public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock<ControllerBlock>, EntityBlock,
+    BlockItemProvider {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create(
         "energy_type",
         ControllerEnergyType.class
@@ -90,19 +89,11 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
         return true;
     }
 
+    @Override
     public BlockItem createBlockItem() {
         if (type == ControllerType.CREATIVE) {
-            return new CreativeControllerBlockItem(
-                this,
-                Blocks.INSTANCE.getCreativeController().getName(
-                    color,
-                    createTranslation("block", "creative_controller")
-                )
-            );
+            return new CreativeControllerBlockItem(this, name);
         }
-        return new ControllerBlockItem(
-            this,
-            Blocks.INSTANCE.getController().getName(getColor(), createTranslation("block", "controller"))
-        );
+        return new ControllerBlockItem(this, name);
     }
 }

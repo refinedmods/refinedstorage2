@@ -20,7 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DestructorBlock extends AbstractConstructorDestructorBlock<DestructorBlock, DestructorBlockEntity> {
+public class DestructorBlock extends AbstractConstructorDestructorBlock<DestructorBlock, DestructorBlockEntity>
+    implements BlockItemProvider {
     private static final Component HELP = createTranslation("item", "destructor.help");
 
     public DestructorBlock(final DyeColor color, final MutableComponent name) {
@@ -41,10 +42,8 @@ public class DestructorBlock extends AbstractConstructorDestructorBlock<Destruct
         return new DestructorBlockEntity(blockPos, blockState);
     }
 
+    @Override
     public BlockItem createBlockItem() {
-        return new NamedBlockItem(this, new Item.Properties(), Blocks.INSTANCE.getDestructor().getName(
-            getColor(),
-            createTranslation("block", "destructor")
-        ), HELP);
+        return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }

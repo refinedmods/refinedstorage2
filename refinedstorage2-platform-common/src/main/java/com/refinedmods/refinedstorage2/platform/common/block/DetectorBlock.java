@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class DetectorBlock extends AbstractDirectionalBlock<Direction>
-    implements ColorableBlock<DetectorBlock>, SimpleWaterloggedBlock, EntityBlock {
+    implements ColorableBlock<DetectorBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
     public static final BooleanProperty POWERED = BooleanProperty.create("powered");
 
     private static final Component HELP = createTranslation("item", "detector.help");
@@ -133,10 +133,8 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
         return state.getValue(POWERED) ? 15 : 0;
     }
 
+    @Override
     public BlockItem createBlockItem() {
-        return new NamedBlockItem(this, new Item.Properties(), Blocks.INSTANCE.getDetector().getName(
-            color,
-            createTranslation("block", "detector")
-        ), HELP);
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

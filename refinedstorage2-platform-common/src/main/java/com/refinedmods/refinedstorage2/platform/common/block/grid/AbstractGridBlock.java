@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.grid;
 
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.BlockConstants;
+import com.refinedmods.refinedstorage2.platform.common.block.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
@@ -16,7 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public abstract class AbstractGridBlock<T extends AbstractGridBlock<T>> extends AbstractDirectionalBlock<BiDirection>
+public abstract class AbstractGridBlock<T extends AbstractGridBlock<T> & BlockItemProvider>
+    extends AbstractDirectionalBlock<BiDirection>
     implements EntityBlock, ColorableBlock<T> {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
@@ -47,7 +49,7 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlock<T>> extends 
 
     @Override
     public MutableComponent getName() {
-        return this.name;
+        return name;
     }
 
     @Override

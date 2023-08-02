@@ -28,7 +28,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
     private void registerCables() {
         final ResourceLocation coreBase = createIdentifier("block/cable/core/base");
         final ResourceLocation extensionBase = createIdentifier("block/cable/extension/base");
-        Blocks.INSTANCE.getCable().forEach((color, cable) -> {
+        Blocks.INSTANCE.getCable().forEach((color, id, cable) -> {
             final ResourceLocation texture = createIdentifier("block/cable/" + color.getName());
             withExistingParent("block/cable/core/" + color.getName(), coreBase)
                 .texture("cable", texture)
@@ -43,7 +43,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         final ResourceLocation base = createIdentifier("block/emissive_all_cutout");
         final ResourceLocation off = createIdentifier("block/controller/off");
         final ResourceLocation on = createIdentifier("block/controller/on");
-        Blocks.INSTANCE.getController().forEach((color, controller) -> {
+        Blocks.INSTANCE.getController().forEach((color, id, controller) -> {
             final ResourceLocation cutout = createIdentifier("block/controller/cutouts/" + color.getName());
             withExistingParent("block/controller/" + color.getName(), base)
                 .texture("particle", off)
@@ -53,7 +53,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerGrids(final BlockColorMap<? extends AbstractGridBlock<?>> blockMap, final String name) {
-        blockMap.forEach((color, block) -> {
+        blockMap.forEach((color, id, block) -> {
             final ResourceLocation cutout = createIdentifier("block/" + name + "/cutouts/" + color.getName());
             registerEmissiveGrids(name, color.getName(), cutout);
         });
@@ -92,7 +92,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         final ResourceLocation bottom = createIdentifier("block/detector/bottom");
         final ResourceLocation top = createIdentifier("block/detector/top");
         final ResourceLocation particle = createIdentifier("block/detector/side");
-        Blocks.INSTANCE.getDetector().forEach((color, block) -> {
+        Blocks.INSTANCE.getDetector().forEach((color, id, block) -> {
             final ResourceLocation torch = createIdentifier("block/detector/cutouts/" + color.getName());
             withExistingParent("block/detector/" + color.getName(), parent)
                 .texture("side", side)

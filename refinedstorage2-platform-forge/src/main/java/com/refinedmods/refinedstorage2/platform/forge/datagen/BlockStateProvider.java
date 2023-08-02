@@ -50,11 +50,11 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerCables() {
-        Blocks.INSTANCE.getCable().forEach((color, cable) -> addCableWithExtensions(cable.get(), color));
+        Blocks.INSTANCE.getCable().forEach((color, id, block) -> addCableWithExtensions(block.get(), color));
     }
 
     private void registerExporters() {
-        Blocks.INSTANCE.getExporter().forEach((color, block) -> {
+        Blocks.INSTANCE.getExporter().forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile exporterModel = modelFile(createIdentifier("block/exporter"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
@@ -66,7 +66,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerImporters() {
-        Blocks.INSTANCE.getImporter().forEach((color, block) -> {
+        Blocks.INSTANCE.getImporter().forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile importerModel = modelFile(createIdentifier("block/importer"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
@@ -78,7 +78,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerExternalStorages() {
-        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile model = modelFile(createIdentifier("block/external_storage"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
@@ -123,8 +123,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerGrids() {
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> configureGridVariants(color, block, "grid"));
-        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> configureGridVariants(
+        Blocks.INSTANCE.getGrid().forEach((color, id, block) -> configureGridVariants(color, block, "grid"));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, id, block) -> configureGridVariants(
             color,
             block,
             "crafting_grid"
@@ -150,8 +150,10 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerControllers() {
-        Blocks.INSTANCE.getController().forEach(this::configureControllerVariants);
-        Blocks.INSTANCE.getCreativeController().forEach(this::configureControllerVariants);
+        Blocks.INSTANCE.getController().forEach((color, id, block) -> configureControllerVariants(color, block));
+        Blocks.INSTANCE.getCreativeController().forEach(
+            (color, id, block) -> configureControllerVariants(color, block)
+        );
     }
 
     private void configureControllerVariants(final DyeColor color, final Supplier<? extends Block> block) {
@@ -181,14 +183,14 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
 
     private void registerDetectors() {
         final ModelFile unpowered = modelFile(createIdentifier("block/detector/unpowered"));
-        Blocks.INSTANCE.getDetector().forEach((color, block) -> {
+        Blocks.INSTANCE.getDetector().forEach((color, id, block) -> {
             final var builder = getVariantBuilder(block.get());
             builder.forAllStates(blockState -> registerDetector(unpowered, block.get(), blockState));
         });
     }
 
     private void registerConstructorDestructors(final BlockColorMap<?> blockMap, final String type) {
-        blockMap.forEach((color, block) -> {
+        blockMap.forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile activeModel = modelFile(createIdentifier("block/" + type + "/active"));
             final ModelFile inactiveModel = modelFile(createIdentifier("block/" + type + "/inactive"));

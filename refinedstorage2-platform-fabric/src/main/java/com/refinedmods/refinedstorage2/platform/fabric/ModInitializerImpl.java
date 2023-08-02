@@ -4,23 +4,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
-import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
@@ -35,9 +21,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.Craftin
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
@@ -53,27 +36,15 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.blo
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
-import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
@@ -124,6 +95,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -133,12 +105,10 @@ import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DETECTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -149,27 +119,15 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStoragePart;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStorageBlock;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStoragePart;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forProcessor;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forStorageDisk;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ModInitializerImpl extends AbstractModInitializer implements ModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModInitializerImpl.class);
-    private static final String BLOCK_TRANSLATION_CATEGORY = "block";
 
     @Override
     public void onInitialize() {
@@ -300,435 +258,30 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerContent() {
-        registerBlocks();
-        registerItems();
+        registerBlocks(new RegistryCallback<>() {
+            @Override
+            public <R extends Block> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+                return ModInitializerImpl.register(BuiltInRegistries.BLOCK, id, value.get());
+            }
+        }, FabricDiskDriveBlockEntity::new);
+        registerItems(new RegistryCallback<>() {
+            @Override
+            public <R extends Item> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+                return ModInitializerImpl.register(BuiltInRegistries.ITEM, id, value.get());
+            }
+        });
+        registerUpgradeMappings();
         registerCreativeModeTab();
         registerBlockEntities();
         registerMenus();
         registerLootFunctions();
     }
 
-    private <T, R extends T> Supplier<R> register(final Registry<T> registry,
-                                                  final ResourceLocation id,
-                                                  final R value) {
+    private static <T, R extends T> Supplier<R> register(final Registry<T> registry,
+                                                         final ResourceLocation id,
+                                                         final R value) {
         final R result = Registry.register(registry, id, value);
         return () -> result;
-    }
-
-    private void registerBlocks() {
-        Blocks.INSTANCE.getCable().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getCable().getId(color, CABLE),
-            new CableBlock(color, Blocks.INSTANCE.getCable().getName(
-                color,
-                createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "cable"
-                )
-            ))
-        ));
-        Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
-            BuiltInRegistries.BLOCK,
-            QUARTZ_ENRICHED_IRON_BLOCK,
-            new SimpleBlock()
-        ));
-        Blocks.INSTANCE.setDiskDrive(register(
-            BuiltInRegistries.BLOCK,
-            DISK_DRIVE,
-            new DiskDriveBlock(FabricDiskDriveBlockEntity::new)
-        ));
-        Blocks.INSTANCE.setMachineCasing(register(
-            BuiltInRegistries.BLOCK,
-            MACHINE_CASING,
-            new SimpleBlock()
-        ));
-
-        Blocks.INSTANCE.getGrid().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new GridBlock(
-                Blocks.INSTANCE.getGrid().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "grid"
-                )),
-                color
-            )
-        ));
-        Blocks.INSTANCE.getCraftingGrid().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
-            new CraftingGridBlock(
-                Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "crafting_grid"
-                )),
-                color
-            )
-        ));
-        Blocks.INSTANCE.getController().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getController().getId(color, CONTROLLER),
-            new ControllerBlock(
-                ControllerType.NORMAL,
-                Blocks.INSTANCE.getController().getName(
-                    color,
-                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
-                ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
-                color
-            )
-        ));
-        Blocks.INSTANCE.getCreativeController().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
-            new ControllerBlock(
-                ControllerType.CREATIVE,
-                Blocks.INSTANCE.getCreativeController().getName(
-                    color,
-                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
-                ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
-                color
-            )
-        ));
-
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Blocks.INSTANCE.setItemStorageBlock(variant, register(
-                BuiltInRegistries.BLOCK,
-                forItemStorageBlock(variant),
-                new ItemStorageBlock(variant)
-            ));
-        }
-
-        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            Blocks.INSTANCE.setFluidStorageBlock(variant, register(
-                BuiltInRegistries.BLOCK,
-                forFluidStorageBlock(variant),
-                new FluidStorageBlock(variant)
-            ));
-        }
-
-        Blocks.INSTANCE.getImporter().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
-            new ImporterBlock(color, Blocks.INSTANCE.getImporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
-            ))
-        ));
-        Blocks.INSTANCE.getExporter().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getExporter().getId(color, EXPORTER),
-            new ExporterBlock(color, Blocks.INSTANCE.getExporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
-            ))
-        ));
-        Blocks.INSTANCE.setInterface(register(
-            BuiltInRegistries.BLOCK,
-            INTERFACE,
-            new InterfaceBlock()
-        ));
-        Blocks.INSTANCE.getExternalStorage().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
-            new ExternalStorageBlock(color, Blocks.INSTANCE.getExternalStorage().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
-            ))
-        ));
-        Blocks.INSTANCE.getDetector().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getDetector().getId(color, DETECTOR),
-            new DetectorBlock(color, Blocks.INSTANCE.getDetector().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "detector")
-            ))
-        ));
-        Blocks.INSTANCE.getDestructor().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR),
-            new DestructorBlock(color, Blocks.INSTANCE.getDestructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
-            ))
-        ));
-        Blocks.INSTANCE.getConstructor().putAll(color -> register(
-            BuiltInRegistries.BLOCK,
-            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR),
-            new ConstructorBlock(color, Blocks.INSTANCE.getConstructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
-            ))
-        ));
-    }
-
-    private void registerItems() {
-        registerSimpleItems();
-        registerGridItems();
-        registerCableItems();
-        registerControllerItems();
-        registerDetectorItems();
-        registerImporterItems();
-        registerExporterItems();
-        registerExternalStorageItems();
-        registerConstructorItems();
-        registerDestructorItems();
-        registerStorageItems();
-        registerUpgrades();
-    }
-
-    private void registerSimpleItems() {
-        Items.INSTANCE.setQuartzEnrichedIron(register(
-            BuiltInRegistries.ITEM,
-            QUARTZ_ENRICHED_IRON,
-            new SimpleItem()
-        ));
-        register(
-            BuiltInRegistries.ITEM,
-            QUARTZ_ENRICHED_IRON_BLOCK,
-            new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock())
-        );
-        Items.INSTANCE.setSilicon(register(
-            BuiltInRegistries.ITEM,
-            SILICON,
-            new SimpleItem()
-        ));
-        Items.INSTANCE.setProcessorBinding(register(
-            BuiltInRegistries.ITEM,
-            PROCESSOR_BINDING,
-            new SimpleItem()
-        ));
-        register(
-            BuiltInRegistries.ITEM,
-            DISK_DRIVE,
-            DiskDriveBlock.createBlockItem()
-        );
-        Items.INSTANCE.setWrench(register(
-            BuiltInRegistries.ITEM,
-            WRENCH,
-            new WrenchItem()
-        ));
-        Items.INSTANCE.setStorageHousing(register(
-            BuiltInRegistries.ITEM,
-            STORAGE_HOUSING,
-            new SimpleItem())
-        );
-        register(
-            BuiltInRegistries.ITEM,
-            MACHINE_CASING,
-            new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
-        );
-        register(
-            BuiltInRegistries.ITEM,
-            INTERFACE,
-            Blocks.INSTANCE.getInterface().createBlockItem()
-        );
-
-        Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
-        Items.INSTANCE.setDestructionCore(register(BuiltInRegistries.ITEM, DESTRUCTION_CORE, new SimpleItem()));
-
-        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            Items.INSTANCE.setProcessor(
-                type,
-                register(
-                    BuiltInRegistries.ITEM,
-                    forProcessor(type),
-                    new ProcessorItem()
-                )
-            );
-        }
-    }
-
-    private void registerGridItems() {
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getGrid().getId(color, GRID),
-            GridBlock.createBlockItem(block.get())
-        ));
-        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
-            CraftingGridBlock.createBlockItem(block.get())
-        ));
-    }
-
-    private void registerCableItems() {
-        Blocks.INSTANCE.getCable().forEach((color, block) -> Items.INSTANCE.addCable(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getCable().getId(color, CABLE),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getCable().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
-            ))
-        )));
-    }
-
-    private void registerControllerItems() {
-        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.addRegularController(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getController().getId(color, CONTROLLER),
-            block.get().createBlockItem()
-        )));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Items.INSTANCE.addController(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerDetectorItems() {
-        Blocks.INSTANCE.getDetector().forEach((color, block) -> Items.INSTANCE.addDetector(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getDetector().getId(color, DETECTOR),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerImporterItems() {
-        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerExporterItems() {
-        Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getExporter().getId(color, EXPORTER),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerExternalStorageItems() {
-        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerConstructorItems() {
-        Blocks.INSTANCE.getConstructor().forEach((color, block) -> Items.INSTANCE.addConstructor(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerDestructorItems() {
-        Blocks.INSTANCE.getDestructor().forEach((color, block) -> Items.INSTANCE.addDestructor(register(
-            BuiltInRegistries.ITEM,
-            Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR),
-            block.get().createBlockItem()
-        )));
-    }
-
-    private void registerStorageItems() {
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            registerItemStorageItems(variant);
-        }
-        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            registerFluidStorageItems(variant);
-        }
-    }
-
-    private void registerItemStorageItems(final ItemStorageType.Variant variant) {
-        if (variant != ItemStorageType.Variant.CREATIVE) {
-            Items.INSTANCE.setItemStoragePart(variant, register(
-                BuiltInRegistries.ITEM,
-                forItemStoragePart(variant),
-                new SimpleItem())
-            );
-        }
-        Items.INSTANCE.setItemStorageDisk(variant, register(
-            BuiltInRegistries.ITEM,
-            forStorageDisk(variant),
-            new ItemStorageDiskItem(variant)
-        ));
-        register(
-            BuiltInRegistries.ITEM,
-            forItemStorageBlock(variant),
-            new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), variant)
-        );
-    }
-
-    private void registerFluidStorageItems(final FluidStorageType.Variant variant) {
-        if (variant != FluidStorageType.Variant.CREATIVE) {
-            Items.INSTANCE.setFluidStoragePart(variant, register(
-                BuiltInRegistries.ITEM,
-                forFluidStoragePart(variant),
-                new SimpleItem())
-            );
-        }
-        Items.INSTANCE.setFluidStorageDisk(variant, register(
-            BuiltInRegistries.ITEM,
-            forFluidStorageDisk(variant),
-            new FluidStorageDiskItem(variant)
-        ));
-        register(
-            BuiltInRegistries.ITEM,
-            forFluidStorageBlock(variant),
-            new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), variant)
-        );
-    }
-
-    private void registerUpgrades() {
-        Items.INSTANCE.setUpgrade(register(
-            BuiltInRegistries.ITEM,
-            ContentIds.UPGRADE,
-            new SimpleItem()
-        ));
-        final Supplier<SimpleUpgradeItem> speedUpgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.SPEED_UPGRADE,
-            new SimpleUpgradeItem(
-                PlatformApi.INSTANCE.getUpgradeRegistry(),
-                Platform.INSTANCE.getConfig().getUpgrade()::getSpeedUpgradeEnergyUsage,
-                false
-            )
-        );
-        Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
-        final Supplier<SimpleUpgradeItem> stackUpgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.STACK_UPGRADE,
-            new SimpleUpgradeItem(
-                PlatformApi.INSTANCE.getUpgradeRegistry(),
-                Platform.INSTANCE.getConfig().getUpgrade()::getStackUpgradeEnergyUsage,
-                false
-            )
-        );
-        Items.INSTANCE.setStackUpgrade(stackUpgrade);
-        final Supplier<FortuneUpgradeItem> fortune1Upgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.FORTUNE_1_UPGRADE,
-            new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 1)
-        );
-        Items.INSTANCE.setFortune1Upgrade(fortune1Upgrade);
-        final Supplier<FortuneUpgradeItem> fortune2Upgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.FORTUNE_2_UPGRADE,
-            new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 2)
-        );
-        Items.INSTANCE.setFortune2Upgrade(fortune2Upgrade);
-        final Supplier<FortuneUpgradeItem> fortune3Upgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.FORTUNE_3_UPGRADE,
-            new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 3)
-        );
-        Items.INSTANCE.setFortune3Upgrade(fortune3Upgrade);
-        final Supplier<SimpleUpgradeItem> silkTouchUpgrade = register(
-            BuiltInRegistries.ITEM,
-            ContentIds.SILK_TOUCH_UPGRADE,
-            new SimpleUpgradeItem(
-                PlatformApi.INSTANCE.getUpgradeRegistry(),
-                Platform.INSTANCE.getConfig().getUpgrade()::getSilkTouchUpgradeEnergyUsage,
-                true
-            )
-        );
-        Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
-        addUpgradeMappings();
     }
 
     private void registerBlockEntities() {

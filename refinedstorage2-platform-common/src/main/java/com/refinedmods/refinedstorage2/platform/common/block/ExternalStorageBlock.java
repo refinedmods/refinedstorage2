@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExternalStorageBlock extends AbstractDirectionalCableBlock
-    implements ColorableBlock<ExternalStorageBlock>, EntityBlock {
+    implements ColorableBlock<ExternalStorageBlock>, EntityBlock, BlockItemProvider {
     private static final Component HELP = createTranslation("item", "external_storage.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
@@ -106,10 +106,8 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
         return name;
     }
 
+    @Override
     public BlockItem createBlockItem() {
-        return new NamedBlockItem(this, new Item.Properties(), Blocks.INSTANCE.getExternalStorage().getName(
-            getColor(),
-            createTranslation("block", "external_storage")
-        ), HELP);
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

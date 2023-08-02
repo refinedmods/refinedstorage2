@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.grid;
 
+import com.refinedmods.refinedstorage2.platform.common.block.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
@@ -24,14 +25,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class GridBlock extends AbstractGridBlock<GridBlock> {
+public class GridBlock extends AbstractGridBlock<GridBlock> implements BlockItemProvider {
     private static final Component HELP = createTranslation("item", "grid.help");
     private static final AbstractBlockEntityTicker<GridBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
         BlockEntities.INSTANCE::getGrid,
         ACTIVE
     );
 
-    public GridBlock(final MutableComponent name, final DyeColor color) {
+    public GridBlock(final DyeColor color, final MutableComponent name) {
         super(name, color);
     }
 
@@ -54,10 +55,8 @@ public class GridBlock extends AbstractGridBlock<GridBlock> {
         return TICKER.get(level, type);
     }
 
-    public static BlockItem createBlockItem(final GridBlock block) {
-        return new NamedBlockItem(block, new Item.Properties(), Blocks.INSTANCE.getGrid().getName(
-            block.getColor(),
-            createTranslation("block", "grid")
-        ), HELP);
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }
