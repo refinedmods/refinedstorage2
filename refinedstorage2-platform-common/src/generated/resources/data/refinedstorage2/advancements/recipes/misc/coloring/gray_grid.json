@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/gray_grid"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

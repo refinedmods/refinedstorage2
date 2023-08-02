@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class AbstractConstructorDestructorBlock<T extends Block, B extends BlockEntity>
+public abstract class AbstractConstructorDestructorBlock<T extends Block & BlockItemProvider, B extends BlockEntity>
     extends AbstractDirectionalCableBlock
     implements ColorableBlock<T>, EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");

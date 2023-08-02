@@ -125,7 +125,7 @@
   "gui.refinedstorage2.filter_slot.left_click_for": "Left click for",
   "gui.refinedstorage2.filter_slot.right_click_for": "Right click for",
   "gui.refinedstorage2.filter_slot.click_to_clear": "Click to clear",
-  "item.refinedstorage2.controller.help": "Provides the storage network with energy.",
+  "item.refinedstorage2.controller.help": "Provides the storage network with energy. Multiple are allowed in a single storage network.",
   "item.refinedstorage2.creative_controller.help": "Provides the storage network with an infinite source of energy.",
   "item.refinedstorage2.disk_drive.help": "Accepts storage disks to provide the storage network with storage space.",
   "item.refinedstorage2.grid.help": "Allows for interacting with the storage network.",

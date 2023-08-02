@@ -29,7 +29,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ExporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ExporterBlock>, EntityBlock {
+public class ExporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ExporterBlock>, EntityBlock,
+    BlockItemProvider {
     private static final Component HELP = createTranslation("item", "exporter.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExporterBlockEntity> TICKER =
@@ -83,10 +84,8 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Colo
         return name;
     }
 
+    @Override
     public BlockItem createBlockItem() {
-        return new NamedBlockItem(this, new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
-            getColor(),
-            createTranslation("block", "exporter")
-        ), HELP);
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

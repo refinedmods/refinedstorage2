@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/magenta_cable"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

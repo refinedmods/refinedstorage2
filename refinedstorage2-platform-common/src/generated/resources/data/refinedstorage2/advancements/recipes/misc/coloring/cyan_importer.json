@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/cyan_importer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

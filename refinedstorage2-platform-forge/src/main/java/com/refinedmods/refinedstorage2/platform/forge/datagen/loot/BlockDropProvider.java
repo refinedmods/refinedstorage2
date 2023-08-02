@@ -17,14 +17,14 @@ public class BlockDropProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        Blocks.INSTANCE.getCable().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getController().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getDetector().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getConstructor().forEach((color, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getDestructor().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getCable().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getGrid().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getController().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getCreativeController().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getDetector().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getConstructor().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getDestructor().forEach((color, id, block) -> dropSelf(block.get()));
     }
 
     @Override

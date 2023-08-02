@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/black_detector"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

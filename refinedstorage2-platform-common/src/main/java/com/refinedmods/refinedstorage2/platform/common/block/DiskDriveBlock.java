@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirecti
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.DiskDriveBlockEntityTicker;
-import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
@@ -50,7 +49,7 @@ public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implem
         return TICKER.get(level, type);
     }
 
-    public static BlockItem createBlockItem() {
-        return new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), HELP);
+    public BlockItem createBlockItem() {
+        return new SimpleBlockItem(this, HELP);
     }
 }

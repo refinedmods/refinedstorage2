@@ -45,8 +45,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerCables() {
         final ResourceLocation base = createIdentifier("item/cable/base");
         final ColorMap<CableBlock> blocks = Blocks.INSTANCE.getCable();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("cable")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName()))
@@ -56,8 +56,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerExporters() {
         final ResourceLocation base = createIdentifier("item/exporter/base");
         final ColorMap<ExporterBlock> blocks = Blocks.INSTANCE.getExporter();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("exporter")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())
@@ -67,8 +67,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerImporters() {
         final ResourceLocation base = createIdentifier("item/importer/base");
         final ColorMap<ImporterBlock> blocks = Blocks.INSTANCE.getImporter();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("importer")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())
@@ -78,8 +78,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerExternalStorages() {
         final ResourceLocation base = createIdentifier("item/external_storage/base");
         final ColorMap<ExternalStorageBlock> blocks = Blocks.INSTANCE.getExternalStorage();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("external_storage")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())
@@ -93,8 +93,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         final ResourceLocation nearlyOn = createIdentifier("block/controller/nearly_on");
         final ResourceLocation stored = createIdentifier("stored_in_controller");
         final ColorMap<ControllerBlock> blocks = Blocks.INSTANCE.getController();
-        blocks.forEach((color, block) ->
-            withExistingParent(blocks.getId(color, createIdentifier("controller")).getPath(), base)
+        blocks.forEach((color, id, block) ->
+            withExistingParent(id.getPath(), base)
                 .override()
                 .predicate(stored, 0)
                 .model(modelFile(off))
@@ -116,32 +116,32 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
     private void registerCreativeControllers() {
         final BlockColorMap<ControllerBlock> blocks = Blocks.INSTANCE.getCreativeController();
-        blocks.forEach((color, block) -> withExistingParent(
-            blocks.getId(color, createIdentifier("creative_controller")).getPath(),
+        blocks.forEach((color, id, block) -> withExistingParent(
+            id.getPath(),
             createIdentifier("block/controller/" + color.getName())
         ));
     }
 
     private void registerGrids() {
         final BlockColorMap<GridBlock> blocks = Blocks.INSTANCE.getGrid();
-        blocks.forEach((color, block) -> withExistingParent(
-            blocks.getId(color, createIdentifier("grid")).getPath(),
+        blocks.forEach((color, id, block) -> withExistingParent(
+            id.getPath(),
             createIdentifier("block/grid/" + color.getName())
         ));
     }
 
     private void registerCraftingGrids() {
         final BlockColorMap<CraftingGridBlock> blocks = Blocks.INSTANCE.getCraftingGrid();
-        blocks.forEach((color, block) -> withExistingParent(
-            blocks.getId(color, createIdentifier("crafting_grid")).getPath(),
+        blocks.forEach((color, id, block) -> withExistingParent(
+            id.getPath(),
             createIdentifier("block/crafting_grid/" + color.getName())
         ));
     }
 
     private void registerDetectors() {
         final BlockColorMap<DetectorBlock> blocks = Blocks.INSTANCE.getDetector();
-        blocks.forEach((color, block) -> withExistingParent(
-            blocks.getId(color, createIdentifier("detector")).getPath(),
+        blocks.forEach((color, id, block) -> withExistingParent(
+            id.getPath(),
             createIdentifier("block/detector/" + color.getName())
         ));
     }
@@ -149,8 +149,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerConstructors() {
         final ResourceLocation base = createIdentifier("item/constructor/base");
         final ColorMap<ConstructorBlock> blocks = Blocks.INSTANCE.getConstructor();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("constructor")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())
@@ -160,8 +160,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerDestructors() {
         final ResourceLocation base = createIdentifier("item/destructor/base");
         final ColorMap<DestructorBlock> blocks = Blocks.INSTANCE.getDestructor();
-        blocks.forEach((color, block) -> singleTexture(
-            blocks.getId(color, createIdentifier("destructor")).getPath(),
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())

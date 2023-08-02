@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/lime_importer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

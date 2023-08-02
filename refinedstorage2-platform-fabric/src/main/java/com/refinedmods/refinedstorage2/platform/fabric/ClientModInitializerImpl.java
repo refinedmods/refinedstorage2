@@ -3,26 +3,13 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
-import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
-import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
@@ -50,9 +37,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import org.lwjgl.glfw.GLFW;
@@ -62,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
-public class ClientModInitializerImpl implements ClientModInitializer {
+public class ClientModInitializerImpl extends AbstractClientModInitializer implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializerImpl.class);
     private static final String KEY_BINDINGS_TRANSLATION_KEY = createTranslationKey("category", "key_bindings");
 
@@ -74,7 +65,15 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerBlockEntityRenderers();
         registerCustomModels();
         registerCustomTooltips();
-        registerScreens();
+        registerScreens(new ScreenRegistration() {
+            @Override
+            public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
+                final MenuType<? extends M> type,
+                final ScreenConstructor<M, U> factory
+            ) {
+                MenuScreens.register(type, factory::create);
+            }
+        });
         registerKeyBindings();
         registerModelPredicates();
         registerGridSynchronizers();
@@ -103,14 +102,28 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerEmissiveModels() {
-        for (final DyeColor color : DyeColor.values()) {
+        Blocks.INSTANCE.getController().forEach((color, id, block) -> {
             registerEmissiveControllerModels(color);
-            registerEmissiveGridModels(color);
-            registerEmissiveCraftingGridModels(color);
-            registerEmissiveDetectorModels(color);
-            registerEmissiveConstructorModels(color);
-            registerEmissiveDestructorModels(color);
-        }
+            registerEmissiveControllerItemModels(color, id);
+        });
+        Blocks.INSTANCE.getCreativeController().forEach(
+            (color, id, block) -> registerEmissiveControllerItemModels(color, id)
+        );
+        Blocks.INSTANCE.getGrid().forEach(
+            (color, id, block) -> registerEmissiveGridModels(color, id)
+        );
+        Blocks.INSTANCE.getCraftingGrid().forEach(
+            (color, id, block) -> registerEmissiveCraftingGridModels(color, id)
+        );
+        Blocks.INSTANCE.getDetector().forEach(
+            (color, id, block) -> registerEmissiveDetectorModels(color, id)
+        );
+        Blocks.INSTANCE.getConstructor().forEach(
+            (color, id, block) -> registerEmissiveConstructorModels(color, id)
+        );
+        Blocks.INSTANCE.getDestructor().forEach(
+            (color, id, block) -> registerEmissiveDestructorModels(color, id)
+        );
     }
 
     private void registerEmissiveControllerModels(final DyeColor color) {
@@ -120,80 +133,61 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             createIdentifier("block/controller/" + color.getName()),
             spriteLocation
         );
-        // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getController().getId(color, createIdentifier("controller")),
-            spriteLocation
-        );
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getCreativeController().getId(color, createIdentifier("creative_controller")),
-            spriteLocation
-        );
     }
 
-    private void registerEmissiveGridModels(final DyeColor color) {
+    private void registerEmissiveControllerItemModels(final DyeColor color, final ResourceLocation id) {
+        final ResourceLocation spriteLocation = createIdentifier("block/controller/cutouts/" + color.getName());
+        EmissiveModelRegistry.INSTANCE.register(id, spriteLocation);
+    }
+
+    private void registerEmissiveGridModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/grid/" + color.getName()),
             createIdentifier("block/grid/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getGrid().getId(color, createIdentifier("grid")),
-            createIdentifier("block/grid/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/grid/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveCraftingGridModels(final DyeColor color) {
+    private void registerEmissiveCraftingGridModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/crafting_grid/" + color.getName()),
             createIdentifier("block/crafting_grid/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getCraftingGrid().getId(color, createIdentifier("crafting_grid")),
-            createIdentifier("block/crafting_grid/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/crafting_grid/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveDetectorModels(final DyeColor color) {
+    private void registerEmissiveDetectorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/detector/" + color.getName()),
             createIdentifier("block/detector/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getDetector().getId(color, createIdentifier("detector")),
-            createIdentifier("block/detector/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/detector/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveConstructorModels(final DyeColor color) {
+    private void registerEmissiveConstructorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/constructor/" + color.getName()),
             createIdentifier("block/constructor/cutouts/active")
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getConstructor().getId(color, createIdentifier("constructor")),
-            createIdentifier("block/constructor/cutouts/active")
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/constructor/cutouts/active"));
     }
 
-    private void registerEmissiveDestructorModels(final DyeColor color) {
+    private void registerEmissiveDestructorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/destructor/" + color.getName()),
             createIdentifier("block/destructor/cutouts/active")
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getDestructor().getId(color, createIdentifier("destructor")),
-            createIdentifier("block/destructor/cutouts/active")
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/destructor/cutouts/active"));
     }
 
     private void registerPackets() {
@@ -235,22 +229,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             }
             return null;
         });
-    }
-
-    private void registerScreens() {
-        MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getInterface(), InterfaceScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
     }
 
     private void registerKeyBindings() {

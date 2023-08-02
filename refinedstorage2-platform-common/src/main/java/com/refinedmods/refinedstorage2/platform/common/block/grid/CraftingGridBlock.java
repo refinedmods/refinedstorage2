@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.grid;
 
+import com.refinedmods.refinedstorage2.platform.common.block.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
@@ -24,14 +25,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class CraftingGridBlock extends AbstractGridBlock<CraftingGridBlock> {
+public class CraftingGridBlock extends AbstractGridBlock<CraftingGridBlock> implements BlockItemProvider {
     private static final Component HELP = createTranslation("item", "crafting_grid.help");
     private static final AbstractBlockEntityTicker<CraftingGridBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
         BlockEntities.INSTANCE::getCraftingGrid,
         ACTIVE
     );
 
-    public CraftingGridBlock(final MutableComponent name, final DyeColor color) {
+    public CraftingGridBlock(final DyeColor color, final MutableComponent name) {
         super(name, color);
     }
 
@@ -54,10 +55,8 @@ public class CraftingGridBlock extends AbstractGridBlock<CraftingGridBlock> {
         return TICKER.get(level, type);
     }
 
-    public static BlockItem createBlockItem(final CraftingGridBlock block) {
-        return new NamedBlockItem(block, new Item.Properties(), Blocks.INSTANCE.getCraftingGrid().getName(
-            block.getColor(),
-            createTranslation("block", "crafting_grid")
-        ), HELP);
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }

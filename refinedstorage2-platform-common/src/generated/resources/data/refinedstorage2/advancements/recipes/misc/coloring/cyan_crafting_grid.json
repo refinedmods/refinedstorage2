@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/cyan_crafting_grid"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
