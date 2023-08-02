@@ -66,8 +66,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
@@ -446,7 +444,7 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         itemRegistry.register(
             DISK_DRIVE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive())
+            DiskDriveBlock::createBlockItem
         );
         Items.INSTANCE.setWrench(itemRegistry.register(
             WRENCH.getPath(),
@@ -468,7 +466,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
         itemRegistry.register(
             INTERFACE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface())
+            () -> Blocks.INSTANCE.getInterface().createBlockItem()
         );
         Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
         Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
@@ -487,49 +485,23 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
-            () -> new NamedBlockItem(
-                block.get(),
-                new Item.Properties(),
-                Blocks.INSTANCE.getGrid().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "grid"
-                ))
-            )
+            () -> GridBlock.createBlockItem(block.get())
         ));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID).getPath(),
-            () -> new NamedBlockItem(
-                block.get(),
-                new Item.Properties(),
-                Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "crafting_grid"
-                ))
-            )
+            () -> CraftingGridBlock.createBlockItem(block.get())
         ));
     }
 
     private void registerControllerItems() {
         Blocks.INSTANCE.getController().forEach((c, block) -> Items.INSTANCE.addRegularController(itemRegistry.register(
             Blocks.INSTANCE.getController().getId(c, CONTROLLER).getPath(),
-            () -> new ControllerBlockItem(
-                block.get(),
-                Blocks.INSTANCE.getController().getName(c, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "controller"
-                ))
-            )
+            () -> block.get().createBlockItem()
         )));
         Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Items.INSTANCE.addController(
             itemRegistry.register(
                 Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
-                () -> new CreativeControllerBlockItem(
-                    block.get(),
-                    Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(
-                        BLOCK_TRANSLATION_CATEGORY,
-                        "creative_controller"
-                    ))
-                )
+                () -> block.get().createBlockItem()
             )
         ));
     }
@@ -537,34 +509,21 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerDetectorItems() {
         Blocks.INSTANCE.getDetector().forEach((color, block) -> Items.INSTANCE.addDetector(itemRegistry.register(
             Blocks.INSTANCE.getDetector().getId(color, DETECTOR).getPath(),
-            () -> new NamedBlockItem(
-                block.get(),
-                new Item.Properties(),
-                Blocks.INSTANCE.getDetector().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "detector"
-                ))
-            )
+            () -> block.get().createBlockItem()
         )));
     }
 
     private void registerImporterItems() {
         Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(itemRegistry.register(
             Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
-            ))
+            () -> block.get().createBlockItem()
         )));
     }
 
     private void registerExporterItems() {
         Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(itemRegistry.register(
             Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
-            ))
+            () -> block.get().createBlockItem()
         )));
     }
 
@@ -572,12 +531,7 @@ public class ModInitializer extends AbstractModInitializer {
         Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(
             itemRegistry.register(
                 Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
-                () -> new NamedBlockItem(block.get(), new Item.Properties(),
-                    Blocks.INSTANCE.getExternalStorage().getName(
-                        color,
-                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
-                    )
-                )
+                () -> block.get().createBlockItem()
             )
         ));
     }
@@ -585,20 +539,14 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerConstructorItems() {
         Blocks.INSTANCE.getConstructor().forEach((color, block) -> Items.INSTANCE.addConstructor(itemRegistry.register(
             Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getConstructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
-            ))
+            () -> block.get().createBlockItem()
         )));
     }
 
     private void registerDestructorItems() {
         Blocks.INSTANCE.getDestructor().forEach((color, block) -> Items.INSTANCE.addDestructor(itemRegistry.register(
             Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR).getPath(),
-            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getDestructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
-            ))
+            () -> block.get().createBlockItem()
         )));
     }
 

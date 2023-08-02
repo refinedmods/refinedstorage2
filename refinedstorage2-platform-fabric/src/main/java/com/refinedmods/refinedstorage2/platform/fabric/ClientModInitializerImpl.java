@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -22,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
@@ -227,6 +229,9 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof AbstractUpgradeItem.UpgradeDestinationTooltipComponent component) {
                 return new UpgradeDestinationClientTooltipComponent(component.destinations());
+            }
+            if (data instanceof HelpTooltipComponent component) {
+                return HelpClientTooltipComponent.create(component.lines());
             }
             return null;
         });

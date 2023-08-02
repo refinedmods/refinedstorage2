@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import org.joml.Matrix4f;
 
@@ -21,9 +21,8 @@ public class HelpClientTooltipComponent extends SmallTextClientTooltipComponent 
     ));
     private static final Style STYLE = Style.EMPTY.withColor(0xFF129ED9);
 
-    private HelpClientTooltipComponent(final List<MutableComponent> components) {
-        super(components);
-        components.forEach(c -> c.setStyle(STYLE));
+    private HelpClientTooltipComponent(final List<Component> components) {
+        super(components.stream().map(c -> c.copy().withStyle(STYLE)).toList());
     }
 
     @Override
@@ -50,7 +49,7 @@ public class HelpClientTooltipComponent extends SmallTextClientTooltipComponent 
         graphics.blit(TextureIds.ICONS, x, y + 2, 236, 158, 20, 20);
     }
 
-    public static ClientTooltipComponent getHelpTooltip(final List<MutableComponent> lines) {
+    public static ClientTooltipComponent create(final List<Component> lines) {
         if (hasShiftDown()) {
             return new HelpClientTooltipComponent(lines);
         } else {

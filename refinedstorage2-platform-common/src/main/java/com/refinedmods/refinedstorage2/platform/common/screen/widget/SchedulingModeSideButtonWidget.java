@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Cl
 
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -53,7 +54,7 @@ public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return property.getValue().getHelp();
     }
 }

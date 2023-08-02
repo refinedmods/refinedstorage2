@@ -48,7 +48,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         super(Menus.INSTANCE.getInterface(), syncId);
         addSlots(
             playerInventory.player,
-            new FilteredResourceFilterContainer(9, StorageChannelTypes.ITEM, 64),
+            new FilteredResourceFilterContainer<>(9, StorageChannelTypes.ITEM, 64),
             new SimpleContainer(9)
         );
         initializeResourceFilterSlots(buf);

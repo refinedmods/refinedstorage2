@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -34,7 +35,7 @@ public enum SchedulingModeType {
 
     private final int id;
     private final MutableComponent name;
-    private final List<MutableComponent> help;
+    private final List<Component> help;
 
     SchedulingModeType(final int id, final MutableComponent name, final MutableComponent help) {
         this.id = id;
@@ -55,7 +56,7 @@ public enum SchedulingModeType {
         return name;
     }
 
-    public List<MutableComponent> getHelp() {
+    public List<Component> getHelp() {
         return help;
     }
 

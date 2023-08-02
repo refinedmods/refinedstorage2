@@ -70,8 +70,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
@@ -504,7 +502,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         register(
             BuiltInRegistries.ITEM,
             DISK_DRIVE,
-            new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive())
+            DiskDriveBlock.createBlockItem()
         );
         Items.INSTANCE.setWrench(register(
             BuiltInRegistries.ITEM,
@@ -524,7 +522,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         register(
             BuiltInRegistries.ITEM,
             INTERFACE,
-            new SimpleBlockItem(Blocks.INSTANCE.getInterface())
+            Blocks.INSTANCE.getInterface().createBlockItem()
         );
 
         Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
@@ -546,18 +544,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getGrid().forEach((color, block) -> register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getGrid().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
-            ))
+            GridBlock.createBlockItem(block.get())
         ));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getCraftingGrid().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "crafting_grid")
-            ))
+            CraftingGridBlock.createBlockItem(block.get())
         ));
     }
 
@@ -576,21 +568,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.addRegularController(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
-            new ControllerBlockItem(block.get(), Blocks.INSTANCE.getController().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
-            ))
+            block.get().createBlockItem()
         )));
         Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Items.INSTANCE.addController(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
-            new CreativeControllerBlockItem(
-                block.get(),
-                Blocks.INSTANCE.getCreativeController().getName(
-                    color,
-                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
-                )
-            )
+            block.get().createBlockItem()
         )));
     }
 
@@ -598,10 +581,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getDetector().forEach((color, block) -> Items.INSTANCE.addDetector(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getDetector().getId(color, DETECTOR),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getDetector().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "detector")
-            ))
+            block.get().createBlockItem()
         )));
     }
 
@@ -609,10 +589,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
-            ))
+            block.get().createBlockItem()
         )));
     }
 
@@ -620,10 +597,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getExporter().getId(color, EXPORTER),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
-            ))
+            block.get().createBlockItem()
         )));
     }
 
@@ -631,10 +605,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExternalStorage().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
-            ))
+            block.get().createBlockItem()
         )));
     }
 
@@ -642,10 +613,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getConstructor().forEach((color, block) -> Items.INSTANCE.addConstructor(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getConstructor().getId(color, CONSTRUCTOR),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getConstructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "constructor")
-            ))
+            block.get().createBlockItem()
         )));
     }
 
@@ -653,10 +621,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getDestructor().forEach((color, block) -> Items.INSTANCE.addDestructor(register(
             BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getDestructor().getId(color, DESTRUCTOR),
-            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getDestructor().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "destructor")
-            ))
+            block.get().createBlockItem()
         )));
     }
 

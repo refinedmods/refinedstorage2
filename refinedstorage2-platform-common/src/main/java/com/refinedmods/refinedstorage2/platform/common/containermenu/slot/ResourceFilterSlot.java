@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -33,13 +32,13 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
-    private final List<MutableComponent> helpText;
+    private final List<Component> helpText;
     @Nullable
     private FilteredResource<?> cachedResource;
 
     public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer,
                               final int index,
-                              final MutableComponent helpText,
+                              final Component helpText,
                               final int x,
                               final int y) {
         super(createDummyContainer(), 0, x, y);
@@ -167,7 +166,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
         ));
         tooltip.addAll(MouseWithIconClientTooltipComponent.createForFilter(carried));
-        tooltip.add(HelpClientTooltipComponent.getHelpTooltip(helpText));
+        tooltip.add(HelpClientTooltipComponent.create(helpText));
         return tooltip;
     }
 }

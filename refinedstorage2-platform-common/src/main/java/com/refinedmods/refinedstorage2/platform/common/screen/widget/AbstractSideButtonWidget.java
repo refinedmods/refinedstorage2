@@ -96,9 +96,9 @@ public abstract class AbstractSideButtonWidget extends Button {
         if (warning != null) {
             lines.add(warning);
         }
-        final List<MutableComponent> helpText = getHelpText();
+        final List<Component> helpText = getHelpText();
         if (!helpText.isEmpty()) {
-            lines.add(HelpClientTooltipComponent.getHelpTooltip(helpText));
+            lines.add(HelpClientTooltipComponent.create(helpText));
         }
         return lines;
     }
@@ -107,7 +107,7 @@ public abstract class AbstractSideButtonWidget extends Button {
 
     protected abstract MutableComponent getSubText();
 
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return Collections.emptyList();
     }
 }

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSid
 
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,7 +16,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.storage_channel_type");
     private static final MutableComponent SUBTEXT_ALL = createTranslation("gui", "grid.storage_channel_type.all");
-    private static final List<MutableComponent> HELP =
+    private static final List<Component> HELP =
         List.of(createTranslation("gui", "grid.storage_channel_type.help"));
 
     private final AbstractGridContainerMenu menu;
@@ -53,7 +54,7 @@ public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget
     }
 
     @Override
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return HELP;
     }
 

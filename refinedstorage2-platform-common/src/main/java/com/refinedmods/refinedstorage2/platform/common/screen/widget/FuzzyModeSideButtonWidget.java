@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Cl
 
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -14,8 +15,8 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent SUBTEXT_OFF = createTranslation("gui", "fuzzy_mode.off");
 
     private final ClientProperty<Boolean> property;
-    private final List<MutableComponent> helpOn;
-    private final List<MutableComponent> helpOff;
+    private final List<Component> helpOn;
+    private final List<Component> helpOff;
 
 
     public FuzzyModeSideButtonWidget(final ClientProperty<Boolean> property, final Type type) {
@@ -50,7 +51,7 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return Boolean.TRUE.equals(property.getValue()) ? helpOn : helpOff;
     }
 

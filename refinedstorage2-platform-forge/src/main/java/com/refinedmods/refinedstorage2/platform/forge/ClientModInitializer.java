@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
@@ -20,6 +21,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
@@ -158,6 +160,10 @@ public final class ClientModInitializer {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
             component -> new UpgradeDestinationClientTooltipComponent(component.destinations())
+        );
+        e.register(
+            HelpTooltipComponent.class,
+            component -> HelpClientTooltipComponent.create(component.lines())
         );
     }
 }

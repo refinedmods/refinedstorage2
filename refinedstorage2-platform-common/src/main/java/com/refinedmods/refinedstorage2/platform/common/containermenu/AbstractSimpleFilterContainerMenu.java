@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -19,7 +19,7 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
-    private final MutableComponent filterHelp;
+    private final Component filterHelp;
 
     protected AbstractSimpleFilterContainerMenu(final MenuType<?> type,
                                                 final int syncId,
@@ -27,7 +27,7 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
                                                 final ResourceFilterContainer resourceFilterContainer,
                                                 final UpgradeContainer upgradeContainer,
                                                 final T blockEntity,
-                                                final MutableComponent filterHelp) {
+                                                final Component filterHelp) {
         super(type, syncId, player);
         this.filterHelp = filterHelp;
         registerServerProperties(blockEntity);
@@ -39,7 +39,7 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
                                                 final Player player,
                                                 final FriendlyByteBuf buf,
                                                 final UpgradeDestinations upgradeDestination,
-                                                final MutableComponent filterHelp) {
+                                                final Component filterHelp) {
         super(type, syncId);
         this.filterHelp = filterHelp;
         registerClientProperties();

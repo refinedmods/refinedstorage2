@@ -15,7 +15,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");
-    private static final List<MutableComponent> HELP = List.of(createTranslation("gui", "priority.storage_help"));
+    private static final List<Component> HELP = List.of(createTranslation("gui", "priority.storage_help"));
 
     private final ClientProperty<Integer> property;
 
@@ -53,7 +53,7 @@ public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return HELP;
     }
 }

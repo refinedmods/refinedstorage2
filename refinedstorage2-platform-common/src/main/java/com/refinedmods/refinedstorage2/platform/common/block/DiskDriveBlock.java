@@ -4,11 +4,15 @@ import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirecti
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.DiskDriveBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.function.BiFunction;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,7 +20,10 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
+    private static final Component HELP = createTranslation("item", "disk_drive.help");
     private static final DiskDriveBlockEntityTicker TICKER = new DiskDriveBlockEntityTicker();
 
     private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
@@ -41,5 +48,9 @@ public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implem
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> type) {
         return TICKER.get(level, type);
+    }
+
+    public static BlockItem createBlockItem() {
+        return new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), HELP);
     }
 }

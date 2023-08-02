@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSid
 
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -40,7 +41,7 @@ public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<MutableComponent> getHelpText() {
+    protected List<Component> getHelpText() {
         return menu.getSynchronizer().getHelp();
     }
 
