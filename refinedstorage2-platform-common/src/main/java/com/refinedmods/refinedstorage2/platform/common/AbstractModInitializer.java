@@ -34,11 +34,26 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.Craftin
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
+import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
+import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -62,6 +77,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -79,9 +95,11 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
@@ -475,6 +493,62 @@ public abstract class AbstractModInitializer {
         BlockEntities.INSTANCE.setDestructor(callback.register(
             DESTRUCTOR,
             () -> typeFactory.create(DestructorBlockEntity::new, Blocks.INSTANCE.getDestructor().toArray())
+        ));
+    }
+
+    protected final void registerMenus(final RegistryCallback<MenuType<?>> callback,
+                                       final MenuTypeFactory menuTypeFactory) {
+        Menus.INSTANCE.setController(callback.register(
+            CONTROLLER,
+            () -> menuTypeFactory.create(ControllerContainerMenu::new)
+        ));
+        Menus.INSTANCE.setDiskDrive(callback.register(
+            DISK_DRIVE,
+            () -> menuTypeFactory.create(DiskDriveContainerMenu::new)
+        ));
+        Menus.INSTANCE.setGrid(callback.register(
+            GRID,
+            () -> menuTypeFactory.create(GridContainerMenu::new)
+        ));
+        Menus.INSTANCE.setCraftingGrid(callback.register(
+            CRAFTING_GRID,
+            () -> menuTypeFactory.create(CraftingGridContainerMenu::new)
+        ));
+        Menus.INSTANCE.setItemStorage(callback.register(
+            ITEM_STORAGE_BLOCK,
+            () -> menuTypeFactory.create(ItemStorageBlockContainerMenu::new)
+        ));
+        Menus.INSTANCE.setFluidStorage(callback.register(
+            FLUID_STORAGE_BLOCK,
+            () -> menuTypeFactory.create(FluidStorageBlockContainerMenu::new)
+        ));
+        Menus.INSTANCE.setImporter(callback.register(
+            IMPORTER,
+            () -> menuTypeFactory.create(ImporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExporter(callback.register(
+            EXPORTER,
+            () -> menuTypeFactory.create(ExporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setInterface(callback.register(
+            INTERFACE,
+            () -> menuTypeFactory.create(InterfaceContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExternalStorage(callback.register(
+            EXTERNAL_STORAGE,
+            () -> menuTypeFactory.create(ExternalStorageContainerMenu::new)
+        ));
+        Menus.INSTANCE.setDetector(callback.register(
+            DETECTOR,
+            () -> menuTypeFactory.create(DetectorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setDestructor(callback.register(
+            DESTRUCTOR,
+            () -> menuTypeFactory.create(DestructorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setConstructor(callback.register(
+            CONSTRUCTOR,
+            () -> menuTypeFactory.create(ConstructorContainerMenu::new)
         ));
     }
 }

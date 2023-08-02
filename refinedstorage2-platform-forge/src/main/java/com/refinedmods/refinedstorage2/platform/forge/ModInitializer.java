@@ -7,24 +7,11 @@ import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBloc
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
-import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -58,6 +45,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -90,19 +78,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTOR;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DETECTOR;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -256,59 +231,17 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerMenus() {
-        Menus.INSTANCE.setController(menuTypeRegistry.register(
-            CONTROLLER.getPath(),
-            () -> IForgeMenuType.create(ControllerContainerMenu::new)
-        ));
-        Menus.INSTANCE.setDiskDrive(menuTypeRegistry.register(
-            DISK_DRIVE.getPath(),
-            () -> IForgeMenuType.create(DiskDriveContainerMenu::new)
-        ));
-        Menus.INSTANCE.setGrid(menuTypeRegistry.register(
-            GRID.getPath(),
-            () -> IForgeMenuType.create(GridContainerMenu::new)
-        ));
-        Menus.INSTANCE.setCraftingGrid(menuTypeRegistry.register(
-            CRAFTING_GRID.getPath(),
-            () -> IForgeMenuType.create(CraftingGridContainerMenu::new)
-        ));
-        Menus.INSTANCE.setItemStorage(menuTypeRegistry.register(
-            ITEM_STORAGE_BLOCK.getPath(),
-            () -> IForgeMenuType.create(ItemStorageBlockContainerMenu::new)
-        ));
-        Menus.INSTANCE.setFluidStorage(menuTypeRegistry.register(
-            FLUID_STORAGE_BLOCK.getPath(),
-            () -> IForgeMenuType.create(FluidStorageBlockContainerMenu::new)
-        ));
-        Menus.INSTANCE.setImporter(menuTypeRegistry.register(
-            IMPORTER.getPath(),
-            () -> IForgeMenuType.create(ImporterContainerMenu::new)
-        ));
-        Menus.INSTANCE.setExporter(menuTypeRegistry.register(
-            EXPORTER.getPath(),
-            () -> IForgeMenuType.create(ExporterContainerMenu::new)
-        ));
-        Menus.INSTANCE.setInterface(menuTypeRegistry.register(
-            INTERFACE.getPath(),
-            () -> IForgeMenuType.create(InterfaceContainerMenu::new)
-        ));
-        Menus.INSTANCE.setExternalStorage(menuTypeRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            () -> IForgeMenuType.create(ExternalStorageContainerMenu::new)
-        ));
-        Menus.INSTANCE.setDetector(menuTypeRegistry.register(
-            DETECTOR.getPath(),
-            () -> IForgeMenuType.create(DetectorContainerMenu::new)
-        ));
-        Menus.INSTANCE.setDestructor(menuTypeRegistry.register(
-            DESTRUCTOR.getPath(),
-            () -> IForgeMenuType.create(DestructorContainerMenu::new)
-        ));
-        Menus.INSTANCE.setConstructor(menuTypeRegistry.register(
-            CONSTRUCTOR.getPath(),
-            () -> IForgeMenuType.create(ConstructorContainerMenu::new)
-        ));
-
+        registerMenus(new RegistryCallback<>() {
+            @Override
+            public <R extends MenuType<?>> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+                return menuTypeRegistry.register(id.getPath(), value);
+            }
+        }, new MenuTypeFactory() {
+            @Override
+            public <T extends AbstractContainerMenu> MenuType<T> create(final MenuSupplier<T> supplier) {
+                return IForgeMenuType.create(supplier::create);
+            }
+        });
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
