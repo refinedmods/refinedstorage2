@@ -4,21 +4,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
@@ -32,7 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Ext
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
@@ -40,8 +28,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
@@ -58,6 +44,8 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.impo
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
@@ -102,11 +90,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DETECTOR;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -119,8 +105,6 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -251,116 +235,23 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerBlockEntities() {
-        BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(
-            CABLE.getPath(),
-            () -> BlockEntityType.Builder.of(
-                CableBlockEntity::new,
-                Blocks.INSTANCE.getCable().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setController(blockEntityTypeRegistry.register(
-            CONTROLLER.getPath(),
-            () -> BlockEntityType.Builder.of(
-                (pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state),
-                Blocks.INSTANCE.getController().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setCreativeController(blockEntityTypeRegistry.register(
-            CREATIVE_CONTROLLER.getPath(),
-            () -> BlockEntityType.Builder.of(
-                (pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state),
-                Blocks.INSTANCE.getCreativeController().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setDiskDrive(blockEntityTypeRegistry.register(
-            DISK_DRIVE.getPath(),
-            () -> BlockEntityType.Builder.of(
-                ForgeDiskDriveBlockEntity::new,
-                Blocks.INSTANCE.getDiskDrive()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setGrid(blockEntityTypeRegistry.register(
-            GRID.getPath(),
-            () -> BlockEntityType.Builder.of(
-                GridBlockEntity::new,
-                Blocks.INSTANCE.getGrid().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setCraftingGrid(blockEntityTypeRegistry.register(
-            CRAFTING_GRID.getPath(),
-            () -> BlockEntityType.Builder.of(
-                CraftingGridBlockEntity::new,
-                Blocks.INSTANCE.getCraftingGrid().toArray()
-            ).build(null)
-        ));
-
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockEntities.INSTANCE.setItemStorageBlock(variant, blockEntityTypeRegistry.register(
-                forItemStorageBlock(variant).getPath(),
-                () -> BlockEntityType.Builder.of(
-                    (pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant),
-                    Blocks.INSTANCE.getItemStorageBlock(variant)
-                ).build(null)
-            ));
-        }
-
-        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            BlockEntities.INSTANCE.setFluidStorageBlock(variant, blockEntityTypeRegistry.register(
-                forFluidStorageBlock(variant).getPath(),
-                () -> BlockEntityType.Builder.of(
-                    (pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant),
-                    Blocks.INSTANCE.getFluidStorageBlock(variant)
-                ).build(null)
-            ));
-        }
-
-        BlockEntities.INSTANCE.setImporter(blockEntityTypeRegistry.register(
-            IMPORTER.getPath(),
-            () -> BlockEntityType.Builder.of(
-                    ImporterBlockEntity::new,
-                    Blocks.INSTANCE.getImporter().toArray())
-                .build(null)
-        ));
-        BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
-            EXPORTER.getPath(),
-            () -> BlockEntityType.Builder.of(
-                    ExporterBlockEntity::new,
-                    Blocks.INSTANCE.getExporter().toArray())
-                .build(null)
-        ));
-        BlockEntities.INSTANCE.setInterface(blockEntityTypeRegistry.register(
-            INTERFACE.getPath(),
-            () -> BlockEntityType.Builder.of(InterfaceBlockEntity::new, Blocks.INSTANCE.getInterface()).build(null)
-        ));
-        BlockEntities.INSTANCE.setExternalStorage(blockEntityTypeRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            () -> BlockEntityType.Builder.of(
-                ExternalStorageBlockEntity::new,
-                Blocks.INSTANCE.getExternalStorage().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setDetector(blockEntityTypeRegistry.register(
-            DETECTOR.getPath(),
-            () -> BlockEntityType.Builder.of(
-                DetectorBlockEntity::new,
-                Blocks.INSTANCE.getDetector().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setConstructor(blockEntityTypeRegistry.register(
-            CONSTRUCTOR.getPath(),
-            () -> BlockEntityType.Builder.of(
-                ConstructorBlockEntity::new,
-                Blocks.INSTANCE.getConstructor().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setDestructor(blockEntityTypeRegistry.register(
-            DESTRUCTOR.getPath(),
-            () -> BlockEntityType.Builder.of(
-                DestructorBlockEntity::new,
-                Blocks.INSTANCE.getDestructor().toArray()
-            ).build(null)
-        ));
-
+        registerBlockEntities(
+            new RegistryCallback<>() {
+                @Override
+                public <R extends BlockEntityType<?>> Supplier<R> register(final ResourceLocation id,
+                                                                           final Supplier<R> value) {
+                    return blockEntityTypeRegistry.register(id.getPath(), value);
+                }
+            },
+            new BlockEntityTypeFactory() {
+                @Override
+                public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntitySupplier<T> factory,
+                                                                         final Block... allowedBlocks) {
+                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                }
+            },
+            ForgeDiskDriveBlockEntity::new
+        );
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
