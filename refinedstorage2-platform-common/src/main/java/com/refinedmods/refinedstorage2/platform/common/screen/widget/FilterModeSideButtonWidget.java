@@ -12,16 +12,18 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "filter_mode");
     private static final MutableComponent SUBTEXT_BLOCK = createTranslation("gui", "filter_mode.block");
     private static final MutableComponent SUBTEXT_ALLOW = createTranslation("gui", "filter_mode.allow");
-    private static final Component HELP_BLOCK =
-        createTranslation("gui", "filter_mode.block.help");
-    private static final Component HELP_ALLOW =
-        createTranslation("gui", "filter_mode.allow.help");
 
     private final ClientProperty<FilterMode> property;
+    private final Component helpAllow;
+    private final Component helpBlock;
 
-    public FilterModeSideButtonWidget(final ClientProperty<FilterMode> property) {
+    public FilterModeSideButtonWidget(final ClientProperty<FilterMode> property,
+                                      final Component helpAllow,
+                                      final Component helpBlock) {
         super(createPressAction(property));
         this.property = property;
+        this.helpAllow = helpAllow;
+        this.helpBlock = helpBlock;
     }
 
     private static OnPress createPressAction(final ClientProperty<FilterMode> property) {
@@ -54,6 +56,6 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected Component getHelpText() {
-        return property.getValue() == FilterMode.BLOCK ? HELP_BLOCK : HELP_ALLOW;
+        return property.getValue() == FilterMode.BLOCK ? helpBlock : helpAllow;
     }
 }

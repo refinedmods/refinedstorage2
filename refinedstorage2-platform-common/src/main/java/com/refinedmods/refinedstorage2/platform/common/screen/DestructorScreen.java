@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeS
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DestructorScreen extends AbstractFilterScreen<DestructorContainerMenu> {
     public DestructorScreen(final DestructorContainerMenu menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
@@ -16,7 +18,11 @@ public class DestructorScreen extends AbstractFilterScreen<DestructorContainerMe
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
+        addSideButton(new FilterModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+            createTranslation("gui", "destructor.filter_mode.allow.help"),
+            createTranslation("gui", "destructor.filter_mode.block.help")
+        ));
         addSideButton(new DestructorPickupItemsSideButtonWidget(
             getMenu().getProperty(PropertyTypes.DESTRUCTOR_PICKUP_ITEMS)
         ));

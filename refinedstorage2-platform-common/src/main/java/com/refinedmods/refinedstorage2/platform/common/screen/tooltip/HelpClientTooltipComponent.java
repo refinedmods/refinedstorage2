@@ -9,6 +9,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -28,8 +29,10 @@ public class HelpClientTooltipComponent implements ClientTooltipComponent {
     private final float scale;
 
     private HelpClientTooltipComponent(final Component text) {
-        this.lines = Minecraft.getInstance().font.split(text.copy().withStyle(STYLE), MAX_CHARS);
-        this.scale = SmallTextClientTooltipComponent.getScale();
+        this.lines = Language.getInstance().getVisualOrder(
+            Minecraft.getInstance().font.getSplitter().splitLines(text, MAX_CHARS, STYLE)
+        );
+        this.scale = SmallText.getScale();
     }
 
     @Override
@@ -58,7 +61,7 @@ public class HelpClientTooltipComponent implements ClientTooltipComponent {
         final int xx = x + 20 + 4;
         int yy = y + 4;
         for (final FormattedCharSequence line : lines) {
-            SmallTextClientTooltipComponent.render(
+            SmallText.render(
                 font,
                 line,
                 xx,

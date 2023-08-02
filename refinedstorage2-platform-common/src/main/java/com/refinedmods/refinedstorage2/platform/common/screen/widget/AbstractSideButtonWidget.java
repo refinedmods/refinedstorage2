@@ -39,12 +39,12 @@ public abstract class AbstractSideButtonWidget extends Button {
         return TextureIds.ICONS;
     }
 
-    public void setWarning(@Nullable final MutableComponent text) {
+    public void setWarning(@Nullable final Component text) {
         if (text == null) {
             this.warning = null;
             return;
         }
-        this.warning = new SmallTextClientTooltipComponent(text.withStyle(ChatFormatting.RED));
+        this.warning = new SmallTextClientTooltipComponent(text.copy().withStyle(ChatFormatting.RED));
     }
 
     @Override

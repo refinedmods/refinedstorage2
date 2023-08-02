@@ -24,6 +24,11 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMenu & StorageAccessor>
     extends AbstractBaseScreen<T> {
+    public static final Component ALLOW_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.allow.help");
+    public static final Component BLOCK_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.block.help");
+
+    private static final Component FILTER_MODE_WARNING = createTranslation("gui", "storage.filter_mode.empty_warning");
+
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
     @Nullable
@@ -59,7 +64,11 @@ public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMe
             getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
             createTranslation("gui", "storage.redstone_mode_help")
         ));
-        filterModeSideButtonWidget = new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE));
+        filterModeSideButtonWidget = new FilterModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+            ALLOW_FILTER_MODE_HELP,
+            BLOCK_FILTER_MODE_HELP
+        );
         addSideButton(filterModeSideButtonWidget);
         addSideButton(new FuzzyModeSideButtonWidget(
             getMenu().getProperty(PropertyTypes.FUZZY_MODE),
@@ -84,7 +93,7 @@ public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMe
             return;
         }
         if (getMenu().shouldDisplayFilterModeWarning()) {
-            filterModeSideButtonWidget.setWarning(createTranslation("gui", "filter_mode.allow.empty_warning"));
+            filterModeSideButtonWidget.setWarning(FILTER_MODE_WARNING);
             return;
         }
         filterModeSideButtonWidget.setWarning(null);
