@@ -103,14 +103,28 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerEmissiveModels() {
-        for (final DyeColor color : DyeColor.values()) {
+        Blocks.INSTANCE.getController().forEach((color, id, block) -> {
             registerEmissiveControllerModels(color);
-            registerEmissiveGridModels(color);
-            registerEmissiveCraftingGridModels(color);
-            registerEmissiveDetectorModels(color);
-            registerEmissiveConstructorModels(color);
-            registerEmissiveDestructorModels(color);
-        }
+            registerEmissiveControllerItemModels(color, id);
+        });
+        Blocks.INSTANCE.getCreativeController().forEach(
+            (color, id, block) -> registerEmissiveControllerItemModels(color, id)
+        );
+        Blocks.INSTANCE.getGrid().forEach(
+            (color, id, block) -> registerEmissiveGridModels(color, id)
+        );
+        Blocks.INSTANCE.getCraftingGrid().forEach(
+            (color, id, block) -> registerEmissiveCraftingGridModels(color, id)
+        );
+        Blocks.INSTANCE.getDetector().forEach(
+            (color, id, block) -> registerEmissiveDetectorModels(color, id)
+        );
+        Blocks.INSTANCE.getConstructor().forEach(
+            (color, id, block) -> registerEmissiveConstructorModels(color, id)
+        );
+        Blocks.INSTANCE.getDestructor().forEach(
+            (color, id, block) -> registerEmissiveDestructorModels(color, id)
+        );
     }
 
     private void registerEmissiveControllerModels(final DyeColor color) {
@@ -120,80 +134,61 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             createIdentifier("block/controller/" + color.getName()),
             spriteLocation
         );
-        // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getController().getId(color, createIdentifier("controller")),
-            spriteLocation
-        );
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getCreativeController().getId(color, createIdentifier("creative_controller")),
-            spriteLocation
-        );
     }
 
-    private void registerEmissiveGridModels(final DyeColor color) {
+    private void registerEmissiveControllerItemModels(final DyeColor color, final ResourceLocation id) {
+        final ResourceLocation spriteLocation = createIdentifier("block/controller/cutouts/" + color.getName());
+        EmissiveModelRegistry.INSTANCE.register(id, spriteLocation);
+    }
+
+    private void registerEmissiveGridModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/grid/" + color.getName()),
             createIdentifier("block/grid/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getGrid().getId(color, createIdentifier("grid")),
-            createIdentifier("block/grid/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/grid/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveCraftingGridModels(final DyeColor color) {
+    private void registerEmissiveCraftingGridModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/crafting_grid/" + color.getName()),
             createIdentifier("block/crafting_grid/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getCraftingGrid().getId(color, createIdentifier("crafting_grid")),
-            createIdentifier("block/crafting_grid/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/crafting_grid/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveDetectorModels(final DyeColor color) {
+    private void registerEmissiveDetectorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/detector/" + color.getName()),
             createIdentifier("block/detector/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getDetector().getId(color, createIdentifier("detector")),
-            createIdentifier("block/detector/cutouts/" + color.getName())
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/detector/cutouts/" + color.getName()));
     }
 
-    private void registerEmissiveConstructorModels(final DyeColor color) {
+    private void registerEmissiveConstructorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/constructor/" + color.getName()),
             createIdentifier("block/constructor/cutouts/active")
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getConstructor().getId(color, createIdentifier("constructor")),
-            createIdentifier("block/constructor/cutouts/active")
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/constructor/cutouts/active"));
     }
 
-    private void registerEmissiveDestructorModels(final DyeColor color) {
+    private void registerEmissiveDestructorModels(final DyeColor color, final ResourceLocation id) {
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/destructor/" + color.getName()),
             createIdentifier("block/destructor/cutouts/active")
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(
-            Blocks.INSTANCE.getDestructor().getId(color, createIdentifier("destructor")),
-            createIdentifier("block/destructor/cutouts/active")
-        );
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/destructor/cutouts/active"));
     }
 
     private void registerPackets() {
