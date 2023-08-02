@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/light_blue_importer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
