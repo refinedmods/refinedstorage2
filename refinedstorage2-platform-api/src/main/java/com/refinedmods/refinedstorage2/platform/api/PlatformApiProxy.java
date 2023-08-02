@@ -11,6 +11,8 @@ import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.Cons
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHints;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -158,6 +160,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addGridInsertionStrategyFactory(final GridInsertionStrategyFactory insertionStrategyFactory) {
         ensureLoaded().addGridInsertionStrategyFactory(insertionStrategyFactory);
+    }
+
+    @Override
+    public void addAlternativeGridInsertionHint(final GridInsertionHint hint) {
+        ensureLoaded().addAlternativeGridInsertionHint(hint);
+    }
+
+    @Override
+    public GridInsertionHints getGridInsertionHints() {
+        return ensureLoaded().getGridInsertionHints();
     }
 
     @Override

@@ -1,15 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
+import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -36,6 +39,11 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
     }
 
     @Override
+    public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
+        return Optional.of(new HelpTooltipComponent(createTranslation("item", "controller.help")));
+    }
+
+    @Override
     public boolean isBarVisible(final ItemStack stack) {
         return ControllerBlockEntity.hasEnergy(getBlockEntityData(stack));
     }
@@ -56,7 +64,6 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
                                 final List<Component> tooltip,
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-
         final CompoundTag data = getBlockEntityData(stack);
         if (ControllerBlockEntity.hasEnergy(data)) {
             final long stored = ControllerBlockEntity.getStored(data);

@@ -11,6 +11,7 @@ import java.util.Map;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -44,5 +45,10 @@ public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
                 ? TooltipFlag.ADVANCED
                 : TooltipFlag.NORMAL
         );
+    }
+
+    @Override
+    public Component getDisplayName(final FluidResource fluidResource) {
+        return FluidVariantAttributes.getName(getFluidVariantFromCache(fluidResource));
     }
 }

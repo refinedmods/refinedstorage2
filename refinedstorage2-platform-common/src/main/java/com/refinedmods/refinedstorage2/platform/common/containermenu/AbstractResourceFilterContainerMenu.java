@@ -101,6 +101,15 @@ public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseCo
         }
     }
 
+    protected final boolean isFilterConfigured() {
+        for (final ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
+            if (!resourceFilterSlot.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slot) {
         return !(slot instanceof ResourceFilterSlot);

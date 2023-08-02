@@ -52,4 +52,8 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
             configContainer::setRedstoneMode
         ));
     }
+
+    public boolean shouldDisplayFilterModeWarning() {
+        return getProperty(PropertyTypes.FILTER_MODE).getValue() == FilterMode.ALLOW && !isFilterConfigured();
+    }
 }

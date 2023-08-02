@@ -1,17 +1,24 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
-import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-
 import javax.annotation.Nullable;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class NoOpGridSynchronizer extends AbstractGridSynchronizer {
-    private static final MutableComponent TITLE = IdentifierUtil.createTranslation("gui", "grid.synchronizer.off");
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.off");
+    private static final Component HELP = createTranslation("gui", "grid.synchronizer.off.help");
 
     @Override
     public MutableComponent getTitle() {
         return TITLE;
+    }
+
+    @Override
+    public Component getHelpText() {
+        return HELP;
     }
 
     @Override

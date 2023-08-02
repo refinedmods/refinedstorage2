@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
@@ -23,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
+import com.refinedmods.refinedstorage2.platform.fabric.util.BucketSingleStackStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.List;
@@ -34,6 +36,7 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -86,6 +89,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public final class PlatformImpl extends AbstractPlatform {
@@ -144,21 +148,39 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
         return convertNonEmptyToFluid(stack);
     }
 
-    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
+    @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        final BucketSingleStackStorage interceptingStorage = new BucketSingleStackStorage();
+        final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+            interceptingStorage.getStack(),
+            ContainerItemContext.ofSingleSlot(interceptingStorage)
+        );
+        if (destination == null) {
+            return Optional.empty();
+        }
+        try (Transaction tx = Transaction.openOuter()) {
+            destination.insert(toFluidVariant(fluidResource), FluidConstants.BUCKET, tx);
+            return Optional.of(interceptingStorage.getStack());
+        }
+    }
+
+    private Optional<ResourceAmount<FluidResource>> convertNonEmptyToFluid(final ItemStack stack) {
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
             stack,
             new ConstantContainerItemContext(ItemVariant.of(stack), 1)
         );
-        return Optional
-            .ofNullable(StorageUtil.findExtractableResource(storage, null))
-            .map(VariantUtil::ofFluidVariant);
+        return Optional.ofNullable(StorageUtil.findExtractableContent(storage, null))
+            .map(content -> new ResourceAmount<>(
+                VariantUtil.ofFluidVariant(content.resource()),
+                content.amount()
+            ));
     }
 
     @Override

@@ -42,6 +42,11 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
         render(poseStack, x, y, packedRgb, sprite);
     }
 
+    @Override
+    public Component getDisplayName(final FluidResource fluidResource) {
+        return fluidResource.fluid().getFluidType().getDescription();
+    }
+
     private TextureAtlasSprite getStillFluidSprite(final IClientFluidTypeExtensions renderProperties,
                                                    final FluidStack fluidStack) {
         final Minecraft minecraft = Minecraft.getInstance();

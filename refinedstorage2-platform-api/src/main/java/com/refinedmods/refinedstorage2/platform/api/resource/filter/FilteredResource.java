@@ -22,6 +22,8 @@ public interface FilteredResource<T> {
 
     String getDisplayedAmount();
 
+    Component getDisplayName();
+
     List<Component> getTooltip();
 
     PlatformStorageChannelType<T> getStorageChannelType();

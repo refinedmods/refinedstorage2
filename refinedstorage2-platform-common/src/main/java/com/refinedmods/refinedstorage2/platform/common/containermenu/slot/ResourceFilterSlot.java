@@ -4,13 +4,17 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,26 +25,31 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceFilterSlot extends Slot {
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
+
+public class ResourceFilterSlot extends Slot implements SlotTooltip {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFilterSlot.class);
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
+    private final Component helpText;
     @Nullable
     private FilteredResource<?> cachedResource;
 
     public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer,
                               final int index,
+                              final Component helpText,
                               final int x,
                               final int y) {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
+        this.helpText = helpText;
         this.cachedResource = resourceFilterContainer.get(index);
     }
 
     public ResourceFilterSlot atPosition(final int newX, final int newY) {
-        return new ResourceFilterSlot(resourceFilterContainer, index, newX, newY);
+        return new ResourceFilterSlot(resourceFilterContainer, index, helpText, newX, newY);
     }
 
     public boolean supportsAmount() {
@@ -50,6 +59,10 @@ public class ResourceFilterSlot extends Slot {
     @Nullable
     public FilteredResource<?> getFilteredResource() {
         return resourceFilterContainer.get(containerIndex);
+    }
+
+    public boolean isEmpty() {
+        return getFilteredResource() == null;
     }
 
     private static SimpleContainer createDummyContainer() {
@@ -130,11 +143,30 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
-    public List<Component> getTooltip() {
+    @Override
+    public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
         final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
         if (filteredResource == null) {
-            return Collections.emptyList();
+            return getTooltipForEmptySlot(carried);
         }
-        return filteredResource.getTooltip();
+        final List<ClientTooltipComponent> tooltip = filteredResource.getTooltip()
+            .stream()
+            .map(Component::getVisualOrderText)
+            .map(ClientTooltipComponent::create)
+            .collect(Collectors.toList());
+        tooltip.add(ClientTooltipComponent.create(
+            createTranslationAsHeading("gui", "filter_slot.click_to_clear").getVisualOrderText()
+        ));
+        return tooltip;
+    }
+
+    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
+        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
+        tooltip.add(ClientTooltipComponent.create(
+            createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
+        ));
+        tooltip.addAll(MouseWithIconClientTooltipComponent.createForFilter(carried));
+        tooltip.add(HelpClientTooltipComponent.create(helpText));
+        return tooltip;
     }
 }

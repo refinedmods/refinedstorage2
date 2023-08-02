@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -122,8 +123,13 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
         return ensureLoaded().convertToFluid(stack);
+    }
+
+    @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        return ensureLoaded().convertToBucket(fluidResource);
     }
 
     @Override

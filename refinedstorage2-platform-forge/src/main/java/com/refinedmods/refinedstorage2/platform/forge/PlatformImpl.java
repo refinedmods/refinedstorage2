@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
@@ -53,6 +54,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.BlockGetter;
@@ -141,11 +143,25 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
         return stack
             .getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null)
             .map(handler -> handler.getFluidInTank(0))
-            .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
+            .map(contents -> contents.isEmpty() ? null : new ResourceAmount<>(
+                new FluidResource(contents.getFluid(), contents.getTag()),
+                contents.getAmount())
+            );
+    }
+
+    @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        return new ItemStack(Items.BUCKET).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).map(dest -> {
+            dest.fill(
+                toFluidStack(fluidResource, FluidType.BUCKET_VOLUME),
+                IFluidHandler.FluidAction.EXECUTE
+            );
+            return dest.getContainer();
+        });
     }
 
     @Override

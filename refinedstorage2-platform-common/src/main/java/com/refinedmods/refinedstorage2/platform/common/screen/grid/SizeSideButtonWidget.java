@@ -1,41 +1,30 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SizeSideButtonWidget extends AbstractSideButtonWidget {
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.size");
+
+    private static final MutableComponent SUBTEXT_STRETCH = createTranslation("gui", "grid.size.stretch");
+    private static final MutableComponent SUBTEXT_SMALL = createTranslation("gui", "grid.size.small");
+    private static final MutableComponent SUBTEXT_MEDIUM = createTranslation("gui", "grid.size.medium");
+    private static final MutableComponent SUBTEXT_LARGE = createTranslation("gui", "grid.size.large");
+    private static final MutableComponent SUBTEXT_EXTRA_LARGE = createTranslation("gui", "grid.size.extra_large");
+
     private final AbstractGridContainerMenu menu;
-    private final Map<GridSize, List<Component>> tooltips = new EnumMap<>(GridSize.class);
 
     public SizeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
-        Arrays.stream(GridSize.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu menu) {
         return btn -> menu.setSize(menu.getSize().toggle());
-    }
-
-    private List<Component> calculateTooltip(final GridSize size) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "grid.size"));
-        lines.add(createTranslation("gui", "grid.size." + size.toString().toLowerCase(Locale.ROOT))
-            .withStyle(ChatFormatting.GRAY));
-        return lines;
     }
 
     @Override
@@ -54,7 +43,18 @@ public class SizeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return tooltips.get(menu.getSize());
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return switch (menu.getSize()) {
+            case STRETCH -> SUBTEXT_STRETCH;
+            case SMALL -> SUBTEXT_SMALL;
+            case MEDIUM -> SUBTEXT_MEDIUM;
+            case LARGE -> SUBTEXT_LARGE;
+            case EXTRA_LARGE -> SUBTEXT_EXTRA_LARGE;
+        };
     }
 }

@@ -11,8 +11,9 @@ import net.minecraft.world.item.ItemStack;
 public class FluidFilteredResourceFactory implements FilteredResourceFactory {
     @Override
     public Optional<FilteredResource<?>> create(final ItemStack stack, final boolean tryAlternatives) {
-        return Platform.INSTANCE.convertToFluid(stack).map(
-            fluidResource -> new FluidFilteredResource(fluidResource, Platform.INSTANCE.getBucketAmount())
-        );
+        return Platform.INSTANCE.convertToFluid(stack).map(resourceAmount -> new FluidFilteredResource(
+            resourceAmount.getResource(),
+            Platform.INSTANCE.getBucketAmount()
+        ));
     }
 }

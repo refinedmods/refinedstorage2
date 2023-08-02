@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +32,6 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
     private final AbstractContainerMenu menu;
-    private final Inventory playerInventory;
     private final GridService<FluidResource> gridService;
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final Storage<ItemResource> itemStorage;
@@ -43,9 +41,8 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                                        final PlatformGridServiceFactory gridServiceFactory,
                                        final Storage<ItemResource> itemStorage) {
         this.menu = containerMenu;
-        this.playerInventory = player.getInventory();
         this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
-        this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
+        this.playerInventoryStorage = new PlayerMainInvWrapper(player.getInventory());
         this.itemStorage = itemStorage;
     }
 

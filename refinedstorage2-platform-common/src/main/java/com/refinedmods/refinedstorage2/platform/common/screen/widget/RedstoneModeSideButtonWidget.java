@@ -3,38 +3,42 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import javax.annotation.Nullable;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final Map<RedstoneMode, List<Component>> tooltips = new EnumMap<>(RedstoneMode.class);
+    private static final MutableComponent TITLE = createTranslation("gui", "redstone_mode");
+    private static final MutableComponent SUBTEXT_IGNORE = createTranslation("gui", "redstone_mode.ignore");
+    private static final MutableComponent SUBTEXT_HIGH = createTranslation("gui", "redstone_mode.high");
+    private static final MutableComponent SUBTEXT_LOW = createTranslation("gui", "redstone_mode.low");
+    private static final Component HELP_IGNORE = createTranslation("gui", "redstone_mode.ignore.help");
+    private static final Component HELP_HIGH = createTranslation("gui", "redstone_mode.high.help");
+    private static final Component HELP_LOW = createTranslation("gui", "redstone_mode.low.help");
+
     private final ClientProperty<RedstoneMode> property;
+    private final Component helpIgnore;
+    private final Component helpHigh;
+    private final Component helpLow;
 
     public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property) {
+        this(property, null);
+    }
+
+    public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property,
+                                        @Nullable final Component extraHelpText) {
         super(createPressAction(property));
         this.property = property;
-        Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
+        this.helpIgnore = getHelpText(HELP_IGNORE, extraHelpText);
+        this.helpHigh = getHelpText(HELP_HIGH, extraHelpText);
+        this.helpLow = getHelpText(HELP_LOW, extraHelpText);
     }
 
     private static OnPress createPressAction(final ClientProperty<RedstoneMode> property) {
         return btn -> property.setValue(property.getValue().toggle());
-    }
-
-    private List<Component> calculateTooltip(final RedstoneMode type) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "redstone_mode"));
-        lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT))
-            .withStyle(ChatFormatting.GRAY));
-        return lines;
     }
 
     @Override
@@ -52,7 +56,32 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return tooltips.get(property.getValue());
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return switch (property.getValue()) {
+            case IGNORE -> SUBTEXT_IGNORE;
+            case HIGH -> SUBTEXT_HIGH;
+            case LOW -> SUBTEXT_LOW;
+        };
+    }
+
+    @Override
+    protected Component getHelpText() {
+        return switch (property.getValue()) {
+            case IGNORE -> helpIgnore;
+            case HIGH -> helpHigh;
+            case LOW -> helpLow;
+        };
+    }
+
+    private Component getHelpText(final Component text, @Nullable final Component extraText) {
+        if (extraText == null) {
+            return text;
+        }
+        return text.copy().append(" ").append(extraText);
     }
 }

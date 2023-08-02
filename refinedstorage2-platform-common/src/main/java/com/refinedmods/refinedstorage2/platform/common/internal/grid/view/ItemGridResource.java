@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -56,6 +58,24 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     @Override
     public int getRegistryId() {
         return id;
+    }
+
+    @Override
+    public List<? extends ClientTooltipComponent> getExtractionHints() {
+        final long extractableAmount = Math.min(getAmount(), itemStack.getMaxStackSize());
+        final long halfExtractionAmount = extractableAmount == 1 ? 1 : extractableAmount / 2;
+        return List.of(
+            new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.LEFT,
+                this::render,
+                extractableAmount == 1 ? null : AmountFormatting.format(extractableAmount)
+            ),
+            new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.RIGHT,
+                this::render,
+                halfExtractionAmount == 1 ? null : AmountFormatting.format(halfExtractionAmount)
+            )
+        );
     }
 
     @Override

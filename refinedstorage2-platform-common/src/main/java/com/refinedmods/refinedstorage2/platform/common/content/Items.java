@@ -4,8 +4,6 @@ import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +14,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
 public final class Items {
@@ -29,15 +28,15 @@ public final class Items {
         = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageDisks
         = new EnumMap<>(FluidStorageType.Variant.class);
-    private final List<Supplier<ControllerBlockItem>> regularControllers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> regularControllers = new ArrayList<>();
     private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allCables = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allExporters = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allImporters = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allExternalStorages = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allDetectors = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allDestructors = new ArrayList<>();
-    private final List<Supplier<NamedBlockItem>> allConstructors = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allCables = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allExporters = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allImporters = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allExternalStorages = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allDetectors = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allDestructors = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -167,68 +166,68 @@ public final class Items {
         return Collections.unmodifiableList(allControllers);
     }
 
-    public void addRegularController(final Supplier<ControllerBlockItem> supplier) {
+    public void addRegularController(final Supplier<BlockItem> supplier) {
         addController(supplier);
         regularControllers.add(supplier);
     }
 
-    public List<Supplier<ControllerBlockItem>> getRegularControllers() {
+    public List<Supplier<BlockItem>> getRegularControllers() {
         return Collections.unmodifiableList(regularControllers);
     }
 
-    public void addCable(final Supplier<NamedBlockItem> supplier) {
+    public void addCable(final Supplier<BlockItem> supplier) {
         allCables.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getCables() {
+    public List<Supplier<BlockItem>> getCables() {
         return Collections.unmodifiableList(allCables);
     }
 
-    public void addExporter(final Supplier<NamedBlockItem> supplier) {
+    public void addExporter(final Supplier<BlockItem> supplier) {
         allExporters.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getExporters() {
+    public List<Supplier<BlockItem>> getExporters() {
         return Collections.unmodifiableList(allExporters);
     }
 
-    public void addImporter(final Supplier<NamedBlockItem> supplier) {
+    public void addImporter(final Supplier<BlockItem> supplier) {
         allImporters.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getImporters() {
+    public List<Supplier<BlockItem>> getImporters() {
         return Collections.unmodifiableList(allImporters);
     }
 
-    public void addExternalStorage(final Supplier<NamedBlockItem> supplier) {
+    public void addExternalStorage(final Supplier<BlockItem> supplier) {
         allExternalStorages.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getExternalStorages() {
+    public List<Supplier<BlockItem>> getExternalStorages() {
         return Collections.unmodifiableList(allExternalStorages);
     }
 
-    public void addDetector(final Supplier<NamedBlockItem> supplier) {
+    public void addDetector(final Supplier<BlockItem> supplier) {
         allDetectors.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getDetectors() {
+    public List<Supplier<BlockItem>> getDetectors() {
         return Collections.unmodifiableList(allDetectors);
     }
 
-    public void addDestructor(final Supplier<NamedBlockItem> supplier) {
+    public void addDestructor(final Supplier<BlockItem> supplier) {
         allDestructors.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getDestructors() {
+    public List<Supplier<BlockItem>> getDestructors() {
         return Collections.unmodifiableList(allDestructors);
     }
 
-    public void addConstructor(final Supplier<NamedBlockItem> supplier) {
+    public void addConstructor(final Supplier<BlockItem> supplier) {
         allConstructors.add(supplier);
     }
 
-    public List<Supplier<NamedBlockItem>> getConstructors() {
+    public List<Supplier<BlockItem>> getConstructors() {
         return Collections.unmodifiableList(allConstructors);
     }
 

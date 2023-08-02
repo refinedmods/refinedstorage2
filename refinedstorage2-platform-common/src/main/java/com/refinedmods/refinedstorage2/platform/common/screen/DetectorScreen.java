@@ -47,7 +47,10 @@ public class DetectorScreen extends AbstractAmountScreen<DetectorContainerMenu, 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+            FuzzyModeSideButtonWidget.Type.DETECTOR
+        ));
         addSideButton(new DetectorModeSideButtonWidget(getMenu().getProperty(PropertyTypes.DETECTOR_MODE)));
     }
 

@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
 
 import java.util.Optional;
 
@@ -69,6 +70,10 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addConstructorStrategyFactory(new ItemDropConstructorStrategyFactory());
     }
 
+    protected void registerAlternativeGridHints() {
+        PlatformApi.INSTANCE.addAlternativeGridInsertionHint(new FluidGridInsertionHint());
+    }
+
     protected void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             EnergyNetworkComponent.class,
@@ -86,60 +91,60 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    protected void addApplicableUpgrades() {
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+    protected void addUpgradeMappings() {
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.IMPORTER,
-            Items.INSTANCE::getSpeedUpgrade,
+            Items.INSTANCE.getSpeedUpgrade(),
             4
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.IMPORTER,
-            Items.INSTANCE::getStackUpgrade,
+            Items.INSTANCE.getStackUpgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.EXPORTER,
-            Items.INSTANCE::getSpeedUpgrade,
+            Items.INSTANCE.getSpeedUpgrade(),
             4
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.EXPORTER,
-            Items.INSTANCE::getStackUpgrade,
+            Items.INSTANCE.getStackUpgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE::getSpeedUpgrade,
+            Items.INSTANCE.getSpeedUpgrade(),
             4
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE::getFortune1Upgrade,
+            Items.INSTANCE.getFortune1Upgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE::getFortune2Upgrade,
+            Items.INSTANCE.getFortune2Upgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE::getFortune3Upgrade,
+            Items.INSTANCE.getFortune3Upgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE::getSilkTouchUpgrade,
+            Items.INSTANCE.getSilkTouchUpgrade(),
             1
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE::getSpeedUpgrade,
+            Items.INSTANCE.getSpeedUpgrade(),
             4
         );
-        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+        PlatformApi.INSTANCE.getUpgradeRegistry().add(
             UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE::getStackUpgrade,
+            Items.INSTANCE.getStackUpgrade(),
             1
         );
     }

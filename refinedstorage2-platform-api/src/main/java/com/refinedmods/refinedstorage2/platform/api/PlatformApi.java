@@ -11,6 +11,8 @@ import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.Cons
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHints;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -87,6 +89,10 @@ public interface PlatformApi {
                                                       GridServiceFactory gridServiceFactory);
 
     void addGridInsertionStrategyFactory(GridInsertionStrategyFactory insertionStrategyFactory);
+
+    void addAlternativeGridInsertionHint(GridInsertionHint hint);
+
+    GridInsertionHints getGridInsertionHints();
 
     GridExtractionStrategy createGridExtractionStrategy(AbstractContainerMenu containerMenu,
                                                         Player player,

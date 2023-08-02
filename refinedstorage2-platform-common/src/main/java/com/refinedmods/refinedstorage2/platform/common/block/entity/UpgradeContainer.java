@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
-import com.refinedmods.refinedstorage2.platform.api.upgrade.ApplicableUpgrade;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeDestination;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeMapping;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Set;
@@ -35,9 +35,8 @@ public class UpgradeContainer extends SimpleContainer {
 
     @Override
     public boolean canPlaceItem(final int slot, final ItemStack stack) {
-        final ApplicableUpgrade upgrade = getApplicableUpgrades()
-            .stream()
-            .filter(applicableUpgrade -> applicableUpgrade.itemSupplier().get() == stack.getItem())
+        final UpgradeMapping upgrade = getAllowedUpgrades().stream()
+            .filter(u -> u.upgradeItem() == stack.getItem())
             .findFirst()
             .orElse(null);
         if (upgrade == null) {
@@ -50,7 +49,7 @@ public class UpgradeContainer extends SimpleContainer {
         return super.canPlaceItem(slot, stack);
     }
 
-    public Set<ApplicableUpgrade> getApplicableUpgrades() {
-        return registry.getApplicableUpgrades(destination);
+    public Set<UpgradeMapping> getAllowedUpgrades() {
+        return registry.getByDestination(destination);
     }
 }

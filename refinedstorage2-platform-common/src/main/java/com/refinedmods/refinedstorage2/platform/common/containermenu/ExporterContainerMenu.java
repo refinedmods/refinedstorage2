@@ -12,18 +12,24 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeD
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 // TODO: Make more generic?! it's duplicated atm.
 public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<ExporterBlockEntity> {
+    private static final MutableComponent FILTER_HELP = createTranslation("gui", "exporter.filter_help");
+
     public ExporterContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
             Menus.INSTANCE.getExporter(),
             syncId,
             playerInventory.player,
             buf,
-            UpgradeDestinations.EXPORTER
+            UpgradeDestinations.EXPORTER,
+            FILTER_HELP
         );
     }
 
@@ -32,7 +38,15 @@ public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<Exp
                                  final ExporterBlockEntity exporter,
                                  final ResourceFilterContainer resourceFilterContainer,
                                  final UpgradeContainer upgradeContainer) {
-        super(Menus.INSTANCE.getExporter(), syncId, player, resourceFilterContainer, upgradeContainer, exporter);
+        super(
+            Menus.INSTANCE.getExporter(),
+            syncId,
+            player,
+            resourceFilterContainer,
+            upgradeContainer,
+            exporter,
+            FILTER_HELP
+        );
     }
 
     @Override

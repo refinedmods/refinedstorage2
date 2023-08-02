@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
@@ -14,15 +14,25 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneMod
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu & StorageAccessor>
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
+public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMenu & StorageAccessor>
     extends AbstractBaseScreen<T> {
+    public static final Component ALLOW_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.allow.help");
+    public static final Component BLOCK_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.block.help");
+
+    private static final Component FILTER_MODE_WARNING = createTranslation("gui", "storage.filter_mode.empty_warning");
+
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
+    @Nullable
+    private FilterModeSideButtonWidget filterModeSideButtonWidget;
 
     protected AbstractStorageScreen(final T menu,
                                     final Inventory inventory,
@@ -50,15 +60,43 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
     protected void init() {
         super.init();
 
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
-        addSideButton(new FilterModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FILTER_MODE)));
-        addSideButton(new FuzzyModeSideButtonWidget(getMenu().getProperty(PropertyTypes.FUZZY_MODE)));
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            createTranslation("gui", "storage.redstone_mode_help")
+        ));
+        filterModeSideButtonWidget = new FilterModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+            ALLOW_FILTER_MODE_HELP,
+            BLOCK_FILTER_MODE_HELP
+        );
+        addSideButton(filterModeSideButtonWidget);
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
+            FuzzyModeSideButtonWidget.Type.STORAGE
+        ));
         addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(PropertyTypes.ACCESS_MODE)));
         addSideButton(new PrioritySideButtonWidget(
             getMenu().getProperty(PropertyTypes.PRIORITY),
             playerInventory,
             this
         ));
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        updateFilterModeWarning();
+    }
+
+    private void updateFilterModeWarning() {
+        if (filterModeSideButtonWidget == null) {
+            return;
+        }
+        if (getMenu().shouldDisplayFilterModeWarning()) {
+            filterModeSideButtonWidget.setWarning(FILTER_MODE_WARNING);
+            return;
+        }
+        filterModeSideButtonWidget.setWarning(null);
     }
 
     private List<Component> createTooltip() {

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -74,7 +75,9 @@ public interface Platform {
 
     FluidRenderer getFluidRenderer();
 
-    Optional<FluidResource> convertToFluid(ItemStack stack);
+    Optional<ResourceAmount<FluidResource>> convertToFluid(ItemStack stack);
+
+    Optional<ItemStack> convertToBucket(FluidResource fluidResource);
 
     EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener);
 
