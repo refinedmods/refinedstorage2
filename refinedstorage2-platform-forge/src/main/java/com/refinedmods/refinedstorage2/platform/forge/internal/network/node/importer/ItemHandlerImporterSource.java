@@ -18,10 +18,11 @@ public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
     private final InsertableStorage<ItemResource> insertTarget;
     private final ExtractableStorage<ItemResource> extractTarget;
 
-    public ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates) {
+    public ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+                                     final AmountOverride amountOverride) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates);
+        this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates, amountOverride);
     }
 
     @Override

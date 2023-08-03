@@ -22,7 +22,7 @@ public class FluidHandlerExternalStorageProvider implements ExternalStorageProvi
     public FluidHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates);
+        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, AmountOverride.NONE);
     }
 
     @Override

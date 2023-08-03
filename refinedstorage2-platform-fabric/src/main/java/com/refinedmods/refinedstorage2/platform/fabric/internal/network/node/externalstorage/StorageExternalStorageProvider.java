@@ -38,7 +38,14 @@ public class StorageExternalStorageProvider<T, P> implements ExternalStorageProv
                                           final Direction direction) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
-        this.extractTarget = new StorageExtractableStorage<>(lookup, toPlatformMapper, serverLevel, pos, direction);
+        this.extractTarget = new StorageExtractableStorage<>(
+            lookup,
+            toPlatformMapper,
+            serverLevel,
+            pos,
+            direction,
+            AmountOverride.NONE
+        );
         this.insertTarget = new StorageInsertableStorage<>(
             lookup,
             toPlatformMapper,

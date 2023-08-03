@@ -18,10 +18,11 @@ public class FluidHandlerImporterSource implements ImporterSource<FluidResource>
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    public FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates) {
+    public FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+                                      final AmountOverride amountOverride) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates);
+        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, amountOverride);
     }
 
     @Override

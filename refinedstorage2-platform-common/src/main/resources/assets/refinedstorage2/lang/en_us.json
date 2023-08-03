@@ -178,7 +178,7 @@
   "item.refinedstorage2.fortune_upgrade.2": "Fortune II Upgrade",
   "item.refinedstorage2.fortune_upgrade.3": "Fortune III Upgrade",
   "item.refinedstorage2.regulator_upgrade": "Regulator Upgrade",
-  "item.refinedstorage2.regulator_upgrade.help": "In an Exporter, will only export if the amount in the target is less than configured in the upgrade. Use item to configure.",
+  "item.refinedstorage2.regulator_upgrade.help": "In an Exporter, will only export if the amount in the target is less than configured in the upgrade. In an Importer, will only import if the amount in the target is more than configured in the upgrade. Use item to configure.",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s (%d%%)",
   "misc.refinedstorage2.total": "%d total",

@@ -22,7 +22,7 @@ public class ItemHandlerExternalStorageProvider implements ExternalStorageProvid
     public ItemHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates);
+        this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates, AmountOverride.NONE);
     }
 
     @Override

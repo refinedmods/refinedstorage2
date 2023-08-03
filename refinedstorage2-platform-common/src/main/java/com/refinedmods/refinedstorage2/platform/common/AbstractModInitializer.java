@@ -376,7 +376,8 @@ public abstract class AbstractModInitializer {
     protected final void registerUpgradeMappings() {
         PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.IMPORTER)
             .add(Items.INSTANCE.getSpeedUpgrade(), 4)
-            .add(Items.INSTANCE.getStackUpgrade());
+            .add(Items.INSTANCE.getStackUpgrade())
+            .add(Items.INSTANCE.getRegulatorUpgrade());
 
         PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.EXPORTER)
             .add(Items.INSTANCE.getSpeedUpgrade(), 4)

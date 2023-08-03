@@ -28,7 +28,7 @@ public class ItemHandlerInsertableStorage implements InsertableStorage<ItemResou
                 final long correctedAmount = amountOverride.overrideAmount(
                     resource,
                     amount,
-                    () -> getCurrentAmount(itemHandler, resource.toItemStack())
+                    () -> HandlerUtil.getCurrentAmount(itemHandler, resource.toItemStack())
                 );
                 if (correctedAmount == 0) {
                     return 0L;
@@ -36,17 +36,6 @@ public class ItemHandlerInsertableStorage implements InsertableStorage<ItemResou
                 return doInsert(resource, correctedAmount, action, itemHandler);
             })
             .orElse(0L);
-    }
-
-    private long getCurrentAmount(final IItemHandler itemHandler, final ItemStack stack) {
-        long amount = 0;
-        for (int i = 0; i < itemHandler.getSlots(); ++i) {
-            final ItemStack slot = itemHandler.getStackInSlot(i);
-            if (ItemStack.isSameItemSameTags(slot, stack)) {
-                amount += slot.getCount();
-            }
-        }
-        return amount;
     }
 
     private long doInsert(final ItemResource resource,

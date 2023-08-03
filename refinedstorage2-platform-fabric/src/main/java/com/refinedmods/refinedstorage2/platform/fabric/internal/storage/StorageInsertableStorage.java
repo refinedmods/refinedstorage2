@@ -10,7 +10,6 @@ import java.util.function.Function;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,23 +43,12 @@ public class StorageInsertableStorage<T, P> implements InsertableStorage<T> {
         final long correctedAmount = amountOverride.overrideAmount(
             resource,
             amount,
-            () -> getCurrentAmount(storage, platformResource)
+            () -> FabricStorageUtil.getCurrentAmount(storage, platformResource)
         );
         if (correctedAmount == 0) {
             return 0;
         }
         return doInsert(platformResource, correctedAmount, action, storage);
-    }
-
-    private long getCurrentAmount(final Storage<P> storage, final P platformResource) {
-        long amount = 0;
-        final Iterable<StorageView<P>> views = storage.nonEmptyViews();
-        for (final StorageView<P> view : views) {
-            if (platformResource.equals(view.getResource())) {
-                amount += view.getAmount();
-            }
-        }
-        return amount;
     }
 
     private long doInsert(final P platformResource, final long amount, final Action action, final Storage<P> storage) {

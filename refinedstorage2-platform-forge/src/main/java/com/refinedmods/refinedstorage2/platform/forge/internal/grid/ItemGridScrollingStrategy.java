@@ -60,7 +60,10 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
         gridService.insert(
             itemResource,
             GridInsertMode.SINGLE_RESOURCE,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(sourceStorage))
+            new ItemHandlerExtractableStorage(
+                InteractionCoordinates.ofItemHandler(sourceStorage),
+                AmountOverride.NONE
+            )
         );
     }
 
