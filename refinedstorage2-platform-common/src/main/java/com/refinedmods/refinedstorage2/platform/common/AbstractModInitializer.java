@@ -374,66 +374,25 @@ public abstract class AbstractModInitializer {
     }
 
     protected final void registerUpgradeMappings() {
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.IMPORTER,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.IMPORTER,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.EXPORTER,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.EXPORTER,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.EXPORTER,
-            Items.INSTANCE.getRegulatorUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune1Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune2Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune3Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getSilkTouchUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.IMPORTER)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.EXPORTER)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade())
+            .add(Items.INSTANCE.getRegulatorUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.DESTRUCTOR)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getFortune1Upgrade())
+            .add(Items.INSTANCE.getFortune2Upgrade())
+            .add(Items.INSTANCE.getFortune3Upgrade())
+            .add(Items.INSTANCE.getSilkTouchUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.CONSTRUCTOR)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade());
     }
 
     protected final void registerBlockEntities(
