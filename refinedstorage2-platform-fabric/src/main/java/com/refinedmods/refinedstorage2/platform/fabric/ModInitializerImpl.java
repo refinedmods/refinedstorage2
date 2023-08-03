@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCal
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -28,13 +29,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.imp
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.DetectorAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotChangePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
@@ -58,7 +59,9 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -207,7 +210,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerContent() {
         registerBlocks(new DirectRegistryCallback<>(BuiltInRegistries.BLOCK), FabricDiskDriveBlockEntity::new);
-        registerItems(new DirectRegistryCallback<>(BuiltInRegistries.ITEM));
+        registerItems(
+            new DirectRegistryCallback<>(BuiltInRegistries.ITEM),
+            () -> new RegulatorUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry()) {
+                @Override
+                public boolean allowNbtUpdateAnimation(final Player player,
+                                                       final InteractionHand hand,
+                                                       final ItemStack oldStack,
+                                                       final ItemStack newStack) {
+                    return RegulatorUpgradeItem.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            }
+        );
         registerUpgradeMappings();
         registerCreativeModeTab();
         registerBlockEntities(
@@ -261,7 +275,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             PacketIds.RESOURCE_FILTER_SLOT_CHANGE,
             new ResourceFilterSlotChangePacket()
         );
-        ServerPlayNetworking.registerGlobalReceiver(PacketIds.DETECTOR_AMOUNT_CHANGE, new DetectorAmountChangePacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.SINGLE_AMOUNT_CHANGE, new SingleAmountChangePacket());
     }
 
     private void registerSidedHandlers() {

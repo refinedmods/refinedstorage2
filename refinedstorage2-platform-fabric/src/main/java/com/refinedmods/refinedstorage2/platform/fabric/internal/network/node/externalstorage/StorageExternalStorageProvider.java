@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
@@ -37,8 +38,22 @@ public class StorageExternalStorageProvider<T, P> implements ExternalStorageProv
                                           final Direction direction) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
-        this.extractTarget = new StorageExtractableStorage<>(lookup, toPlatformMapper, serverLevel, pos, direction);
-        this.insertTarget = new StorageInsertableStorage<>(lookup, toPlatformMapper, serverLevel, pos, direction);
+        this.extractTarget = new StorageExtractableStorage<>(
+            lookup,
+            toPlatformMapper,
+            serverLevel,
+            pos,
+            direction,
+            AmountOverride.NONE
+        );
+        this.insertTarget = new StorageInsertableStorage<>(
+            lookup,
+            toPlatformMapper,
+            serverLevel,
+            pos,
+            direction,
+            AmountOverride.NONE
+        );
         this.direction = direction;
     }
 

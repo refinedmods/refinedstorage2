@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
@@ -12,6 +11,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.RegulatorUpgradeScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 
@@ -37,6 +38,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
         registration.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
         registration.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
+        registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
     }
 
     @FunctionalInterface

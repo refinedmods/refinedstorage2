@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ECE",
+    "RUR",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "U": {
+      "item": "refinedstorage2:upgrade"
+    }
+  },
+  "result": {
+    "item": "refinedstorage2:regulator_upgrade"
+  }
+}

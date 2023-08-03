@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -49,6 +50,8 @@ public final class Menus {
     private Supplier<MenuType<DestructorContainerMenu>> destructor;
     @Nullable
     private Supplier<MenuType<ConstructorContainerMenu>> constructor;
+    @Nullable
+    private Supplier<MenuType<RegulatorUpgradeContainerMenu>> regulatorUpgrade;
 
     private Menus() {
     }
@@ -155,5 +158,13 @@ public final class Menus {
 
     public void setConstructor(final Supplier<MenuType<ConstructorContainerMenu>> supplier) {
         this.constructor = supplier;
+    }
+
+    public MenuType<RegulatorUpgradeContainerMenu> getRegulatorUpgrade() {
+        return Objects.requireNonNull(regulatorUpgrade).get();
+    }
+
+    public void setRegulatorUpgrade(final Supplier<MenuType<RegulatorUpgradeContainerMenu>> supplier) {
+        this.regulatorUpgrade = supplier;
     }
 }

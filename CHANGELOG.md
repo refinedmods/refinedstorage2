@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Constructor
+-   Regulator Upgrade
 -   Filter slot hints that show which resource will be put in a filter slot and what the effect of the filter is on the device.
 -   Grid slot hints that show which resource will be inserted or extracted in a Grid.
 -   Help information to the side buttons by pressing SHIFT.
@@ -22,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Constructor crafting recipe now takes 2 diamonds instead of 2 redstone.
 -   You can now select a "Scheduling mode" in the Constructor: first available, round robin, random.
 -   The "applicable upgrades" tooltip on the upgrade slot tooltip now shows the upgrade items in item form.
+-   The Regulator Upgrade now works in an Importer as well. It will only keep importing until the configured amount is reached.
 
 ### Fixed
 

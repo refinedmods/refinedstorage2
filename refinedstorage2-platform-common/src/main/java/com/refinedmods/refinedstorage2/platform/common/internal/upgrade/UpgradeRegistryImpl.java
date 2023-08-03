@@ -18,9 +18,23 @@ public class UpgradeRegistryImpl implements UpgradeRegistry {
     private final Map<Item, Set<UpgradeMapping>> byUpgradeItem = new HashMap<>();
 
     @Override
-    public void add(final UpgradeDestination destination, final Item upgradeItem, final int maxAmount) {
+    public DestinationBuilder forDestination(final UpgradeDestination destination) {
+        return new DestinationBuilder() {
+            @Override
+            public DestinationBuilder add(final Item upgradeItem, final int maxAmount) {
+                final UpgradeMapping mapping = createMapping(destination, upgradeItem, maxAmount);
+                byDestination.computeIfAbsent(destination, key -> new HashSet<>()).add(mapping);
+                byUpgradeItem.computeIfAbsent(upgradeItem, key -> new HashSet<>()).add(mapping);
+                return this;
+            }
+        };
+    }
+
+    private static UpgradeMapping createMapping(final UpgradeDestination destination,
+                                                final Item upgradeItem,
+                                                final int maxAmount) {
         final ItemStack displayItemStack = new ItemStack(upgradeItem);
-        final UpgradeMapping mapping = new UpgradeMapping(
+        return new UpgradeMapping(
             destination,
             upgradeItem,
             maxAmount,
@@ -36,8 +50,6 @@ public class UpgradeRegistryImpl implements UpgradeRegistry {
                 .append(")"),
             displayItemStack
         );
-        byDestination.computeIfAbsent(destination, key -> new HashSet<>()).add(mapping);
-        byUpgradeItem.computeIfAbsent(upgradeItem, key -> new HashSet<>()).add(mapping);
     }
 
     @Override

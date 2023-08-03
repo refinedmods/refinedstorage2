@@ -94,10 +94,10 @@ public class PlatformApiImpl implements PlatformApi {
         new PlatformRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new PlatformRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction, upgradeState) -> (filter, actor, network) -> false);
+            (level, pos, direction, upgradeState, amountOverride) -> (filter, actor, network) -> false);
     private final PlatformRegistry<ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
         new PlatformRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction, upgradeState, fuzzyMode) -> (resource, actor, network) -> false);
+            (level, pos, direction, upgradeState, amountOverride, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
     private final Map<StorageChannelType<?>, Queue<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();

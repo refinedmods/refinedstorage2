@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -67,6 +68,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem
 import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
@@ -111,6 +113,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.REGULATOR_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
@@ -225,7 +228,10 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.setInterface(callback.register(INTERFACE, InterfaceBlock::new));
     }
 
-    protected final void registerItems(final RegistryCallback<Item> callback) {
+    protected final void registerItems(
+        final RegistryCallback<Item> callback,
+        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier
+    ) {
         registerSimpleItems(callback);
         Blocks.INSTANCE.getGrid().registerItems(callback);
         Blocks.INSTANCE.getCraftingGrid().registerItems(callback);
@@ -239,7 +245,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getConstructor().registerItems(callback, Items.INSTANCE::addConstructor);
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         registerStorageItems(callback);
-        registerUpgrades(callback);
+        registerUpgrades(callback, regulatorUpgradeItemSupplier);
     }
 
     private void registerSimpleItems(final RegistryCallback<Item> callback) {
@@ -311,7 +317,10 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    private void registerUpgrades(final RegistryCallback<Item> callback) {
+    private void registerUpgrades(
+        final RegistryCallback<Item> callback,
+        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier
+    ) {
         Items.INSTANCE.setUpgrade(callback.register(
             ContentIds.UPGRADE,
             SimpleItem::new
@@ -358,64 +367,33 @@ public abstract class AbstractModInitializer {
             )
         );
         Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
+        Items.INSTANCE.setRegulatorUpgrade(callback.register(
+            ContentIds.REGULATOR_UPGRADE,
+            regulatorUpgradeItemSupplier
+        ));
     }
 
     protected final void registerUpgradeMappings() {
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.IMPORTER,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.IMPORTER,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.EXPORTER,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.EXPORTER,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune1Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune2Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getFortune3Upgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.DESTRUCTOR,
-            Items.INSTANCE.getSilkTouchUpgrade(),
-            1
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE.getSpeedUpgrade(),
-            4
-        );
-        PlatformApi.INSTANCE.getUpgradeRegistry().add(
-            UpgradeDestinations.CONSTRUCTOR,
-            Items.INSTANCE.getStackUpgrade(),
-            1
-        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.IMPORTER)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade())
+            .add(Items.INSTANCE.getRegulatorUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.EXPORTER)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade())
+            .add(Items.INSTANCE.getRegulatorUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.DESTRUCTOR)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getFortune1Upgrade())
+            .add(Items.INSTANCE.getFortune2Upgrade())
+            .add(Items.INSTANCE.getFortune3Upgrade())
+            .add(Items.INSTANCE.getSilkTouchUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.CONSTRUCTOR)
+            .add(Items.INSTANCE.getSpeedUpgrade(), 4)
+            .add(Items.INSTANCE.getStackUpgrade());
     }
 
     protected final void registerBlockEntities(
@@ -557,6 +535,10 @@ public abstract class AbstractModInitializer {
         Menus.INSTANCE.setConstructor(callback.register(
             CONSTRUCTOR,
             () -> menuTypeFactory.create(ConstructorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setRegulatorUpgrade(callback.register(
+            REGULATOR_UPGRADE,
+            () -> menuTypeFactory.create(RegulatorUpgradeContainerMenu::new)
         ));
     }
 

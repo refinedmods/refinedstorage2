@@ -16,6 +16,7 @@ public interface ExporterTransferStrategyFactory {
         BlockPos pos,
         Direction direction,
         UpgradeState upgradeState,
+        AmountOverride amountOverride,
         boolean fuzzyMode
     );
 }

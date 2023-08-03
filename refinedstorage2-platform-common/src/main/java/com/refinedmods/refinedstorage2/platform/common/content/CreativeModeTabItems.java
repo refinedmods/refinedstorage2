@@ -81,5 +81,6 @@ public final class CreativeModeTabItems {
         consumer.accept(Items.INSTANCE.getFortune2Upgrade());
         consumer.accept(Items.INSTANCE.getFortune3Upgrade());
         consumer.accept(Items.INSTANCE.getSilkTouchUpgrade());
+        consumer.accept(Items.INSTANCE.getRegulatorUpgrade());
     }
 }

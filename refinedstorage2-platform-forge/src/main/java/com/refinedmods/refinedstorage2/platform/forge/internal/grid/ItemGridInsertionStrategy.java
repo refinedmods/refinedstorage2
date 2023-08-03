@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
@@ -41,7 +42,10 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         gridService.insert(
             itemResource,
             insertMode,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(playerCursorStorage))
+            new ItemHandlerExtractableStorage(
+                InteractionCoordinates.ofItemHandler(playerCursorStorage),
+                AmountOverride.NONE
+            )
         );
         return true;
     }
@@ -62,7 +66,10 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         gridService.insert(
             itemResource,
             GridInsertMode.ENTIRE_RESOURCE,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(storage))
+            new ItemHandlerExtractableStorage(
+                InteractionCoordinates.ofItemHandler(storage),
+                AmountOverride.NONE
+            )
         );
         return true;
     }

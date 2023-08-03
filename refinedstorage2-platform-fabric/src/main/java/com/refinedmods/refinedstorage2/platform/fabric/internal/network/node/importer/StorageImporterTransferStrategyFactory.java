@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -39,14 +40,16 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final UpgradeState upgradeState) {
+                                           final UpgradeState upgradeState,
+                                           final AmountOverride amountOverride) {
         final ImporterSource<T> source = new StorageImporterSource<>(
             lookup,
             fromPlatformMapper,
             toPlatformMapper,
             level,
             pos,
-            direction
+            direction,
+            amountOverride
         );
         return new ImporterTransferStrategyImpl<>(
             source,

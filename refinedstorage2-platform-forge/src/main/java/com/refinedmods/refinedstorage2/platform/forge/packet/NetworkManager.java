@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.forge.packet;
 
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.CraftingGridRecipeTransferPacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.DetectorAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceFilterSlotAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceFilterSlotChangePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
@@ -146,10 +146,10 @@ public class NetworkManager {
         );
         handler.registerMessage(
             id++,
-            DetectorAmountChangePacket.class,
-            DetectorAmountChangePacket::encode,
-            DetectorAmountChangePacket::decode,
-            DetectorAmountChangePacket::handle
+            SingleAmountChangePacket.class,
+            SingleAmountChangePacket::encode,
+            SingleAmountChangePacket::decode,
+            SingleAmountChangePacket::handle
         );
     }
 

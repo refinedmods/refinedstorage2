@@ -528,6 +528,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue fortune2UpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue fortune3UpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue silkTouchUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue regulatorUpgradeEnergyUsage;
 
         UpgradeEntryImpl() {
             builder.push("upgrade");
@@ -549,6 +550,9 @@ public class ConfigImpl implements Config {
             silkTouchUpgradeEnergyUsage = builder
                 .comment("The additional energy used by the Silk Touch Upgrade")
                 .defineInRange("silkTouchUpgradeEnergyUsage", DefaultEnergyUsage.SILK_TOUCH_UPGRADE, 0, Long.MAX_VALUE);
+            regulatorUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Regulator Upgrade")
+                .defineInRange("regulatorUpgradeEnergyUsage", DefaultEnergyUsage.REGULATOR_UPGRADE, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -580,6 +584,11 @@ public class ConfigImpl implements Config {
         @Override
         public long getSilkTouchUpgradeEnergyUsage() {
             return silkTouchUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getRegulatorUpgradeEnergyUsage() {
+            return regulatorUpgradeEnergyUsage.get();
         }
     }
 }
