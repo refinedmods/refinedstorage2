@@ -76,7 +76,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBl
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -170,10 +169,6 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
             Optional.of(new PlaceFluidConstructorStrategy(level, pos, direction)));
         PlatformApi.INSTANCE.addConstructorStrategyFactory(new ItemDropConstructorStrategyFactory());
-    }
-
-    protected void registerAlternativeGridHints() {
-        PlatformApi.INSTANCE.addAlternativeGridInsertionHint(new FluidGridInsertionHint());
     }
 
     protected void registerNetworkComponents() {

@@ -84,6 +84,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerKeyBindings();
         registerModelPredicates();
         registerGridSynchronizers();
+        registerAlternativeGridHints();
     }
 
     private void setRenderLayers() {

@@ -100,7 +100,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalFilteredResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
-        registerAlternativeGridHints();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();

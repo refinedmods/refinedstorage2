@@ -12,18 +12,17 @@ import net.minecraft.world.item.ItemStack;
 public class FluidGridInsertionHint implements GridInsertionHint {
     @Override
     public Optional<ClientTooltipComponent> getHint(final ItemStack carried) {
-        return Platform.INSTANCE.convertToFluid(carried)
-            .map(resourceAmount -> new MouseWithIconClientTooltipComponent(
-                MouseWithIconClientTooltipComponent.Type.RIGHT,
-                (graphics, x, y) -> Platform.INSTANCE.getFluidRenderer().render(
-                    graphics.pose(),
-                    x,
-                    y,
-                    resourceAmount.getResource()
-                ),
-                resourceAmount.getAmount() == Platform.INSTANCE.getBucketAmount()
-                    ? null
-                    : Platform.INSTANCE.getBucketAmountFormatter().format(resourceAmount.getAmount())
-            ));
+        return Platform.INSTANCE.convertToFluid(carried).map(resourceAmount -> new MouseWithIconClientTooltipComponent(
+            MouseWithIconClientTooltipComponent.Type.RIGHT,
+            (graphics, x, y) -> Platform.INSTANCE.getFluidRenderer().render(
+                graphics.pose(),
+                x,
+                y,
+                resourceAmount.getResource()
+            ),
+            resourceAmount.getAmount() == Platform.INSTANCE.getBucketAmount()
+                ? null
+                : Platform.INSTANCE.getBucketAmountFormatter().format(resourceAmount.getAmount())
+        ));
     }
 }

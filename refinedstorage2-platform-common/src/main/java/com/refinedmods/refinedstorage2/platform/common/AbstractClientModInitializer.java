@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.RegulatorUpgradeSc
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -39,6 +41,10 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
         registration.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
         registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
+    }
+
+    protected static void registerAlternativeGridHints() {
+        PlatformApi.INSTANCE.addAlternativeGridInsertionHint(new FluidGridInsertionHint());
     }
 
     @FunctionalInterface

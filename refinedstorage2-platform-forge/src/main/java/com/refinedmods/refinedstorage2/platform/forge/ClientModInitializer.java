@@ -69,6 +69,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         }));
         registerBlockEntityRenderer();
         registerGridSynchronizers();
+        registerAlternativeGridHints();
     }
 
     private static void registerModelPredicates() {
