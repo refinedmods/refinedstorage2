@@ -2,6 +2,9 @@ package com.refinedmods.refinedstorage2.platform.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,4 +34,11 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * @return whether the node can accept an incoming connection
      */
     boolean canAcceptIncomingConnection(Direction direction, BlockState other);
+
+    BlockState getBlockState();
+
+    @Nullable
+    Level getLevel();
+
+    BlockPos getBlockPos();
 }

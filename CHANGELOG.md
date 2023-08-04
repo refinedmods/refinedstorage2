@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   You can now select a "Scheduling mode" in the Constructor: first available, round robin, random.
 -   The "applicable upgrades" tooltip on the upgrade slot tooltip now shows the upgrade items in item form.
 -   The Regulator Upgrade now works in an Importer as well. It will only keep importing until the configured amount is reached.
+-   The Regulator Upgrade now needs to be configured separately, by using the upgrade. It can no longer be configured in the device GUI itself.
 
 ### Fixed
 
