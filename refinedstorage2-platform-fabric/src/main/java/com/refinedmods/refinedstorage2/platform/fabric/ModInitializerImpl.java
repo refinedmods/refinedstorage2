@@ -91,7 +91,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerAdditionalFilteredResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
-        registerAlternativeGridHints();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
