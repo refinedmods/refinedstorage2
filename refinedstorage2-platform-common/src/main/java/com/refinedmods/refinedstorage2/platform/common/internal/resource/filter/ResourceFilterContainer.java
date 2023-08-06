@@ -3,8 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
 
 import java.util.ArrayList;
@@ -17,24 +19,37 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-public class ResourceFilterContainer {
+public class ResourceFilterContainer implements Container {
     private final FilteredResource<?>[] items;
     private final long maxAmount;
+    private final ResourceFilterContainerType type;
     @Nullable
     private Runnable listener;
 
-    public ResourceFilterContainer(final int size) {
-        this(size, -1);
+    public ResourceFilterContainer(final int size, final ResourceFilterContainerType type) {
+        this(size, -1, type);
     }
 
-    public ResourceFilterContainer(final int size, final long maxAmount) {
+    public ResourceFilterContainer(final int size, final long maxAmount, final ResourceFilterContainerType type) {
         this.items = new FilteredResource[size];
         this.maxAmount = maxAmount;
+        this.type = type;
     }
 
     public boolean supportsAmount() {
-        return maxAmount >= 0;
+        return type == ResourceFilterContainerType.CONTAINER || type == ResourceFilterContainerType.FILTER_WITH_AMOUNT;
+    }
+
+    public boolean canModifyAmount() {
+        return type == ResourceFilterContainerType.FILTER_WITH_AMOUNT;
+    }
+
+    public boolean supportsItemSlotInteractions() {
+        return type == ResourceFilterContainerType.CONTAINER;
     }
 
     public void setListener(@Nullable final Runnable listener) {
@@ -216,5 +231,86 @@ public class ResourceFilterContainer {
         storageChannelType.fromTag(tag.getCompound("v"))
             .flatMap(resource -> storageChannelType.toFilteredResource(new ResourceAmount<>(resource, amount)))
             .ifPresent(filteredResource -> setSilently(index, filteredResource));
+    }
+
+    @Override
+    public int getContainerSize() {
+        return size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for (int i = 0; i < size(); ++i) {
+            if (get(i) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public ItemStack getItem(final int slot) {
+        return get(slot) instanceof ItemFilteredResource item ? item.stack() : ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItem(final int slot, final int amount) {
+        if (get(slot) instanceof ItemFilteredResource item) {
+            final long maxRemove = Math.min(amount, item.amount());
+            final long remainder = item.amount() - maxRemove;
+            if (remainder == 0) {
+                remove(slot);
+            } else {
+                set(slot, item.withAmount(remainder));
+            }
+            return item.stack().copyWithCount((int) maxRemove);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(final int slot) {
+        if (get(slot) instanceof ItemFilteredResource item) {
+            final long maxRemove = Math.min(item.getMaxAmount(), item.amount());
+            final long remainder = item.amount() - maxRemove;
+            if (remainder == 0) {
+                remove(slot);
+            } else {
+                set(slot, item.withAmount(remainder));
+            }
+            return item.stack().copyWithCount((int) maxRemove);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void setItem(final int slot, final ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            remove(slot);
+        } else {
+            set(slot, new ItemFilteredResource(ItemResource.ofItemStack(itemStack), itemStack.getCount()));
+        }
+    }
+
+    @Override
+    public void setChanged() {
+        if (listener != null) {
+            listener.run();
+        }
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return true;
+    }
+
+    @Override
+    public void clearContent() {
+        for (int i = 0; i < size(); ++i) {
+            removeSilently(i);
+        }
+        if (listener != null) {
+            listener.run();
+        }
     }
 }

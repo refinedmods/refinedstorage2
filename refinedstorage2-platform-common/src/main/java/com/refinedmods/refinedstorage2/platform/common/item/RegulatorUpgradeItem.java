@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSin
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
@@ -84,7 +85,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     private ResourceFilterContainer getResourceFilterContainer(final ItemStack stack) {
-        final ResourceFilterContainer container = new ResourceFilterContainer(1);
+        final ResourceFilterContainer container = new ResourceFilterContainer(1, ResourceFilterContainerType.FILTER);
         container.setListener(() -> stack.getOrCreateTag().put(TAG_RESOURCE_FILTER_CONTAINER, container.toTag()));
         final CompoundTag tag = stack.getTagElement(TAG_RESOURCE_FILTER_CONTAINER);
         if (tag != null) {

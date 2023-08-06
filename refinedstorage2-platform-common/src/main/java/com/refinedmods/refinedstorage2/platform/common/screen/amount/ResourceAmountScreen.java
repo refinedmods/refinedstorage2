@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
@@ -68,7 +67,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
     }
 
     @Override
-    protected boolean tryOpenResourceFilterAmountScreen(final Slot clickedSlot) {
+    protected boolean tryOpenResourceFilterAmountScreen(final ResourceFilterSlot clickedSlot) {
         return false;
     }
 

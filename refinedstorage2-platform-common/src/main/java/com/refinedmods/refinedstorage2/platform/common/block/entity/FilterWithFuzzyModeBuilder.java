@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
 
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,9 @@ public final class FilterWithFuzzyModeBuilder {
     }
 
     public static FilterWithFuzzyModeBuilder of(final int size, final int maxAmount) {
-        return new FilterWithFuzzyModeBuilder(new ResourceFilterContainer(size, maxAmount));
+        return new FilterWithFuzzyModeBuilder(
+            new ResourceFilterContainer(size, maxAmount, ResourceFilterContainerType.FILTER)
+        );
     }
 
     public static <T> FilterWithFuzzyModeBuilder of(

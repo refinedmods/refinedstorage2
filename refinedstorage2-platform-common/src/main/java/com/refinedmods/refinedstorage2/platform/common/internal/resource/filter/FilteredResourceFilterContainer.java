@@ -15,7 +15,7 @@ public class FilteredResourceFilterContainer<T> extends ResourceFilterContainer 
     public FilteredResourceFilterContainer(final int size,
                                            final PlatformStorageChannelType<T> allowedType,
                                            final long maxAmount) {
-        super(size, maxAmount);
+        super(size, maxAmount, ResourceFilterContainerType.FILTER);
         this.allowedType = allowedType;
     }
 

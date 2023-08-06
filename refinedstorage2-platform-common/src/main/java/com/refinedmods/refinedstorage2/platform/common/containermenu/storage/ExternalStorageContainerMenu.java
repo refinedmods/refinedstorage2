@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,7 +18,7 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
 
     public ExternalStorageContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getExternalStorage(), syncId);
-        addSlots(playerInventory.player, new ResourceFilterContainer(9));
+        addSlots(playerInventory.player, new ResourceFilterContainer(9, ResourceFilterContainerType.FILTER));
         initializeResourceFilterSlots(buf);
     }
 

@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClient
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +19,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +31,6 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFilterSlot.class);
 
     private final ResourceFilterContainer resourceFilterContainer;
-    private final int containerIndex;
     private final Component helpText;
     @Nullable
     private FilteredResource<?> cachedResource;
@@ -41,9 +40,8 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
                               final Component helpText,
                               final int x,
                               final int y) {
-        super(createDummyContainer(), 0, x, y);
+        super(resourceFilterContainer, index, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
-        this.containerIndex = index;
         this.helpText = helpText;
         this.cachedResource = resourceFilterContainer.get(index);
     }
@@ -56,36 +54,40 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
         return resourceFilterContainer.supportsAmount();
     }
 
+    public boolean canModifyAmount() {
+        return resourceFilterContainer.canModifyAmount();
+    }
+
+    public boolean isRegularInv() {
+        return resourceFilterContainer.supportsItemSlotInteractions();
+    }
+
     @Nullable
     public FilteredResource<?> getFilteredResource() {
-        return resourceFilterContainer.get(containerIndex);
+        return resourceFilterContainer.get(getContainerSlot());
     }
 
     public boolean isEmpty() {
         return getFilteredResource() == null;
     }
 
-    private static SimpleContainer createDummyContainer() {
-        return new SimpleContainer(1);
-    }
-
     public void change(final ItemStack stack, final boolean tryAlternatives) {
         PlatformApi.INSTANCE.getFilteredResourceFactory().create(stack, tryAlternatives).ifPresentOrElse(
-            translated -> resourceFilterContainer.set(containerIndex, translated),
-            () -> resourceFilterContainer.remove(containerIndex)
+            translated -> resourceFilterContainer.set(getContainerSlot(), translated),
+            () -> resourceFilterContainer.remove(getContainerSlot())
         );
     }
 
     public <T> void change(@Nullable final FilteredResource<T> filteredResource) {
         if (filteredResource == null) {
-            resourceFilterContainer.remove(containerIndex);
+            resourceFilterContainer.remove(getContainerSlot());
         } else {
-            resourceFilterContainer.set(containerIndex, filteredResource);
+            resourceFilterContainer.set(getContainerSlot(), filteredResource);
         }
     }
 
     public boolean changeIfEmpty(final ItemStack stack) {
-        final FilteredResource<?> existing = resourceFilterContainer.get(containerIndex);
+        final FilteredResource<?> existing = resourceFilterContainer.get(getContainerSlot());
         if (existing != null) {
             return false;
         }
@@ -94,7 +96,7 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
     }
 
     public void changeAmount(final long amount) {
-        resourceFilterContainer.setAmount(containerIndex, amount);
+        resourceFilterContainer.setAmount(getContainerSlot(), amount);
     }
 
     public void changeAmountOnClient(final long amount) {
@@ -106,14 +108,16 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
             stack,
             false
         );
-        final Optional<FilteredResource<?>> current = Optional.ofNullable(resourceFilterContainer.get(containerIndex));
+        final Optional<FilteredResource<?>> current = Optional.ofNullable(
+            resourceFilterContainer.get(getContainerSlot())
+        );
         return converted.equals(current);
     }
 
     public void broadcastChanges(final Player player) {
-        final FilteredResource<?> currentResource = resourceFilterContainer.get(containerIndex);
+        final FilteredResource<?> currentResource = resourceFilterContainer.get(getContainerSlot());
         if (!Objects.equals(currentResource, cachedResource)) {
-            LOGGER.debug("Resource filter slot {} has changed", containerIndex);
+            LOGGER.debug("Resource filter slot {} has changed", getContainerSlot());
             this.cachedResource = currentResource;
             broadcastChange((ServerPlayer) player, currentResource);
         }
@@ -130,22 +134,25 @@ public class ResourceFilterSlot extends Slot implements SlotTooltip {
     }
 
     public void readFromUpdatePacket(final FriendlyByteBuf buf) {
-        resourceFilterContainer.readFromUpdatePacket(containerIndex, buf);
+        resourceFilterContainer.readFromUpdatePacket(getContainerSlot(), buf);
     }
 
     @Override
     public boolean mayPickup(final Player player) {
-        return false;
+        return resourceFilterContainer.supportsItemSlotInteractions();
     }
 
     @Override
     public boolean mayPlace(final ItemStack stack) {
-        return false;
+        return resourceFilterContainer.supportsItemSlotInteractions();
     }
 
     @Override
     public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
-        final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
+        if (resourceFilterContainer.supportsItemSlotInteractions()) {
+            return Collections.emptyList();
+        }
+        final FilteredResource<?> filteredResource = resourceFilterContainer.get(getContainerSlot());
         if (filteredResource == null) {
             return getTooltipForEmptySlot(carried);
         }

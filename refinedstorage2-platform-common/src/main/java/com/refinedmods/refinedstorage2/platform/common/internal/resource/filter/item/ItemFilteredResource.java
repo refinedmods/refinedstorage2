@@ -13,13 +13,19 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-public record ItemFilteredResource(ItemResource value, long amount) implements FilteredResource<ItemResource> {
+public record ItemFilteredResource(ItemResource value, long amount, ItemStack stack)
+    implements FilteredResource<ItemResource> {
+    public ItemFilteredResource(final ItemResource value, final long amount) {
+        this(value, amount, value.toItemStack(amount));
+    }
+
     @Override
     public void render(final GuiGraphics graphics, final int x, final int y) {
-        graphics.renderItem(value.toItemStack(), x, y);
-        graphics.renderItemDecorations(Minecraft.getInstance().font, value.toItemStack(), x, y);
+        graphics.renderItem(stack, x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y);
     }
 
     @Override
@@ -39,7 +45,7 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
 
     @Override
     public long getMaxAmount() {
-        return value.toItemStack().getMaxStackSize();
+        return stack.getMaxStackSize();
     }
 
     @Override
@@ -52,13 +58,13 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
 
     @Override
     public Component getDisplayName() {
-        return value.toItemStack().getHoverName();
+        return stack.getHoverName();
     }
 
     @Override
     public List<Component> getTooltip() {
         final Minecraft minecraft = Minecraft.getInstance();
-        return ClientProxy.getPlayer().map(player -> value.toItemStack().getTooltipLines(
+        return ClientProxy.getPlayer().map(player -> stack.getTooltipLines(
             player,
             minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
         )).orElse(Collections.emptyList());

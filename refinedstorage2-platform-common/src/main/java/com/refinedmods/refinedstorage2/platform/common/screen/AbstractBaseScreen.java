@@ -145,9 +145,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     @Override
     public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (hoveredSlot instanceof ResourceFilterSlot
+        if (hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot
             && getMenu() instanceof AbstractResourceFilterContainerMenu containerMenu) {
-            if (!tryOpenResourceFilterAmountScreen(hoveredSlot)) {
+            if (!tryOpenResourceFilterAmountScreen(resourceFilterSlot)) {
+                if (resourceFilterSlot.isRegularInv()) {
+                    return super.mouseClicked(mouseX, mouseY, clickedButton);
+                }
                 containerMenu.sendResourceFilterSlotChange(hoveredSlot.index, clickedButton == 1);
             }
             return true;
@@ -155,16 +158,15 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    protected boolean tryOpenResourceFilterAmountScreen(final Slot slot) {
-        final boolean isFilterSlot = slot instanceof ResourceFilterSlot filterSlot
-            && filterSlot.getFilteredResource() != null;
-        final boolean doesFilterSlotSupportAmount = isFilterSlot && ((ResourceFilterSlot) slot).supportsAmount();
+    protected boolean tryOpenResourceFilterAmountScreen(final ResourceFilterSlot slot) {
+        final boolean isFilterSlot = slot.getFilteredResource() != null;
+        final boolean doesFilterSlotSupportAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
         final boolean canChangeAmount =
             isFilterSlot && doesFilterSlotSupportAmount && isNotTryingToRemoveFilter && isNotCarryingItem;
         if (canChangeAmount && minecraft != null) {
-            minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, (ResourceFilterSlot) slot));
+            minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, slot));
         }
         return canChangeAmount;
     }

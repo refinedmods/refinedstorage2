@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +30,7 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
         }
         this.clientAmount = buf.readDouble();
         this.filterHelpText = filterHelpText;
-        addSlots(playerInventory.player, new ResourceFilterContainer(1));
+        addSlots(playerInventory.player, new ResourceFilterContainer(1, ResourceFilterContainerType.FILTER));
         initializeResourceFilterSlots(buf);
     }
 

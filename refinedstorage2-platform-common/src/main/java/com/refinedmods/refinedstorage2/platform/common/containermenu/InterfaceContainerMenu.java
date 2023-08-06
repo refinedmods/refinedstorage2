@@ -8,12 +8,12 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.Resour
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -29,7 +29,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
                                   final Player player,
                                   final InterfaceBlockEntity blockEntity,
                                   final ResourceFilterContainer exportConfig,
-                                  final Container exportedItems) {
+                                  final ResourceFilterContainer exportedItems) {
         super(Menus.INSTANCE.getInterface(), syncId, player);
         addSlots(player, exportConfig, exportedItems);
         registerProperty(new ServerProperty<>(
@@ -49,7 +49,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         addSlots(
             playerInventory.player,
             new FilteredResourceFilterContainer<>(9, StorageChannelTypes.ITEM, 64),
-            new SimpleContainer(9)
+            new ResourceFilterContainer(9, ResourceFilterContainerType.CONTAINER)
         );
         initializeResourceFilterSlots(buf);
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
@@ -58,7 +58,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
 
     private void addSlots(final Player player,
                           final ResourceFilterContainer exportConfig,
-                          final Container exportedItems) {
+                          final ResourceFilterContainer exportedItems) {
         for (int i = 0; i < exportConfig.size(); ++i) {
             addSlot(createExportConfigSlot(exportConfig, i));
         }
@@ -81,9 +81,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         );
     }
 
-    private Slot createExportedItemSlot(final Container container, final int index) {
+    private Slot createExportedItemSlot(final ResourceFilterContainer resourceFilterContainer, final int index) {
         final int x = getExportSlotX(index);
-        return new Slot(container, index, x, EXPORT_OUTPUT_SLOT_Y);
+        return new ResourceFilterSlot(resourceFilterContainer, index, Component.empty(), x, EXPORT_OUTPUT_SLOT_Y);
     }
 
     private static int getExportSlotX(final int index) {
