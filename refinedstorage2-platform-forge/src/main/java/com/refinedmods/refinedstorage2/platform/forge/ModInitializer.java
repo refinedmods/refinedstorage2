@@ -95,15 +95,9 @@ public class ModInitializer extends AbstractModInitializer {
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApi();
-        registerAdditionalStorageTypes();
-        registerAdditionalStorageChannelTypes();
-        registerAdditionalFilteredResourceFactories();
-        registerDestructorStrategyFactories();
-        registerConstructorStrategyFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
-        registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
         registerExternalStorageProviderFactories();
@@ -123,7 +117,7 @@ public class ModInitializer extends AbstractModInitializer {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
-        MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
+        MinecraftForge.EVENT_BUS.addListener(this::registerWrenchingEvent);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
     }
 
@@ -264,7 +258,7 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock e) {
+    public void registerWrenchingEvent(final PlayerInteractEvent.RightClickBlock e) {
         final BlockState state = e.getLevel().getBlockState(e.getHitVec().getBlockPos());
 
         AbstractBaseBlock.tryUseWrench(state, e.getLevel(), e.getHitVec(), e.getEntity(), e.getHand())

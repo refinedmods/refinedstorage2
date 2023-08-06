@@ -306,6 +306,7 @@ public final class PlatformImpl extends AbstractPlatform {
         return doPlaceFluid(level, pos, player, content, blockState, replaceable);
     }
 
+    @SuppressWarnings("deprecation")
     private boolean doPlaceFluid(final Level level,
                                  final BlockPos pos,
                                  final Player player,
@@ -323,6 +324,7 @@ public final class PlatformImpl extends AbstractPlatform {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private void playEmptySound(final Fluid content, final Player player, final LevelAccessor level,
                                 final BlockPos pos) {
         final SoundEvent soundEvent = content.is(FluidTags.LAVA)

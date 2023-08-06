@@ -24,12 +24,12 @@ import net.minecraft.world.level.block.Blocks;
 
 public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
     private final EnchantmentInstance enchantment;
-    private final ItemStack result;
+    private final ItemStack theResult;
 
     public UpgradeWithEnchantedBookRecipe(final ResourceLocation recipeId,
                                           final Enchantment enchantment,
                                           final int enchantmentLevel,
-                                          final ItemStack result) {
+                                          final ItemStack theResult) {
         super(recipeId, "", CraftingBookCategory.MISC, 3, 3, NonNullList.of(
             Ingredient.EMPTY,
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
@@ -43,13 +43,13 @@ public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron()))
-        ), result);
+        ), theResult);
         this.enchantment = new EnchantmentInstance(enchantment, enchantmentLevel);
-        this.result = result;
+        this.theResult = theResult;
     }
 
     public ItemStack getResult() {
-        return result;
+        return theResult;
     }
 
     @Nullable

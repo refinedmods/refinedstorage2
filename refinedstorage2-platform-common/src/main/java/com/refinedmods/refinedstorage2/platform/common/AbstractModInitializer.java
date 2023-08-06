@@ -129,39 +129,45 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public abstract class AbstractModInitializer {
     private static final String FLUID_REGISTRY_KEY = "fluid";
 
-    protected void initializePlatform(final Platform platform) {
+    protected final void initializePlatform(final Platform platform) {
         ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
 
-    protected void initializePlatformApi() {
+    protected final void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
+        registerAdditionalStorageTypes();
+        registerAdditionalStorageChannelTypes();
+        registerAdditionalFilteredResourceFactories();
+        registerDestructorStrategyFactories();
+        registerConstructorStrategyFactories();
+        registerNetworkComponents();
     }
 
-    protected void registerAdditionalStorageTypes() {
+    private void registerAdditionalStorageTypes() {
         PlatformApi.INSTANCE.getStorageTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
             FluidStorageType.INSTANCE
         );
     }
 
-    protected void registerAdditionalStorageChannelTypes() {
+    private void registerAdditionalStorageChannelTypes() {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
             StorageChannelTypes.FLUID
         );
     }
 
-    protected void registerAdditionalFilteredResourceFactories() {
+    private void registerAdditionalFilteredResourceFactories() {
         PlatformApi.INSTANCE.addFilteredResourceFactory(new FluidFilteredResourceFactory());
     }
 
-    protected void registerDestructorStrategyFactories() {
+    private void registerDestructorStrategyFactories() {
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new BlockBreakDestructorStrategyFactory());
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new FluidBreakDestructorStrategyFactory());
         PlatformApi.INSTANCE.addDestructorStrategyFactory(new ItemPickupDestructorStrategyFactory());
     }
 
-    protected void registerConstructorStrategyFactories() {
+    private void registerConstructorStrategyFactories() {
         PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
             Optional.of(new PlaceBlockConstructorStrategy(level, pos, direction)));
         PlatformApi.INSTANCE.addConstructorStrategyFactory((level, pos, direction, upgradeState, dropItems) ->
@@ -171,7 +177,7 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.addConstructorStrategyFactory(new ItemDropConstructorStrategyFactory());
     }
 
-    protected void registerNetworkComponents() {
+    private void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             EnergyNetworkComponent.class,
             network -> new EnergyNetworkComponentImpl()
