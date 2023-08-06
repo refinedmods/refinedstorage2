@@ -88,7 +88,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendDetectorAmountChange(final double amount) {
-        networkManager.send(new DetectorAmountChangePacket(amount));
+    public void sendSingleAmountChange(final double amount) {
+        networkManager.send(new SingleAmountChangePacket(amount));
     }
 }

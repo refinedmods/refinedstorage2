@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ECE",
+    "RMR",
+    "EIE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
+    },
+    "C": {
+      "item": "refinedstorage2:construction_core"
+    },
+    "R": {
+      "item": "minecraft:diamond"
+    },
+    "M": {
+      "item": "refinedstorage2:cable"
+    },
+    "I": {
+      "item": "refinedstorage2:improved_processor"
+    }
+  },
+  "result": {
+    "item": "refinedstorage2:constructor"
+  }
+}

@@ -61,6 +61,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleEnergyUsageEntryImpl destructor = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.DESTRUCTOR);
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl constructor = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.CONSTRUCTOR);
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -133,6 +136,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getDestructor() {
         return destructor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getConstructor() {
+        return constructor;
     }
 
     private static class GridEntryImpl implements GridEntry {
@@ -420,6 +428,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private long silkTouchUpgradeEnergyUsage = DefaultEnergyUsage.SILK_TOUCH_UPGRADE;
 
+        private long regulatorUpgradeEnergyUsage = DefaultEnergyUsage.REGULATOR_UPGRADE;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
@@ -448,6 +458,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getSilkTouchUpgradeEnergyUsage() {
             return silkTouchUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getRegulatorUpgradeEnergyUsage() {
+            return regulatorUpgradeEnergyUsage;
         }
     }
 }

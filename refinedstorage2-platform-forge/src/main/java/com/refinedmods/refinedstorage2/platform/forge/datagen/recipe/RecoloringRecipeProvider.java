@@ -24,31 +24,34 @@ public class RecoloringRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(final Consumer<FinishedRecipe> provider) {
-        Blocks.INSTANCE.getCable().forEach((color, block) ->
+        Blocks.INSTANCE.getCable().forEach((color, id, block) ->
             recolorItems(Tags.CABLES, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_cable")));
-        Blocks.INSTANCE.getImporter().forEach((color, block) ->
+        Blocks.INSTANCE.getImporter().forEach((color, id, block) ->
             recolorItems(Tags.IMPORTERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_importer")));
-        Blocks.INSTANCE.getExporter().forEach((color, block) ->
+        Blocks.INSTANCE.getExporter().forEach((color, id, block) ->
             recolorItems(Tags.EXPORTERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_exporter")));
-        Blocks.INSTANCE.getExternalStorage().forEach((color, block) ->
+        Blocks.INSTANCE.getExternalStorage().forEach((color, id, block) ->
             recolorItems(Tags.EXTERNAL_STORAGES, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_external_storage")));
-        Blocks.INSTANCE.getController().forEach((color, block) ->
+        Blocks.INSTANCE.getController().forEach((color, id, block) ->
             recolorItems(Tags.CONTROLLERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_controller")));
-        Blocks.INSTANCE.getGrid().forEach((color, block) ->
+        Blocks.INSTANCE.getGrid().forEach((color, id, block) ->
             recolorItems(Tags.GRIDS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_grid")));
-        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) ->
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, id, block) ->
             recolorItems(Tags.CRAFTING_GRIDS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_crafting_grid")));
-        Blocks.INSTANCE.getDetector().forEach((color, block) ->
+        Blocks.INSTANCE.getDetector().forEach((color, id, block) ->
             recolorItems(Tags.DETECTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_detector")));
-        Blocks.INSTANCE.getDestructor().forEach((color, block) ->
+        Blocks.INSTANCE.getConstructor().forEach((color, id, block) ->
+            recolorItems(Tags.CONSTRUCTORS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_constructor")));
+        Blocks.INSTANCE.getDestructor().forEach((color, id, block) ->
             recolorItems(Tags.DESTRUCTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_destructor")));
     }

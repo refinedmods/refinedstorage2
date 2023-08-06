@@ -13,6 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageContainerMenu
     implements StorageAccessor {
     private static final int FILTER_SLOT_X = 8;
@@ -53,7 +55,13 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
+        return new ResourceFilterSlot(
+            resourceFilterContainer,
+            i,
+            createTranslation("gui", "storage.filter_help"),
+            x,
+            FILTER_SLOT_Y
+        );
     }
 
     @Override

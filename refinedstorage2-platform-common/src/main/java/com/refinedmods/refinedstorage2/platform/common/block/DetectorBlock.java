@@ -8,11 +8,15 @@ import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeB
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,9 +31,13 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DetectorBlock extends AbstractDirectionalBlock<Direction>
-    implements ColorableBlock<DetectorBlock>, SimpleWaterloggedBlock, EntityBlock {
+    implements ColorableBlock<DetectorBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
     public static final BooleanProperty POWERED = BooleanProperty.create("powered");
+
+    private static final Component HELP = createTranslation("item", "detector.help");
 
     private static final AbstractBlockEntityTicker<DetectorBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
         BlockEntities.INSTANCE::getDetector
@@ -122,6 +130,11 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
                          final BlockGetter world,
                          final BlockPos pos,
                          final Direction side) {
-        return state.getValue(POWERED) ? 15 : 0;
+        return Boolean.TRUE.equals(state.getValue(POWERED)) ? 15 : 0;
+    }
+
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

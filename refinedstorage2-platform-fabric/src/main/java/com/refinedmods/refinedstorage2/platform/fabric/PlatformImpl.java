@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
@@ -22,15 +24,19 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
+import com.refinedmods.refinedstorage2.platform.fabric.util.BucketSingleStackStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -42,29 +48,48 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public final class PlatformImpl extends AbstractPlatform {
@@ -123,21 +148,39 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
         return convertNonEmptyToFluid(stack);
     }
 
-    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
+    @Override
+    public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
+        final BucketSingleStackStorage interceptingStorage = new BucketSingleStackStorage();
+        final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+            interceptingStorage.getStack(),
+            ContainerItemContext.ofSingleSlot(interceptingStorage)
+        );
+        if (destination == null) {
+            return Optional.empty();
+        }
+        try (Transaction tx = Transaction.openOuter()) {
+            destination.insert(toFluidVariant(fluidResource), FluidConstants.BUCKET, tx);
+            return Optional.of(interceptingStorage.getStack());
+        }
+    }
+
+    private Optional<ResourceAmount<FluidResource>> convertNonEmptyToFluid(final ItemStack stack) {
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
             stack,
             new ConstantContainerItemContext(ItemVariant.of(stack), 1)
         );
-        return Optional
-            .ofNullable(StorageUtil.findExtractableResource(storage, null))
-            .map(VariantUtil::ofFluidVariant);
+        return Optional.ofNullable(StorageUtil.findExtractableContent(storage, null))
+            .map(content -> new ResourceAmount<>(
+                VariantUtil.ofFluidVariant(content.resource()),
+                content.amount()
+            ));
     }
 
     @Override
@@ -216,6 +259,82 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
+    public boolean placeBlock(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final ItemStack stack
+    ) {
+        final BlockPlaceContext ctx = new CustomBlockPlaceContext(
+            level,
+            player,
+            InteractionHand.MAIN_HAND,
+            stack,
+            new BlockHitResult(Vec3.ZERO, direction, pos, false)
+        );
+        final InteractionResult result = stack.useOn(ctx);
+        return result.consumesAction();
+    }
+
+    @Override
+    public boolean placeFluid(
+        final Level level,
+        final BlockPos pos,
+        final Direction direction,
+        final Player player,
+        final FluidResource fluidResource
+    ) {
+        // Stolen from BucketItem#emptyContents
+        final Fluid content = fluidResource.fluid();
+        if (!(content instanceof FlowingFluid)) {
+            return false;
+        }
+        final BlockState blockState = level.getBlockState(pos);
+        final Block block = blockState.getBlock();
+        final boolean replaceable = blockState.canBeReplaced(content);
+        final boolean canPlace = blockState.isAir()
+            || replaceable
+            || (block instanceof LiquidBlockContainer lbc && lbc.canPlaceLiquid(level, pos, blockState, content));
+        if (!canPlace || blockState.getFluidState().isSource()) {
+            return false;
+        } else if (block instanceof LiquidBlockContainer lbc && content == Fluids.WATER) {
+            lbc.placeLiquid(level, pos, blockState, ((FlowingFluid) content).getSource(false));
+            playEmptySound(content, player, level, pos);
+            return true;
+        }
+        return doPlaceFluid(level, pos, player, content, blockState, replaceable);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean doPlaceFluid(final Level level,
+                                 final BlockPos pos,
+                                 final Player player,
+                                 final Fluid content,
+                                 final BlockState blockState,
+                                 final boolean replaceable) {
+        if (replaceable && !blockState.liquid()) {
+            level.destroyBlock(pos, true);
+        }
+        if (!level.setBlock(pos, content.defaultFluidState().createLegacyBlock(), 11)
+            && !blockState.getFluidState().isSource()) {
+            return false;
+        }
+        playEmptySound(content, player, level, pos);
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void playEmptySound(final Fluid content, final Player player, final LevelAccessor level,
+                                final BlockPos pos) {
+        final SoundEvent soundEvent = content.is(FluidTags.LAVA)
+            ? SoundEvents.BUCKET_EMPTY_LAVA
+            : SoundEvents.BUCKET_EMPTY;
+        level.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
+    }
+
+    @Override
     public ItemStack getBlockAsItemStack(final Block block,
                                          final BlockState state,
                                          final Direction direction,
@@ -228,5 +347,34 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
         return liquidBlock.getPickupSound();
+    }
+
+    @Override
+    public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack,
+                                                                 final GuiGraphics graphics,
+                                                                 final int mouseX,
+                                                                 final Optional<TooltipComponent> imageComponent,
+                                                                 final List<Component> components) {
+        final List<ClientTooltipComponent> processedComponents = components
+            .stream()
+            .map(Component::getVisualOrderText)
+            .map(ClientTooltipComponent::create)
+            .collect(Collectors.toList());
+        imageComponent.ifPresent(image -> processedComponents.add(1, ClientTooltipComponent.create(image)));
+        return processedComponents;
+    }
+
+    @Override
+    public void renderTooltip(final GuiGraphics graphics,
+                              final List<ClientTooltipComponent> components,
+                              final int x,
+                              final int y) {
+        graphics.renderTooltipInternal(
+            Minecraft.getInstance().font,
+            components,
+            x,
+            y,
+            DefaultTooltipPositioner.INSTANCE
+        );
     }
 }

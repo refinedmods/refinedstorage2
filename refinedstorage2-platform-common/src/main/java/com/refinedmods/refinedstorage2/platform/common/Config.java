@@ -38,6 +38,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getDestructor();
 
+    SimpleEnergyUsageEntry getConstructor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -132,5 +134,7 @@ public interface Config {
         long getFortune3UpgradeEnergyUsage();
 
         long getSilkTouchUpgradeEnergyUsage();
+
+        long getRegulatorUpgradeEnergyUsage();
     }
 }

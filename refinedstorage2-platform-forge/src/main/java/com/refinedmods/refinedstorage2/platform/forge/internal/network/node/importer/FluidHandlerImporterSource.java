@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.FluidHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.FluidHandlerInsertableStorage;
@@ -17,10 +18,11 @@ public class FluidHandlerImporterSource implements ImporterSource<FluidResource>
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    public FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates) {
+    public FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+                                      final AmountOverride amountOverride) {
         this.interactionCoordinates = interactionCoordinates;
-        this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates);
-        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates);
+        this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
+        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, amountOverride);
     }
 
     @Override

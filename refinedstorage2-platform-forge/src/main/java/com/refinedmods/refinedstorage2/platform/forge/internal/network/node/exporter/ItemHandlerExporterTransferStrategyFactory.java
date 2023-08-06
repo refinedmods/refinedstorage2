@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.AbstractExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.AbstractExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
@@ -24,10 +24,10 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
                                            final BlockPos pos,
                                            final Direction direction,
                                            final UpgradeState upgradeState,
+                                           final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
-        final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(
-            new InteractionCoordinatesImpl(level, pos, direction)
-        );
+        final InteractionCoordinatesImpl coordinates = new InteractionCoordinatesImpl(level, pos, direction);
+        final ItemHandlerInsertableStorage destination = new ItemHandlerInsertableStorage(coordinates, amountOverride);
         final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.ITEM, transferQuota) {

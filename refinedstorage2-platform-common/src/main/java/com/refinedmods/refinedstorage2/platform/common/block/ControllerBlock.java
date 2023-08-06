@@ -4,9 +4,12 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBl
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock<ControllerBlock>, EntityBlock {
+public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock<ControllerBlock>, EntityBlock,
+    BlockItemProvider {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create(
         "energy_type",
         ControllerEnergyType.class
@@ -83,5 +87,13 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
     @Override
     public boolean canAlwaysConnect() {
         return true;
+    }
+
+    @Override
+    public BlockItem createBlockItem() {
+        if (type == ControllerType.CREATIVE) {
+            return new CreativeControllerBlockItem(this, name);
+        }
+        return new ControllerBlockItem(this, name);
     }
 }

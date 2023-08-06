@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeB
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +14,12 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -27,8 +31,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class ExternalStorageBlock extends AbstractDirectionalCableBlock
-    implements ColorableBlock<ExternalStorageBlock>, EntityBlock {
+    implements ColorableBlock<ExternalStorageBlock>, EntityBlock, BlockItemProvider {
+    private static final Component HELP = createTranslation("item", "external_storage.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExternalStorage);
@@ -97,5 +104,10 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     @Override
     public MutableComponent getName() {
         return name;
+    }
+
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

@@ -11,4 +11,6 @@ public interface FluidRenderer {
     void render(PoseStack poseStack, int x, int y, FluidResource fluidResource);
 
     List<Component> getTooltip(FluidResource fluidResource);
+
+    Component getDisplayName(FluidResource fluidResource);
 }

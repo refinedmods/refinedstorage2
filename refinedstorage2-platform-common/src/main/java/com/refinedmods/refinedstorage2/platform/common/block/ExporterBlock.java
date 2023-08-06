@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeB
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +14,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,7 +27,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ExporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ExporterBlock>, EntityBlock {
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
+public class ExporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ExporterBlock>, EntityBlock,
+    BlockItemProvider {
+    private static final Component HELP = createTranslation("item", "exporter.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExporterBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExporter);
@@ -74,5 +82,10 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Colo
     @Override
     public MutableComponent getName() {
         return name;
+    }
+
+    @Override
+    public BlockItem createBlockItem() {
+        return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

@@ -1,35 +1,28 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.exporter;
 
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -40,17 +33,9 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExporterBlockEntity
-    extends AbstractUpgradeableNetworkNodeContainerBlockEntity<ExporterNetworkNode>
-    implements ExtendedMenuProvider {
+    extends AbstractSchedulingNetworkNodeContainerBlockEntity<ExporterNetworkNode, ExporterNetworkNode.TaskContext>
+    implements AmountOverride, UpgradeState {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExporterBlockEntity.class);
-
-    private static final String TAG_SCHEDULING_MODE = "sm";
-
-    private final FilterWithFuzzyMode filter;
-
-    private ExporterSchedulingModeSettings schedulingModeSettings = ExporterSchedulingModeSettings.FIRST_AVAILABLE;
-    @Nullable
-    private ExporterSchedulingMode schedulingMode;
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -60,15 +45,6 @@ public class ExporterBlockEntity
             new ExporterNetworkNode(0),
             UpgradeDestinations.EXPORTER
         );
-
-        this.filter = FilterWithFuzzyModeBuilder.of()
-            .listener(this::setChanged)
-            .templatesAcceptor(templates -> getNode().setFilterTemplates(
-                templates.stream().map(TypedTemplate::template).collect(Collectors.toList())
-            ))
-            .build();
-
-        this.setSchedulingMode(null, schedulingModeSettings);
     }
 
     @Override
@@ -89,7 +65,8 @@ public class ExporterBlockEntity
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                this::hasUpgrade,
+                this,
+                this,
                 filter.isFuzzyMode()
             ))
             .toList();
@@ -97,67 +74,9 @@ public class ExporterBlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
-        if (schedulingMode != null) {
-            tag.putInt(TAG_SCHEDULING_MODE, schedulingModeSettings.getId());
-            schedulingModeSettings.writeToTag(tag, schedulingMode);
-        }
-        filter.save(tag);
-    }
-
-    @Override
-    public void load(final CompoundTag tag) {
-        if (tag.contains(TAG_SCHEDULING_MODE)) {
-            setSchedulingMode(tag, ExporterSchedulingModeSettings.getById(tag.getInt(TAG_SCHEDULING_MODE)));
-        }
-
-        filter.load(tag);
-
-        super.load(tag);
-    }
-
-    @Override
     protected void setEnergyUsage(final long upgradeEnergyUsage) {
         final long baseEnergyUsage = Platform.INSTANCE.getConfig().getExporter().getEnergyUsage();
         getNode().setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
-    }
-
-    public void setSchedulingMode(final ExporterSchedulingModeSettings modeSettings) {
-        setSchedulingMode(null, modeSettings);
-        setChanged();
-    }
-
-    private void setSchedulingMode(@Nullable final CompoundTag tag,
-                                   final ExporterSchedulingModeSettings modeSettings) {
-        this.schedulingModeSettings = modeSettings;
-        this.schedulingMode = modeSettings.create(tag, new RandomExporterSchedulingMode.Randomizer() {
-            @Override
-            public <T> void shuffle(final List<T> list) {
-                Collections.shuffle(list, new Random());
-            }
-        }, this::setChanged);
-        getNode().setSchedulingMode(schedulingMode);
-    }
-
-    public ExporterSchedulingModeSettings getSchedulingMode() {
-        return schedulingModeSettings;
-    }
-
-    public boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
-    }
-
-    public void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
-        }
-    }
-
-    @Override
-    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 
     @Override
@@ -169,5 +88,35 @@ public class ExporterBlockEntity
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new ExporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer);
+    }
+
+    @Override
+    protected void setTaskExecutor(final TaskExecutor<ExporterNetworkNode.TaskContext> taskExecutor) {
+        getNode().setTaskExecutor(taskExecutor);
+    }
+
+    @Override
+    protected void setFilterTemplates(final List<Object> templates) {
+        getNode().setFilterTemplates(templates);
+    }
+
+    @Override
+    public <T> long overrideAmount(final T resource, final long amount, final LongSupplier currentAmount) {
+        if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
+            return amount;
+        }
+        return upgradeContainer.getRegulatedAmount(resource)
+            .stream()
+            .map(desiredAmount -> getAmountStillNeeded(amount, currentAmount.getAsLong(), desiredAmount))
+            .findFirst()
+            .orElse(amount);
+    }
+
+    private long getAmountStillNeeded(final long amount, final long currentAmount, final long desiredAmount) {
+        final long stillNeeding = desiredAmount - currentAmount;
+        if (stillNeeding <= 0) {
+            return 0;
+        }
+        return Math.min(stillNeeding, amount);
     }
 }

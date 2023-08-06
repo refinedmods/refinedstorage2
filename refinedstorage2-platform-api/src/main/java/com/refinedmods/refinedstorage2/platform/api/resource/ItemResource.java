@@ -44,7 +44,6 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         return stack;
     }
 
-    // TODO: This is kinda bad for perf. should just do comparisons instead.
     @Override
     public ItemResource normalize() {
         return new ItemResource(item, null);

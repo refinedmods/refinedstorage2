@@ -43,7 +43,10 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            createTranslation("gui", "controller.redstone_mode_help")
+        ));
     }
 
     @Override

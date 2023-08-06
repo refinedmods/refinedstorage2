@@ -6,14 +6,17 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNe
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
+import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
@@ -35,7 +38,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ImporterBlockEntity
     extends AbstractUpgradeableNetworkNodeContainerBlockEntity<ImporterNetworkNode>
-    implements ExtendedMenuProvider {
+    implements AmountOverride, ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImporterBlockEntity.class);
 
     private static final String TAG_FILTER_MODE = "fim";
@@ -75,7 +78,7 @@ public class ImporterBlockEntity
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, this::hasUpgrade))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, this::hasUpgrade, this))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
     }
@@ -135,5 +138,29 @@ public class ImporterBlockEntity
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new ImporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer);
+    }
+
+    @Override
+    public <T> long overrideAmount(final T resource,
+                                   final long amount,
+                                   final LongSupplier currentAmount) {
+        if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
+            return amount;
+        }
+        return upgradeContainer.getRegulatedAmount(resource)
+            .stream()
+            .map(desiredAmount -> getAmountStillAvailableForImport(amount, currentAmount.getAsLong(), desiredAmount))
+            .findFirst()
+            .orElse(amount);
+    }
+
+    private long getAmountStillAvailableForImport(final long amount,
+                                                  final long currentAmount,
+                                                  final long desiredAmount) {
+        final long stillAvailableToImport = currentAmount - desiredAmount;
+        if (stillAvailableToImport <= 0) {
+            return 0;
+        }
+        return Math.min(stillAvailableToImport, amount);
     }
 }

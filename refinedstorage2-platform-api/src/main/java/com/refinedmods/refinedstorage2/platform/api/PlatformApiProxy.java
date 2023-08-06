@@ -5,11 +5,14 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHints;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -101,6 +104,16 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
+    public Collection<ConstructorStrategyFactory> getConstructorStrategyFactories() {
+        return ensureLoaded().getConstructorStrategyFactories();
+    }
+
+    @Override
+    public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
+        ensureLoaded().addConstructorStrategyFactory(factory);
+    }
+
+    @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
     }
@@ -150,17 +163,21 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
+    public void addAlternativeGridInsertionHint(final GridInsertionHint hint) {
+        ensureLoaded().addAlternativeGridInsertionHint(hint);
+    }
+
+    @Override
+    public GridInsertionHints getGridInsertionHints() {
+        return ensureLoaded().getGridInsertionHints();
+    }
+
+    @Override
     public GridExtractionStrategy createGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                                                final Player player,
                                                                final GridServiceFactory gridServiceFactory,
-                                                               final ExtractableStorage<ItemResource>
-                                                                   containerExtractionSource) {
-        return ensureLoaded().createGridExtractionStrategy(
-            containerMenu,
-            player,
-            gridServiceFactory,
-            containerExtractionSource
-        );
+                                                               final Storage<ItemResource> itemStorage) {
+        return ensureLoaded().createGridExtractionStrategy(containerMenu, player, gridServiceFactory, itemStorage);
     }
 
     @Override

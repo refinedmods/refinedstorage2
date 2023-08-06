@@ -1,10 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RoundRobinExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RoundRobinState;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.impl.node.task.RoundRobinTaskExecutor;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -33,8 +32,8 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
     }
 
     @Override
-    protected ExporterSchedulingMode createSchedulingMode() {
-        return new RoundRobinExporterSchedulingMode(new RoundRobinState(listener, 0));
+    protected TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor() {
+        return new RoundRobinTaskExecutor<>(new RoundRobinTaskExecutor.State(listener, 0));
     }
 
     @Test

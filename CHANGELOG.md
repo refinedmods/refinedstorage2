@@ -7,6 +7,36 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.12] - 2023-08-06
+
+### Added
+
+-   Constructor
+-   Regulator Upgrade
+-   Filter slot hints that show which resource will be put in a filter slot and what the effect of the filter is on the device.
+-   Grid slot hints that show which resource will be inserted or extracted in a Grid.
+-   Help information to the side buttons by pressing SHIFT.
+-   Help information on items.
+-   A warning to the "filter mode" button on the storage screens if there is an allowlist with no configured filters.
+-   The "supported by" tooltip on upgrade items now shows the devices that accept the upgrade.
+
+### Changed
+
+-   The Constructor crafting recipe now takes 2 diamonds instead of 2 redstone.
+-   You can now select a "Scheduling mode" in the Constructor: first available, round robin, random.
+-   The "applicable upgrades" tooltip on the upgrade slot tooltip now shows the upgrade items in item form.
+-   The Regulator Upgrade now works in an Importer as well. It will only keep importing until the configured amount is reached.
+-   The Regulator Upgrade now needs to be configured separately, by using the upgrade. It can no longer be configured in the device GUI itself.
+
+### Fixed
+
+-   Fixed Grid voiding fluids if there was no space in inventory on Fabric.
+-   Fixed Grid dropping fluid buckets if there was no space in inventory on Forge.
+-   Fixed compatibility with custom tooltips in the Grid.
+-   Fixed bundle tooltip in the Grid.
+-   Fixed changes to access mode or fuzzy mode not being persisted.
+-   Fixed being able to put any item in the upgrade slots.
+
 ## [2.0.0-milestone.2.11] - 2023-07-04
 
 ### Added
@@ -381,7 +411,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.12...HEAD
+
+[2.0.0-milestone.2.12]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...v2.0.0-milestone.2.12
 
 [2.0.0-milestone.2.11]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...v2.0.0-milestone.2.11
 

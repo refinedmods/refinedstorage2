@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractGri
 
 import javax.annotation.Nullable;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -11,6 +12,8 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class ReiGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.rei");
     private static final MutableComponent TITLE_TWO_WAY = createTranslation("gui", "grid.synchronizer.rei.two_way");
+    private static final Component HELP = createTranslation("gui", "grid.synchronizer.rei.help");
+    private static final Component HELP_TWO_WAY = createTranslation("gui", "grid.synchronizer.rei.two_way.help");
 
     private final ReiProxy reiProxy;
     private final boolean twoWay;
@@ -23,6 +26,11 @@ public class ReiGridSynchronizer extends AbstractGridSynchronizer {
     @Override
     public MutableComponent getTitle() {
         return twoWay ? TITLE_TWO_WAY : TITLE;
+    }
+
+    @Override
+    public Component getHelpText() {
+        return twoWay ? HELP_TWO_WAY : HELP;
     }
 
     @Override

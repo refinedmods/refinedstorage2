@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.network.node.exporter;
 
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 
 import net.minecraft.core.BlockPos;
@@ -16,6 +16,7 @@ public interface ExporterTransferStrategyFactory {
         BlockPos pos,
         Direction direction,
         UpgradeState upgradeState,
+        AmountOverride amountOverride,
         boolean fuzzyMode
     );
 }

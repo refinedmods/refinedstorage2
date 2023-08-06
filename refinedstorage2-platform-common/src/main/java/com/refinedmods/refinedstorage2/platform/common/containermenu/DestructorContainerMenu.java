@@ -12,17 +12,23 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeD
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<DestructorBlockEntity> {
+    private static final MutableComponent FILTER_HELP = createTranslation("gui", "destructor.filter_help");
+
     public DestructorContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
             Menus.INSTANCE.getDestructor(),
             syncId,
             playerInventory.player,
             buf,
-            UpgradeDestinations.DESTRUCTOR
+            UpgradeDestinations.DESTRUCTOR,
+            FILTER_HELP
         );
     }
 
@@ -37,7 +43,8 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<D
             player,
             resourceFilterContainer,
             upgradeContainer,
-            destructor
+            destructor,
+            FILTER_HELP
         );
     }
 

@@ -315,7 +315,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
             this,
             playerInventory.player,
             Objects.requireNonNull(grid).getNode(),
-            grid.getContainerExtractionSource()
+            grid.getItemStorage()
         );
         this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
             this,

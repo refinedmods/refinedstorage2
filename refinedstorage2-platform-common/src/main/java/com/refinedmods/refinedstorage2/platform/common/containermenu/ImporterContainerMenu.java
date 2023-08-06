@@ -12,17 +12,23 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeD
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<ImporterBlockEntity> {
+    private static final MutableComponent FILTER_HELP = createTranslation("gui", "importer.filter_help");
+
     public ImporterContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
             Menus.INSTANCE.getImporter(),
             syncId,
             playerInventory.player,
             buf,
-            UpgradeDestinations.IMPORTER
+            UpgradeDestinations.IMPORTER,
+            FILTER_HELP
         );
     }
 
@@ -37,7 +43,8 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Imp
             player,
             resourceFilterContainer,
             upgradeContainer,
-            importer
+            importer,
+            FILTER_HELP
         );
     }
 

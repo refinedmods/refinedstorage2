@@ -104,8 +104,8 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
         upgradeState.put(upgradeItem, upgradeState.getInt(upgradeItem) + 1);
     }
 
-    public final boolean hasUpgrade(final UpgradeItem item) {
-        return upgradeState.containsKey(item);
+    public final boolean hasUpgrade(final UpgradeItem upgradeItem) {
+        return upgradeState.containsKey(upgradeItem);
     }
 
     protected abstract void setEnergyUsage(long upgradeEnergyUsage);

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -38,7 +39,7 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
             gridService.extract(
                 itemResource,
                 extractMode,
-                new ItemHandlerInsertableStorage(InteractionCoordinates.ofItemHandler(handler))
+                new ItemHandlerInsertableStorage(InteractionCoordinates.ofItemHandler(handler), AmountOverride.NONE)
             );
             return true;
         }

@@ -1,35 +1,39 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
-import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
-import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DetectorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.FilteredResourceClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveGeometryLoader;
 
+import java.util.List;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -44,7 +48,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
-public final class ClientModInitializer {
+public final class ClientModInitializer extends AbstractClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializer.class);
     private static final String KEY_BINDINGS_TRANSLATION_KEY = createTranslationKey("category", "key_bindings");
 
@@ -54,9 +58,18 @@ public final class ClientModInitializer {
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent e) {
         e.enqueueWork(ClientModInitializer::registerModelPredicates);
-        e.enqueueWork(ClientModInitializer::registerScreens);
+        e.enqueueWork(() -> registerScreens(new ScreenRegistration() {
+            @Override
+            public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
+                final MenuType<? extends M> type,
+                final ScreenConstructor<M, U> factory
+            ) {
+                MenuScreens.register(type, factory::create);
+            }
+        }));
         registerBlockEntityRenderer();
         registerGridSynchronizers();
+        registerAlternativeGridHints();
     }
 
     private static void registerModelPredicates() {
@@ -65,21 +78,6 @@ public final class ClientModInitializer {
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()
         ));
-    }
-
-    private static void registerScreens() {
-        MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getInterface(), InterfaceScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getDetector(), DetectorScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
     }
 
     @SubscribeEvent
@@ -119,8 +117,10 @@ public final class ClientModInitializer {
     }
 
     private static void registerBlockEntityRenderer() {
-        BlockEntityRenderers.register(BlockEntities.INSTANCE.getDiskDrive(),
-            ctx -> new DiskDriveBlockEntityRendererImpl<>());
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getDiskDrive(),
+            ctx -> new DiskDriveBlockEntityRendererImpl<>()
+        );
     }
 
     private static void registerGridSynchronizers() {
@@ -146,5 +146,36 @@ public final class ClientModInitializer {
             createIdentifier("rei_two_way"),
             new ReiGridSynchronizer(reiProxy, true)
         );
+    }
+
+    @SubscribeEvent
+    public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
+        e.register(
+            AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
+            component -> new UpgradeDestinationClientTooltipComponent(component.destinations())
+        );
+        e.register(
+            HelpTooltipComponent.class,
+            component -> HelpClientTooltipComponent.create(component.text())
+        );
+        e.register(
+            RegulatorUpgradeItem.RegulatorTooltipComponent.class,
+            component -> {
+                final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
+                return component.filteredResource() == null
+                    ? help
+                    : createRegulatorUpgradeClientTooltipComponent(component.filteredResource(), help);
+            }
+        );
+    }
+
+    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final FilteredResource<?> filteredResource,
+        final ClientTooltipComponent help
+    ) {
+        return new CompositeClientTooltipComponent(List.of(
+            new FilteredResourceClientTooltipComponent<>(filteredResource),
+            help
+        ));
     }
 }

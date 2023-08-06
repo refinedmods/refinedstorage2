@@ -2,35 +2,29 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final ClientProperty<Boolean> property;
-    private final List<Component> tooltipWhenOn;
-    private final List<Component> tooltipWhenOff;
+    private static final MutableComponent TITLE = createTranslation("gui", "fuzzy_mode");
+    private static final MutableComponent SUBTEXT_ON = createTranslation("gui", "fuzzy_mode.on");
+    private static final MutableComponent SUBTEXT_OFF = createTranslation("gui", "fuzzy_mode.off");
 
-    public FuzzyModeSideButtonWidget(final ClientProperty<Boolean> property) {
+    private final ClientProperty<Boolean> property;
+    private final Component helpOn;
+    private final Component helpOff;
+
+    public FuzzyModeSideButtonWidget(final ClientProperty<Boolean> property, final Type type) {
         super(createPressAction(property));
         this.property = property;
-        this.tooltipWhenOn = calculateTooltip(true);
-        this.tooltipWhenOff = calculateTooltip(false);
+        this.helpOn = createTranslation("gui", "fuzzy_mode.on." + type.getHelpTranslationKey());
+        this.helpOff = createTranslation("gui", "fuzzy_mode.off." + type.getHelpTranslationKey());
     }
 
     private static OnPress createPressAction(final ClientProperty<Boolean> property) {
         return btn -> property.setValue(!property.getValue());
-    }
-
-    private List<Component> calculateTooltip(final boolean fuzzyMode) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "fuzzy_mode"));
-        lines.add(createTranslation("gui", "fuzzy_mode." + (fuzzyMode ? "on" : "off")).withStyle(ChatFormatting.GRAY));
-        return lines;
     }
 
     @Override
@@ -44,7 +38,28 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected List<Component> getSideButtonTooltip() {
-        return Boolean.TRUE.equals(property.getValue()) ? tooltipWhenOn : tooltipWhenOff;
+    protected MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    protected MutableComponent getSubText() {
+        return Boolean.TRUE.equals(property.getValue()) ? SUBTEXT_ON : SUBTEXT_OFF;
+    }
+
+    @Override
+    protected Component getHelpText() {
+        return Boolean.TRUE.equals(property.getValue()) ? helpOn : helpOff;
+    }
+
+    public enum Type {
+        STORAGE,
+        DETECTOR,
+        EXTRACTING_STORAGE_NETWORK,
+        EXTRACTING_SOURCE;
+
+        String getHelpTranslationKey() {
+            return name().toLowerCase() + "_help";
+        }
     }
 }

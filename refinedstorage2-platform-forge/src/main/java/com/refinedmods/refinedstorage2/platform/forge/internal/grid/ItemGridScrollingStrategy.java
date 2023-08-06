@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -59,7 +60,10 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
         gridService.insert(
             itemResource,
             GridInsertMode.SINGLE_RESOURCE,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(sourceStorage))
+            new ItemHandlerExtractableStorage(
+                InteractionCoordinates.ofItemHandler(sourceStorage),
+                AmountOverride.NONE
+            )
         );
     }
 
@@ -67,7 +71,10 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
         gridService.extract(
             itemResource,
             GridExtractMode.SINGLE_RESOURCE,
-            new ItemHandlerInsertableStorage(InteractionCoordinates.ofItemHandler(destinationStorage))
+            new ItemHandlerInsertableStorage(
+                InteractionCoordinates.ofItemHandler(destinationStorage),
+                AmountOverride.NONE
+            )
         );
     }
 }

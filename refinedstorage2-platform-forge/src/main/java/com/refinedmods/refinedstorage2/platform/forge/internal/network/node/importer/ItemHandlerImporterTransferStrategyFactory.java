@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.internal.network.node.imp
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
@@ -19,12 +20,13 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final UpgradeState upgradeState) {
+                                           final UpgradeState upgradeState,
+                                           final AmountOverride amountOverride) {
         final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(new InteractionCoordinatesImpl(
             level,
             pos,
             direction
-        ));
+        ), amountOverride);
         final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.ITEM, transferQuota);
     }

@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorModeSettings;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.resources.ResourceLocation;
@@ -35,10 +35,10 @@ public final class PropertyTypes {
         AccessModeSettings::getAccessMode
     );
 
-    public static final PropertyType<ExporterSchedulingModeSettings> EXPORTER_SCHEDULING_MODE = new PropertyType<>(
-        createIdentifier("exporter_scheduling_mode"),
-        ExporterSchedulingModeSettings::getId,
-        ExporterSchedulingModeSettings::getById
+    public static final PropertyType<SchedulingModeType> SCHEDULING_MODE = new PropertyType<>(
+        createIdentifier("scheduling_mode"),
+        SchedulingModeType::getId,
+        SchedulingModeType::getById
     );
 
     public static final PropertyType<Boolean> FUZZY_MODE = bool(createIdentifier("fuzzy_mode"));
@@ -50,6 +50,7 @@ public final class PropertyTypes {
     );
 
     public static final PropertyType<Boolean> DESTRUCTOR_PICKUP_ITEMS = bool(createIdentifier("pickup_items"));
+    public static final PropertyType<Boolean> CONSTRUCTOR_DROP_ITEMS = bool(createIdentifier("drop_items"));
 
     private PropertyTypes() {
     }

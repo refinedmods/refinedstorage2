@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.AbstractExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.AbstractExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
@@ -25,13 +25,13 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
                                            final BlockPos pos,
                                            final Direction direction,
                                            final UpgradeState upgradeState,
+                                           final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
-        final InteractionCoordinates coords = new InteractionCoordinatesImpl(
-            level,
-            pos,
-            direction
+        final InteractionCoordinates coordinates = new InteractionCoordinatesImpl(level, pos, direction);
+        final FluidHandlerInsertableStorage destination = new FluidHandlerInsertableStorage(
+            coordinates,
+            amountOverride
         );
-        final InsertableStorage<FluidResource> destination = new FluidHandlerInsertableStorage(coords);
         final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.FLUID, transferQuota) {

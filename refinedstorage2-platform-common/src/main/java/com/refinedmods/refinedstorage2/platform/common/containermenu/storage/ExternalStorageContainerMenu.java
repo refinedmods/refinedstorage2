@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
@@ -38,6 +40,12 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
+        return new ResourceFilterSlot(
+            resourceFilterContainer,
+            i,
+            createTranslation("gui", "storage.filter_help"),
+            x,
+            FILTER_SLOT_Y
+        );
     }
 }

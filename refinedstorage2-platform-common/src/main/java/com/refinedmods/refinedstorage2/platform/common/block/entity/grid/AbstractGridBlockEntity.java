@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.node.container.NetworkNodeContainerPriorities;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -42,7 +42,7 @@ public abstract class AbstractGridBlockEntity
         this.storageChannelTypeRegistry = PlatformApi.INSTANCE.getStorageChannelTypeRegistry();
     }
 
-    public ExtractableStorage<ItemResource> getContainerExtractionSource() {
+    public Storage<ItemResource> getItemStorage() {
         return Objects.requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM);

@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.FirstAvailableExporterSchedulingMode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.task.DefaultTaskExecutor;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -23,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected ExporterSchedulingMode createSchedulingMode() {
-        return FirstAvailableExporterSchedulingMode.INSTANCE;
+    protected TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor() {
+        return new DefaultTaskExecutor<>();
     }
 
     @Test

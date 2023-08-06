@@ -1,15 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.api.upgrade.ApplicableUpgrade;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.SlotTooltip;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nullable;
@@ -18,14 +16,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private final Inventory playerInventory;
@@ -52,9 +48,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
-
         graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
-
         renderResourceFilterSlots(graphics);
     }
 
@@ -122,7 +116,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         final PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         // Large amounts overlap with the slot lines (see Minecraft behavior)
-        poseStack.translate(x + (large ? 1D : 0D), y + (large ? 1D : 0D), 300D);
+        poseStack.translate(x + (large ? 1D : 0D), y + (large ? 1D : 0D), 199);
         if (!large) {
             poseStack.scale(0.5F, 0.5F, 1);
         }
@@ -133,42 +127,20 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     public void addSideButton(final AbstractSideButtonWidget button) {
         button.setX(leftPos - button.getWidth() - 2);
         button.setY(topPos + sideButtonY);
-
         sideButtonY += button.getHeight() + 2;
-
         addRenderableWidget(button);
     }
 
     @Override
     protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
-            final List<Component> lines = resourceFilterSlot.getTooltip();
-            if (!lines.isEmpty()) {
-                graphics.renderComponentTooltip(font, lines, x, y);
+        if (hoveredSlot instanceof SlotTooltip slotTooltip) {
+            final List<ClientTooltipComponent> tooltip = slotTooltip.getTooltip(menu.getCarried());
+            if (!tooltip.isEmpty()) {
+                Platform.INSTANCE.renderTooltip(graphics, tooltip, x, y);
+                return;
             }
-        } else if (menu.getCarried().isEmpty()
-            && hoveredSlot instanceof UpgradeSlot upgradeSlot
-            && !hoveredSlot.hasItem()) {
-            final List<Component> lines = getUpgradeSlotTooltip(upgradeSlot);
-            graphics.renderComponentTooltip(font, lines, x, y);
-        } else {
-            super.renderTooltip(graphics, x, y);
         }
-    }
-
-    private List<Component> getUpgradeSlotTooltip(final UpgradeSlot upgradeSlot) {
-        final List<Component> lines = new ArrayList<>();
-        lines.add(PlatformApi.INSTANCE.createTranslation(
-            "gui",
-            "applicable_upgrades"
-        ).withStyle(ChatFormatting.WHITE));
-        for (final ApplicableUpgrade applicableUpgrade : upgradeSlot.getApplicableUpgrades()) {
-            final Item upgradeItem = applicableUpgrade.itemSupplier().get();
-            final MutableComponent name = upgradeItem.getName(new ItemStack(upgradeItem)).copy();
-            final MutableComponent amount = Component.literal("(" + applicableUpgrade.maxAmount() + ")");
-            lines.add(name.append(" ").append(amount).withStyle(ChatFormatting.GRAY));
-        }
-        return lines;
+        super.renderTooltip(graphics, x, y);
     }
 
     @Override

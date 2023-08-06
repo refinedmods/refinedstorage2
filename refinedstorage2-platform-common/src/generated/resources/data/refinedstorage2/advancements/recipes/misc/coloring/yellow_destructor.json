@@ -28,5 +28,6 @@
     "recipes": [
       "refinedstorage2:coloring/yellow_destructor"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
