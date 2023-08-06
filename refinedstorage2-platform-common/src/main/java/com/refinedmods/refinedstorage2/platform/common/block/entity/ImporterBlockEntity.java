@@ -13,11 +13,9 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterCon
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
-import java.util.OptionalLong;
 import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -32,7 +30,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,23 +147,11 @@ public class ImporterBlockEntity
         if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }
-        return overrideAmountForRegulatorUpgrade(resource, amount, currentAmount);
-    }
-
-    private <T> long overrideAmountForRegulatorUpgrade(final T resource,
-                                                       final long amount,
-                                                       final LongSupplier currentAmount) {
-        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            final ItemStack upgradeStack = upgradeContainer.getItem(i);
-            if (!(upgradeStack.getItem() instanceof RegulatorUpgradeItem regulatorUpgrade)) {
-                continue;
-            }
-            final OptionalLong desiredAmount = regulatorUpgrade.getDesiredAmount(upgradeStack, resource);
-            if (desiredAmount.isPresent()) {
-                return getAmountStillAvailableForImport(amount, currentAmount.getAsLong(), desiredAmount.getAsLong());
-            }
-        }
-        return amount;
+        return upgradeContainer.getRegulatedAmount(resource)
+            .stream()
+            .map(desiredAmount -> getAmountStillAvailableForImport(amount, currentAmount.getAsLong(), desiredAmount))
+            .findFirst()
+            .orElse(amount);
     }
 
     private long getAmountStillAvailableForImport(final long amount,

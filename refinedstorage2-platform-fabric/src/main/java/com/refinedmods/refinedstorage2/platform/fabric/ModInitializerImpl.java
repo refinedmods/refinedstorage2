@@ -86,15 +86,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         initializePlatform(new PlatformImpl());
         initializePlatformApi();
-        registerAdditionalStorageTypes();
-        registerAdditionalStorageChannelTypes();
-        registerAdditionalFilteredResourceFactories();
-        registerDestructorStrategyFactories();
-        registerConstructorStrategyFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
-        registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
         registerExternalStorageProviderFactories();
@@ -104,18 +98,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerRecipeSerializers(new DirectRegistryCallback<>(BuiltInRegistries.RECIPE_SERIALIZER));
         registerSidedHandlers();
         registerTickHandler();
-        registerEvents();
+        registerWrenchingEvent();
 
         LOGGER.info("Refined Storage 2 has loaded.");
-    }
-
-    private void registerEvents() {
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
-            final BlockState state = level.getBlockState(hitResult.getBlockPos());
-            return AbstractBaseBlock.tryUseWrench(state, level, hitResult, player, hand)
-                .or(() -> AbstractBaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
-                .orElse(InteractionResult.PASS);
-        });
     }
 
     private void registerAdditionalGridInsertionStrategyFactories() {
@@ -315,5 +300,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerTickHandler() {
         ServerTickEvents.START_SERVER_TICK.register(server -> TickHandler.runQueuedActions());
+    }
+
+    private void registerWrenchingEvent() {
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            final BlockState state = level.getBlockState(hitResult.getBlockPos());
+            return AbstractBaseBlock.tryUseWrench(state, level, hitResult, player, hand)
+                .or(() -> AbstractBaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
+                .orElse(InteractionResult.PASS);
+        });
     }
 }

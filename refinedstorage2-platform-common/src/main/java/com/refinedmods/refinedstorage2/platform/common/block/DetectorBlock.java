@@ -130,7 +130,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
                          final BlockGetter world,
                          final BlockPos pos,
                          final Direction side) {
-        return state.getValue(POWERED) ? 15 : 0;
+        return Boolean.TRUE.equals(state.getValue(POWERED)) ? 15 : 0;
     }
 
     @Override

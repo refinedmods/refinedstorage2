@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractConstructorDestructorBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
@@ -11,6 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import net.minecraft.core.Direction;
@@ -19,16 +22,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import static com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport.PROPERTY_BY_DIRECTION;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class BlockStateProvider extends net.minecraftforge.client.model.generators.BlockStateProvider {
+    private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = new EnumMap<>(Map.of(
+        Direction.NORTH, CableBlockSupport.NORTH,
+        Direction.EAST, CableBlockSupport.EAST,
+        Direction.SOUTH, CableBlockSupport.SOUTH,
+        Direction.WEST, CableBlockSupport.WEST,
+        Direction.UP, CableBlockSupport.UP,
+        Direction.DOWN, CableBlockSupport.DOWN
+    ));
+
     private final ExistingFileHelper existingFileHelper;
 
     public BlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
@@ -139,7 +151,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         final var builder = getVariantBuilder(block.get());
         builder.forAllStates(blockState -> {
             final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
-            if (blockState.getValue(AbstractGridBlock.ACTIVE)) {
+            if (Boolean.TRUE.equals(blockState.getValue(AbstractGridBlock.ACTIVE))) {
                 model.modelFile(active);
             } else {
                 model.modelFile(inactive);
@@ -215,10 +227,10 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
                                                final DetectorBlock block,
                                                final BlockState blockState) {
         final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
-        if (!blockState.getValue(DetectorBlock.POWERED)) {
-            model.modelFile(unpowered);
-        } else {
+        if (Boolean.TRUE.equals(blockState.getValue(DetectorBlock.POWERED))) {
             model.modelFile(modelFile(createIdentifier("block/detector/" + block.getColor().getName())));
+        } else {
+            model.modelFile(unpowered);
         }
         final Direction direction = blockState.getValue(DirectionTypeImpl.INSTANCE.getProperty());
         addRotation(model, direction);

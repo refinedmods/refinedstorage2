@@ -14,10 +14,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterCon
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 
 import java.util.List;
-import java.util.OptionalLong;
 import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
@@ -28,7 +26,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,23 +105,11 @@ public class ExporterBlockEntity
         if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }
-        return overrideAmountForRegulatorUpgrade(resource, amount, currentAmount);
-    }
-
-    private <T> long overrideAmountForRegulatorUpgrade(final T resource,
-                                                       final long amount,
-                                                       final LongSupplier currentAmount) {
-        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            final ItemStack upgradeStack = upgradeContainer.getItem(i);
-            if (!(upgradeStack.getItem() instanceof RegulatorUpgradeItem regulatorUpgrade)) {
-                continue;
-            }
-            final OptionalLong desiredAmount = regulatorUpgrade.getDesiredAmount(upgradeStack, resource);
-            if (desiredAmount.isPresent()) {
-                return getAmountStillNeeded(amount, currentAmount.getAsLong(), desiredAmount.getAsLong());
-            }
-        }
-        return amount;
+        return upgradeContainer.getRegulatedAmount(resource)
+            .stream()
+            .map(desiredAmount -> getAmountStillNeeded(amount, currentAmount.getAsLong(), desiredAmount))
+            .findFirst()
+            .orElse(amount);
     }
 
     private long getAmountStillNeeded(final long amount, final long currentAmount, final long desiredAmount) {
