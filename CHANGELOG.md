@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.12] - 2023-08-06
+
 ### Added
 
 -   Constructor
@@ -409,7 +411,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.12...HEAD
+
+[2.0.0-milestone.2.12]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...v2.0.0-milestone.2.12
 
 [2.0.0-milestone.2.11]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.10...v2.0.0-milestone.2.11
 
