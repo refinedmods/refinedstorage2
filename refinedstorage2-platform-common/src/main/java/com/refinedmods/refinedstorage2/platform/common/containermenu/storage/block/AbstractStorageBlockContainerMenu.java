@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FilteredResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -31,32 +32,32 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-        addSlots(player, new FilteredResourceFilterContainer<>(9, storageChannelType));
-        initializeResourceFilterSlots(buf);
+        addSlots(player, new FilteredResourceContainer<>(9, storageChannelType, ResourceContainerType.FILTER));
+        initializeResourceSlots(buf);
     }
 
     protected AbstractStorageBlockContainerMenu(final MenuType<?> type,
                                                 final int syncId,
                                                 final Player player,
-                                                final ResourceFilterContainer resourceFilterContainer,
+                                                final ResourceContainer resourceContainer,
                                                 final StorageConfigurationContainer configContainer) {
         super(type, syncId, player, configContainer);
-        addSlots(player, resourceFilterContainer);
+        addSlots(player, resourceContainer);
     }
 
-    private void addSlots(final Player player, final ResourceFilterContainer resourceFilterContainer) {
-        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
-            addSlot(createFilterSlot(resourceFilterContainer, i));
+    private void addSlots(final Player player, final ResourceContainer resourceContainer) {
+        for (int i = 0; i < resourceContainer.size(); ++i) {
+            addSlot(createFilterSlot(resourceContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
 
         transferManager.addFilterTransfer(player.getInventory());
     }
 
-    private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
+    private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(
-            resourceFilterContainer,
+        return new ResourceSlot(
+            resourceContainer,
             i,
             createTranslation("gui", "storage.filter_help"),
             x,

@@ -6,15 +6,15 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridExtractPack
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceFilterSlotAmountChangePacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceFilterSlotChangePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceSlotAmountChangePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridUpdatePacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceFilterSlotUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
 
 import net.minecraft.resources.ResourceLocation;
@@ -68,10 +68,10 @@ public class NetworkManager {
         );
         handler.registerMessage(
             id++,
-            ResourceFilterSlotUpdatePacket.class,
-            ResourceFilterSlotUpdatePacket::encode,
-            ResourceFilterSlotUpdatePacket::decode,
-            ResourceFilterSlotUpdatePacket::handle
+            ResourceSlotUpdatePacket.class,
+            ResourceSlotUpdatePacket::encode,
+            ResourceSlotUpdatePacket::decode,
+            ResourceSlotUpdatePacket::handle
         );
         handler.registerMessage(
             id++,
@@ -118,17 +118,17 @@ public class NetworkManager {
         );
         handler.registerMessage(
             id++,
-            ResourceFilterSlotAmountChangePacket.class,
-            ResourceFilterSlotAmountChangePacket::encode,
-            ResourceFilterSlotAmountChangePacket::decode,
-            ResourceFilterSlotAmountChangePacket::handle
+            ResourceSlotAmountChangePacket.class,
+            ResourceSlotAmountChangePacket::encode,
+            ResourceSlotAmountChangePacket::decode,
+            ResourceSlotAmountChangePacket::handle
         );
         handler.registerMessage(
             id++,
-            ResourceFilterSlotChangePacket.class,
-            ResourceFilterSlotChangePacket::encode,
-            ResourceFilterSlotChangePacket::decode,
-            ResourceFilterSlotChangePacket::handle
+            ResourceSlotChangePacket.class,
+            ResourceSlotChangePacket::encode,
+            ResourceSlotChangePacket::decode,
+            ResourceSlotChangePacket::handle
         );
         handler.registerMessage(
             id++,

@@ -9,14 +9,13 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -46,9 +45,9 @@ public class InterfaceBlockEntity
     private static final int EXPORT_SLOTS = 9;
 
     private final FilterWithFuzzyMode filter;
-    private final ResourceFilterContainer exportedItems = new ResourceFilterContainer(
+    private final ResourceContainer exportedItems = new ResourceContainer(
         EXPORT_SLOTS,
-        ResourceFilterContainerType.CONTAINER
+        ResourceContainerType.CONTAINER
     );
     private final InterfaceExternalStorageProvider<ItemResource> externalStorageProvider;
 
@@ -64,9 +63,12 @@ public class InterfaceBlockEntity
         );
         getNode().setExportState(this);
         getNode().setTransferQuota(64);
-        this.filter = FilterWithFuzzyModeBuilder.of(EXPORT_SLOTS, 64, StorageChannelTypes.ITEM)
-            .listener(this::setChanged)
-            .build();
+        this.filter = FilterWithFuzzyModeBuilder.of(
+            EXPORT_SLOTS,
+            StorageChannelTypes.ITEM,
+            ResourceContainerType.FILTER_WITH_AMOUNT,
+            ResourceInstance::getInterfaceExportLimit
+        ).listener(this::setChanged).build();
         this.exportedItems.setListener(this::setChanged);
         this.externalStorageProvider = new InterfaceExternalStorageProviderImpl<>(getNode());
     }
@@ -99,7 +101,7 @@ public class InterfaceBlockEntity
         filter.setFuzzyMode(fuzzyMode);
     }
 
-    public ResourceFilterContainer getExportedItems() {
+    public ResourceContainer getExportedItems() {
         return exportedItems;
     }
 
@@ -154,16 +156,19 @@ public class InterfaceBlockEntity
     @Nullable
     @Override
     public ItemResource getRequestedResource(final int index) {
-        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
-        if (!(filteredResource instanceof ItemFilteredResource itemFilteredResource)) {
+        final ResourceInstance<?> filteredResource = filter.getFilterContainer().get(index);
+        if (filteredResource == null) {
             return null;
         }
-        return itemFilteredResource.value();
+        if (!(filteredResource.getResource() instanceof ItemResource itemResource)) {
+            return null;
+        }
+        return itemResource;
     }
 
     @Override
     public long getRequestedResourceAmount(final int index) {
-        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
+        final ResourceInstance<?> filteredResource = filter.getFilterContainer().get(index);
         if (filteredResource == null) {
             return 0;
         }

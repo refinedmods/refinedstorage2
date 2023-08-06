@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.bl
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,9 +16,9 @@ public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainer
 
     public ItemStorageBlockContainerMenu(final int syncId,
                                          final Player player,
-                                         final ResourceFilterContainer resourceFilterContainer,
+                                         final ResourceContainer resourceContainer,
                                          final StorageConfigurationContainer configContainer) {
-        super(Menus.INSTANCE.getItemStorage(), syncId, player, resourceFilterContainer, configContainer);
+        super(Menus.INSTANCE.getItemStorage(), syncId, player, resourceContainer, configContainer);
     }
 
     @Override

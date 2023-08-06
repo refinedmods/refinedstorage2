@@ -1,0 +1,36 @@
+package com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei;
+
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
+
+import dev.architectury.event.CompoundEventResult;
+import me.shedaniel.math.Point;
+import me.shedaniel.rei.api.client.registry.screen.FocusedStackProvider;
+import me.shedaniel.rei.api.common.entry.EntryStack;
+import net.minecraft.client.gui.screens.Screen;
+
+public class ResourceFocusedStackProvider implements FocusedStackProvider {
+    private final IngredientConverter converter;
+
+    public ResourceFocusedStackProvider(final IngredientConverter converter) {
+        this.converter = converter;
+    }
+
+    @Override
+    public CompoundEventResult<EntryStack<?>> provide(final Screen screen, final Point mouse) {
+        if (!(screen instanceof AbstractBaseScreen<?> baseScreen)) {
+            return CompoundEventResult.pass();
+        }
+        final ResourceInstance<?> resourceInstance = baseScreen.getHoveredResource();
+        if (resourceInstance == null) {
+            return CompoundEventResult.pass();
+        }
+        final Object converted = converter.convertToIngredient(resourceInstance).orElse(null);
+        if (converted instanceof EntryStack<?> stack) {
+            return CompoundEventResult.interruptTrue(stack);
+        }
+        return CompoundEventResult.pass();
+    }
+}
+

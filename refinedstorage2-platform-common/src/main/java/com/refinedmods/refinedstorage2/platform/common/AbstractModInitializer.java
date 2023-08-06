@@ -59,7 +59,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -137,7 +137,7 @@ public abstract class AbstractModInitializer {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
-        registerAdditionalFilteredResourceFactories();
+        registerAdditionalResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
         registerNetworkComponents();
@@ -157,8 +157,8 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    private void registerAdditionalFilteredResourceFactories() {
-        PlatformApi.INSTANCE.addFilteredResourceFactory(new FluidFilteredResourceFactory());
+    private void registerAdditionalResourceFactories() {
+        PlatformApi.INSTANCE.addResourceFactory(new FluidResourceFactory());
     }
 
     private void registerDestructorStrategyFactories() {

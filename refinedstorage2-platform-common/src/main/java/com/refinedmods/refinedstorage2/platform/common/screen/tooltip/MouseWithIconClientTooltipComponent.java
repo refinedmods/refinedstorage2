@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.tooltip;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 
 import java.util.ArrayList;
@@ -57,16 +57,24 @@ public class MouseWithIconClientTooltipComponent implements ClientTooltipCompone
             return Collections.emptyList();
         }
         final List<ClientTooltipComponent> lines = new ArrayList<>();
-        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, false).ifPresent(asItem -> lines.add(
-            new MouseWithIconClientTooltipComponent(Type.LEFT, asItem::render, null)
+        PlatformApi.INSTANCE.createResource(carried, false).ifPresent(asItem -> lines.add(
+            new MouseWithIconClientTooltipComponent(Type.LEFT, getResourceRendering(asItem.getResource()), null)
         ));
-        PlatformApi.INSTANCE.getFilteredResourceFactory().create(carried, true).ifPresent(asAlternative -> {
-            if (asAlternative instanceof ItemFilteredResource) {
+        PlatformApi.INSTANCE.createResource(carried, true).ifPresent(asAlternative -> {
+            if (asAlternative.getResource() instanceof ItemResource) {
                 return;
             }
-            lines.add(new MouseWithIconClientTooltipComponent(Type.RIGHT, asAlternative::render, null));
+            lines.add(new MouseWithIconClientTooltipComponent(
+                Type.RIGHT,
+                getResourceRendering(asAlternative.getResource()),
+                null
+            ));
         });
         return lines;
+    }
+
+    public static <T> IconRenderer getResourceRendering(final T resource) {
+        return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
     }
 
     @FunctionalInterface

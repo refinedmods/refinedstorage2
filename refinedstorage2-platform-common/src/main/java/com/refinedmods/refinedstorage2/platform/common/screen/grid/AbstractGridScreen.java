@@ -417,7 +417,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
 
     @Nullable
-    public GridResource getHoveredResource() {
+    public GridResource getHoveredGridResource() {
         if (this.gridSlotNumber == -1) {
             return null;
         }

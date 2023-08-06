@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInte
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -162,7 +162,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         return storageId;
     }
 
-    protected final ResourceFilterContainer getFilterContainer() {
+    protected final ResourceContainer getFilterContainer() {
         return filter.getFilterContainer();
     }
 

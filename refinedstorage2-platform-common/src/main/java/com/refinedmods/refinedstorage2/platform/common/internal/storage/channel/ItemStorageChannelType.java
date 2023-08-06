@@ -5,14 +5,12 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.AbstractPlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannelImpl;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -55,16 +53,13 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
-    public Optional<FilteredResource<ItemResource>> toFilteredResource(final ResourceAmount<?> resourceAmount) {
-        if (resourceAmount.getResource() instanceof ItemResource itemResource) {
-            return Optional.of(new ItemFilteredResource(itemResource, resourceAmount.getAmount()));
-        }
-        return Optional.empty();
+    public boolean isGridResourceBelonging(final GridResource gridResource) {
+        return gridResource instanceof ItemGridResource;
     }
 
     @Override
-    public boolean isGridResourceBelonging(final GridResource gridResource) {
-        return gridResource instanceof ItemGridResource;
+    public long getInterfaceExportLimit(final ItemResource resource) {
+        return resource.item().getMaxStackSize();
     }
 
     @Override

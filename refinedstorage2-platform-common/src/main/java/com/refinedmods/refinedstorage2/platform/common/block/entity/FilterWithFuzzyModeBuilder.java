@@ -1,18 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainerType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FilteredResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
 public final class FilterWithFuzzyModeBuilder {
-    private final ResourceFilterContainer filterContainer;
+    private final ResourceContainer filterContainer;
     @Nullable
     private Runnable listener;
     @Nullable
@@ -20,46 +22,37 @@ public final class FilterWithFuzzyModeBuilder {
     @Nullable
     private Consumer<List<TypedTemplate<?>>> templatesAcceptor;
 
-    private FilterWithFuzzyModeBuilder(final ResourceFilterContainer filterContainer) {
+    private FilterWithFuzzyModeBuilder(final ResourceContainer filterContainer) {
         this.filterContainer = filterContainer;
     }
 
     public static FilterWithFuzzyModeBuilder of() {
-        return of(9, -1);
+        return of(9);
     }
 
     public static FilterWithFuzzyModeBuilder of(final int size) {
-        return of(size, -1);
+        return new FilterWithFuzzyModeBuilder(new ResourceContainer(size, ResourceContainerType.FILTER));
     }
 
-    public static FilterWithFuzzyModeBuilder of(final int size, final int maxAmount) {
-        return new FilterWithFuzzyModeBuilder(
-            new ResourceFilterContainer(size, maxAmount, ResourceFilterContainerType.FILTER)
-        );
-    }
-
-    public static <T> FilterWithFuzzyModeBuilder of(
-        final PlatformStorageChannelType<T> storageChannelType
-    ) {
-        return of(9, storageChannelType);
+    public static <T> FilterWithFuzzyModeBuilder of(final PlatformStorageChannelType<T> storageChannelType) {
+        return new FilterWithFuzzyModeBuilder(new FilteredResourceContainer<>(
+            9,
+            storageChannelType,
+            ResourceContainerType.FILTER
+        ));
     }
 
     public static <T> FilterWithFuzzyModeBuilder of(
         final int size,
-        final PlatformStorageChannelType<T> storageChannelType
+        final PlatformStorageChannelType<T> storageChannelType,
+        final ResourceContainerType containerType,
+        final ToLongFunction<ResourceInstance<?>> maxAmountProvider
     ) {
-        return of(size, -1, storageChannelType);
-    }
-
-    public static <T> FilterWithFuzzyModeBuilder of(
-        final int size,
-        final int maxAmount,
-        final PlatformStorageChannelType<T> storageChannelType
-    ) {
-        return new FilterWithFuzzyModeBuilder(new FilteredResourceFilterContainer<>(
+        return new FilterWithFuzzyModeBuilder(new FilteredResourceContainer<>(
             size,
             storageChannelType,
-            maxAmount
+            containerType,
+            maxAmountProvider
         ));
     }
 

@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeConta
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
@@ -20,11 +20,11 @@ public abstract class AbstractSchedulingContainerMenu<T extends AbstractScheduli
     protected AbstractSchedulingContainerMenu(final MenuType<?> type,
                                               final int syncId,
                                               final Player player,
-                                              final ResourceFilterContainer resourceFilterContainer,
+                                              final ResourceContainer resourceContainer,
                                               final UpgradeContainer upgradeContainer,
                                               final T blockEntity,
                                               final Component filterHelp) {
-        super(type, syncId, player, resourceFilterContainer, upgradeContainer, blockEntity, filterHelp);
+        super(type, syncId, player, resourceContainer, upgradeContainer, blockEntity, filterHelp);
     }
 
     protected AbstractSchedulingContainerMenu(final MenuType<?> type,

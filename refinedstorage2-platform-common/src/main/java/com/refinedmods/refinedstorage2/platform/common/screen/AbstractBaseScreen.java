@@ -1,9 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.SlotTooltip;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
@@ -21,7 +23,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private final Inventory playerInventory;
@@ -49,7 +50,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
         graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
-        renderResourceFilterSlots(graphics);
+        renderResourceSlots(graphics);
     }
 
     @Override
@@ -59,49 +60,53 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         renderTooltip(graphics, mouseX, mouseY);
     }
 
-    protected final void renderResourceFilterSlots(final GuiGraphics graphics) {
-        for (final Slot slot : menu.slots) {
-            tryRenderResourceFilterSlot(graphics, slot);
+    protected final void renderResourceSlots(final GuiGraphics graphics) {
+        if (!(menu instanceof AbstractResourceContainerMenu resourceContainerMenu)) {
+            return;
+        }
+        for (final ResourceSlot slot : resourceContainerMenu.getResourceSlots()) {
+            tryRenderResourceSlot(graphics, slot);
         }
     }
 
-    private void tryRenderResourceFilterSlot(final GuiGraphics graphics, final Slot slot) {
-        if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
+    private void tryRenderResourceSlot(final GuiGraphics graphics, final ResourceSlot slot) {
+        final ResourceInstance<?> resourceInstance = slot.getContents();
+        if (resourceInstance == null) {
             return;
         }
-        final FilteredResource<?> filteredResource = resourceFilterSlot.getFilteredResource();
-        if (filteredResource == null) {
-            return;
-        }
-        renderResourceFilterSlot(
+        renderResourceSlot(
             graphics,
             leftPos + slot.x,
             topPos + slot.y,
-            filteredResource,
-            resourceFilterSlot.supportsAmount()
+            resourceInstance,
+            slot.supportsAmount()
         );
     }
 
-    private void renderResourceFilterSlot(final GuiGraphics graphics,
-                                          final int x,
-                                          final int y,
-                                          final FilteredResource<?> filteredResource,
-                                          final boolean supportsAmount) {
-        filteredResource.render(graphics, x, y);
+    private <R> void renderResourceSlot(final GuiGraphics graphics,
+                                        final int x,
+                                        final int y,
+                                        final ResourceInstance<R> resourceInstance,
+                                        final boolean supportsAmount) {
+        final ResourceRendering<R> rendering = PlatformApi.INSTANCE.getResourceRendering(
+            resourceInstance.getResource()
+        );
+        rendering.render(resourceInstance.getResource(), graphics, x, y);
         if (supportsAmount) {
-            renderResourceFilterSlotAmount(graphics, x, y, filteredResource);
+            renderResourceSlotAmount(graphics, x, y, resourceInstance.getAmount(), rendering);
         }
     }
 
-    protected void renderResourceFilterSlotAmount(final GuiGraphics graphics,
-                                                  final int x,
-                                                  final int y,
-                                                  final FilteredResource<?> filteredResource) {
+    protected <R> void renderResourceSlotAmount(final GuiGraphics graphics,
+                                                final int x,
+                                                final int y,
+                                                final long amount,
+                                                final ResourceRendering<R> rendering) {
         renderAmount(
             graphics,
             x,
             y,
-            filteredResource.getDisplayedAmount(),
+            rendering.getDisplayedAmount(amount),
             Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
             true
         );
@@ -145,36 +150,32 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     @Override
     public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot
-            && getMenu() instanceof AbstractResourceFilterContainerMenu containerMenu) {
-            if (!tryOpenResourceFilterAmountScreen(resourceFilterSlot)) {
-                if (resourceFilterSlot.isRegularInv()) {
-                    return super.mouseClicked(mouseX, mouseY, clickedButton);
-                }
-                containerMenu.sendResourceFilterSlotChange(hoveredSlot.index, clickedButton == 1);
+        if (hoveredSlot instanceof ResourceSlot resourceSlot
+            && !resourceSlot.supportsItemSlotInteractions()
+            && getMenu() instanceof AbstractResourceContainerMenu containerMenu) {
+            if (!tryOpenResourceAmountScreen(resourceSlot)) {
+                containerMenu.sendResourceSlotChange(hoveredSlot.index, clickedButton == 1);
             }
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    protected boolean tryOpenResourceFilterAmountScreen(final ResourceFilterSlot slot) {
-        final boolean isFilterSlot = slot.getFilteredResource() != null;
-        final boolean doesFilterSlotSupportAmount = isFilterSlot && slot.canModifyAmount();
+    protected boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
+        final boolean isFilterSlot = slot.getContents() != null;
+        final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
-        final boolean canChangeAmount =
-            isFilterSlot && doesFilterSlotSupportAmount && isNotTryingToRemoveFilter && isNotCarryingItem;
-        if (canChangeAmount && minecraft != null) {
+        final boolean canOpen =
+            isFilterSlot && canModifyAmount && isNotTryingToRemoveFilter && isNotCarryingItem;
+        if (canOpen && minecraft != null) {
             minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, slot));
         }
-        return canChangeAmount;
+        return canOpen;
     }
 
     @Nullable
-    public FilteredResource<?> getFilteredResource() {
-        return hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot
-            ? resourceFilterSlot.getFilteredResource()
-            : null;
+    public ResourceInstance<?> getHoveredResource() {
+        return hoveredSlot instanceof ResourceSlot resourceSlot ? resourceSlot.getContents() : null;
     }
 }
