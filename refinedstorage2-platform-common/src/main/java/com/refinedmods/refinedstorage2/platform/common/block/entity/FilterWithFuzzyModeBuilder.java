@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FilteredResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -34,25 +34,27 @@ public final class FilterWithFuzzyModeBuilder {
         return new FilterWithFuzzyModeBuilder(new ResourceContainer(size, ResourceContainerType.FILTER));
     }
 
-    public static <T> FilterWithFuzzyModeBuilder of(final PlatformStorageChannelType<T> storageChannelType) {
-        return new FilterWithFuzzyModeBuilder(new FilteredResourceContainer<>(
+    public static <T> FilterWithFuzzyModeBuilder of(final ResourceFactory<T> resourceFactory) {
+        return new FilterWithFuzzyModeBuilder(new ResourceContainer(
             9,
-            storageChannelType,
-            ResourceContainerType.FILTER
+            ResourceContainerType.FILTER,
+            resourceFactory,
+            Collections.emptySet()
         ));
     }
 
     public static <T> FilterWithFuzzyModeBuilder of(
         final int size,
-        final PlatformStorageChannelType<T> storageChannelType,
+        final ResourceFactory<T> resourceFactory,
         final ResourceContainerType containerType,
         final ToLongFunction<ResourceInstance<?>> maxAmountProvider
     ) {
-        return new FilterWithFuzzyModeBuilder(new FilteredResourceContainer<>(
+        return new FilterWithFuzzyModeBuilder(new ResourceContainer(
             size,
-            storageChannelType,
             containerType,
-            maxAmountProvider
+            maxAmountProvider,
+            resourceFactory,
+            Collections.emptySet()
         ));
     }
 

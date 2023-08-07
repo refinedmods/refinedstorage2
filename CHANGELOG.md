@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed filter slot hints not being aware of the resource types that they can show in a slot.
+
 ## [2.0.0-milestone.2.12] - 2023-08-06
 
 ### Added

@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
@@ -65,7 +66,7 @@ public class InterfaceBlockEntity
         getNode().setTransferQuota(64);
         this.filter = FilterWithFuzzyModeBuilder.of(
             EXPORT_SLOTS,
-            StorageChannelTypes.ITEM,
+            PlatformApi.INSTANCE.getItemResourceFactory(),
             ResourceContainerType.FILTER_WITH_AMOUNT,
             ResourceInstance::getInterfaceExportLimit
         ).listener(this::setChanged).build();

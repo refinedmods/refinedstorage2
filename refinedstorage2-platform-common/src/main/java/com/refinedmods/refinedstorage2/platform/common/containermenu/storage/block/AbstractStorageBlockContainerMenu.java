@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FilteredResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
+
+import java.util.Collections;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +29,16 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
                                                     final int syncId,
                                                     final Player player,
                                                     final FriendlyByteBuf buf,
-                                                    final PlatformStorageChannelType<T> storageChannelType) {
+                                                    final ResourceFactory<T> resourceFactory) {
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-        addSlots(player, new FilteredResourceContainer<>(9, storageChannelType, ResourceContainerType.FILTER));
+        addSlots(player, new ResourceContainer(
+            9,
+            ResourceContainerType.FILTER,
+            resourceFactory,
+            Collections.emptySet()
+        ));
         initializeResourceSlots(buf);
     }
 

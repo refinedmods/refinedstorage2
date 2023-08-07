@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -36,7 +37,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             pos,
             state,
             new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
-            StorageChannelTypes.ITEM
+            PlatformApi.INSTANCE.getItemResourceFactory()
         );
         this.variant = variant;
         this.displayName = createTranslation("block", String.format("%s_storage_block", variant.getName()));

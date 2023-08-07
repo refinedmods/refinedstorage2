@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
@@ -36,7 +37,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             pos,
             state,
             new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
-            StorageChannelTypes.FLUID
+            PlatformApi.INSTANCE.getFluidResourceFactory()
         );
         this.variant = variant;
         this.displayName = createTranslation(

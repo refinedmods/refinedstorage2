@@ -24,9 +24,9 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -34,12 +34,11 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
@@ -113,11 +112,15 @@ public interface PlatformApi {
 
     <T> void addResourceFactory(ResourceFactory<T> factory);
 
+    ResourceFactory<ItemResource> getItemResourceFactory();
+
+    ResourceFactory<FluidResource> getFluidResourceFactory();
+
+    Set<ResourceFactory<?>> getAlternativeResourceFactories();
+
     <T> void registerResourceRendering(Class<T> resourceClass, ResourceRendering<T> rendering);
 
     <T> ResourceRendering<T> getResourceRendering(T resource);
-
-    Optional<ResourceInstance<?>> createResource(ItemStack stack, boolean tryAlternatives);
 
     void registerIngredientConverter(IngredientConverter converter);
 

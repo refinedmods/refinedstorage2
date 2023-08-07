@@ -4,19 +4,23 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +35,9 @@ public class ResourceContainer implements Container {
     @Nullable
     private Runnable listener;
 
+    private final ResourceFactory<?> primaryResourceFactory;
+    private final Set<ResourceFactory<?>> alternativeResourceFactories;
+
     public ResourceContainer(final int size, final ResourceContainerType type) {
         this(size, type, resourceInstance -> Long.MAX_VALUE);
     }
@@ -38,9 +45,32 @@ public class ResourceContainer implements Container {
     public ResourceContainer(final int size,
                              final ResourceContainerType type,
                              final ToLongFunction<ResourceInstance<?>> maxAmountProvider) {
+        this(
+            size,
+            type,
+            maxAmountProvider,
+            PlatformApi.INSTANCE.getItemResourceFactory(),
+            PlatformApi.INSTANCE.getAlternativeResourceFactories()
+        );
+    }
+
+    public ResourceContainer(final int size,
+                             final ResourceContainerType type,
+                             final ResourceFactory<?> primaryResourceFactory,
+                             final Set<ResourceFactory<?>> alternativeResourceFactories) {
+        this(size, type, resourceInstance -> Long.MAX_VALUE, primaryResourceFactory, alternativeResourceFactories);
+    }
+
+    public ResourceContainer(final int size,
+                             final ResourceContainerType type,
+                             final ToLongFunction<ResourceInstance<?>> maxAmountProvider,
+                             final ResourceFactory<?> primaryResourceFactory,
+                             final Set<ResourceFactory<?>> alternativeResourceFactories) {
         this.items = new ResourceInstance<?>[size];
         this.type = type;
         this.maxAmountProvider = maxAmountProvider;
+        this.primaryResourceFactory = primaryResourceFactory;
+        this.alternativeResourceFactories = alternativeResourceFactories;
     }
 
     public boolean supportsAmount() {
@@ -61,6 +91,22 @@ public class ResourceContainer implements Container {
 
     public void setListener(@Nullable final Runnable listener) {
         this.listener = listener;
+    }
+
+    public void change(final int index, final ItemStack stack, final boolean tryAlternatives) {
+        if (tryAlternatives) {
+            for (final ResourceFactory<?> resourceFactory : alternativeResourceFactories) {
+                final var result = resourceFactory.create(stack);
+                if (result.isPresent()) {
+                    set(index, result.get());
+                    return;
+                }
+            }
+        }
+        primaryResourceFactory.create(stack).ifPresentOrElse(
+            resource -> set(index, resource),
+            () -> remove(index)
+        );
     }
 
     public <T> void set(final int index, final ResourceInstance<T> resourceInstance) {
@@ -321,6 +367,33 @@ public class ResourceContainer implements Container {
             );
             set(slot, new ResourceInstance<>(resourceAmount, StorageChannelTypes.ITEM));
         }
+    }
+
+    public List<ClientTooltipComponent> getHelpTooltip(final ItemStack carried) {
+        if (carried.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<ClientTooltipComponent> lines = new ArrayList<>();
+        primaryResourceFactory.create(carried).ifPresent(primaryResourceInstance -> lines.add(
+            new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.LEFT,
+                getResourceRendering(primaryResourceInstance.getResource()),
+                null
+            )
+        ));
+        for (final ResourceFactory<?> alternativeResourceFactory : alternativeResourceFactories) {
+            final var result = alternativeResourceFactory.create(carried);
+            result.ifPresent(alternativeResourceInstance -> lines.add(new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.RIGHT,
+                getResourceRendering(alternativeResourceInstance.getResource()),
+                null
+            )));
+        }
+        return lines;
+    }
+
+    public static <T> MouseWithIconClientTooltipComponent.IconRenderer getResourceRendering(final T resource) {
+        return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
     }
 
     @Override

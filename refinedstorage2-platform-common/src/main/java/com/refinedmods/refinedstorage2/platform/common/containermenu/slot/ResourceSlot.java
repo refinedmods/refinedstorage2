@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 
 import java.util.ArrayList;
@@ -103,10 +102,7 @@ public class ResourceSlot extends Slot implements SlotTooltip {
     }
 
     public void change(final ItemStack stack, final boolean tryAlternatives) {
-        PlatformApi.INSTANCE.createResource(stack, tryAlternatives).ifPresentOrElse(
-            translated -> resourceContainer.set(getContainerSlot(), translated),
-            () -> resourceContainer.remove(getContainerSlot())
-        );
+        resourceContainer.change(getContainerSlot(), stack, tryAlternatives);
     }
 
     public <T> void change(@Nullable final ResourceInstance<T> instance) {
@@ -122,7 +118,7 @@ public class ResourceSlot extends Slot implements SlotTooltip {
         if (existing != null) {
             return false;
         }
-        PlatformApi.INSTANCE.createResource(stack, false).ifPresent(this::change);
+        resourceContainer.change(getContainerSlot(), stack, false);
         return true;
     }
 
@@ -200,7 +196,7 @@ public class ResourceSlot extends Slot implements SlotTooltip {
         tooltip.add(ClientTooltipComponent.create(
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
         ));
-        tooltip.addAll(MouseWithIconClientTooltipComponent.createForFilter(carried));
+        tooltip.addAll(resourceContainer.getHelpTooltip(carried));
         tooltip.add(HelpClientTooltipComponent.create(helpText));
         return tooltip;
     }

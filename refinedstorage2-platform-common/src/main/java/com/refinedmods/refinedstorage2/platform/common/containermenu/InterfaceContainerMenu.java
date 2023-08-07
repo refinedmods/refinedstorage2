@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
@@ -7,11 +8,11 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FilteredResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
+
+import java.util.Collections;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -49,11 +50,12 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu {
         super(Menus.INSTANCE.getInterface(), syncId);
         addSlots(
             playerInventory.player,
-            new FilteredResourceContainer<>(
+            new ResourceContainer(
                 9,
-                StorageChannelTypes.ITEM,
                 ResourceContainerType.FILTER_WITH_AMOUNT,
-                ResourceInstance::getInterfaceExportLimit
+                ResourceInstance::getInterfaceExportLimit,
+                PlatformApi.INSTANCE.getItemResourceFactory(),
+                Collections.emptySet()
             ),
             new ResourceContainer(9, ResourceContainerType.CONTAINER)
         );
