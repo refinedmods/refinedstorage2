@@ -29,8 +29,10 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -44,8 +46,8 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.PlatformGri
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.CompositeFilteredResourceFactory;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -62,11 +64,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -116,9 +120,10 @@ public class PlatformApiImpl implements PlatformApi {
     );
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
-    private final CompositeFilteredResourceFactory filteredResourceFactory = new CompositeFilteredResourceFactory(
-        new ItemFilteredResourceFactory()
-    );
+    private final ResourceFactory<ItemResource> itemResourceFactory = new ItemResourceFactory();
+    private final ResourceFactory<FluidResource> fluidResourceFactory = new FluidResourceFactory();
+    private final Set<ResourceFactory<?>> resourceFactories = new HashSet<>();
+    private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -331,13 +336,34 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void addFilteredResourceFactory(final FilteredResourceFactory factory) {
-        filteredResourceFactory.addAlternativeFactory(factory);
+    public <T> void addResourceFactory(final ResourceFactory<T> factory) {
+        resourceFactories.add(factory);
     }
 
     @Override
-    public FilteredResourceFactory getFilteredResourceFactory() {
-        return filteredResourceFactory;
+    public ResourceFactory<ItemResource> getItemResourceFactory() {
+        return itemResourceFactory;
+    }
+
+    @Override
+    public ResourceFactory<FluidResource> getFluidResourceFactory() {
+        return fluidResourceFactory;
+    }
+
+    @Override
+    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+        return resourceFactories;
+    }
+
+    @Override
+    public <T> void registerResourceRendering(final Class<T> resourceClass, final ResourceRendering<T> rendering) {
+        resourceRenderingMap.put(resourceClass, rendering);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> ResourceRendering<T> getResourceRendering(final T resource) {
+        return (ResourceRendering<T>) resourceRenderingMap.get(resource.getClass());
     }
 
     @Override

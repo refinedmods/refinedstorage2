@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +16,7 @@ public final class FilterWithFuzzyMode {
     private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
-    private final ResourceFilterContainer filterContainer;
+    private final ResourceContainer filterContainer;
     @Nullable
     private final Runnable listener;
     @Nullable
@@ -26,7 +26,7 @@ public final class FilterWithFuzzyMode {
 
     private boolean fuzzyMode;
 
-    public FilterWithFuzzyMode(final ResourceFilterContainer filterContainer,
+    public FilterWithFuzzyMode(final ResourceContainer filterContainer,
                                @Nullable final Runnable listener,
                                @Nullable final Consumer<Set<TypedTemplate<?>>> uniqueTemplatesAcceptor,
                                @Nullable final Consumer<List<TypedTemplate<?>>> templatesAcceptor) {
@@ -44,7 +44,7 @@ public final class FilterWithFuzzyMode {
         }
     }
 
-    public ResourceFilterContainer getFilterContainer() {
+    public ResourceContainer getFilterContainer() {
         return filterContainer;
     }
 

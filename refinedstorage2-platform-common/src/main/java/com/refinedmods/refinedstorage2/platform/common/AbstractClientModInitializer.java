@@ -1,7 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceRendering;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
@@ -45,6 +49,11 @@ public abstract class AbstractClientModInitializer {
 
     protected static void registerAlternativeGridHints() {
         PlatformApi.INSTANCE.addAlternativeGridInsertionHint(new FluidGridInsertionHint());
+    }
+
+    protected static void registerResourceRendering() {
+        PlatformApi.INSTANCE.registerResourceRendering(ItemResource.class, new ItemResourceRendering());
+        PlatformApi.INSTANCE.registerResourceRendering(FluidResource.class, new FluidResourceRendering());
     }
 
     @FunctionalInterface

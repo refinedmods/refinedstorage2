@@ -50,7 +50,7 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
         final IngredientConverter converter = PlatformApi.INSTANCE.getIngredientConverter();
         registration.addGenericGuiContainerHandler(
             AbstractBaseScreen.class,
-            new FilteredResourceGuiContainerHandler(converter, registration.getJeiHelpers().getIngredientManager())
+            new ResourceGuiContainerHandler(converter, registration.getJeiHelpers().getIngredientManager())
         );
         registration.addGenericGuiContainerHandler(
             AbstractGridScreen.class,
@@ -83,6 +83,6 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
 
     private void registerIngredientConverters(final IPlatformFluidHelper<?> fluidHelper) {
         PlatformApi.INSTANCE.registerIngredientConverter(new GridResourceIngredientConverter(fluidHelper));
-        PlatformApi.INSTANCE.registerIngredientConverter(new FilteredResourceIngredientConverter(fluidHelper));
+        PlatformApi.INSTANCE.registerIngredientConverter(new ResourceIngredientConverter(fluidHelper));
     }
 }

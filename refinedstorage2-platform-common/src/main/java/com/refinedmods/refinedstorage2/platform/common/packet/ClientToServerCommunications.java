@@ -31,9 +31,9 @@ public interface ClientToServerCommunications {
 
     void sendStorageInfoRequest(UUID storageId);
 
-    void sendResourceFilterSlotChange(int slotIndex, boolean tryAlternatives);
+    void sendResourceSlotChange(int slotIndex, boolean tryAlternatives);
 
-    void sendResourceFilterSlotAmountChange(int slotIndex, long amount);
+    void sendResourceSlotAmountChange(int slotIndex, long amount);
 
     void sendSingleAmountChange(double amount);
 }

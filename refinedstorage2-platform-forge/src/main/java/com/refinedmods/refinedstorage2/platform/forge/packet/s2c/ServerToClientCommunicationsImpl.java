@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
@@ -53,29 +54,22 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendResourceFilterSlotUpdate(final ServerPlayer player,
-                                                 @Nullable final PlatformStorageChannelType<T> storageChannelType,
-                                                 @Nullable final T resource,
-                                                 final long amount,
-                                                 final int slotIndex) {
-        if (storageChannelType != null && resource != null) {
-            PlatformApi.INSTANCE
-                .getStorageChannelTypeRegistry()
-                .getId(storageChannelType)
-                .ifPresent(id -> networkManager.send(player, new ResourceFilterSlotUpdatePacket<>(
+    public <T> void sendResourceSlotUpdate(final ServerPlayer player,
+                                           @Nullable final ResourceInstance<T> resourceInstance,
+                                           final int slotIndex) {
+        if (resourceInstance != null) {
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+                .getId(resourceInstance.getStorageChannelType())
+                .ifPresent(id -> networkManager.send(player, new ResourceSlotUpdatePacket<>(
                     slotIndex,
-                    storageChannelType,
-                    id,
-                    resource,
-                    amount
+                    resourceInstance,
+                    id
                 )));
         } else {
-            networkManager.send(player, new ResourceFilterSlotUpdatePacket<>(
+            networkManager.send(player, new ResourceSlotUpdatePacket<>(
                 slotIndex,
                 null,
-                null,
-                null,
-                amount
+                null
             ));
         }
     }

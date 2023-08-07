@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
@@ -64,15 +65,15 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     @Nullable
-    private FilteredResource<?> getFilteredResource(final ItemStack stack) {
-        final ResourceFilterContainer container = getResourceFilterContainer(stack);
-        final FilteredResource<?> filteredResource = container.get(0);
-        if (filteredResource == null) {
+    private ResourceInstance<?> getFilteredResource(final ItemStack stack) {
+        final ResourceContainer container = getResourceFilterContainer(stack);
+        final ResourceInstance<?> resourceInstance = container.get(0);
+        if (resourceInstance == null) {
             return null;
         }
         final double amount = getAmount(stack);
-        final long normalizedAmount = filteredResource.getStorageChannelType().normalizeAmount(amount);
-        return filteredResource.withAmount(normalizedAmount);
+        final long normalizedAmount = resourceInstance.getStorageChannelType().normalizeAmount(amount);
+        return resourceInstance.withAmount(normalizedAmount);
     }
 
     public double getAmount(final ItemStack stack) {
@@ -83,8 +84,8 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         stack.getOrCreateTag().putDouble(TAG_AMOUNT, amount);
     }
 
-    private ResourceFilterContainer getResourceFilterContainer(final ItemStack stack) {
-        final ResourceFilterContainer container = new ResourceFilterContainer(1);
+    private ResourceContainer getResourceFilterContainer(final ItemStack stack) {
+        final ResourceContainer container = new ResourceContainer(1, ResourceContainerType.FILTER);
         container.setListener(() -> stack.getOrCreateTag().put(TAG_RESOURCE_FILTER_CONTAINER, container.toTag()));
         final CompoundTag tag = stack.getTagElement(TAG_RESOURCE_FILTER_CONTAINER);
         if (tag != null) {
@@ -99,12 +100,12 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     public OptionalLong getDesiredAmount(final ItemStack stack, final Object resource) {
-        final ResourceFilterContainer container = getResourceFilterContainer(stack);
-        final FilteredResource<?> filteredResource = container.get(0);
+        final ResourceContainer container = getResourceFilterContainer(stack);
+        final ResourceInstance<?> filteredResource = container.get(0);
         if (filteredResource == null) {
             return OptionalLong.empty();
         }
-        final boolean same = filteredResource.getValue().equals(resource);
+        final boolean same = filteredResource.getResource().equals(resource);
         if (!same) {
             return OptionalLong.empty();
         }
@@ -114,21 +115,21 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     public record RegulatorTooltipComponent(Component helpText,
-                                            @Nullable FilteredResource<?> filteredResource)
+                                            @Nullable ResourceInstance<?> filteredResource)
         implements TooltipComponent {
     }
 
     private static class ExtendedMenuProviderImpl implements ExtendedMenuProvider {
-        private final ResourceFilterContainer resourceFilterContainer;
+        private final ResourceContainer resourceContainer;
         private final double amount;
         private final Consumer<Double> amountAcceptor;
         private final PlayerSlotReference playerSlotReference;
 
-        private ExtendedMenuProviderImpl(final ResourceFilterContainer resourceFilterContainer,
+        private ExtendedMenuProviderImpl(final ResourceContainer resourceContainer,
                                          final double amount,
                                          final Consumer<Double> amountAcceptor,
                                          final PlayerSlotReference playerSlotReference) {
-            this.resourceFilterContainer = resourceFilterContainer;
+            this.resourceContainer = resourceContainer;
             this.amount = amount;
             this.amountAcceptor = amountAcceptor;
             this.playerSlotReference = playerSlotReference;
@@ -136,7 +137,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
 
         @Override
         public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-            AbstractSingleAmountContainerMenu.writeToBuf(buf, amount, resourceFilterContainer, playerSlotReference);
+            AbstractSingleAmountContainerMenu.writeToBuf(buf, amount, resourceContainer, playerSlotReference);
         }
 
         @Override
@@ -149,7 +150,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
             return new RegulatorUpgradeContainerMenu(
                 syncId,
                 player,
-                resourceFilterContainer,
+                resourceContainer,
                 amountAcceptor,
                 playerSlotReference
             );

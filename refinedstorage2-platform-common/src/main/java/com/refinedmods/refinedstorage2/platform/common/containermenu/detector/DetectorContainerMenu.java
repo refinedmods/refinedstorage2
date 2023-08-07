@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Cl
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 
 import javax.annotation.Nullable;
 
@@ -33,8 +33,8 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
     public DetectorContainerMenu(final int syncId,
                                  final Player player,
                                  final DetectorBlockEntity detector,
-                                 final ResourceFilterContainer resourceFilterContainer) {
-        super(Menus.INSTANCE.getDetector(), syncId, player, resourceFilterContainer, FILTER_HELP, null);
+                                 final ResourceContainer resourceContainer) {
+        super(Menus.INSTANCE.getDetector(), syncId, player, resourceContainer, FILTER_HELP, null);
         this.detector = detector;
         registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,

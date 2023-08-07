@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetw
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -46,9 +46,9 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final BlockPos pos,
                                               final BlockState state,
                                               final StorageNetworkNode<T> node,
-                                              final PlatformStorageChannelType<T> storageChannelType) {
+                                              final ResourceFactory<T> resourceFactory) {
         super(type, pos, state, node);
-        this.filter = FilterWithFuzzyModeBuilder.of(storageChannelType)
+        this.filter = FilterWithFuzzyModeBuilder.of(resourceFactory)
             .listener(this::setChanged)
             .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
                 templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
@@ -162,7 +162,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         return storageId;
     }
 
-    protected final ResourceFilterContainer getFilterContainer() {
+    protected final ResourceContainer getFilterContainer() {
         return filter.getFilterContainer();
     }
 

@@ -1,16 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
@@ -21,11 +18,11 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "amount");
 
-    private final ResourceFilterSlot slot;
+    private final ResourceSlot slot;
 
     public ResourceAmountScreen(final Screen parent,
                                 final Inventory playerInventory,
-                                final ResourceFilterSlot slot) {
+                                final ResourceSlot slot) {
         super(
             new DummyContainerMenu(slot),
             parent,
@@ -39,7 +36,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
                 .withAmountFieldPosition(new Vector3f(9, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
                 .withMinAmount(1L)
-                .withMaxAmount(getMaxAmount(slot))
+                .withMaxAmount(slot.getMaxAmount())
                 .withResetAmount(1L)
                 .build(),
             LongAmountOperations.INSTANCE
@@ -49,12 +46,8 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
         this.imageHeight = 99;
     }
 
-    private static long getInitialAmount(final ResourceFilterSlot slot) {
-        return slot.getFilteredResource() == null ? 0 : slot.getFilteredResource().getAmount();
-    }
-
-    private static long getMaxAmount(final ResourceFilterSlot slot) {
-        return slot.getFilteredResource() == null ? 0 : slot.getFilteredResource().getMaxAmount();
+    private static long getInitialAmount(final ResourceSlot slot) {
+        return slot.getContents() == null ? 0 : slot.getContents().getAmount();
     }
 
     @Override
@@ -67,33 +60,15 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
         return TEXTURE;
     }
 
-    @Override
-    protected boolean tryOpenResourceFilterAmountScreen(final Slot clickedSlot) {
-        return false;
-    }
-
-    @Override
-    protected void renderResourceFilterSlotAmount(final GuiGraphics graphics,
-                                                  final int x,
-                                                  final int y,
-                                                  final FilteredResource<?> filteredResource) {
-        // should not render amount here
-    }
-
-    public static class DummyContainerMenu extends AbstractContainerMenu {
-        protected DummyContainerMenu(final ResourceFilterSlot slot) {
+    public static class DummyContainerMenu extends AbstractResourceContainerMenu {
+        protected DummyContainerMenu(final ResourceSlot slot) {
             super(null, 0);
-            addSlot(slot.atPosition(89, 48));
+            addSlot(slot.forAmountScreen(89, 48));
         }
 
         @Override
-        public ItemStack quickMoveStack(final Player player, final int i) {
+        public ItemStack quickMoveStack(final Player player, final int slot) {
             return ItemStack.EMPTY;
-        }
-
-        @Override
-        public boolean stillValid(final Player player) {
-            return true;
         }
     }
 }

@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAm
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAmountStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
@@ -91,10 +91,10 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     }
 
     private void propagateAmount() {
-        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(0);
-        final long normalizedAmount = filteredResource == null
+        final ResourceInstance<?> resourceInstance = filter.getFilterContainer().get(0);
+        final long normalizedAmount = resourceInstance == null
             ? (long) amount
-            : filteredResource.getStorageChannelType().normalizeAmount(amount);
+            : resourceInstance.getStorageChannelType().normalizeAmount(amount);
         LOGGER.debug("Updating detector amount of {} normalized as {}", amount, normalizedAmount);
         getNode().setAmount(normalizedAmount);
     }

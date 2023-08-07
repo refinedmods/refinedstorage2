@@ -8,13 +8,15 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -26,11 +28,9 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -46,7 +46,10 @@ public class InterfaceBlockEntity
     private static final int EXPORT_SLOTS = 9;
 
     private final FilterWithFuzzyMode filter;
-    private final SimpleContainer exportedItems = new SimpleContainer(EXPORT_SLOTS);
+    private final ResourceContainer exportedItems = new ResourceContainer(
+        EXPORT_SLOTS,
+        ResourceContainerType.CONTAINER
+    );
     private final InterfaceExternalStorageProvider<ItemResource> externalStorageProvider;
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
@@ -61,10 +64,13 @@ public class InterfaceBlockEntity
         );
         getNode().setExportState(this);
         getNode().setTransferQuota(64);
-        this.filter = FilterWithFuzzyModeBuilder.of(EXPORT_SLOTS, 64, StorageChannelTypes.ITEM)
-            .listener(this::setChanged)
-            .build();
-        this.exportedItems.addListener(c -> setChanged());
+        this.filter = FilterWithFuzzyModeBuilder.of(
+            EXPORT_SLOTS,
+            PlatformApi.INSTANCE.getItemResourceFactory(),
+            ResourceContainerType.FILTER_WITH_AMOUNT,
+            ResourceInstance::getInterfaceExportLimit
+        ).listener(this::setChanged).build();
+        this.exportedItems.setListener(this::setChanged);
         this.externalStorageProvider = new InterfaceExternalStorageProviderImpl<>(getNode());
     }
 
@@ -75,14 +81,14 @@ public class InterfaceBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_EXPORT_ITEMS, exportedItems.createTag());
+        tag.put(TAG_EXPORT_ITEMS, exportedItems.toTag());
         filter.save(tag);
     }
 
     @Override
     public void load(final CompoundTag tag) {
         if (tag.contains(TAG_EXPORT_ITEMS)) {
-            exportedItems.fromTag(tag.getList(TAG_EXPORT_ITEMS, Tag.TAG_COMPOUND));
+            exportedItems.fromTag(tag.getCompound(TAG_EXPORT_ITEMS));
         }
         filter.load(tag);
         super.load(tag);
@@ -96,7 +102,7 @@ public class InterfaceBlockEntity
         filter.setFuzzyMode(fuzzyMode);
     }
 
-    public SimpleContainer getExportedItems() {
+    public ResourceContainer getExportedItems() {
         return exportedItems;
     }
 
@@ -109,6 +115,7 @@ public class InterfaceBlockEntity
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         filter.getFilterContainer().writeToUpdatePacket(buf);
+        exportedItems.writeToUpdatePacket(buf);
     }
 
     @Override
@@ -150,16 +157,19 @@ public class InterfaceBlockEntity
     @Nullable
     @Override
     public ItemResource getRequestedResource(final int index) {
-        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
-        if (!(filteredResource instanceof ItemFilteredResource itemFilteredResource)) {
+        final ResourceInstance<?> filteredResource = filter.getFilterContainer().get(index);
+        if (filteredResource == null) {
             return null;
         }
-        return itemFilteredResource.value();
+        if (!(filteredResource.getResource() instanceof ItemResource itemResource)) {
+            return null;
+        }
+        return itemResource;
     }
 
     @Override
     public long getRequestedResourceAmount(final int index) {
-        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
+        final ResourceInstance<?> filteredResource = filter.getFilterContainer().get(index);
         if (filteredResource == null) {
             return 0;
         }

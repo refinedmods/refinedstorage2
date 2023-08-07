@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -57,25 +58,28 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendResourceFilterSlotUpdate(final ServerPlayer player,
-                                                 @Nullable final PlatformStorageChannelType<T> storageChannelType,
-                                                 @Nullable final T resource,
-                                                 final long amount,
-                                                 final int slotIndex) {
-        sendToPlayer(player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
+    public <T> void sendResourceSlotUpdate(final ServerPlayer player,
+                                           @Nullable final ResourceInstance<T> resourceInstance,
+                                           final int slotIndex) {
+        sendToPlayer(player, PacketIds.RESOURCE_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
-            if (storageChannelType != null && resource != null) {
-                sendResourceFilterSlotUpdate(storageChannelType, resource, amount, buf);
+            if (resourceInstance != null) {
+                sendResourceSlotUpdate(
+                    resourceInstance.getStorageChannelType(),
+                    resourceInstance.getResource(),
+                    resourceInstance.getAmount(),
+                    buf
+                );
             } else {
                 buf.writeBoolean(false);
             }
         });
     }
 
-    private <T> void sendResourceFilterSlotUpdate(final PlatformStorageChannelType<T> storageChannelType,
-                                                  final T resource,
-                                                  final long amount,
-                                                  final FriendlyByteBuf buf) {
+    private <T> void sendResourceSlotUpdate(final PlatformStorageChannelType<T> storageChannelType,
+                                            final T resource,
+                                            final long amount,
+                                            final FriendlyByteBuf buf) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresentOrElse(id -> {
             buf.writeBoolean(true);
             buf.writeResourceLocation(id);

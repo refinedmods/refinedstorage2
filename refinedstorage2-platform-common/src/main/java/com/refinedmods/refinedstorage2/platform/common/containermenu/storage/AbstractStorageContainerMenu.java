@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
-public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu {
+public abstract class AbstractStorageContainerMenu extends AbstractResourceContainerMenu {
     protected AbstractStorageContainerMenu(final MenuType<?> type, final int syncId) {
         super(type, syncId);
         registerProperty(new ClientProperty<>(PropertyTypes.PRIORITY, 0));
@@ -54,6 +54,6 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
     }
 
     public boolean shouldDisplayFilterModeWarning() {
-        return getProperty(PropertyTypes.FILTER_MODE).getValue() == FilterMode.ALLOW && !isFilterConfigured();
+        return getProperty(PropertyTypes.FILTER_MODE).getValue() == FilterMode.ALLOW && areAllResourceSlotsEmpty();
     }
 }
