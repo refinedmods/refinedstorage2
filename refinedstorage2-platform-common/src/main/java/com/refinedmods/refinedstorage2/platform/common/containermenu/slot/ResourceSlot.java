@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,10 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
 
 public class ResourceSlot extends Slot implements SlotTooltip {
+    private static final SmallTextClientTooltipComponent CLICK_TO_CLEAR = new SmallTextClientTooltipComponent(
+        createTranslationAsHeading("gui", "filter_slot.click_to_clear")
+    );
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceSlot.class);
 
     private final ResourceContainer resourceContainer;
@@ -45,11 +50,26 @@ public class ResourceSlot extends Slot implements SlotTooltip {
         this.cachedResource = resourceContainer.get(index);
     }
 
-    public ResourceSlot atPosition(final int newX, final int newY) {
-        return new ResourceSlot(resourceContainer, index, helpText, newX, newY);
+    public ResourceSlot forAmountScreen(final int newX, final int newY) {
+        return new ResourceSlot(resourceContainer, index, helpText, newX, newY) {
+            @Override
+            public boolean canModifyAmount() {
+                return false;
+            }
+
+            @Override
+            public boolean shouldRenderAmount() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+        };
     }
 
-    public boolean supportsAmount() {
+    public boolean shouldRenderAmount() {
         return resourceContainer.supportsAmount();
     }
 
@@ -59,6 +79,10 @@ public class ResourceSlot extends Slot implements SlotTooltip {
 
     public boolean supportsItemSlotInteractions() {
         return resourceContainer.supportsItemSlotInteractions();
+    }
+
+    public boolean isDisabled() {
+        return false;
     }
 
     @Nullable
@@ -162,13 +186,16 @@ public class ResourceSlot extends Slot implements SlotTooltip {
             .map(Component::getVisualOrderText)
             .map(ClientTooltipComponent::create)
             .collect(Collectors.toList());
-        tooltip.add(ClientTooltipComponent.create(
-            createTranslationAsHeading("gui", "filter_slot.click_to_clear").getVisualOrderText()
-        ));
+        if (!isDisabled()) {
+            tooltip.add(CLICK_TO_CLEAR);
+        }
         return tooltip;
     }
 
     private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
+        if (isDisabled()) {
+            return Collections.emptyList();
+        }
         final List<ClientTooltipComponent> tooltip = new ArrayList<>();
         tooltip.add(ClientTooltipComponent.create(
             createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()

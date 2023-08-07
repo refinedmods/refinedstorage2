@@ -1,10 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -62,24 +60,10 @@ public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScr
         return TEXTURE;
     }
 
-    @Override
-    protected boolean tryOpenResourceAmountScreen(final ResourceSlot clickedSlot) {
-        return false;
-    }
-
-    @Override
-    protected <R> void renderResourceSlotAmount(final GuiGraphics graphics,
-                                                final int x,
-                                                final int y,
-                                                final long amount,
-                                                final ResourceRendering<R> rendering) {
-        // should not render amount here
-    }
-
     public static class DummyContainerMenu extends AbstractResourceContainerMenu {
         protected DummyContainerMenu(final ResourceSlot slot) {
             super(null, 0);
-            addSlot(slot.atPosition(89, 48));
+            addSlot(slot.forAmountScreen(89, 48));
         }
 
         @Override

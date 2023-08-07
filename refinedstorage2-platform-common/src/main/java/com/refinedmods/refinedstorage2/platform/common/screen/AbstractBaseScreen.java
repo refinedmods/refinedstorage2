@@ -79,7 +79,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             leftPos + slot.x,
             topPos + slot.y,
             resourceInstance,
-            slot.supportsAmount()
+            slot.shouldRenderAmount()
         );
     }
 
@@ -87,21 +87,21 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                                         final int x,
                                         final int y,
                                         final ResourceInstance<R> resourceInstance,
-                                        final boolean supportsAmount) {
+                                        final boolean renderAmount) {
         final ResourceRendering<R> rendering = PlatformApi.INSTANCE.getResourceRendering(
             resourceInstance.getResource()
         );
         rendering.render(resourceInstance.getResource(), graphics, x, y);
-        if (supportsAmount) {
+        if (renderAmount) {
             renderResourceSlotAmount(graphics, x, y, resourceInstance.getAmount(), rendering);
         }
     }
 
-    protected <R> void renderResourceSlotAmount(final GuiGraphics graphics,
-                                                final int x,
-                                                final int y,
-                                                final long amount,
-                                                final ResourceRendering<R> rendering) {
+    private <R> void renderResourceSlotAmount(final GuiGraphics graphics,
+                                              final int x,
+                                              final int y,
+                                              final long amount,
+                                              final ResourceRendering<R> rendering) {
         renderAmount(
             graphics,
             x,
@@ -152,6 +152,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
         if (hoveredSlot instanceof ResourceSlot resourceSlot
             && !resourceSlot.supportsItemSlotInteractions()
+            && !resourceSlot.isDisabled()
             && getMenu() instanceof AbstractResourceContainerMenu containerMenu) {
             if (!tryOpenResourceAmountScreen(resourceSlot)) {
                 containerMenu.sendResourceSlotChange(hoveredSlot.index, clickedButton == 1);
@@ -161,7 +162,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    protected boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
+    private boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
         final boolean isFilterSlot = slot.getContents() != null;
         final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
