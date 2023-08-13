@@ -4,15 +4,15 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
@@ -160,14 +160,10 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerExternalStorageProviderFactories() {
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new ItemHandlerPlatformExternalStorageProviderFactory());
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.ITEM,
-            new ItemHandlerPlatformExternalStorageProviderFactory()
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.FLUID,
-            new FluidHandlerPlatformExternalStorageProviderFactory()
-        );
+            new FluidHandlerPlatformExternalStorageProviderFactory());
     }
 
     private void registerContent() {
@@ -284,7 +280,7 @@ public class ModInitializer extends AbstractModInitializer {
             registerItemHandler(e, diskDriveBlockEntity, AbstractDiskDriveBlockEntity::getDiskInventory);
         }
         if (e.getObject() instanceof InterfaceBlockEntity interfaceBlockEntity) {
-            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedItems);
+            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedResources);
         }
     }
 

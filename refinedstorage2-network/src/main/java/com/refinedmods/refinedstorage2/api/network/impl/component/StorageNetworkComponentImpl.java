@@ -3,11 +3,13 @@ package com.refinedmods.refinedstorage2.api.network.impl.component;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -69,5 +71,17 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     @Override
     public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
         return (StorageChannel<T>) channels.get(type);
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public boolean hasSource(final Predicate<Storage<?>> matcher) {
+        for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
+            final StorageChannel storageChannel = entry.getValue();
+            if (storageChannel.hasSource(matcher)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
@@ -70,15 +71,15 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private void tryRenderResourceSlot(final GuiGraphics graphics, final ResourceSlot slot) {
-        final ResourceInstance<?> resourceInstance = slot.getContents();
-        if (resourceInstance == null) {
+        final ResourceAmountTemplate<?> resourceAmount = slot.getResourceAmount();
+        if (resourceAmount == null) {
             return;
         }
         renderResourceSlot(
             graphics,
             leftPos + slot.x,
             topPos + slot.y,
-            resourceInstance,
+            resourceAmount,
             slot.shouldRenderAmount()
         );
     }
@@ -86,14 +87,14 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     private <R> void renderResourceSlot(final GuiGraphics graphics,
                                         final int x,
                                         final int y,
-                                        final ResourceInstance<R> resourceInstance,
+                                        final ResourceAmountTemplate<R> resourceAmount,
                                         final boolean renderAmount) {
         final ResourceRendering<R> rendering = PlatformApi.INSTANCE.getResourceRendering(
-            resourceInstance.getResource()
+            resourceAmount.getResource()
         );
-        rendering.render(resourceInstance.getResource(), graphics, x, y);
+        rendering.render(resourceAmount.getResource(), graphics, x, y);
         if (renderAmount) {
-            renderResourceSlotAmount(graphics, x, y, resourceInstance.getAmount(), rendering);
+            renderResourceSlotAmount(graphics, x, y, resourceAmount.getAmount(), rendering);
         }
     }
 
@@ -163,7 +164,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
-        final boolean isFilterSlot = slot.getContents() != null;
+        final boolean isFilterSlot = slot.getResourceAmount() != null;
         final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
@@ -176,7 +177,9 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Nullable
-    public ResourceInstance<?> getHoveredResource() {
-        return hoveredSlot instanceof ResourceSlot resourceSlot ? resourceSlot.getContents() : null;
+    public ResourceTemplate<?> getHoveredResource() {
+        return hoveredSlot instanceof ResourceSlot resourceSlot && resourceSlot.getResourceAmount() != null
+            ? resourceSlot.getResourceAmount().getResourceTemplate()
+            : null;
     }
 }

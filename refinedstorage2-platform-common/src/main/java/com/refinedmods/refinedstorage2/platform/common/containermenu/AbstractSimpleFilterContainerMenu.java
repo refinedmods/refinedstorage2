@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeConta
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,7 +45,7 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
         registerClientProperties();
         addSlots(
             player,
-            new ResourceContainer(9, ResourceContainerType.FILTER),
+            ResourceContainer.createForFilter(),
             new UpgradeContainer(upgradeDestination, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         initializeResourceSlots(buf);

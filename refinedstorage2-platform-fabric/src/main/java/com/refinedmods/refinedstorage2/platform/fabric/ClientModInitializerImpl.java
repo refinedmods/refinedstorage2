@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -235,7 +235,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             if (data instanceof HelpTooltipComponent component) {
                 return HelpClientTooltipComponent.create(component.text());
             }
-            if (data instanceof RegulatorUpgradeItem.RegulatorTooltipComponent component) {
+            if (data instanceof RegulatorUpgradeItem.RegulatorTooltipComponent<?> component) {
                 final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
                 return component.filteredResource() == null
                     ? help
@@ -245,8 +245,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         });
     }
 
-    private CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final ResourceInstance<?> filteredResource,
+    private <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmountTemplate<T> filteredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(

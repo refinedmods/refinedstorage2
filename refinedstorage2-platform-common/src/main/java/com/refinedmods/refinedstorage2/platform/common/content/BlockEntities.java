@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
@@ -12,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.Exp
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;

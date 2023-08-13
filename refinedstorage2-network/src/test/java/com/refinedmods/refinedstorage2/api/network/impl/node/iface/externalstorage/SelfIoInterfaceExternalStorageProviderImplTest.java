@@ -5,10 +5,12 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.Ext
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExportStateImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SetupNetwork
 class SelfIoInterfaceExternalStorageProviderImplTest {
     @AddNetworkNode
-    InterfaceNetworkNode<String> iface;
+    InterfaceNetworkNode iface;
     InterfaceExportStateImpl exportState;
     @AddNetworkNode
     ExternalStorageNetworkNode connection;
@@ -29,10 +31,11 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
     void setUp() {
         exportState = new InterfaceExportStateImpl(2);
         iface.setExportState(exportState);
-        iface.setTransferQuota(100);
-        connection.initialize(new ExternalStorageProviderFactoryImpl(
-            new InterfaceExternalStorageProviderImpl<>(iface)
-        ));
+        iface.setTransferQuotaProvider(resource -> 100);
+        connection.initialize(new ExternalStorageProviderFactoryImpl(new InterfaceExternalStorageProviderImpl<>(
+            iface,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE
+        )));
     }
 
     // We don't allow self-insertions and self-extractions for the same reasons mentioned in
@@ -52,11 +55,13 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
         connection.detectChanges();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isEqualTo("B");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(0)).isEqualTo(15);
+        assertThat(exportState.getExportedResource(0)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("B", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(0)).isEqualTo(15);
 
-        assertThat(exportState.getCurrentlyExportedResource(1)).isNull();
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isZero();
+        assertThat(exportState.getExportedResource(1)).isNull();
+        assertThat(exportState.getExportedAmount(1)).isZero();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("B", 15)

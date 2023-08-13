@@ -58,13 +58,18 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public long getInterfaceExportLimit(final FluidResource resource) {
-        return Platform.INSTANCE.getBucketAmount() * 16;
+    public long normalizeAmount(final double amount) {
+        return (long) (amount * Platform.INSTANCE.getBucketAmount());
     }
 
     @Override
-    public long normalizeAmount(final double amount) {
-        return (long) (amount * Platform.INSTANCE.getBucketAmount());
+    public double getDisplayAmount(final long amount) {
+        return amount / (double) Platform.INSTANCE.getBucketAmount();
+    }
+
+    @Override
+    public long getInterfaceExportLimit(final FluidResource resource) {
+        return Platform.INSTANCE.getBucketAmount() * 16;
     }
 
     @Override

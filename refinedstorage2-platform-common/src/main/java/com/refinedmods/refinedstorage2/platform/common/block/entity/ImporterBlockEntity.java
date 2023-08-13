@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.CompositeImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
@@ -12,12 +11,12 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
 import java.util.function.LongSupplier;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -53,14 +52,11 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-
-        this.filter = FilterWithFuzzyModeBuilder.of()
-            .listener(this::setChanged)
-            .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
-                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
-            ))
-            .build();
-
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+            ResourceContainer.createForFilter(),
+            this::setChanged,
+            templates -> getNode().setFilterTemplates(templates)
+        );
         getNode().setNormalizer(filter.createNormalizer());
     }
 

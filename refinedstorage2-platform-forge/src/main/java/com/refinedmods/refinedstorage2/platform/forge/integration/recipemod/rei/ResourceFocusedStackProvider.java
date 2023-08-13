@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei;
 
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
 import dev.architectury.event.CompoundEventResult;
@@ -22,11 +22,11 @@ public class ResourceFocusedStackProvider implements FocusedStackProvider {
         if (!(screen instanceof AbstractBaseScreen<?> baseScreen)) {
             return CompoundEventResult.pass();
         }
-        final ResourceInstance<?> resourceInstance = baseScreen.getHoveredResource();
-        if (resourceInstance == null) {
+        final ResourceTemplate<?> hoveredResource = baseScreen.getHoveredResource();
+        if (hoveredResource == null) {
             return CompoundEventResult.pass();
         }
-        final Object converted = converter.convertToIngredient(resourceInstance).orElse(null);
+        final Object converted = converter.convertToIngredient(hoveredResource).orElse(null);
         if (converted instanceof EntryStack<?> stack) {
             return CompoundEventResult.interruptTrue(stack);
         }

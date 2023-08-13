@@ -2,11 +2,13 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SetupNetwork
 class ClearSlotInterfaceNetworkNodeTest {
     @AddNetworkNode
-    InterfaceNetworkNode<String> sut;
+    InterfaceNetworkNode sut;
 
     private InterfaceExportStateImpl exportState;
 
@@ -26,7 +28,7 @@ class ClearSlotInterfaceNetworkNodeTest {
     void setUp() {
         exportState = new InterfaceExportStateImpl(3);
         sut.setExportState(exportState);
-        sut.setTransferQuota(2);
+        sut.setTransferQuotaProvider(resource -> 2);
         sut.setEnergyUsage(5);
     }
 
@@ -42,10 +44,12 @@ class ClearSlotInterfaceNetworkNodeTest {
 
         // Act & assert
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(5);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(5);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -54,10 +58,12 @@ class ClearSlotInterfaceNetworkNodeTest {
             );
 
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(3);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(3);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -66,10 +72,12 @@ class ClearSlotInterfaceNetworkNodeTest {
             );
 
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(1);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(1);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -78,9 +86,9 @@ class ClearSlotInterfaceNetworkNodeTest {
             );
 
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).isNull();
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -91,9 +99,9 @@ class ClearSlotInterfaceNetworkNodeTest {
         sut.doWork();
         sut.doWork();
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).isNull();
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -113,19 +121,23 @@ class ClearSlotInterfaceNetworkNodeTest {
 
         // Act & assert
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(5);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(5);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 2));
 
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(4);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(4);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 3));
@@ -133,10 +145,12 @@ class ClearSlotInterfaceNetworkNodeTest {
         sut.doWork();
         sut.doWork();
         sut.doWork();
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(4);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(4);
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 3));
@@ -153,10 +167,12 @@ class ClearSlotInterfaceNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(7);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(7);
+        assertThat(exportState.getExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll()).isEmpty();
     }

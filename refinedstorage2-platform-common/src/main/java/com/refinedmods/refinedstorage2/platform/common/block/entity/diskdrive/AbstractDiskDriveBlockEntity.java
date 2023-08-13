@@ -4,22 +4,20 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiS
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -78,12 +76,11 @@ public abstract class AbstractDiskDriveBlockEntity
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
-        this.filter = FilterWithFuzzyModeBuilder.of()
-            .listener(this::setChanged)
-            .uniqueTemplatesAcceptor(templates -> getNode().setFilterTemplates(
-                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
-            ))
-            .build();
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+            ResourceContainer.createForFilter(),
+            this::setChanged,
+            templates -> getNode().setFilterTemplates(templates)
+        );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
             filter,

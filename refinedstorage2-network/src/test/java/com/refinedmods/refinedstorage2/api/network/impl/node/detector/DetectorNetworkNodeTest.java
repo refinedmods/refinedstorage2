@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.detector;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
@@ -42,7 +42,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutNetwork() {
         // Act
-        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setNetwork(null);
 
         // Assert
@@ -55,7 +55,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutActiveness() {
         // Act
-        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setActive(false);
 
         // Assert
@@ -78,7 +78,7 @@ class DetectorNetworkNodeTest {
     @EnumSource(DetectorMode.class)
     void testWithTemplateButWithoutResourceInNetwork(final DetectorMode mode) {
         // Arrange
-        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
 
         // Act
@@ -121,7 +121,7 @@ class DetectorNetworkNodeTest {
                    final boolean expectedActivated,
                    @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
-        sut.setFilterTemplate(new TypedTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
         sut.setAmount(comparisonAmount);
 

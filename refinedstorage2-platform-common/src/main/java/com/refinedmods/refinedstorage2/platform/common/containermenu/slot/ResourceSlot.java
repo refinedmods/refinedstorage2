@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -18,6 +18,8 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -30,27 +32,38 @@ public class ResourceSlot extends Slot implements SlotTooltip {
     private static final SmallTextClientTooltipComponent CLICK_TO_CLEAR = new SmallTextClientTooltipComponent(
         createTranslationAsHeading("gui", "filter_slot.click_to_clear")
     );
-
+    private static final ClientTooltipComponent EMPTY_FILTER = ClientTooltipComponent.create(
+        createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
+    );
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceSlot.class);
 
     private final ResourceContainer resourceContainer;
     private final Component helpText;
     @Nullable
-    private ResourceInstance<?> cachedResource;
+    private ResourceAmountTemplate<?> cachedResource;
 
     public ResourceSlot(final ResourceContainer resourceContainer,
                         final int index,
                         final Component helpText,
                         final int x,
                         final int y) {
-        super(resourceContainer, index, x, y);
+        this(resourceContainer, new SimpleContainer(resourceContainer.size()), index, helpText, x, y);
+    }
+
+    public ResourceSlot(final ResourceContainer resourceContainer,
+                        final Container resourceContainerAsContainer,
+                        final int index,
+                        final Component helpText,
+                        final int x,
+                        final int y) {
+        super(resourceContainerAsContainer, index, x, y);
         this.resourceContainer = resourceContainer;
         this.helpText = helpText;
         this.cachedResource = resourceContainer.get(index);
     }
 
     public ResourceSlot forAmountScreen(final int newX, final int newY) {
-        return new ResourceSlot(resourceContainer, index, helpText, newX, newY) {
+        return new ResourceSlot(resourceContainer, container, index, helpText, newX, newY) {
             @Override
             public boolean canModifyAmount() {
                 return false;
@@ -85,27 +98,19 @@ public class ResourceSlot extends Slot implements SlotTooltip {
     }
 
     @Nullable
-    public ResourceInstance<?> getContents() {
+    public ResourceAmountTemplate<?> getResourceAmount() {
         return resourceContainer.get(getContainerSlot());
     }
 
-    public long getMaxAmount() {
-        final ResourceInstance<?> contents = getContents();
-        if (contents == null) {
-            return 0;
-        }
-        return resourceContainer.getMaxAmount(contents);
-    }
-
     public boolean isEmpty() {
-        return getContents() == null;
+        return getResourceAmount() == null;
     }
 
     public void change(final ItemStack stack, final boolean tryAlternatives) {
         resourceContainer.change(getContainerSlot(), stack, tryAlternatives);
     }
 
-    public <T> void change(@Nullable final ResourceInstance<T> instance) {
+    public <T> void change(@Nullable final ResourceAmountTemplate<T> instance) {
         if (instance == null) {
             resourceContainer.remove(getContainerSlot());
         } else {
@@ -114,8 +119,7 @@ public class ResourceSlot extends Slot implements SlotTooltip {
     }
 
     public boolean changeIfEmpty(final ItemStack stack) {
-        final ResourceInstance<?> existing = getContents();
-        if (existing != null) {
+        if (!isEmpty()) {
             return false;
         }
         resourceContainer.change(getContainerSlot(), stack, false);
@@ -126,26 +130,33 @@ public class ResourceSlot extends Slot implements SlotTooltip {
         resourceContainer.setAmount(getContainerSlot(), amount);
     }
 
-    public void changeAmountOnClient(final long amount) {
-        Platform.INSTANCE.getClientToServerCommunications().sendResourceSlotAmountChange(index, amount);
+    public void changeAmountOnClient(final double amount) {
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        if (resourceAmount == null) {
+            return;
+        }
+        final long normalizedAmount = resourceAmount.getStorageChannelType().normalizeAmount(amount);
+        Platform.INSTANCE.getClientToServerCommunications().sendResourceSlotAmountChange(index, normalizedAmount);
     }
 
     public boolean contains(final ItemStack stack) {
-        final ResourceInstance<?> instance = getContents();
-        return instance != null && ItemStack.matches(stack, instance.getStackRepresentation());
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        return resourceAmount != null && ItemStack.matches(stack, resourceAmount.getStackRepresentation());
     }
 
     public void broadcastChanges(final Player player) {
-        final ResourceInstance<?> currentResource = getContents();
-        if (!Objects.equals(currentResource, cachedResource)) {
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        if (!Objects.equals(resourceAmount, cachedResource)) {
             LOGGER.debug("Resource slot {} has changed", getContainerSlot());
-            this.cachedResource = currentResource;
-            broadcastChange((ServerPlayer) player, currentResource);
+            this.cachedResource = resourceAmount;
+            broadcastChange((ServerPlayer) player, resourceAmount);
         }
     }
 
-    private <T> void broadcastChange(final ServerPlayer player, @Nullable final ResourceInstance<T> resourceInstance) {
-        Platform.INSTANCE.getServerToClientCommunications().sendResourceSlotUpdate(player, resourceInstance, index);
+    private <T> void broadcastChange(final ServerPlayer player,
+                                     @Nullable final ResourceAmountTemplate<T> contents) {
+        Platform.INSTANCE.getServerToClientCommunications()
+            .sendResourceSlotUpdate(player, contents, index);
     }
 
     public void readFromUpdatePacket(final FriendlyByteBuf buf) {
@@ -159,45 +170,57 @@ public class ResourceSlot extends Slot implements SlotTooltip {
 
     @Override
     public boolean mayPlace(final ItemStack stack) {
-        return resourceContainer.supportsItemSlotInteractions();
+        return resourceContainer.supportsItemSlotInteractions()
+            && container.canPlaceItem(getContainerSlot(), stack);
+    }
+
+    public double getDisplayAmount() {
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        if (resourceAmount == null) {
+            return 0;
+        }
+        return resourceAmount.getStorageChannelType().getDisplayAmount(resourceAmount.getAmount());
+    }
+
+    public double getMaxAmountWhenModifying() {
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        if (resourceAmount == null) {
+            return 0;
+        }
+        return resourceContainer.getMaxAmount(resourceAmount);
     }
 
     @Override
     public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
-        if (resourceContainer.supportsItemSlotInteractions()) {
-            return Collections.emptyList();
-        }
-        final ResourceInstance<?> resourceInstance = getContents();
-        if (resourceInstance == null) {
+        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        if (resourceAmount == null) {
             return getTooltipForEmptySlot(carried);
         }
-        return getClientTooltipComponents(resourceInstance);
+        return getTooltipForResource(resourceAmount);
     }
 
-    private <T> List<ClientTooltipComponent> getClientTooltipComponents(final ResourceInstance<T> resourceInstance) {
+    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
+        if (isDisabled() || supportsItemSlotInteractions()) {
+            return Collections.emptyList();
+        }
+        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
+        tooltip.add(EMPTY_FILTER);
+        tooltip.addAll(resourceContainer.getHelpTooltip(carried));
+        tooltip.add(HelpClientTooltipComponent.create(helpText));
+        return tooltip;
+    }
+
+    private <T> List<ClientTooltipComponent> getTooltipForResource(final ResourceAmountTemplate<T> contents) {
         final List<ClientTooltipComponent> tooltip = PlatformApi.INSTANCE
-            .getResourceRendering(resourceInstance.getResource())
-            .getTooltip(resourceInstance.getResource())
+            .getResourceRendering(contents.getResource())
+            .getTooltip(contents.getResource())
             .stream()
             .map(Component::getVisualOrderText)
             .map(ClientTooltipComponent::create)
             .collect(Collectors.toList());
-        if (!isDisabled()) {
+        if (!isDisabled() && !supportsItemSlotInteractions()) {
             tooltip.add(CLICK_TO_CLEAR);
         }
-        return tooltip;
-    }
-
-    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
-        if (isDisabled()) {
-            return Collections.emptyList();
-        }
-        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
-        tooltip.add(ClientTooltipComponent.create(
-            createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
-        ));
-        tooltip.addAll(resourceContainer.getHelpTooltip(carried));
-        tooltip.add(HelpClientTooltipComponent.create(helpText));
         return tooltip;
     }
 }

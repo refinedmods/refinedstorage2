@@ -1,14 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
@@ -61,19 +60,19 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-        return Optional.of(new RegulatorTooltipComponent(HELP, getFilteredResource(stack)));
+        return Optional.of(new RegulatorTooltipComponent<>(HELP, getFilteredResource(stack)));
     }
 
     @Nullable
-    private ResourceInstance<?> getFilteredResource(final ItemStack stack) {
+    private ResourceAmountTemplate<?> getFilteredResource(final ItemStack stack) {
         final ResourceContainer container = getResourceFilterContainer(stack);
-        final ResourceInstance<?> resourceInstance = container.get(0);
-        if (resourceInstance == null) {
+        final ResourceAmountTemplate<?> resourceAmount = container.get(0);
+        if (resourceAmount == null) {
             return null;
         }
         final double amount = getAmount(stack);
-        final long normalizedAmount = resourceInstance.getStorageChannelType().normalizeAmount(amount);
-        return resourceInstance.withAmount(normalizedAmount);
+        final long normalizedAmount = resourceAmount.getStorageChannelType().normalizeAmount(amount);
+        return resourceAmount.withAmount(normalizedAmount);
     }
 
     public double getAmount(final ItemStack stack) {
@@ -85,7 +84,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     private ResourceContainer getResourceFilterContainer(final ItemStack stack) {
-        final ResourceContainer container = new ResourceContainer(1, ResourceContainerType.FILTER);
+        final ResourceContainer container = ResourceContainer.createForFilter(1);
         container.setListener(() -> stack.getOrCreateTag().put(TAG_RESOURCE_FILTER_CONTAINER, container.toTag()));
         final CompoundTag tag = stack.getTagElement(TAG_RESOURCE_FILTER_CONTAINER);
         if (tag != null) {
@@ -101,7 +100,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
 
     public OptionalLong getDesiredAmount(final ItemStack stack, final Object resource) {
         final ResourceContainer container = getResourceFilterContainer(stack);
-        final ResourceInstance<?> filteredResource = container.get(0);
+        final ResourceAmountTemplate<?> filteredResource = container.get(0);
         if (filteredResource == null) {
             return OptionalLong.empty();
         }
@@ -114,8 +113,8 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         return OptionalLong.of(normalizedAmount);
     }
 
-    public record RegulatorTooltipComponent(Component helpText,
-                                            @Nullable ResourceInstance<?> filteredResource)
+    public record RegulatorTooltipComponent<T>(Component helpText,
+                                               @Nullable ResourceAmountTemplate<T> filteredResource)
         implements TooltipComponent {
     }
 

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.integration.recipemod.jei;
 
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
 
 import java.util.Optional;
 
@@ -23,13 +23,13 @@ public class ResourceIngredientConverter implements IngredientConverter {
 
     @Override
     public Optional<Object> convertToIngredient(final Object resource) {
-        if (!(resource instanceof ResourceInstance<?> resourceInstance)) {
+        if (!(resource instanceof ResourceTemplate<?> resourceTemplate)) {
             return Optional.empty();
         }
-        if (resourceInstance.getResource() instanceof ItemResource itemResource) {
+        if (resourceTemplate.resource() instanceof ItemResource itemResource) {
             return Optional.of(itemResource.toItemStack());
         }
-        if (resourceInstance.getResource() instanceof FluidResource fluidResource) {
+        if (resourceTemplate.resource() instanceof FluidResource fluidResource) {
             return Optional.of(fluidHelper.create(
                 fluidResource.fluid(),
                 fluidHelper.bucketVolume(),

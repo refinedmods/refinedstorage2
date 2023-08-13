@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.detector;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 
 import javax.annotation.Nullable;
 
@@ -11,7 +11,7 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
     private long amount;
     private DetectorMode mode = DetectorMode.EQUAL;
     @Nullable
-    private TypedTemplate<?> template;
+    private ResourceTemplate<?> template;
     @Nullable
     private DetectorAmountStrategy amountStrategy;
 
@@ -24,7 +24,7 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public <T> void setFilterTemplate(@Nullable final TypedTemplate<T> filterTemplate) {
+    public <T> void setFilterTemplate(@Nullable final ResourceTemplate<T> filterTemplate) {
         this.template = filterTemplate;
     }
 
