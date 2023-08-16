@@ -6,9 +6,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Abs
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
-
-import java.util.Collections;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -33,12 +30,7 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-        addSlots(player, new ResourceContainer(
-            9,
-            ResourceContainerType.FILTER,
-            resourceFactory,
-            Collections.emptySet()
-        ));
+        addSlots(player, ResourceContainer.createForFilter(resourceFactory));
         initializeResourceSlots(buf);
     }
 

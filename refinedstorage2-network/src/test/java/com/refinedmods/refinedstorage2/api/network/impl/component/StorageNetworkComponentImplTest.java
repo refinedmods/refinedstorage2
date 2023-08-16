@@ -93,4 +93,22 @@ class StorageNetworkComponentImplTest {
         assertThat(resourcesPre).isNotEmpty();
         assertThat(resourcesPost).isEmpty();
     }
+
+    @Test
+    void testHasSource() {
+        // Arrange
+        sut.onContainerAdded(storage1Container);
+
+        // Act
+        final boolean found = sut.hasSource(
+            s -> s == storage1.getStorageForChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE).get()
+        );
+        final boolean found2 = sut.hasSource(
+            s -> s == storage2.getStorageForChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE).get()
+        );
+
+        // Assert
+        assertThat(found).isTrue();
+        assertThat(found2).isFalse();
+    }
 }

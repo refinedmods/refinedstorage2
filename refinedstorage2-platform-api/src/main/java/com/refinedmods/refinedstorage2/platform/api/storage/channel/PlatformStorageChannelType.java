@@ -32,8 +32,6 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
 
     boolean isGridResourceBelonging(GridResource gridResource);
 
-    long getInterfaceExportLimit(T resource);
-
     MutableComponent getTitle();
 
     ResourceLocation getTextureIdentifier();
@@ -43,4 +41,8 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
     int getYTexture();
 
     long normalizeAmount(double amount);
+
+    double getDisplayAmount(long amount);
+
+    long getInterfaceExportLimit(T resource);
 }

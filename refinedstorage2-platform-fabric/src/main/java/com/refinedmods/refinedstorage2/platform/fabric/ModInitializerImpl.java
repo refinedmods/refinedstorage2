@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -170,26 +170,19 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExternalStorageProviderFactories() {
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
             StorageChannelTypes.ITEM,
-            new InterfacePlatformExternalStorageProviderFactory()
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.ITEM,
-            new StoragePlatformExternalStorageProviderFactory<>(
-                ItemStorage.SIDED,
-                VariantUtil::ofItemVariant,
-                VariantUtil::toItemVariant
-            )
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            ItemStorage.SIDED,
+            VariantUtil::ofItemVariant,
+            VariantUtil::toItemVariant
+        ));
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
             StorageChannelTypes.FLUID,
-            new StoragePlatformExternalStorageProviderFactory<>(
-                FluidStorage.SIDED,
-                VariantUtil::ofFluidVariant,
-                VariantUtil::toFluidVariant
-            )
-        );
+            FluidStorage.SIDED,
+            VariantUtil::ofFluidVariant,
+            VariantUtil::toFluidVariant
+        ));
     }
 
     private void registerContent() {
@@ -272,7 +265,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerItemStorage(
             InterfaceBlockEntity.class::isInstance,
             InterfaceBlockEntity.class::cast,
-            InterfaceBlockEntity::getExportedItems,
+            InterfaceBlockEntity::getExportedResources,
             BlockEntities.INSTANCE.getInterface()
         );
         registerControllerEnergy();

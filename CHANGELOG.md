@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The Interface now supports fluids.
+
 ### Fixed
 
 - Fixed filter slot hints not being aware of the resource types that they can show in a slot.

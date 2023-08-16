@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Sto
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         addSlots(
             playerInventory.player,
             new SimpleContainer(AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS),
-            new ResourceContainer(9, ResourceContainerType.FILTER)
+            ResourceContainer.createForFilter()
         );
         initializeResourceSlots(buf);
     }

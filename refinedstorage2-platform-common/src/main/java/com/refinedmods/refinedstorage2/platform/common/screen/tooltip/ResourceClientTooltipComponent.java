@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.tooltip;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 
 import java.util.Objects;
@@ -13,12 +13,12 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 
 public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent {
-    private final ResourceInstance<T> resourceInstance;
+    private final ResourceAmountTemplate<T> resourceAmount;
     private final Component name;
 
-    public ResourceClientTooltipComponent(final ResourceInstance<T> resourceInstance) {
-        this.resourceInstance = resourceInstance;
-        this.name = getNameWithAmount(resourceInstance);
+    public ResourceClientTooltipComponent(final ResourceAmountTemplate<T> resourceAmount) {
+        this.resourceAmount = resourceAmount;
+        this.name = getNameWithAmount(resourceAmount);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent
 
     @Override
     public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
-        PlatformApi.INSTANCE.getResourceRendering(resourceInstance.getResource()).render(
-            resourceInstance.getResource(),
+        PlatformApi.INSTANCE.getResourceRendering(resourceAmount.getResource()).render(
+            resourceAmount.getResource(),
             graphics,
             x,
             y
@@ -48,12 +48,12 @@ public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent
         );
     }
 
-    private static <T> Component getNameWithAmount(final ResourceInstance<T> resourceInstance) {
+    private static <T> Component getNameWithAmount(final ResourceAmountTemplate<T> resourceAmount) {
         final ResourceRendering<T> rendering = PlatformApi.INSTANCE.getResourceRendering(
-            resourceInstance.getResource()
+            resourceAmount.getResource()
         );
-        final String amount = rendering.getDisplayedAmount(resourceInstance.getAmount());
-        final Component displayName = rendering.getDisplayName(resourceInstance.getResource());
+        final String amount = rendering.getDisplayedAmount(resourceAmount.getAmount());
+        final Component displayName = rendering.getDisplayName(resourceAmount.getResource());
         if (amount.isEmpty()) {
             return displayName;
         }

@@ -4,15 +4,15 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAm
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAmountStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import javax.annotation.Nullable;
@@ -50,17 +50,20 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         super(BlockEntities.INSTANCE.getDetector(), pos, state, new DetectorNetworkNode(
             Platform.INSTANCE.getConfig().getDetector().getEnergyUsage()
         ));
-        this.filter = FilterWithFuzzyModeBuilder.of(1)
-            .listener(() -> {
+        final ResourceContainer resourceContainer = ResourceContainer.createForFilter(1);
+        this.filter = FilterWithFuzzyMode.createAndListenForTemplates(
+            resourceContainer,
+            () -> {
                 propagateAmount();
                 setChanged();
-            })
-            .templatesAcceptor(templates -> getNode().setFilterTemplate(
+            },
+            templates -> getNode().setFilterTemplate(
                 templates.isEmpty() ? null : templates.get(0)
-            ))
-            .build();
+            )
+        );
         initialize();
     }
+
 
     @Override
     public void saveAdditional(final CompoundTag tag) {
@@ -91,10 +94,10 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     }
 
     private void propagateAmount() {
-        final ResourceInstance<?> resourceInstance = filter.getFilterContainer().get(0);
-        final long normalizedAmount = resourceInstance == null
+        final ResourceAmountTemplate<?> resourceAmount = filter.getFilterContainer().get(0);
+        final long normalizedAmount = resourceAmount == null
             ? (long) amount
-            : resourceInstance.getStorageChannelType().normalizeAmount(amount);
+            : resourceAmount.getStorageChannelType().normalizeAmount(amount);
         LOGGER.debug("Updating detector amount of {} normalized as {}", amount, normalizedAmount);
         getNode().setAmount(normalizedAmount);
     }

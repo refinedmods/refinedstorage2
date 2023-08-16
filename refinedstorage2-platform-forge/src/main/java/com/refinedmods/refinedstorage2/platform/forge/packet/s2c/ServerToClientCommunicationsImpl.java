@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
@@ -55,14 +55,14 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public <T> void sendResourceSlotUpdate(final ServerPlayer player,
-                                           @Nullable final ResourceInstance<T> resourceInstance,
+                                           @Nullable final ResourceAmountTemplate<T> resourceAmount,
                                            final int slotIndex) {
-        if (resourceInstance != null) {
+        if (resourceAmount != null) {
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
-                .getId(resourceInstance.getStorageChannelType())
+                .getId(resourceAmount.getStorageChannelType())
                 .ifPresent(id -> networkManager.send(player, new ResourceSlotUpdatePacket<>(
                     slotIndex,
-                    resourceInstance,
+                    resourceAmount,
                     id
                 )));
         } else {

@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
 
@@ -39,9 +38,9 @@ public class ResourceSlotUpdatePacket implements ClientPlayNetworking.PlayChanne
                             final int slotIndex) {
         final T resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
-        final ResourceAmount<T> resourceAmount = new ResourceAmount<>(resource, amount);
-        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceInstance<>(
-            resourceAmount,
+        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceAmountTemplate<>(
+            resource,
+            amount,
             type
         )));
     }

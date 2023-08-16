@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceInstance;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -150,6 +150,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unchecked")
     public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
@@ -170,8 +171,8 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         );
     }
 
-    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final ResourceInstance<?> filteredResource,
+    private static <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmountTemplate<T> filteredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(

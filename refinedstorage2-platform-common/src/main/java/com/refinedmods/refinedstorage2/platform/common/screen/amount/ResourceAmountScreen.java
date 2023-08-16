@@ -14,44 +14,38 @@ import org.joml.Vector3f;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScreen.DummyContainerMenu, Long> {
+public class ResourceAmountScreen extends AbstractAmountScreen<ResourceAmountScreen.DummyContainerMenu, Double> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "amount");
 
     private final ResourceSlot slot;
 
-    public ResourceAmountScreen(final Screen parent,
-                                final Inventory playerInventory,
-                                final ResourceSlot slot) {
+    public ResourceAmountScreen(final Screen parent, final Inventory playerInventory, final ResourceSlot slot) {
         super(
             new DummyContainerMenu(slot),
             parent,
             playerInventory,
             TITLE,
-            AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Long>create()
-                .withInitialAmount(getInitialAmount(slot))
+            AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
+                .withInitialAmount(slot.getDisplayAmount())
                 .withIncrementsTop(1, 10, 64)
                 .withIncrementsBottom(-1, -10, -64)
                 .withIncrementsBottomStartPosition(new Vector3f(7, 72, 0))
                 .withAmountFieldPosition(new Vector3f(9, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
-                .withMinAmount(1L)
-                .withMaxAmount(slot.getMaxAmount())
-                .withResetAmount(1L)
+                .withMinAmount(1D)
+                .withMaxAmount(slot.getMaxAmountWhenModifying())
+                .withResetAmount(1D)
                 .build(),
-            LongAmountOperations.INSTANCE
+            DoubleAmountOperations.INSTANCE
         );
         this.slot = slot;
         this.imageWidth = 172;
         this.imageHeight = 99;
     }
 
-    private static long getInitialAmount(final ResourceSlot slot) {
-        return slot.getContents() == null ? 0 : slot.getContents().getAmount();
-    }
-
     @Override
-    protected void accept(final Long amount) {
+    protected void accept(final Double amount) {
         slot.changeAmountOnClient(amount);
     }
 

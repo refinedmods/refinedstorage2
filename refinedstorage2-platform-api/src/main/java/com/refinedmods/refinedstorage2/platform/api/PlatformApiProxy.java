@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -84,16 +83,13 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
-                                                      final PlatformExternalStorageProviderFactory factory) {
-        ensureLoaded().addExternalStorageProviderFactory(channelType, factory);
+    public void addExternalStorageProviderFactory(final PlatformExternalStorageProviderFactory factory) {
+        ensureLoaded().addExternalStorageProviderFactory(factory);
     }
 
     @Override
-    public <T> Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
-        final StorageChannelType<T> channelType
-    ) {
-        return ensureLoaded().getExternalStorageProviderFactories(channelType);
+    public Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories() {
+        return ensureLoaded().getExternalStorageProviderFactories();
     }
 
     @Override
