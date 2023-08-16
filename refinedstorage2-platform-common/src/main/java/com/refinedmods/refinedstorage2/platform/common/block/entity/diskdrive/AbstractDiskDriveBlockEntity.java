@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfi
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
@@ -77,7 +77,7 @@ public abstract class AbstractDiskDriveBlockEntity
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
-            ResourceContainer.createForFilter(),
+            ResourceContainerImpl.createForFilter(),
             this::setChanged,
             templates -> getNode().setFilterTemplates(templates)
         );

@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFu
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
@@ -52,7 +52,7 @@ public class ExternalStorageBlockEntity
             Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage()
         ));
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
-            ResourceContainer.createForFilter(),
+            ResourceContainerImpl.createForFilter(),
             this::setChanged,
             templates -> getNode().setFilterTemplates(templates)
         );

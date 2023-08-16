@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -34,7 +34,7 @@ public abstract class AbstractSchedulingNetworkNodeContainerBlockEntity<T extend
         super(type, pos, state, node, destination);
         this.schedulingMode = new SchedulingMode<>(this::setChanged, this::setTaskExecutor);
         this.filter = FilterWithFuzzyMode.createAndListenForTemplates(
-            ResourceContainer.createForFilter(),
+            ResourceContainerImpl.createForFilter(),
             this::setChanged,
             templates -> setFilterTemplates(
                 templates.stream().map(ResourceTemplate::resource).collect(Collectors.toList())

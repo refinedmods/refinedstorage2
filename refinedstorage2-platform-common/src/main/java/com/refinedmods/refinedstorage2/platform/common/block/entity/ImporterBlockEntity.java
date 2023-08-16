@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -53,7 +53,7 @@ public class ImporterBlockEntity
             UpgradeDestinations.IMPORTER
         );
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
-            ResourceContainer.createForFilter(),
+            ResourceContainerImpl.createForFilter(),
             this::setChanged,
             templates -> getNode().setFilterTemplates(templates)
         );

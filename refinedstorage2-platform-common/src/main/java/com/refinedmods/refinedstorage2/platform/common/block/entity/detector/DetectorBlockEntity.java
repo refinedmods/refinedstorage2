@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAm
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
@@ -12,7 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFu
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import javax.annotation.Nullable;
@@ -50,7 +51,7 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         super(BlockEntities.INSTANCE.getDetector(), pos, state, new DetectorNetworkNode(
             Platform.INSTANCE.getConfig().getDetector().getEnergyUsage()
         ));
-        final ResourceContainer resourceContainer = ResourceContainer.createForFilter(1);
+        final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
         this.filter = FilterWithFuzzyMode.createAndListenForTemplates(
             resourceContainer,
             () -> {

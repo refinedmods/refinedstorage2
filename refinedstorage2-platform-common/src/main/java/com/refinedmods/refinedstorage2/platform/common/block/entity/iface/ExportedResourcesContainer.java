@@ -9,18 +9,18 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-public class ExportedResourcesContainer extends ResourceContainer implements InterfaceExportState {
+public class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
     private final FilterWithFuzzyMode filter;
 
     public ExportedResourcesContainer(final int size, final FilterWithFuzzyMode filter) {

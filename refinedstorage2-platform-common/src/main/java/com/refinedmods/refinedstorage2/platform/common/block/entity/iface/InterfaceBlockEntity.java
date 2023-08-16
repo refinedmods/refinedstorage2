@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
@@ -13,8 +15,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityW
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class InterfaceBlockEntity
         this.exportedResources = createExportedResourcesContainer(filter);
         this.exportedResources.setListener(this::setChanged);
         getNode().setExportState(exportedResources);
-        this.exportedResourcesAsContainer = exportedResources.toContainer();
+        this.exportedResourcesAsContainer = exportedResources.toItemContainer();
         addExternalStorageProviders();
     }
 
@@ -83,7 +84,7 @@ public class InterfaceBlockEntity
     }
 
     public static ResourceContainer createFilterContainer() {
-        return new ResourceContainer(
+        return new ResourceContainerImpl(
             EXPORT_SLOTS,
             ResourceContainerType.FILTER_WITH_AMOUNT,
             InterfaceBlockEntity::getTransferQuota,

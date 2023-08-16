@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
@@ -10,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Abs
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         addSlots(
             playerInventory.player,
             new SimpleContainer(AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS),
-            ResourceContainer.createForFilter()
+            ResourceContainerImpl.createForFilter()
         );
         initializeResourceSlots(buf);
     }
