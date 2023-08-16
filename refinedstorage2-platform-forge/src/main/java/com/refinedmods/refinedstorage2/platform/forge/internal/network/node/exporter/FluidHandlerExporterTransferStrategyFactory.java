@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Amount
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -32,7 +33,8 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
             coordinates,
             amountOverride
         );
-        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
+        final long transferQuota = (upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1)
+            * Platform.INSTANCE.getBucketAmount();
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.FLUID, transferQuota) {
                 @Nullable
