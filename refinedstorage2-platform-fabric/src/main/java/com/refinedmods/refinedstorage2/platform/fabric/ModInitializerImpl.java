@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridScr
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.ResourceContainerFluidStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
@@ -255,6 +256,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.SINGLE_AMOUNT_CHANGE, new SingleAmountChangePacket());
     }
 
+    @SuppressWarnings("checkstyle:Indentation")
     private void registerSidedHandlers() {
         registerItemStorage(
             AbstractDiskDriveBlockEntity.class::isInstance,
@@ -265,7 +267,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerItemStorage(
             InterfaceBlockEntity.class::isInstance,
             InterfaceBlockEntity.class::cast,
-            InterfaceBlockEntity::getExportedResources,
+            InterfaceBlockEntity::getExportedResourcesAsContainer,
+            BlockEntities.INSTANCE.getInterface()
+        );
+        FluidStorage.SIDED.registerForBlockEntity(
+            (blockEntity, context) -> new ResourceContainerFluidStorageAdapter(blockEntity.getExportedResources()),
             BlockEntities.INSTANCE.getInterface()
         );
         registerControllerEnergy();

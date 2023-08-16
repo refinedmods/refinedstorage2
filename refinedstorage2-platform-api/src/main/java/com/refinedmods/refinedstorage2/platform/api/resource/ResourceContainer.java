@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.api.resource;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.List;
 import java.util.Set;
@@ -58,4 +60,10 @@ public interface ResourceContainer {
     List<ClientTooltipComponent> getHelpTooltip(ItemStack carried);
 
     Container toItemContainer();
+
+    <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+
+    <T> long extract(T resource, long amount, Action action);
+
+    ResourceContainer copy();
 }

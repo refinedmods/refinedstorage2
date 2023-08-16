@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
@@ -23,6 +25,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 public class ResourceContainerImpl implements ResourceContainer {
@@ -312,7 +315,7 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
-    public AbstractResourceContainerContainerAdapter toItemContainer() {
+    public Container toItemContainer() {
         if (type != ResourceContainerType.CONTAINER) {
             throw new UnsupportedOperationException();
         }
@@ -322,6 +325,102 @@ public class ResourceContainerImpl implements ResourceContainer {
                 changed();
             }
         };
+    }
+
+    @Override
+    public <T> long insert(final StorageChannelType<T> storageChannelType,
+                           final T resource,
+                           final long amount,
+                           final Action action) {
+        if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
+            return 0;
+        }
+        long remainder = amount;
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> existing = get(i);
+            if (existing == null) {
+                remainder -= insertIntoEmptySlot(i, resource, action, platformStorageChannelType, remainder);
+            } else if (existing.getResource().equals(resource)) {
+                remainder -= insertIntoExistingSlot(
+                    i,
+                    platformStorageChannelType,
+                    resource,
+                    action,
+                    remainder,
+                    existing
+                );
+            }
+            if (remainder == 0) {
+                break;
+            }
+        }
+        return amount - remainder;
+    }
+
+    private <T> long insertIntoEmptySlot(final int slotIndex,
+                                         final T resource,
+                                         final Action action,
+                                         final PlatformStorageChannelType<T> platformStorageChannelType,
+                                         final long amount) {
+        final long inserted = Math.min(platformStorageChannelType.getInterfaceExportLimit(resource), amount);
+        if (action == Action.EXECUTE) {
+            set(slotIndex, new ResourceAmountTemplate<>(
+                resource,
+                inserted,
+                platformStorageChannelType
+            ));
+        }
+        return inserted;
+    }
+
+    private <T> long insertIntoExistingSlot(final int slotIndex,
+                                            final PlatformStorageChannelType<T> storageChannelType,
+                                            final T resource,
+                                            final Action action,
+                                            final long amount,
+                                            final ResourceAmountTemplate<?> existing) {
+        final long spaceRemaining = storageChannelType.getInterfaceExportLimit(resource) - existing.getAmount();
+        final long inserted = Math.min(spaceRemaining, amount);
+        if (action == Action.EXECUTE) {
+            grow(slotIndex, inserted);
+        }
+        return inserted;
+    }
+
+    @Override
+    public <T> long extract(final T resource, final long amount, final Action action) {
+        long extracted = 0;
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> slot = get(i);
+            if (slot == null || !resource.equals(slot.getResource())) {
+                continue;
+            }
+            final long stillNeeded = amount - extracted;
+            final long toExtract = Math.min(slot.getAmount(), stillNeeded);
+            if (action == Action.EXECUTE) {
+                shrink(i, toExtract);
+            }
+            extracted += toExtract;
+        }
+        return extracted;
+    }
+
+    @Override
+    public ResourceContainer copy() {
+        final ResourceContainer copy = new ResourceContainerImpl(
+            slots.length,
+            type,
+            maxAmountProvider,
+            primaryResourceFactory,
+            alternativeResourceFactories
+        );
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> resourceAmount = get(i);
+            if (resourceAmount != null) {
+                copy.set(i, resourceAmount);
+            }
+        }
+        return copy;
     }
 
     public static ResourceContainer createForFilter() {

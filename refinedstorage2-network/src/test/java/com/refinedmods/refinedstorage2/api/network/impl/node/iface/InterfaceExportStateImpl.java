@@ -18,7 +18,6 @@ import javax.annotation.Nullable;
 public class InterfaceExportStateImpl implements InterfaceExportState {
     private final Map<Integer, ResourceAmount<String>> requested = new HashMap<>();
     private final Map<Integer, ResourceAmount<String>> current = new HashMap<>();
-
     private final int slots;
 
     public InterfaceExportStateImpl(final int slots) {
@@ -61,10 +60,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public <A, B> boolean isExportedResourceValid(
-        final ResourceTemplate<A> want,
-        final ResourceTemplate<B> got
-    ) {
+    public <A, B> boolean isExportedResourceValid(final ResourceTemplate<A> want, final ResourceTemplate<B> got) {
         if ("A".equals(want.resource())) {
             return ((String) got.resource()).startsWith("A");
         }
@@ -165,5 +161,24 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
             }
         }
         return 0;
+    }
+
+    @Override
+    public <T> long extract(final T resource, final long amount, final Action action) {
+        long extracted = 0;
+        for (int i = 0; i < getSlots(); ++i) {
+            final ResourceTemplate<?> slot = getExportedResource(i);
+            if (slot != null && slot.resource().equals(resource)) {
+                final long maxAmount = Math.min(getExportedAmount(i), amount - extracted);
+                extracted += maxAmount;
+                if (action == Action.EXECUTE) {
+                    shrinkExportedAmount(i, maxAmount);
+                }
+                if (extracted == amount) {
+                    break;
+                }
+            }
+        }
+        return extracted;
     }
 }

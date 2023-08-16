@@ -33,30 +33,7 @@ public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExterna
         if (exportState == null) {
             return 0;
         }
-        return doExtract(resource, amount, action, exportState);
-    }
-
-    private long doExtract(final T resource,
-                           final long amount,
-                           final Action action,
-                           final InterfaceExportState exportState) {
-        long extracted = 0;
-        for (int i = 0; i < exportState.getSlots(); ++i) {
-            final ResourceTemplate<?> exportedResource = exportState.getExportedResource(i);
-            if (exportedResource == null || !resource.equals(exportedResource.resource())) {
-                continue;
-            }
-            final long stillNeeded = amount - extracted;
-            final long toExtract = Math.min(
-                exportState.getExportedAmount(i),
-                stillNeeded
-            );
-            if (action == Action.EXECUTE) {
-                exportState.shrinkExportedAmount(i, stillNeeded);
-            }
-            extracted += toExtract;
-        }
-        return extracted;
+        return exportState.extract(resource, amount, action);
     }
 
     @Override

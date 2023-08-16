@@ -128,7 +128,11 @@ public class InterfaceBlockEntity
         filter.setFuzzyMode(fuzzyMode);
     }
 
-    public Container getExportedResources() {
+    public ExportedResourcesContainer getExportedResources() {
+        return exportedResources;
+    }
+
+    public Container getExportedResourcesAsContainer() {
         return exportedResourcesAsContainer;
     }
 
