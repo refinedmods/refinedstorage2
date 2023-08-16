@@ -2,8 +2,9 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 
@@ -82,15 +83,16 @@ public class ResourceSlot extends Slot implements SlotTooltip {
     }
 
     public boolean shouldRenderAmount() {
-        return resourceContainer.supportsAmount();
+        return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT
+            || resourceContainer.getType() == ResourceContainerType.CONTAINER;
     }
 
     public boolean canModifyAmount() {
-        return resourceContainer.canModifyAmount();
+        return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
     }
 
     public boolean supportsItemSlotInteractions() {
-        return resourceContainer.supportsItemSlotInteractions();
+        return resourceContainer.getType() == ResourceContainerType.CONTAINER;
     }
 
     public boolean isDisabled() {
@@ -165,13 +167,12 @@ public class ResourceSlot extends Slot implements SlotTooltip {
 
     @Override
     public boolean mayPickup(final Player player) {
-        return resourceContainer.supportsItemSlotInteractions();
+        return supportsItemSlotInteractions();
     }
 
     @Override
     public boolean mayPlace(final ItemStack stack) {
-        return resourceContainer.supportsItemSlotInteractions()
-            && container.canPlaceItem(getContainerSlot(), stack);
+        return supportsItemSlotInteractions() && container.canPlaceItem(getContainerSlot(), stack);
     }
 
     public double getDisplayAmount() {

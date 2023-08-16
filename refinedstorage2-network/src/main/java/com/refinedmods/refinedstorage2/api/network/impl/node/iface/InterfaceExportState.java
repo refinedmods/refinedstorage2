@@ -33,4 +33,6 @@ public interface InterfaceExportState {
     void growExportedAmount(int slotIndex, long amount);
 
     <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+
+    <T> long extract(T resource, long amount, Action action);
 }

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

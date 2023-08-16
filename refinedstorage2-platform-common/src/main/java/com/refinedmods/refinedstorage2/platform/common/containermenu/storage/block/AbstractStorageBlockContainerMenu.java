@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +31,7 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-        addSlots(player, ResourceContainer.createForFilter(resourceFactory));
+        addSlots(player, ResourceContainerImpl.createForFilter(resourceFactory));
         initializeResourceSlots(buf);
     }
 

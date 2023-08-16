@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.resource;
+package com.refinedmods.refinedstorage2.platform.api.resource;
 
 public enum ResourceContainerType {
     FILTER,

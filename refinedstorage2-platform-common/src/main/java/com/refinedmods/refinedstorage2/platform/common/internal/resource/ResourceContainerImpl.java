@@ -1,9 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
@@ -21,9 +25,10 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
-public class ResourceContainer {
+public class ResourceContainerImpl implements ResourceContainer {
     private final ResourceAmountTemplate<?>[] slots;
     private final ResourceContainerType type;
     private final ToLongFunction<ResourceTemplate<?>> maxAmountProvider;
@@ -33,11 +38,11 @@ public class ResourceContainer {
     @Nullable
     private Runnable listener;
 
-    public ResourceContainer(final int size,
-                             final ResourceContainerType type,
-                             final ToLongFunction<ResourceTemplate<?>> maxAmountProvider,
-                             final ResourceFactory<?> primaryResourceFactory,
-                             final Set<ResourceFactory<?>> alternativeResourceFactories) {
+    public ResourceContainerImpl(final int size,
+                                 final ResourceContainerType type,
+                                 final ToLongFunction<ResourceTemplate<?>> maxAmountProvider,
+                                 final ResourceFactory<?> primaryResourceFactory,
+                                 final Set<ResourceFactory<?>> alternativeResourceFactories) {
         this.slots = new ResourceAmountTemplate<?>[size];
         this.type = type;
         this.maxAmountProvider = maxAmountProvider;
@@ -45,22 +50,17 @@ public class ResourceContainer {
         this.alternativeResourceFactories = alternativeResourceFactories;
     }
 
-    public boolean supportsAmount() {
-        return type == ResourceContainerType.CONTAINER || type == ResourceContainerType.FILTER_WITH_AMOUNT;
+    @Override
+    public ResourceContainerType getType() {
+        return type;
     }
 
-    public boolean canModifyAmount() {
-        return type == ResourceContainerType.FILTER_WITH_AMOUNT;
-    }
-
-    public boolean supportsItemSlotInteractions() {
-        return type == ResourceContainerType.CONTAINER;
-    }
-
+    @Override
     public void setListener(@Nullable final Runnable listener) {
         this.listener = listener;
     }
 
+    @Override
     public void change(final int index, final ItemStack stack, final boolean tryAlternatives) {
         if (tryAlternatives) {
             for (final ResourceFactory<?> resourceFactory : alternativeResourceFactories) {
@@ -77,6 +77,7 @@ public class ResourceContainer {
         );
     }
 
+    @Override
     public <T> void set(final int index, final ResourceAmountTemplate<T> resourceAmount) {
         setSilently(index, resourceAmount);
         changed();
@@ -86,6 +87,7 @@ public class ResourceContainer {
         slots[index] = resourceAmount;
     }
 
+    @Override
     public long getAmount(final int index) {
         final ResourceAmountTemplate<?> resourceAmount = slots[index];
         if (resourceAmount == null) {
@@ -94,20 +96,20 @@ public class ResourceContainer {
         return resourceAmount.getAmount();
     }
 
+    @Override
     public void grow(final int index, final long amount) {
         CoreValidations.validateNotNegative(amount, "Amount to grow cannot be negative.");
         setAmount(index, getAmount(index) + amount);
     }
 
+    @Override
     public void shrink(final int index, final long amount) {
         CoreValidations.validateNotNegative(amount, "Amount to shrink cannot be negative.");
         setAmount(index, getAmount(index) - amount);
     }
 
+    @Override
     public void setAmount(final int index, final long amount) {
-        if (!supportsAmount()) {
-            return;
-        }
         final ResourceAmountTemplate<?> resourceAmount = slots[index];
         if (resourceAmount == null) {
             return;
@@ -121,10 +123,12 @@ public class ResourceContainer {
         changed();
     }
 
+    @Override
     public <T> long getMaxAmount(final ResourceAmountTemplate<T> resourceAmount) {
         return maxAmountProvider.applyAsLong(resourceAmount.getResourceTemplate());
     }
 
+    @Override
     public void remove(final int index) {
         removeSilently(index);
         changed();
@@ -134,15 +138,18 @@ public class ResourceContainer {
         slots[index] = null;
     }
 
+    @Override
     public int size() {
         return slots.length;
     }
 
+    @Override
     @Nullable
     public ResourceAmountTemplate<?> get(final int index) {
         return slots[index];
     }
 
+    @Override
     public Set<Object> getUniqueTemplates() {
         final Set<Object> result = new HashSet<>();
         for (int i = 0; i < size(); ++i) {
@@ -155,6 +162,7 @@ public class ResourceContainer {
         return result;
     }
 
+    @Override
     public List<ResourceTemplate<?>> getTemplates() {
         final List<ResourceTemplate<?>> result = new ArrayList<>();
         for (int i = 0; i < size(); ++i) {
@@ -167,6 +175,7 @@ public class ResourceContainer {
         return result;
     }
 
+    @Override
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {
         for (final ResourceAmountTemplate<?> slot : slots) {
             if (slot == null) {
@@ -187,6 +196,7 @@ public class ResourceContainer {
         }, () -> buf.writeBoolean(false));
     }
 
+    @Override
     public void readFromUpdatePacket(final int index, final FriendlyByteBuf buf) {
         final boolean present = buf.readBoolean();
         if (!present) {
@@ -207,6 +217,7 @@ public class ResourceContainer {
         setSilently(index, new ResourceAmountTemplate<>(resource, amount, storageChannelType));
     }
 
+    @Override
     public CompoundTag toTag() {
         final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
@@ -240,6 +251,7 @@ public class ResourceContainer {
         tag.put("s" + index, serialized);
     }
 
+    @Override
     public void fromTag(final CompoundTag tag) {
         for (int i = 0; i < size(); ++i) {
             final String key = "s" + i;
@@ -268,6 +280,7 @@ public class ResourceContainer {
         ));
     }
 
+    @Override
     public List<ClientTooltipComponent> getHelpTooltip(final ItemStack carried) {
         if (carried.isEmpty()) {
             return Collections.emptyList();
@@ -301,7 +314,8 @@ public class ResourceContainer {
         }
     }
 
-    public AbstractResourceContainerContainerAdapter toContainer() {
+    @Override
+    public Container toItemContainer() {
         if (type != ResourceContainerType.CONTAINER) {
             throw new UnsupportedOperationException();
         }
@@ -313,6 +327,102 @@ public class ResourceContainer {
         };
     }
 
+    @Override
+    public <T> long insert(final StorageChannelType<T> storageChannelType,
+                           final T resource,
+                           final long amount,
+                           final Action action) {
+        if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
+            return 0;
+        }
+        long remainder = amount;
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> existing = get(i);
+            if (existing == null) {
+                remainder -= insertIntoEmptySlot(i, resource, action, platformStorageChannelType, remainder);
+            } else if (existing.getResource().equals(resource)) {
+                remainder -= insertIntoExistingSlot(
+                    i,
+                    platformStorageChannelType,
+                    resource,
+                    action,
+                    remainder,
+                    existing
+                );
+            }
+            if (remainder == 0) {
+                break;
+            }
+        }
+        return amount - remainder;
+    }
+
+    private <T> long insertIntoEmptySlot(final int slotIndex,
+                                         final T resource,
+                                         final Action action,
+                                         final PlatformStorageChannelType<T> platformStorageChannelType,
+                                         final long amount) {
+        final long inserted = Math.min(platformStorageChannelType.getInterfaceExportLimit(resource), amount);
+        if (action == Action.EXECUTE) {
+            set(slotIndex, new ResourceAmountTemplate<>(
+                resource,
+                inserted,
+                platformStorageChannelType
+            ));
+        }
+        return inserted;
+    }
+
+    private <T> long insertIntoExistingSlot(final int slotIndex,
+                                            final PlatformStorageChannelType<T> storageChannelType,
+                                            final T resource,
+                                            final Action action,
+                                            final long amount,
+                                            final ResourceAmountTemplate<?> existing) {
+        final long spaceRemaining = storageChannelType.getInterfaceExportLimit(resource) - existing.getAmount();
+        final long inserted = Math.min(spaceRemaining, amount);
+        if (action == Action.EXECUTE) {
+            grow(slotIndex, inserted);
+        }
+        return inserted;
+    }
+
+    @Override
+    public <T> long extract(final T resource, final long amount, final Action action) {
+        long extracted = 0;
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> slot = get(i);
+            if (slot == null || !resource.equals(slot.getResource())) {
+                continue;
+            }
+            final long stillNeeded = amount - extracted;
+            final long toExtract = Math.min(slot.getAmount(), stillNeeded);
+            if (action == Action.EXECUTE) {
+                shrink(i, toExtract);
+            }
+            extracted += toExtract;
+        }
+        return extracted;
+    }
+
+    @Override
+    public ResourceContainer copy() {
+        final ResourceContainer copy = new ResourceContainerImpl(
+            slots.length,
+            type,
+            maxAmountProvider,
+            primaryResourceFactory,
+            alternativeResourceFactories
+        );
+        for (int i = 0; i < size(); ++i) {
+            final ResourceAmountTemplate<?> resourceAmount = get(i);
+            if (resourceAmount != null) {
+                copy.set(i, resourceAmount);
+            }
+        }
+        return copy;
+    }
+
     public static ResourceContainer createForFilter() {
         return createForFilter(9);
     }
@@ -322,7 +432,7 @@ public class ResourceContainer {
     }
 
     public static ResourceContainer createForFilter(final int size, final ResourceContainerType type) {
-        return new ResourceContainer(
+        return new ResourceContainerImpl(
             size,
             type,
             resource -> Long.MAX_VALUE,
@@ -332,7 +442,7 @@ public class ResourceContainer {
     }
 
     public static <T> ResourceContainer createForFilter(final ResourceFactory<T> resourceFactory) {
-        return new ResourceContainer(
+        return new ResourceContainerImpl(
             9,
             ResourceContainerType.FILTER,
             resource -> Long.MAX_VALUE,

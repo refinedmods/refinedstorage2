@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
@@ -7,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,7 +50,7 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu {
         final ResourceContainer exportedResources = InterfaceBlockEntity.createExportedResourcesContainer(
             FilterWithFuzzyMode.create(filterContainer, null)
         );
-        addSlots(playerInventory.player, filterContainer, exportedResources, exportedResources.toContainer());
+        addSlots(playerInventory.player, filterContainer, exportedResources, exportedResources.toItemContainer());
         initializeResourceSlots(buf);
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));

@@ -1,26 +1,24 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.iface;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExportState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-public class ExportedResourcesContainer extends ResourceContainer implements InterfaceExportState {
+public class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
     private final FilterWithFuzzyMode filter;
 
     public ExportedResourcesContainer(final int size, final FilterWithFuzzyMode filter) {
@@ -40,8 +38,7 @@ public class ExportedResourcesContainer extends ResourceContainer implements Int
     }
 
     @Override
-    public <T> Collection<T> expandExportCandidates(final StorageChannel<T> storageChannel,
-                                                    final T resource) {
+    public <T> Collection<T> expandExportCandidates(final StorageChannel<T> storageChannel, final T resource) {
         if (!filter.isFuzzyMode()) {
             return Collections.singletonList(resource);
         }
@@ -56,10 +53,7 @@ public class ExportedResourcesContainer extends ResourceContainer implements Int
     }
 
     @Override
-    public <A, B> boolean isExportedResourceValid(
-        final ResourceTemplate<A> want,
-        final ResourceTemplate<B> got
-    ) {
+    public <A, B> boolean isExportedResourceValid(final ResourceTemplate<A> want, final ResourceTemplate<B> got) {
         if (!filter.isFuzzyMode()) {
             return got.equals(want);
         }
@@ -76,8 +70,6 @@ public class ExportedResourcesContainer extends ResourceContainer implements Int
         return value;
     }
 
-    // TODO: introduce itemhandler/fluidhandlers..
-    // TODO: fix/add more tests.
     @Nullable
     @Override
     public ResourceTemplate<?> getRequestedResource(final int slotIndex) {
@@ -129,65 +121,5 @@ public class ExportedResourcesContainer extends ResourceContainer implements Int
     @Override
     public void growExportedAmount(final int slotIndex, final long amount) {
         grow(slotIndex, amount);
-    }
-
-    @Override
-    public <T> long insert(final StorageChannelType<T> storageChannelType,
-                           final T resource,
-                           final long amount,
-                           final Action action) {
-        if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
-            return 0;
-        }
-        long remainder = amount;
-        for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate<?> existing = get(i);
-            if (existing == null) {
-                remainder -= insertIntoEmptySlot(i, resource, action, platformStorageChannelType, remainder);
-            } else if (existing.getResource().equals(resource)) {
-                remainder -= insertIntoExistingSlot(
-                    i,
-                    platformStorageChannelType,
-                    resource,
-                    action,
-                    remainder,
-                    existing
-                );
-            }
-            if (remainder == 0) {
-                break;
-            }
-        }
-        return amount - remainder;
-    }
-
-    private <T> long insertIntoEmptySlot(final int slotIndex,
-                                         final T resource,
-                                         final Action action,
-                                         final PlatformStorageChannelType<T> platformStorageChannelType,
-                                         final long amount) {
-        final long inserted = Math.min(platformStorageChannelType.getInterfaceExportLimit(resource), amount);
-        if (action == Action.EXECUTE) {
-            set(slotIndex, new ResourceAmountTemplate<>(
-                resource,
-                inserted,
-                platformStorageChannelType
-            ));
-        }
-        return inserted;
-    }
-
-    private <T> long insertIntoExistingSlot(final int slotIndex,
-                                            final PlatformStorageChannelType<T> storageChannelType,
-                                            final T resource,
-                                            final Action action,
-                                            final long amount,
-                                            final ResourceAmountTemplate<?> existing) {
-        final long spaceRemaining = storageChannelType.getInterfaceExportLimit(resource) - existing.getAmount();
-        final long inserted = Math.min(spaceRemaining, amount);
-        if (action == Action.EXECUTE) {
-            grow(slotIndex, inserted);
-        }
-        return inserted;
     }
 }

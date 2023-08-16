@@ -3,12 +3,13 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -46,7 +47,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final ResourceFactory<T> resourceFactory) {
         super(type, pos, state, node);
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
-            ResourceContainer.createForFilter(resourceFactory),
+            ResourceContainerImpl.createForFilter(resourceFactory),
             this::setChanged,
             templates -> getNode().setFilterTemplates(templates)
         );

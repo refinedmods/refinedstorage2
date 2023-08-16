@@ -2,12 +2,13 @@ package com.refinedmods.refinedstorage2.platform.common.item;
 
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Optional;
@@ -84,7 +85,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     }
 
     private ResourceContainer getResourceFilterContainer(final ItemStack stack) {
-        final ResourceContainer container = ResourceContainer.createForFilter(1);
+        final ResourceContainer container = ResourceContainerImpl.createForFilter(1);
         container.setListener(() -> stack.getOrCreateTag().put(TAG_RESOURCE_FILTER_CONTAINER, container.toTag()));
         final CompoundTag tag = stack.getTagElement(TAG_RESOURCE_FILTER_CONTAINER);
         if (tag != null) {

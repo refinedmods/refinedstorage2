@@ -31,6 +31,10 @@ public final class VariantUtil {
         return new FluidStack(fluidResource.fluid(), (int) amount, fluidResource.tag());
     }
 
+    public static Action toAction(final IFluidHandler.FluidAction action) {
+        return action == IFluidHandler.FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE;
+    }
+
     public static IFluidHandler.FluidAction toFluidAction(final Action action) {
         return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
     }

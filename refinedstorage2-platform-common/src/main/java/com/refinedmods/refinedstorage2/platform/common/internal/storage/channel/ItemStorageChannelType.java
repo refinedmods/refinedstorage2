@@ -68,6 +68,11 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
+    public long getInterfaceExportLimit() {
+        return 64;
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public long getInterfaceExportLimit(final ItemResource resource) {
         return resource.item().getMaxStackSize();

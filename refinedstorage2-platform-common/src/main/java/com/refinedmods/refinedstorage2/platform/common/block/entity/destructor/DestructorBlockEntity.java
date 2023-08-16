@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -56,7 +56,7 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
         );
         this.actor = new NetworkNodeActor(getNode());
         this.filterWithFuzzyMode = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
-            ResourceContainer.createForFilter(),
+            ResourceContainerImpl.createForFilter(),
             this::setChanged,
             filter::setTemplates
         );

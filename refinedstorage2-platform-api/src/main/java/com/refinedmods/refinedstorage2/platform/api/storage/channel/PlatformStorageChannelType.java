@@ -44,5 +44,9 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
 
     double getDisplayAmount(long amount);
 
-    long getInterfaceExportLimit(T resource);
+    long getInterfaceExportLimit();
+
+    default long getInterfaceExportLimit(T resource) {
+        return getInterfaceExportLimit();
+    }
 }
