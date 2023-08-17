@@ -86,7 +86,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
             storageRepository.get(storageId).ifPresentOrElse(
                 storage -> getNode().setStorage((Storage<T>) storage),
-                () -> LOGGER.warn("Storage with {} could not be resolved!", storageId)
+                () -> LOGGER.warn("Storage {} could not be resolved", storageId)
             );
         }
     }

@@ -35,10 +35,10 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      */
     boolean canAcceptIncomingConnection(Direction direction, BlockState other);
 
-    BlockState getBlockState();
+    BlockState getContainerBlockState();
 
     @Nullable
-    Level getLevel();
+    Level getContainerLevel();
 
-    BlockPos getBlockPos();
+    BlockPos getContainerPosition();
 }

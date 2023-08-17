@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fixed filter slot hints not being aware of the resource types that they can show in a slot.
 - Fixed Exporter only exporting 1 mB per cycle on Forge.
+- Fixed not being able to use any blocks on Fabric or Forge.
 
 ## [2.0.0-milestone.2.12] - 2023-08-06
 
