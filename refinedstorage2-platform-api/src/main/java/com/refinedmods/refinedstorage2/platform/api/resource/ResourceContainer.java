@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -57,7 +56,9 @@ public interface ResourceContainer {
 
     void fromTag(CompoundTag tag);
 
-    List<ClientTooltipComponent> getHelpTooltip(ItemStack carried);
+    ResourceFactory<?> getPrimaryResourceFactory();
+
+    Set<ResourceFactory<?>> getAlternativeResourceFactories();
 
     Container toItemContainer();
 

@@ -1,21 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,15 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
-
-public class ResourceSlot extends Slot implements SlotTooltip {
-    private static final SmallTextClientTooltipComponent CLICK_TO_CLEAR = new SmallTextClientTooltipComponent(
-        createTranslationAsHeading("gui", "filter_slot.click_to_clear")
-    );
-    private static final ClientTooltipComponent EMPTY_FILTER = ClientTooltipComponent.create(
-        createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
-    );
+public class ResourceSlot extends Slot {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceSlot.class);
 
     private final ResourceContainer resourceContainer;
@@ -191,37 +177,15 @@ public class ResourceSlot extends Slot implements SlotTooltip {
         return resourceContainer.getMaxAmount(resourceAmount);
     }
 
-    @Override
-    public List<ClientTooltipComponent> getTooltip(final ItemStack carried) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        if (resourceAmount == null) {
-            return getTooltipForEmptySlot(carried);
-        }
-        return getTooltipForResource(resourceAmount);
+    public Component getHelpText() {
+        return helpText;
     }
 
-    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried) {
-        if (isDisabled() || supportsItemSlotInteractions()) {
-            return Collections.emptyList();
-        }
-        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
-        tooltip.add(EMPTY_FILTER);
-        tooltip.addAll(resourceContainer.getHelpTooltip(carried));
-        tooltip.add(HelpClientTooltipComponent.create(helpText));
-        return tooltip;
+    public ResourceFactory<?> getPrimaryResourceFactory() {
+        return resourceContainer.getPrimaryResourceFactory();
     }
 
-    private <T> List<ClientTooltipComponent> getTooltipForResource(final ResourceAmountTemplate<T> contents) {
-        final List<ClientTooltipComponent> tooltip = PlatformApi.INSTANCE
-            .getResourceRendering(contents.getResource())
-            .getTooltip(contents.getResource())
-            .stream()
-            .map(Component::getVisualOrderText)
-            .map(ClientTooltipComponent::create)
-            .collect(Collectors.toList());
-        if (!isDisabled() && !supportsItemSlotInteractions()) {
-            tooltip.add(CLICK_TO_CLEAR);
-        }
-        return tooltip;
+    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+        return resourceContainer.getAlternativeResourceFactories();
     }
 }

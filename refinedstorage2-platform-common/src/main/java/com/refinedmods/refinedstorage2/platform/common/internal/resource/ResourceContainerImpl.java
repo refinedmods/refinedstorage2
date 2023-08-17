@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.Set;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -281,31 +279,13 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
-    public List<ClientTooltipComponent> getHelpTooltip(final ItemStack carried) {
-        if (carried.isEmpty()) {
-            return Collections.emptyList();
-        }
-        final List<ClientTooltipComponent> lines = new ArrayList<>();
-        primaryResourceFactory.create(carried).ifPresent(primaryResourceInstance -> lines.add(
-            new MouseWithIconClientTooltipComponent(
-                MouseWithIconClientTooltipComponent.Type.LEFT,
-                getResourceRendering(primaryResourceInstance.getResource()),
-                null
-            )
-        ));
-        for (final ResourceFactory<?> alternativeResourceFactory : alternativeResourceFactories) {
-            final var result = alternativeResourceFactory.create(carried);
-            result.ifPresent(alternativeResourceInstance -> lines.add(new MouseWithIconClientTooltipComponent(
-                MouseWithIconClientTooltipComponent.Type.RIGHT,
-                getResourceRendering(alternativeResourceInstance.getResource()),
-                null
-            )));
-        }
-        return lines;
+    public ResourceFactory<?> getPrimaryResourceFactory() {
+        return primaryResourceFactory;
     }
 
-    public static <T> MouseWithIconClientTooltipComponent.IconRenderer getResourceRendering(final T resource) {
-        return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
+    @Override
+    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+        return alternativeResourceFactories;
     }
 
     private void changed() {

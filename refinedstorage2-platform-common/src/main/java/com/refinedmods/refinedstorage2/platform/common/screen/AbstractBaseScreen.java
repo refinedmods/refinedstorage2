@@ -3,16 +3,25 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeMapping;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.SlotTooltip;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.SmallTextClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeItemClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,8 +33,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
+    private static final SmallTextClientTooltipComponent CLICK_TO_CLEAR = new SmallTextClientTooltipComponent(
+        createTranslationAsHeading("gui", "filter_slot.click_to_clear")
+    );
+    private static final ClientTooltipComponent EMPTY_FILTER = ClientTooltipComponent.create(
+        createTranslationAsHeading("gui", "filter_slot.empty_filter").getVisualOrderText()
+    );
+
     private final Inventory playerInventory;
     private int sideButtonY;
 
@@ -139,14 +158,98 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     @Override
     protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (hoveredSlot instanceof SlotTooltip slotTooltip) {
-            final List<ClientTooltipComponent> tooltip = slotTooltip.getTooltip(menu.getCarried());
+        if (hoveredSlot instanceof UpgradeSlot upgradeSlot) {
+            final List<ClientTooltipComponent> tooltip = getUpgradeTooltip(menu.getCarried(), upgradeSlot);
+            if (!tooltip.isEmpty()) {
+                Platform.INSTANCE.renderTooltip(graphics, tooltip, x, y);
+                return;
+            }
+        }
+        if (hoveredSlot instanceof ResourceSlot resourceSlot) {
+            final List<ClientTooltipComponent> tooltip = getResourceTooltip(menu.getCarried(), resourceSlot);
             if (!tooltip.isEmpty()) {
                 Platform.INSTANCE.renderTooltip(graphics, tooltip, x, y);
                 return;
             }
         }
         super.renderTooltip(graphics, x, y);
+    }
+
+    private List<ClientTooltipComponent> getUpgradeTooltip(final ItemStack carried, final UpgradeSlot upgradeSlot) {
+        if (!carried.isEmpty() || upgradeSlot.hasItem()) {
+            return Collections.emptyList();
+        }
+        final List<ClientTooltipComponent> lines = new ArrayList<>();
+        lines.add(ClientTooltipComponent.create(
+            createTranslationAsHeading("gui", "upgrade_slot").getVisualOrderText()
+        ));
+        for (final UpgradeMapping upgrade : upgradeSlot.getAllowedUpgrades()) {
+            lines.add(new UpgradeItemClientTooltipComponent(upgrade));
+        }
+        return lines;
+    }
+
+    public List<ClientTooltipComponent> getResourceTooltip(final ItemStack carried, final ResourceSlot resourceSlot) {
+        final ResourceAmountTemplate<?> resourceAmount = resourceSlot.getResourceAmount();
+        if (resourceAmount == null) {
+            return getTooltipForEmptySlot(carried, resourceSlot);
+        }
+        return getTooltipForResource(resourceAmount, resourceSlot);
+    }
+
+    private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried,
+                                                                final ResourceSlot resourceSlot) {
+        if (resourceSlot.isDisabled() || resourceSlot.supportsItemSlotInteractions()) {
+            return Collections.emptyList();
+        }
+        final List<ClientTooltipComponent> tooltip = new ArrayList<>();
+        tooltip.add(EMPTY_FILTER);
+        tooltip.addAll(getResourceSlotHelpTooltip(carried, resourceSlot));
+        tooltip.add(HelpClientTooltipComponent.create(resourceSlot.getHelpText()));
+        return tooltip;
+    }
+
+    private List<ClientTooltipComponent> getResourceSlotHelpTooltip(final ItemStack carried,
+                                                                    final ResourceSlot resourceSlot) {
+        if (carried.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<ClientTooltipComponent> lines = new ArrayList<>();
+        resourceSlot.getPrimaryResourceFactory().create(carried).ifPresent(primaryResourceInstance -> lines.add(
+            new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.LEFT,
+                getResourceRendering(primaryResourceInstance.getResource()),
+                null
+            )
+        ));
+        for (final ResourceFactory<?> alternativeResourceFactory : resourceSlot.getAlternativeResourceFactories()) {
+            final var result = alternativeResourceFactory.create(carried);
+            result.ifPresent(alternativeResourceInstance -> lines.add(new MouseWithIconClientTooltipComponent(
+                MouseWithIconClientTooltipComponent.Type.RIGHT,
+                getResourceRendering(alternativeResourceInstance.getResource()),
+                null
+            )));
+        }
+        return lines;
+    }
+
+    public static <T> MouseWithIconClientTooltipComponent.IconRenderer getResourceRendering(final T resource) {
+        return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
+    }
+
+    private <R> List<ClientTooltipComponent> getTooltipForResource(final ResourceAmountTemplate<R> resourceAmount,
+                                                                   final ResourceSlot resourceSlot) {
+        final List<ClientTooltipComponent> tooltip = PlatformApi.INSTANCE
+            .getResourceRendering(resourceAmount.getResource())
+            .getTooltip(resourceAmount.getResource())
+            .stream()
+            .map(Component::getVisualOrderText)
+            .map(ClientTooltipComponent::create)
+            .collect(Collectors.toList());
+        if (!resourceSlot.isDisabled() && !resourceSlot.supportsItemSlotInteractions()) {
+            tooltip.add(CLICK_TO_CLEAR);
+        }
+        return tooltip;
     }
 
     @Override

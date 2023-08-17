@@ -4,8 +4,11 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -68,6 +71,22 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     @Override
     public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
         return true;
+    }
+
+    @Override
+    public BlockState getContainerBlockState() {
+        return getBlockState();
+    }
+
+    @Nullable
+    @Override
+    public Level getContainerLevel() {
+        return getLevel();
+    }
+
+    @Override
+    public BlockPos getContainerPosition() {
+        return getBlockPos();
     }
 
     @Override
