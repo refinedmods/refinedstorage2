@@ -52,7 +52,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     public List<? extends ClientTooltipComponent> getExtractionHints() {
         return Platform.INSTANCE.convertToBucket(fluidResource).map(
             bucket -> new MouseWithIconClientTooltipComponent(
-                MouseWithIconClientTooltipComponent.Type.RIGHT,
+                MouseWithIconClientTooltipComponent.Type.LEFT,
                 (graphics, x, y) -> graphics.renderItem(bucket, x, y),
                 null
             )
