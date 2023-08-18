@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,13 +30,13 @@ public class ExporterContainerMenu extends AbstractSchedulingContainerMenu<Expor
     public ExporterContainerMenu(final int syncId,
                                  final Player player,
                                  final ExporterBlockEntity exporter,
-                                 final ResourceFilterContainer resourceFilterContainer,
+                                 final ResourceContainer resourceContainer,
                                  final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getExporter(),
             syncId,
             player,
-            resourceFilterContainer,
+            resourceContainer,
             upgradeContainer,
             exporter,
             FILTER_HELP

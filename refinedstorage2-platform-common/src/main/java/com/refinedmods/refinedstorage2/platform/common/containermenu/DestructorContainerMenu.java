@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
@@ -35,13 +35,13 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<D
     public DestructorContainerMenu(final int syncId,
                                    final Player player,
                                    final DestructorBlockEntity destructor,
-                                   final ResourceFilterContainer resourceFilterContainer,
+                                   final ResourceContainer resourceContainer,
                                    final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getDestructor(),
             syncId,
             player,
-            resourceFilterContainer,
+            resourceContainer,
             upgradeContainer,
             destructor,
             FILTER_HELP

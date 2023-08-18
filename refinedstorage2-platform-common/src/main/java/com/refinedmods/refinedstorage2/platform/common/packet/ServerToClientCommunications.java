@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.packet;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import java.util.UUID;
@@ -22,11 +23,9 @@ public interface ServerToClientCommunications {
 
     void sendGridClear(ServerPlayer player);
 
-    <T> void sendResourceFilterSlotUpdate(ServerPlayer player,
-                                          @Nullable PlatformStorageChannelType<T> storageChannelType,
-                                          @Nullable T resource,
-                                          long amount,
-                                          int slotIndex);
+    <T> void sendResourceSlotUpdate(ServerPlayer player,
+                                    @Nullable ResourceAmountTemplate<T> resourceAmount,
+                                    int slotIndex);
 
     void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo);
 }

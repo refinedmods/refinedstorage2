@@ -93,16 +93,16 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotChange(final int slotIndex, final boolean tryAlternatives) {
-        sendToServer(PacketIds.RESOURCE_FILTER_SLOT_CHANGE, buf -> {
+    public void sendResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {
+        sendToServer(PacketIds.RESOURCE_SLOT_CHANGE, buf -> {
             buf.writeInt(slotIndex);
             buf.writeBoolean(tryAlternatives);
         });
     }
 
     @Override
-    public void sendResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
-        sendToServer(PacketIds.RESOURCE_FILTER_SLOT_AMOUNT_CHANGE, buf -> {
+    public void sendResourceSlotAmountChange(final int slotIndex, final long amount) {
+        sendToServer(PacketIds.RESOURCE_SLOT_AMOUNT_CHANGE, buf -> {
             buf.writeInt(slotIndex);
             buf.writeLong(amount);
         });

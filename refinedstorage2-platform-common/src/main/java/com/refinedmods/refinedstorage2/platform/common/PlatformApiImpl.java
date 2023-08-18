@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
@@ -29,8 +28,10 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -44,8 +45,8 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.PlatformGri
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.CompositeFilteredResourceFactory;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -59,14 +60,15 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -99,8 +101,9 @@ public class PlatformApiImpl implements PlatformApi {
         new PlatformRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, upgradeState, amountOverride, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
-    private final Map<StorageChannelType<?>, Queue<PlatformExternalStorageProviderFactory>>
-        externalStorageProviderFactories = new HashMap<>();
+    private final Queue<PlatformExternalStorageProviderFactory> externalStorageProviderFactories = new PriorityQueue<>(
+        Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority)
+    );
     private final Queue<DestructorStrategyFactory> destructorStrategyFactories = new PriorityQueue<>(
         Comparator.comparingInt(DestructorStrategyFactory::getPriority)
     );
@@ -116,9 +119,10 @@ public class PlatformApiImpl implements PlatformApi {
     );
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
-    private final CompositeFilteredResourceFactory filteredResourceFactory = new CompositeFilteredResourceFactory(
-        new ItemFilteredResourceFactory()
-    );
+    private final ResourceFactory<ItemResource> itemResourceFactory = new ItemResourceFactory();
+    private final ResourceFactory<FluidResource> fluidResourceFactory = new FluidResourceFactory();
+    private final Set<ResourceFactory<?>> resourceFactories = new HashSet<>();
+    private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -171,25 +175,13 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
-                                                      final PlatformExternalStorageProviderFactory factory) {
-        final Queue<PlatformExternalStorageProviderFactory> factories =
-            externalStorageProviderFactories.computeIfAbsent(
-                channelType,
-                k -> new PriorityQueue<>(Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority))
-            );
-        factories.add(factory);
+    public void addExternalStorageProviderFactory(final PlatformExternalStorageProviderFactory factory) {
+        externalStorageProviderFactories.add(factory);
     }
 
     @Override
-    public <T> Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
-        final StorageChannelType<T> channelType
-    ) {
-        final var factories = externalStorageProviderFactories.get(channelType);
-        if (factories == null) {
-            return Collections.emptyList();
-        }
-        return factories;
+    public Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories() {
+        return externalStorageProviderFactories;
     }
 
     @Override
@@ -331,13 +323,34 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void addFilteredResourceFactory(final FilteredResourceFactory factory) {
-        filteredResourceFactory.addAlternativeFactory(factory);
+    public <T> void addResourceFactory(final ResourceFactory<T> factory) {
+        resourceFactories.add(factory);
     }
 
     @Override
-    public FilteredResourceFactory getFilteredResourceFactory() {
-        return filteredResourceFactory;
+    public ResourceFactory<ItemResource> getItemResourceFactory() {
+        return itemResourceFactory;
+    }
+
+    @Override
+    public ResourceFactory<FluidResource> getFluidResourceFactory() {
+        return fluidResourceFactory;
+    }
+
+    @Override
+    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+        return resourceFactories;
+    }
+
+    @Override
+    public <T> void registerResourceRendering(final Class<T> resourceClass, final ResourceRendering<T> rendering) {
+        resourceRenderingMap.put(resourceClass, rendering);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> ResourceRendering<T> getResourceRendering(final T resource) {
+        return (ResourceRendering<T>) resourceRenderingMap.get(resource.getClass());
     }
 
     @Override

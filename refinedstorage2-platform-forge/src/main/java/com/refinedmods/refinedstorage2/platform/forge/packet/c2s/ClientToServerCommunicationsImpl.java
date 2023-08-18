@@ -78,13 +78,13 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotChange(final int slotIndex, final boolean tryAlternatives) {
-        networkManager.send(new ResourceFilterSlotChangePacket(slotIndex, tryAlternatives));
+    public void sendResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {
+        networkManager.send(new ResourceSlotChangePacket(slotIndex, tryAlternatives));
     }
 
     @Override
-    public void sendResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
-        networkManager.send(new ResourceFilterSlotAmountChangePacket(slotIndex, amount));
+    public void sendResourceSlotAmountChange(final int slotIndex, final long amount) {
+        networkManager.send(new ResourceSlotAmountChangePacket(slotIndex, amount));
     }
 
     @Override

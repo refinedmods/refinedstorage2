@@ -66,14 +66,14 @@ public class LevelConnectionProvider implements ConnectionProvider {
         if (!(pivot instanceof PlatformNetworkNodeContainer platformPivot)) {
             return;
         }
-        final Level pivotLevel = platformPivot.getLevel();
+        final Level pivotLevel = platformPivot.getContainerLevel();
         if (pivotLevel == null) {
             LOGGER.warn("Pivot level was null for {}", pivot);
             return;
         }
         scanState.toCheck.add(new ScanRequest(
             pivotLevel.dimension(),
-            platformPivot.getBlockPos()
+            platformPivot.getContainerPosition()
         ));
     }
 
@@ -97,7 +97,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     private Set<ScanRequest> findConnectionsAt(final PlatformNetworkNodeContainer from) {
-        final Level level = from.getLevel();
+        final Level level = from.getContainerLevel();
         if (level == null) {
             return Collections.emptySet();
         }
@@ -106,9 +106,9 @@ public class LevelConnectionProvider implements ConnectionProvider {
             if (!from.canPerformOutgoingConnection(direction)) {
                 continue;
             }
-            final BlockPos offsetPos = from.getBlockPos().relative(direction);
+            final BlockPos offsetPos = from.getContainerPosition().relative(direction);
             if (getBlockEntity(level, offsetPos) instanceof PlatformNetworkNodeContainer neighborContainer
-                && neighborContainer.canAcceptIncomingConnection(direction, from.getBlockState())) {
+                && neighborContainer.canAcceptIncomingConnection(direction, from.getContainerBlockState())) {
                 requests.add(new ScanRequest(level.dimension(), offsetPos));
             }
         }
@@ -181,8 +181,8 @@ public class LevelConnectionProvider implements ConnectionProvider {
         private static Set<ScanEntry> toScanEntries(final Set<PlatformNetworkNodeContainer> existingConnections) {
             return existingConnections.stream().map(container -> new ScanEntry(
                 container,
-                Objects.requireNonNull(container.getLevel()),
-                Objects.requireNonNull(container.getBlockPos())
+                Objects.requireNonNull(container.getContainerLevel()),
+                Objects.requireNonNull(container.getContainerPosition())
             )).collect(Collectors.toSet());
         }
     }

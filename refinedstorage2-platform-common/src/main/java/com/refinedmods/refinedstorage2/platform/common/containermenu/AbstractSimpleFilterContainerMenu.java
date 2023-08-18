@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,7 +16,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
-    extends AbstractResourceFilterContainerMenu {
+    extends AbstractResourceContainerMenu {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
@@ -24,14 +25,14 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
     protected AbstractSimpleFilterContainerMenu(final MenuType<?> type,
                                                 final int syncId,
                                                 final Player player,
-                                                final ResourceFilterContainer resourceFilterContainer,
+                                                final ResourceContainer resourceContainer,
                                                 final UpgradeContainer upgradeContainer,
                                                 final T blockEntity,
                                                 final Component filterHelp) {
         super(type, syncId, player);
         this.filterHelp = filterHelp;
         registerServerProperties(blockEntity);
-        addSlots(player, resourceFilterContainer, upgradeContainer);
+        addSlots(player, resourceContainer, upgradeContainer);
     }
 
     protected AbstractSimpleFilterContainerMenu(final MenuType<?> type,
@@ -45,10 +46,10 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
         registerClientProperties();
         addSlots(
             player,
-            new ResourceFilterContainer(9),
+            ResourceContainerImpl.createForFilter(),
             new UpgradeContainer(upgradeDestination, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
-        initializeResourceFilterSlots(buf);
+        initializeResourceSlots(buf);
     }
 
     protected abstract void registerClientProperties();
@@ -56,10 +57,10 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
     protected abstract void registerServerProperties(T blockEntity);
 
     private void addSlots(final Player player,
-                          final ResourceFilterContainer resourceFilterContainer,
+                          final ResourceContainer resourceContainer,
                           final UpgradeContainer upgradeContainer) {
-        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
-            addSlot(createFilterSlot(resourceFilterContainer, i));
+        for (int i = 0; i < resourceContainer.size(); ++i) {
+            addSlot(createFilterSlot(resourceContainer, i));
         }
         for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
             addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
@@ -70,8 +71,8 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
         transferManager.addFilterTransfer(player.getInventory());
     }
 
-    private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
+    private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(resourceFilterContainer, i, filterHelp, x, FILTER_SLOT_Y);
+        return new ResourceSlot(resourceContainer, i, filterHelp, x, FILTER_SLOT_Y);
     }
 }

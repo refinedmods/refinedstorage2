@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.13] - 2023-08-18
+
+### Changed
+
+-   The Interface now supports fluids.
+
+### Fixed
+
+-   Fixed filter slot hints not being aware of the resource types that they can show in a slot.
+-   Fixed Exporter only exporting 1 mB per cycle on Forge.
+-   Fixed not being able to use any blocks on Fabric or Forge.
+-   Fixed External Storage crash on Fabric when a stack with zero amount is exposed.
+
 ## [2.0.0-milestone.2.12] - 2023-08-06
 
 ### Added
@@ -411,7 +424,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.12...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.13...HEAD
+
+[2.0.0-milestone.2.13]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.12...v2.0.0-milestone.2.13
 
 [2.0.0-milestone.2.12]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.11...v2.0.0-milestone.2.12
 

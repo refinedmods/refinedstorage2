@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -31,8 +30,6 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
 
     Optional<GridResource> toGridResource(ResourceAmount<?> resourceAmount);
 
-    Optional<FilteredResource<T>> toFilteredResource(ResourceAmount<?> resourceAmount);
-
     boolean isGridResourceBelonging(GridResource gridResource);
 
     MutableComponent getTitle();
@@ -44,4 +41,12 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
     int getYTexture();
 
     long normalizeAmount(double amount);
+
+    double getDisplayAmount(long amount);
+
+    long getInterfaceExportLimit();
+
+    default long getInterfaceExportLimit(T resource) {
+        return getInterfaceExportLimit();
+    }
 }

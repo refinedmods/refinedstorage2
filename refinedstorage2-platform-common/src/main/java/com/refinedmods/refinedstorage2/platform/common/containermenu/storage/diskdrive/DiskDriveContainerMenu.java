@@ -3,14 +3,15 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,30 +46,30 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         addSlots(
             playerInventory.player,
             new SimpleContainer(AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS),
-            new ResourceFilterContainer(9)
+            ResourceContainerImpl.createForFilter()
         );
-        initializeResourceFilterSlots(buf);
+        initializeResourceSlots(buf);
     }
 
     public DiskDriveContainerMenu(final int syncId,
                                   final Player player,
                                   final SimpleContainer diskInventory,
-                                  final ResourceFilterContainer resourceFilterContainer,
+                                  final ResourceContainer resourceContainer,
                                   final StorageConfigurationContainer configContainer,
                                   final StorageDiskInfoAccessor storageInfoAccessor) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, player, configContainer);
         this.storageInfoAccessor = storageInfoAccessor;
-        addSlots(player, diskInventory, resourceFilterContainer);
+        addSlots(player, diskInventory, resourceContainer);
     }
 
     private void addSlots(final Player player,
                           final SimpleContainer diskInventory,
-                          final ResourceFilterContainer resourceFilterContainer) {
+                          final ResourceContainer resourceContainer) {
         for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
-        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
-            addSlot(createFilterSlot(resourceFilterContainer, i));
+        for (int i = 0; i < resourceContainer.size(); ++i) {
+            addSlot(createFilterSlot(resourceContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
 
@@ -76,10 +77,10 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         transferManager.addFilterTransfer(player.getInventory());
     }
 
-    private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
+    private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceFilterSlot(
-            resourceFilterContainer,
+        return new ResourceSlot(
+            resourceContainer,
             i,
             createTranslation("gui", "storage.filter_help"),
             x,

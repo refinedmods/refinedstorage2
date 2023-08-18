@@ -4,10 +4,12 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SetupNetwork
 class ExportToEmptySlotInterfaceNetworkNodeTest {
     @AddNetworkNode
-    InterfaceNetworkNode<String> sut;
+    InterfaceNetworkNode sut;
 
     private InterfaceExportStateImpl exportState;
 
@@ -27,7 +29,7 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
     void setUp() {
         exportState = new InterfaceExportStateImpl(3);
         sut.setExportState(exportState);
-        sut.setTransferQuota(2);
+        sut.setTransferQuotaProvider(resource -> 2);
         sut.setEnergyUsage(5);
     }
 
@@ -43,9 +45,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).isNull();
+        assertThat(exportState.getExportedResource(2)).isNull();
         assertThat(storageChannel.getAll()).isEmpty();
     }
 
@@ -59,16 +61,18 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
 
         exportState.setRequestedResource(1, "A", 10);
 
-        sut.setTransferQuota(10);
+        sut.setTransferQuotaProvider(resource -> 10);
 
         // Act
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
+        assertThat(exportState.getExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll()).isEmpty();
     }
@@ -87,10 +91,12 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(1);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(1);
+        assertThat(exportState.getExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
@@ -113,11 +119,15 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isEqualTo("B");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(2)).isEqualTo(2);
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
+        assertThat(exportState.getExportedResource(2)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("B", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(2)).isEqualTo(2);
 
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
@@ -142,10 +152,12 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
-        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
-        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
-        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
+        assertThat(exportState.getExportedResource(0)).isNull();
+        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
+            new ResourceTemplate<>("A1", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+        );
+        assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
+        assertThat(exportState.getExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()

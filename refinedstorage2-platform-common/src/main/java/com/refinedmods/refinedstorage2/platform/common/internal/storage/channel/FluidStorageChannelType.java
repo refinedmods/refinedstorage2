@@ -5,14 +5,12 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.AbstractPlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannelImpl;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidGridResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -55,14 +53,6 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public Optional<FilteredResource<FluidResource>> toFilteredResource(final ResourceAmount<?> resourceAmount) {
-        if (resourceAmount.getResource() instanceof FluidResource fluidResource) {
-            return Optional.of(new FluidFilteredResource(fluidResource, resourceAmount.getAmount()));
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public boolean isGridResourceBelonging(final GridResource gridResource) {
         return gridResource instanceof FluidGridResource;
     }
@@ -70,6 +60,16 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     @Override
     public long normalizeAmount(final double amount) {
         return (long) (amount * Platform.INSTANCE.getBucketAmount());
+    }
+
+    @Override
+    public double getDisplayAmount(final long amount) {
+        return amount / (double) Platform.INSTANCE.getBucketAmount();
+    }
+
+    @Override
+    public long getInterfaceExportLimit() {
+        return Platform.INSTANCE.getBucketAmount() * 16;
     }
 
     @Override

@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridScr
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.ResourceContainerFluidStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
@@ -33,8 +34,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPac
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotAmountChangePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotChangePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotAmountChangePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
@@ -170,26 +171,19 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExternalStorageProviderFactories() {
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
             StorageChannelTypes.ITEM,
-            new InterfacePlatformExternalStorageProviderFactory()
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.ITEM,
-            new StoragePlatformExternalStorageProviderFactory<>(
-                ItemStorage.SIDED,
-                VariantUtil::ofItemVariant,
-                VariantUtil::toItemVariant
-            )
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            ItemStorage.SIDED,
+            VariantUtil::ofItemVariant,
+            VariantUtil::toItemVariant
+        ));
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
             StorageChannelTypes.FLUID,
-            new StoragePlatformExternalStorageProviderFactory<>(
-                FluidStorage.SIDED,
-                VariantUtil::ofFluidVariant,
-                VariantUtil::toFluidVariant
-            )
-        );
+            FluidStorage.SIDED,
+            VariantUtil::ofFluidVariant,
+            VariantUtil::toFluidVariant
+        ));
     }
 
     private void registerContent() {
@@ -252,16 +246,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         );
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
         ServerPlayNetworking.registerGlobalReceiver(
-            PacketIds.RESOURCE_FILTER_SLOT_AMOUNT_CHANGE,
-            new ResourceFilterSlotAmountChangePacket()
+            PacketIds.RESOURCE_SLOT_AMOUNT_CHANGE,
+            new ResourceSlotAmountChangePacket()
         );
         ServerPlayNetworking.registerGlobalReceiver(
-            PacketIds.RESOURCE_FILTER_SLOT_CHANGE,
-            new ResourceFilterSlotChangePacket()
+            PacketIds.RESOURCE_SLOT_CHANGE,
+            new ResourceSlotChangePacket()
         );
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.SINGLE_AMOUNT_CHANGE, new SingleAmountChangePacket());
     }
 
+    @SuppressWarnings("checkstyle:Indentation")
     private void registerSidedHandlers() {
         registerItemStorage(
             AbstractDiskDriveBlockEntity.class::isInstance,
@@ -272,7 +267,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerItemStorage(
             InterfaceBlockEntity.class::isInstance,
             InterfaceBlockEntity.class::cast,
-            InterfaceBlockEntity::getExportedItems,
+            InterfaceBlockEntity::getExportedResourcesAsContainer,
+            BlockEntities.INSTANCE.getInterface()
+        );
+        FluidStorage.SIDED.registerForBlockEntity(
+            (blockEntity, context) -> new ResourceContainerFluidStorageAdapter(blockEntity.getExportedResources()),
             BlockEntities.INSTANCE.getInterface()
         );
         registerControllerEnergy();

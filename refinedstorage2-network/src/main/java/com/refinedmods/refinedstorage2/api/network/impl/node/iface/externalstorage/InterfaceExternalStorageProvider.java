@@ -7,5 +7,5 @@ import javax.annotation.Nullable;
 
 public interface InterfaceExternalStorageProvider<T> extends ExternalStorageProvider<T> {
     @Nullable
-    InterfaceNetworkNode<T> getInterface();
+    InterfaceNetworkNode getInterface();
 }

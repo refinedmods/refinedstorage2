@@ -1,31 +1,38 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 
-import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 import javax.annotation.Nullable;
 
-public interface InterfaceExportState<T> extends InsertableStorage<T> {
+public interface InterfaceExportState {
     int getSlots();
 
-    Collection<T> expandExportCandidates(StorageChannel<T> storageChannel, T resource);
+    <T> Collection<T> expandExportCandidates(StorageChannel<T> storageChannel, T resource);
 
-    boolean isCurrentlyExportedResourceValid(T want, T got);
-
-    @Nullable
-    T getRequestedResource(int index);
-
-    long getRequestedResourceAmount(int index);
+    <A, B> boolean isExportedResourceValid(ResourceTemplate<A> want,
+                                           ResourceTemplate<B> got);
 
     @Nullable
-    T getCurrentlyExportedResource(int index);
+    ResourceTemplate<?> getRequestedResource(int slotIndex);
 
-    long getCurrentlyExportedResourceAmount(int index);
+    long getRequestedAmount(int slotIndex);
 
-    void setCurrentlyExported(int index, T resource, long amount);
+    @Nullable
+    ResourceTemplate<?> getExportedResource(int slotIndex);
 
-    void decrementCurrentlyExportedAmount(int index, long amount);
+    long getExportedAmount(int slotIndex);
 
-    void incrementCurrentlyExportedAmount(int index, long amount);
+    <T> void setExportSlot(int slotIndex, ResourceTemplate<T> resource, long amount);
+
+    void shrinkExportedAmount(int slotIndex, long amount);
+
+    void growExportedAmount(int slotIndex, long amount);
+
+    <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+
+    <T> long extract(T resource, long amount, Action action);
 }

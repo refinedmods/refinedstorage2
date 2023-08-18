@@ -4,15 +4,15 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
@@ -27,6 +27,7 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exte
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ResourceContainerFluidHandlerAdapter;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.Arrays;
@@ -64,6 +65,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -160,14 +162,10 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerExternalStorageProviderFactories() {
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new ItemHandlerPlatformExternalStorageProviderFactory());
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.ITEM,
-            new ItemHandlerPlatformExternalStorageProviderFactory()
-        );
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
-            StorageChannelTypes.FLUID,
-            new FluidHandlerPlatformExternalStorageProviderFactory()
-        );
+            new FluidHandlerPlatformExternalStorageProviderFactory());
     }
 
     private void registerContent() {
@@ -284,21 +282,42 @@ public class ModInitializer extends AbstractModInitializer {
             registerItemHandler(e, diskDriveBlockEntity, AbstractDiskDriveBlockEntity::getDiskInventory);
         }
         if (e.getObject() instanceof InterfaceBlockEntity interfaceBlockEntity) {
-            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedItems);
+            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedResourcesAsContainer);
+            registerFluidHandler(
+                e,
+                interfaceBlockEntity,
+                blockEntity -> new ResourceContainerFluidHandlerAdapter(blockEntity.getExportedResources())
+            );
         }
     }
 
     private <T extends BlockEntity> void registerItemHandler(final AttachCapabilitiesEvent<BlockEntity> e,
-                                                             final T diskDriveBlockEntity,
+                                                             final T blockEntity,
                                                              final Function<T, Container> containerSupplier) {
-        final LazyOptional<IItemHandler> capability = LazyOptional
-            .of(() -> new InvWrapper(containerSupplier.apply(diskDriveBlockEntity)));
+        final LazyOptional<IItemHandler> capability = LazyOptional.of(() -> new InvWrapper(
+            containerSupplier.apply(blockEntity)
+        ));
         e.addCapability(createIdentifier("items"), new ICapabilityProvider() {
             @Override
             @Nonnull
-            public <C> LazyOptional<C> getCapability(final Capability<C> cap,
-                                                     @Nullable final Direction side) {
+            public <C> LazyOptional<C> getCapability(final Capability<C> cap, @Nullable final Direction side) {
                 if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                    return capability.cast();
+                }
+                return LazyOptional.empty();
+            }
+        });
+    }
+
+    private <T extends BlockEntity> void registerFluidHandler(final AttachCapabilitiesEvent<BlockEntity> e,
+                                                              final T blockEntity,
+                                                              final Function<T, IFluidHandler> handlerSupplier) {
+        final LazyOptional<IFluidHandler> capability = LazyOptional.of(() -> handlerSupplier.apply(blockEntity));
+        e.addCapability(createIdentifier("fluids"), new ICapabilityProvider() {
+            @Override
+            @Nonnull
+            public <C> LazyOptional<C> getCapability(final Capability<C> cap, @Nullable final Direction side) {
+                if (cap == ForgeCapabilities.FLUID_HANDLER) {
                     return capability.cast();
                 }
                 return LazyOptional.empty();

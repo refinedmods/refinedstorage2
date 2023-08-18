@@ -5,21 +5,19 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.TypedTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategy;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyModeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -57,12 +55,11 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
             UpgradeDestinations.DESTRUCTOR
         );
         this.actor = new NetworkNodeActor(getNode());
-        this.filterWithFuzzyMode = FilterWithFuzzyModeBuilder.of()
-            .listener(this::setChanged)
-            .uniqueTemplatesAcceptor(templates -> filter.setTemplates(
-                templates.stream().map(TypedTemplate::template).collect(Collectors.toSet())
-            ))
-            .build();
+        this.filterWithFuzzyMode = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+            ResourceContainerImpl.createForFilter(),
+            this::setChanged,
+            filter::setTemplates
+        );
     }
 
     public boolean isPickupItems() {

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.transfer;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,15 +38,10 @@ public class TransferManager {
     }
 
     public void addFilterTransfer(final Container from) {
-        if (!(containerMenu instanceof AbstractResourceFilterContainerMenu resourceFilterContainer)) {
-            throw new UnsupportedOperationException(
-                "Cannot add filter transfer if container menu isn't resource filterable"
-            );
+        if (!(containerMenu instanceof AbstractResourceContainerMenu resourceContainer)) {
+            throw new UnsupportedOperationException(containerMenu.getClass().toString());
         }
-        addTransfer(
-            destinationFactory.apply(from),
-            new FilterInventoryDestination(resourceFilterContainer)
-        );
+        addTransfer(destinationFactory.apply(from), new ResourceInventoryDestination(resourceContainer));
     }
 
     public void addBiTransfer(final Container from, final Container to) {

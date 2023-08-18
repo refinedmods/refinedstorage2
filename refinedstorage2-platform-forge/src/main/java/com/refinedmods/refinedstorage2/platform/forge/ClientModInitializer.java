@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -11,8 +11,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.FilteredResourceClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
@@ -69,6 +69,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         }));
         registerBlockEntityRenderer();
         registerGridSynchronizers();
+        registerResourceRendering();
         registerAlternativeGridHints();
     }
 
@@ -149,6 +150,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unchecked")
     public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
@@ -169,12 +171,12 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         );
     }
 
-    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final FilteredResource<?> filteredResource,
+    private static <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmountTemplate<T> filteredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(
-            new FilteredResourceClientTooltipComponent<>(filteredResource),
+            new ResourceClientTooltipComponent<>(filteredResource),
             help
         ));
     }

@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -24,14 +23,17 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
+import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -55,12 +57,9 @@ public interface PlatformApi {
 
     PlatformRegistry<ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
 
-    <T> void addExternalStorageProviderFactory(StorageChannelType<T> channelType,
-                                               PlatformExternalStorageProviderFactory factory);
+    void addExternalStorageProviderFactory(PlatformExternalStorageProviderFactory factory);
 
-    <T> Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
-        StorageChannelType<T> channelType
-    );
+    Collection<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories();
 
     Collection<DestructorStrategyFactory> getDestructorStrategyFactories();
 
@@ -107,9 +106,17 @@ public interface PlatformApi {
 
     void addGridScrollingStrategyFactory(GridScrollingStrategyFactory scrollingStrategyFactory);
 
-    void addFilteredResourceFactory(FilteredResourceFactory factory);
+    <T> void addResourceFactory(ResourceFactory<T> factory);
 
-    FilteredResourceFactory getFilteredResourceFactory();
+    ResourceFactory<ItemResource> getItemResourceFactory();
+
+    ResourceFactory<FluidResource> getFluidResourceFactory();
+
+    Set<ResourceFactory<?>> getAlternativeResourceFactories();
+
+    <T> void registerResourceRendering(Class<T> resourceClass, ResourceRendering<T> rendering);
+
+    <T> ResourceRendering<T> getResourceRendering(T resource);
 
     void registerIngredientConverter(IngredientConverter converter);
 

@@ -17,7 +17,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ItemDropConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceBlockConstructorStrategy;
@@ -33,6 +32,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.Exp
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
@@ -59,7 +59,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -137,7 +137,7 @@ public abstract class AbstractModInitializer {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
-        registerAdditionalFilteredResourceFactories();
+        registerAdditionalResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
         registerNetworkComponents();
@@ -157,8 +157,8 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    private void registerAdditionalFilteredResourceFactories() {
-        PlatformApi.INSTANCE.addFilteredResourceFactory(new FluidFilteredResourceFactory());
+    private void registerAdditionalResourceFactories() {
+        PlatformApi.INSTANCE.addResourceFactory(new FluidResourceFactory());
     }
 
     private void registerDestructorStrategyFactories() {

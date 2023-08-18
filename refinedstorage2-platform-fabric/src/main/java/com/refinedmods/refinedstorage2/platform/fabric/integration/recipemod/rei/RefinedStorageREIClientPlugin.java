@@ -26,7 +26,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
     public void registerScreens(final ScreenRegistry registry) {
         final IngredientConverter converter = PlatformApi.INSTANCE.getIngredientConverter();
         registry.registerFocusedStack(new GridFocusedStackProvider(converter));
-        registry.registerFocusedStack(new FilteredResourceFocusedStackProvider(converter));
+        registry.registerFocusedStack(new ResourceFocusedStackProvider(converter));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
 
     public static void registerIngredientConverters() {
         PlatformApi.INSTANCE.registerIngredientConverter(new GridResourceIngredientConverter());
-        PlatformApi.INSTANCE.registerIngredientConverter(new FilteredResourceIngredientConverter());
+        PlatformApi.INSTANCE.registerIngredientConverter(new ResourceIngredientConverter());
     }
 
     @SuppressWarnings("UnstableApiUsage")

@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetw
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,13 +17,17 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-public class InterfaceProxyExternalStorageProvider implements InterfaceExternalStorageProvider<ItemResource> {
+public class InterfaceProxyExternalStorageProvider<T> implements InterfaceExternalStorageProvider<T> {
     private final Level level;
     private final BlockPos pos;
+    private final StorageChannelType<T> storageChannelType;
 
-    public InterfaceProxyExternalStorageProvider(final Level level, final BlockPos pos) {
+    public InterfaceProxyExternalStorageProvider(final Level level,
+                                                 final BlockPos pos,
+                                                 final StorageChannelType<T> storageChannelType) {
         this.level = level;
         this.pos = pos;
+        this.storageChannelType = storageChannelType;
     }
 
     private Optional<InterfaceBlockEntity> tryGetInterface() {
@@ -33,28 +37,28 @@ public class InterfaceProxyExternalStorageProvider implements InterfaceExternalS
         return Optional.empty();
     }
 
-    private Optional<InterfaceExternalStorageProvider<ItemResource>> tryGetProvider() {
-        return tryGetInterface().map(InterfaceBlockEntity::getExternalStorageProvider);
+    private Optional<InterfaceExternalStorageProvider<T>> tryGetProvider() {
+        return tryGetInterface().map(iface -> iface.getExternalStorageProvider(storageChannelType));
     }
 
     @Override
-    public long extract(final ItemResource resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         return tryGetProvider().map(provider -> provider.extract(resource, amount, action, actor)).orElse(0L);
     }
 
     @Override
-    public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         return tryGetProvider().map(provider -> provider.insert(resource, amount, action, actor)).orElse(0L);
     }
 
     @Override
-    public Iterator<ResourceAmount<ItemResource>> iterator() {
+    public Iterator<ResourceAmount<T>> iterator() {
         return tryGetProvider().map(InterfaceExternalStorageProvider::iterator).orElse(Collections.emptyIterator());
     }
 
     @Override
     @Nullable
-    public InterfaceNetworkNode<ItemResource> getInterface() {
+    public InterfaceNetworkNode getInterface() {
         return tryGetInterface().map(AbstractNetworkNodeContainerBlockEntity::getNode).orElse(null);
     }
 }

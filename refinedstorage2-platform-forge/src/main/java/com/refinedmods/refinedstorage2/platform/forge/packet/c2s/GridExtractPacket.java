@@ -62,12 +62,12 @@ public class GridExtractPacket<T> {
     public static <T> void handle(final GridExtractPacket<T> packet, final Supplier<NetworkEvent.Context> ctx) {
         final ServerPlayer player = ctx.get().getSender();
         if (player != null && player.containerMenu instanceof GridExtractionStrategy strategy) {
-            strategy.onExtract(
+            ctx.get().enqueueWork(() -> strategy.onExtract(
                 packet.storageChannelType,
                 packet.resource,
                 packet.mode,
                 packet.cursor
-            );
+            ));
         }
         ctx.get().setPacketHandled(true);
     }
