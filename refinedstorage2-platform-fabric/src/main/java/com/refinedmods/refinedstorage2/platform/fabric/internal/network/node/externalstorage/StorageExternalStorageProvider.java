@@ -75,7 +75,7 @@ public class StorageExternalStorageProvider<T, P> implements ExternalStorageProv
         }
         final Iterator<StorageView<P>> iterator = storage.iterator();
         return transform(
-            filter(iterator, storageView -> !storageView.isResourceBlank()),
+            filter(iterator, storageView -> !storageView.isResourceBlank() && storageView.getAmount() > 0),
             storageView -> new ResourceAmount<>(
                 fromPlatformMapper.apply(storageView.getResource()),
                 storageView.getAmount()
