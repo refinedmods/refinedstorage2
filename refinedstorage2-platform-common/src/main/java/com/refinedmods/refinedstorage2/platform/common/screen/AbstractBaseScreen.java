@@ -29,6 +29,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,6 +47,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     );
 
     private final Inventory playerInventory;
+    private final List<Rect2i> exclusionZones = new ArrayList<>();
     private int sideButtonY;
 
     protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final Component text) {
@@ -61,6 +63,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         clearWidgets();
         super.init();
         sideButtonY = 6;
+    }
+
+    @Override
+    protected void clearWidgets() {
+        super.clearWidgets();
+        exclusionZones.clear();
     }
 
     protected abstract ResourceLocation getTexture();
@@ -152,8 +160,13 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     public void addSideButton(final AbstractSideButtonWidget button) {
         button.setX(leftPos - button.getWidth() - 2);
         button.setY(topPos + sideButtonY);
+        exclusionZones.add(new Rect2i(button.getX(), button.getY(), button.getWidth(), button.getHeight()));
         sideButtonY += button.getHeight() + 2;
         addRenderableWidget(button);
+    }
+
+    public List<Rect2i> getExclusionZones() {
+        return exclusionZones;
     }
 
     @Override

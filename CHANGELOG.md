@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Support for JEI/REI exclusion zones.
+
 ## [2.0.0-milestone.2.13] - 2023-08-18
 
 ### Changed
