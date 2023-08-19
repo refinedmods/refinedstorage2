@@ -56,11 +56,7 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
     public <T> void handleResourceFilterSlotUpdate(final int slotIndex,
                                                    final PlatformStorageChannelType<T> storageChannelType,
                                                    final T resource) {
-        getResourceSlot(slotIndex).ifPresent(slot -> slot.change(new ResourceAmountTemplate<>(
-            resource,
-            1,
-            storageChannelType
-        )));
+        getResourceSlot(slotIndex).ifPresent(slot -> slot.set(storageChannelType, resource));
     }
 
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {

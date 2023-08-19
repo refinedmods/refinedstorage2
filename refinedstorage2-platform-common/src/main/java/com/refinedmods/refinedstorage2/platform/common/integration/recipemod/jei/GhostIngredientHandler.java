@@ -8,9 +8,9 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractRes
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.ingredients.ITypedIngredient;
@@ -37,11 +37,16 @@ public class GhostIngredientHandler implements IGhostIngredientHandler<AbstractB
     private <I> List<Target<I>> getTargets(final AbstractBaseScreen screen,
                                            final I ingredient,
                                            final AbstractResourceContainerMenu menu) {
-        return menu.getResourceSlots().stream()
-            .flatMap(slot -> ingredientConverter.convertToResource(ingredient).map(resource -> {
-                final Rect2i bounds = getBounds(screen, slot);
-                return new TargetImpl<I>(bounds, slot.index);
-            }).stream()).collect(Collectors.toList());
+        final List<Target<I>> targets = new ArrayList<>();
+        ingredientConverter.convertToResource(ingredient).ifPresent(resource -> {
+            for (final ResourceSlot slot : menu.getResourceSlots()) {
+                if (slot.isValid(resource.resource())) {
+                    final Rect2i bounds = getBounds(screen, slot);
+                    targets.add(new TargetImpl<>(bounds, slot.index));
+                }
+            }
+        });
+        return targets;
     }
 
     private Rect2i getBounds(final AbstractBaseScreen screen, final ResourceSlot slot) {

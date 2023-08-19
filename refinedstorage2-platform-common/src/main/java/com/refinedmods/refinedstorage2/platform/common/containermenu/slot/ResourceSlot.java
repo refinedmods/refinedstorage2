@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTempl
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.Objects;
@@ -104,6 +105,21 @@ public class ResourceSlot extends Slot {
         } else {
             resourceContainer.set(getContainerSlot(), instance);
         }
+    }
+
+    public <T> void set(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
+        if (!isValid(resource)) {
+            return;
+        }
+        resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate<>(
+            resource,
+            1,
+            storageChannelType
+        ));
+    }
+
+    public <T> boolean isValid(final T resource) {
+        return resourceContainer.isValid(resource);
     }
 
     public boolean changeIfEmpty(final ItemStack stack) {

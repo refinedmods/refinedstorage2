@@ -21,4 +21,9 @@ public class ItemResourceFactory implements ResourceFactory<ItemResource> {
             StorageChannelTypes.ITEM
         ));
     }
+
+    @Override
+    public boolean isValid(final Object resource) {
+        return resource instanceof ItemResource;
+    }
 }

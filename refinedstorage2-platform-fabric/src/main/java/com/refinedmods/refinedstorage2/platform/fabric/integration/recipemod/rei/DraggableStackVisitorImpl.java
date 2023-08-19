@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractRes
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import me.shedaniel.math.Rectangle;
@@ -33,9 +35,15 @@ public class DraggableStackVisitorImpl
         final var screen = context.getScreen();
         final var menu = screen.getMenu();
         final var value = stack.getStack().getValue();
-        return menu.getResourceSlots().stream()
-            .flatMap(slot -> ingredientConverter.convertToResource(value)
-                .map(filteredResource -> BoundsProvider.ofRectangle(toRectangle(screen, slot))).stream());
+        final List<BoundsProvider> bounds = new ArrayList<>();
+        ingredientConverter.convertToResource(value).ifPresent(resource -> {
+            for (final ResourceSlot slot : menu.getResourceSlots()) {
+                if (slot.isValid(resource.resource())) {
+                    bounds.add(BoundsProvider.ofRectangle(toRectangle(screen, slot)));
+                }
+            }
+        });
+        return bounds.stream();
     }
 
     @Override

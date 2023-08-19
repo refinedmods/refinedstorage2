@@ -19,4 +19,9 @@ public class FluidResourceFactory implements ResourceFactory<FluidResource> {
             StorageChannelTypes.FLUID
         ));
     }
+
+    @Override
+    public boolean isValid(final Object resource) {
+        return resource instanceof FluidResource;
+    }
 }
