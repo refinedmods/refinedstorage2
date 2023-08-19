@@ -86,6 +86,19 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
+    public <T> boolean isValid(final T resource) {
+        if (primaryResourceFactory.isValid(resource)) {
+            return true;
+        }
+        for (final ResourceFactory<?> resourceFactory : alternativeResourceFactories) {
+            if (resourceFactory.isValid(resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public long getAmount(final int index) {
         final ResourceAmountTemplate<?> resourceAmount = slots[index];
         if (resourceAmount == null) {

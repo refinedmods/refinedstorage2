@@ -60,6 +60,7 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
             AbstractBaseScreen.class,
             new ExclusionZonesGuiContainerHandler()
         );
+        registration.addGhostIngredientHandler(AbstractBaseScreen.class, new GhostIngredientHandler(converter));
     }
 
     @Nullable

@@ -20,6 +20,7 @@ public final class PacketIds {
         createIdentifier("crafting_grid_recipe_transfer");
     public static final ResourceLocation RESOURCE_SLOT_UPDATE = createIdentifier("resource_slot_update");
     public static final ResourceLocation RESOURCE_SLOT_CHANGE = createIdentifier("resource_slot_change");
+    public static final ResourceLocation RESOURCE_FILTER_SLOT_CHANGE = createIdentifier("resource_filter_slot_change");
     public static final ResourceLocation RESOURCE_SLOT_AMOUNT_CHANGE = createIdentifier("resource_slot_amount_change");
     public static final ResourceLocation SINGLE_AMOUNT_CHANGE = createIdentifier("detector_amount_change");
 

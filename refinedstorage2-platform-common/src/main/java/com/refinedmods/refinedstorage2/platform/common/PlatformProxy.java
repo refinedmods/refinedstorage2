@@ -128,6 +128,11 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
+    public Optional<FluidResource> convertJeiIngredientToFluid(final Object ingredient) {
+        return ensureLoaded().convertJeiIngredientToFluid(ingredient);
+    }
+
+    @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
         return ensureLoaded().convertToBucket(fluidResource);
     }

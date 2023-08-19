@@ -37,6 +37,8 @@ public interface ResourceContainer {
 
     <T> long getMaxAmount(ResourceAmountTemplate<T> resourceAmount);
 
+    <T> boolean isValid(T resource);
+
     void remove(int index);
 
     int size();

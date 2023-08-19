@@ -82,6 +82,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 
 public final class PlatformImpl extends AbstractPlatform {
@@ -151,6 +152,14 @@ public final class PlatformImpl extends AbstractPlatform {
                 new FluidResource(contents.getFluid(), contents.getTag()),
                 contents.getAmount())
             );
+    }
+
+    @Override
+    public Optional<FluidResource> convertJeiIngredientToFluid(final Object ingredient) {
+        if (ingredient instanceof FluidStack fluidStack) {
+            return Optional.of(ofFluidStack(fluidStack));
+        }
+        return Optional.empty();
     }
 
     @Override

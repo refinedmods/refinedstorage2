@@ -53,6 +53,7 @@ dependencies {
     modRuntimeOnly fabric.rei.impl
 
     modCompileOnly common.jei.api
+    modCompileOnly fabric.jei.api
     // modRuntimeOnly fabric.jei.impl
 
     modRuntimeOnly fabric.wthit

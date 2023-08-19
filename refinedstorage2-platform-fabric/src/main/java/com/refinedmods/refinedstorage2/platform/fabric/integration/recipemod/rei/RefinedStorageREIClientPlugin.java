@@ -29,6 +29,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         final IngredientConverter converter = PlatformApi.INSTANCE.getIngredientConverter();
         registry.registerFocusedStack(new GridFocusedStackProvider(converter));
         registry.registerFocusedStack(new ResourceFocusedStackProvider(converter));
+        registry.registerDraggableStackVisitor(new DraggableStackVisitorImpl(converter));
     }
 
     @Override
