@@ -100,6 +100,19 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
         });
     }
 
+
+    @Override
+    public <T> void sendResourceFilterSlotChange(final PlatformStorageChannelType<T> storageChannelType,
+                                                 final T resource,
+                                                 final int slotIndex) {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType)
+            .ifPresent(id -> sendToServer(PacketIds.RESOURCE_FILTER_SLOT_CHANGE, buf -> {
+                buf.writeInt(slotIndex);
+                buf.writeResourceLocation(id);
+                storageChannelType.toBuffer(resource, buf);
+            }));
+    }
+
     @Override
     public void sendResourceSlotAmountChange(final int slotIndex, final long amount) {
         sendToServer(PacketIds.RESOURCE_SLOT_AMOUNT_CHANGE, buf -> {

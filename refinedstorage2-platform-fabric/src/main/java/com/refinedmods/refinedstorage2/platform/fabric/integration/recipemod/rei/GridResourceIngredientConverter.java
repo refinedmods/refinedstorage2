@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei;
 
+import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
@@ -11,7 +12,7 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 
 public class GridResourceIngredientConverter implements IngredientConverter {
     @Override
-    public Optional<Object> convertToResource(final Object ingredient) {
+    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
         return Optional.empty();
     }
 

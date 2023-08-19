@@ -33,6 +33,8 @@ public interface ClientToServerCommunications {
 
     void sendResourceSlotChange(int slotIndex, boolean tryAlternatives);
 
+    <T> void sendResourceFilterSlotChange(PlatformStorageChannelType<T> storageChannelType, T resource, int slotIndex);
+
     void sendResourceSlotAmountChange(int slotIndex, long amount);
 
     void sendSingleAmountChange(double amount);

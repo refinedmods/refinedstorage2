@@ -27,6 +27,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidR
 import com.refinedmods.refinedstorage2.platform.fabric.util.BucketSingleStackStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -56,6 +58,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -153,6 +156,27 @@ public final class PlatformImpl extends AbstractPlatform {
             return Optional.empty();
         }
         return convertNonEmptyToFluid(stack);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<FluidResource> convertJeiIngredientToFluid(final Object ingredient) {
+        // TODO: Remove when JEI fixes remapping
+        if (ingredient instanceof IJeiFluidIngredient fluidIngredient) {
+            try {
+                final Object fluid = fluidIngredient.getClass().getMethod("getFluid").invoke(fluidIngredient);
+                final Object tag = fluidIngredient.getClass().getMethod("getTag").invoke(fluidIngredient);
+                final Fluid castedFluid = (Fluid) fluid;
+                final Optional<CompoundTag> castedTag = (Optional<CompoundTag>) tag;
+                return Optional.of(new FluidResource(
+                    castedFluid,
+                    castedTag.orElse(null)
+                ));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

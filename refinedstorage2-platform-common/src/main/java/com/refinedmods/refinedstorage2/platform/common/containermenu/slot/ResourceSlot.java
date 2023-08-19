@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTempl
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.Objects;
@@ -73,6 +74,11 @@ public class ResourceSlot extends Slot {
             || resourceContainer.getType() == ResourceContainerType.CONTAINER;
     }
 
+    public boolean isFilter() {
+        return resourceContainer.getType() == ResourceContainerType.FILTER
+            || resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
+    }
+
     public boolean canModifyAmount() {
         return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
     }
@@ -106,6 +112,21 @@ public class ResourceSlot extends Slot {
         }
     }
 
+    public <T> void setFilter(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
+        if (!isFilter() || !isValid(resource)) {
+            return;
+        }
+        resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate<>(
+            resource,
+            storageChannelType.normalizeAmount(1D),
+            storageChannelType
+        ));
+    }
+
+    public <T> boolean isValid(final T resource) {
+        return resourceContainer.isValid(resource);
+    }
+
     public boolean changeIfEmpty(final ItemStack stack) {
         if (!isEmpty()) {
             return false;
@@ -115,6 +136,9 @@ public class ResourceSlot extends Slot {
     }
 
     public void changeAmount(final long amount) {
+        if (resourceContainer.getType() != ResourceContainerType.FILTER_WITH_AMOUNT) {
+            return;
+        }
         resourceContainer.setAmount(getContainerSlot(), amount);
     }
 

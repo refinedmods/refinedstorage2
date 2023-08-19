@@ -56,6 +56,11 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
             AbstractGridScreen.class,
             new GridGuiContainerHandler(converter, registration.getJeiHelpers().getIngredientManager())
         );
+        registration.addGenericGuiContainerHandler(
+            AbstractBaseScreen.class,
+            new ExclusionZonesGuiContainerHandler()
+        );
+        registration.addGhostIngredientHandler(AbstractBaseScreen.class, new GhostIngredientHandler(converter));
     }
 
     @Nullable

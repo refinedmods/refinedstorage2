@@ -94,9 +94,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
         }
 
         @Override
-        public long extract(final FluidVariant resource,
-                            final long maxAmount,
-                            final TransactionContext transaction) {
+        public long extract(final FluidVariant resource, final long maxAmount, final TransactionContext transaction) {
             final ResourceAmountTemplate<?> slot = resourceContainer.get(index);
             if (slot == null
                 || !(slot.getResource() instanceof FluidResource fluidResource)
