@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.14] - 2023-08-19
+
 ### Added
 
 -   Support for JEI/REI exclusion zones.
@@ -429,7 +431,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.13...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.14...HEAD
+
+[2.0.0-milestone.2.14]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.13...v2.0.0-milestone.2.14
 
 [2.0.0-milestone.2.13]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.12...v2.0.0-milestone.2.13
 
