@@ -17,7 +17,7 @@ public class ResourceIngredientConverter implements IngredientConverter {
     }
 
     @Override
-    public Optional<Object> convertToResource(final Object ingredient) {
+    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
         return Optional.empty();
     }
 

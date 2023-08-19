@@ -34,6 +34,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPac
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceFilterSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.SingleAmountChangePacket;
@@ -248,6 +249,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(
             PacketIds.RESOURCE_SLOT_AMOUNT_CHANGE,
             new ResourceSlotAmountChangePacket()
+        );
+        ServerPlayNetworking.registerGlobalReceiver(
+            PacketIds.RESOURCE_FILTER_SLOT_CHANGE,
+            new ResourceFilterSlotChangePacket()
         );
         ServerPlayNetworking.registerGlobalReceiver(
             PacketIds.RESOURCE_SLOT_CHANGE,

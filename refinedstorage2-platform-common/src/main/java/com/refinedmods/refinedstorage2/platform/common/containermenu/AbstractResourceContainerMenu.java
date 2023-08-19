@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 
@@ -49,6 +50,17 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
     public <T> void handleResourceSlotUpdate(final int slotIndex,
                                              @Nullable final ResourceAmountTemplate<T> resourceAmount) {
         getResourceSlot(slotIndex).ifPresent(slot -> slot.change(resourceAmount));
+    }
+
+
+    public <T> void handleResourceFilterSlotUpdate(final int slotIndex,
+                                                   final PlatformStorageChannelType<T> storageChannelType,
+                                                   final T resource) {
+        getResourceSlot(slotIndex).ifPresent(slot -> slot.change(new ResourceAmountTemplate<>(
+            resource,
+            1,
+            storageChannelType
+        )));
     }
 
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {

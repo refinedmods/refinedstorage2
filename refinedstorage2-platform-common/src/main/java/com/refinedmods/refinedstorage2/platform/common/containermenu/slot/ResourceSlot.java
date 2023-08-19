@@ -115,6 +115,9 @@ public class ResourceSlot extends Slot {
     }
 
     public void changeAmount(final long amount) {
+        if (resourceContainer.getType() != ResourceContainerType.FILTER_WITH_AMOUNT) {
+            return;
+        }
         resourceContainer.setAmount(getContainerSlot(), amount);
     }
 

@@ -298,4 +298,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             ? resourceSlot.getResourceAmount().getResourceTemplate()
             : null;
     }
+
+    public int getLeftPos() {
+        return leftPos;
+    }
+
+    public int getTopPos() {
+        return topPos;
+    }
 }

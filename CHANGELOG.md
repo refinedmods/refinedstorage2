@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Support for JEI/REI exclusion zones.
+-   Support for REI ghost ingredient dragging.
 
 ## [2.0.0-milestone.2.13] - 2023-08-18
 
