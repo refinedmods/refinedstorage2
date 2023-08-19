@@ -74,6 +74,11 @@ public class ResourceSlot extends Slot {
             || resourceContainer.getType() == ResourceContainerType.CONTAINER;
     }
 
+    public boolean isFilter() {
+        return resourceContainer.getType() == ResourceContainerType.FILTER
+            || resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
+    }
+
     public boolean canModifyAmount() {
         return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
     }
@@ -107,13 +112,13 @@ public class ResourceSlot extends Slot {
         }
     }
 
-    public <T> void set(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
-        if (!isValid(resource)) {
+    public <T> void setFilter(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
+        if (!isFilter() || !isValid(resource)) {
             return;
         }
         resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate<>(
             resource,
-            1,
+            storageChannelType.normalizeAmount(1D),
             storageChannelType
         ));
     }

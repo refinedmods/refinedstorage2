@@ -40,7 +40,7 @@ public class GhostIngredientHandler implements IGhostIngredientHandler<AbstractB
         final List<Target<I>> targets = new ArrayList<>();
         ingredientConverter.convertToResource(ingredient).ifPresent(resource -> {
             for (final ResourceSlot slot : menu.getResourceSlots()) {
-                if (slot.isValid(resource.resource())) {
+                if (slot.isFilter() && slot.isValid(resource.resource())) {
                     final Rect2i bounds = getBounds(screen, slot);
                     targets.add(new TargetImpl<>(bounds, slot.index));
                 }

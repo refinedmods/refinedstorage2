@@ -38,7 +38,7 @@ public class DraggableStackVisitorImpl
         final List<BoundsProvider> bounds = new ArrayList<>();
         ingredientConverter.convertToResource(value).ifPresent(resource -> {
             for (final ResourceSlot slot : menu.getResourceSlots()) {
-                if (slot.isValid(resource.resource())) {
+                if (slot.isFilter() && slot.isValid(resource.resource())) {
                     bounds.add(BoundsProvider.ofRectangle(toRectangle(screen, slot)));
                 }
             }
