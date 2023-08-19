@@ -7,9 +7,11 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
+import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
+import me.shedaniel.rei.api.client.registry.screen.ExclusionZones;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
@@ -53,6 +55,11 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         groupItems(registry, Blocks.INSTANCE.getController(), ContentIds.CONTROLLER, Tags.CONTROLLERS);
         groupItems(registry, Blocks.INSTANCE.getCreativeController(),
             ContentIds.CREATIVE_CONTROLLER, Tags.CREATIVE_CONTROLLERS);
+    }
+
+    @Override
+    public void registerExclusionZones(final ExclusionZones zones) {
+        zones.register(AbstractBaseScreen.class, new ExclusionZonesProviderImpl());
     }
 
     @SuppressWarnings("UnstableApiUsage")
