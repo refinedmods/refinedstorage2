@@ -40,6 +40,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getConstructor();
 
+    WirelessGridEntry getWirelessGrid();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -136,5 +138,17 @@ public interface Config {
         long getSilkTouchUpgradeEnergyUsage();
 
         long getRegulatorUpgradeEnergyUsage();
+    }
+
+    interface WirelessGridEntry {
+        boolean getUseEnergy();
+
+        long getEnergyCapacity();
+
+        long getOpenEnergyUsage();
+
+        long getInsertEnergyUsage();
+
+        long getExtractEnergyUsage();
     }
 }

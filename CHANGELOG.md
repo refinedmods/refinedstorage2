@@ -7,9 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Wireless Grid
+-   Creative Wireless Grid
+
 ### Changed
 
 -   The Forge variant now targets NeoForge instead of Forge.
+-   You can now always open the Wireless Grid, even if there is no network bound or if the Wireless Grid is out of
+    energy.
 
 ## [2.0.0-milestone.2.14] - 2023-08-19
 

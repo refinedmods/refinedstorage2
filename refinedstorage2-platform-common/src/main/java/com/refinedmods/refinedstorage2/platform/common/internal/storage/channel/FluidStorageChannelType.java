@@ -1,9 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.storage.channel;
 
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperationsImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceListImpl;
@@ -70,6 +74,17 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     @Override
     public long getInterfaceExportLimit() {
         return Platform.INSTANCE.getBucketAmount() * 16;
+    }
+
+    @Override
+    public GridOperations<FluidResource> createGridOperations(final StorageChannel<FluidResource> storageChannel,
+                                                              final Actor actor) {
+        return new GridOperationsImpl<>(
+            storageChannel,
+            actor,
+            fluidResource -> Long.MAX_VALUE,
+            Platform.INSTANCE.getBucketAmount()
+        );
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -22,7 +23,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -104,9 +104,9 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         return createTranslation("block", "crafting_grid");
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
+    @Nullable
+    public AbstractGridContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new CraftingGridContainerMenu(syncId, inventory, this);
     }
 

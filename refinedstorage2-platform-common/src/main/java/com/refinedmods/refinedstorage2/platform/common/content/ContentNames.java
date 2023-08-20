@@ -18,6 +18,7 @@ public final class ContentNames {
     public static final MutableComponent DESTRUCTOR = createTranslation(BLOCK_CATEGORY, "destructor");
     public static final MutableComponent CONTROLLER = createTranslation(BLOCK_CATEGORY, "controller");
     public static final MutableComponent CREATIVE_CONTROLLER = createTranslation(BLOCK_CATEGORY, "creative_controller");
+    public static final MutableComponent WIRELESS_GRID = createTranslation("item", "wireless_grid");
 
     private ContentNames() {
     }

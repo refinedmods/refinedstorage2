@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.grid.service;
+package com.refinedmods.refinedstorage2.api.grid.operations;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -12,7 +12,7 @@ import java.util.function.ToLongFunction;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class GridServiceImpl<T> implements GridService<T> {
+public class GridOperationsImpl<T> implements GridOperations<T> {
     private final StorageChannel<T> storageChannel;
     private final Actor actor;
     private final ToLongFunction<T> maxAmountProvider;
@@ -20,15 +20,15 @@ public class GridServiceImpl<T> implements GridService<T> {
 
     /**
      * @param storageChannel    the storage channel to act on
-     * @param actor             the actor performing the grid interactions
+     * @param actor             the actor performing the grid operations
      * @param maxAmountProvider provider for the maximum amount of a given resource
      * @param singleAmount      amount that needs to be extracted when using
      *                          {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
      */
-    public GridServiceImpl(final StorageChannel<T> storageChannel,
-                           final Actor actor,
-                           final ToLongFunction<T> maxAmountProvider,
-                           final long singleAmount) {
+    public GridOperationsImpl(final StorageChannel<T> storageChannel,
+                              final Actor actor,
+                              final ToLongFunction<T> maxAmountProvider,
+                              final long singleAmount) {
         this.storageChannel = storageChannel;
         this.actor = actor;
         this.maxAmountProvider = maxAmountProvider;
@@ -36,12 +36,13 @@ public class GridServiceImpl<T> implements GridService<T> {
     }
 
     @Override
-    public void extract(final T resource, final GridExtractMode extractMode, final InsertableStorage<T> destination) {
+    public boolean extract(final T resource, final GridExtractMode extractMode,
+                           final InsertableStorage<T> destination) {
         final long amount = getExtractableAmount(resource, extractMode);
         if (amount == 0) {
-            return;
+            return false;
         }
-        TransferHelper.transfer(resource, amount, actor, storageChannel, destination, storageChannel);
+        return TransferHelper.transfer(resource, amount, actor, storageChannel, destination, storageChannel) > 0;
     }
 
     private long getExtractableAmount(final T resource, final GridExtractMode extractMode) {
@@ -65,11 +66,11 @@ public class GridServiceImpl<T> implements GridService<T> {
     }
 
     @Override
-    public void insert(final T resource, final GridInsertMode insertMode, final ExtractableStorage<T> source) {
+    public boolean insert(final T resource, final GridInsertMode insertMode, final ExtractableStorage<T> source) {
         final long amount = switch (insertMode) {
             case ENTIRE_RESOURCE -> maxAmountProvider.applyAsLong(resource);
             case SINGLE_RESOURCE -> singleAmount;
         };
-        TransferHelper.transfer(resource, amount, actor, source, storageChannel, null);
+        return TransferHelper.transfer(resource, amount, actor, source, storageChannel, null) > 0;
     }
 }

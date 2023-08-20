@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerExtractableStorage;
 
@@ -21,14 +22,14 @@ import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource
 
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridService<ItemResource> gridService;
+    private final GridOperations<ItemResource> gridOperations;
     private final CursorStorage playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
-                                     final PlatformGridServiceFactory gridServiceFactory) {
+                                     final Grid grid) {
         this.containerMenu = containerMenu;
-        this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
+        this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
         this.playerCursorStorage = new CursorStorage(containerMenu);
     }
 
@@ -39,7 +40,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
-        gridService.insert(
+        gridOperations.insert(
             itemResource,
             insertMode,
             new ItemHandlerExtractableStorage(
@@ -63,7 +64,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final ItemResource itemResource = ofItemStack(itemStackInSlot);
-        gridService.insert(
+        gridOperations.insert(
             itemResource,
             GridInsertMode.ENTIRE_RESOURCE,
             new ItemHandlerExtractableStorage(

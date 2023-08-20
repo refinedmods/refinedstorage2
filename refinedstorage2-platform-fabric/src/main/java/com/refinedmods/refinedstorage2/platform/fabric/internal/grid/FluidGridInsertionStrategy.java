@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import javax.annotation.Nullable;
 
@@ -27,15 +28,15 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.t
 
 public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridService<FluidResource> gridService;
+    private final GridOperations<FluidResource> gridOperations;
     private final Player player;
     private final PlayerInventoryStorage playerInventoryStorage;
 
     public FluidGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                       final Player player,
-                                      final PlatformGridServiceFactory gridServiceFactory) {
+                                      final Grid grid) {
         this.containerMenu = containerMenu;
-        this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
+        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
         this.player = player;
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
     }
@@ -51,7 +52,7 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
-        gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
+        gridOperations.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
             final FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = cursorStorage.extract(fluidVariant, amount, tx);
@@ -90,7 +91,7 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
-        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
+        gridOperations.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
             final FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);

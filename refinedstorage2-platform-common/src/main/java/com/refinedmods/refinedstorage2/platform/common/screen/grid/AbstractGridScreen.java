@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.DisabledSlot;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
@@ -112,7 +113,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addWidget(scrollbar);
         addWidget(searchField);
 
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        if (getMenu().hasProperty(PropertyTypes.REDSTONE_MODE)) {
+            addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
+        }
         addSideButton(new SortingDirectionSideButtonWidget(getMenu()));
         addSideButton(new SortingTypeSideButtonWidget(getMenu()));
         addSideButton(new SizeSideButtonWidget(getMenu()));
@@ -505,7 +508,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
         if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
             mouseScrolledInGrid(up);
-        } else if (hoveredSlot != null && hoveredSlot.hasItem()) {
+        } else if (hoveredSlot != null && hoveredSlot.hasItem() && !(hoveredSlot instanceof DisabledSlot)) {
             mouseScrolledInInventory(up, hoveredSlot);
         }
 

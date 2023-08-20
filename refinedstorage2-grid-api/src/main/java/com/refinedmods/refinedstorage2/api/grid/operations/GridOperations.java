@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.grid.service;
+package com.refinedmods.refinedstorage2.api.grid.operations;
 
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
@@ -6,12 +6,12 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import org.apiguardian.api.API;
 
 /**
- * The grid service is the service that the grid uses to interact with the storage network.
+ * Grid operations, used for grids to interact with the storage network.
  *
  * @param <T> the resource type
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface GridService<T> {
+public interface GridOperations<T> {
     /**
      * Tries to move a resource from the network storage to the destination.
      * The amount being extracted depends on the extraction mode.
@@ -20,7 +20,7 @@ public interface GridService<T> {
      * @param extractMode the extract mode
      * @param destination the destination
      */
-    void extract(T resource, GridExtractMode extractMode, InsertableStorage<T> destination);
+    boolean extract(T resource, GridExtractMode extractMode, InsertableStorage<T> destination);
 
     /**
      * Tries to move a resource from the source to the network storage.
@@ -30,5 +30,5 @@ public interface GridService<T> {
      * @param insertMode the insertion mode
      * @param source     the source
      */
-    void insert(T resource, GridInsertMode insertMode, ExtractableStorage<T> source);
+    boolean insert(T resource, GridInsertMode insertMode, ExtractableStorage<T> source);
 }

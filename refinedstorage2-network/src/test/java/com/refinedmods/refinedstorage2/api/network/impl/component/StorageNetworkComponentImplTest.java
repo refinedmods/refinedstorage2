@@ -7,12 +7,16 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetw
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
+import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,5 +114,34 @@ class StorageNetworkComponentImplTest {
         // Assert
         assertThat(found).isTrue();
         assertThat(found2).isFalse();
+    }
+
+    @Test
+    void shouldRetrieveResources() {
+        // Arrange
+        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        sut.onContainerRemoved(storage1Container);
+        sut.onContainerRemoved(storage2Container);
+        storageChannel.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 2L));
+        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        final List<TrackedResourceAmount<String>> resources = sut.getResources(
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            EmptyActor.class
+        );
+
+        // Assert
+        assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new TrackedResourceAmount<>(
+                new ResourceAmount<>("A", 100),
+                new TrackedResource("Empty", 2L)
+            ),
+            new TrackedResourceAmount<>(
+                new ResourceAmount<>("B", 200),
+                new TrackedResource("Empty", 2L)
+            )
+        );
     }
 }

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +69,10 @@ public final class Items {
     private Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade;
     @Nullable
     private Supplier<? extends AbstractUpgradeItem> regulatorUpgrade;
+    @Nullable
+    private Supplier<WirelessGridItem> wirelessGrid;
+    @Nullable
+    private Supplier<WirelessGridItem> creativeWirelessGrid;
 
     private Items() {
     }
@@ -303,5 +308,21 @@ public final class Items {
 
     public void setRegulatorUpgrade(final Supplier<? extends AbstractUpgradeItem> regulatorUpgrade) {
         this.regulatorUpgrade = regulatorUpgrade;
+    }
+
+    public WirelessGridItem getWirelessGrid() {
+        return Objects.requireNonNull(wirelessGrid).get();
+    }
+
+    public void setWirelessGrid(final Supplier<WirelessGridItem> supplier) {
+        this.wirelessGrid = supplier;
+    }
+
+    public WirelessGridItem getCreativeWirelessGrid() {
+        return Objects.requireNonNull(creativeWirelessGrid).get();
+    }
+
+    public void setCreativeWirelessGrid(final Supplier<WirelessGridItem> supplier) {
+        this.creativeWirelessGrid = supplier;
     }
 }

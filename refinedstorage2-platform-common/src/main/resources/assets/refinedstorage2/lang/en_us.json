@@ -179,6 +179,11 @@
   "item.refinedstorage2.fortune_upgrade.3": "Fortune III Upgrade",
   "item.refinedstorage2.regulator_upgrade": "Regulator Upgrade",
   "item.refinedstorage2.regulator_upgrade.help": "In an Exporter, will only export if the amount in the target is less than configured in the upgrade. In an Importer, will only import if the amount in the target is more than configured in the upgrade. Use item to configure.",
+  "item.refinedstorage2.wireless_grid": "Wireless Grid",
+  "item.refinedstorage2.creative_wireless_grid": "Creative Wireless Grid",
+  "item.refinedstorage2.network_item.unbound": "Unbound.",
+  "item.refinedstorage2.network_item.unbound.help": "Use on any storage network device to bind.",
+  "item.refinedstorage2.network_item.bound_to": "Bound to %d, %d, %d.",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s (%d%%)",
   "misc.refinedstorage2.total": "%d total",
@@ -262,6 +267,12 @@
   "text.autoconfig.refinedstorage2.option.iface.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.externalStorage": "External Storage",
   "text.autoconfig.refinedstorage2.option.externalStorage.energyUsage": "Energy usage",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid": "Wireless Grid",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid.useEnergy": "Use energy",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid.energyCapacity": "Energy capacity",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid.openEnergyUsage": "Open energy usage",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid.insertEnergyUsage": "Insert energy usage",
+  "text.autoconfig.refinedstorage2.option.wirelessGrid.extractEnergyUsage": "Extract energy usage",
   "advancements.refinedstorage2.root.description": "Use one or multiple Controllers in a network to provide your network with energy",
   "advancements.refinedstorage2.connecting": "Connecting",
   "advancements.refinedstorage2.connecting.description": "Use Cable to connect devices with each other, or place devices against each other",
@@ -290,5 +301,7 @@
   "advancements.refinedstorage2.construction": "Construction",
   "advancements.refinedstorage2.construction.description": "Get blocks from the storage network into the world with a Constructor",
   "advancements.refinedstorage2.destruction": "Destruction",
-  "advancements.refinedstorage2.destruction.description": "Get blocks from in the world into the storage network with a Destructor"
+  "advancements.refinedstorage2.destruction.description": "Get blocks from in the world into the storage network with a Destructor",
+  "advancements.refinedstorage2.wireless": "Wireless",
+  "advancements.refinedstorage2.wireless.description": "Access your resources wirelessly with a Wireless Grid."
 }

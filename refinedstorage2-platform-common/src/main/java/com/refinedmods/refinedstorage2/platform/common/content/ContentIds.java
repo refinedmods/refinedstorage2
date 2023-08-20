@@ -42,6 +42,8 @@ public final class ContentIds {
     public static final ResourceLocation DETECTOR = createIdentifier("detector");
     public static final ResourceLocation DESTRUCTOR = createIdentifier("destructor");
     public static final ResourceLocation CONSTRUCTOR = createIdentifier("constructor");
+    public static final ResourceLocation WIRELESS_GRID = createIdentifier("wireless_grid");
+    public static final ResourceLocation CREATIVE_WIRELESS_GRID = createIdentifier("creative_wireless_grid");
 
     private ContentIds() {
     }

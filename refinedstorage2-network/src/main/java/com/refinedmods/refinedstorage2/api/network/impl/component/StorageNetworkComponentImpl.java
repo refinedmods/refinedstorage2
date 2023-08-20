@@ -3,11 +3,14 @@ package com.refinedmods.refinedstorage2.api.network.impl.component;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -83,5 +86,15 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
             }
         }
         return false;
+    }
+
+    @Override
+    public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
+                                                           final Class<? extends Actor> actorType) {
+        final StorageChannel<T> storageChannel = getStorageChannel(type);
+        return storageChannel.getAll().stream().map(resourceAmount -> new TrackedResourceAmount<>(
+            resourceAmount,
+            storageChannel.findTrackedResourceByActorType(resourceAmount.getResource(), actorType).orElse(null)
+        )).toList();
     }
 }
