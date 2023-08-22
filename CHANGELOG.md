@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   The Forge variant now targets NeoForge instead of Forge.
+
 ## [2.0.0-milestone.2.14] - 2023-08-19
 
 ### Added
