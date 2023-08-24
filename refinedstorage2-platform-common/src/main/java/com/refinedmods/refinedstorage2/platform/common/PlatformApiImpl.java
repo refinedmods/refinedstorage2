@@ -320,8 +320,18 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
+    public PlatformStorageChannelType<ItemResource> getItemStorageChannelType() {
+        return StorageChannelTypes.ITEM;
+    }
+
+    @Override
     public ResourceFactory<FluidResource> getFluidResourceFactory() {
         return fluidResourceFactory;
+    }
+
+    @Override
+    public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
+        return StorageChannelTypes.FLUID;
     }
 
     @Override
