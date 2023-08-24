@@ -256,24 +256,32 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                             final int idx,
                             final int column) {
         final GridView view = getMenu().getView();
-
         final int slotX = rowX + 1 + (column * 18);
         final int slotY = rowY + 1;
+        if (!getMenu().isActive()) {
+            renderDisabledSlot(graphics, slotX, slotY);
+        } else {
+            renderSlot(graphics, mouseX, mouseY, idx, view, slotX, slotY);
+        }
+    }
 
+    private void renderSlot(final GuiGraphics graphics,
+                            final int mouseX,
+                            final int mouseY,
+                            final int idx,
+                            final GridView view,
+                            final int slotX,
+                            final int slotY) {
+        final boolean inBounds = mouseX >= slotX
+            && mouseY >= slotY
+            && mouseX <= slotX + 16
+            && mouseY <= slotY + 16;
         GridResource resource = null;
         if (idx < view.getViewList().size()) {
             resource = view.getViewList().get(idx);
             renderResourceWithAmount(graphics, slotX, slotY, resource);
         }
-
-        final boolean inBounds = mouseX >= slotX
-            && mouseY >= slotY
-            && mouseX <= slotX + 16
-            && mouseY <= slotY + 16;
-
-        if (!getMenu().isActive()) {
-            renderDisabledSlot(graphics, slotX, slotY);
-        } else if (inBounds && isOverStorageArea(mouseX, mouseY)) {
+        if (inBounds && isOverStorageArea(mouseX, mouseY)) {
             renderSelection(graphics, slotX, slotY);
             if (resource != null) {
                 gridSlotNumber = idx;

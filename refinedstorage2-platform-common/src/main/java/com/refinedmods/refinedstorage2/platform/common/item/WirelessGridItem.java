@@ -16,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-// TODO: Grid Screen still displays items on disabled slots
 public class WirelessGridItem extends AbstractNetworkBoundItem {
     public WirelessGridItem(final ItemEnergyProvider energyProvider) {
         super(new Item.Properties().stacksTo(1), energyProvider);

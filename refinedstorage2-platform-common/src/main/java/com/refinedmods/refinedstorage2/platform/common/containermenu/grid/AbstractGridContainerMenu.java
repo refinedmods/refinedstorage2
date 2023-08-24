@@ -389,6 +389,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public boolean onInsert(final GridInsertMode insertMode, final boolean tryAlternatives) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return insertionStrategy.onInsert(insertMode, tryAlternatives);
     }
 
@@ -397,6 +400,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
                                  final T resource,
                                  final GridExtractMode extractMode,
                                  final boolean cursor) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
     }
 
@@ -405,6 +411,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
                                 final T resource,
                                 final GridScrollMode scrollMode,
                                 final int slotIndex) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return scrollingStrategy.onScroll(storageChannelType, resource, scrollMode, slotIndex);
     }
 
@@ -415,7 +424,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
-        if (!playerEntity.level().isClientSide()) {
+        if (!playerEntity.level().isClientSide() && grid != null && grid.isActive()) {
             final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
                 insertionStrategy.onTransfer(slot.index);

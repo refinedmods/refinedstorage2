@@ -18,6 +18,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   You can now always open the Wireless Grid, even if there is no network bound or if the Wireless Grid is out of
     energy.
 
+### Fixed
+
+-   Fixed inactive Grid slots still rendering resources.
+-   Fixed being able to interact with inactive Grid.
+
 ## [2.0.0-milestone.2.14] - 2023-08-19
 
 ### Added
