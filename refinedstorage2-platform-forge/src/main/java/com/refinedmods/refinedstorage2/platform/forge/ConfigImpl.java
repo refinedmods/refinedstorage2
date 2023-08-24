@@ -613,9 +613,9 @@ public class ConfigImpl implements Config {
                 .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
                 .defineInRange("openEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_OPEN, 0, Long.MAX_VALUE);
-            extractEnergyUsage = builder.comment("The energy used by the Wireless Grid to extract items")
+            extractEnergyUsage = builder.comment("The energy used by the Wireless Grid to extract resources")
                 .defineInRange("extractEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_EXTRACT, 0, Long.MAX_VALUE);
-            insertEnergyUsage = builder.comment("The energy used by the Wireless Grid to insert items")
+            insertEnergyUsage = builder.comment("The energy used by the Wireless Grid to insert resources")
                 .defineInRange("insertEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_INSERT, 0, Long.MAX_VALUE);
             builder.pop();
         }

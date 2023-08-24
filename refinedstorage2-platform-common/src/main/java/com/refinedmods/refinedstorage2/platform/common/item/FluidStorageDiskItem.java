@@ -29,7 +29,7 @@ public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidReso
         super(
             new Item.Properties().stacksTo(1).fireResistant(),
             StorageChannelTypes.FLUID,
-            PlatformApi.INSTANCE.getStorageContainerHelper()
+            PlatformApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
     }

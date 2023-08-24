@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.5")
-public interface StorageContainerHelper {
+public interface StorageContainerItemHelper {
     Optional<Storage<?>> resolve(StorageRepository storageRepository, ItemStack stack);
 
     void set(StorageRepository storageRepository, ItemStack stack, Storage<?> storage);

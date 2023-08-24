@@ -21,7 +21,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
@@ -39,7 +39,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
@@ -108,7 +108,7 @@ public class PlatformApiImpl implements PlatformApi {
         Comparator.comparingInt(ConstructorStrategyFactory::getPriority)
     );
     private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
-    private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
+    private final StorageContainerItemHelper storageContainerItemHelper = new StorageContainerItemHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
     private final GridInsertionHintsImpl gridInsertionHints = new GridInsertionHintsImpl(
         new ItemGridInsertionHint(),
@@ -142,8 +142,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public StorageContainerHelper getStorageContainerHelper() {
-        return storageContainerHelper;
+    public StorageContainerItemHelper getStorageContainerItemHelper() {
+        return storageContainerItemHelper;
     }
 
     private StorageRepositoryImpl createStorageRepository(final CompoundTag tag) {

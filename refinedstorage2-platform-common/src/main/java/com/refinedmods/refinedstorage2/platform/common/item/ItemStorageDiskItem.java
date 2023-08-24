@@ -29,7 +29,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
         super(
             new Item.Properties().stacksTo(1).fireResistant(),
             StorageChannelTypes.ITEM,
-            PlatformApi.INSTANCE.getStorageContainerHelper()
+            PlatformApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
     }

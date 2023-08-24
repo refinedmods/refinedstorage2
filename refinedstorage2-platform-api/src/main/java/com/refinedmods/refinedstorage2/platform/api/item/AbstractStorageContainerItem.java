@@ -26,12 +26,12 @@ import org.apiguardian.api.API;
 // TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class AbstractStorageContainerItem<T> extends Item implements StorageContainerItem {
-    protected final StorageContainerHelper helper;
+    protected final StorageContainerItemHelper helper;
     private final StorageChannelType<T> type;
 
     protected AbstractStorageContainerItem(final Properties properties,
                                            final StorageChannelType<T> type,
-                                           final StorageContainerHelper helper) {
+                                           final StorageContainerItemHelper helper) {
         super(properties);
         this.type = type;
         this.helper = helper;
