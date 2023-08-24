@@ -108,7 +108,15 @@ public interface PlatformApi {
 
     ResourceFactory<ItemResource> getItemResourceFactory();
 
+    PlatformStorageChannelType<ItemResource> getItemStorageChannelType();
+
+    StorageType<ItemResource> getItemStorageType();
+
     ResourceFactory<FluidResource> getFluidResourceFactory();
+
+    PlatformStorageChannelType<FluidResource> getFluidStorageChannelType();
+
+    StorageType<FluidResource> getFluidStorageType();
 
     Set<ResourceFactory<?>> getAlternativeResourceFactories();
 

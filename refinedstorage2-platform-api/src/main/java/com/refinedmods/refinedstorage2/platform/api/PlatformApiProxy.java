@@ -205,8 +205,28 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
+    public PlatformStorageChannelType<ItemResource> getItemStorageChannelType() {
+        return ensureLoaded().getItemStorageChannelType();
+    }
+
+    @Override
+    public StorageType<ItemResource> getItemStorageType() {
+        return ensureLoaded().getItemStorageType();
+    }
+
+    @Override
     public ResourceFactory<FluidResource> getFluidResourceFactory() {
         return ensureLoaded().getFluidResourceFactory();
+    }
+
+    @Override
+    public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
+        return ensureLoaded().getFluidStorageChannelType();
+    }
+
+    @Override
+    public StorageType<FluidResource> getFluidStorageType() {
+        return ensureLoaded().getFluidStorageType();
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.SimpleListener;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import net.minecraft.world.item.Items;
@@ -38,13 +38,13 @@ class PlatformStorageTest {
             () -> 0L
         );
         listener = new SimpleListener();
-        sut = new PlatformStorage<>(delegate, ItemStorageType.INSTANCE, trackedStorageRepository, listener);
+        sut = new PlatformStorage<>(delegate, StorageTypes.ITEM, trackedStorageRepository, listener);
     }
 
     @Test
     void testInitialState() {
         // Assert
-        assertThat(sut.getType()).isEqualTo(ItemStorageType.INSTANCE);
+        assertThat(sut.getType()).isEqualTo(StorageTypes.ITEM);
         assertThat(sut).isNotInstanceOf(LimitedStorage.class);
     }
 
