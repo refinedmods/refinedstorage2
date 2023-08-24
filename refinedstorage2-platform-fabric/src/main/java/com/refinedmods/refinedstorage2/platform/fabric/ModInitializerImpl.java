@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
@@ -12,13 +13,17 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFa
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.item.CreativeItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.TeamRebornEnergyItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridExtractionStrategy;
@@ -75,6 +80,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -110,10 +116,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerGridExtractionStrategyFactories() {
-        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(
-            (containerMenu, player, gridServiceFactory, itemStorage) ->
-                new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
-        );
+        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(ItemGridExtractionStrategy::new);
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);
     }
 
@@ -197,7 +200,25 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                                                        final InteractionHand hand,
                                                        final ItemStack oldStack,
                                                        final ItemStack newStack) {
-                    return RegulatorUpgradeItem.allowNbtUpdateAnimation(oldStack, newStack);
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            },
+            () -> new WirelessGridItem(new TeamRebornEnergyItemEnergyProvider()) {
+                @Override
+                public boolean allowNbtUpdateAnimation(final Player player,
+                                                       final InteractionHand hand,
+                                                       final ItemStack oldStack,
+                                                       final ItemStack newStack) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            },
+            () -> new WirelessGridItem(CreativeItemEnergyProvider.INSTANCE) {
+                @Override
+                public boolean allowNbtUpdateAnimation(final Player player,
+                                                       final InteractionHand hand,
+                                                       final ItemStack oldStack,
+                                                       final ItemStack newStack) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             }
         );
@@ -280,6 +301,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BlockEntities.INSTANCE.getInterface()
         );
         registerControllerEnergy();
+        registerWirelessGridEnergy();
     }
 
     private <T extends BlockEntity> void registerItemStorage(final Predicate<BlockEntity> test,
@@ -300,6 +322,15 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             (be, direction) -> ((ControllerTeamRebornEnergy) be.getEnergyStorage()).getExposedStorage(),
             BlockEntities.INSTANCE.getController()
         );
+    }
+
+    private void registerWirelessGridEnergy() {
+        EnergyStorage.ITEM.registerForItems((stack, context) -> SimpleEnergyItem.createStorage(
+            context,
+            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity(),
+            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity(),
+            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
+        ), Items.INSTANCE.getWirelessGrid());
     }
 
     private void registerTickHandler() {

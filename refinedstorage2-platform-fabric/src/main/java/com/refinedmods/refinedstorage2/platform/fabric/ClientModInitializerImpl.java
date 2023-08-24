@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -37,7 +38,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -48,6 +49,7 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -86,6 +88,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerGridSynchronizers();
         registerResourceRendering();
         registerAlternativeGridHints();
+        registerItemProperties();
     }
 
     private void setRenderLayers() {
@@ -219,12 +222,12 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
         final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, ctx) -> {
-            if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
+        ModelLoadingPlugin.register(pluginContext -> pluginContext.resolveModel().register(context -> {
+            if (context.id().equals(diskDriveIdentifier) || context.id().equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
-        });
+        }));
     }
 
     private void registerCustomTooltips() {
@@ -292,6 +295,19 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
             createIdentifier("rei_two_way"),
             new ReiGridSynchronizer(reiProxy, true)
+        );
+    }
+
+    private void registerItemProperties() {
+        ItemProperties.register(
+            Items.INSTANCE.getWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getCreativeWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
         );
     }
 }

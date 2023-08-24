@@ -1,17 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import javax.annotation.Nullable;
 
@@ -32,18 +33,17 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
     private final AbstractContainerMenu menu;
-    private final GridService<FluidResource> gridService;
+    private final GridOperations<FluidResource> gridOperations;
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final Storage<ItemResource> itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
-                                       final PlatformGridServiceFactory gridServiceFactory,
-                                       final Storage<ItemResource> itemStorage) {
+                                       final Grid grid) {
         this.menu = containerMenu;
-        this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
+        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
         this.playerInventoryStorage = new PlayerMainInvWrapper(player.getInventory());
-        this.itemStorage = itemStorage;
+        this.itemStorage = grid.getItemStorage();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
         if (destination == null) {
             return; // shouldn't happen
         }
-        gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
+        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
             final int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
             if (action == Action.EXECUTE) {
                 extractSourceBucket(bucketFromInventory, source);

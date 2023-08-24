@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -67,6 +68,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
                 MenuScreens.register(type, factory::create);
             }
         }));
+        e.enqueueWork(ClientModInitializer::registerItemProperties);
         registerBlockEntityRenderer();
         registerGridSynchronizers();
         registerResourceRendering();
@@ -179,5 +181,18 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             new ResourceClientTooltipComponent<>(filteredResource),
             help
         ));
+    }
+
+    private static void registerItemProperties() {
+        ItemProperties.register(
+            Items.INSTANCE.getWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getCreativeWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
+        );
     }
 }

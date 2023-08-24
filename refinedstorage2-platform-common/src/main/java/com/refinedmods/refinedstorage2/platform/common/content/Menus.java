@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUp
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -30,6 +31,8 @@ public final class Menus {
     private Supplier<MenuType<GridContainerMenu>> grid;
     @Nullable
     private Supplier<MenuType<CraftingGridContainerMenu>> craftingGrid;
+    @Nullable
+    private Supplier<MenuType<WirelessGridContainerMenu>> wirelessGrid;
     @Nullable
     private Supplier<MenuType<ControllerContainerMenu>> controller;
     @Nullable
@@ -70,6 +73,14 @@ public final class Menus {
 
     public void setCraftingGrid(final Supplier<MenuType<CraftingGridContainerMenu>> supplier) {
         this.craftingGrid = supplier;
+    }
+
+    public MenuType<WirelessGridContainerMenu> getWirelessGrid() {
+        return Objects.requireNonNull(wirelessGrid).get();
+    }
+
+    public void setWirelessGrid(final Supplier<MenuType<WirelessGridContainerMenu>> supplier) {
+        this.wirelessGrid = supplier;
     }
 
     public MenuType<ControllerContainerMenu> getController() {

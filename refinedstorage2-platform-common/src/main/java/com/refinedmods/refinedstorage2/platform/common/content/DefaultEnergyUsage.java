@@ -35,6 +35,11 @@ public final class DefaultEnergyUsage {
     public static final long SILK_TOUCH_UPGRADE = 16;
     public static final long REGULATOR_UPGRADE = 16;
 
+    public static final long WIRELESS_GRID_CAPACITY = 1000;
+    public static final long WIRELESS_GRID_OPEN = 5;
+    public static final long WIRELESS_GRID_INSERT = 5;
+    public static final long WIRELESS_GRID_EXTRACT = 5;
+
     private DefaultEnergyUsage() {
     }
 }

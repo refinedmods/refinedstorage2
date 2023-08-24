@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.grid.service;
+package com.refinedmods.refinedstorage2.api.grid.operations;
 
 import org.apiguardian.api.API;
 

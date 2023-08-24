@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
@@ -18,7 +17,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
@@ -49,7 +48,7 @@ public interface PlatformApi {
 
     StorageRepository getStorageRepository(Level level);
 
-    StorageContainerHelper getStorageContainerHelper();
+    StorageContainerItemHelper getStorageContainerItemHelper();
 
     PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry();
 
@@ -85,7 +84,7 @@ public interface PlatformApi {
 
     GridInsertionStrategy createGridInsertionStrategy(AbstractContainerMenu containerMenu,
                                                       Player player,
-                                                      GridServiceFactory gridServiceFactory);
+                                                      Grid grid);
 
     void addGridInsertionStrategyFactory(GridInsertionStrategyFactory insertionStrategyFactory);
 
@@ -95,14 +94,13 @@ public interface PlatformApi {
 
     GridExtractionStrategy createGridExtractionStrategy(AbstractContainerMenu containerMenu,
                                                         Player player,
-                                                        GridServiceFactory gridServiceFactory,
-                                                        Storage<ItemResource> itemStorage);
+                                                        Grid grid);
 
     void addGridExtractionStrategyFactory(GridExtractionStrategyFactory extractionStrategyFactory);
 
     GridScrollingStrategy createGridScrollingStrategy(AbstractContainerMenu containerMenu,
                                                       Player player,
-                                                      GridServiceFactory gridServiceFactory);
+                                                      Grid grid);
 
     void addGridScrollingStrategyFactory(GridScrollingStrategyFactory scrollingStrategyFactory);
 

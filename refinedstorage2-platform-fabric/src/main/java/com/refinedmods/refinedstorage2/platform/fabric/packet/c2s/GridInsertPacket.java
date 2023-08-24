@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

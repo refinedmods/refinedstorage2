@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperationsImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -19,16 +22,16 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GridServiceImplTest {
+class GridOperationsImplTest {
     private static final long MAX_COUNT = 15;
 
     private StorageChannel<String> storageChannel;
-    private GridServiceImpl<String> sut;
+    private GridOperationsImpl<String> sut;
 
     @BeforeEach
     void setUp() {
         storageChannel = new StorageChannelImpl<>();
-        sut = new GridServiceImpl<>(storageChannel, GridActor.INSTANCE, r -> MAX_COUNT, 1);
+        sut = new GridOperationsImpl<>(storageChannel, GridActor.INSTANCE, r -> MAX_COUNT, 1);
     }
 
     @Nested
@@ -44,9 +47,11 @@ class GridServiceImplTest {
             storageChannel.addSource(destination);
 
             // Act
-            sut.insert("A", insertMode, source);
+            final boolean success = sut.insert("A", insertMode, source);
 
             // Assert
+            assertThat(success).isTrue();
+
             final long expectedAmount = switch (insertMode) {
                 case ENTIRE_RESOURCE -> MAX_COUNT;
                 case SINGLE_RESOURCE -> 1;
@@ -74,9 +79,10 @@ class GridServiceImplTest {
             storageChannel.addSource(destination);
 
             // Act
-            sut.insert("A", insertMode, source);
+            final boolean success = sut.insert("A", insertMode, source);
 
             // Assert
+            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(source.getAll()).isEmpty();
             assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
@@ -94,9 +100,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.insert("A", insertMode, source);
+            final boolean success = sut.insert("A", insertMode, source);
 
             // Assert
+            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
             );
@@ -120,9 +127,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
+            final boolean success = sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
 
             // Assert
+            assertThat(success).isTrue();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
             );
@@ -163,9 +171,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
+            final boolean success = sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
 
             // Assert
+            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100 - MAX_COUNT + 1)
             );
@@ -189,9 +198,11 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", extractMode, destination);
+            final boolean success = sut.extract("A", extractMode, destination);
 
             // Assert
+            assertThat(success).isTrue();
+
             final long expectedExtracted = switch (extractMode) {
                 case ENTIRE_RESOURCE -> MAX_COUNT;
                 case HALF_RESOURCE -> MAX_COUNT / 2;
@@ -220,9 +231,10 @@ class GridServiceImplTest {
             storageChannel.addSource(source);
 
             // Act
-            sut.extract("A", extractMode, destination);
+            final boolean success = sut.extract("A", extractMode, destination);
 
             // Assert
+            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).isEmpty();
             assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isNotPresent();
@@ -240,9 +252,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", extractMode, destination);
+            final boolean success = sut.extract("A", extractMode, destination);
 
             // Assert
+            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
             );
@@ -265,9 +278,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
+            final boolean success = sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
 
             // Assert
+            assertThat(success).isTrue();
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT - 1)
@@ -288,9 +302,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
+            final boolean success = sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
 
             // Assert
+            assertThat(success).isTrue();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100 - MAX_COUNT + 1)
             );
@@ -316,9 +331,10 @@ class GridServiceImplTest {
             storageChannel.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", GridExtractMode.HALF_RESOURCE, destination);
+            final boolean success = sut.extract("A", GridExtractMode.HALF_RESOURCE, destination);
 
             // Assert
+            assertThat(success).isTrue();
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 1)

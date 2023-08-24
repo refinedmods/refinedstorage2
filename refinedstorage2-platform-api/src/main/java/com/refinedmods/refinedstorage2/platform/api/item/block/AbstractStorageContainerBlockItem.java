@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
 import java.util.List;
@@ -24,12 +24,12 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public abstract class AbstractStorageContainerBlockItem extends BlockItem {
-    protected final StorageContainerHelper helper;
+    protected final StorageContainerItemHelper helper;
 
     protected AbstractStorageContainerBlockItem(
         final Block block,
         final Properties properties,
-        final StorageContainerHelper helper
+        final StorageContainerItemHelper helper
     ) {
         super(block, properties);
         this.helper = helper;

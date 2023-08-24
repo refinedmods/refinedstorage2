@@ -64,6 +64,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleEnergyUsageEntryImpl constructor = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.CONSTRUCTOR);
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private WirelessGridEntryImpl wirelessGrid = new WirelessGridEntryImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -141,6 +144,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getConstructor() {
         return constructor;
+    }
+
+    @Override
+    public WirelessGridEntry getWirelessGrid() {
+        return wirelessGrid;
     }
 
     private static class GridEntryImpl implements GridEntry {
@@ -463,6 +471,43 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getRegulatorUpgradeEnergyUsage() {
             return regulatorUpgradeEnergyUsage;
+        }
+    }
+
+    private static class WirelessGridEntryImpl implements WirelessGridEntry {
+        private boolean useEnergy = true;
+
+        private long energyCapacity = DefaultEnergyUsage.WIRELESS_GRID_CAPACITY;
+
+        private long openEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_OPEN;
+
+        private long insertEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_INSERT;
+
+        private long extractEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_EXTRACT;
+
+        @Override
+        public boolean getUseEnergy() {
+            return useEnergy;
+        }
+
+        @Override
+        public long getEnergyCapacity() {
+            return energyCapacity;
+        }
+
+        @Override
+        public long getOpenEnergyUsage() {
+            return openEnergyUsage;
+        }
+
+        @Override
+        public long getInsertEnergyUsage() {
+            return insertEnergyUsage;
+        }
+
+        @Override
+        public long getExtractEnergyUsage() {
+            return extractEnergyUsage;
         }
     }
 }

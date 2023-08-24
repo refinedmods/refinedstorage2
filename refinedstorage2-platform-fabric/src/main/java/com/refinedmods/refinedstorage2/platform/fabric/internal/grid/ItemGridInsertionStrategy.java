@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -24,14 +25,14 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.t
 
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridService<ItemResource> gridService;
+    private final GridOperations<ItemResource> gridOperations;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
-                                     final PlatformGridServiceFactory gridServiceFactory) {
+                                     final Grid grid) {
         this.containerMenu = containerMenu;
-        this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
+        this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }
 
@@ -42,7 +43,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
-        gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
+        gridOperations.insert(itemResource, insertMode, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
                 final long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
@@ -65,7 +66,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final ItemResource itemResource = ofItemVariant(itemVariantInSlot);
-        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
+        gridOperations.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
                 final long extracted = storage.extract(itemVariant, amount, tx);

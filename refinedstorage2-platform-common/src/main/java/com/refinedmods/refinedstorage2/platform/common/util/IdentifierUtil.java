@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,6 +30,20 @@ public final class IdentifierUtil {
 
     public static MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return Component.translatable(createTranslationKey(category, value), args);
+    }
+
+    public static MutableComponent createStoredWithCapacityTranslation(
+        final long stored,
+        final long capacity,
+        final double pct
+    ) {
+        return createTranslation(
+            "misc",
+            "stored_with_capacity",
+            AmountFormatting.format(stored),
+            AmountFormatting.format(capacity),
+            String.valueOf((int) (pct * 100D))
+        );
     }
 
     public static MutableComponent createTranslationAsHeading(final String category, final String value) {

@@ -1,16 +1,17 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BucketSingleStackStorage;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -29,19 +30,18 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final GridService<FluidResource> gridService;
+    private final GridOperations<FluidResource> gridOperations;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final net.fabricmc.fabric.api.transfer.v1.storage.Storage<ItemVariant> playerCursorStorage;
     private final Storage<ItemResource> itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
-                                       final PlatformGridServiceFactory gridServiceFactory,
-                                       final Storage<ItemResource> itemStorage) {
-        this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
+                                       final Grid grid) {
+        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
-        this.itemStorage = itemStorage;
+        this.itemStorage = grid.getItemStorage();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
         if (destination == null) {
             return;
         }
-        gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
+        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
@@ -102,7 +102,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             if (dest == null) {
                 return;
             }
-            gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
+            gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
                 try (Transaction innerTx = tx.openNested()) {
                     final long inserted = dest.insert(toFluidVariant(resource), amount, innerTx);
                     final boolean couldInsertBucket = insertResultingBucketIntoInventory(

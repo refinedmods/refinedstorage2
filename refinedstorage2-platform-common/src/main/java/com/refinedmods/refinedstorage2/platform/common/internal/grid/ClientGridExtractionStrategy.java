@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;

@@ -33,6 +33,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry detector;
     private final SimpleEnergyUsageEntry destructor;
     private final SimpleEnergyUsageEntry constructor;
+    private final WirelessGridEntry wirelessGrid;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -54,6 +55,7 @@ public class ConfigImpl implements Config {
         detector = new SimpleEnergyUsageEntryImpl("detector", "Detector", DefaultEnergyUsage.DETECTOR);
         destructor = new SimpleEnergyUsageEntryImpl("destructor", "Destructor", DefaultEnergyUsage.DESTRUCTOR);
         constructor = new SimpleEnergyUsageEntryImpl("constructor", "Constructor", DefaultEnergyUsage.CONSTRUCTOR);
+        wirelessGrid = new WirelessGridEntryImpl();
         spec = builder.build();
     }
 
@@ -134,6 +136,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getConstructor() {
         return constructor;
+    }
+
+    @Override
+    public WirelessGridEntry getWirelessGrid() {
+        return wirelessGrid;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
@@ -589,6 +596,48 @@ public class ConfigImpl implements Config {
         @Override
         public long getRegulatorUpgradeEnergyUsage() {
             return regulatorUpgradeEnergyUsage.get();
+        }
+    }
+
+    private class WirelessGridEntryImpl implements WirelessGridEntry {
+        private final ForgeConfigSpec.BooleanValue useEnergy;
+        private final ForgeConfigSpec.LongValue energyCapacity;
+        private final ForgeConfigSpec.LongValue openEnergyUsage;
+        private final ForgeConfigSpec.LongValue extractEnergyUsage;
+        private final ForgeConfigSpec.LongValue insertEnergyUsage;
+
+        WirelessGridEntryImpl() {
+            builder.push("wirelessGrid");
+            useEnergy = builder.comment("Whether the Wireless Grid uses energy").define("useEnergy", true);
+            energyCapacity = builder.comment("The energy capacity of the Wireless Grid")
+                .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
+            openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
+                .defineInRange("openEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_OPEN, 0, Long.MAX_VALUE);
+            extractEnergyUsage = builder.comment("The energy used by the Wireless Grid to extract resources")
+                .defineInRange("extractEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_EXTRACT, 0, Long.MAX_VALUE);
+            insertEnergyUsage = builder.comment("The energy used by the Wireless Grid to insert resources")
+                .defineInRange("insertEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_INSERT, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        public boolean getUseEnergy() {
+            return useEnergy.get();
+        }
+
+        public long getEnergyCapacity() {
+            return energyCapacity.get();
+        }
+
+        public long getOpenEnergyUsage() {
+            return openEnergyUsage.get();
+        }
+
+        public long getExtractEnergyUsage() {
+            return extractEnergyUsage.get();
+        }
+
+        public long getInsertEnergyUsage() {
+            return insertEnergyUsage.get();
         }
     }
 }

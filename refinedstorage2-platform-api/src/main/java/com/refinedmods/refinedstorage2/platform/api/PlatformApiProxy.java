@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
@@ -18,7 +17,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
@@ -63,8 +62,8 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public StorageContainerHelper getStorageContainerHelper() {
-        return ensureLoaded().getStorageContainerHelper();
+    public StorageContainerItemHelper getStorageContainerItemHelper() {
+        return ensureLoaded().getStorageContainerItemHelper();
     }
 
     @Override
@@ -152,8 +151,8 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public GridInsertionStrategy createGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                                              final Player player,
-                                                             final GridServiceFactory gridServiceFactory) {
-        return ensureLoaded().createGridInsertionStrategy(containerMenu, player, gridServiceFactory);
+                                                             final Grid grid) {
+        return ensureLoaded().createGridInsertionStrategy(containerMenu, player, grid);
     }
 
     @Override
@@ -174,9 +173,8 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public GridExtractionStrategy createGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                                                final Player player,
-                                                               final GridServiceFactory gridServiceFactory,
-                                                               final Storage<ItemResource> itemStorage) {
-        return ensureLoaded().createGridExtractionStrategy(containerMenu, player, gridServiceFactory, itemStorage);
+                                                               final Grid grid) {
+        return ensureLoaded().createGridExtractionStrategy(containerMenu, player, grid);
     }
 
     @Override
@@ -187,8 +185,8 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public GridScrollingStrategy createGridScrollingStrategy(final AbstractContainerMenu containerMenu,
                                                              final Player player,
-                                                             final GridServiceFactory gridServiceFactory) {
-        return ensureLoaded().createGridScrollingStrategy(containerMenu, player, gridServiceFactory);
+                                                             final Grid grid) {
+        return ensureLoaded().createGridScrollingStrategy(containerMenu, player, grid);
     }
 
     @Override

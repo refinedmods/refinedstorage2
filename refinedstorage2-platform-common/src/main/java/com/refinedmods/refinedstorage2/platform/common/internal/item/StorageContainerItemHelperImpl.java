@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.internal.item;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageTooltipHelper;
 
@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class StorageContainerHelperImpl implements StorageContainerHelper {
+public class StorageContainerItemHelperImpl implements StorageContainerItemHelper {
     private static final String TAG_ID = "id";
 
     @Override

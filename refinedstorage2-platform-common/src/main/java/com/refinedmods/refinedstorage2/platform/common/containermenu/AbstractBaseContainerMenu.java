@@ -33,6 +33,10 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         this.transferManager = Platform.INSTANCE.createTransferManager(this);
     }
 
+    public <T> boolean hasProperty(final PropertyType<T> type) {
+        return propertyMap.containsKey(type);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> ClientProperty<T> getProperty(final PropertyType<T> type) {
         return (ClientProperty<T>) propertyMap.get(type);

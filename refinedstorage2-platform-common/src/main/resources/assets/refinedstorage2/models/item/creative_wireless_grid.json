@@ -1,0 +1,17 @@
+{
+  "parent": "item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "active": 0
+      },
+      "model": "refinedstorage2:item/wireless_grid/inactive"
+    },
+    {
+      "predicate": {
+        "active": 1
+      },
+      "model": "refinedstorage2:item/wireless_grid/active"
+    }
+  ]
+}

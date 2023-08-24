@@ -45,6 +45,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUp
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -71,6 +72,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
@@ -85,6 +87,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -116,6 +119,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WIRELESS_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
@@ -231,7 +235,9 @@ public abstract class AbstractModInitializer {
 
     protected final void registerItems(
         final RegistryCallback<Item> callback,
-        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier
+        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier,
+        final Supplier<WirelessGridItem> wirelessGridItemSupplier,
+        final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier
     ) {
         registerSimpleItems(callback);
         Blocks.INSTANCE.getGrid().registerItems(callback);
@@ -247,6 +253,11 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         registerStorageItems(callback);
         registerUpgrades(callback, regulatorUpgradeItemSupplier);
+        Items.INSTANCE.setWirelessGrid(callback.register(ContentIds.WIRELESS_GRID, wirelessGridItemSupplier));
+        Items.INSTANCE.setCreativeWirelessGrid(callback.register(
+            ContentIds.CREATIVE_WIRELESS_GRID,
+            creativeWirelessGridItemSupplier
+        ));
     }
 
     private void registerSimpleItems(final RegistryCallback<Item> callback) {
@@ -501,6 +512,10 @@ public abstract class AbstractModInitializer {
             CRAFTING_GRID,
             () -> menuTypeFactory.create(CraftingGridContainerMenu::new)
         ));
+        Menus.INSTANCE.setWirelessGrid(callback.register(
+            WIRELESS_GRID,
+            () -> menuTypeFactory.create(WirelessGridContainerMenu::new)
+        ));
         Menus.INSTANCE.setItemStorage(callback.register(
             ITEM_STORAGE_BLOCK,
             () -> menuTypeFactory.create(ItemStorageBlockContainerMenu::new)
@@ -562,5 +577,9 @@ public abstract class AbstractModInitializer {
             createIdentifier("upgrade_with_enchanted_book"),
             UpgradeWithEnchantedBookRecipeSerializer::new
         );
+    }
+
+    protected static boolean allowNbtUpdateAnimation(final ItemStack oldStack, final ItemStack newStack) {
+        return oldStack.getItem() != newStack.getItem();
     }
 }
