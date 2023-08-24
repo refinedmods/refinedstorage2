@@ -64,6 +64,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidRe
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
@@ -150,7 +151,7 @@ public abstract class AbstractModInitializer {
     private void registerAdditionalStorageTypes() {
         PlatformApi.INSTANCE.getStorageTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
-            FluidStorageType.INSTANCE
+            StorageTypes.FLUID
         );
     }
 

@@ -1,20 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -54,31 +49,8 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
     }
 
     @Override
-    protected PlatformStorage<ItemResource> createStorage(final Runnable listener) {
-        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (!variant.hasCapacity()) {
-            final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
-                new InMemoryStorageImpl<>(),
-                trackingRepository,
-                System::currentTimeMillis
-            );
-            return new PlatformStorage<>(
-                delegate,
-                ItemStorageType.INSTANCE,
-                trackingRepository,
-                listener
-            );
-        }
-        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
-            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-            variant.getCapacity()
-        );
-        return new LimitedPlatformStorage<>(
-            delegate,
-            ItemStorageType.INSTANCE,
-            trackingRepository,
-            listener
-        );
+    protected Storage<ItemResource> createStorage(final Runnable listener) {
+        return StorageTypes.ITEM.create(variant.getCapacity(), listener);
     }
 
     @Override

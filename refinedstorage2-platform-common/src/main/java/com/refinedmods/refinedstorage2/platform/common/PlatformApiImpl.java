@@ -47,7 +47,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemRes
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.ItemGridInsertionHint;
@@ -86,7 +86,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final NetworkBuilder networkBuilder =
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
     private final PlatformRegistry<StorageType<?>> storageTypeRegistry =
-        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageTypes.ITEM);
     private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry =
         new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
@@ -325,6 +325,11 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
+    public StorageType<ItemResource> getItemStorageType() {
+        return StorageTypes.ITEM;
+    }
+
+    @Override
     public ResourceFactory<FluidResource> getFluidResourceFactory() {
         return fluidResourceFactory;
     }
@@ -332,6 +337,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
         return StorageChannelTypes.FLUID;
+    }
+
+    @Override
+    public StorageType<FluidResource> getFluidStorageType() {
+        return StorageTypes.FLUID;
     }
 
     @Override
