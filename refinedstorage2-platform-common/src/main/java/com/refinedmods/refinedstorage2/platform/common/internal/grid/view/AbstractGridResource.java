@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+// TODO: Move to API
 public abstract class AbstractGridResource<T> implements PlatformGridResource {
     protected final ResourceAmount<T> resourceAmount;
     private final String name;

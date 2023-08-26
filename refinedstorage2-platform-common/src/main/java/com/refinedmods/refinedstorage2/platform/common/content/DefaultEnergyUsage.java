@@ -40,6 +40,9 @@ public final class DefaultEnergyUsage {
     public static final long WIRELESS_GRID_INSERT = 5;
     public static final long WIRELESS_GRID_EXTRACT = 5;
 
+    public static final long WIRELESS_TRANSMITTER = 16;
+    public static final int WIRELESS_TRANSMITTER_BASE_RANGE = 16;
+
     private DefaultEnergyUsage() {
     }
 }

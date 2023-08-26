@@ -54,8 +54,18 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         groupItems(registry, Blocks.INSTANCE.getConstructor(), ContentIds.CONSTRUCTOR, Tags.CONSTRUCTORS);
         groupItems(registry, Blocks.INSTANCE.getExternalStorage(), ContentIds.EXTERNAL_STORAGE, Tags.EXTERNAL_STORAGES);
         groupItems(registry, Blocks.INSTANCE.getController(), ContentIds.CONTROLLER, Tags.CONTROLLERS);
-        groupItems(registry, Blocks.INSTANCE.getCreativeController(),
-            ContentIds.CREATIVE_CONTROLLER, Tags.CREATIVE_CONTROLLERS);
+        groupItems(
+            registry,
+            Blocks.INSTANCE.getCreativeController(),
+            ContentIds.CREATIVE_CONTROLLER,
+            Tags.CREATIVE_CONTROLLERS
+        );
+        groupItems(
+            registry,
+            Blocks.INSTANCE.getWirelessTransmitter(),
+            ContentIds.WIRELESS_TRANSMITTER,
+            Tags.WIRELESS_TRANSMITTERS
+        );
     }
 
     @Override

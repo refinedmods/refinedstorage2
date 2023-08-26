@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -252,6 +253,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public IngredientConverter getIngredientConverter() {
         return ensureLoaded().getIngredientConverter();
+    }
+
+    @Override
+    public void addWirelessTransmitterRangeModifier(final WirelessTransmitterRangeModifier rangeModifier) {
+        ensureLoaded().addWirelessTransmitterRangeModifier(rangeModifier);
+    }
+
+    @Override
+    public WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier() {
+        return ensureLoaded().getWirelessTransmitterRangeModifier();
     }
 
     private PlatformApi ensureLoaded() {

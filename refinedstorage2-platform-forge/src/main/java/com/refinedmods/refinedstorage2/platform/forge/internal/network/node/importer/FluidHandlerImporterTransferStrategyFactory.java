@@ -28,7 +28,7 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
             pos,
             direction
         ), amountOverride);
-        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
+        final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade())
             ? FluidType.BUCKET_VOLUME * 64
             : FluidType.BUCKET_VOLUME;
         return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.FLUID, transferQuota);

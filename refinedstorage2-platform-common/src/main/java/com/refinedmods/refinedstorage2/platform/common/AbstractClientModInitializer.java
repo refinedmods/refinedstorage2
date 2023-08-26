@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.RegulatorUpgradeScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.WirelessTransmitterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
@@ -48,6 +49,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
         registration.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
         registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
+        registration.register(Menus.INSTANCE.getWirelessTransmitter(), WirelessTransmitterScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {

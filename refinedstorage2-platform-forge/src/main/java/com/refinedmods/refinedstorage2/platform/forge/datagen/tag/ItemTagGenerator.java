@@ -32,6 +32,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.IMPORTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORAGE_DISKS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 
 public class ItemTagGenerator extends ItemTagsProvider {
@@ -92,6 +93,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(DESTRUCTORS,
             Blocks.INSTANCE.getDestructor().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(WIRELESS_TRANSMITTERS,
+            Blocks.INSTANCE.getWirelessTransmitter().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }

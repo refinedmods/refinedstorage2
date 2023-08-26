@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -127,4 +128,8 @@ public interface PlatformApi {
     void registerIngredientConverter(IngredientConverter converter);
 
     IngredientConverter getIngredientConverter();
+
+    void addWirelessTransmitterRangeModifier(WirelessTransmitterRangeModifier rangeModifier);
+
+    WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier();
 }

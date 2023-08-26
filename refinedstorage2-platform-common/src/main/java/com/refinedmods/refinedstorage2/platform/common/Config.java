@@ -42,6 +42,8 @@ public interface Config {
 
     WirelessGridEntry getWirelessGrid();
 
+    WirelessTransmitterEntry getWirelessTransmitter();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -150,5 +152,9 @@ public interface Config {
         long getInsertEnergyUsage();
 
         long getExtractEnergyUsage();
+    }
+
+    interface WirelessTransmitterEntry extends SimpleEnergyUsageEntry {
+        int getBaseRange();
     }
 }

@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridClearPacket
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.WirelessTransmitterRangePacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +46,13 @@ public class NetworkManager {
             ControllerEnergyInfoPacket::encode,
             ControllerEnergyInfoPacket::decode,
             ControllerEnergyInfoPacket::handle
+        );
+        handler.registerMessage(
+            id++,
+            WirelessTransmitterRangePacket.class,
+            WirelessTransmitterRangePacket::encode,
+            WirelessTransmitterRangePacket::decode,
+            WirelessTransmitterRangePacket::handle
         );
         handler.registerMessage(
             id++,

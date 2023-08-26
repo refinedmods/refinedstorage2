@@ -26,6 +26,11 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
+    public void sendWirelessTransmitterRange(final ServerPlayer player, final int range) {
+        networkManager.send(player, new WirelessTransmitterRangePacket(range));
+    }
+
+    @Override
     public void sendGridActiveness(final ServerPlayer player, final boolean active) {
         networkManager.send(player, new GridActivePacket(active));
     }

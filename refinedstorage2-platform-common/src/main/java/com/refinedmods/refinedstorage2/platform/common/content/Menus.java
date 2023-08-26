@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterCon
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.WirelessTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -55,6 +56,8 @@ public final class Menus {
     private Supplier<MenuType<ConstructorContainerMenu>> constructor;
     @Nullable
     private Supplier<MenuType<RegulatorUpgradeContainerMenu>> regulatorUpgrade;
+    @Nullable
+    private Supplier<MenuType<WirelessTransmitterContainerMenu>> wirelessTransmitter;
 
     private Menus() {
     }
@@ -177,5 +180,13 @@ public final class Menus {
 
     public void setRegulatorUpgrade(final Supplier<MenuType<RegulatorUpgradeContainerMenu>> supplier) {
         this.regulatorUpgrade = supplier;
+    }
+
+    public MenuType<WirelessTransmitterContainerMenu> getWirelessTransmitter() {
+        return Objects.requireNonNull(wirelessTransmitter).get();
+    }
+
+    public void setWirelessTransmitter(final Supplier<MenuType<WirelessTransmitterContainerMenu>> supplier) {
+        this.wirelessTransmitter = supplier;
     }
 }

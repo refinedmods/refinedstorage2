@@ -23,6 +23,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         registerGrids(Blocks.INSTANCE.getGrid(), "grid");
         registerGrids(Blocks.INSTANCE.getCraftingGrid(), "crafting_grid");
         registerDetectors();
+        registerWirelessTransmitters();
     }
 
     private void registerCables() {
@@ -101,5 +102,12 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
                 .texture("particle", particle)
                 .texture("torch", torch);
         });
+    }
+
+    private void registerWirelessTransmitters() {
+        final ResourceLocation parent = createIdentifier("block/wireless_transmitter/inactive");
+        Blocks.INSTANCE.getWirelessTransmitter()
+            .forEach((color, id, block) -> withExistingParent("block/wireless_transmitter/" + color.getName(), parent)
+                .texture("cutout", createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())));
     }
 }

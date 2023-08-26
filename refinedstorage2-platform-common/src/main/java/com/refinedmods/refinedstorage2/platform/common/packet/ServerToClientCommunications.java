@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 public interface ServerToClientCommunications {
     void sendControllerEnergyInfo(ServerPlayer player, long stored, long capacity);
 
+    void sendWirelessTransmitterRange(ServerPlayer player, int range);
+
     void sendGridActiveness(ServerPlayer player, boolean active);
 
     <T> void sendGridUpdate(ServerPlayer player,

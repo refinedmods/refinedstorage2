@@ -77,7 +77,7 @@ public class ConstructorBlockEntity
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                this::hasUpgrade,
+                upgradeContainer,
                 dropItems
             ).stream())
             .toList();

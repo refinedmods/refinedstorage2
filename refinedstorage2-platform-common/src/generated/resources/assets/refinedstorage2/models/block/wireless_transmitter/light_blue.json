@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage2:block/wireless_transmitter/inactive",
+  "textures": {
+    "cutout": "refinedstorage2:block/wireless_transmitter/cutouts/light_blue"
+  }
+}

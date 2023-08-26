@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Wireless Grid
 -   Creative Wireless Grid
+-   Wireless Transmitter
 
 ### Changed
 

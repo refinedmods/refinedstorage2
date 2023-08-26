@@ -35,6 +35,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlo
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.BaseWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
@@ -42,6 +44,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterCon
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.WirelessTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -121,6 +124,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WIRELESS_GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WIRELESS_TRANSMITTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
@@ -146,6 +150,7 @@ public abstract class AbstractModInitializer {
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
         registerNetworkComponents();
+        registerWirelessTransmitterRangeModifiers();
     }
 
     private void registerAdditionalStorageTypes() {
@@ -199,6 +204,10 @@ public abstract class AbstractModInitializer {
         );
     }
 
+    private void registerWirelessTransmitterRangeModifiers() {
+        PlatformApi.INSTANCE.addWirelessTransmitterRangeModifier(new BaseWirelessTransmitterRangeModifier());
+    }
+
     protected final void registerBlocks(
         final RegistryCallback<Block> callback,
         final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> diskDriveBlockEntityFactory
@@ -232,6 +241,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getConstructor().registerBlocks(callback);
         Blocks.INSTANCE.getDestructor().registerBlocks(callback);
         Blocks.INSTANCE.setInterface(callback.register(INTERFACE, InterfaceBlock::new));
+        Blocks.INSTANCE.getWirelessTransmitter().registerBlocks(callback);
     }
 
     protected final void registerItems(
@@ -252,6 +262,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getExternalStorage().registerItems(callback, Items.INSTANCE::addExternalStorage);
         Blocks.INSTANCE.getConstructor().registerItems(callback, Items.INSTANCE::addConstructor);
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
+        Blocks.INSTANCE.getWirelessTransmitter().registerItems(callback, Items.INSTANCE::addWirelessTransmitter);
         registerStorageItems(callback);
         registerUpgrades(callback, regulatorUpgradeItemSupplier);
         Items.INSTANCE.setWirelessGrid(callback.register(ContentIds.WIRELESS_GRID, wirelessGridItemSupplier));
@@ -493,6 +504,13 @@ public abstract class AbstractModInitializer {
             DESTRUCTOR,
             () -> typeFactory.create(DestructorBlockEntity::new, Blocks.INSTANCE.getDestructor().toArray())
         ));
+        BlockEntities.INSTANCE.setWirelessTransmitter(callback.register(
+            WIRELESS_TRANSMITTER,
+            () -> typeFactory.create(
+                WirelessTransmitterBlockEntity::new,
+                Blocks.INSTANCE.getWirelessTransmitter().toArray()
+            )
+        ));
     }
 
     protected final void registerMenus(final RegistryCallback<MenuType<?>> callback,
@@ -556,6 +574,10 @@ public abstract class AbstractModInitializer {
         Menus.INSTANCE.setRegulatorUpgrade(callback.register(
             REGULATOR_UPGRADE,
             () -> menuTypeFactory.create(RegulatorUpgradeContainerMenu::new)
+        ));
+        Menus.INSTANCE.setWirelessTransmitter(callback.register(
+            WIRELESS_TRANSMITTER,
+            () -> menuTypeFactory.create(WirelessTransmitterContainerMenu::new)
         ));
     }
 

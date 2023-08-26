@@ -38,6 +38,7 @@ public final class Items {
     private final List<Supplier<BlockItem>> allDetectors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allDestructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allWirelessTransmitters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -236,6 +237,14 @@ public final class Items {
 
     public List<Supplier<BlockItem>> getConstructors() {
         return Collections.unmodifiableList(allConstructors);
+    }
+
+    public void addWirelessTransmitter(final Supplier<BlockItem> supplier) {
+        allWirelessTransmitters.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getWirelessTransmitters() {
+        return Collections.unmodifiableList(allWirelessTransmitters);
     }
 
     public Item getStorageHousing() {

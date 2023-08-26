@@ -28,7 +28,7 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
                                            final boolean fuzzyMode) {
         final InteractionCoordinatesImpl coordinates = new InteractionCoordinatesImpl(level, pos, direction);
         final ItemHandlerInsertableStorage destination = new ItemHandlerInsertableStorage(coordinates, amountOverride);
-        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
+        final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.ITEM, transferQuota) {
                 @Nullable

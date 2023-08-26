@@ -30,6 +30,7 @@ public final class CreativeModeTabItems {
         Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getConstructors().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getDestructors().stream().map(Supplier::get).forEach(itemConsumer);
+        Items.INSTANCE.getWirelessTransmitters().stream().map(Supplier::get).forEach(itemConsumer);
         itemConsumer.accept(Blocks.INSTANCE.getDiskDrive());
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
         appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());

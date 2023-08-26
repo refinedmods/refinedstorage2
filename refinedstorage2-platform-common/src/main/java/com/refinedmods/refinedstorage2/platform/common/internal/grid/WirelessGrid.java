@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import net.minecraft.server.MinecraftServer;
 
+// TODO: Check wireless transmitters
 public class WirelessGrid implements Grid {
     private final MinecraftServer server;
     private final NetworkBoundItemContext ctx;

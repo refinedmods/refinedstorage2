@@ -28,6 +28,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacke
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.WirelessTransmitterRangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
@@ -103,6 +104,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getDetector());
         setCutout(Blocks.INSTANCE.getConstructor());
         setCutout(Blocks.INSTANCE.getDestructor());
+        setCutout(Blocks.INSTANCE.getWirelessTransmitter());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -135,6 +137,9 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
         Blocks.INSTANCE.getDestructor().forEach(
             (color, id, block) -> registerEmissiveDestructorModels(color, id)
+        );
+        Blocks.INSTANCE.getWirelessTransmitter().forEach(
+            (color, id, block) -> registerEmissiveWirelessTransmitterModels(color, id)
         );
     }
 
@@ -202,12 +207,26 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/destructor/cutouts/active"));
     }
 
+    private void registerEmissiveWirelessTransmitterModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/wireless_transmitter/" + color.getName()),
+            createIdentifier("block/wireless_transmitter/cutouts/active")
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/wireless_transmitter/cutouts/active"));
+    }
+
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_CLEAR, new GridClearPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
+        ClientPlayNetworking.registerGlobalReceiver(
+            PacketIds.WIRELESS_TRANSMITTER_RANGE,
+            new WirelessTransmitterRangePacket()
+        );
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_SLOT_UPDATE, new ResourceSlotUpdatePacket());
     }
 

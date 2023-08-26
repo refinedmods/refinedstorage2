@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
@@ -57,6 +58,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerControllers();
         registerGrids();
         registerDetectors();
+        registerWirelessTransmitters();
         registerConstructorDestructors(Blocks.INSTANCE.getConstructor(), "constructor");
         registerConstructorDestructors(Blocks.INSTANCE.getDestructor(), "destructor");
     }
@@ -198,6 +200,24 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         Blocks.INSTANCE.getDetector().forEach((color, id, block) -> {
             final var builder = getVariantBuilder(block.get());
             builder.forAllStates(blockState -> registerDetector(unpowered, block.get(), blockState));
+        });
+    }
+
+    private void registerWirelessTransmitters() {
+        final ModelFile inactive = modelFile(createIdentifier("block/wireless_transmitter/inactive"));
+        Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                if (Boolean.TRUE.equals(blockState.getValue(WirelessTransmitterBlock.ACTIVE))) {
+                    model.modelFile(modelFile(createIdentifier("block/wireless_transmitter/" + color.getName())));
+                } else {
+                    model.modelFile(inactive);
+                }
+                final Direction direction = blockState.getValue(DirectionTypeImpl.INSTANCE.getProperty());
+                addRotation(model, direction);
+                return model.build();
+            });
         });
     }
 
