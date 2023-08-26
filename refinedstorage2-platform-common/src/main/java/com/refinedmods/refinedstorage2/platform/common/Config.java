@@ -140,6 +140,12 @@ public interface Config {
         long getSilkTouchUpgradeEnergyUsage();
 
         long getRegulatorUpgradeEnergyUsage();
+
+        long getRangeUpgradeEnergyUsage();
+
+        long getCreativeRangeUpgradeEnergyUsage();
+
+        int getRangeUpgradeRange();
     }
 
     interface WirelessGridEntry {

@@ -87,6 +87,8 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getFortune3Upgrade());
         itemConsumer.accept(Items.INSTANCE.getSilkTouchUpgrade());
         itemConsumer.accept(Items.INSTANCE.getRegulatorUpgrade());
+        itemConsumer.accept(Items.INSTANCE.getRangeUpgrade());
+        itemConsumer.accept(Items.INSTANCE.getCreativeRangeUpgrade());
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
         if (Platform.INSTANCE.getConfig().getWirelessGrid().getUseEnergy()) {
             consumer.accept(Items.INSTANCE.getWirelessGrid().getAtCapacity());

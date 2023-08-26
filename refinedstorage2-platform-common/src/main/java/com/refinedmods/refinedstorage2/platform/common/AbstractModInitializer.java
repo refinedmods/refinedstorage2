@@ -36,6 +36,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.Interf
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.BaseWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.CreativeRangeUpgradeWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.RangeUpgradeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
@@ -73,6 +75,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem
 import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.RangeUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
@@ -206,6 +209,10 @@ public abstract class AbstractModInitializer {
 
     private void registerWirelessTransmitterRangeModifiers() {
         PlatformApi.INSTANCE.addWirelessTransmitterRangeModifier(new BaseWirelessTransmitterRangeModifier());
+        PlatformApi.INSTANCE.addWirelessTransmitterRangeModifier(new RangeUpgradeWirelessTransmitterRangeModifier());
+        PlatformApi.INSTANCE.addWirelessTransmitterRangeModifier(
+            new CreativeRangeUpgradeWirelessTransmitterRangeModifier()
+        );
     }
 
     protected final void registerBlocks(
@@ -395,6 +402,14 @@ public abstract class AbstractModInitializer {
             ContentIds.REGULATOR_UPGRADE,
             regulatorUpgradeItemSupplier
         ));
+        Items.INSTANCE.setRangeUpgrade(callback.register(
+            ContentIds.RANGE_UPGRADE,
+            () -> new RangeUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), false)
+        ));
+        Items.INSTANCE.setCreativeRangeUpgrade(callback.register(
+            ContentIds.CREATIVE_RANGE_UPGRADE,
+            () -> new RangeUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), true)
+        ));
     }
 
     protected final void registerUpgradeMappings() {
@@ -418,6 +433,10 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.CONSTRUCTOR)
             .add(Items.INSTANCE.getSpeedUpgrade(), 4)
             .add(Items.INSTANCE.getStackUpgrade());
+
+        PlatformApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.WIRELESS_TRANSMITTER)
+            .add(Items.INSTANCE.getRangeUpgrade(), 4)
+            .add(Items.INSTANCE.getCreativeRangeUpgrade());
     }
 
     protected final void registerBlockEntities(

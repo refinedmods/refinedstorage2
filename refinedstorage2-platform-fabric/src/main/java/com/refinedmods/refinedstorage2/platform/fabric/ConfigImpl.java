@@ -446,6 +446,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private long regulatorUpgradeEnergyUsage = DefaultEnergyUsage.REGULATOR_UPGRADE;
 
+        private long rangeUpgradeEnergyUsage = DefaultEnergyUsage.RANGE_UPGRADE;
+
+        private long creativeRangeUpgradeEnergyUsage = DefaultEnergyUsage.CREATIVE_RANGE_UPGRADE;
+
+        private int rangeUpgradeRange = DefaultEnergyUsage.RANGE_UPGRADE_RANGE;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
@@ -479,6 +485,21 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getRegulatorUpgradeEnergyUsage() {
             return regulatorUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getRangeUpgradeEnergyUsage() {
+            return rangeUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getCreativeRangeUpgradeEnergyUsage() {
+            return creativeRangeUpgradeEnergyUsage;
+        }
+
+        @Override
+        public int getRangeUpgradeRange() {
+            return rangeUpgradeRange;
         }
     }
 

@@ -25,8 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
-// TODO: Range Upgrade.
-// TODO: Check advancement
 public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<SimpleNetworkNode>
     implements ExtendedMenuProvider {
     private static final String TAG_UPGRADES = "u";
@@ -34,7 +32,7 @@ public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeC
     private final UpgradeContainer upgradeContainer = new UpgradeContainer(
         UpgradeDestinations.WIRELESS_TRANSMITTER,
         PlatformApi.INSTANCE.getUpgradeRegistry(),
-        this::setChanged
+        this::upgradeContainerChanged
     );
 
     public WirelessTransmitterBlockEntity(final BlockPos pos, final BlockState state) {
@@ -54,6 +52,7 @@ public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeC
         if (tag.contains(TAG_UPGRADES)) {
             upgradeContainer.fromTag(tag.getList(TAG_UPGRADES, Tag.TAG_COMPOUND));
         }
+        configureAccordingToUpgrades();
         super.load(tag);
     }
 
@@ -85,5 +84,15 @@ public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeC
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeInt(getRange());
+    }
+
+    private void upgradeContainerChanged() {
+        setChanged();
+        configureAccordingToUpgrades();
+    }
+
+    private void configureAccordingToUpgrades() {
+        final long baseUsage = Platform.INSTANCE.getConfig().getWirelessTransmitter().getEnergyUsage();
+        getNode().setEnergyUsage(baseUsage + upgradeContainer.getEnergyUsage());
     }
 }

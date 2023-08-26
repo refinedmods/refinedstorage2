@@ -45,6 +45,8 @@ public final class ContentIds {
     public static final ResourceLocation WIRELESS_GRID = createIdentifier("wireless_grid");
     public static final ResourceLocation CREATIVE_WIRELESS_GRID = createIdentifier("creative_wireless_grid");
     public static final ResourceLocation WIRELESS_TRANSMITTER = createIdentifier("wireless_transmitter");
+    public static final ResourceLocation RANGE_UPGRADE = createIdentifier("range_upgrade");
+    public static final ResourceLocation CREATIVE_RANGE_UPGRADE = createIdentifier("creative_range_upgrade");
 
     private ContentIds() {
     }

@@ -71,6 +71,10 @@ public final class Items {
     @Nullable
     private Supplier<? extends AbstractUpgradeItem> regulatorUpgrade;
     @Nullable
+    private Supplier<? extends AbstractUpgradeItem> rangeUpgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade;
+    @Nullable
     private Supplier<WirelessGridItem> wirelessGrid;
     @Nullable
     private Supplier<WirelessGridItem> creativeWirelessGrid;
@@ -317,6 +321,22 @@ public final class Items {
 
     public void setRegulatorUpgrade(final Supplier<? extends AbstractUpgradeItem> regulatorUpgrade) {
         this.regulatorUpgrade = regulatorUpgrade;
+    }
+
+    public AbstractUpgradeItem getRangeUpgrade() {
+        return Objects.requireNonNull(rangeUpgrade).get();
+    }
+
+    public void setRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> rangeUpgrade) {
+        this.rangeUpgrade = rangeUpgrade;
+    }
+
+    public AbstractUpgradeItem getCreativeRangeUpgrade() {
+        return Objects.requireNonNull(creativeRangeUpgrade).get();
+    }
+
+    public void setCreativeRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade) {
+        this.creativeRangeUpgrade = creativeRangeUpgrade;
     }
 
     public WirelessGridItem getWirelessGrid() {
