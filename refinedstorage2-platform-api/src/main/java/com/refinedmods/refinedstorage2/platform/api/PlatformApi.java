@@ -30,6 +30,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
@@ -76,6 +77,8 @@ public interface PlatformApi {
     PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry();
 
     UpgradeRegistry getUpgradeRegistry();
+
+    BuiltinUpgradeDestinations getBuiltinUpgradeDestinations();
 
     void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
 

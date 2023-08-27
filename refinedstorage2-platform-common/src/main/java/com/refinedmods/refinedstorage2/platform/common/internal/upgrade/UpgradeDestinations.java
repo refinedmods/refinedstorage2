@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-// TODO: Move to api
 public enum UpgradeDestinations implements UpgradeDestination {
     IMPORTER(ContentNames.IMPORTER, () -> new ItemStack(Items.INSTANCE.getImporters().get(0).get())),
     EXPORTER(ContentNames.EXPORTER, () -> new ItemStack(Items.INSTANCE.getExporters().get(0).get())),
