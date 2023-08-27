@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
+// TODO: Fully charged in creative tabs
 public class ControllerBlockItem extends CreativeControllerBlockItem {
     public ControllerBlockItem(final Block block, final Component displayName) {
         super(block, displayName);

@@ -92,6 +92,23 @@ class GraphNetworkComponentTest {
     }
 
     @Test
+    void shouldAddAndRetrieveMultipleContainersByInterface() {
+        // Arrange
+        final NetworkNodeContainer1 container11 = new NetworkNodeContainer1();
+        final NetworkNodeContainer1 container12 = new NetworkNodeContainer1();
+        final NetworkNodeContainer2 container2 = new NetworkNodeContainer2();
+        sut.onContainerAdded(container11);
+        sut.onContainerAdded(container12);
+        sut.onContainerAdded(container2);
+
+        // Act
+        final Set<BothImplements> containers = sut.getContainers(BothImplements.class);
+
+        // Assert
+        assertThat(containers).containsExactlyInAnyOrder(container11, container12, container2);
+    }
+
+    @Test
     void shouldRemoveSingleContainerAndRetrieveByClass() {
         // Arrange
         final NetworkNodeContainer1 container11 = new NetworkNodeContainer1();
@@ -111,6 +128,25 @@ class GraphNetworkComponentTest {
     }
 
     @Test
+    void shouldRemoveSingleContainerAndRetrieveByInterface() {
+        // Arrange
+        final NetworkNodeContainer1 container11 = new NetworkNodeContainer1();
+        final NetworkNodeContainer1 container12 = new NetworkNodeContainer1();
+        final NetworkNodeContainer2 container2 = new NetworkNodeContainer2();
+        sut.onContainerAdded(container11);
+        sut.onContainerAdded(container12);
+        sut.onContainerAdded(container2);
+
+        // Act
+        sut.onContainerRemoved(container12);
+
+        final Set<BothImplements> containers = sut.getContainers(BothImplements.class);
+
+        // Assert
+        assertThat(containers).containsExactlyInAnyOrder(container11, container2);
+    }
+
+    @Test
     void shouldRemoveMultipleContainersAndRetrieveByClass() {
         // Arrange
         final NetworkNodeContainer1 container11 = new NetworkNodeContainer1();
@@ -126,23 +162,49 @@ class GraphNetworkComponentTest {
 
         final Set<NetworkNodeContainer1> containers1 = sut.getContainers(NetworkNodeContainer1.class);
         final Set<NetworkNodeContainer2> containers2 = sut.getContainers(NetworkNodeContainer2.class);
+        final Set<BothImplements> containersByIface = sut.getContainers(BothImplements.class);
 
         // Assert
         assertThat(containers1).isEmpty();
         assertThat(containers2).containsExactly(container2);
+        assertThat(containersByIface).containsExactly(container2);
     }
 
-    private static class NetworkNodeContainer1 implements NetworkNodeContainer {
+    @Test
+    void shouldRemoveMultipleContainersAndRetrieveByInterface() {
+        // Arrange
+        final NetworkNodeContainer1 container11 = new NetworkNodeContainer1();
+        final NetworkNodeContainer1 container12 = new NetworkNodeContainer1();
+        final NetworkNodeContainer2 container2 = new NetworkNodeContainer2();
+        sut.onContainerAdded(container11);
+        sut.onContainerAdded(container12);
+        sut.onContainerAdded(container2);
+
+        // Act
+        sut.onContainerRemoved(container11);
+        sut.onContainerRemoved(container12);
+        sut.onContainerRemoved(container2);
+
+        final Set<BothImplements> containers = sut.getContainers(BothImplements.class);
+
+        // Assert
+        assertThat(containers).isEmpty();
+    }
+
+    private static class NetworkNodeContainer1 implements NetworkNodeContainer, BothImplements {
         @Override
         public NetworkNode getNode() {
             return new SimpleNetworkNode(0);
         }
     }
 
-    private static class NetworkNodeContainer2 implements NetworkNodeContainer {
+    private static class NetworkNodeContainer2 implements NetworkNodeContainer, BothImplements {
         @Override
         public NetworkNode getNode() {
             return new SimpleNetworkNode(0);
         }
+    }
+
+    private interface BothImplements {
     }
 }
