@@ -19,11 +19,11 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.item.NetworkBoundItemContext;
 
@@ -31,11 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 public class WirelessGrid implements Grid {
     private final MinecraftServer server;
@@ -59,36 +56,17 @@ public class WirelessGrid implements Grid {
             .map(PlatformNetworkNodeContainer.class::cast)
             .map(PlatformNetworkNodeContainer::getNode)
             .map(NetworkNode::getNetwork)
-            .flatMap(this::isInRange);
+            .filter(this::isInRange);
     }
 
-    private Optional<Network> isInRange(final Network network) {
-        /// TODO: Wireless Transmitter API iface here instead of concrete class?
-        final Set<WirelessTransmitterBlockEntity> transmitters = network.getComponent(GraphNetworkComponent.class)
-            .getContainers(WirelessTransmitterBlockEntity.class);
-        for (final WirelessTransmitterBlockEntity transmitter : transmitters) {
-            if (isInRange(transmitter)) {
-                return Optional.of(network);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private boolean isInRange(final WirelessTransmitterBlockEntity transmitter) {
-        final Level transmitterLevel = transmitter.getLevel();
-        if (transmitterLevel == null || transmitterLevel.dimension() != ctx.getPlayerLevel()) {
-            return false;
-        }
-        if (!transmitter.getNode().isActive()) {
-            return false;
-        }
-        final Vec3 pos = ctx.getPlayerPosition();
-        final double distance = Math.sqrt(
-            Math.pow(transmitter.getBlockPos().getX() - pos.x(), 2)
-                + Math.pow(transmitter.getBlockPos().getY() - pos.y(), 2)
-                + Math.pow(transmitter.getBlockPos().getZ() - pos.z(), 2)
-        );
-        return distance <= transmitter.getRange();
+    private boolean isInRange(final Network network) {
+        return network.getComponent(GraphNetworkComponent.class)
+            .getContainers(WirelessTransmitter.class)
+            .stream()
+            .anyMatch(wirelessTransmitter -> wirelessTransmitter.isInRange(
+                ctx.getPlayerLevel(),
+                ctx.getPlayerPosition()
+            ));
     }
 
     private Optional<StorageNetworkComponent> getStorage() {

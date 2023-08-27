@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstra
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
@@ -19,14 +20,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<SimpleNetworkNode>
-    implements ExtendedMenuProvider {
+    implements ExtendedMenuProvider, WirelessTransmitter {
     private static final String TAG_UPGRADES = "u";
 
     private final UpgradeContainer upgradeContainer = new UpgradeContainer(
@@ -94,5 +98,22 @@ public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeC
     private void configureAccordingToUpgrades() {
         final long baseUsage = Platform.INSTANCE.getConfig().getWirelessTransmitter().getEnergyUsage();
         getNode().setEnergyUsage(baseUsage + upgradeContainer.getEnergyUsage());
+    }
+
+    @Override
+    public boolean isInRange(final ResourceKey<Level> dimension, final Vec3 position) {
+        final Level level = getLevel();
+        if (level == null || level.dimension() != dimension) {
+            return false;
+        }
+        if (!getNode().isActive()) {
+            return false;
+        }
+        final double distance = Math.sqrt(
+            Math.pow(getBlockPos().getX() - position.x(), 2)
+                + Math.pow(getBlockPos().getY() - position.y(), 2)
+                + Math.pow(getBlockPos().getZ() - position.z(), 2)
+        );
+        return distance <= getRange();
     }
 }
