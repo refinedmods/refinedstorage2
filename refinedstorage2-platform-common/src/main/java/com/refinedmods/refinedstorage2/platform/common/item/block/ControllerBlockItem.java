@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
 import java.util.List;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 // TODO: Fully charged in creative tabs
@@ -69,12 +69,8 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
         if (ControllerBlockEntity.hasEnergy(data)) {
             final long stored = ControllerBlockEntity.getStored(data);
             final long capacity = ControllerBlockEntity.getCapacity(data);
-            tooltip.add(createTranslation(
-                "misc",
-                "stored_with_capacity",
-                AmountFormatting.format(stored),
-                AmountFormatting.format(capacity)
-            ).withStyle(ChatFormatting.GRAY));
+            tooltip.add(createStoredWithCapacityTranslation(stored, capacity, getPercentFull(stack))
+                .withStyle(ChatFormatting.GRAY));
         }
     }
 }
