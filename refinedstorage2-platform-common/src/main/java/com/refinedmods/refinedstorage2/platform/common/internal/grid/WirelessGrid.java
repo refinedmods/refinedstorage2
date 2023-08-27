@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridWatchers;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -22,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.item.NetworkBoundItemContext;
 
@@ -29,10 +31,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
-// TODO: Check wireless transmitters
 public class WirelessGrid implements Grid {
     private final MinecraftServer server;
     private final NetworkBoundItemContext ctx;
@@ -49,11 +53,42 @@ public class WirelessGrid implements Grid {
             return Optional.empty();
         }
         return Optional.ofNullable(server.getLevel(ctx.getNetworkReference().dimensionKey()))
+            .filter(level -> level.isLoaded(ctx.getNetworkReference().pos()))
             .map(level -> level.getBlockEntity(ctx.getNetworkReference().pos()))
             .filter(PlatformNetworkNodeContainer.class::isInstance)
             .map(PlatformNetworkNodeContainer.class::cast)
             .map(PlatformNetworkNodeContainer::getNode)
-            .map(NetworkNode::getNetwork);
+            .map(NetworkNode::getNetwork)
+            .flatMap(this::isInRange);
+    }
+
+    private Optional<Network> isInRange(final Network network) {
+        /// TODO: Wireless Transmitter API iface here instead of concrete class?
+        final Set<WirelessTransmitterBlockEntity> transmitters = network.getComponent(GraphNetworkComponent.class)
+            .getContainers(WirelessTransmitterBlockEntity.class);
+        for (final WirelessTransmitterBlockEntity transmitter : transmitters) {
+            if (isInRange(transmitter)) {
+                return Optional.of(network);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean isInRange(final WirelessTransmitterBlockEntity transmitter) {
+        final Level transmitterLevel = transmitter.getLevel();
+        if (transmitterLevel == null || transmitterLevel.dimension() != ctx.getPlayerLevel()) {
+            return false;
+        }
+        if (!transmitter.getNode().isActive()) {
+            return false;
+        }
+        final Vec3 pos = ctx.getPlayerPosition();
+        final double distance = Math.sqrt(
+            Math.pow(transmitter.getBlockPos().getX() - pos.x(), 2)
+                + Math.pow(transmitter.getBlockPos().getY() - pos.y(), 2)
+                + Math.pow(transmitter.getBlockPos().getZ() - pos.z(), 2)
+        );
+        return distance <= transmitter.getRange();
     }
 
     private Optional<StorageNetworkComponent> getStorage() {
