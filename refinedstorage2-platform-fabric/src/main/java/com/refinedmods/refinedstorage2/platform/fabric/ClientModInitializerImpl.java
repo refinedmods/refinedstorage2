@@ -290,7 +290,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     }
 
     private void registerModelPredicates() {
-        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
+        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()

@@ -46,7 +46,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         addAllToTag(CABLES, Items.INSTANCE.getCables());
-        addAllToTag(CONTROLLERS, Items.INSTANCE.getRegularControllers());
+        addAllToTag(CONTROLLERS, Items.INSTANCE.getControllers());
         addAllToTag(CREATIVE_CONTROLLERS, Blocks.INSTANCE.getCreativeController().values().stream()
             .map(Block::asItem)
             .map(c -> (Supplier<Item>) () -> c)

@@ -29,8 +29,8 @@ public final class Items {
         = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageDisks
         = new EnumMap<>(FluidStorageType.Variant.class);
-    private final List<Supplier<BlockItem>> regularControllers = new ArrayList<>();
-    private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allControllers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allCreativeControllers = new ArrayList<>();
     private final List<Supplier<BlockItem>> allCables = new ArrayList<>();
     private final List<Supplier<BlockItem>> allExporters = new ArrayList<>();
     private final List<Supplier<BlockItem>> allImporters = new ArrayList<>();
@@ -170,21 +170,20 @@ public final class Items {
         return Objects.requireNonNull(destructionCore).get();
     }
 
-    public void addController(final Supplier<? extends Item> supplier) {
+    public void addCreativeController(final Supplier<BlockItem> supplier) {
+        allCreativeControllers.add(supplier);
+    }
+
+    public List<Supplier<? extends Item>> getCreativeControllers() {
+        return Collections.unmodifiableList(allCreativeControllers);
+    }
+
+    public void addController(final Supplier<BlockItem> supplier) {
         allControllers.add(supplier);
     }
 
-    public List<Supplier<? extends Item>> getAllControllers() {
+    public List<Supplier<BlockItem>> getControllers() {
         return Collections.unmodifiableList(allControllers);
-    }
-
-    public void addRegularController(final Supplier<BlockItem> supplier) {
-        addController(supplier);
-        regularControllers.add(supplier);
-    }
-
-    public List<Supplier<BlockItem>> getRegularControllers() {
-        return Collections.unmodifiableList(regularControllers);
     }
 
     public void addCable(final Supplier<BlockItem> supplier) {

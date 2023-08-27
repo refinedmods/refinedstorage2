@@ -6,21 +6,31 @@ import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
+
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.client.registry.screen.ExclusionZones;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry;
+import me.shedaniel.rei.api.common.entry.comparison.ItemComparatorRegistry;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 @Environment(EnvType.CLIENT)
 public class RefinedStorageREIClientPlugin implements REIClientPlugin {
@@ -42,6 +52,11 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         PlatformApi.INSTANCE.registerIngredientConverter(new ResourceIngredientConverter());
     }
 
+    @Override
+    public void registerItemComparators(final ItemComparatorRegistry registry) {
+        Items.INSTANCE.getControllers().stream().map(Supplier::get).forEach(registry::registerNbt);
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public void registerCollapsibleEntries(final CollapsibleEntryRegistry registry) {
@@ -55,6 +70,11 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         groupItems(registry, Blocks.INSTANCE.getConstructor(), ContentIds.CONSTRUCTOR, Tags.CONSTRUCTORS);
         groupItems(registry, Blocks.INSTANCE.getExternalStorage(), ContentIds.EXTERNAL_STORAGE, Tags.EXTERNAL_STORAGES);
         groupItems(registry, Blocks.INSTANCE.getController(), ContentIds.CONTROLLER, Tags.CONTROLLERS);
+        registry.group(
+            createIdentifier("fully_charged_controller"),
+            createTranslation("block", "controller.rei_fully_charged"),
+            ControllerBlockItem.getAllAtCapacity().map(EntryStacks::of).collect(Collectors.toList())
+        );
         groupItems(
             registry,
             Blocks.INSTANCE.getCreativeController(),

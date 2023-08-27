@@ -76,7 +76,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     private static void registerModelPredicates() {
-        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemProperties.register(
+        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()

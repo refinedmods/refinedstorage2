@@ -261,8 +261,8 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getGrid().registerItems(callback);
         Blocks.INSTANCE.getCraftingGrid().registerItems(callback);
         Blocks.INSTANCE.getCable().registerItems(callback, Items.INSTANCE::addCable);
-        Blocks.INSTANCE.getController().registerItems(callback, Items.INSTANCE::addRegularController);
-        Blocks.INSTANCE.getCreativeController().registerItems(callback, Items.INSTANCE::addController);
+        Blocks.INSTANCE.getController().registerItems(callback, Items.INSTANCE::addController);
+        Blocks.INSTANCE.getCreativeController().registerItems(callback, Items.INSTANCE::addCreativeController);
         Blocks.INSTANCE.getDetector().registerItems(callback, Items.INSTANCE::addDetector);
         Blocks.INSTANCE.getImporter().registerItems(callback, Items.INSTANCE::addImporter);
         Blocks.INSTANCE.getExporter().registerItems(callback, Items.INSTANCE::addExporter);

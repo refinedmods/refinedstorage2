@@ -1,10 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
@@ -20,7 +25,6 @@ import net.minecraft.world.level.block.Block;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Fully charged in creative tabs
 public class ControllerBlockItem extends CreativeControllerBlockItem {
     public ControllerBlockItem(final Block block, final Component displayName) {
         super(block, displayName);
@@ -37,6 +41,24 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
             return 1;
         }
         return (float) stored / (float) capacity;
+    }
+
+    public ItemStack getAtCapacity() {
+        final long capacity = Platform.INSTANCE.getConfig().getController().getEnergyCapacity();
+        final ItemStack result = new ItemStack(this);
+        final CompoundTag blockEntityData = new CompoundTag();
+        ControllerBlockEntity.setStored(blockEntityData, capacity);
+        ControllerBlockEntity.setCapacity(blockEntityData, capacity);
+        setBlockEntityData(result, BlockEntities.INSTANCE.getController(), blockEntityData);
+        return result;
+    }
+
+    public static Stream<ItemStack> getAllAtCapacity() {
+        return Items.INSTANCE.getControllers().stream()
+            .map(Supplier::get)
+            .filter(ControllerBlockItem.class::isInstance)
+            .map(ControllerBlockItem.class::cast)
+            .map(ControllerBlockItem::getAtCapacity);
     }
 
     @Override

@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Wireless Transmitter
 -   Range Upgrade
 -   Creative Range Upgrade
+-   Fully charged Controller variants to the creative mode tab.
 
 ### Changed
 
