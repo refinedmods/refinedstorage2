@@ -56,8 +56,16 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
         return tag.contains(TAG_STORED) ? tag.getLong(TAG_STORED) : 0;
     }
 
+    public static void setStored(final CompoundTag tag, final long stored) {
+        tag.putLong(TAG_STORED, stored);
+    }
+
     public static long getCapacity(final CompoundTag tag) {
         return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
+    }
+
+    public static void setCapacity(final CompoundTag tag, final long capacity) {
+        tag.putLong(TAG_CAPACITY, capacity);
     }
 
     public static boolean hasEnergy(@Nullable final CompoundTag tag) {

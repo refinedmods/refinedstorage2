@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Wireless Grid
 -   Creative Wireless Grid
+-   Wireless Transmitter
+-   Range Upgrade
+-   Creative Range Upgrade
+-   Fully charged Controller variants to the creative mode tab.
 
 ### Changed
 
@@ -22,6 +26,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Fixed inactive Grid slots still rendering resources.
 -   Fixed being able to interact with inactive Grid.
+-   Fixed nearly on/off Controller model not being rendered correctly on Forge.
+-   Fixed Controller energy tooltip not working.
 
 ## [2.0.0-milestone.2.14] - 2023-08-19
 

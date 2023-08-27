@@ -54,7 +54,7 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
             direction,
             amountOverride
         );
-        final long transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
+        final long transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade())
             ? singleAmount * 64
             : singleAmount;
         return create(fuzzyMode, insertTarget, transferQuota);

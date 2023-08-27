@@ -34,6 +34,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry destructor;
     private final SimpleEnergyUsageEntry constructor;
     private final WirelessGridEntry wirelessGrid;
+    private final WirelessTransmitterEntry wirelessTransmitter;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -56,6 +57,7 @@ public class ConfigImpl implements Config {
         destructor = new SimpleEnergyUsageEntryImpl("destructor", "Destructor", DefaultEnergyUsage.DESTRUCTOR);
         constructor = new SimpleEnergyUsageEntryImpl("constructor", "Constructor", DefaultEnergyUsage.CONSTRUCTOR);
         wirelessGrid = new WirelessGridEntryImpl();
+        wirelessTransmitter = new WirelessTransmitterEntryImpl();
         spec = builder.build();
     }
 
@@ -141,6 +143,11 @@ public class ConfigImpl implements Config {
     @Override
     public WirelessGridEntry getWirelessGrid() {
         return wirelessGrid;
+    }
+
+    @Override
+    public WirelessTransmitterEntry getWirelessTransmitter() {
+        return wirelessTransmitter;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
@@ -536,6 +543,9 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue fortune3UpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue silkTouchUpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue regulatorUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue rangeUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue creativeRangeUpgradeEnergyUsage;
+        private final ForgeConfigSpec.IntValue rangeUpgradeRange;
 
         UpgradeEntryImpl() {
             builder.push("upgrade");
@@ -560,6 +570,20 @@ public class ConfigImpl implements Config {
             regulatorUpgradeEnergyUsage = builder
                 .comment("The additional energy used by the Regulator Upgrade")
                 .defineInRange("regulatorUpgradeEnergyUsage", DefaultEnergyUsage.REGULATOR_UPGRADE, 0, Long.MAX_VALUE);
+            rangeUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Range Upgrade")
+                .defineInRange("rangeUpgradeEnergyUsage", DefaultEnergyUsage.RANGE_UPGRADE, 0, Long.MAX_VALUE);
+            creativeRangeUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Creative Range Upgrade")
+                .defineInRange(
+                    "creativeRangeUpgradeEnergyUsage",
+                    DefaultEnergyUsage.CREATIVE_RANGE_UPGRADE,
+                    0,
+                    Long.MAX_VALUE
+                );
+            rangeUpgradeRange = builder
+                .comment("The additional range by the Range Upgrade")
+                .defineInRange("rangeUpgradeRange", DefaultEnergyUsage.RANGE_UPGRADE_RANGE, 0, Integer.MAX_VALUE);
             builder.pop();
         }
 
@@ -596,6 +620,21 @@ public class ConfigImpl implements Config {
         @Override
         public long getRegulatorUpgradeEnergyUsage() {
             return regulatorUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getRangeUpgradeEnergyUsage() {
+            return rangeUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getCreativeRangeUpgradeEnergyUsage() {
+            return creativeRangeUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public int getRangeUpgradeRange() {
+            return rangeUpgradeRange.get();
         }
     }
 
@@ -638,6 +677,30 @@ public class ConfigImpl implements Config {
 
         public long getInsertEnergyUsage() {
             return insertEnergyUsage.get();
+        }
+    }
+
+    private class WirelessTransmitterEntryImpl implements WirelessTransmitterEntry {
+        private final ForgeConfigSpec.LongValue energyUsage;
+        private final ForgeConfigSpec.IntValue baseRange;
+
+        WirelessTransmitterEntryImpl() {
+            builder.push("wirelessTransmitter");
+
+            energyUsage = builder.comment("The energy used by the Wireless Transmitter")
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.WIRELESS_TRANSMITTER, 0, Long.MAX_VALUE);
+            baseRange = builder.comment("The base range of the Wireless Transmitter")
+                .defineInRange("baseRange", DefaultEnergyUsage.WIRELESS_TRANSMITTER_BASE_RANGE, 0, Integer.MAX_VALUE);
+
+            builder.pop();
+        }
+
+        public long getEnergyUsage() {
+            return energyUsage.get();
+        }
+
+        public int getBaseRange() {
+            return baseRange.get();
         }
     }
 }

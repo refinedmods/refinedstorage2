@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
@@ -40,6 +41,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerDetectors();
         registerConstructors();
         registerDestructors();
+        registerWirelessTransmitters();
     }
 
     private void registerCables() {
@@ -165,6 +167,17 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())
+        ));
+    }
+
+    private void registerWirelessTransmitters() {
+        final ResourceLocation base = createIdentifier("block/wireless_transmitter/inactive");
+        final ColorMap<WirelessTransmitterBlock> blocks = Blocks.INSTANCE.getWirelessTransmitter();
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
+            base,
+            "cutout",
+            createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
         ));
     }
 

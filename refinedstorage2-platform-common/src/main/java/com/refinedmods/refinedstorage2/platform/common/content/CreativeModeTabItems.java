@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -23,13 +24,16 @@ public final class CreativeModeTabItems {
 
     private static void appendBlocks(final Consumer<ItemStack> consumer) {
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
-        Items.INSTANCE.getAllControllers().stream().map(Supplier::get).forEach(itemConsumer);
+        Items.INSTANCE.getControllers().stream().map(Supplier::get).forEach(itemConsumer);
+        ControllerBlockItem.getAllAtCapacity().forEach(consumer);
+        Items.INSTANCE.getCreativeControllers().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getConstructors().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getDestructors().stream().map(Supplier::get).forEach(itemConsumer);
+        Items.INSTANCE.getWirelessTransmitters().stream().map(Supplier::get).forEach(itemConsumer);
         itemConsumer.accept(Blocks.INSTANCE.getDiskDrive());
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
         appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
@@ -86,6 +90,8 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getFortune3Upgrade());
         itemConsumer.accept(Items.INSTANCE.getSilkTouchUpgrade());
         itemConsumer.accept(Items.INSTANCE.getRegulatorUpgrade());
+        itemConsumer.accept(Items.INSTANCE.getRangeUpgrade());
+        itemConsumer.accept(Items.INSTANCE.getCreativeRangeUpgrade());
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
         if (Platform.INSTANCE.getConfig().getWirelessGrid().getUseEnergy()) {
             consumer.accept(Items.INSTANCE.getWirelessGrid().getAtCapacity());

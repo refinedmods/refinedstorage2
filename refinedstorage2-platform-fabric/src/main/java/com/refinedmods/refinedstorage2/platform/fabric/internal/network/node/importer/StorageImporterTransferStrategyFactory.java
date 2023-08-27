@@ -54,7 +54,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
         return new ImporterTransferStrategyImpl<>(
             source,
             storageChannelType,
-            upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? singleAmount * 64 : singleAmount
+            upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? singleAmount * 64 : singleAmount
         );
     }
 }

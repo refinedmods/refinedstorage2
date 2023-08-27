@@ -25,6 +25,7 @@ public class BlockDropProvider extends BlockLootSubProvider {
         Blocks.INSTANCE.getDetector().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getConstructor().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getDestructor().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) -> dropSelf(block.get()));
     }
 
     @Override
@@ -38,6 +39,7 @@ public class BlockDropProvider extends BlockLootSubProvider {
         blocks.addAll(Blocks.INSTANCE.getDetector().values());
         blocks.addAll(Blocks.INSTANCE.getConstructor().values());
         blocks.addAll(Blocks.INSTANCE.getDestructor().values());
+        blocks.addAll(Blocks.INSTANCE.getWirelessTransmitter().values());
         return blocks;
     }
 }

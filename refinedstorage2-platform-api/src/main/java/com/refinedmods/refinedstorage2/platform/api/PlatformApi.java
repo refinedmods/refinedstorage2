@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -29,6 +30,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
@@ -75,6 +77,8 @@ public interface PlatformApi {
     PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry();
 
     UpgradeRegistry getUpgradeRegistry();
+
+    BuiltinUpgradeDestinations getBuiltinUpgradeDestinations();
 
     void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
 
@@ -127,4 +131,8 @@ public interface PlatformApi {
     void registerIngredientConverter(IngredientConverter converter);
 
     IngredientConverter getIngredientConverter();
+
+    void addWirelessTransmitterRangeModifier(WirelessTransmitterRangeModifier rangeModifier);
+
+    WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier();
 }

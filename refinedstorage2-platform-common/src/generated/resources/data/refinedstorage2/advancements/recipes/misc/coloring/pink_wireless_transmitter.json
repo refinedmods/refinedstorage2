@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage2:coloring/pink_wireless_transmitter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wireless_transmitters": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "refinedstorage2:wireless_transmitters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wireless_transmitters",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage2:coloring/pink_wireless_transmitter"
+    ]
+  },
+  "sends_telemetry_event": false
+}

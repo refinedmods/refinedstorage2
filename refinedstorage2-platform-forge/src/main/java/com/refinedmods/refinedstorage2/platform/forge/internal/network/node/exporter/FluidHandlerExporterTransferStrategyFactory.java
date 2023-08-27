@@ -33,7 +33,7 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
             coordinates,
             amountOverride
         );
-        final long transferQuota = (upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1)
+        final long transferQuota = (upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1)
             * Platform.INSTANCE.getBucketAmount();
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.FLUID, transferQuota) {

@@ -20,6 +20,9 @@
             "items": [
               "refinedstorage2:wireless_grid"
             ]
+          },
+          {
+            "tag": "refinedstorage2:wireless_transmitters"
           }
         ]
       }

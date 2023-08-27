@@ -74,7 +74,7 @@ public class ImporterBlockEntity
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, this::hasUpgrade, this))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, upgradeContainer, this))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
     }
@@ -140,7 +140,7 @@ public class ImporterBlockEntity
     public <T> long overrideAmount(final T resource,
                                    final long amount,
                                    final LongSupplier currentAmount) {
-        if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
+        if (!upgradeContainer.has(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }
         return upgradeContainer.getRegulatedAmount(resource)

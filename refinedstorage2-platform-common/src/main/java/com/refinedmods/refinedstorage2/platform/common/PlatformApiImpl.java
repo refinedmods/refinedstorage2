@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
@@ -33,7 +34,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.CompositeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.common.integration.recipemod.CompositeIngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
@@ -48,6 +51,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientSt
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.BuiltinUpgradeDestinationsImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.ItemGridInsertionHint;
@@ -98,6 +102,7 @@ public class PlatformApiImpl implements PlatformApi {
         new PlatformRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, upgradeState, amountOverride, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
+    private final BuiltinUpgradeDestinations builtinUpgradeDestinations = new BuiltinUpgradeDestinationsImpl();
     private final Queue<PlatformExternalStorageProviderFactory> externalStorageProviderFactories = new PriorityQueue<>(
         Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority)
     );
@@ -120,6 +125,8 @@ public class PlatformApiImpl implements PlatformApi {
     private final ResourceFactory<FluidResource> fluidResourceFactory = new FluidResourceFactory();
     private final Set<ResourceFactory<?>> resourceFactories = new HashSet<>();
     private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
+    private final CompositeWirelessTransmitterRangeModifier wirelessTransmitterRangeModifier =
+        new CompositeWirelessTransmitterRangeModifier();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -219,6 +226,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public UpgradeRegistry getUpgradeRegistry() {
         return upgradeRegistry;
+    }
+
+    @Override
+    public BuiltinUpgradeDestinations getBuiltinUpgradeDestinations() {
+        return builtinUpgradeDestinations;
     }
 
     @Override
@@ -368,5 +380,15 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public IngredientConverter getIngredientConverter() {
         return compositeConverter;
+    }
+
+    @Override
+    public void addWirelessTransmitterRangeModifier(final WirelessTransmitterRangeModifier rangeModifier) {
+        wirelessTransmitterRangeModifier.addModifier(rangeModifier);
+    }
+
+    @Override
+    public WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier() {
+        return wirelessTransmitterRangeModifier;
     }
 }

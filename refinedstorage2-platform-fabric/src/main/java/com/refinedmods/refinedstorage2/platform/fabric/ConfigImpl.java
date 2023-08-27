@@ -67,6 +67,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private WirelessGridEntryImpl wirelessGrid = new WirelessGridEntryImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private WirelessTransmitterEntryImpl wirelessTransmitter = new WirelessTransmitterEntryImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -149,6 +152,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public WirelessGridEntry getWirelessGrid() {
         return wirelessGrid;
+    }
+
+    @Override
+    public WirelessTransmitterEntry getWirelessTransmitter() {
+        return wirelessTransmitter;
     }
 
     private static class GridEntryImpl implements GridEntry {
@@ -438,6 +446,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private long regulatorUpgradeEnergyUsage = DefaultEnergyUsage.REGULATOR_UPGRADE;
 
+        private long rangeUpgradeEnergyUsage = DefaultEnergyUsage.RANGE_UPGRADE;
+
+        private long creativeRangeUpgradeEnergyUsage = DefaultEnergyUsage.CREATIVE_RANGE_UPGRADE;
+
+        private int rangeUpgradeRange = DefaultEnergyUsage.RANGE_UPGRADE_RANGE;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
@@ -471,6 +485,21 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getRegulatorUpgradeEnergyUsage() {
             return regulatorUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getRangeUpgradeEnergyUsage() {
+            return rangeUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getCreativeRangeUpgradeEnergyUsage() {
+            return creativeRangeUpgradeEnergyUsage;
+        }
+
+        @Override
+        public int getRangeUpgradeRange() {
+            return rangeUpgradeRange;
         }
     }
 
@@ -508,6 +537,22 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getExtractEnergyUsage() {
             return extractEnergyUsage;
+        }
+    }
+
+    private static class WirelessTransmitterEntryImpl implements WirelessTransmitterEntry {
+        private long energyUsage = DefaultEnergyUsage.WIRELESS_TRANSMITTER;
+
+        private int baseRange = DefaultEnergyUsage.WIRELESS_TRANSMITTER_BASE_RANGE;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
+        }
+
+        @Override
+        public int getBaseRange() {
+            return baseRange;
         }
     }
 }

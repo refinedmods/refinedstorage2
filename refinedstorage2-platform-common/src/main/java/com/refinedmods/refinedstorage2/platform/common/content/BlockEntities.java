@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlo
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
@@ -58,6 +59,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<DestructorBlockEntity>> destructor;
     @Nullable
     private Supplier<BlockEntityType<ConstructorBlockEntity>> constructor;
+    @Nullable
+    private Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> wirelessTransmitter;
 
     private BlockEntities() {
     }
@@ -182,5 +185,13 @@ public final class BlockEntities {
 
     public void setConstructor(final Supplier<BlockEntityType<ConstructorBlockEntity>> supplier) {
         this.constructor = supplier;
+    }
+
+    public BlockEntityType<WirelessTransmitterBlockEntity> getWirelessTransmitter() {
+        return Objects.requireNonNull(wirelessTransmitter).get();
+    }
+
+    public void setWirelessTransmitter(final Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> supplier) {
+        this.wirelessTransmitter = supplier;
     }
 }

@@ -7,7 +7,10 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
+
+import java.util.stream.Collectors;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
@@ -20,6 +23,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 @REIPluginClient
 public class RefinedStorageREIClientPlugin implements REIClientPlugin {
@@ -54,8 +60,23 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         groupItems(registry, Blocks.INSTANCE.getConstructor(), ContentIds.CONSTRUCTOR, Tags.CONSTRUCTORS);
         groupItems(registry, Blocks.INSTANCE.getExternalStorage(), ContentIds.EXTERNAL_STORAGE, Tags.EXTERNAL_STORAGES);
         groupItems(registry, Blocks.INSTANCE.getController(), ContentIds.CONTROLLER, Tags.CONTROLLERS);
-        groupItems(registry, Blocks.INSTANCE.getCreativeController(),
-            ContentIds.CREATIVE_CONTROLLER, Tags.CREATIVE_CONTROLLERS);
+        registry.group(
+            createIdentifier("fully_charged_controller"),
+            createTranslation("block", "controller.rei_fully_charged"),
+            EntryIngredients.ofItemStacks(ControllerBlockItem.getAllAtCapacity().collect(Collectors.toSet()))
+        );
+        groupItems(
+            registry,
+            Blocks.INSTANCE.getCreativeController(),
+            ContentIds.CREATIVE_CONTROLLER,
+            Tags.CREATIVE_CONTROLLERS
+        );
+        groupItems(
+            registry,
+            Blocks.INSTANCE.getWirelessTransmitter(),
+            ContentIds.WIRELESS_TRANSMITTER,
+            Tags.WIRELESS_TRANSMITTERS
+        );
     }
 
     @Override

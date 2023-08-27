@@ -14,7 +14,9 @@ public enum UpgradeDestinations implements UpgradeDestination {
     IMPORTER(ContentNames.IMPORTER, () -> new ItemStack(Items.INSTANCE.getImporters().get(0).get())),
     EXPORTER(ContentNames.EXPORTER, () -> new ItemStack(Items.INSTANCE.getExporters().get(0).get())),
     DESTRUCTOR(ContentNames.DESTRUCTOR, () -> new ItemStack(Items.INSTANCE.getDestructors().get(0).get())),
-    CONSTRUCTOR(ContentNames.CONSTRUCTOR, () -> new ItemStack(Items.INSTANCE.getConstructors().get(0).get()));
+    CONSTRUCTOR(ContentNames.CONSTRUCTOR, () -> new ItemStack(Items.INSTANCE.getConstructors().get(0).get())),
+    WIRELESS_TRANSMITTER(ContentNames.WIRELESS_TRANSMITTER,
+        () -> new ItemStack(Items.INSTANCE.getWirelessTransmitters().get(0).get()));
 
     private final Component name;
     private final Supplier<ItemStack> stackFactory;

@@ -137,7 +137,7 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
         final Direction incomingDirection = direction.getOpposite();
         final List<DestructorStrategy> strategies = PlatformApi.INSTANCE.getDestructorStrategyFactories()
             .stream()
-            .flatMap(factory -> factory.create(level, pos, incomingDirection, this::hasUpgrade, pickupItems).stream())
+            .flatMap(factory -> factory.create(level, pos, incomingDirection, upgradeContainer, pickupItems).stream())
             .toList();
         this.strategy = new CompositeDestructorStrategy(strategies);
     }

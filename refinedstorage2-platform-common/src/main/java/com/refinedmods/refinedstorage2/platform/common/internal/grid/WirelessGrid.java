@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridWatchers;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -18,6 +19,7 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -48,11 +50,23 @@ public class WirelessGrid implements Grid {
             return Optional.empty();
         }
         return Optional.ofNullable(server.getLevel(ctx.getNetworkReference().dimensionKey()))
+            .filter(level -> level.isLoaded(ctx.getNetworkReference().pos()))
             .map(level -> level.getBlockEntity(ctx.getNetworkReference().pos()))
             .filter(PlatformNetworkNodeContainer.class::isInstance)
             .map(PlatformNetworkNodeContainer.class::cast)
             .map(PlatformNetworkNodeContainer::getNode)
-            .map(NetworkNode::getNetwork);
+            .map(NetworkNode::getNetwork)
+            .filter(this::isInRange);
+    }
+
+    private boolean isInRange(final Network network) {
+        return network.getComponent(GraphNetworkComponent.class)
+            .getContainers(WirelessTransmitter.class)
+            .stream()
+            .anyMatch(wirelessTransmitter -> wirelessTransmitter.isInRange(
+                ctx.getPlayerLevel(),
+                ctx.getPlayerPosition()
+            ));
     }
 
     private Optional<StorageNetworkComponent> getStorage() {

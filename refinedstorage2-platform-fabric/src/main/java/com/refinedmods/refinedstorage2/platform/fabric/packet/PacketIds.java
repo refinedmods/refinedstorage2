@@ -8,6 +8,7 @@ public final class PacketIds {
     public static final ResourceLocation STORAGE_INFO_RESPONSE = createIdentifier("storage_info_response");
     public static final ResourceLocation STORAGE_INFO_REQUEST = createIdentifier("storage_info_request");
     public static final ResourceLocation CONTROLLER_ENERGY_INFO = createIdentifier("controller_energy");
+    public static final ResourceLocation WIRELESS_TRANSMITTER_RANGE = createIdentifier("wireless_transmitter_range");
     public static final ResourceLocation GRID_ACTIVE = createIdentifier("grid_active");
     public static final ResourceLocation GRID_UPDATE = createIdentifier("grid_update");
     public static final ResourceLocation GRID_CLEAR = createIdentifier("grid_clear");
