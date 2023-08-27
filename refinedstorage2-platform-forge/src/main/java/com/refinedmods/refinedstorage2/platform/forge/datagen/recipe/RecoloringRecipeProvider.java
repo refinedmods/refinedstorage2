@@ -54,6 +54,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getDestructor().forEach((color, id, block) ->
             recolorItems(Tags.DESTRUCTORS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_destructor")));
+        Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) ->
+            recolorItems(Tags.WIRELESS_TRANSMITTERS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_wireless_transmitter")));
     }
 
     private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {

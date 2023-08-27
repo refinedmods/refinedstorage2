@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
@@ -13,10 +14,14 @@ import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCal
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.common.item.CreativeItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ForgeEnergyCapabilityProvider;
+import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ForgeEnergyItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridExtractionStrategy;
@@ -40,6 +45,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
@@ -120,7 +126,7 @@ public class ModInitializer extends AbstractModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
         MinecraftForge.EVENT_BUS.addListener(this::registerWrenchingEvent);
-        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
+        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerBlockEntityCapabilities);
     }
 
     private void registerAdditionalGridInsertionStrategyFactories() {
@@ -128,10 +134,7 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerGridExtractionStrategyFactories() {
-        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(
-            (containerMenu, player, gridServiceFactory, itemStorage) ->
-                new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
-        );
+        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(ItemGridExtractionStrategy::new);
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);
     }
 
@@ -188,7 +191,31 @@ public class ModInitializer extends AbstractModInitializer {
                 public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
                                                            final ItemStack newStack,
                                                            final boolean slotChanged) {
-                    return RegulatorUpgradeItem.allowNbtUpdateAnimation(oldStack, newStack);
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            },
+            () -> new WirelessGridItem(new ForgeEnergyItemEnergyProvider()) {
+                @Override
+                public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
+                                                           final ItemStack newStack,
+                                                           final boolean slotChanged) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+
+                @Override
+                public ICapabilityProvider initCapabilities(final ItemStack stack, @Nullable final CompoundTag tag) {
+                    return new ForgeEnergyCapabilityProvider(
+                        stack,
+                        (int) Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
+                    );
+                }
+            },
+            () -> new WirelessGridItem(CreativeItemEnergyProvider.INSTANCE) {
+                @Override
+                public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
+                                                           final ItemStack newStack,
+                                                           final boolean slotChanged) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             }
         );
@@ -274,7 +301,7 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void registerCapabilities(final AttachCapabilitiesEvent<BlockEntity> e) {
+    public void registerBlockEntityCapabilities(final AttachCapabilitiesEvent<BlockEntity> e) {
         if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
             registerControllerEnergy(e, controllerBlockEntity);
         }

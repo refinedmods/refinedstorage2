@@ -1,21 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +23,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
         super(
             new Item.Properties().stacksTo(1).fireResistant(),
             StorageChannelTypes.ITEM,
-            PlatformApi.INSTANCE.getStorageContainerHelper()
+            PlatformApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
     }
@@ -46,30 +40,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
 
     @Override
     protected Storage<ItemResource> createStorage(final StorageRepository storageRepository) {
-        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (!variant.hasCapacity()) {
-            final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
-                new InMemoryStorageImpl<>(),
-                trackingRepository,
-                System::currentTimeMillis
-            );
-            return new PlatformStorage<>(
-                delegate,
-                ItemStorageType.INSTANCE,
-                trackingRepository,
-                storageRepository::markAsChanged
-            );
-        }
-        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
-            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-            variant.getCapacity()
-        );
-        return new LimitedPlatformStorage<>(
-            delegate,
-            ItemStorageType.INSTANCE,
-            trackingRepository,
-            storageRepository::markAsChanged
-        );
+        return StorageTypes.ITEM.create(variant.getCapacity(), storageRepository::markAsChanged);
     }
 
     @Override

@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import javax.annotation.Nullable;
 
@@ -23,13 +24,11 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.to
 
 public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu menu;
-    private final GridService<FluidResource> gridService;
+    private final GridOperations<FluidResource> gridOperations;
 
-    public FluidGridInsertionStrategy(final AbstractContainerMenu menu,
-                                      final Player player,
-                                      final PlatformGridServiceFactory serviceFactory) {
+    public FluidGridInsertionStrategy(final AbstractContainerMenu menu, final Player player, final Grid grid) {
         this.menu = menu;
-        this.gridService = serviceFactory.createForFluid(new PlayerActor(player));
+        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
     }
 
     @Override
@@ -43,7 +42,7 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
             return false;
         }
         final FluidResource fluidResource = ofFluidStack(extractableResource);
-        gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
+        gridOperations.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
             final FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
             final FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {

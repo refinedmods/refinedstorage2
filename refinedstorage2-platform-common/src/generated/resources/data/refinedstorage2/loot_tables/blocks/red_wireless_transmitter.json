@@ -1,0 +1,20 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "refinedstorage2:red_wireless_transmitter"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "refinedstorage2:blocks/red_wireless_transmitter"
+}

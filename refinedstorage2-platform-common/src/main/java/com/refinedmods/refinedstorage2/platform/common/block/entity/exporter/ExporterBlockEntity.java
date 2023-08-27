@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
@@ -34,7 +33,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ExporterBlockEntity
     extends AbstractSchedulingNetworkNodeContainerBlockEntity<ExporterNetworkNode, ExporterNetworkNode.TaskContext>
-    implements AmountOverride, UpgradeState {
+    implements AmountOverride {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExporterBlockEntity.class);
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
@@ -65,7 +64,7 @@ public class ExporterBlockEntity
                 serverLevel,
                 sourcePosition,
                 incomingDirection,
-                this,
+                upgradeContainer,
                 this,
                 filter.isFuzzyMode()
             ))
@@ -102,7 +101,7 @@ public class ExporterBlockEntity
 
     @Override
     public <T> long overrideAmount(final T resource, final long amount, final LongSupplier currentAmount) {
-        if (!hasUpgrade(Items.INSTANCE.getRegulatorUpgrade())) {
+        if (!upgradeContainer.has(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }
         return upgradeContainer.getRegulatedAmount(resource)

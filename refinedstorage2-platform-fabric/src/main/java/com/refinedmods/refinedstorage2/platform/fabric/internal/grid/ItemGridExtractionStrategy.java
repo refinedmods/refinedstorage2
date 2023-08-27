@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -20,14 +21,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public class ItemGridExtractionStrategy implements GridExtractionStrategy {
-    private final GridService<ItemResource> gridService;
+    private final GridOperations<ItemResource> gridOperations;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
     public ItemGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                       final Player player,
-                                      final PlatformGridServiceFactory gridServiceFactory) {
-        this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
+                                      final Grid grid) {
+        this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }
@@ -38,7 +39,7 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
                                  final GridExtractMode extractMode,
                                  final boolean cursor) {
         if (resource instanceof ItemResource itemResource) {
-            gridService.extract(itemResource, extractMode, (r, amount, action, source) -> {
+            gridOperations.extract(itemResource, extractMode, (r, amount, action, source) -> {
                 final ItemVariant itemVariant = toItemVariant(r);
                 try (Transaction tx = Transaction.openOuter()) {
                     final long inserted = insert(itemVariant, amount, tx, cursor);

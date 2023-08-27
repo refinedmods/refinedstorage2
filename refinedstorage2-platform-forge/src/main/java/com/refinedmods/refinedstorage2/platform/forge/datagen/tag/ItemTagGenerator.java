@@ -32,6 +32,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.IMPORTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORAGE_DISKS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 
 public class ItemTagGenerator extends ItemTagsProvider {
@@ -45,7 +46,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         addAllToTag(CABLES, Items.INSTANCE.getCables());
-        addAllToTag(CONTROLLERS, Items.INSTANCE.getRegularControllers());
+        addAllToTag(CONTROLLERS, Items.INSTANCE.getControllers());
         addAllToTag(CREATIVE_CONTROLLERS, Blocks.INSTANCE.getCreativeController().values().stream()
             .map(Block::asItem)
             .map(c -> (Supplier<Item>) () -> c)
@@ -92,6 +93,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(DESTRUCTORS,
             Blocks.INSTANCE.getDestructor().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(WIRELESS_TRANSMITTERS,
+            Blocks.INSTANCE.getWirelessTransmitter().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }

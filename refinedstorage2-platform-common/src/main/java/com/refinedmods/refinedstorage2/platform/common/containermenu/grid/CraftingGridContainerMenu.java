@@ -4,8 +4,12 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +43,7 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
         this.source = new ClientCraftingGridSource();
         this.player = playerInventory.player;
         addSlots(0);
+        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
     public CraftingGridContainerMenu(final int syncId,
@@ -48,6 +53,11 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
         this.source = new CraftingGridSourceImpl(grid);
         this.player = playerInventory.player;
         addSlots(0);
+        registerProperty(new ServerProperty<>(
+            PropertyTypes.REDSTONE_MODE,
+            grid::getRedstoneMode,
+            grid::setRedstoneMode
+        ));
     }
 
     public void setActivenessListener(@Nullable final Consumer<Boolean> activenessListener) {

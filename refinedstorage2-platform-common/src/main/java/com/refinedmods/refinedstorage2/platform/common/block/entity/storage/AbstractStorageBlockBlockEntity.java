@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInte
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Objects;
@@ -61,7 +60,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         getNode().setNormalizer(filter.createNormalizer());
     }
 
-    protected abstract PlatformStorage<T> createStorage(Runnable listener);
+    protected abstract Storage<T> createStorage(Runnable listener);
 
     @Override
     @SuppressWarnings("unchecked")

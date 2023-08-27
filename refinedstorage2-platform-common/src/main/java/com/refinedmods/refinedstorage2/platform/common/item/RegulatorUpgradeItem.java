@@ -41,10 +41,6 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         super(new Item.Properties(), registry);
     }
 
-    public static boolean allowNbtUpdateAnimation(final ItemStack oldStack, final ItemStack newStack) {
-        return oldStack.getItem() != newStack.getItem();
-    }
-
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);

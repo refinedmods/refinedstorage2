@@ -7,6 +7,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.3.0] - 2023-08-27
+
+### Added
+
+-   Wireless Grid
+-   Creative Wireless Grid
+-   Wireless Transmitter
+-   Range Upgrade
+-   Creative Range Upgrade
+-   Fully charged Controller variants to the creative mode tab.
+
+### Changed
+
+-   The Forge variant now targets NeoForge instead of Forge.
+-   You can now always open the Wireless Grid, even if there is no network bound or if the Wireless Grid is out of
+    energy.
+
+### Fixed
+
+-   Fixed inactive Grid slots still rendering resources.
+-   Fixed being able to interact with inactive Grid.
+-   Fixed nearly on/off Controller model not being rendered correctly on Forge.
+-   Fixed Controller energy tooltip not working.
+
 ## [2.0.0-milestone.2.14] - 2023-08-19
 
 ### Added
@@ -431,7 +455,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.14...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.0...HEAD
+
+[2.0.0-milestone.3.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.14...v2.0.0-milestone.3.0
 
 [2.0.0-milestone.2.14]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.13...v2.0.0-milestone.2.14
 

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +29,8 @@ public final class Items {
         = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageDisks
         = new EnumMap<>(FluidStorageType.Variant.class);
-    private final List<Supplier<BlockItem>> regularControllers = new ArrayList<>();
-    private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allControllers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allCreativeControllers = new ArrayList<>();
     private final List<Supplier<BlockItem>> allCables = new ArrayList<>();
     private final List<Supplier<BlockItem>> allExporters = new ArrayList<>();
     private final List<Supplier<BlockItem>> allImporters = new ArrayList<>();
@@ -37,6 +38,7 @@ public final class Items {
     private final List<Supplier<BlockItem>> allDetectors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allDestructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allWirelessTransmitters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -68,6 +70,14 @@ public final class Items {
     private Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade;
     @Nullable
     private Supplier<? extends AbstractUpgradeItem> regulatorUpgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> rangeUpgrade;
+    @Nullable
+    private Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade;
+    @Nullable
+    private Supplier<WirelessGridItem> wirelessGrid;
+    @Nullable
+    private Supplier<WirelessGridItem> creativeWirelessGrid;
 
     private Items() {
     }
@@ -160,21 +170,20 @@ public final class Items {
         return Objects.requireNonNull(destructionCore).get();
     }
 
-    public void addController(final Supplier<? extends Item> supplier) {
+    public void addCreativeController(final Supplier<BlockItem> supplier) {
+        allCreativeControllers.add(supplier);
+    }
+
+    public List<Supplier<? extends Item>> getCreativeControllers() {
+        return Collections.unmodifiableList(allCreativeControllers);
+    }
+
+    public void addController(final Supplier<BlockItem> supplier) {
         allControllers.add(supplier);
     }
 
-    public List<Supplier<? extends Item>> getAllControllers() {
+    public List<Supplier<BlockItem>> getControllers() {
         return Collections.unmodifiableList(allControllers);
-    }
-
-    public void addRegularController(final Supplier<BlockItem> supplier) {
-        addController(supplier);
-        regularControllers.add(supplier);
-    }
-
-    public List<Supplier<BlockItem>> getRegularControllers() {
-        return Collections.unmodifiableList(regularControllers);
     }
 
     public void addCable(final Supplier<BlockItem> supplier) {
@@ -231,6 +240,14 @@ public final class Items {
 
     public List<Supplier<BlockItem>> getConstructors() {
         return Collections.unmodifiableList(allConstructors);
+    }
+
+    public void addWirelessTransmitter(final Supplier<BlockItem> supplier) {
+        allWirelessTransmitters.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getWirelessTransmitters() {
+        return Collections.unmodifiableList(allWirelessTransmitters);
     }
 
     public Item getStorageHousing() {
@@ -303,5 +320,37 @@ public final class Items {
 
     public void setRegulatorUpgrade(final Supplier<? extends AbstractUpgradeItem> regulatorUpgrade) {
         this.regulatorUpgrade = regulatorUpgrade;
+    }
+
+    public AbstractUpgradeItem getRangeUpgrade() {
+        return Objects.requireNonNull(rangeUpgrade).get();
+    }
+
+    public void setRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> rangeUpgrade) {
+        this.rangeUpgrade = rangeUpgrade;
+    }
+
+    public AbstractUpgradeItem getCreativeRangeUpgrade() {
+        return Objects.requireNonNull(creativeRangeUpgrade).get();
+    }
+
+    public void setCreativeRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade) {
+        this.creativeRangeUpgrade = creativeRangeUpgrade;
+    }
+
+    public WirelessGridItem getWirelessGrid() {
+        return Objects.requireNonNull(wirelessGrid).get();
+    }
+
+    public void setWirelessGrid(final Supplier<WirelessGridItem> supplier) {
+        this.wirelessGrid = supplier;
+    }
+
+    public WirelessGridItem getCreativeWirelessGrid() {
+        return Objects.requireNonNull(creativeWirelessGrid).get();
+    }
+
+    public void setCreativeWirelessGrid(final Supplier<WirelessGridItem> supplier) {
+        this.creativeWirelessGrid = supplier;
     }
 }

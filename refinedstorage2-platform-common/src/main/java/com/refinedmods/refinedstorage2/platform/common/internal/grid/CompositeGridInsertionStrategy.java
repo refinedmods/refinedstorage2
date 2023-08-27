@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 
 import java.util.Collections;

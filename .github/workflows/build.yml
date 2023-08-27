@@ -8,5 +8,5 @@ on:
     types: [ opened, synchronize, reopened ]
 jobs:
   build:
-    uses: refinedmods/refinedarchitect/.github/workflows/build.yml@v0.7.1
+    uses: refinedmods/refinedarchitect/.github/workflows/build.yml@v0.8.2
     secrets: inherit

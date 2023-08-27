@@ -2,10 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -21,9 +18,6 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.util.FakeActor;
-
-import java.util.Collection;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,27 +58,6 @@ class GridNetworkNodeTest {
     void testInitialState() {
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(5);
-    }
-
-    @Test
-    void shouldRetrieveResources() {
-        // Act
-        final List<GridNetworkNode.GridResource<String>> resources = sut.getResources(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            EmptyActor.class
-        );
-
-        // Assert
-        assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new GridNetworkNode.GridResource<>(
-                new ResourceAmount<>("A", 100),
-                new TrackedResource("Empty", 2L)
-            ),
-            new GridNetworkNode.GridResource<>(
-                new ResourceAmount<>("B", 200),
-                new TrackedResource("Empty", 2L)
-            )
-        );
     }
 
     @Test
@@ -206,44 +179,5 @@ class GridNetworkNodeTest {
         );
 
         verifyNoMoreInteractions(watcher);
-    }
-
-    @Test
-    void shouldCreateService(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
-    ) {
-        // Arrange
-        final GridService<String> service = sut.create(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            FakeActor.INSTANCE,
-            r -> 5L,
-            1
-        );
-
-        final InMemoryStorageImpl<String> source = new InMemoryStorageImpl<>();
-        source.insert("Z", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-
-        // Act
-        service.insert("Z", GridInsertMode.SINGLE_RESOURCE, source);
-        final Collection<ResourceAmount<String>> afterSingle = networkStorage
-            .getAll()
-            .stream()
-            .map(ra -> new ResourceAmount<>(ra.getResource(), ra.getAmount()))
-            .toList();
-
-        service.insert("Z", GridInsertMode.ENTIRE_RESOURCE, source);
-        final Collection<ResourceAmount<String>> afterEntire = networkStorage
-            .getAll()
-            .stream()
-            .map(ra -> new ResourceAmount<>(ra.getResource(), ra.getAmount()))
-            .toList();
-
-        // Assert
-        assertThat(afterSingle).usingRecursiveFieldByFieldElementComparator().contains(
-            new ResourceAmount<>("Z", 1)
-        );
-        assertThat(afterEntire).usingRecursiveFieldByFieldElementComparator().contains(
-            new ResourceAmount<>("Z", 6)
-        );
     }
 }

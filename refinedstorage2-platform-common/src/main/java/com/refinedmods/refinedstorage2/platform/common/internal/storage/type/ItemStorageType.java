@@ -15,59 +15,65 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 public class ItemStorageType implements StorageType<ItemResource> {
-    public static final ItemStorageType INSTANCE = new ItemStorageType();
-
     private static final String TAG_CAPACITY = "cap";
     private static final String TAG_STACKS = "stacks";
     private static final String TAG_CHANGED_BY = "cb";
     private static final String TAG_CHANGED_AT = "ca";
 
-    private ItemStorageType() {
+    ItemStorageType() {
+    }
+
+    @Override
+    public Storage<ItemResource> create(@Nullable final Long capacity, final Runnable listener) {
+        return innerCreate(capacity, listener);
     }
 
     @Override
     public Storage<ItemResource> fromTag(final CompoundTag tag, final Runnable listener) {
-        final PlatformStorage<ItemResource> storage = createStorage(tag, listener);
+        final PlatformStorage<ItemResource> storage = innerCreate(
+            tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : null,
+            listener
+        );
         final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (final Tag stackTag : stacks) {
-            ItemResource
-                .fromTagWithAmount((CompoundTag) stackTag)
-                .ifPresent(resourceAmount -> storage.load(
-                    resourceAmount.getResource(),
-                    resourceAmount.getAmount(),
-                    ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
-                    ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
-                ));
+            ItemResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.load(
+                resourceAmount.getResource(),
+                resourceAmount.getAmount(),
+                ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+            ));
         }
         return storage;
     }
 
-    private PlatformStorage<ItemResource> createStorage(final CompoundTag tag, final Runnable listener) {
+    private PlatformStorage<ItemResource> innerCreate(@Nullable final Long capacity, final Runnable listener) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (tag.contains(TAG_CAPACITY)) {
+        if (capacity != null) {
             final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
                 new TrackedStorageImpl<>(
                     new InMemoryStorageImpl<>(),
                     trackingRepository,
                     System::currentTimeMillis
                 ),
-                tag.getLong(TAG_CAPACITY)
+                capacity
             );
             return new LimitedPlatformStorage<>(
                 delegate,
-                ItemStorageType.INSTANCE,
+                StorageTypes.ITEM,
                 trackingRepository,
                 listener
             );
         }
         return new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             trackingRepository,
             listener
         );
@@ -101,16 +107,17 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     public enum Variant {
-        ONE_K("1k", 1024),
-        FOUR_K("4k", 1024 * 4),
-        SIXTEEN_K("16k", 1024 * 4 * 4),
-        SIXTY_FOUR_K("64k", 1024 * 4 * 4 * 4),
-        CREATIVE("creative", 0);
+        ONE_K("1k", 1024L),
+        FOUR_K("4k", 1024 * 4L),
+        SIXTEEN_K("16k", 1024 * 4 * 4L),
+        SIXTY_FOUR_K("64k", 1024 * 4 * 4 * 4L),
+        CREATIVE("creative", null);
 
         private final String name;
-        private final int capacity;
+        @Nullable
+        private final Long capacity;
 
-        Variant(final String name, final int capacity) {
+        Variant(final String name, @Nullable final Long capacity) {
             this.name = name;
             this.capacity = capacity;
         }
@@ -119,12 +126,13 @@ public class ItemStorageType implements StorageType<ItemResource> {
             return name;
         }
 
-        public int getCapacity() {
+        @Nullable
+        public Long getCapacity() {
             return capacity;
         }
 
         public boolean hasCapacity() {
-            return capacity > 0;
+            return capacity != null;
         }
     }
 }

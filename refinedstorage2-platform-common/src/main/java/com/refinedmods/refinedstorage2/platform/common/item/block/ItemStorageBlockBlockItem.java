@@ -28,7 +28,7 @@ public class ItemStorageBlockBlockItem extends AbstractStorageContainerBlockItem
         super(
             block,
             new Item.Properties().stacksTo(1).fireResistant(),
-            PlatformApi.INSTANCE.getStorageContainerHelper()
+            PlatformApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
     }

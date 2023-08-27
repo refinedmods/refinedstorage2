@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
@@ -108,6 +109,12 @@ public final class Blocks {
         ContentIds.CONSTRUCTOR,
         ContentNames.CONSTRUCTOR,
         CABLE_LIKE_COLOR
+    );
+    private final BlockColorMap<WirelessTransmitterBlock> wirelessTransmitter = new BlockColorMap<>(
+        WirelessTransmitterBlock::new,
+        ContentIds.WIRELESS_TRANSMITTER,
+        ContentNames.WIRELESS_TRANSMITTER,
+        COLOR
     );
 
     @Nullable
@@ -217,5 +224,9 @@ public final class Blocks {
 
     public BlockColorMap<ConstructorBlock> getConstructor() {
         return constructor;
+    }
+
+    public BlockColorMap<WirelessTransmitterBlock> getWirelessTransmitter() {
+        return wirelessTransmitter;
     }
 }

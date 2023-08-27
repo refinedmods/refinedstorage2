@@ -38,7 +38,7 @@ public class BlockBreakDestructorStrategyFactory implements DestructorStrategyFa
 
     private ItemStack createTool(final UpgradeState state) {
         for (final Tool tool : TOOLS) {
-            if (state.hasUpgrade(tool.itemSupplier.get())) {
+            if (state.has(tool.itemSupplier.get())) {
                 return tool.tool;
             }
         }

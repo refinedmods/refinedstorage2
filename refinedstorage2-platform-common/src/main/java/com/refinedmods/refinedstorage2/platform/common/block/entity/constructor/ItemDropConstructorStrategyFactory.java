@@ -25,7 +25,7 @@ public class ItemDropConstructorStrategyFactory implements ConstructorStrategyFa
             level,
             pos,
             direction,
-            upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade())
+            upgradeState.has(Items.INSTANCE.getStackUpgrade())
         ));
     }
 

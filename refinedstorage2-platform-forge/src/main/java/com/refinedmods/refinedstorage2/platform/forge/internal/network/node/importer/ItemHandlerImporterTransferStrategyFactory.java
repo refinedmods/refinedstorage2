@@ -27,7 +27,7 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
             pos,
             direction
         ), amountOverride);
-        final int transferQuota = upgradeState.hasUpgrade(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
+        final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.ITEM, transferQuota);
     }
 }

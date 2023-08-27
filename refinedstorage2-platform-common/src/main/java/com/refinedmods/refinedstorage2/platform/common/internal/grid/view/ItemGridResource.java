@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
@@ -26,7 +27,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemGridResource extends AbstractGridResource<ItemResource> {
+public class ItemGridResource extends AbstractPlatformGridResource<ItemResource> {
     private final int id;
     private final ItemStack itemStack;
 

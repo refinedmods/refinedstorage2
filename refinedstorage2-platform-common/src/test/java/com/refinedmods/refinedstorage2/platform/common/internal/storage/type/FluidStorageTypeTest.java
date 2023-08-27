@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SetupMinecraft
 class FluidStorageTypeTest {
-    FluidStorageType sut = FluidStorageType.INSTANCE;
+    FluidStorageType sut = StorageTypes.FLUID;
     SimpleListener listener;
 
     @BeforeEach
@@ -42,7 +42,7 @@ class FluidStorageTypeTest {
         final InMemoryTrackedStorageRepository<FluidResource> tracker = new InMemoryTrackedStorageRepository<>();
         final Storage<FluidResource> storage = new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
-            FluidStorageType.INSTANCE,
+            StorageTypes.FLUID,
             tracker,
             () -> {
             }
@@ -78,7 +78,7 @@ class FluidStorageTypeTest {
         final InMemoryTrackedStorageRepository<FluidResource> tracker = new InMemoryTrackedStorageRepository<>();
         final Storage<FluidResource> storage = new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
-            FluidStorageType.INSTANCE,
+            StorageTypes.FLUID,
             tracker,
             () -> {
             }
@@ -107,7 +107,7 @@ class FluidStorageTypeTest {
                 new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
                 100
             ),
-            FluidStorageType.INSTANCE,
+            StorageTypes.FLUID,
             tracker,
             () -> {
             }

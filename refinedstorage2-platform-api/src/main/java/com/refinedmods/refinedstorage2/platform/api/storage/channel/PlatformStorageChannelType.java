@@ -1,7 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.api.storage.channel;
 
+import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
@@ -49,4 +52,6 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
     default long getInterfaceExportLimit(T resource) {
         return getInterfaceExportLimit();
     }
+
+    GridOperations<T> createGridOperations(StorageChannel<T> storageChannel, Actor actor);
 }

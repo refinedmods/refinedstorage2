@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ProgressWidget;
@@ -15,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu> {
@@ -59,12 +59,10 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     }
 
     private List<Component> createTooltip() {
-        return Collections.singletonList(createTranslation(
-            "misc",
-            "stored_with_capacity",
-            AmountFormatting.format(getMenu().getStored()),
-            AmountFormatting.format(getMenu().getCapacity()),
-            String.valueOf((int) (getPercentageFull() * 100D))
+        return Collections.singletonList(createStoredWithCapacityTranslation(
+            getMenu().getStored(),
+            getMenu().getCapacity(),
+            getPercentageFull()
         ));
     }
 

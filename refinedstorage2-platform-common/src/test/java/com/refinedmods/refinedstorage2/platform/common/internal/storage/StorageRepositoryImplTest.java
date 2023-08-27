@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.PlatformTestFixtures;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import java.util.Optional;
@@ -43,7 +43,7 @@ class StorageRepositoryImplTest {
         if (storage instanceof LimitedStorageImpl<ItemResource> limitedStorage) {
             return new LimitedPlatformStorage<>(
                 limitedStorage,
-                ItemStorageType.INSTANCE,
+                StorageTypes.ITEM,
                 new InMemoryTrackedStorageRepository<>(),
                 () -> {
                 }
@@ -51,7 +51,7 @@ class StorageRepositoryImplTest {
         }
         return new PlatformStorage<>(
             storage,
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             new InMemoryTrackedStorageRepository<>(),
             () -> {
             }
@@ -234,13 +234,13 @@ class StorageRepositoryImplTest {
         final InMemoryTrackedStorageRepository<ItemResource> repository = new InMemoryTrackedStorageRepository<>();
         final PlatformStorage<ItemResource> a = new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), repository, () -> 123L),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             repository,
             sut::markAsChanged
         );
         final PlatformStorage<ItemResource> b = new LimitedPlatformStorage<>(
             new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             new InMemoryTrackedStorageRepository<>(),
             sut::markAsChanged
         );

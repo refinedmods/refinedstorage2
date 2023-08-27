@@ -12,62 +12,69 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 public class FluidStorageType implements StorageType<FluidResource> {
-    public static final FluidStorageType INSTANCE = new FluidStorageType();
-
     private static final String TAG_CAPACITY = "cap";
     private static final String TAG_STACKS = "stacks";
     private static final String TAG_CHANGED_BY = "cb";
     private static final String TAG_CHANGED_AT = "ca";
 
-    private FluidStorageType() {
+    FluidStorageType() {
+    }
+
+    @Override
+    public Storage<FluidResource> create(@Nullable final Long capacity, final Runnable listener) {
+        return innerCreate(capacity, listener);
     }
 
     @Override
     public Storage<FluidResource> fromTag(final CompoundTag tag, final Runnable listener) {
-        final PlatformStorage<FluidResource> storage = createStorage(tag, listener);
+        final PlatformStorage<FluidResource> storage = innerCreate(
+            tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : null,
+            listener
+        );
         final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (final Tag stackTag : stacks) {
-            FluidResource
-                .fromTagWithAmount((CompoundTag) stackTag)
-                .ifPresent(resourceAmount -> storage.load(
-                    resourceAmount.getResource(),
-                    resourceAmount.getAmount(),
-                    ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
-                    ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
-                ));
+            FluidResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.load(
+                resourceAmount.getResource(),
+                resourceAmount.getAmount(),
+                ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+            ));
         }
         return storage;
     }
 
-    private PlatformStorage<FluidResource> createStorage(final CompoundTag tag, final Runnable listener) {
+    private PlatformStorage<FluidResource> innerCreate(@Nullable final Long capacity, final Runnable listener) {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (tag.contains(TAG_CAPACITY)) {
+        if (capacity != null) {
             final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
                 new TrackedStorageImpl<>(
                     new InMemoryStorageImpl<>(),
                     trackingRepository,
                     System::currentTimeMillis
                 ),
-                tag.getLong(TAG_CAPACITY)
+                capacity
             );
             return new LimitedPlatformStorage<>(
                 delegate,
-                FluidStorageType.INSTANCE,
+                StorageTypes.FLUID,
                 trackingRepository,
                 listener
             );
         }
         return new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-            FluidStorageType.INSTANCE,
+            StorageTypes.FLUID,
             trackingRepository,
             listener
         );
@@ -102,16 +109,17 @@ public class FluidStorageType implements StorageType<FluidResource> {
     }
 
     public enum Variant {
-        SIXTY_FOUR_B("64b", 64),
-        TWO_HUNDRED_FIFTY_SIX_B("256b", 256),
-        THOUSAND_TWENTY_FOUR_B("1024b", 1024),
-        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096),
-        CREATIVE("creative", 0);
+        SIXTY_FOUR_B("64b", 64L),
+        TWO_HUNDRED_FIFTY_SIX_B("256b", 256L),
+        THOUSAND_TWENTY_FOUR_B("1024b", 1024L),
+        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096L),
+        CREATIVE("creative", null);
 
         private final String name;
-        private final long capacityInBuckets;
+        @Nullable
+        private final Long capacityInBuckets;
 
-        Variant(final String name, final long capacityInBuckets) {
+        Variant(final String name, @Nullable final Long capacityInBuckets) {
             this.name = name;
             this.capacityInBuckets = capacityInBuckets;
         }
@@ -120,12 +128,16 @@ public class FluidStorageType implements StorageType<FluidResource> {
             return name;
         }
 
-        public long getCapacityInBuckets() {
-            return capacityInBuckets;
+        @Nullable
+        public Long getCapacity() {
+            if (capacityInBuckets == null) {
+                return null;
+            }
+            return capacityInBuckets * Platform.INSTANCE.getBucketAmount();
         }
 
         public boolean hasCapacity() {
-            return capacityInBuckets > 0;
+            return capacityInBuckets != null;
         }
     }
 }

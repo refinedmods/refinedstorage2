@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -27,6 +28,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacke
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.WirelessTransmitterRangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
@@ -37,7 +39,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -48,6 +50,7 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -86,6 +89,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerGridSynchronizers();
         registerResourceRendering();
         registerAlternativeGridHints();
+        registerItemProperties();
     }
 
     private void setRenderLayers() {
@@ -100,6 +104,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getDetector());
         setCutout(Blocks.INSTANCE.getConstructor());
         setCutout(Blocks.INSTANCE.getDestructor());
+        setCutout(Blocks.INSTANCE.getWirelessTransmitter());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -132,6 +137,9 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
         Blocks.INSTANCE.getDestructor().forEach(
             (color, id, block) -> registerEmissiveDestructorModels(color, id)
+        );
+        Blocks.INSTANCE.getWirelessTransmitter().forEach(
+            (color, id, block) -> registerEmissiveWirelessTransmitterModels(color, id)
         );
     }
 
@@ -199,12 +207,29 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/destructor/cutouts/active"));
     }
 
+    private void registerEmissiveWirelessTransmitterModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/wireless_transmitter/" + color.getName()),
+            createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
+        );
+    }
+
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_CLEAR, new GridClearPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
+        ClientPlayNetworking.registerGlobalReceiver(
+            PacketIds.WIRELESS_TRANSMITTER_RANGE,
+            new WirelessTransmitterRangePacket()
+        );
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_SLOT_UPDATE, new ResourceSlotUpdatePacket());
     }
 
@@ -219,12 +244,12 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
         final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, ctx) -> {
-            if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
+        ModelLoadingPlugin.register(pluginContext -> pluginContext.resolveModel().register(context -> {
+            if (context.id().equals(diskDriveIdentifier) || context.id().equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
-        });
+        }));
     }
 
     private void registerCustomTooltips() {
@@ -265,7 +290,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     }
 
     private void registerModelPredicates() {
-        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
+        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()
@@ -292,6 +317,19 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
             createIdentifier("rei_two_way"),
             new ReiGridSynchronizer(reiProxy, true)
+        );
+    }
+
+    private void registerItemProperties() {
+        ItemProperties.register(
+            Items.INSTANCE.getWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getCreativeWirelessGrid(),
+            NetworkItemItemPropertyFunction.NAME,
+            new NetworkItemItemPropertyFunction()
         );
     }
 }

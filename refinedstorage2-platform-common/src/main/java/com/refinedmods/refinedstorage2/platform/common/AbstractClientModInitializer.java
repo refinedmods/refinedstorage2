@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceRendering;
@@ -17,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.RegulatorUpgradeScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.WirelessTransmitterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.DetectorScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
@@ -32,8 +35,9 @@ import net.minecraft.world.inventory.MenuType;
 public abstract class AbstractClientModInitializer {
     protected static void registerScreens(final ScreenRegistration registration) {
         registration.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        registration.register(Menus.INSTANCE.getGrid(), GridScreen::new);
+        registration.register(Menus.INSTANCE.getGrid(), GridScreen<GridContainerMenu>::new);
         registration.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
+        registration.register(Menus.INSTANCE.getWirelessGrid(), GridScreen<WirelessGridContainerMenu>::new);
         registration.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         registration.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         registration.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
@@ -45,6 +49,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getDestructor(), DestructorScreen::new);
         registration.register(Menus.INSTANCE.getConstructor(), ConstructorScreen::new);
         registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
+        registration.register(Menus.INSTANCE.getWirelessTransmitter(), WirelessTransmitterScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {

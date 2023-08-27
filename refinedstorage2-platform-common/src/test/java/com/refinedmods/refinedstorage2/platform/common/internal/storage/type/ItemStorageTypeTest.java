@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SetupMinecraft
 class ItemStorageTypeTest {
-    ItemStorageType sut = ItemStorageType.INSTANCE;
+    ItemStorageType sut = StorageTypes.ITEM;
     SimpleListener listener;
 
     @BeforeEach
@@ -42,7 +42,7 @@ class ItemStorageTypeTest {
         final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
         final Storage<ItemResource> storage = new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             tracker,
             () -> {
             }
@@ -78,7 +78,7 @@ class ItemStorageTypeTest {
         final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
         final Storage<ItemResource> storage = new PlatformStorage<>(
             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             tracker,
             () -> {
             }
@@ -104,7 +104,7 @@ class ItemStorageTypeTest {
         final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
         final Storage<ItemResource> storage = new LimitedPlatformStorage<>(
             new LimitedStorageImpl<>(new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L), 100),
-            ItemStorageType.INSTANCE,
+            StorageTypes.ITEM,
             tracker,
             () -> {
             }

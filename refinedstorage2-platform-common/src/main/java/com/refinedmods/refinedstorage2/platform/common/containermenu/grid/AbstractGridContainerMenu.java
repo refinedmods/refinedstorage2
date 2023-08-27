@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
@@ -24,11 +25,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
@@ -37,7 +34,6 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSorting
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
@@ -76,7 +72,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     private final Inventory playerInventory;
     private final GridView view;
     @Nullable
-    private AbstractGridBlockEntity grid;
+    private Grid grid;
 
     private GridInsertionStrategy insertionStrategy;
     private GridExtractionStrategy extractionStrategy;
@@ -103,8 +99,6 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         super(menuType, syncId);
 
         this.playerInventory = playerInventory;
-
-        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
 
         this.active = buf.readBoolean();
 
@@ -135,17 +129,11 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         final MenuType<? extends AbstractGridContainerMenu> menuType,
         final int syncId,
         final Inventory playerInventory,
-        final AbstractGridBlockEntity grid
+        final Grid grid
     ) {
         super(menuType, syncId);
 
         this.view = createViewBuilder().build();
-
-        registerProperty(new ServerProperty<>(
-            PropertyTypes.REDSTONE_MODE,
-            grid::getRedstoneMode,
-            grid::setRedstoneMode
-        ));
 
         this.playerInventory = playerInventory;
         this.grid = grid;
@@ -309,18 +297,17 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid).getNode()
+            Objects.requireNonNull(grid)
         );
         this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid).getNode(),
-            grid.getItemStorage()
+            Objects.requireNonNull(grid)
         );
         this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid).getNode()
+            Objects.requireNonNull(grid)
         );
     }
 
@@ -402,6 +389,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public boolean onInsert(final GridInsertMode insertMode, final boolean tryAlternatives) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return insertionStrategy.onInsert(insertMode, tryAlternatives);
     }
 
@@ -410,6 +400,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
                                  final T resource,
                                  final GridExtractMode extractMode,
                                  final boolean cursor) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
     }
 
@@ -418,6 +411,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
                                 final T resource,
                                 final GridScrollMode scrollMode,
                                 final int slotIndex) {
+        if (grid != null && !grid.isActive()) {
+            return false;
+        }
         return scrollingStrategy.onScroll(storageChannelType, resource, scrollMode, slotIndex);
     }
 
@@ -428,7 +424,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
-        if (!playerEntity.level().isClientSide()) {
+        if (!playerEntity.level().isClientSide() && grid != null && grid.isActive()) {
             final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
                 insertionStrategy.onTransfer(slot.index);
