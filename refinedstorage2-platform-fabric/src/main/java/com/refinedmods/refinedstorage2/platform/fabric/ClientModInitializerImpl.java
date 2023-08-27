@@ -211,10 +211,13 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/wireless_transmitter/" + color.getName()),
-            createIdentifier("block/wireless_transmitter/cutouts/active")
+            createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
         );
         // Item
-        EmissiveModelRegistry.INSTANCE.register(id, createIdentifier("block/wireless_transmitter/cutouts/active"));
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
+        );
     }
 
     private void registerPackets() {
