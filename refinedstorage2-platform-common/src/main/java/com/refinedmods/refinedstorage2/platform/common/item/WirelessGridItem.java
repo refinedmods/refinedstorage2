@@ -1,11 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.WirelessGrid;
 import com.refinedmods.refinedstorage2.platform.common.menu.WirelessGridExtendedMenuProvider;
+
+import java.util.Optional;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,8 +21,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class WirelessGridItem extends AbstractNetworkBoundItem {
-    public WirelessGridItem(final ItemEnergyProvider energyProvider) {
-        super(new Item.Properties().stacksTo(1), energyProvider);
+    private final boolean creative;
+
+    public WirelessGridItem(final boolean creative) {
+        super(new Item.Properties().stacksTo(1));
+        this.creative = creative;
     }
 
     @Override
@@ -49,5 +56,16 @@ public class WirelessGridItem extends AbstractNetworkBoundItem {
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
             slotReference
         ));
+    }
+
+    @Override
+    public Optional<EnergyStorage> createEnergyStorage(final ItemStack stack) {
+        if (creative) {
+            return Optional.empty();
+        }
+        final EnergyStorage energyStorage = new EnergyStorageImpl(
+            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
+        );
+        return Optional.of(PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack));
     }
 }

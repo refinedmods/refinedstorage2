@@ -504,8 +504,6 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     }
 
     private static class WirelessGridEntryImpl implements WirelessGridEntry {
-        private boolean useEnergy = true;
-
         private long energyCapacity = DefaultEnergyUsage.WIRELESS_GRID_CAPACITY;
 
         private long openEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_OPEN;
@@ -513,11 +511,6 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         private long insertEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_INSERT;
 
         private long extractEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_EXTRACT;
-
-        @Override
-        public boolean getUseEnergy() {
-            return useEnergy;
-        }
 
         @Override
         public long getEnergyCapacity() {

@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 
 import javax.annotation.Nullable;
@@ -14,14 +16,12 @@ public class NetworkBoundItemContext {
     private final Player player;
     private final Vec3 playerPosition;
     private final PlayerSlotReference playerSlotReference;
-    private final ItemEnergyProvider energyProvider;
     @Nullable
     private final NetworkReference networkReference;
 
     public NetworkBoundItemContext(
         final Player player,
         final PlayerSlotReference playerSlotReference,
-        final ItemEnergyProvider energyProvider,
         @Nullable final NetworkReference networkReference
     ) {
         this.player = player;
@@ -31,7 +31,6 @@ public class NetworkBoundItemContext {
         // be removed after it was added).
         this.playerPosition = new Vec3(player.position().x, player.position().y, player.position().z);
         this.playerSlotReference = playerSlotReference;
-        this.energyProvider = energyProvider;
         this.networkReference = networkReference;
     }
 
@@ -44,14 +43,15 @@ public class NetworkBoundItemContext {
     }
 
     public boolean isActive() {
-        if (!energyProvider.isEnabled()) {
-            return true;
-        }
-        return energyProvider.getStored(player.getInventory().getItem(playerSlotReference.getSlotIndex())) > 0;
+        return Platform.INSTANCE.getEnergyStorage(playerSlotReference.resolve(player))
+            .map(energyStorage -> energyStorage.getStored() > 0)
+            .orElse(true);
     }
 
     public void drain(final long amount) {
-        energyProvider.drain(player, playerSlotReference, amount);
+        Platform.INSTANCE.getEnergyStorage(playerSlotReference.resolve(player)).ifPresent(
+            energyStorage -> energyStorage.extract(amount, Action.EXECUTE)
+        );
     }
 
     @Nullable

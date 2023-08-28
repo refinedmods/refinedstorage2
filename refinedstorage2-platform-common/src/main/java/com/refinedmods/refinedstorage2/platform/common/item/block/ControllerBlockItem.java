@@ -25,6 +25,8 @@ import net.minecraft.world.level.block.Block;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
+// TODO: Use cap here.
+// TODO: Make network bound item api accessible.
 public class ControllerBlockItem extends CreativeControllerBlockItem {
     public ControllerBlockItem(final Block block, final Component displayName) {
         super(block, displayName);

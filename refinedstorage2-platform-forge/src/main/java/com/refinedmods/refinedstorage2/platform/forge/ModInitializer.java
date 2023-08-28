@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.EnergyBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
@@ -14,14 +15,12 @@ import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCal
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.platform.common.item.CreativeItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ForgeEnergyCapabilityProvider;
-import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ForgeEnergyItemEnergyProvider;
+import com.refinedmods.refinedstorage2.platform.forge.internal.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridExtractionStrategy;
@@ -37,6 +36,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
@@ -45,7 +45,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
@@ -127,6 +126,7 @@ public class ModInitializer extends AbstractModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
         MinecraftForge.EVENT_BUS.addListener(this::registerWrenchingEvent);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerBlockEntityCapabilities);
+        MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, this::registerItemStackCapabilities);
     }
 
     private void registerAdditionalGridInsertionStrategyFactories() {
@@ -194,23 +194,15 @@ public class ModInitializer extends AbstractModInitializer {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(new ForgeEnergyItemEnergyProvider()) {
+            () -> new WirelessGridItem(false) {
                 @Override
                 public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
                                                            final ItemStack newStack,
                                                            final boolean slotChanged) {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
-
-                @Override
-                public ICapabilityProvider initCapabilities(final ItemStack stack, @Nullable final CompoundTag tag) {
-                    return new ForgeEnergyCapabilityProvider(
-                        stack,
-                        (int) Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
-                    );
-                }
             },
-            () -> new WirelessGridItem(CreativeItemEnergyProvider.INSTANCE) {
+            () -> new WirelessGridItem(true) {
                 @Override
                 public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
                                                            final ItemStack newStack,
@@ -302,8 +294,8 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void registerBlockEntityCapabilities(final AttachCapabilitiesEvent<BlockEntity> e) {
-        if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
-            registerControllerEnergy(e, controllerBlockEntity);
+        if (e.getObject() instanceof EnergyBlockEntity energyBlockEntity) {
+            registerEnergyBlockEntity(e, energyBlockEntity);
         }
         if (e.getObject() instanceof AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
             registerItemHandler(e, diskDriveBlockEntity, AbstractDiskDriveBlockEntity::getDiskInventory);
@@ -352,22 +344,42 @@ public class ModInitializer extends AbstractModInitializer {
         });
     }
 
-    private void registerControllerEnergy(final AttachCapabilitiesEvent<BlockEntity> e,
-                                          final ControllerBlockEntity controllerBlockEntity) {
-        final LazyOptional<IEnergyStorage> capability = LazyOptional
-            .of(() -> (IEnergyStorage) controllerBlockEntity.getEnergyStorage());
+    private void registerEnergyBlockEntity(final AttachCapabilitiesEvent<BlockEntity> e,
+                                           final EnergyBlockEntity energyBlockEntity) {
+        final LazyOptional<IEnergyStorage> capability = LazyOptional.of(
+            () -> new EnergyStorageAdapter(energyBlockEntity.getEnergyStorage())
+        );
         e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
             @Override
             @Nonnull
             public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                      @Nullable final Direction side) {
-                if (cap == ForgeCapabilities.ENERGY
-                    && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {
+                if (cap == ForgeCapabilities.ENERGY) {
                     return capability.cast();
                 }
                 return LazyOptional.empty();
             }
         });
+    }
+
+    @SubscribeEvent
+    public void registerItemStackCapabilities(final AttachCapabilitiesEvent<ItemStack> e) {
+        if (e.getObject().getItem() instanceof EnergyItem energyItem) {
+            final Optional<EnergyStorage> energyStorage = energyItem.createEnergyStorage(e.getObject());
+            final LazyOptional<IEnergyStorage> forgeEnergyStorage = energyStorage.map(
+                storage -> LazyOptional.of(() -> (IEnergyStorage) new EnergyStorageAdapter(storage))
+            ).orElse(LazyOptional.empty());
+            e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
+                @Override
+                public <T> LazyOptional<T> getCapability(final Capability<T> cap,
+                                                         @Nullable final Direction side) {
+                    if (cap == ForgeCapabilities.ENERGY) {
+                        return forgeEnergyStorage.cast();
+                    }
+                    return LazyOptional.empty();
+                }
+            });
+        }
     }
 
     @SubscribeEvent

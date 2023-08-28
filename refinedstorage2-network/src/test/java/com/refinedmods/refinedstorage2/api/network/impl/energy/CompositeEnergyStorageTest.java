@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.api.network.impl.energy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -340,24 +339,5 @@ class CompositeEnergyStorageTest {
         }
 
         assertThat(sut.getCapacity()).isEqualTo(15);
-    }
-
-    @Test
-    void shouldNotOverflowStoredAndCapacityCountOnInfiniteEnergyStoragesStoredInComposite() {
-        // Arrange
-        final EnergyStorage a = new InfiniteEnergyStorage();
-        final EnergyStorage b = new InfiniteEnergyStorage();
-
-        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
-        sut.addSource(a);
-        sut.addSource(b);
-
-        // Act
-        final long stored = sut.getStored();
-        final long capacity = sut.getCapacity();
-
-        // Assert
-        assertThat(stored).isEqualTo(Long.MAX_VALUE);
-        assertThat(capacity).isEqualTo(Long.MAX_VALUE);
     }
 }

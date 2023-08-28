@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractEnergyItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
@@ -19,20 +20,17 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class AbstractNetworkBoundItem extends Item {
+public abstract class AbstractNetworkBoundItem extends AbstractEnergyItem {
     private static final MutableComponent UNBOUND = createTranslation("item", "network_item.unbound")
         .withStyle(ChatFormatting.RED);
     private static final Component UNBOUND_HELP = createTranslation("item", "network_item.unbound.help");
@@ -42,11 +40,8 @@ public abstract class AbstractNetworkBoundItem extends Item {
     private static final String TAG_Z = "z";
     private static final String TAG_DIMENSION = "dim";
 
-    private final ItemEnergyProvider energyProvider;
-
-    protected AbstractNetworkBoundItem(final Properties properties, final ItemEnergyProvider energyProvider) {
+    protected AbstractNetworkBoundItem(final Properties properties) {
         super(properties);
-        this.energyProvider = energyProvider;
     }
 
     public boolean isBound(final ItemStack stack) {
@@ -82,7 +77,6 @@ public abstract class AbstractNetworkBoundItem extends Item {
         contextConsumer.accept(new NetworkBoundItemContext(
             player,
             slotReference,
-            energyProvider,
             networkReference.orElse(null)
         ));
     }
@@ -121,36 +115,6 @@ public abstract class AbstractNetworkBoundItem extends Item {
             ).withStyle(ChatFormatting.GRAY)),
             () -> tooltip.add(UNBOUND)
         );
-        if (!energyProvider.isEnabled()) {
-            return;
-        }
-        final long stored = energyProvider.getStored(stack);
-        final long capacity = energyProvider.getCapacity(stack);
-        final double pct = stored / (double) capacity;
-        tooltip.add(createStoredWithCapacityTranslation(stored, capacity, pct).withStyle(ChatFormatting.GRAY));
-    }
-
-    @Override
-    public boolean isBarVisible(final ItemStack stack) {
-        return energyProvider.isEnabled();
-    }
-
-    @Override
-    public int getBarWidth(final ItemStack stack) {
-        return (int) Math.round((energyProvider.getStored(stack) / (double) energyProvider.getCapacity(stack)) * 13D);
-    }
-
-    @Override
-    public int getBarColor(final ItemStack stack) {
-        return Mth.hsvToRgb(
-            Math.max(0.0F, (float) energyProvider.getStored(stack) / (float) energyProvider.getCapacity(stack)) / 3.0F,
-            1.0F,
-            1.0F
-        );
-    }
-
-    public ItemStack getAtCapacity() {
-        return energyProvider.getAtCapacity(new ItemStack(this));
     }
 
     @Override
