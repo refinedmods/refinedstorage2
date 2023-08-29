@@ -254,7 +254,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             createIdentifier("general"),
             CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                 .title(createTranslation("itemGroup", "general"))
-                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
+                .icon(() -> new ItemStack(Blocks.INSTANCE.getCreativeController().getDefault()))
                 .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
                 .build()
         );

@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkCo
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
@@ -84,6 +83,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.loot.EnergyLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.loot.StorageBlockLootItemFunctionSerializer;
 import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
 
 import java.util.Optional;
@@ -603,7 +604,11 @@ public abstract class AbstractModInitializer {
     protected final void registerLootFunctions(final RegistryCallback<LootItemFunctionType> callback) {
         LootFunctions.INSTANCE.setStorageBlock(callback.register(
             STORAGE_BLOCK,
-            () -> new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(new StorageBlockLootItemFunctionSerializer())
+        ));
+        LootFunctions.INSTANCE.setEnergy(callback.register(
+            createIdentifier("energy"),
+            () -> new LootItemFunctionType(new EnergyLootItemFunctionSerializer())
         ));
     }
 
