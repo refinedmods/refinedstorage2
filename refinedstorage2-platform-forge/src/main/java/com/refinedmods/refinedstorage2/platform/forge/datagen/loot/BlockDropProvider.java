@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen.loot;
 
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.loot.EnergyLootItemFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,10 @@ public class BlockDropProvider extends BlockLootSubProvider {
         Blocks.INSTANCE.getCable().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getGrid().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, id, block) -> dropSelf(block.get()));
-        Blocks.INSTANCE.getController().forEach((color, id, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getController().forEach((color, id, block) -> add(
+            block.get(),
+            createSingleItemTable(block.get()).apply(EnergyLootItemFunction::new)
+        ));
         Blocks.INSTANCE.getCreativeController().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getDetector().forEach((color, id, block) -> dropSelf(block.get()));
         Blocks.INSTANCE.getConstructor().forEach((color, id, block) -> dropSelf(block.get()));

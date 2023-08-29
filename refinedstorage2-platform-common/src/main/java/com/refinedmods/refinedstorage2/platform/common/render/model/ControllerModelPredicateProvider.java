@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.render.model;
 
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +15,11 @@ public class ControllerModelPredicateProvider implements ClampedItemPropertyFunc
                                @Nullable final ClientLevel level,
                                @Nullable final LivingEntity entity,
                                final int seed) {
-        return ControllerBlockItem.getPercentFull(stack);
+        if (stack.getTag() == null) { // for newly created items
+            return 1;
+        }
+        return PlatformApi.INSTANCE.getEnergyStorage(stack)
+            .map(energyStorage -> (float) energyStorage.getStored() / (float) energyStorage.getCapacity())
+            .orElse(1F);
     }
 }

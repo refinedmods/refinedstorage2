@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractEnergyBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public final class CreativeModeTabItems {
     private static void appendBlocks(final Consumer<ItemStack> consumer) {
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
         Items.INSTANCE.getControllers().stream().map(Supplier::get).forEach(itemConsumer);
-        ControllerBlockItem.getAllAtCapacity().forEach(consumer);
+        AbstractEnergyBlockItem.createAllAtEnergyCapacity(Items.INSTANCE.getControllers()).forEach(consumer);
         Items.INSTANCE.getCreativeControllers().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(itemConsumer);

@@ -13,8 +13,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
-import javax.annotation.Nullable;
-
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -66,26 +64,6 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
             : BlockEntities.INSTANCE.getController();
     }
 
-    public static long getStored(final CompoundTag tag) {
-        return tag.contains(TAG_STORED) ? tag.getLong(TAG_STORED) : 0;
-    }
-
-    public static void setStored(final CompoundTag tag, final long stored) {
-        tag.putLong(TAG_STORED, stored);
-    }
-
-    public static long getCapacity(final CompoundTag tag) {
-        return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
-    }
-
-    public static void setCapacity(final CompoundTag tag, final long capacity) {
-        tag.putLong(TAG_CAPACITY, capacity);
-    }
-
-    public static boolean hasEnergy(@Nullable final CompoundTag tag) {
-        return tag != null && tag.contains(TAG_STORED) && tag.contains(TAG_CAPACITY);
-    }
-
     public void updateEnergyTypeInLevel(final BlockState state) {
         final ControllerEnergyType currentEnergyType = ControllerEnergyType.ofState(getNode().getState());
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
@@ -122,7 +100,7 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public void load(final CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_STORED)) {
-            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
+            loadEnergy(tag.getLong(TAG_STORED));
         }
     }
 
@@ -156,5 +134,9 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
+    }
+
+    public void loadEnergy(final long stored) {
+        energyStorage.receive(stored, Action.EXECUTE);
     }
 }

@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-  You can now recharge the Controller in item form.
+
 ### Removed
 
 -   The `useEnergy` config option for the Wireless Grid. If you do not wish to use energy, use the
