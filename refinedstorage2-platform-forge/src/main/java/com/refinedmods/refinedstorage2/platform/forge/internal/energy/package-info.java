@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.platform.common.internal;
+package com.refinedmods.refinedstorage2.platform.forge.internal.energy;
 
 import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
 

@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -81,10 +80,6 @@ public interface Platform {
 
     Optional<ItemStack> convertToBucket(FluidResource fluidResource);
 
-    EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener);
-
-    void setEnergy(EnergyStorage energyStorage, long stored);
-
     TransferManager createTransferManager(AbstractContainerMenu containerMenu);
 
     long insertIntoContainer(Container container, ItemResource itemResource, long amount, Action action);
@@ -123,4 +118,6 @@ public interface Platform {
     );
 
     void renderTooltip(GuiGraphics graphics, List<ClientTooltipComponent> components, int x, int y);
+
+    Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
 }

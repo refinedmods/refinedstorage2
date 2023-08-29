@@ -639,7 +639,6 @@ public class ConfigImpl implements Config {
     }
 
     private class WirelessGridEntryImpl implements WirelessGridEntry {
-        private final ForgeConfigSpec.BooleanValue useEnergy;
         private final ForgeConfigSpec.LongValue energyCapacity;
         private final ForgeConfigSpec.LongValue openEnergyUsage;
         private final ForgeConfigSpec.LongValue extractEnergyUsage;
@@ -647,7 +646,6 @@ public class ConfigImpl implements Config {
 
         WirelessGridEntryImpl() {
             builder.push("wirelessGrid");
-            useEnergy = builder.comment("Whether the Wireless Grid uses energy").define("useEnergy", true);
             energyCapacity = builder.comment("The energy capacity of the Wireless Grid")
                 .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
@@ -657,10 +655,6 @@ public class ConfigImpl implements Config {
             insertEnergyUsage = builder.comment("The energy used by the Wireless Grid to insert resources")
                 .defineInRange("insertEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_INSERT, 0, Long.MAX_VALUE);
             builder.pop();
-        }
-
-        public boolean getUseEnergy() {
-            return useEnergy.get();
         }
 
         public long getEnergyCapacity() {

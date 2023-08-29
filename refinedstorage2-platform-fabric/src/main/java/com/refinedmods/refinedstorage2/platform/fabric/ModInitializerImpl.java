@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.EnergyBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
@@ -13,17 +14,14 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFa
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.item.CreativeItemEnergyProvider;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.TeamRebornEnergyItemEnergyProvider;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridExtractionStrategy;
@@ -51,18 +49,24 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.Container;
@@ -73,6 +77,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -80,7 +85,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
-import team.reborn.energy.api.base.SimpleEnergyItem;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -203,7 +207,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(new TeamRebornEnergyItemEnergyProvider()) {
+            () -> new WirelessGridItem(false) {
                 @Override
                 public boolean allowNbtUpdateAnimation(final Player player,
                                                        final InteractionHand hand,
@@ -212,7 +216,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(CreativeItemEnergyProvider.INSTANCE) {
+            () -> new WirelessGridItem(true) {
                 @Override
                 public boolean allowNbtUpdateAnimation(final Player player,
                                                        final InteractionHand hand,
@@ -300,8 +304,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             (blockEntity, context) -> new ResourceContainerFluidStorageAdapter(blockEntity.getExportedResources()),
             BlockEntities.INSTANCE.getInterface()
         );
-        registerControllerEnergy();
-        registerWirelessGridEnergy();
+        registerEnergyBlockEntityProviders();
+        registerEnergyItemProviders();
     }
 
     private <T extends BlockEntity> void registerItemStorage(final Predicate<BlockEntity> test,
@@ -317,20 +321,34 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         }, type);
     }
 
-    private void registerControllerEnergy() {
-        EnergyStorage.SIDED.registerForBlockEntity(
-            (be, direction) -> ((ControllerTeamRebornEnergy) be.getEnergyStorage()).getExposedStorage(),
-            BlockEntities.INSTANCE.getController()
-        );
+    private void registerEnergyBlockEntityProviders() {
+        EnergyStorage.SIDED.registerFallback(new BlockApiLookup.BlockApiProvider<>() {
+            @Override
+            @Nullable
+            public EnergyStorage find(final Level world,
+                                      final BlockPos pos,
+                                      final BlockState state,
+                                      @Nullable final BlockEntity blockEntity,
+                                      final Direction context) {
+                if (blockEntity instanceof EnergyBlockEntity energyBlockEntity) {
+                    return new EnergyStorageAdapter(energyBlockEntity.getEnergyStorage());
+                }
+                return null;
+            }
+        });
     }
 
-    private void registerWirelessGridEnergy() {
-        EnergyStorage.ITEM.registerForItems((stack, context) -> SimpleEnergyItem.createStorage(
-            context,
-            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity(),
-            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity(),
-            Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
-        ), Items.INSTANCE.getWirelessGrid());
+    private void registerEnergyItemProviders() {
+        EnergyStorage.ITEM.registerFallback(new ItemApiLookup.ItemApiProvider<>() {
+            @Override
+            @Nullable
+            public EnergyStorage find(final ItemStack itemStack, final ContainerItemContext context) {
+                if (itemStack.getItem() instanceof EnergyItem energyItem) {
+                    return energyItem.createEnergyStorage(itemStack).map(EnergyStorageAdapter::new).orElse(null);
+                }
+                return null;
+            }
+        });
     }
 
     private void registerTickHandler() {

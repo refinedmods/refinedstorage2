@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
@@ -38,6 +39,7 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestin
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.CompositeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.common.integration.recipemod.CompositeIngredientConverter;
+import com.refinedmods.refinedstorage2.platform.common.internal.energy.ItemEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
@@ -67,6 +69,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -76,6 +79,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -211,6 +215,13 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return IdentifierUtil.createTranslation(category, value, args);
+    }
+
+    @Override
+    public MutableComponent createStoredWithCapacityTranslation(final long stored,
+                                                                final long capacity,
+                                                                final double pct) {
+        return IdentifierUtil.createStoredWithCapacityTranslation(stored, capacity, pct);
     }
 
     @Override
@@ -390,5 +401,16 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier() {
         return wirelessTransmitterRangeModifier;
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        return Platform.INSTANCE.getEnergyStorage(stack);
+    }
+
+    @Override
+    public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage,
+                                             final ItemStack stack) {
+        return new ItemEnergyStorage(stack, energyStorage);
     }
 }

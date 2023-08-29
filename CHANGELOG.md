@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Removed
+
+-   The `useEnergy` config option for the Wireless Grid. If you do not wish to use energy, use the
+    Creative Wireless Grid.
+
 ## [2.0.0-milestone.3.0] - 2023-08-27
 
 ### Added

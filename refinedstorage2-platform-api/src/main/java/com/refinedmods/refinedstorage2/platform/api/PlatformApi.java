@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.api;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
@@ -34,11 +35,13 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestin
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
@@ -71,6 +74,8 @@ public interface PlatformApi {
     void addConstructorStrategyFactory(ConstructorStrategyFactory factory);
 
     MutableComponent createTranslation(String category, String value, Object... args);
+
+    MutableComponent createStoredWithCapacityTranslation(long stored, long capacity, double pct);
 
     ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory();
 
@@ -135,4 +140,8 @@ public interface PlatformApi {
     void addWirelessTransmitterRangeModifier(WirelessTransmitterRangeModifier rangeModifier);
 
     WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier();
+
+    Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+
+    EnergyStorage asItemEnergyStorage(EnergyStorage energyStorage, ItemStack stack);
 }

@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -138,16 +137,6 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
-        return ensureLoaded().createEnergyStorage(controllerType, listener);
-    }
-
-    @Override
-    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
-        ensureLoaded().setEnergy(energyStorage, stored);
-    }
-
-    @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return ensureLoaded().createTransferManager(containerMenu);
     }
@@ -238,6 +227,11 @@ public class PlatformProxy implements Platform {
                               final int x,
                               final int y) {
         ensureLoaded().renderTooltip(graphics, components, x, y);
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        return ensureLoaded().getEnergyStorage(stack);
     }
 
     private Platform ensureLoaded() {

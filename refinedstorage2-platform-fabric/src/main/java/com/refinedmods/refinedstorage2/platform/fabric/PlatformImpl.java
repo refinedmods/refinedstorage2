@@ -3,18 +3,16 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridResourceFactory;
@@ -196,21 +194,6 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
-        return switch (controllerType) {
-            case NORMAL -> new ControllerTeamRebornEnergy(listener);
-            case CREATIVE -> new InfiniteEnergyStorage();
-        };
-    }
-
-    @Override
-    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
-        if (energyStorage instanceof ControllerTeamRebornEnergy controllerTeamRebornEnergy) {
-            controllerTeamRebornEnergy.setStoredSilently(stored);
-        }
-    }
-
-    @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return new TransferManager(containerMenu, ContainerTransferDestination::new);
     }
@@ -388,5 +371,17 @@ public final class PlatformImpl extends AbstractPlatform {
             y,
             DefaultTooltipPositioner.INSTANCE
         );
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        final ConstantContainerItemContext ctx = new ConstantContainerItemContext(
+            ItemVariant.of(stack),
+            stack.getCount()
+        );
+        return Optional.ofNullable(team.reborn.energy.api.EnergyStorage.ITEM.find(stack, ctx))
+            .filter(EnergyStorageAdapter.class::isInstance)
+            .map(EnergyStorageAdapter.class::cast)
+            .map(EnergyStorageAdapter::getEnergyStorage);
     }
 }

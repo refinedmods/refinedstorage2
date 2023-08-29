@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.api;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
@@ -34,12 +35,14 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestin
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiProxy implements PlatformApi {
@@ -116,6 +119,13 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
+    }
+
+    @Override
+    public MutableComponent createStoredWithCapacityTranslation(final long stored,
+                                                                final long capacity,
+                                                                final double pct) {
+        return ensureLoaded().createStoredWithCapacityTranslation(stored, capacity, pct);
     }
 
     @Override
@@ -269,6 +279,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier() {
         return ensureLoaded().getWirelessTransmitterRangeModifier();
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        return ensureLoaded().getEnergyStorage(stack);
+    }
+
+    @Override
+    public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack) {
+        return ensureLoaded().asItemEnergyStorage(energyStorage, stack);
     }
 
     private PlatformApi ensureLoaded() {

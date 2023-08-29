@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
@@ -93,9 +92,7 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getRangeUpgrade());
         itemConsumer.accept(Items.INSTANCE.getCreativeRangeUpgrade());
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
-        if (Platform.INSTANCE.getConfig().getWirelessGrid().getUseEnergy()) {
-            consumer.accept(Items.INSTANCE.getWirelessGrid().getAtCapacity());
-        }
+        consumer.accept(Items.INSTANCE.getWirelessGrid().createAtEnergyCapacity());
         itemConsumer.accept(Items.INSTANCE.getCreativeWirelessGrid());
     }
 }

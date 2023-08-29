@@ -149,8 +149,6 @@ public interface Config {
     }
 
     interface WirelessGridEntry {
-        boolean getUseEnergy();
-
         long getEnergyCapacity();
 
         long getOpenEnergyUsage();
