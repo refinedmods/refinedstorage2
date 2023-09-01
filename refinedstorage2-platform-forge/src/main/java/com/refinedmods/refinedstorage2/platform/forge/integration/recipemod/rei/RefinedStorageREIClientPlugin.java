@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractEnergyBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
 import java.util.function.Supplier;
@@ -72,7 +72,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         registry.group(
             createIdentifier("fully_charged_controller"),
             createTranslation("block", "controller.rei_fully_charged"),
-            AbstractEnergyBlockItem.createAllAtEnergyCapacity(Items.INSTANCE.getControllers())
+            EnergyItemHelperImpl.createAllAtEnergyCapacity(Items.INSTANCE.getControllers())
                 .map(EntryStacks::of).collect(Collectors.toList())
         );
         groupItems(

@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -119,13 +120,6 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
-    }
-
-    @Override
-    public MutableComponent createStoredWithCapacityTranslation(final long stored,
-                                                                final long capacity,
-                                                                final double pct) {
-        return ensureLoaded().createStoredWithCapacityTranslation(stored, capacity, pct);
     }
 
     @Override
@@ -284,6 +278,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
         return ensureLoaded().getEnergyStorage(stack);
+    }
+
+    @Override
+    public EnergyItemHelper getEnergyItemHelper() {
+        return ensureLoaded().getEnergyItemHelper();
     }
 
     @Override

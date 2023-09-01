@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -74,8 +75,6 @@ public interface PlatformApi {
     void addConstructorStrategyFactory(ConstructorStrategyFactory factory);
 
     MutableComponent createTranslation(String category, String value, Object... args);
-
-    MutableComponent createStoredWithCapacityTranslation(long stored, long capacity, double pct);
 
     ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory();
 
@@ -142,6 +141,8 @@ public interface PlatformApi {
     WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier();
 
     Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+
+    EnergyItemHelper getEnergyItemHelper();
 
     EnergyStorage asItemEnergyStorage(EnergyStorage energyStorage, ItemStack stack);
 }

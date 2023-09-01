@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractEnergyItem;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
@@ -41,7 +42,7 @@ public abstract class AbstractNetworkBoundItem extends AbstractEnergyItem {
     private static final String TAG_DIMENSION = "dim";
 
     protected AbstractNetworkBoundItem(final Properties properties) {
-        super(properties);
+        super(properties, PlatformApi.INSTANCE.getEnergyItemHelper());
     }
 
     public boolean isBound(final ItemStack stack) {
