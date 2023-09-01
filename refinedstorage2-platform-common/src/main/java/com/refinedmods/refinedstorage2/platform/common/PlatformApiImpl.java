@@ -23,6 +23,8 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -44,6 +46,8 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.NetworkBoundItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
@@ -131,6 +135,8 @@ public class PlatformApiImpl implements PlatformApi {
     private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
     private final CompositeWirelessTransmitterRangeModifier wirelessTransmitterRangeModifier =
         new CompositeWirelessTransmitterRangeModifier();
+    private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
+    private final NetworkBoundItemHelper networkBoundItemHelper = new NetworkBoundItemHelperImpl();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -215,13 +221,6 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return IdentifierUtil.createTranslation(category, value, args);
-    }
-
-    @Override
-    public MutableComponent createStoredWithCapacityTranslation(final long stored,
-                                                                final long capacity,
-                                                                final double pct) {
-        return IdentifierUtil.createStoredWithCapacityTranslation(stored, capacity, pct);
     }
 
     @Override
@@ -409,8 +408,18 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
+    public EnergyItemHelper getEnergyItemHelper() {
+        return energyItemHelper;
+    }
+
+    @Override
     public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage,
                                              final ItemStack stack) {
         return new ItemEnergyStorage(stack, energyStorage);
+    }
+
+    @Override
+    public NetworkBoundItemHelper getNetworkBoundItemHelper() {
+        return networkBoundItemHelper;
     }
 }

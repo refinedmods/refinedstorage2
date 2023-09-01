@@ -100,7 +100,7 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public void load(final CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_STORED)) {
-            loadEnergy(tag.getLong(TAG_STORED));
+            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
         }
     }
 
@@ -134,9 +134,5 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
-    }
-
-    public void loadEnergy(final long stored) {
-        energyStorage.receive(stored, Action.EXECUTE);
     }
 }
