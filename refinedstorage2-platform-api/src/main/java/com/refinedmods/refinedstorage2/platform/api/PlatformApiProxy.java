@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFa
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -288,6 +289,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack) {
         return ensureLoaded().asItemEnergyStorage(energyStorage, stack);
+    }
+
+    @Override
+    public NetworkBoundItemHelper getNetworkBoundItemHelper() {
+        return ensureLoaded().getNetworkBoundItemHelper();
     }
 
     private PlatformApi ensureLoaded() {

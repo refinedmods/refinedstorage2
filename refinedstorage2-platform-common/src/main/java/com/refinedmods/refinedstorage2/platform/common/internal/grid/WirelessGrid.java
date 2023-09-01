@@ -5,12 +5,9 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
-import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridWatchers;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
@@ -19,68 +16,38 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
-import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.item.NetworkBoundItemContext;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.server.MinecraftServer;
-
 public class WirelessGrid implements Grid {
-    private final MinecraftServer server;
-    private final NetworkBoundItemContext ctx;
+    private final NetworkBoundItemSession session;
     private final GridWatchers watchers;
 
-    public WirelessGrid(final MinecraftServer server, final NetworkBoundItemContext ctx) {
-        this.server = server;
-        this.ctx = ctx;
+    public WirelessGrid(final NetworkBoundItemSession session) {
+        this.session = session;
         this.watchers = new GridWatchers(PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll());
     }
 
-    private Optional<Network> getNetwork() {
-        if (ctx.getNetworkReference() == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(server.getLevel(ctx.getNetworkReference().dimensionKey()))
-            .filter(level -> level.isLoaded(ctx.getNetworkReference().pos()))
-            .map(level -> level.getBlockEntity(ctx.getNetworkReference().pos()))
-            .filter(PlatformNetworkNodeContainer.class::isInstance)
-            .map(PlatformNetworkNodeContainer.class::cast)
-            .map(PlatformNetworkNodeContainer::getNode)
-            .map(NetworkNode::getNetwork)
-            .filter(this::isInRange);
-    }
-
-    private boolean isInRange(final Network network) {
-        return network.getComponent(GraphNetworkComponent.class)
-            .getContainers(WirelessTransmitter.class)
-            .stream()
-            .anyMatch(wirelessTransmitter -> wirelessTransmitter.isInRange(
-                ctx.getPlayerLevel(),
-                ctx.getPlayerPosition()
-            ));
-    }
-
     private Optional<StorageNetworkComponent> getStorage() {
-        return getNetwork().map(network -> network.getComponent(StorageNetworkComponent.class));
+        return session.resolveNetwork().map(network -> network.getComponent(StorageNetworkComponent.class));
     }
 
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
-        getNetwork().ifPresent(network -> watchers.addWatcher(watcher, actorType, network));
+        session.resolveNetwork().ifPresent(network -> watchers.addWatcher(watcher, actorType, network));
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        getNetwork().ifPresent(network -> watchers.removeWatcher(watcher, network));
+        session.resolveNetwork().ifPresent(network -> watchers.removeWatcher(watcher, network));
     }
 
     @Override
@@ -91,10 +58,10 @@ public class WirelessGrid implements Grid {
 
     @Override
     public boolean isActive() {
-        final boolean networkActive = getNetwork().map(
+        final boolean networkActive = session.resolveNetwork().map(
             network -> network.getComponent(EnergyNetworkComponent.class).getStored() > 0
         ).orElse(false);
-        return networkActive && ctx.isActive();
+        return networkActive && session.isActive();
     }
 
     @Override
@@ -109,7 +76,7 @@ public class WirelessGrid implements Grid {
         return getStorage()
             .map(storage -> storage.getStorageChannel(storageChannelType))
             .map(storageChannel -> storageChannelType.createGridOperations(storageChannel, actor))
-            .map(gridOperations -> (GridOperations<T>) new WirelessGridOperations<>(gridOperations, ctx, watchers))
+            .map(gridOperations -> (GridOperations<T>) new WirelessGridOperations<>(gridOperations, session, watchers))
             .orElseGet(this::createNoOpGridOperations);
     }
 

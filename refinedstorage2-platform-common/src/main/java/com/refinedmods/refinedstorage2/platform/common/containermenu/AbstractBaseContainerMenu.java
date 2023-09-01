@@ -74,8 +74,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; i++) {
             final int x = inventoryX + i * 18;
             final int y = inventoryY + 4 + (3 * 18);
-            final boolean disabled = disabledPlayerInventorySlot != null
-                && disabledPlayerInventorySlot.getSlotIndex() == id;
+            final boolean disabled = disabledPlayerInventorySlot != null && disabledPlayerInventorySlot.isDisabled(id);
             addSlot(disabled ? new DisabledSlot(inventory, id, x, y) : new Slot(inventory, id, x, y));
             id++;
         }
@@ -107,6 +106,6 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     private boolean isSwappingDisabledSlotWithNumberKeys(final int dragType, final ClickType clickType) {
         return disabledPlayerInventorySlot != null
             && clickType == ClickType.SWAP
-            && dragType == disabledPlayerInventorySlot.getSlotIndex();
+            && disabledPlayerInventorySlot.isDisabled(dragType);
     }
 }

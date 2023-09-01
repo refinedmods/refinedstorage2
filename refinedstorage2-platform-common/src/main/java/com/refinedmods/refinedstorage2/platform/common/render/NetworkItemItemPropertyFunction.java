@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.render;
 
-import com.refinedmods.refinedstorage2.platform.common.item.AbstractNetworkBoundItem;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractNetworkBoundEnergyItem;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +18,7 @@ public class NetworkItemItemPropertyFunction implements ClampedItemPropertyFunct
                                @Nullable final ClientLevel clientLevel,
                                @Nullable final LivingEntity livingEntity,
                                final int i) {
-        if (itemStack.getItem() instanceof AbstractNetworkBoundItem boundItem) {
+        if (itemStack.getItem() instanceof AbstractNetworkBoundEnergyItem boundItem) {
             return boundItem.isBound(itemStack) ? 1 : 0;
         }
         return 0;

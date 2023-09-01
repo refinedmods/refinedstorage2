@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.Block;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Make network bound item api accessible.
 public class ControllerBlockItem extends AbstractEnergyBlockItem {
     private final Component name;
 

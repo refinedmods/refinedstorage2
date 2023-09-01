@@ -17,8 +17,8 @@ public final class PlayerSlotReference {
         return player.getInventory().getItem(slotIndex);
     }
 
-    public int getSlotIndex() {
-        return slotIndex;
+    public boolean isDisabled(final int playerSlotIndex) {
+        return playerSlotIndex == slotIndex;
     }
 
     public void writeToBuf(final ByteBuf buf) {
