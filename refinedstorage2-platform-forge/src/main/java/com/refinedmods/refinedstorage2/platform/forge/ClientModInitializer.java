@@ -33,11 +33,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -58,6 +60,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent e) {
+        MinecraftForge.EVENT_BUS.addListener(ClientModInitializer::onKeyInput);
         e.enqueueWork(ClientModInitializer::registerModelPredicates);
         e.enqueueWork(() -> registerScreens(new ScreenRegistration() {
             @Override
@@ -73,6 +76,11 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         registerGridSynchronizers();
         registerResourceRendering();
         registerAlternativeGridHints();
+    }
+
+    @SubscribeEvent
+    public static void onKeyInput(final InputEvent.Key e) {
+        handleInputEvents();
     }
 
     private static void registerModelPredicates() {
@@ -117,6 +125,15 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         );
         e.register(clearCraftingGridMatrixToInventory);
         KeyMappings.INSTANCE.setClearCraftingGridMatrixToInventory(clearCraftingGridMatrixToInventory);
+
+        final KeyMapping openWirelessGrid = new KeyMapping(
+            createTranslationKey("key", "open_wireless_grid"),
+            KeyConflictContext.IN_GAME,
+            InputConstants.UNKNOWN,
+            KEY_BINDINGS_TRANSLATION_KEY
+        );
+        e.register(openWirelessGrid);
+        KeyMappings.INSTANCE.setOpenWirelessGrid(openWirelessGrid);
     }
 
     private static void registerBlockEntityRenderer() {

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +19,7 @@ public interface NetworkBoundItemHelper {
 
     Optional<TooltipComponent> getTooltipImage(ItemStack stack);
 
-    NetworkBoundItemSession openSession(ItemStack stack, ServerPlayer player, InteractionHand hand);
+    NetworkBoundItemSession openSession(ItemStack stack, ServerPlayer player, SlotReference slotReference);
 
     boolean isBound(ItemStack stack);
 }

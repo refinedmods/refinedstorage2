@@ -21,6 +21,10 @@ repositories {
         name = 'NoIndium'
         url = 'https://maven.cafeteria.dev/releases/'
     }
+    maven {
+        name = "Trinkets"
+        url = 'https://maven.ladysnake.org/releases'
+    }
 }
 
 fabricProject("refinedstorage2", project(":refinedstorage2-platform-common"), apis, compileApis)
@@ -57,6 +61,9 @@ dependencies {
     // modRuntimeOnly fabric.jei.impl
 
     modRuntimeOnly fabric.wthit
+
+    // https://www.curseforge.com/minecraft/mc-mods/trinkets/files
+    modImplementation "dev.emi:trinkets:3.7.1"
 }
 
 enablePublishing()

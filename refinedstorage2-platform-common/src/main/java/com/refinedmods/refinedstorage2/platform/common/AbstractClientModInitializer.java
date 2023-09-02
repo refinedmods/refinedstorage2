@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
+import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceRendering;
@@ -25,10 +27,13 @@ import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridS
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
 
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 
@@ -59,6 +64,21 @@ public abstract class AbstractClientModInitializer {
     protected static void registerResourceRendering() {
         PlatformApi.INSTANCE.registerResourceRendering(ItemResource.class, new ItemResourceRendering());
         PlatformApi.INSTANCE.registerResourceRendering(FluidResource.class, new FluidResourceRendering());
+    }
+
+    protected static void handleInputEvents() {
+        final Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        final KeyMapping openWirelessGrid = KeyMappings.INSTANCE.getOpenWirelessGrid();
+        while (openWirelessGrid != null && openWirelessGrid.consumeClick()) {
+            PlatformApi.INSTANCE.useNetworkBoundItem(
+                player,
+                Items.INSTANCE.getWirelessGrid(),
+                Items.INSTANCE.getCreativeWirelessGrid()
+            );
+        }
     }
 
     @FunctionalInterface

@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -49,7 +50,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 getResourceFilterContainer(stack),
                 getAmount(stack),
                 newAmount -> setAmount(stack, newAmount),
-                PlayerSlotReference.of(player, hand)
+                PlatformApi.INSTANCE.createInventorySlotReference(player, hand)
             ));
         }
         return InteractionResultHolder.success(stack);
@@ -119,21 +120,21 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         private final ResourceContainer resourceContainer;
         private final double amount;
         private final Consumer<Double> amountAcceptor;
-        private final PlayerSlotReference playerSlotReference;
+        private final SlotReference slotReference;
 
         private ExtendedMenuProviderImpl(final ResourceContainer resourceContainer,
                                          final double amount,
                                          final Consumer<Double> amountAcceptor,
-                                         final PlayerSlotReference playerSlotReference) {
+                                         final SlotReference slotReference) {
             this.resourceContainer = resourceContainer;
             this.amount = amount;
             this.amountAcceptor = amountAcceptor;
-            this.playerSlotReference = playerSlotReference;
+            this.slotReference = slotReference;
         }
 
         @Override
         public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-            AbstractSingleAmountContainerMenu.writeToBuf(buf, amount, resourceContainer, playerSlotReference);
+            AbstractSingleAmountContainerMenu.writeToBuf(buf, amount, resourceContainer, slotReference);
         }
 
         @Override
@@ -148,7 +149,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 player,
                 resourceContainer,
                 amountAcceptor,
-                playerSlotReference
+                slotReference
             );
         }
     }

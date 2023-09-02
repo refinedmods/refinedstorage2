@@ -25,6 +25,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -46,7 +49,10 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.CompositeSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.InventorySlotReference;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.InventorySlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.NetworkBoundItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
@@ -66,6 +72,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -79,10 +86,14 @@ import java.util.Queue;
 import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -137,6 +148,11 @@ public class PlatformApiImpl implements PlatformApi {
         new CompositeWirelessTransmitterRangeModifier();
     private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
     private final NetworkBoundItemHelper networkBoundItemHelper = new NetworkBoundItemHelperImpl();
+    private final PlatformRegistry<SlotReferenceFactory> slotReferenceFactoryRegistry = new PlatformRegistryImpl<>(
+        createIdentifier("inventory"),
+        InventorySlotReferenceFactory.INSTANCE
+    );
+    private final CompositeSlotReferenceProvider slotReferenceProvider = new CompositeSlotReferenceProvider();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -421,5 +437,46 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public NetworkBoundItemHelper getNetworkBoundItemHelper() {
         return networkBoundItemHelper;
+    }
+
+    @Override
+    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
+        return slotReferenceFactoryRegistry;
+    }
+
+    @Override
+    public void writeSlotReference(final SlotReference slotReference, final FriendlyByteBuf buf) {
+        this.slotReferenceFactoryRegistry.getId(slotReference.getFactory()).ifPresentOrElse(id -> {
+            buf.writeBoolean(true);
+            buf.writeResourceLocation(id);
+            slotReference.writeToBuffer(buf);
+        }, () -> buf.writeBoolean(false));
+    }
+
+    @Override
+    public Optional<SlotReference> getSlotReference(final FriendlyByteBuf buf) {
+        if (!buf.readBoolean()) {
+            return Optional.empty();
+        }
+        final ResourceLocation id = buf.readResourceLocation();
+        return slotReferenceFactoryRegistry.get(id).map(factory -> factory.create(buf));
+    }
+
+    @Override
+    public void addSlotReferenceProvider(final SlotReferenceProvider provider) {
+        slotReferenceProvider.addProvider(provider);
+    }
+
+    @Override
+    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
+        return InventorySlotReference.of(player, hand);
+    }
+
+    @Override
+    public void useNetworkBoundItem(final Player player, final Item... items) {
+        final Set<Item> validItems = new HashSet<>(Arrays.asList(items));
+        slotReferenceProvider.findForUse(player, items[0], validItems).ifPresent(
+            slotReference -> Platform.INSTANCE.getClientToServerCommunications().sendUseNetworkBoundItem(slotReference)
+        );
     }
 }

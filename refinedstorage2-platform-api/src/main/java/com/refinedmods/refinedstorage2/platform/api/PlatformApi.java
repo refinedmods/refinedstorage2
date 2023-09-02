@@ -21,6 +21,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -40,9 +43,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
@@ -148,4 +154,16 @@ public interface PlatformApi {
     EnergyStorage asItemEnergyStorage(EnergyStorage energyStorage, ItemStack stack);
 
     NetworkBoundItemHelper getNetworkBoundItemHelper();
+
+    PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry();
+
+    void writeSlotReference(SlotReference slotReference, FriendlyByteBuf buf);
+
+    Optional<SlotReference> getSlotReference(FriendlyByteBuf buf);
+
+    void addSlotReferenceProvider(SlotReferenceProvider slotReferenceProvider);
+
+    SlotReference createInventorySlotReference(Player player, InteractionHand hand);
+
+    void useNetworkBoundItem(Player player, Item... items);
 }

@@ -21,6 +21,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -41,9 +44,12 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -294,6 +300,36 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public NetworkBoundItemHelper getNetworkBoundItemHelper() {
         return ensureLoaded().getNetworkBoundItemHelper();
+    }
+
+    @Override
+    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
+        return ensureLoaded().getSlotReferenceFactoryRegistry();
+    }
+
+    @Override
+    public void writeSlotReference(final SlotReference slotReference, final FriendlyByteBuf buf) {
+        ensureLoaded().writeSlotReference(slotReference, buf);
+    }
+
+    @Override
+    public Optional<SlotReference> getSlotReference(final FriendlyByteBuf buf) {
+        return ensureLoaded().getSlotReference(buf);
+    }
+
+    @Override
+    public void addSlotReferenceProvider(final SlotReferenceProvider slotReferenceProvider) {
+        ensureLoaded().addSlotReferenceProvider(slotReferenceProvider);
+    }
+
+    @Override
+    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
+        return ensureLoaded().createInventorySlotReference(player, hand);
+    }
+
+    @Override
+    public void useNetworkBoundItem(final Player player, final Item... items) {
+        ensureLoaded().useNetworkBoundItem(player, items);
     }
 
     private PlatformApi ensureLoaded() {

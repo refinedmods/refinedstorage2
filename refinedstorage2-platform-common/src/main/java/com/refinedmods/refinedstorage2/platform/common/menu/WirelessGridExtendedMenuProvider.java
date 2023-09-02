@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.menu;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,12 +17,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
-    private final PlayerSlotReference slotReference;
+    private final SlotReference slotReference;
 
     public WirelessGridExtendedMenuProvider(final Grid grid,
                                             final PlatformRegistry<PlatformStorageChannelType<?>>
                                                 storageChannelTypeRegistry,
-                                            final PlayerSlotReference slotReference) {
+                                            final SlotReference slotReference) {
         super(grid, storageChannelTypeRegistry, new MenuProvider() {
             @Override
             public Component getDisplayName() {
@@ -39,6 +40,6 @@ public class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         super.writeScreenOpeningData(player, buf);
-        slotReference.writeToBuf(buf);
+        PlatformApi.INSTANCE.writeSlotReference(slotReference, buf);
     }
 }

@@ -21,6 +21,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem
 import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.trinkets.TrinketsSlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.trinkets.TrinketsSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridInsertionStrategy;
@@ -42,6 +44,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotAm
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.UseNetworkBoundItemPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Arrays;
@@ -110,6 +113,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerRecipeSerializers(new DirectRegistryCallback<>(BuiltInRegistries.RECIPE_SERIALIZER));
         registerSidedHandlers();
         registerTickHandler();
+        registerSlotReferenceProviders();
         registerWrenchingEvent();
 
         LOGGER.info("Refined Storage 2 has loaded.");
@@ -284,6 +288,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new ResourceSlotChangePacket()
         );
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.SINGLE_AMOUNT_CHANGE, new SingleAmountChangePacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.USE_NETWORK_BOUND_ITEM, new UseNetworkBoundItemPacket());
     }
 
     @SuppressWarnings("checkstyle:Indentation")
@@ -353,6 +358,16 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerTickHandler() {
         ServerTickEvents.START_SERVER_TICK.register(server -> TickHandler.runQueuedActions());
+    }
+
+    private void registerSlotReferenceProviders() {
+        TrinketsSlotReferenceProvider.create().ifPresent(slotReferenceProvider -> {
+            PlatformApi.INSTANCE.getSlotReferenceFactoryRegistry().register(
+                createIdentifier("trinkets"),
+                TrinketsSlotReferenceFactory.INSTANCE
+            );
+            PlatformApi.INSTANCE.addSlotReferenceProvider(slotReferenceProvider);
+        });
     }
 
     private void registerWrenchingEvent() {
