@@ -20,6 +20,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.integration.curios.CuriosSlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.forge.integration.curios.CuriosSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.forge.internal.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
@@ -112,6 +114,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerSounds();
         registerRecipeSerializers();
         registerTickHandler();
+        registerSlotReferenceProviders();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -251,6 +254,16 @@ public class ModInitializer extends AbstractModInitializer {
 
     private void registerTickHandler() {
         MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+    }
+
+    protected void registerSlotReferenceProviders() {
+        CuriosSlotReferenceProvider.create().ifPresent(slotReferenceProvider -> {
+            PlatformApi.INSTANCE.getSlotReferenceFactoryRegistry().register(
+                createIdentifier("curios"),
+                CuriosSlotReferenceFactory.INSTANCE
+            );
+            PlatformApi.INSTANCE.addSlotReferenceProvider(slotReferenceProvider);
+        });
     }
 
     @SubscribeEvent

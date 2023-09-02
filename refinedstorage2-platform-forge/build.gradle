@@ -7,6 +7,9 @@ repositories {
         name = 'REI'
         url 'https://maven.shedaniel.me/'
     }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 forgeProject("refinedstorage2", project(":refinedstorage2-platform-common"), apis, compileApis)
@@ -24,6 +27,9 @@ dependencies {
     compileOnly fg.deobf(forge.rei.cloth.math.get())
 //    runtimeOnly fg.deobf(forge.rei.impl.get())
 //    runtimeOnly fg.deobf(forge.rei.architectury.get())
+
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0+1.20.1")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0+1.20.1:api")
 }
 
 enablePublishing()

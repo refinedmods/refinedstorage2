@@ -22,6 +22,8 @@ import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.Ingred
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -153,9 +155,15 @@ public interface PlatformApi {
 
     NetworkBoundItemHelper getNetworkBoundItemHelper();
 
-    SlotReference createSlotReference(FriendlyByteBuf buf);
+    PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry();
 
-    SlotReference createSlotReference(Player player, InteractionHand hand);
+    void writeSlotReference(SlotReference slotReference, FriendlyByteBuf buf);
+
+    Optional<SlotReference> getSlotReference(FriendlyByteBuf buf);
+
+    void addSlotReferenceProvider(SlotReferenceProvider slotReferenceProvider);
+
+    SlotReference createInventorySlotReference(Player player, InteractionHand hand);
 
     void useNetworkBoundItem(Player player, Item... items);
 }

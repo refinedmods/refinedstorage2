@@ -1,19 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.item;
 
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
 
 import java.util.Optional;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public final class SlotReferenceImpl implements SlotReference {
+public final class InventorySlotReference implements SlotReference {
     private final int slotIndex;
 
-    public SlotReferenceImpl(final int slotIndex) {
+    public InventorySlotReference(final int slotIndex) {
         this.slotIndex = slotIndex;
     }
 
@@ -27,21 +28,22 @@ public final class SlotReferenceImpl implements SlotReference {
     }
 
     @Override
+    public SlotReferenceFactory getFactory() {
+        return InventorySlotReferenceFactory.INSTANCE;
+    }
+
+    @Override
     public boolean isDisabledSlot(final int playerSlotIndex) {
         return playerSlotIndex == slotIndex;
     }
 
     @Override
-    public void writeToBuf(final ByteBuf buf) {
+    public void writeToBuffer(final FriendlyByteBuf buf) {
         buf.writeInt(slotIndex);
     }
 
-    public static SlotReference of(final ByteBuf buf) {
-        return new SlotReferenceImpl(buf.readInt());
-    }
-
     public static SlotReference of(final Player player, final InteractionHand hand) {
-        return new SlotReferenceImpl(hand == InteractionHand.MAIN_HAND
+        return new InventorySlotReference(hand == InteractionHand.MAIN_HAND
             ? player.getInventory().selected
             : Inventory.SLOT_OFFHAND);
     }

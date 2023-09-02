@@ -22,6 +22,8 @@ import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.Ingred
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -301,13 +303,28 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public SlotReference createSlotReference(final FriendlyByteBuf buf) {
-        return ensureLoaded().createSlotReference(buf);
+    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
+        return ensureLoaded().getSlotReferenceFactoryRegistry();
     }
 
     @Override
-    public SlotReference createSlotReference(final Player player, final InteractionHand hand) {
-        return ensureLoaded().createSlotReference(player, hand);
+    public void writeSlotReference(final SlotReference slotReference, final FriendlyByteBuf buf) {
+        ensureLoaded().writeSlotReference(slotReference, buf);
+    }
+
+    @Override
+    public Optional<SlotReference> getSlotReference(final FriendlyByteBuf buf) {
+        return ensureLoaded().getSlotReference(buf);
+    }
+
+    @Override
+    public void addSlotReferenceProvider(final SlotReferenceProvider slotReferenceProvider) {
+        ensureLoaded().addSlotReferenceProvider(slotReferenceProvider);
+    }
+
+    @Override
+    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
+        return ensureLoaded().createInventorySlotReference(player, hand);
     }
 
     @Override

@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   "Open Wireless Grid" keybinding.
+-   Curios integration on Forge.
 
 ### Changed
 

@@ -26,6 +26,8 @@ import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.Ingred
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -47,9 +49,11 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.CompositeSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.InventorySlotReference;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.InventorySlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.NetworkBoundItemHelperImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.item.SlotReferenceImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
@@ -77,15 +81,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -145,6 +148,11 @@ public class PlatformApiImpl implements PlatformApi {
         new CompositeWirelessTransmitterRangeModifier();
     private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
     private final NetworkBoundItemHelper networkBoundItemHelper = new NetworkBoundItemHelperImpl();
+    private final PlatformRegistry<SlotReferenceFactory> slotReferenceFactoryRegistry = new PlatformRegistryImpl<>(
+        createIdentifier("inventory"),
+        InventorySlotReferenceFactory.INSTANCE
+    );
+    private final CompositeSlotReferenceProvider slotReferenceProvider = new CompositeSlotReferenceProvider();
 
     @Override
     public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
@@ -432,49 +440,43 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public SlotReference createSlotReference(final FriendlyByteBuf buf) {
-        return SlotReferenceImpl.of(buf);
+    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
+        return slotReferenceFactoryRegistry;
     }
 
     @Override
-    public SlotReference createSlotReference(final Player player, final InteractionHand hand) {
-        return SlotReferenceImpl.of(player, hand);
+    public void writeSlotReference(final SlotReference slotReference, final FriendlyByteBuf buf) {
+        this.slotReferenceFactoryRegistry.getId(slotReference.getFactory()).ifPresentOrElse(id -> {
+            buf.writeBoolean(true);
+            buf.writeResourceLocation(id);
+            slotReference.writeToBuffer(buf);
+        }, () -> buf.writeBoolean(false));
+    }
+
+    @Override
+    public Optional<SlotReference> getSlotReference(final FriendlyByteBuf buf) {
+        if (!buf.readBoolean()) {
+            return Optional.empty();
+        }
+        final ResourceLocation id = buf.readResourceLocation();
+        return slotReferenceFactoryRegistry.get(id).map(factory -> factory.create(buf));
+    }
+
+    @Override
+    public void addSlotReferenceProvider(final SlotReferenceProvider provider) {
+        slotReferenceProvider.addProvider(provider);
+    }
+
+    @Override
+    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
+        return InventorySlotReference.of(player, hand);
     }
 
     @Override
     public void useNetworkBoundItem(final Player player, final Item... items) {
-        findItem(player, items).ifPresent(
-            slotIndex -> Platform.INSTANCE.getClientToServerCommunications().sendUseNetworkBoundItem(
-                new SlotReferenceImpl(slotIndex)
-            )
-        );
-    }
-
-    private OptionalInt findItem(final Player player, final Item... items) {
         final Set<Item> validItems = new HashSet<>(Arrays.asList(items));
-        OptionalInt slotIndex = OptionalInt.empty();
-        for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-            final ItemStack slot = player.getInventory().getItem(i);
-            if (!validItems.contains(slot.getItem())) {
-                continue;
-            }
-            if (slotIndex.isPresent()) {
-                player.sendSystemMessage(createTranslation(
-                    "item",
-                    "network_item.cannot_open_with_shortcut_due_to_duplicate",
-                    items[0].getDescription()
-                ).withStyle(ChatFormatting.RED));
-                return OptionalInt.empty();
-            }
-            slotIndex = OptionalInt.of(i);
-        }
-        if (slotIndex.isEmpty()) {
-            player.sendSystemMessage(createTranslation(
-                "item",
-                "network_item.cannot_open_because_not_found",
-                items[0].getDescription()
-            ).withStyle(ChatFormatting.RED));
-        }
-        return slotIndex;
+        slotReferenceProvider.findForUse(player, items[0], validItems).ifPresent(
+            slotReference -> Platform.INSTANCE.getClientToServerCommunications().sendUseNetworkBoundItem(slotReference)
+        );
     }
 }

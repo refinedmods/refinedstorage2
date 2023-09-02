@@ -53,7 +53,7 @@ public abstract class AbstractNetworkBoundEnergyItem extends AbstractEnergyItem 
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer && level.getServer() != null) {
-            final SlotReference slotReference = PlatformApi.INSTANCE.createSlotReference(player, hand);
+            final SlotReference slotReference = PlatformApi.INSTANCE.createInventorySlotReference(player, hand);
             final NetworkBoundItemSession session = networkBoundItemHelper.openSession(
                 stack,
                 serverPlayer,

@@ -6,24 +6,28 @@ import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
+import static java.util.Objects.requireNonNull;
+
 public class UseNetworkBoundItemPacket {
+    @Nullable
     private final SlotReference slotReference;
 
-    public UseNetworkBoundItemPacket(final SlotReference slotReference) {
+    public UseNetworkBoundItemPacket(@Nullable final SlotReference slotReference) {
         this.slotReference = slotReference;
     }
 
     public static UseNetworkBoundItemPacket decode(final FriendlyByteBuf buf) {
-        return new UseNetworkBoundItemPacket(PlatformApi.INSTANCE.createSlotReference(buf));
+        return new UseNetworkBoundItemPacket(PlatformApi.INSTANCE.getSlotReference(buf).orElse(null));
     }
 
     public static void encode(final UseNetworkBoundItemPacket packet, final FriendlyByteBuf buf) {
-        packet.slotReference.writeToBuf(buf);
+        PlatformApi.INSTANCE.writeSlotReference(requireNonNull(packet.slotReference), buf);
     }
 
     public static void handle(final UseNetworkBoundItemPacket packet, final Supplier<NetworkEvent.Context> ctx) {
@@ -35,6 +39,9 @@ public class UseNetworkBoundItemPacket {
     }
 
     private static void handle(final UseNetworkBoundItemPacket packet, final ServerPlayer player) {
+        if (packet.slotReference == null) {
+            return;
+        }
         packet.slotReference.resolve(player).ifPresent(stack -> {
             if (!(stack.getItem() instanceof AbstractNetworkBoundEnergyItem networkBoundItem)) {
                 return;

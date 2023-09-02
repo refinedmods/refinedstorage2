@@ -25,14 +25,12 @@ import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.client.event.InputEvent;
@@ -82,18 +80,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onKeyInput(final InputEvent.Key e) {
-        final Player player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
-        final KeyMapping openWirelessGrid = KeyMappings.INSTANCE.getOpenWirelessGrid();
-        if (openWirelessGrid != null && openWirelessGrid.isDown()) {
-            PlatformApi.INSTANCE.useNetworkBoundItem(
-                player,
-                Items.INSTANCE.getWirelessGrid(),
-                Items.INSTANCE.getCreativeWirelessGrid()
-            );
-        }
+        handleInputEvents();
     }
 
     private static void registerModelPredicates() {

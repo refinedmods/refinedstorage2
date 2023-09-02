@@ -129,7 +129,10 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendUseNetworkBoundItem(final SlotReference slotReference) {
-        sendToServer(PacketIds.USE_NETWORK_BOUND_ITEM, slotReference::writeToBuf);
+        sendToServer(
+            PacketIds.USE_NETWORK_BOUND_ITEM,
+            buf -> PlatformApi.INSTANCE.writeSlotReference(slotReference, buf)
+        );
     }
 
     private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.item;
 
 import java.util.Optional;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
@@ -11,7 +11,9 @@ import org.apiguardian.api.API;
 public interface SlotReference {
     boolean isDisabledSlot(int playerSlotIndex);
 
-    void writeToBuf(ByteBuf buf);
+    void writeToBuffer(FriendlyByteBuf buf);
 
     Optional<ItemStack> resolve(Player player);
+
+    SlotReferenceFactory getFactory();
 }

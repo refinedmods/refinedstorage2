@@ -27,7 +27,7 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
                                                 final Component filterHelpText) {
         super(type, syncId);
         if (buf.readBoolean()) {
-            disabledSlot = PlatformApi.INSTANCE.createSlotReference(buf);
+            disabledSlot = PlatformApi.INSTANCE.getSlotReference(buf).orElse(null);
         }
         this.clientAmount = buf.readDouble();
         this.filterHelpText = filterHelpText;
@@ -70,7 +70,7 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
                                   @Nullable final SlotReference disabledSlotReference) {
         if (disabledSlotReference != null) {
             buf.writeBoolean(true);
-            disabledSlotReference.writeToBuf(buf);
+            PlatformApi.INSTANCE.writeSlotReference(disabledSlotReference, buf);
         } else {
             buf.writeBoolean(false);
         }

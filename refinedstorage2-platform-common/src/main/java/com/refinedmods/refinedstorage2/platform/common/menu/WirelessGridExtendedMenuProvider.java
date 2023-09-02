@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.menu;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
@@ -16,12 +17,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
-    private final SlotReference itemReference;
+    private final SlotReference slotReference;
 
     public WirelessGridExtendedMenuProvider(final Grid grid,
                                             final PlatformRegistry<PlatformStorageChannelType<?>>
                                                 storageChannelTypeRegistry,
-                                            final SlotReference itemReference) {
+                                            final SlotReference slotReference) {
         super(grid, storageChannelTypeRegistry, new MenuProvider() {
             @Override
             public Component getDisplayName() {
@@ -30,15 +31,15 @@ public class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
 
             @Override
             public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-                return new WirelessGridContainerMenu(syncId, inventory, grid, itemReference);
+                return new WirelessGridContainerMenu(syncId, inventory, grid, slotReference);
             }
         });
-        this.itemReference = itemReference;
+        this.slotReference = slotReference;
     }
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         super.writeScreenOpeningData(player, buf);
-        itemReference.writeToBuf(buf);
+        PlatformApi.INSTANCE.writeSlotReference(slotReference, buf);
     }
 }

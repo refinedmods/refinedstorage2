@@ -50,7 +50,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 getResourceFilterContainer(stack),
                 getAmount(stack),
                 newAmount -> setAmount(stack, newAmount),
-                PlatformApi.INSTANCE.createSlotReference(player, hand)
+                PlatformApi.INSTANCE.createInventorySlotReference(player, hand)
             ));
         }
         return InteractionResultHolder.success(stack);

@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.platform.api.item.AbstractNetworkBoundEne
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession;
 import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 
+import java.util.Optional;
+
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,8 +21,8 @@ public class UseNetworkBoundItemPacket implements ServerPlayNetworking.PlayChann
                         final ServerGamePacketListenerImpl handler,
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
-        final SlotReference slotReference = PlatformApi.INSTANCE.createSlotReference(buf);
-        server.execute(() -> slotReference.resolve(player).ifPresent(stack -> {
+        final Optional<SlotReference> slotRefMaybe = PlatformApi.INSTANCE.getSlotReference(buf);
+        server.execute(() -> slotRefMaybe.ifPresent(slotReference -> slotReference.resolve(player).ifPresent(stack -> {
             if (!(stack.getItem() instanceof AbstractNetworkBoundEnergyItem networkBoundItem)) {
                 return;
             }
@@ -30,6 +32,6 @@ public class UseNetworkBoundItemPacket implements ServerPlayNetworking.PlayChann
                 slotReference
             );
             networkBoundItem.use(player, slotReference, sess);
-        }));
+        })));
     }
 }

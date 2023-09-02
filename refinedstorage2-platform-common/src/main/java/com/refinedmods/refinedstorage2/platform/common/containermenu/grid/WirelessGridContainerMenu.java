@@ -11,16 +11,16 @@ import net.minecraft.world.entity.player.Inventory;
 public class WirelessGridContainerMenu extends AbstractGridContainerMenu {
     public WirelessGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getWirelessGrid(), syncId, playerInventory, buf);
-        this.disabledSlot = PlatformApi.INSTANCE.createSlotReference(buf);
+        this.disabledSlot = PlatformApi.INSTANCE.getSlotReference(buf).orElse(null);
         addSlots(0);
     }
 
     public WirelessGridContainerMenu(final int syncId,
                                      final Inventory playerInventory,
                                      final Grid grid,
-                                     final SlotReference itemReference) {
+                                     final SlotReference slotReference) {
         super(Menus.INSTANCE.getWirelessGrid(), syncId, playerInventory, grid);
-        this.disabledSlot = itemReference;
+        this.disabledSlot = slotReference;
         addSlots(0);
     }
 }
