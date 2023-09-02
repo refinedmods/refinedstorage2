@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   "Open Wireless Grid" keybinding.
 -   Curios integration on Forge.
+-   Trinkets integration on Fabric.
 
 ### Changed
 

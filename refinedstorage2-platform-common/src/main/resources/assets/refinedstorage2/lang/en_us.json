@@ -218,6 +218,7 @@
   "refinedstorage2.subtitle.wrench": "Wrench used",
   "category.refinedstorage2.key_bindings": "Refined Storage 2",
   "curios.identifier.refinedstorage2": "Refined Storage 2",
+  "trinkets.slot.refinedstorage2.wireless": "Refined Storage 2",
   "text.autoconfig.refinedstorage2.title": "Refined Storage 2",
   "text.autoconfig.refinedstorage2.option.grid": "Grid",
   "text.autoconfig.refinedstorage2.option.grid.largeFont": "Large font",
