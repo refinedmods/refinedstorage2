@@ -25,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -48,6 +49,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGr
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.NetworkBoundItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.SlotReferenceImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
@@ -66,6 +68,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -74,15 +77,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -421,5 +429,52 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public NetworkBoundItemHelper getNetworkBoundItemHelper() {
         return networkBoundItemHelper;
+    }
+
+    @Override
+    public SlotReference createSlotReference(final FriendlyByteBuf buf) {
+        return SlotReferenceImpl.of(buf);
+    }
+
+    @Override
+    public SlotReference createSlotReference(final Player player, final InteractionHand hand) {
+        return SlotReferenceImpl.of(player, hand);
+    }
+
+    @Override
+    public void useNetworkBoundItem(final Player player, final Item... items) {
+        findItem(player, items).ifPresent(
+            slotIndex -> Platform.INSTANCE.getClientToServerCommunications().sendUseNetworkBoundItem(
+                new SlotReferenceImpl(slotIndex)
+            )
+        );
+    }
+
+    private OptionalInt findItem(final Player player, final Item... items) {
+        final Set<Item> validItems = new HashSet<>(Arrays.asList(items));
+        OptionalInt slotIndex = OptionalInt.empty();
+        for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
+            final ItemStack slot = player.getInventory().getItem(i);
+            if (!validItems.contains(slot.getItem())) {
+                continue;
+            }
+            if (slotIndex.isPresent()) {
+                player.sendSystemMessage(createTranslation(
+                    "item",
+                    "network_item.cannot_open_with_shortcut_due_to_duplicate",
+                    items[0].getDescription()
+                ).withStyle(ChatFormatting.RED));
+                return OptionalInt.empty();
+            }
+            slotIndex = OptionalInt.of(i);
+        }
+        if (slotIndex.isEmpty()) {
+            player.sendSystemMessage(createTranslation(
+                "item",
+                "network_item.cannot_open_because_not_found",
+                items[0].getDescription()
+            ).withStyle(ChatFormatting.RED));
+        }
+        return slotIndex;
     }
 }

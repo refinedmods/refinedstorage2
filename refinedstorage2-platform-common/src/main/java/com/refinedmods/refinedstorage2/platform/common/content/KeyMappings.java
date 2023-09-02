@@ -14,6 +14,8 @@ public final class KeyMappings {
     private KeyMapping clearCraftingGridMatrixToNetwork;
     @Nullable
     private KeyMapping clearCraftingGridMatrixToInventory;
+    @Nullable
+    private KeyMapping openWirelessGrid;
 
     private KeyMappings() {
     }
@@ -42,5 +44,14 @@ public final class KeyMappings {
 
     public void setClearCraftingGridMatrixToInventory(final KeyMapping clearCraftingGridMatrixToInventory) {
         this.clearCraftingGridMatrixToInventory = clearCraftingGridMatrixToInventory;
+    }
+
+    @Nullable
+    public KeyMapping getOpenWirelessGrid() {
+        return openWirelessGrid;
+    }
+
+    public void setOpenWirelessGrid(final KeyMapping openWirelessGrid) {
+        this.openWirelessGrid = openWirelessGrid;
     }
 }

@@ -38,12 +38,14 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -52,6 +54,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
@@ -287,6 +290,26 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             GLFW.GLFW_KEY_TAB,
             KEY_BINDINGS_TRANSLATION_KEY
         )));
+        KeyMappings.INSTANCE.setOpenWirelessGrid(KeyBindingHelper.registerKeyBinding(new KeyMapping(
+            createTranslationKey("key", "open_wireless_grid"),
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            KEY_BINDINGS_TRANSLATION_KEY
+        )));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            final Player player = Minecraft.getInstance().player;
+            if (player == null) {
+                return;
+            }
+            final KeyMapping openWirelessGrid = KeyMappings.INSTANCE.getOpenWirelessGrid();
+            while (openWirelessGrid != null && openWirelessGrid.consumeClick()) {
+                PlatformApi.INSTANCE.useNetworkBoundItem(
+                    player,
+                    Items.INSTANCE.getWirelessGrid(),
+                    Items.INSTANCE.getCreativeWirelessGrid()
+                );
+            }
+        });
     }
 
     private void registerModelPredicates() {

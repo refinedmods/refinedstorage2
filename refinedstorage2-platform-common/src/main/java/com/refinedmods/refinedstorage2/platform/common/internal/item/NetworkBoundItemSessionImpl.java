@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkCo
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -22,13 +22,13 @@ import net.minecraft.world.phys.Vec3;
 public class NetworkBoundItemSessionImpl implements NetworkBoundItemSession {
     private final Player player;
     private final Vec3 playerPosition;
-    private final PlayerSlotReference playerSlotReference;
+    private final SlotReference slotReference;
     @Nullable
     private final NetworkReference networkReference;
 
     public NetworkBoundItemSessionImpl(
         final Player player,
-        final PlayerSlotReference playerSlotReference,
+        final SlotReference slotReference,
         @Nullable final NetworkReference networkReference
     ) {
         this.player = player;
@@ -37,7 +37,7 @@ public class NetworkBoundItemSessionImpl implements NetworkBoundItemSession {
         // If the network is no longer accessible, certain assumptions will break (e.g. grid watcher can no longer
         // be removed after it was added).
         this.playerPosition = new Vec3(player.position().x, player.position().y, player.position().z);
-        this.playerSlotReference = playerSlotReference;
+        this.slotReference = slotReference;
         this.networkReference = networkReference;
     }
 
@@ -69,14 +69,15 @@ public class NetworkBoundItemSessionImpl implements NetworkBoundItemSession {
 
     @Override
     public boolean isActive() {
-        return Platform.INSTANCE.getEnergyStorage(playerSlotReference.resolve(player))
+        return slotReference.resolve(player)
+            .flatMap(Platform.INSTANCE::getEnergyStorage)
             .map(energyStorage -> energyStorage.getStored() > 0)
             .orElse(true);
     }
 
     @Override
     public void drainEnergy(final long amount) {
-        Platform.INSTANCE.getEnergyStorage(playerSlotReference.resolve(player)).ifPresent(
+        slotReference.resolve(player).flatMap(Platform.INSTANCE::getEnergyStorage).ifPresent(
             energyStorage -> energyStorage.extract(amount, Action.EXECUTE)
         );
     }

@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.internal.item;
 import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +19,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
@@ -90,11 +89,11 @@ public class NetworkBoundItemHelperImpl implements NetworkBoundItemHelper {
     @Override
     public NetworkBoundItemSession openSession(final ItemStack stack,
                                                final ServerPlayer player,
-                                               final InteractionHand hand) {
+                                               final SlotReference slotReference) {
         final Optional<NetworkBoundItemSessionImpl.NetworkReference> networkReference = getNetworkReference(stack);
         return new NetworkBoundItemSessionImpl(
             player,
-            PlayerSlotReference.of(player, hand),
+            slotReference,
             networkReference.orElse(null)
         );
     }

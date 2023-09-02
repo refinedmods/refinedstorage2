@@ -7,9 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   "Open Wireless Grid" keybinding.
+
 ### Changed
 
--  You can now recharge the Controller in item form.
+-   You can now recharge the Controller in item form.
 
 ### Removed
 

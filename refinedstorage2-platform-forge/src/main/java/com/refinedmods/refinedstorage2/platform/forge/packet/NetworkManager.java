@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceSlotAmo
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceSlotChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.UseNetworkBoundItemPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridClearPacket;
@@ -166,6 +167,13 @@ public class NetworkManager {
             SingleAmountChangePacket::encode,
             SingleAmountChangePacket::decode,
             SingleAmountChangePacket::handle
+        );
+        handler.registerMessage(
+            id++,
+            UseNetworkBoundItemPacket.class,
+            UseNetworkBoundItemPacket::encode,
+            UseNetworkBoundItemPacket::decode,
+            UseNetworkBoundItemPacket::handle
         );
     }
 

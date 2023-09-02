@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
@@ -124,6 +125,11 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     @Override
     public void sendSingleAmountChange(final double amount) {
         sendToServer(PacketIds.SINGLE_AMOUNT_CHANGE, buf -> buf.writeDouble(amount));
+    }
+
+    @Override
+    public void sendUseNetworkBoundItem(final SlotReference slotReference) {
+        sendToServer(PacketIds.USE_NETWORK_BOUND_ITEM, slotReference::writeToBuf);
     }
 
     private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {
