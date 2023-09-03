@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfi
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
@@ -40,13 +41,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
@@ -110,7 +108,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private void sync() {
         if (level != null) {
-            level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -222,12 +220,12 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     protected void onDriveStateUpdated() {
-        LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
+        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
@@ -247,7 +245,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "disk_drive");
+        return ContentNames.DISK_DRIVE;
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFu
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -32,8 +33,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<DetectorNetworkNode>
     implements ExtendedMenuProvider {
@@ -140,7 +139,7 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "detector");
+        return ContentNames.DETECTOR;
     }
 
     @Nullable

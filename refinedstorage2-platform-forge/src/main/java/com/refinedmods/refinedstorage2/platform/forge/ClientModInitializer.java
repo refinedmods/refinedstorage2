@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.render.entity.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -140,6 +141,10 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getDiskDrive(),
             ctx -> new DiskDriveBlockEntityRendererImpl<>()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getStorageMonitor(),
+            ctx -> new StorageMonitorBlockEntityRenderer()
         );
     }
 

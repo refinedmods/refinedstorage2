@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
@@ -31,10 +32,25 @@ public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
                        final FluidResource fluidResource) {
         final FluidVariant fluidVariant = getFluidVariantFromCache(fluidResource);
         final TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
-        if (sprite != null) {
-            final int packedRgb = FluidVariantRendering.getColor(fluidVariant);
-            render(poseStack, x, y, packedRgb, sprite);
+        if (sprite == null) {
+            return;
         }
+        final int packedRgb = FluidVariantRendering.getColor(fluidVariant);
+        render(poseStack, x, y, packedRgb, sprite);
+    }
+
+    @Override
+    public void render(final PoseStack poseStack,
+                       final MultiBufferSource renderTypeBuffer,
+                       final int light,
+                       final FluidResource fluidResource) {
+        final FluidVariant fluidVariant = getFluidVariantFromCache(fluidResource);
+        final TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
+        if (sprite == null) {
+            return;
+        }
+        final int packedRgb = FluidVariantRendering.getColor(fluidVariant);
+        render(poseStack, renderTypeBuffer, light, packedRgb, sprite);
     }
 
     @Override

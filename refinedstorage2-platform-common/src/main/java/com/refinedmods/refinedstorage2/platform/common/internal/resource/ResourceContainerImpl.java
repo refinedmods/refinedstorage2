@@ -267,6 +267,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         for (int i = 0; i < size(); ++i) {
             final String key = "s" + i;
             if (!tag.contains(key)) {
+                removeSilently(i);
                 continue;
             }
             final CompoundTag item = tag.getCompound(key);

@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -122,6 +124,26 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
         ensureLoaded().addConstructorStrategyFactory(factory);
+    }
+
+    @Override
+    public void addStorageMonitorExtractionStrategy(final StorageMonitorExtractionStrategy strategy) {
+        ensureLoaded().addStorageMonitorExtractionStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorExtractionStrategy getStorageMonitorExtractionStrategy() {
+        return ensureLoaded().getStorageMonitorExtractionStrategy();
+    }
+
+    @Override
+    public void addStorageMonitorInsertionStrategy(final StorageMonitorInsertionStrategy strategy) {
+        ensureLoaded().addStorageMonitorInsertionStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorInsertionStrategy getStorageMonitorInsertionStrategy() {
+        return ensureLoaded().getStorageMonitorInsertionStrategy();
     }
 
     @Override

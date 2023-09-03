@@ -54,7 +54,7 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
 
     public enum Type {
         STORAGE,
-        DETECTOR,
+        GENERIC,
         EXTRACTING_STORAGE_NETWORK,
         EXTRACTING_SOURCE;
 
