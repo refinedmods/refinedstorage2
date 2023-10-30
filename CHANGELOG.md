@@ -18,6 +18,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   You can now recharge the Controller in item form.
 
+### Fixed
+
+-   Fixed a random Grid crash.
+
 ### Removed
 
 -   The `useEnergy` config option for the Wireless Grid. If you do not wish to use energy, use the
