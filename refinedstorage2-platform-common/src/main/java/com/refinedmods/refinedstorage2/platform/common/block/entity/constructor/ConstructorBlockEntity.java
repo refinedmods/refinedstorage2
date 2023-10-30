@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import java.util.ArrayList;
@@ -29,8 +30,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ConstructorBlockEntity
     extends AbstractSchedulingNetworkNodeContainerBlockEntity<SimpleNetworkNode, ConstructorBlockEntity.TaskContext> {
@@ -127,7 +126,7 @@ public class ConstructorBlockEntity
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "constructor");
+        return ContentNames.CONSTRUCTOR;
     }
 
     @Nullable

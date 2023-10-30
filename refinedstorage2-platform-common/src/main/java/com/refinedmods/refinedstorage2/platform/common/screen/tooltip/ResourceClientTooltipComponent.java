@@ -52,7 +52,7 @@ public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent
         final ResourceRendering<T> rendering = PlatformApi.INSTANCE.getResourceRendering(
             resourceAmount.getResource()
         );
-        final String amount = rendering.getDisplayedAmount(resourceAmount.getAmount());
+        final String amount = rendering.getDisplayedAmount(resourceAmount.getAmount(), true);
         final Component displayName = rendering.getDisplayName(resourceAmount.getResource());
         if (amount.isEmpty()) {
             return displayName;

@@ -44,6 +44,8 @@ public interface Config {
 
     WirelessTransmitterEntry getWirelessTransmitter();
 
+    SimpleEnergyUsageEntry getStorageMonitor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

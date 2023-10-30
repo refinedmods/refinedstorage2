@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid.hint;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.MouseWithIconClientTooltipComponent;
 
@@ -12,17 +13,21 @@ import net.minecraft.world.item.ItemStack;
 public class FluidGridInsertionHint implements GridInsertionHint {
     @Override
     public Optional<ClientTooltipComponent> getHint(final ItemStack carried) {
-        return Platform.INSTANCE.convertToFluid(carried).map(resourceAmount -> new MouseWithIconClientTooltipComponent(
+        return Platform.INSTANCE.getContainedFluid(carried).map(this::createComponent);
+    }
+
+    private MouseWithIconClientTooltipComponent createComponent(final ContainedFluid result) {
+        return new MouseWithIconClientTooltipComponent(
             MouseWithIconClientTooltipComponent.Type.RIGHT,
             (graphics, x, y) -> Platform.INSTANCE.getFluidRenderer().render(
                 graphics.pose(),
                 x,
                 y,
-                resourceAmount.getResource()
+                result.fluid().getResource()
             ),
-            resourceAmount.getAmount() == Platform.INSTANCE.getBucketAmount()
+            result.fluid().getAmount() == Platform.INSTANCE.getBucketAmount()
                 ? null
-                : Platform.INSTANCE.getBucketAmountFormatter().format(resourceAmount.getAmount())
-        ));
+                : Platform.INSTANCE.getBucketAmountFormatter().format(result.fluid().getAmount())
+        );
     }
 }

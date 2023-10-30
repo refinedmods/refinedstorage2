@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyTyp
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -27,8 +28,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
     implements ExtendedMenuProvider, EnergyBlockEntity {
@@ -106,10 +105,7 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
 
     @Override
     public Component getDisplayName() {
-        return createTranslation(
-            "block",
-            type == ControllerType.CREATIVE ? "creative_controller" : "controller"
-        );
+        return type == ControllerType.CREATIVE ? ContentNames.CREATIVE_CONTROLLER : ContentNames.CONTROLLER;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -139,7 +140,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
 
         @Override
         public Component getDisplayName() {
-            return createTranslation("item", "regulator_upgrade");
+            return ContentNames.REGULATOR_UPGRADE;
         }
 
         @Override

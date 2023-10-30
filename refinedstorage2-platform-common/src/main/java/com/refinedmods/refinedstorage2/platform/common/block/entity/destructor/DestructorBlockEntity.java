@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -31,8 +32,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContainerBlockEntity<SimpleNetworkNode>
     implements ExtendedMenuProvider {
@@ -116,7 +115,7 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "destructor");
+        return ContentNames.DESTRUCTOR;
     }
 
     @Nullable

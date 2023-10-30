@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -80,6 +82,14 @@ public interface PlatformApi {
     Collection<ConstructorStrategyFactory> getConstructorStrategyFactories();
 
     void addConstructorStrategyFactory(ConstructorStrategyFactory factory);
+
+    void addStorageMonitorExtractionStrategy(StorageMonitorExtractionStrategy strategy);
+
+    StorageMonitorExtractionStrategy getStorageMonitorExtractionStrategy();
+
+    void addStorageMonitorInsertionStrategy(StorageMonitorInsertionStrategy strategy);
+
+    StorageMonitorInsertionStrategy getStorageMonitorInsertionStrategy();
 
     MutableComponent createTranslation(String category, String value, Object... args);
 

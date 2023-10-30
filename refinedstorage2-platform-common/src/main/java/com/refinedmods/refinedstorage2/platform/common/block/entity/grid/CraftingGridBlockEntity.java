@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
@@ -29,8 +30,6 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
     private static final String TAG_CRAFTING_MATRIX = "matrix";
@@ -101,7 +100,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "crafting_grid");
+        return ContentNames.CRAFTING_GRID;
     }
 
     @Override

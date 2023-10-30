@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "refinedstorage2:block/side",
+    "north": "refinedstorage2:block/storage_monitor/front",
+    "east": "refinedstorage2:block/storage_monitor/left",
+    "south": "refinedstorage2:block/storage_monitor/back",
+    "west": "refinedstorage2:block/storage_monitor/right",
+    "up": "refinedstorage2:block/storage_monitor/top",
+    "down": "refinedstorage2:block/bottom"
+  }
+}

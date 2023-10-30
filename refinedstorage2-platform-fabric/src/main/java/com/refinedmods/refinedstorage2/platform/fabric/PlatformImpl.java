@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
+import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
@@ -22,8 +23,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.util.BucketSingleStackStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.util.SingleStackStorageImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +88,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
@@ -147,11 +148,24 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
+    public Optional<ContainedFluid> getContainedFluid(final ItemStack stack) {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        return convertNonEmptyToFluid(stack);
+        final SingleStackStorageImpl interceptingStorage = new SingleStackStorageImpl(stack);
+        final Storage<FluidVariant> storage = FluidStorage.ITEM.find(stack, ContainerItemContext.ofSingleSlot(
+            interceptingStorage
+        ));
+        try (Transaction tx = Transaction.openOuter()) {
+            final var extracted = StorageUtil.extractAny(storage, Long.MAX_VALUE, tx);
+            if (extracted == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new ContainedFluid(
+                interceptingStorage.getStack(),
+                new ResourceAmount<>(ofFluidVariant(extracted.resource()), extracted.amount())
+            ));
+        }
     }
 
     @Override
@@ -167,7 +181,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
-        final BucketSingleStackStorage interceptingStorage = new BucketSingleStackStorage();
+        final SingleStackStorageImpl interceptingStorage = SingleStackStorageImpl.forEmptyBucket();
         final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)
@@ -179,18 +193,6 @@ public final class PlatformImpl extends AbstractPlatform {
             destination.insert(toFluidVariant(fluidResource), FluidConstants.BUCKET, tx);
             return Optional.of(interceptingStorage.getStack());
         }
-    }
-
-    private Optional<ResourceAmount<FluidResource>> convertNonEmptyToFluid(final ItemStack stack) {
-        final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
-            stack,
-            new ConstantContainerItemContext(ItemVariant.of(stack), 1)
-        );
-        return Optional.ofNullable(StorageUtil.findExtractableContent(storage, null))
-            .map(content -> new ResourceAmount<>(
-                VariantUtil.ofFluidVariant(content.resource()),
-                content.amount()
-            ));
     }
 
     @Override

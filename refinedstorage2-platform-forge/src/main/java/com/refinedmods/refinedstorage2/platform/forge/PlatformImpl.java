@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
+import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
@@ -69,6 +70,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
@@ -142,14 +144,22 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
-        return stack
-            .getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null)
-            .map(handler -> handler.getFluidInTank(0))
-            .map(contents -> contents.isEmpty() ? null : new ResourceAmount<>(
-                new FluidResource(contents.getFluid(), contents.getTag()),
-                contents.getAmount())
-            );
+    public Optional<ContainedFluid> getContainedFluid(final ItemStack stack) {
+        final FluidTank tank = new FluidTank(Integer.MAX_VALUE);
+        final FluidActionResult result = FluidUtil.tryEmptyContainer(
+            stack,
+            tank,
+            Integer.MAX_VALUE,
+            null,
+            true
+        );
+        if (!result.isSuccess() || tank.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ContainedFluid(
+            result.getResult(),
+            new ResourceAmount<>(ofFluidStack(tank.getFluid()), tank.getFluidAmount())
+        ));
     }
 
     @Override

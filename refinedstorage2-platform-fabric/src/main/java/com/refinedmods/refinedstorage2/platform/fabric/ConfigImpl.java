@@ -70,6 +70,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private WirelessTransmitterEntryImpl wirelessTransmitter = new WirelessTransmitterEntryImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl storageMonitor = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.STORAGE_MONITOR
+    );
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -157,6 +162,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public WirelessTransmitterEntry getWirelessTransmitter() {
         return wirelessTransmitter;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getStorageMonitor() {
+        return storageMonitor;
     }
 
     private static class GridEntryImpl implements GridEntry {

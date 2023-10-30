@@ -11,6 +11,8 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -42,6 +44,8 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.CompositeStorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.CompositeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.common.integration.recipemod.CompositeIngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.internal.energy.ItemEnergyStorage;
@@ -131,6 +135,10 @@ public class PlatformApiImpl implements PlatformApi {
     private final Queue<ConstructorStrategyFactory> constructorStrategyFactories = new PriorityQueue<>(
         Comparator.comparingInt(ConstructorStrategyFactory::getPriority)
     );
+    private final CompositeStorageMonitorInsertionStrategy storageMonitorInsertionStrategy =
+        new CompositeStorageMonitorInsertionStrategy();
+    private final CompositeStorageMonitorExtractionStrategy storageMonitorExtractionStrategy =
+        new CompositeStorageMonitorExtractionStrategy();
     private final CompositeIngredientConverter compositeConverter = new CompositeIngredientConverter();
     private final StorageContainerItemHelper storageContainerItemHelper = new StorageContainerItemHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
@@ -232,6 +240,26 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
         constructorStrategyFactories.add(factory);
+    }
+
+    @Override
+    public void addStorageMonitorExtractionStrategy(final StorageMonitorExtractionStrategy strategy) {
+        storageMonitorExtractionStrategy.addStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorExtractionStrategy getStorageMonitorExtractionStrategy() {
+        return storageMonitorExtractionStrategy;
+    }
+
+    @Override
+    public void addStorageMonitorInsertionStrategy(final StorageMonitorInsertionStrategy strategy) {
+        storageMonitorInsertionStrategy.addStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorInsertionStrategy getStorageMonitorInsertionStrategy() {
+        return storageMonitorInsertionStrategy;
     }
 
     @Override

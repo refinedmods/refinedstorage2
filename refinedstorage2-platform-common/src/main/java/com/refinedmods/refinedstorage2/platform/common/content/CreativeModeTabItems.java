@@ -46,6 +46,7 @@ public final class CreativeModeTabItems {
         ));
         itemConsumer.accept(Blocks.INSTANCE.getMachineCasing());
         itemConsumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());
+        itemConsumer.accept(Blocks.INSTANCE.getStorageMonitor());
     }
 
     private static void appendBlockColors(final Consumer<ItemStack> consumer, final BlockColorMap<?> map) {

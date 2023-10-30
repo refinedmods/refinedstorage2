@@ -134,7 +134,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             graphics,
             x,
             y,
-            rendering.getDisplayedAmount(amount),
+            rendering.getDisplayedAmount(amount, true),
             Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
             true
         );
