@@ -47,6 +47,7 @@ public final class ContentIds {
     public static final ResourceLocation WIRELESS_TRANSMITTER = createIdentifier("wireless_transmitter");
     public static final ResourceLocation RANGE_UPGRADE = createIdentifier("range_upgrade");
     public static final ResourceLocation CREATIVE_RANGE_UPGRADE = createIdentifier("creative_range_upgrade");
+    public static final ResourceLocation STORAGE_MONITOR = createIdentifier("storage_monitor");
 
     private ContentIds() {
     }

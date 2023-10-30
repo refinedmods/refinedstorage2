@@ -22,7 +22,7 @@ public class GridFocusedStackProvider implements FocusedStackProvider {
         if (!(screen instanceof AbstractGridScreen<?> gridScreen)) {
             return CompoundEventResult.pass();
         }
-        final GridResource resource = gridScreen.getHoveredGridResource();
+        final GridResource resource = gridScreen.getCurrentGridResource();
         if (resource == null) {
             return CompoundEventResult.pass();
         }

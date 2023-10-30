@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
 import java.util.function.Supplier;
@@ -73,7 +73,8 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         registry.group(
             createIdentifier("fully_charged_controller"),
             createTranslation("block", "controller.rei_fully_charged"),
-            ControllerBlockItem.getAllAtCapacity().map(EntryStacks::of).collect(Collectors.toList())
+            EnergyItemHelperImpl.createAllAtEnergyCapacity(Items.INSTANCE.getControllers())
+                .map(EntryStacks::of).collect(Collectors.toList())
         );
         groupItems(
             registry,

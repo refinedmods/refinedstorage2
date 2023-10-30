@@ -35,6 +35,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry constructor;
     private final WirelessGridEntry wirelessGrid;
     private final WirelessTransmitterEntry wirelessTransmitter;
+    private final SimpleEnergyUsageEntry storageMonitor;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -58,6 +59,11 @@ public class ConfigImpl implements Config {
         constructor = new SimpleEnergyUsageEntryImpl("constructor", "Constructor", DefaultEnergyUsage.CONSTRUCTOR);
         wirelessGrid = new WirelessGridEntryImpl();
         wirelessTransmitter = new WirelessTransmitterEntryImpl();
+        storageMonitor = new SimpleEnergyUsageEntryImpl(
+            "storageMonitor",
+            "Storage Monitor",
+            DefaultEnergyUsage.STORAGE_MONITOR
+        );
         spec = builder.build();
     }
 
@@ -148,6 +154,11 @@ public class ConfigImpl implements Config {
     @Override
     public WirelessTransmitterEntry getWirelessTransmitter() {
         return wirelessTransmitter;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getStorageMonitor() {
+        return storageMonitor;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
@@ -639,7 +650,6 @@ public class ConfigImpl implements Config {
     }
 
     private class WirelessGridEntryImpl implements WirelessGridEntry {
-        private final ForgeConfigSpec.BooleanValue useEnergy;
         private final ForgeConfigSpec.LongValue energyCapacity;
         private final ForgeConfigSpec.LongValue openEnergyUsage;
         private final ForgeConfigSpec.LongValue extractEnergyUsage;
@@ -647,7 +657,6 @@ public class ConfigImpl implements Config {
 
         WirelessGridEntryImpl() {
             builder.push("wirelessGrid");
-            useEnergy = builder.comment("Whether the Wireless Grid uses energy").define("useEnergy", true);
             energyCapacity = builder.comment("The energy capacity of the Wireless Grid")
                 .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
@@ -657,10 +666,6 @@ public class ConfigImpl implements Config {
             insertEnergyUsage = builder.comment("The energy used by the Wireless Grid to insert resources")
                 .defineInRange("insertEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_INSERT, 0, Long.MAX_VALUE);
             builder.pop();
-        }
-
-        public boolean getUseEnergy() {
-            return useEnergy.get();
         }
 
         public long getEnergyCapacity() {

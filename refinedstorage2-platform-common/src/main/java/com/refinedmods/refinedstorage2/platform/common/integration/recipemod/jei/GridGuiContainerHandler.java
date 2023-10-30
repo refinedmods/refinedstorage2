@@ -27,7 +27,7 @@ public class GridGuiContainerHandler implements IGuiContainerHandler<AbstractGri
         final double mouseX,
         final double mouseY
     ) {
-        final GridResource resource = screen.getHoveredGridResource();
+        final GridResource resource = screen.getCurrentGridResource();
         if (resource == null) {
             return Optional.empty();
         }

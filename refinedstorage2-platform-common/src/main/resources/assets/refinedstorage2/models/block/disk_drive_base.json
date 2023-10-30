@@ -1,11 +1,11 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "refinedstorage2:block/disk_drive",
-    "front": "refinedstorage2:block/disk_drive",
-    "bottom": "refinedstorage2:block/disk_drive_bottom",
-    "top": "refinedstorage2:block/disk_drive_top",
-    "side": "refinedstorage2:block/disk_drive_side"
+    "particle": "refinedstorage2:block/disk_drive/front",
+    "front": "refinedstorage2:block/disk_drive/front",
+    "bottom": "refinedstorage2:block/disk_drive/bottom",
+    "top": "refinedstorage2:block/disk_drive/top",
+    "side": "refinedstorage2:block/disk_drive/side"
   },
   "elements": [
     {

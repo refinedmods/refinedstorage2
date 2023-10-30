@@ -1,0 +1,57 @@
+{
+  "variants": {
+    "direction=down_east": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": 90,
+      "y": -90
+    },
+    "direction=down_north": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": 90
+    },
+    "direction=down_south": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": 90,
+      "y": 180
+    },
+    "direction=down_west": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": 90,
+      "y": 90
+    },
+    "direction=east": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "y": 90
+    },
+    "direction=north": {
+      "model": "refinedstorage2:block/storage_monitor"
+    },
+    "direction=south": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "y": 180
+    },
+    "direction=up_east": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": -90,
+      "y": -90
+    },
+    "direction=up_north": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": -90,
+      "y": 180
+    },
+    "direction=up_south": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": -90
+    },
+    "direction=up_west": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "x": -90,
+      "y": 90
+    },
+    "direction=west": {
+      "model": "refinedstorage2:block/storage_monitor",
+      "y": 270
+    }
+  }
+}

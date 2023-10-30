@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.importer.Import
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
@@ -32,8 +33,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ImporterBlockEntity
     extends AbstractUpgradeableNetworkNodeContainerBlockEntity<ImporterNetworkNode>
@@ -127,7 +126,7 @@ public class ImporterBlockEntity
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", "importer");
+        return ContentNames.IMPORTER;
     }
 
     @Nullable

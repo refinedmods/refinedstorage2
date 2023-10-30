@@ -3,11 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -123,8 +121,8 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public Optional<ResourceAmount<FluidResource>> convertToFluid(final ItemStack stack) {
-        return ensureLoaded().convertToFluid(stack);
+    public Optional<ContainedFluid> getContainedFluid(final ItemStack stack) {
+        return ensureLoaded().getContainedFluid(stack);
     }
 
     @Override
@@ -135,16 +133,6 @@ public class PlatformProxy implements Platform {
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
         return ensureLoaded().convertToBucket(fluidResource);
-    }
-
-    @Override
-    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
-        return ensureLoaded().createEnergyStorage(controllerType, listener);
-    }
-
-    @Override
-    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
-        ensureLoaded().setEnergy(energyStorage, stored);
     }
 
     @Override
@@ -238,6 +226,11 @@ public class PlatformProxy implements Platform {
                               final int x,
                               final int y) {
         ensureLoaded().renderTooltip(graphics, components, x, y);
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        return ensureLoaded().getEnergyStorage(stack);
     }
 
     private Platform ensureLoaded() {

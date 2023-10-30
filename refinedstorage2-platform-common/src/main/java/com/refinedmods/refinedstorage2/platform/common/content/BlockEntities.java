@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlo
 import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -61,6 +62,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<ConstructorBlockEntity>> constructor;
     @Nullable
     private Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> wirelessTransmitter;
+    @Nullable
+    private Supplier<BlockEntityType<StorageMonitorBlockEntity>> storageMonitor;
 
     private BlockEntities() {
     }
@@ -193,5 +196,13 @@ public final class BlockEntities {
 
     public void setWirelessTransmitter(final Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> supplier) {
         this.wirelessTransmitter = supplier;
+    }
+
+    public BlockEntityType<StorageMonitorBlockEntity> getStorageMonitor() {
+        return Objects.requireNonNull(storageMonitor).get();
+    }
+
+    public void setStorageMonitor(final Supplier<BlockEntityType<StorageMonitorBlockEntity>> supplier) {
+        this.storageMonitor = supplier;
     }
 }

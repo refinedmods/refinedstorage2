@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +41,22 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
         final TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
 
         render(poseStack, x, y, packedRgb, sprite);
+    }
+
+    @Override
+    public void render(final PoseStack poseStack,
+                       final MultiBufferSource renderTypeBuffer,
+                       final int light,
+                       final FluidResource fluidResource) {
+        final FluidStack stack = getFluidStackFromCache(fluidResource);
+        final Fluid fluid = fluidResource.fluid();
+
+        final IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
+
+        final int packedRgb = renderProperties.getTintColor(stack);
+        final TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
+
+        render(poseStack, renderTypeBuffer, light, packedRgb, sprite);
     }
 
     @Override

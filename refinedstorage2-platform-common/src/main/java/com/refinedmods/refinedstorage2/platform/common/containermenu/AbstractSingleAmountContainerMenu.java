@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.PlayerSlotReference;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceSlot;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
 
@@ -26,7 +27,7 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
                                                 final Component filterHelpText) {
         super(type, syncId);
         if (buf.readBoolean()) {
-            disabledPlayerInventorySlot = PlayerSlotReference.of(buf);
+            disabledSlot = PlatformApi.INSTANCE.getSlotReference(buf).orElse(null);
         }
         this.clientAmount = buf.readDouble();
         this.filterHelpText = filterHelpText;
@@ -39,9 +40,9 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
                                                 final Player player,
                                                 final ResourceContainer resourceContainer,
                                                 final Component filterHelpText,
-                                                @Nullable final PlayerSlotReference disabledSlotReference) {
+                                                @Nullable final SlotReference disabledSlotReference) {
         super(type, syncId, player);
-        this.disabledPlayerInventorySlot = disabledSlotReference;
+        this.disabledSlot = disabledSlotReference;
         this.filterHelpText = filterHelpText;
         addSlots(player, resourceContainer);
     }
@@ -66,10 +67,10 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
     public static void writeToBuf(final FriendlyByteBuf buf,
                                   final double amount,
                                   final ResourceContainer container,
-                                  @Nullable final PlayerSlotReference disabledSlotReference) {
+                                  @Nullable final SlotReference disabledSlotReference) {
         if (disabledSlotReference != null) {
             buf.writeBoolean(true);
-            disabledSlotReference.writeToBuf(buf);
+            PlatformApi.INSTANCE.writeSlotReference(disabledSlotReference, buf);
         } else {
             buf.writeBoolean(false);
         }

@@ -24,6 +24,7 @@ public final class PacketIds {
     public static final ResourceLocation RESOURCE_FILTER_SLOT_CHANGE = createIdentifier("resource_filter_slot_change");
     public static final ResourceLocation RESOURCE_SLOT_AMOUNT_CHANGE = createIdentifier("resource_slot_amount_change");
     public static final ResourceLocation SINGLE_AMOUNT_CHANGE = createIdentifier("detector_amount_change");
+    public static final ResourceLocation USE_NETWORK_BOUND_ITEM = createIdentifier("use_network_bound_item");
 
     private PacketIds() {
     }

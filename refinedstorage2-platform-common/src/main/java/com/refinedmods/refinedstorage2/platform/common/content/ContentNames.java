@@ -18,6 +18,10 @@ public final class ContentNames {
     public static final MutableComponent CREATIVE_CONTROLLER = createTranslation("block", "creative_controller");
     public static final MutableComponent WIRELESS_GRID = createTranslation("item", "wireless_grid");
     public static final MutableComponent WIRELESS_TRANSMITTER = createTranslation("block", "wireless_transmitter");
+    public static final MutableComponent REGULATOR_UPGRADE = createTranslation("block", "regulator_upgrade");
+    public static final MutableComponent STORAGE_MONITOR = createTranslation("block", "storage_monitor");
+    public static final MutableComponent INTERFACE = createTranslation("block", "interface");
+    public static final MutableComponent DISK_DRIVE = createTranslation("block", "disk_drive");
 
     private ContentNames() {
     }

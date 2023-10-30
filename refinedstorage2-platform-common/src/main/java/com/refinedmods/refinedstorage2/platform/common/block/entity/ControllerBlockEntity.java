@@ -1,16 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.EnergyBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
+import com.refinedmods.refinedstorage2.platform.common.internal.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
-
-import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
@@ -21,15 +23,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
-
 public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
-    implements ExtendedMenuProvider {
+    implements ExtendedMenuProvider, EnergyBlockEntity {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBlockEntity.class);
 
     private static final String TAG_STORED = "stored";
@@ -42,34 +43,24 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public ControllerBlockEntity(final ControllerType type, final BlockPos pos, final BlockState state) {
         super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
         this.type = type;
-        this.energyStorage = Platform.INSTANCE.createEnergyStorage(type, this::setChanged);
+        this.energyStorage = createEnergyStorage(type, this);
         this.getNode().setEnergyStorage(energyStorage);
+    }
+
+    private static EnergyStorage createEnergyStorage(final ControllerType type, final BlockEntity blockEntity) {
+        if (type == ControllerType.CREATIVE) {
+            return CreativeEnergyStorage.INSTANCE;
+        }
+        return new BlockEntityEnergyStorage(
+            Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+            blockEntity
+        );
     }
 
     private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(final ControllerType type) {
         return type == ControllerType.CREATIVE
             ? BlockEntities.INSTANCE.getCreativeController()
             : BlockEntities.INSTANCE.getController();
-    }
-
-    public static long getStored(final CompoundTag tag) {
-        return tag.contains(TAG_STORED) ? tag.getLong(TAG_STORED) : 0;
-    }
-
-    public static void setStored(final CompoundTag tag, final long stored) {
-        tag.putLong(TAG_STORED, stored);
-    }
-
-    public static long getCapacity(final CompoundTag tag) {
-        return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
-    }
-
-    public static void setCapacity(final CompoundTag tag, final long capacity) {
-        tag.putLong(TAG_CAPACITY, capacity);
-    }
-
-    public static boolean hasEnergy(@Nullable final CompoundTag tag) {
-        return tag != null && tag.contains(TAG_STORED) && tag.contains(TAG_CAPACITY);
     }
 
     public void updateEnergyTypeInLevel(final BlockState state) {
@@ -108,16 +99,13 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public void load(final CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_STORED)) {
-            Platform.INSTANCE.setEnergy(energyStorage, tag.getLong(TAG_STORED));
+            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
         }
     }
 
     @Override
     public Component getDisplayName() {
-        return createTranslation(
-            "block",
-            type == ControllerType.CREATIVE ? "creative_controller" : "controller"
-        );
+        return type == ControllerType.CREATIVE ? ContentNames.CREATIVE_CONTROLLER : ContentNames.CONTROLLER;
     }
 
     @Override
@@ -139,6 +127,7 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
         return getNode().getActualCapacity();
     }
 
+    @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
     }

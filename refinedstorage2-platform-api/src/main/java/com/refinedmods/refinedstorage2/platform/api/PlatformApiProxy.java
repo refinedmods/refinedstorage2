@@ -3,9 +3,12 @@ package com.refinedmods.refinedstorage2.platform.api;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.constructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.destructor.DestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -18,6 +21,11 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.item.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.item.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -34,12 +42,17 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestin
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiProxy implements PlatformApi {
@@ -111,6 +124,26 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addConstructorStrategyFactory(final ConstructorStrategyFactory factory) {
         ensureLoaded().addConstructorStrategyFactory(factory);
+    }
+
+    @Override
+    public void addStorageMonitorExtractionStrategy(final StorageMonitorExtractionStrategy strategy) {
+        ensureLoaded().addStorageMonitorExtractionStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorExtractionStrategy getStorageMonitorExtractionStrategy() {
+        return ensureLoaded().getStorageMonitorExtractionStrategy();
+    }
+
+    @Override
+    public void addStorageMonitorInsertionStrategy(final StorageMonitorInsertionStrategy strategy) {
+        ensureLoaded().addStorageMonitorInsertionStrategy(strategy);
+    }
+
+    @Override
+    public StorageMonitorInsertionStrategy getStorageMonitorInsertionStrategy() {
+        return ensureLoaded().getStorageMonitorInsertionStrategy();
     }
 
     @Override
@@ -269,6 +302,56 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier() {
         return ensureLoaded().getWirelessTransmitterRangeModifier();
+    }
+
+    @Override
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
+        return ensureLoaded().getEnergyStorage(stack);
+    }
+
+    @Override
+    public EnergyItemHelper getEnergyItemHelper() {
+        return ensureLoaded().getEnergyItemHelper();
+    }
+
+    @Override
+    public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack) {
+        return ensureLoaded().asItemEnergyStorage(energyStorage, stack);
+    }
+
+    @Override
+    public NetworkBoundItemHelper getNetworkBoundItemHelper() {
+        return ensureLoaded().getNetworkBoundItemHelper();
+    }
+
+    @Override
+    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
+        return ensureLoaded().getSlotReferenceFactoryRegistry();
+    }
+
+    @Override
+    public void writeSlotReference(final SlotReference slotReference, final FriendlyByteBuf buf) {
+        ensureLoaded().writeSlotReference(slotReference, buf);
+    }
+
+    @Override
+    public Optional<SlotReference> getSlotReference(final FriendlyByteBuf buf) {
+        return ensureLoaded().getSlotReference(buf);
+    }
+
+    @Override
+    public void addSlotReferenceProvider(final SlotReferenceProvider slotReferenceProvider) {
+        ensureLoaded().addSlotReferenceProvider(slotReferenceProvider);
+    }
+
+    @Override
+    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
+        return ensureLoaded().createInventorySlotReference(player, hand);
+    }
+
+    @Override
+    public void useNetworkBoundItem(final Player player, final Item... items) {
+        ensureLoaded().useNetworkBoundItem(player, items);
     }
 
     private PlatformApi ensureLoaded() {

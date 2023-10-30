@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.render.entity.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
@@ -38,6 +39,7 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -238,6 +240,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             BlockEntities.INSTANCE.getDiskDrive(),
             ctx -> new DiskDriveBlockEntityRendererImpl<>()
         );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getStorageMonitor(),
+            ctx -> new StorageMonitorBlockEntityRenderer()
+        );
     }
 
     private void registerCustomModels() {
@@ -287,6 +293,13 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             GLFW.GLFW_KEY_TAB,
             KEY_BINDINGS_TRANSLATION_KEY
         )));
+        KeyMappings.INSTANCE.setOpenWirelessGrid(KeyBindingHelper.registerKeyBinding(new KeyMapping(
+            createTranslationKey("key", "open_wireless_grid"),
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            KEY_BINDINGS_TRANSLATION_KEY
+        )));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> handleInputEvents());
     }
 
     private void registerModelPredicates() {

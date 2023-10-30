@@ -9,24 +9,25 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public enum BiDirection implements StringRepresentable {
-    NORTH(new Vector3f(0, 0, 0)),
-    EAST(new Vector3f(0, -90, 0)),
-    SOUTH(new Vector3f(0, 180, 0)),
-    WEST(new Vector3f(0, 90, 0)),
-    UP_NORTH(new Vector3f(90, 0, 180)),
-    UP_EAST(new Vector3f(90, 0, -90)),
-    UP_SOUTH(new Vector3f(90, 0, 0)),
-    UP_WEST(new Vector3f(90, 0, 90)),
-    DOWN_NORTH(new Vector3f(-90, 0, 0)),
-    DOWN_EAST(new Vector3f(-90, 0, -90)),
-    DOWN_SOUTH(new Vector3f(-90, 0, 180)),
-    DOWN_WEST(new Vector3f(-90, 0, 90));
+    NORTH(new Vector3f(0, 0, 0), Direction.NORTH),
+    EAST(new Vector3f(0, -90, 0), Direction.EAST),
+    SOUTH(new Vector3f(0, 180, 0), Direction.SOUTH),
+    WEST(new Vector3f(0, 90, 0), Direction.WEST),
+    UP_NORTH(new Vector3f(90, 0, 180), Direction.UP),
+    UP_EAST(new Vector3f(90, 0, -90), Direction.UP),
+    UP_SOUTH(new Vector3f(90, 0, 0), Direction.UP),
+    UP_WEST(new Vector3f(90, 0, 90), Direction.UP),
+    DOWN_NORTH(new Vector3f(-90, 0, 0), Direction.DOWN),
+    DOWN_EAST(new Vector3f(-90, 0, -90), Direction.DOWN),
+    DOWN_SOUTH(new Vector3f(-90, 0, 180), Direction.DOWN),
+    DOWN_WEST(new Vector3f(-90, 0, 90), Direction.DOWN);
 
     private final Vector3f vec;
     private final String name;
     private final Quaternionf quaternion;
+    private final Direction direction;
 
-    BiDirection(final Vector3f vec) {
+    BiDirection(final Vector3f vec, final Direction direction) {
         this.vec = vec;
         this.name = name().toLowerCase(Locale.ROOT);
         this.quaternion = new Quaternionf().rotateXYZ(
@@ -34,6 +35,7 @@ public enum BiDirection implements StringRepresentable {
             vec.y() * Mth.DEG_TO_RAD,
             vec.z() * Mth.DEG_TO_RAD
         );
+        this.direction = direction;
     }
 
     public static BiDirection forHorizontal(final Direction horizontalDirection) {
@@ -94,5 +96,9 @@ public enum BiDirection implements StringRepresentable {
 
     public Quaternionf getQuaternion() {
         return quaternion;
+    }
+
+    public Direction asDirection() {
+        return direction;
     }
 }

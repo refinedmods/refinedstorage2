@@ -67,7 +67,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private ScrollbarWidget scrollbar;
     private int totalRows;
     private int visibleRows;
-    private int gridSlotNumber;
+    private int currentGridSlotIndex;
 
     protected AbstractGridScreen(final T menu,
                                  final Inventory playerInventory,
@@ -207,7 +207,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
         graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, bottomHeight);
 
-        gridSlotNumber = -1;
+        currentGridSlotIndex = -1;
 
         graphics.enableScissor(x + 7, y + TOP_HEIGHT, x + 7 + (18 * COLUMNS), y + TOP_HEIGHT + (visibleRows * 18));
         for (int row = 0; row < Math.max(totalRows, visibleRows); ++row) {
@@ -284,7 +284,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (inBounds && isOverStorageArea(mouseX, mouseY)) {
             renderSelection(graphics, slotX, slotY);
             if (resource != null) {
-                gridSlotNumber = idx;
+                currentGridSlotIndex = idx;
             }
         }
     }
@@ -343,8 +343,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     private void renderOverStorageAreaTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (gridSlotNumber != -1) {
-            renderHoveredResourceTooltip(graphics, x, y);
+        final GridResource resource = getCurrentGridResource();
+        if (resource != null) {
+            renderHoveredResourceTooltip(graphics, x, y, resource);
             return;
         }
         final ItemStack carried = getMenu().getCarried();
@@ -355,13 +356,14 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         Platform.INSTANCE.renderTooltip(graphics, hints, x, y);
     }
 
-    private void renderHoveredResourceTooltip(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        final GridView view = getMenu().getView();
-        final GridResource resource = view.getViewList().get(gridSlotNumber);
+    private void renderHoveredResourceTooltip(final GuiGraphics graphics,
+                                              final int mouseX,
+                                              final int mouseY,
+                                              final GridResource resource) {
         if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
-        renderHoveredResourceTooltip(graphics, mouseX, mouseY, view, platformResource);
+        renderHoveredResourceTooltip(graphics, mouseX, mouseY, getMenu().getView(), platformResource);
     }
 
     private void renderHoveredResourceTooltip(final GuiGraphics graphics,
@@ -428,11 +430,15 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
 
     @Nullable
-    public GridResource getHoveredGridResource() {
-        if (this.gridSlotNumber == -1) {
+    public GridResource getCurrentGridResource() {
+        if (currentGridSlotIndex < 0) {
             return null;
         }
-        return menu.getView().getViewList().get(this.gridSlotNumber);
+        final List<GridResource> viewList = menu.getView().getViewList();
+        if (currentGridSlotIndex >= viewList.size()) {
+            return null;
+        }
+        return viewList.get(currentGridSlotIndex);
     }
 
     @Override
@@ -453,9 +459,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
 
         final ItemStack carriedStack = getMenu().getCarried();
+        final GridResource resource = getCurrentGridResource();
 
-        if (!getMenu().getView().getViewList().isEmpty() && gridSlotNumber >= 0 && carriedStack.isEmpty()) {
-            mouseClickedInGrid(clickedButton, getMenu().getView().getViewList().get(gridSlotNumber));
+        if (resource != null && carriedStack.isEmpty()) {
+            mouseClickedInGrid(clickedButton, resource);
             return true;
         }
 
@@ -514,8 +521,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     public boolean mouseScrolled(final double x, final double y, final double delta) {
         final boolean up = delta > 0;
 
-        if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
-            mouseScrolledInGrid(up);
+        if (isOverStorageArea((int) x, (int) y)) {
+            final GridResource resource = getCurrentGridResource();
+            if (resource != null) {
+                mouseScrolledInGrid(up, resource);
+            }
         } else if (hoveredSlot != null && hoveredSlot.hasItem() && !(hoveredSlot instanceof DisabledSlot)) {
             mouseScrolledInInventory(up, hoveredSlot);
         }
@@ -544,13 +554,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         );
     }
 
-    private void mouseScrolledInGrid(final boolean up) {
+    private void mouseScrolledInGrid(final boolean up, final GridResource resource) {
         getMenu().getView().setPreventSorting(true);
         final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
         if (scrollMode == null) {
             return;
         }
-        final GridResource resource = getMenu().getView().getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformGridResource)) {
             return;
         }

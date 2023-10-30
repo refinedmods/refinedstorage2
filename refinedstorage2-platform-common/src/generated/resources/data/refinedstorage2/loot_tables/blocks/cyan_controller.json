@@ -1,4 +1,9 @@
 {
+  "functions": [
+    {
+      "function": "refinedstorage2:energy"
+    }
+  ],
   "pools": [
     {
       "bonus_rolls": 0.0,

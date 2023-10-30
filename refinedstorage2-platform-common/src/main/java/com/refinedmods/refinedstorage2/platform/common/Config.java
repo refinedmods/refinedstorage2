@@ -44,6 +44,8 @@ public interface Config {
 
     WirelessTransmitterEntry getWirelessTransmitter();
 
+    SimpleEnergyUsageEntry getStorageMonitor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -149,8 +151,6 @@ public interface Config {
     }
 
     interface WirelessGridEntry {
-        boolean getUseEnergy();
-
         long getEnergyCapacity();
 
         long getOpenEnergyUsage();

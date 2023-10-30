@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
@@ -129,6 +130,8 @@ public final class Blocks {
         new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
     private Supplier<InterfaceBlock> iface;
+    @Nullable
+    private Supplier<StorageMonitorBlock> storageMonitor;
 
     private Blocks() {
     }
@@ -228,5 +231,13 @@ public final class Blocks {
 
     public BlockColorMap<WirelessTransmitterBlock> getWirelessTransmitter() {
         return wirelessTransmitter;
+    }
+
+    public void setStorageMonitor(final Supplier<StorageMonitorBlock> supplier) {
+        this.storageMonitor = supplier;
+    }
+
+    public StorageMonitorBlock getStorageMonitor() {
+        return Objects.requireNonNull(storageMonitor).get();
     }
 }

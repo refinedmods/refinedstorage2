@@ -11,6 +11,8 @@ public final class LootFunctions {
 
     @Nullable
     private Supplier<LootItemFunctionType> storageBlock;
+    @Nullable
+    private Supplier<LootItemFunctionType> energy;
 
     private LootFunctions() {
     }
@@ -19,7 +21,15 @@ public final class LootFunctions {
         return Objects.requireNonNull(storageBlock).get();
     }
 
-    public void setStorageBlock(final Supplier<LootItemFunctionType> storageBlockSupplier) {
-        this.storageBlock = storageBlockSupplier;
+    public void setStorageBlock(final Supplier<LootItemFunctionType> supplier) {
+        this.storageBlock = supplier;
+    }
+
+    public LootItemFunctionType getEnergy() {
+        return Objects.requireNonNull(energy).get();
+    }
+
+    public void setEnergy(final Supplier<LootItemFunctionType> supplier) {
+        this.energy = supplier;
     }
 }

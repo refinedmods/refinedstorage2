@@ -30,8 +30,9 @@ public class EnergyStorageImpl implements EnergyStorage {
     public long receive(final long amount, final Action action) {
         final long spaceRemaining = capacity - stored;
         final long maxReceive = Math.min(amount, spaceRemaining);
-        if (action == Action.EXECUTE) {
+        if (maxReceive > 0 && action == Action.EXECUTE) {
             stored += maxReceive;
+            changed();
         }
         return maxReceive;
     }
@@ -39,9 +40,14 @@ public class EnergyStorageImpl implements EnergyStorage {
     @Override
     public long extract(final long amount, final Action action) {
         final long maxExtract = Math.min(stored, amount);
-        if (action == Action.EXECUTE) {
+        if (maxExtract > 0 && action == Action.EXECUTE) {
             stored -= maxExtract;
+            changed();
         }
         return maxExtract;
+    }
+
+    protected void changed() {
+        // no op
     }
 }

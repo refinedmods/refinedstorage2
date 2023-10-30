@@ -13,6 +13,8 @@ public final class DefaultEnergyUsage {
     public static final long CONSTRUCTOR = 3;
     public static final long DESTRUCTOR = 3;
     public static final long DISK_DRIVE_PER_DISK = 4;
+    public static final long STORAGE_MONITOR = 4;
+
     public static final long CONTROLLER_CAPACITY = 1000;
 
     public static final long ONE_K_STORAGE_BLOCK = 2;
