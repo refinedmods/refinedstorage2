@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.WirelessTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -29,7 +29,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class WirelessTransmitterBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<SimpleNetworkNode>
+public class WirelessTransmitterBlockEntity
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<SimpleNetworkNode>
     implements ExtendedMenuProvider, WirelessTransmitter {
     private static final String TAG_UPGRADES = "u";
 

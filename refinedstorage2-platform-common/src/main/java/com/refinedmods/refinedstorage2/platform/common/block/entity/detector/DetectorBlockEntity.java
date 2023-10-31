@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTempl
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<DetectorNetworkNode>
+public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<DetectorNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(DetectorBlockEntity.class);
 

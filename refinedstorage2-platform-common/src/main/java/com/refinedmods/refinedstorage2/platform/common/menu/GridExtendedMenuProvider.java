@@ -34,7 +34,7 @@ public class GridExtendedMenuProvider implements ExtendedMenuProvider {
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-        buf.writeBoolean(grid.isActive());
+        buf.writeBoolean(grid.isGridActive());
         final List<PlatformStorageChannelType<?>> types = storageChannelTypeRegistry.getAll();
         buf.writeInt(types.size());
         types.forEach(type -> writeStorageChannel(type, buf));

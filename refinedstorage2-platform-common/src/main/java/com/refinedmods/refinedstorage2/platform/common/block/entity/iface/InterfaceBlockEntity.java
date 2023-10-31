@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
@@ -37,7 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class InterfaceBlockEntity
-    extends AbstractInternalNetworkNodeContainerBlockEntity<InterfaceNetworkNode>
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<InterfaceNetworkNode>
     implements ExtendedMenuProvider, BlockEntityWithDrops {
     private static final String TAG_EXPORT_ITEMS = "ei";
     private static final int EXPORT_SLOTS = 9;

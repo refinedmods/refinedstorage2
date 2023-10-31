@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -16,7 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.SimpleNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ItemDropConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceBlockConstructorStrategy;
@@ -479,11 +480,11 @@ public abstract class AbstractModInitializer {
     ) {
         BlockEntities.INSTANCE.setCable(callback.register(
             CABLE,
-            () -> typeFactory.create((pos, state) -> new SimpleNetworkNodeContainerBlockEntity(
+            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
                 BlockEntities.INSTANCE.getCable(),
                 pos,
                 state,
-                Platform.INSTANCE.getConfig().getCable().getEnergyUsage()
+                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
             ), Blocks.INSTANCE.getCable().toArray())
         ));
         BlockEntities.INSTANCE.setController(callback.register(
@@ -573,11 +574,11 @@ public abstract class AbstractModInitializer {
         ));
         BlockEntities.INSTANCE.setNetworkReceiver(callback.register(
             NETWORK_RECEIVER,
-            () -> typeFactory.create((pos, state) -> new SimpleNetworkNodeContainerBlockEntity(
+            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
                 BlockEntities.INSTANCE.getNetworkReceiver(),
                 pos,
                 state,
-                Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage()
+                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage())
             ), Blocks.INSTANCE.getNetworkReceiver().toArray())
         ));
     }

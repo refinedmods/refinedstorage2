@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ResourceContainerImpl;
@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
-    extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 

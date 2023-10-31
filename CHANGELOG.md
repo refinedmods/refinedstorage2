@@ -337,9 +337,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   The Wrench now dismantles devices when crouching.
-  -   The Disk Drive in item form now supports rendering of disks that were dismantled.
-  -   In order to retain Controller energy, the Controller must now be dismantled.
-  -   All config and upgrades are transferred to the item.
+    - The Disk Drive in item form now supports rendering of disks that were dismantled.
+    - In order to retain Controller energy, the Controller must now be dismantled.
+    - All config and upgrades are transferred to the item.
 -   You can now use any Wrench from other mods in order to rotate or dismantle.
 -   Item and fluid storage blocks.
 -   Initial advancements.
