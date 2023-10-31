@@ -64,9 +64,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
         this.filter = FilterWithFuzzyMode.create(resourceContainer, () -> {
             setChanged();
-            if (level != null) {
-                sendDisplayUpdate(level, getAmount(), getNode().isActive());
-            }
+            sendDisplayUpdate();
         });
     }
 
@@ -139,7 +137,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         if (!success) {
             return;
         }
-        sendDisplayUpdate(level, getAmount(), getNode().isActive());
+        sendDisplayUpdate();
         level.playSound(
             null,
             getBlockPos(),
@@ -152,7 +150,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
 
     public void insert(final Player player, final InteractionHand hand) {
         if (level != null && doInsert(player, hand)) {
-            sendDisplayUpdate(level, getAmount(), getNode().isActive());
+            sendDisplayUpdate();
         }
     }
 
@@ -308,10 +306,17 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         return tag;
     }
 
+    private void sendDisplayUpdate() {
+        if (level == null) {
+            return;
+        }
+        sendDisplayUpdate(level, getAmount(), getNode().isActive());
+    }
+
     private void sendDisplayUpdate(final Level level, final long amount, final boolean active) {
         currentAmount = amount;
         currentlyActive = active;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        LOGGER.info("Sending display update for storage monitor {} with amount {}", worldPosition, amount);
+        LOGGER.debug("Sending display update for storage monitor {} with amount {}", worldPosition, amount);
     }
 }
