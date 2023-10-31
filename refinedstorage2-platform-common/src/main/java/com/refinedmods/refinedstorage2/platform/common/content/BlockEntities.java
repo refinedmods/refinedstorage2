@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SimpleNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
@@ -31,7 +31,7 @@ public final class BlockEntities {
     public static final BlockEntities INSTANCE = new BlockEntities();
 
     @Nullable
-    private Supplier<BlockEntityType<CableBlockEntity>> cable;
+    private Supplier<BlockEntityType<SimpleNetworkNodeContainerBlockEntity>> cable;
     @Nullable
     private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
@@ -64,15 +64,17 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> wirelessTransmitter;
     @Nullable
     private Supplier<BlockEntityType<StorageMonitorBlockEntity>> storageMonitor;
+    @Nullable
+    private Supplier<BlockEntityType<SimpleNetworkNodeContainerBlockEntity>> networkReceiver;
 
     private BlockEntities() {
     }
 
-    public BlockEntityType<CableBlockEntity> getCable() {
+    public BlockEntityType<SimpleNetworkNodeContainerBlockEntity> getCable() {
         return Objects.requireNonNull(cable).get();
     }
 
-    public void setCable(final Supplier<BlockEntityType<CableBlockEntity>> supplier) {
+    public void setCable(final Supplier<BlockEntityType<SimpleNetworkNodeContainerBlockEntity>> supplier) {
         this.cable = supplier;
     }
 
@@ -204,5 +206,13 @@ public final class BlockEntities {
 
     public void setStorageMonitor(final Supplier<BlockEntityType<StorageMonitorBlockEntity>> supplier) {
         this.storageMonitor = supplier;
+    }
+
+    public BlockEntityType<SimpleNetworkNodeContainerBlockEntity> getNetworkReceiver() {
+        return Objects.requireNonNull(networkReceiver).get();
+    }
+
+    public void setNetworkReceiver(final Supplier<BlockEntityType<SimpleNetworkNodeContainerBlockEntity>> supplier) {
+        this.networkReceiver = supplier;
     }
 }

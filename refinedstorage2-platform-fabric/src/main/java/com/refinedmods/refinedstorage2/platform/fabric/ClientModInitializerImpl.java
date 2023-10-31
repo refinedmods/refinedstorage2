@@ -108,6 +108,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getConstructor());
         setCutout(Blocks.INSTANCE.getDestructor());
         setCutout(Blocks.INSTANCE.getWirelessTransmitter());
+        setCutout(Blocks.INSTANCE.getNetworkReceiver());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -143,6 +144,9 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
         Blocks.INSTANCE.getWirelessTransmitter().forEach(
             (color, id, block) -> registerEmissiveWirelessTransmitterModels(color, id)
+        );
+        Blocks.INSTANCE.getNetworkReceiver().forEach(
+            (color, id, block) -> registerEmissiveNetworkReceiverModels(color, id)
         );
     }
 
@@ -220,6 +224,19 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         EmissiveModelRegistry.INSTANCE.register(
             id,
             createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
+        );
+    }
+
+    private void registerEmissiveNetworkReceiverModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_receiver/" + color.getName()),
+            createIdentifier("block/network_receiver/cutouts/" + color.getName())
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/network_receiver/cutouts/" + color.getName())
         );
     }
 

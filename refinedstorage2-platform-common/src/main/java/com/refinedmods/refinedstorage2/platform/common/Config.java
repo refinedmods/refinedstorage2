@@ -46,6 +46,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getStorageMonitor();
 
+    SimpleEnergyUsageEntry getNetworkReceiver();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

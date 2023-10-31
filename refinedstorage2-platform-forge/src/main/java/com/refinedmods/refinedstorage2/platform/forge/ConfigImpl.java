@@ -36,6 +36,7 @@ public class ConfigImpl implements Config {
     private final WirelessGridEntry wirelessGrid;
     private final WirelessTransmitterEntry wirelessTransmitter;
     private final SimpleEnergyUsageEntry storageMonitor;
+    private final SimpleEnergyUsageEntry networkReceiver;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -63,6 +64,11 @@ public class ConfigImpl implements Config {
             "storageMonitor",
             "Storage Monitor",
             DefaultEnergyUsage.STORAGE_MONITOR
+        );
+        networkReceiver = new SimpleEnergyUsageEntryImpl(
+            "networkReceiver",
+            "Network Receiver",
+            DefaultEnergyUsage.NETWORK_RECEIVER
         );
         spec = builder.build();
     }
@@ -159,6 +165,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getStorageMonitor() {
         return storageMonitor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkReceiver() {
+        return networkReceiver;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {

@@ -22,6 +22,7 @@ public final class ContentNames {
     public static final MutableComponent STORAGE_MONITOR = createTranslation("block", "storage_monitor");
     public static final MutableComponent INTERFACE = createTranslation("block", "interface");
     public static final MutableComponent DISK_DRIVE = createTranslation("block", "disk_drive");
+    public static final MutableComponent NETWORK_RECEIVER = createTranslation("block", "network_receiver");
 
     private ContentNames() {
     }

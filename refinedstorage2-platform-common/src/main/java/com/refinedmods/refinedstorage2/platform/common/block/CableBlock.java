@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.SimpleNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
@@ -37,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CableBlock extends AbstractBaseBlock
     implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
-    private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
+    private static final AbstractBlockEntityTicker<SimpleNetworkNodeContainerBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
     private final DyeColor color;
@@ -115,7 +116,12 @@ public class CableBlock extends AbstractBaseBlock
 
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return new CableBlockEntity(pos, state);
+        return new SimpleNetworkNodeContainerBlockEntity(
+            BlockEntities.INSTANCE.getCable(),
+            pos,
+            state,
+            Platform.INSTANCE.getConfig().getCable().getEnergyUsage()
+        );
     }
 
     @Nullable
