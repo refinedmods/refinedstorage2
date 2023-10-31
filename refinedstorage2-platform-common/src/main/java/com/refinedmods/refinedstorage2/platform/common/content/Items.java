@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 
 import java.util.ArrayList;
 import java.util.Collections;

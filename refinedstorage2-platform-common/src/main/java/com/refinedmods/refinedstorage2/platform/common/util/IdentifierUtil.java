@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
-import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
+import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

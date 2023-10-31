@@ -15,8 +15,4 @@ public class SimpleListener implements Runnable {
     public int getChanges() {
         return changes;
     }
-
-    public void reset() {
-        changes = 0;
-    }
 }

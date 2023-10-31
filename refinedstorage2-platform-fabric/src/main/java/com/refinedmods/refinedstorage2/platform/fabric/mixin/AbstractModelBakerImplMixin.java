@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.mixin;
 
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.model.EmissiveModelRegistry;
 
 import java.util.Map;
 
