@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.WirelessTransmitterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

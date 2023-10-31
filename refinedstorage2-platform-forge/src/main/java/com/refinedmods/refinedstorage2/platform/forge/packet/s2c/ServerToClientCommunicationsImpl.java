@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.UUID;

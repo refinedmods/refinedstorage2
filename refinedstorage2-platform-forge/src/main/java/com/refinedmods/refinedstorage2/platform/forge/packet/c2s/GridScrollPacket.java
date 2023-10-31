@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import java.util.function.Supplier;

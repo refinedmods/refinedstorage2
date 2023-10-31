@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen.loot;
 
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.loot.EnergyLootItemFunction;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunction;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridMatrixCloseBehavior;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSortingTypes;
 
 import java.util.Optional;
 

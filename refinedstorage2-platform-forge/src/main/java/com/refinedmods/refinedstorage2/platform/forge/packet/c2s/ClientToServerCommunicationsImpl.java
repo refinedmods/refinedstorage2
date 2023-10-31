@@ -4,11 +4,11 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
-import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.List;

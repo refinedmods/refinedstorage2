@@ -1,20 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.NetworkReceiverBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlock;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
-import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
-import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
-import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
+import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
+import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 public abstract class AbstractPlatform implements Platform {

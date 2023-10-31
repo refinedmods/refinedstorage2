@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractConstructorDestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.NetworkReceiverBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
-import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.AbstractConstructorDestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerEnergyType;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.CableBlockSupport;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionTypeImpl;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlock;
 
 import java.util.EnumMap;
 import java.util.Map;

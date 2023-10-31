@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategy;
 
 import java.util.function.Supplier;
 

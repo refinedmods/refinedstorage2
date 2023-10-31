@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

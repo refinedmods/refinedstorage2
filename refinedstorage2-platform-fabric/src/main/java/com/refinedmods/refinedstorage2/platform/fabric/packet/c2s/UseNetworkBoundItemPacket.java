@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractNetworkBoundEnergyItem;
-import com.refinedmods.refinedstorage2.platform.api.item.NetworkBoundItemSession;
-import com.refinedmods.refinedstorage2.platform.api.item.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractNetworkBoundEnergyItem;
+import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
 
 import java.util.Optional;
 

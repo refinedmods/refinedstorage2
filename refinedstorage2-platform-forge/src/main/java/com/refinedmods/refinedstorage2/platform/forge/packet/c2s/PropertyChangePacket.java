@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseContainerMenu;
 
 import java.util.function.Supplier;
 
