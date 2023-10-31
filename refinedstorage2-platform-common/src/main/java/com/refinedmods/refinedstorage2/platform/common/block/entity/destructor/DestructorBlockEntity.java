@@ -83,15 +83,16 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(filter.getMode()));
         tag.putBoolean(TAG_PICKUP_ITEMS, pickupItems);
         filterWithFuzzyMode.save(tag);
     }
 
     @Override
-    public void load(final CompoundTag tag) {
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         filterWithFuzzyMode.load(tag);
         if (tag.contains(TAG_FILTER_MODE)) {
             filter.setMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
@@ -99,7 +100,6 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
         if (tag.contains(TAG_PICKUP_ITEMS)) {
             pickupItems = tag.getBoolean(TAG_PICKUP_ITEMS);
         }
-        super.load(tag);
     }
 
     @Override

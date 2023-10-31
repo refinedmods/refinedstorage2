@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.blockentity.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
@@ -25,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
     extends AbstractNetworkNodeContainerBlockEntity<T>
-    implements PlayerAware {
+    implements PlayerAware, ConfigurationCardTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractInternalNetworkNodeContainerBlockEntity.class);
 
     private static final String TAG_REDSTONE_MODE = "rm";
@@ -56,21 +57,36 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+        writeConfiguration(tag);
         if (placedByPlayerId != null) {
             tag.putUUID(TAG_PLACED_BY_PLAYER_ID, placedByPlayerId);
         }
     }
 
     @Override
+    public void writeConfiguration(final CompoundTag tag) {
+        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+    }
+
+    @Override
     public void load(final CompoundTag tag) {
         super.load(tag);
-        if (tag.contains(TAG_REDSTONE_MODE)) {
-            redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
-        }
+        readConfiguration(tag);
         if (tag.hasUUID(TAG_PLACED_BY_PLAYER_ID)) {
             placedByPlayerId = tag.getUUID(TAG_PLACED_BY_PLAYER_ID);
         }
+    }
+
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        if (tag.contains(TAG_REDSTONE_MODE)) {
+            redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
+        }
+    }
+
+    @Override
+    public BlockEntityType<?> getBlockEntityType() {
+        return getType();
     }
 
     public void updateActiveness(final BlockState state,

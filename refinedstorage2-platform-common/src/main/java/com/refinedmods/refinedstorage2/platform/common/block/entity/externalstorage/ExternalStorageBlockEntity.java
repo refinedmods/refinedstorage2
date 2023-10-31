@@ -75,7 +75,6 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
         if (level instanceof ServerLevel serverLevel) {
@@ -134,17 +133,27 @@ public class ExternalStorageBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
+        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepositoryProvider.toTag());
+    }
+
+    @Override
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         filter.save(tag);
         configContainer.save(tag);
-        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepositoryProvider.toTag());
     }
 
     @Override
     public void load(final CompoundTag tag) {
         super.load(tag);
+        trackedStorageRepositoryProvider.fromTag(tag.getList(TAG_TRACKED_RESOURCES, Tag.TAG_COMPOUND));
+    }
+
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         filter.load(tag);
         configContainer.load(tag);
-        trackedStorageRepositoryProvider.fromTag(tag.getList(TAG_TRACKED_RESOURCES, Tag.TAG_COMPOUND));
     }
 
     @Override

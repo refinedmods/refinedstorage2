@@ -107,6 +107,11 @@ public class InterfaceBlockEntity
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_EXPORT_ITEMS, exportedResources.toTag());
+    }
+
+    @Override
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         filter.save(tag);
     }
 
@@ -115,8 +120,13 @@ public class InterfaceBlockEntity
         if (tag.contains(TAG_EXPORT_ITEMS)) {
             exportedResources.fromTag(tag.getCompound(TAG_EXPORT_ITEMS));
         }
-        filter.load(tag);
         super.load(tag);
+    }
+
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
+        filter.load(tag);
     }
 
     public boolean isFuzzyMode() {

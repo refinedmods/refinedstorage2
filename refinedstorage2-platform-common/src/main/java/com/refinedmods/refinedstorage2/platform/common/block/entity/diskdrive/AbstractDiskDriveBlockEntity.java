@@ -155,21 +155,28 @@ public abstract class AbstractDiskDriveBlockEntity
     @Override
     public void load(final CompoundTag tag) {
         fromClientTag(tag);
-
         if (tag.contains(TAG_DISK_INVENTORY)) {
             ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
         }
+        super.load(tag);
+    }
 
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         configContainer.load(tag);
         filter.load(tag);
-
-        super.load(tag);
     }
 
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
+    }
+
+    @Override
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         configContainer.save(tag);
         filter.save(tag);
     }

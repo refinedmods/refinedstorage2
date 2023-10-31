@@ -259,8 +259,8 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         filter.save(tag);
     }
 
@@ -270,10 +270,14 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
             filter.getFilterContainer().fromTag(tag.getCompound(TAG_CLIENT_FILTER));
             currentAmount = tag.getLong(TAG_CLIENT_AMOUNT);
             currentlyActive = tag.getBoolean(TAG_CLIENT_ACTIVE);
-        } else {
-            filter.load(tag);
         }
         super.load(tag);
+    }
+
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
+        filter.load(tag);
     }
 
     @Override

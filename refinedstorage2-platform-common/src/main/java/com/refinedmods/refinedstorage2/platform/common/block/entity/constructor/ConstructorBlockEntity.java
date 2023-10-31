@@ -99,17 +99,17 @@ public class ConstructorBlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         tag.putBoolean(TAG_DROP_ITEMS, dropItems);
     }
 
     @Override
-    public void load(final CompoundTag tag) {
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         if (tag.contains(TAG_DROP_ITEMS)) {
             dropItems = tag.getBoolean(TAG_DROP_ITEMS);
         }
-        super.load(tag);
     }
 
     public boolean isDropItems() {

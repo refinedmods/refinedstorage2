@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractLevelInteractingNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
     extends AbstractInternalNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(
-            AbstractLevelInteractingNetworkNodeContainerBlockEntity.class
+        AbstractLevelInteractingNetworkNodeContainerBlockEntity.class
     );
 
     protected AbstractLevelInteractingNetworkNodeContainerBlockEntity(
@@ -28,7 +28,6 @@ public abstract class AbstractLevelInteractingNetworkNodeContainerBlockEntity<T 
 
     // used to handle rotations
     @Override
-    @SuppressWarnings("deprecation")
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
         if (!(level instanceof ServerLevel serverLevel)) {
