@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
+public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<ControllerNetworkNode>
     implements ExtendedMenuProvider, EnergyBlockEntity {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBlockEntity.class);
 

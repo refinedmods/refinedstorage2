@@ -57,7 +57,7 @@ public class WirelessGrid implements Grid {
     }
 
     @Override
-    public boolean isActive() {
+    public boolean isGridActive() {
         final boolean networkActive = session.resolveNetwork().map(
             network -> network.getComponent(EnergyNetworkComponent.class).getStored() > 0
         ).orElse(false);

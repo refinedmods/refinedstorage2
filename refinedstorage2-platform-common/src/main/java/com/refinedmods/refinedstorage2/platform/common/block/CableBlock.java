@@ -1,21 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -35,23 +34,13 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CableBlock extends AbstractBaseBlock
+public class CableBlock extends AbstractColoredBlock<CableBlock>
     implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
-    private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
+    private static final AbstractBlockEntityTicker<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
-    private final DyeColor color;
-    private final MutableComponent name;
-
     public CableBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.CABLE_PROPERTIES);
-        this.color = color;
-        this.name = name;
-    }
-
-    @Override
-    public DyeColor getColor() {
-        return color;
+        super(BlockConstants.CABLE_PROPERTIES, color, name);
     }
 
     @Override
@@ -115,7 +104,17 @@ public class CableBlock extends AbstractBaseBlock
 
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return new CableBlockEntity(pos, state);
+        return new NetworkNodeContainerBlockEntityImpl<>(
+            BlockEntities.INSTANCE.getCable(),
+            pos,
+            state,
+            new SimpleNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
+        );
+    }
+
+    @Override
+    public BlockColorMap<CableBlock> getBlockColorMap() {
+        return Blocks.INSTANCE.getCable();
     }
 
     @Nullable
@@ -124,20 +123,5 @@ public class CableBlock extends AbstractBaseBlock
                                                                   final BlockState blockState,
                                                                   final BlockEntityType<T> type) {
         return TICKER.get(level, type);
-    }
-
-    @Override
-    public BlockColorMap<CableBlock> getBlockColorMap() {
-        return Blocks.INSTANCE.getCable();
-    }
-
-    @Override
-    public MutableComponent getName() {
-        return name;
-    }
-
-    @Override
-    public BlockItem createBlockItem() {
-        return new NamedBlockItem(this, new Item.Properties(), name);
     }
 }

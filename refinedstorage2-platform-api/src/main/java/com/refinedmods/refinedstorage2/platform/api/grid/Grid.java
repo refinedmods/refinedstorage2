@@ -21,7 +21,7 @@ public interface Grid {
 
     Storage<ItemResource> getItemStorage();
 
-    boolean isActive();
+    boolean isGridActive();
 
     <T> List<TrackedResourceAmount<T>> getResources(StorageChannelType<T> type, Class<? extends Actor> actorType);
 

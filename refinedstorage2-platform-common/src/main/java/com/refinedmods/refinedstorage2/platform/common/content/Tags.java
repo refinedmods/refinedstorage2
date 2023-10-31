@@ -21,6 +21,7 @@ public final class Tags {
     public static final TagKey<Item> CONSTRUCTORS = createTag("constructors");
     public static final TagKey<Item> DESTRUCTORS = createTag("destructors");
     public static final TagKey<Item> WIRELESS_TRANSMITTERS = createTag("wireless_transmitters");
+    public static final TagKey<Item> NETWORK_RECEIVERS = createTag("network_receivers");
 
     private Tags() {
     }

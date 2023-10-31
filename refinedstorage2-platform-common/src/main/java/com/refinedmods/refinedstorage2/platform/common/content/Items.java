@@ -39,6 +39,7 @@ public final class Items {
     private final List<Supplier<BlockItem>> allDestructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allWirelessTransmitters = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allNetworkReceivers = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -362,5 +363,13 @@ public final class Items {
 
     public void setConfigurationCard(final Supplier<Item> supplier) {
         this.configurationCard = supplier;
+    }
+
+    public void addNetworkReceiver(final Supplier<BlockItem> supplier) {
+        allNetworkReceivers.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getNetworkReceivers() {
+        return Collections.unmodifiableList(allNetworkReceivers);
     }
 }

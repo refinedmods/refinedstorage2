@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -14,9 +15,9 @@ import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ItemDropConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceBlockConstructorStrategy;
@@ -129,6 +130,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_RECEIVER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
@@ -273,6 +275,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.setInterface(callback.register(INTERFACE, InterfaceBlock::new));
         Blocks.INSTANCE.getWirelessTransmitter().registerBlocks(callback);
         Blocks.INSTANCE.setStorageMonitor(callback.register(STORAGE_MONITOR, StorageMonitorBlock::new));
+        Blocks.INSTANCE.getNetworkReceiver().registerBlocks(callback);
     }
 
     protected final void registerItems(
@@ -294,6 +297,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getConstructor().registerItems(callback, Items.INSTANCE::addConstructor);
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         Blocks.INSTANCE.getWirelessTransmitter().registerItems(callback, Items.INSTANCE::addWirelessTransmitter);
+        Blocks.INSTANCE.getNetworkReceiver().registerItems(callback, Items.INSTANCE::addNetworkReceiver);
         registerStorageItems(callback);
         registerUpgrades(callback, regulatorUpgradeItemSupplier);
         Items.INSTANCE.setWirelessGrid(callback.register(WIRELESS_GRID, wirelessGridItemSupplier));
@@ -476,7 +480,12 @@ public abstract class AbstractModInitializer {
     ) {
         BlockEntities.INSTANCE.setCable(callback.register(
             CABLE,
-            () -> typeFactory.create(CableBlockEntity::new, Blocks.INSTANCE.getCable().toArray())
+            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
+                BlockEntities.INSTANCE.getCable(),
+                pos,
+                state,
+                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
+            ), Blocks.INSTANCE.getCable().toArray())
         ));
         BlockEntities.INSTANCE.setController(callback.register(
             CONTROLLER,
@@ -562,6 +571,15 @@ public abstract class AbstractModInitializer {
         BlockEntities.INSTANCE.setStorageMonitor(callback.register(
             STORAGE_MONITOR,
             () -> typeFactory.create(StorageMonitorBlockEntity::new, Blocks.INSTANCE.getStorageMonitor())
+        ));
+        BlockEntities.INSTANCE.setNetworkReceiver(callback.register(
+            NETWORK_RECEIVER,
+            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
+                BlockEntities.INSTANCE.getNetworkReceiver(),
+                pos,
+                state,
+                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage())
+            ), Blocks.INSTANCE.getNetworkReceiver().toArray())
         ));
     }
 

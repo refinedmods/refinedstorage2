@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.NetworkReceiverBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
@@ -61,6 +62,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerWirelessTransmitters();
         registerConstructorDestructors(Blocks.INSTANCE.getConstructor(), "constructor");
         registerConstructorDestructors(Blocks.INSTANCE.getDestructor(), "destructor");
+        registerNetworkReceivers();
     }
 
     private void registerCables() {
@@ -255,6 +257,22 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         final Direction direction = blockState.getValue(DirectionTypeImpl.INSTANCE.getProperty());
         addRotation(model, direction);
         return model.build();
+    }
+
+    private void registerNetworkReceivers() {
+        final ModelFile inactive = modelFile(createIdentifier("block/network_receiver/inactive"));
+        Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                if (Boolean.TRUE.equals(blockState.getValue(NetworkReceiverBlock.ACTIVE))) {
+                    model.modelFile(modelFile(createIdentifier("block/network_receiver/" + color.getName())));
+                } else {
+                    model.modelFile(inactive);
+                }
+                return model.build();
+            });
+        });
     }
 
     private void addRotation(final ConfiguredModel.Builder<?> model, final Direction direction) {

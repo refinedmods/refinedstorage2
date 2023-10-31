@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.NetworkReceiverBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
@@ -115,6 +116,12 @@ public final class Blocks {
         WirelessTransmitterBlock::new,
         ContentIds.WIRELESS_TRANSMITTER,
         ContentNames.WIRELESS_TRANSMITTER,
+        COLOR
+    );
+    private final BlockColorMap<NetworkReceiverBlock> networkReceiver = new BlockColorMap<>(
+        NetworkReceiverBlock::new,
+        ContentIds.NETWORK_RECEIVER,
+        ContentNames.NETWORK_RECEIVER,
         COLOR
     );
 
@@ -239,5 +246,9 @@ public final class Blocks {
 
     public StorageMonitorBlock getStorageMonitor() {
         return Objects.requireNonNull(storageMonitor).get();
+    }
+
+    public BlockColorMap<NetworkReceiverBlock> getNetworkReceiver() {
+        return networkReceiver;
     }
 }

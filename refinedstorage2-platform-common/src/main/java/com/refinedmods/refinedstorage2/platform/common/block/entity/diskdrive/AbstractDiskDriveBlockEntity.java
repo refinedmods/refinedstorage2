@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiS
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDiskDriveBlockEntity
-    extends AbstractInternalNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
     implements BlockEntityWithDrops, MultiStorageListener, ExtendedMenuProvider {
     public static final int AMOUNT_OF_DISKS = 8;
 

@@ -88,6 +88,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
             ContentIds.WIRELESS_TRANSMITTER,
             Tags.WIRELESS_TRANSMITTERS
         );
+        groupItems(registry, Blocks.INSTANCE.getNetworkReceiver(), ContentIds.NETWORK_RECEIVER, Tags.NETWORK_RECEIVERS);
     }
 
     @Override

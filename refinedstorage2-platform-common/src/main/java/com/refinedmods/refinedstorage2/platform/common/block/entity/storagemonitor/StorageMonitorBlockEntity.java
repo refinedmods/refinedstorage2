@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageMonitorContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -42,7 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<SimpleNetworkNode>
+public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<SimpleNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageMonitorBlockEntity.class);
 

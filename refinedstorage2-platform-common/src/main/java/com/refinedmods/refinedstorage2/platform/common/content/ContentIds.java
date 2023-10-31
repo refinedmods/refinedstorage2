@@ -49,6 +49,7 @@ public final class ContentIds {
     public static final ResourceLocation CREATIVE_RANGE_UPGRADE = createIdentifier("creative_range_upgrade");
     public static final ResourceLocation STORAGE_MONITOR = createIdentifier("storage_monitor");
     public static final ResourceLocation CONFIGURATION_CARD = createIdentifier("configuration_card");
+    public static final ResourceLocation NETWORK_RECEIVER = createIdentifier("network_receiver");
 
     private ContentIds() {
     }

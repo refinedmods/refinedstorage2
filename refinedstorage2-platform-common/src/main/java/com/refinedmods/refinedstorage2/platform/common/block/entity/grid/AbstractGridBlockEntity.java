@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.List;
@@ -25,7 +25,8 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractGridBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<GridNetworkNode>
+public abstract class AbstractGridBlockEntity
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<GridNetworkNode>
     implements Grid, MenuProvider {
     protected AbstractGridBlockEntity(final BlockEntityType<? extends AbstractGridBlockEntity> type,
                                       final BlockPos pos,
@@ -55,7 +56,7 @@ public abstract class AbstractGridBlockEntity extends AbstractInternalNetworkNod
     }
 
     @Override
-    public boolean isActive() {
+    public boolean isGridActive() {
         return getNode().isActive();
     }
 
