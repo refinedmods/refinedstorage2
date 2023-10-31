@@ -114,11 +114,14 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             }
             storageId = actualStorageId;
         }
+        super.load(tag);
+    }
 
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         configContainer.load(tag);
         filter.load(tag);
-
-        super.load(tag);
     }
 
     @SuppressWarnings("unchecked")
@@ -149,6 +152,11 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
         }
+    }
+
+    @Override
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         configContainer.save(tag);
         filter.save(tag);
     }

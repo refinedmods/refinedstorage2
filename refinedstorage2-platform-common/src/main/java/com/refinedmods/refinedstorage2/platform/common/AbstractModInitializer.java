@@ -77,6 +77,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.Flu
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+import com.refinedmods.refinedstorage2.platform.common.item.ConfigurationCardItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
@@ -321,6 +322,10 @@ public abstract class AbstractModInitializer {
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
             registerProcessor(callback, type);
         }
+        Items.INSTANCE.setConfigurationCard(callback.register(
+            ContentIds.CONFIGURATION_CARD,
+            ConfigurationCardItem::new
+        ));
     }
 
     private void registerProcessor(final RegistryCallback<Item> callback, final ProcessorItem.Type type) {

@@ -26,8 +26,7 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
                                              final FilterWithFuzzyMode filter,
                                              final Runnable listener,
                                              final Supplier<RedstoneMode> redstoneModeSupplier,
-                                             final Consumer<RedstoneMode> redstoneModeConsumer
-    ) {
+                                             final Consumer<RedstoneMode> redstoneModeConsumer) {
         this.config = config;
         this.filter = filter;
         this.listener = listener;

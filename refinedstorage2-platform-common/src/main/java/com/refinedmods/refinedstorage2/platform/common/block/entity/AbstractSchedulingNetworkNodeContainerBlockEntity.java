@@ -43,17 +43,17 @@ public abstract class AbstractSchedulingNetworkNodeContainerBlockEntity<T extend
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         schedulingMode.writeToTag(tag);
         filter.save(tag);
     }
 
     @Override
-    public void load(final CompoundTag tag) {
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         schedulingMode.load(tag);
         filter.load(tag);
-        super.load(tag);
     }
 
     public void setSchedulingModeType(final SchedulingModeType type) {

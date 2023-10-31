@@ -5,12 +5,16 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +65,24 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
         if (level instanceof ServerLevel serverLevel) {
             initialize(serverLevel);
         }
+    }
+
+    @Override
+    public List<Item> getUpgradeItems() {
+        final List<Item> upgradeItems = new ArrayList<>();
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
+            final ItemStack itemStack = upgradeContainer.getItem(i);
+            if (itemStack.isEmpty()) {
+                continue;
+            }
+            upgradeItems.add(itemStack.getItem());
+        }
+        return upgradeItems;
+    }
+
+    @Override
+    public boolean addUpgradeItem(final Item upgradeItem) {
+        return upgradeContainer.addItem(new ItemStack(upgradeItem)).isEmpty();
     }
 
     @Override

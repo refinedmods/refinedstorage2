@@ -64,17 +64,17 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         initialize();
     }
 
-
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         filter.save(tag);
         tag.putDouble(TAG_AMOUNT, amount);
         tag.putInt(TAG_MODE, DetectorModeSettings.getDetectorMode(getNode().getMode()));
     }
 
     @Override
-    public void load(final CompoundTag tag) {
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         filter.load(tag);
         if (tag.contains(TAG_AMOUNT)) {
             this.amount = tag.getDouble(TAG_AMOUNT);
@@ -84,7 +84,6 @@ public class DetectorBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         }
         initialize();
         propagateAmount();
-        super.load(tag);
     }
 
     public void setAmount(final double amount) {

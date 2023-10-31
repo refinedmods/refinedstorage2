@@ -64,9 +64,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
         this.filter = FilterWithFuzzyMode.create(resourceContainer, () -> {
             setChanged();
-            if (level != null) {
-                sendDisplayUpdate(level, getAmount(), getNode().isActive());
-            }
+            sendDisplayUpdate();
         });
     }
 
@@ -139,7 +137,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         if (!success) {
             return;
         }
-        sendDisplayUpdate(level, getAmount(), getNode().isActive());
+        sendDisplayUpdate();
         level.playSound(
             null,
             getBlockPos(),
@@ -152,7 +150,7 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
 
     public void insert(final Player player, final InteractionHand hand) {
         if (level != null && doInsert(player, hand)) {
-            sendDisplayUpdate(level, getAmount(), getNode().isActive());
+            sendDisplayUpdate();
         }
     }
 
@@ -261,8 +259,8 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         filter.save(tag);
     }
 
@@ -272,10 +270,14 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
             filter.getFilterContainer().fromTag(tag.getCompound(TAG_CLIENT_FILTER));
             currentAmount = tag.getLong(TAG_CLIENT_AMOUNT);
             currentlyActive = tag.getBoolean(TAG_CLIENT_ACTIVE);
-        } else {
-            filter.load(tag);
         }
         super.load(tag);
+    }
+
+    @Override
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
+        filter.load(tag);
     }
 
     @Override
@@ -308,10 +310,17 @@ public class StorageMonitorBlockEntity extends AbstractInternalNetworkNodeContai
         return tag;
     }
 
+    private void sendDisplayUpdate() {
+        if (level == null) {
+            return;
+        }
+        sendDisplayUpdate(level, getAmount(), getNode().isActive());
+    }
+
     private void sendDisplayUpdate(final Level level, final long amount, final boolean active) {
         currentAmount = amount;
         currentlyActive = active;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        LOGGER.info("Sending display update for storage monitor {} with amount {}", worldPosition, amount);
+        LOGGER.debug("Sending display update for storage monitor {} with amount {}", worldPosition, amount);
     }
 }

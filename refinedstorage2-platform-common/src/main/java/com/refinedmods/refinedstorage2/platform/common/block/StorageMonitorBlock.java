@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,7 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getStorageMonitor);
 
     public StorageMonitorBlock() {
-        super(BlockConstants.PROPERTIES.strength(1.5F, 6.0F));
+        super(BlockConstants.PROPERTIES.strength(2.5F, 6.0F));
     }
 
     @Override
@@ -60,6 +61,10 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
         if (player.isCrouching()) {
             return super.use(state, level, pos, player, hand, hit);
         }
+        final BiDirection direction = getDirection(state);
+        if (direction == null || hit.getDirection() != direction.asDirection()) {
+            return InteractionResult.FAIL;
+        }
         if (!level.isClientSide()) {
             final BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof StorageMonitorBlockEntity storageMonitor) {
@@ -83,19 +88,23 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
         if (direction == null) {
             return;
         }
+        final Direction hitDirection = getHitDirection(level, player);
+        if (hitDirection != direction.asDirection()) {
+            return;
+        }
+        storageMonitor.extract(player);
+    }
+
+    private Direction getHitDirection(final Level level, final Player player) {
         final Vec3 base = player.getEyePosition(1.0F);
         final Vec3 look = player.getLookAngle();
         final Vec3 target = base.add(look.x * 20, look.y * 20, look.z * 20);
-        final BlockHitResult hitResult = level.clip(new ClipContext(
+        return level.clip(new ClipContext(
             base,
             target,
             ClipContext.Block.OUTLINE,
             ClipContext.Fluid.NONE,
             player
-        ));
-        if (hitResult.getDirection() != direction.asDirection()) {
-            return;
-        }
-        storageMonitor.extract(player);
+        )).getDirection();
     }
 }

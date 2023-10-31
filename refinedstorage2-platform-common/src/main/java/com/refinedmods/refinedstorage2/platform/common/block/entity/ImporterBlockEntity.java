@@ -79,21 +79,19 @@ public class ImporterBlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void writeConfiguration(final CompoundTag tag) {
+        super.writeConfiguration(tag);
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         filter.save(tag);
     }
 
     @Override
-    public void load(final CompoundTag tag) {
+    public void readConfiguration(final CompoundTag tag) {
+        super.readConfiguration(tag);
         if (tag.contains(TAG_FILTER_MODE)) {
             getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
-
         filter.load(tag);
-
-        super.load(tag);
     }
 
     public boolean isFuzzyMode() {

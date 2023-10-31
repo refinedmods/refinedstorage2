@@ -95,5 +95,6 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
         consumer.accept(Items.INSTANCE.getWirelessGrid().createAtEnergyCapacity());
         itemConsumer.accept(Items.INSTANCE.getCreativeWirelessGrid());
+        itemConsumer.accept(Items.INSTANCE.getConfigurationCard());
     }
 }
