@@ -1,0 +1,17 @@
+{
+  "parent": "item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "active": 0
+      },
+      "model": "refinedstorage2:item/configuration_card/inactive"
+    },
+    {
+      "predicate": {
+        "active": 1
+      },
+      "model": "refinedstorage2:item/configuration_card/active"
+    }
+  ]
+}

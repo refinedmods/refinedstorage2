@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectional
 import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -18,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -85,8 +88,13 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     }
 
     @Override
-    public BlockEntityType<?> getBlockEntityType() {
-        return getType();
+    public List<Item> getUpgradeItems() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean addUpgradeItem(final Item upgradeItem) {
+        return false;
     }
 
     public void updateActiveness(final BlockState state,

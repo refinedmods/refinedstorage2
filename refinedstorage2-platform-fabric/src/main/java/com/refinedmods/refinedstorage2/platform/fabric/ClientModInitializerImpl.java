@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.render.ConfigurationCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.render.entity.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
@@ -343,6 +344,11 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             Items.INSTANCE.getCreativeWirelessGrid(),
             NetworkItemItemPropertyFunction.NAME,
             new NetworkItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getConfigurationCard(),
+            ConfigurationCardItemPropertyFunction.NAME,
+            new ConfigurationCardItemPropertyFunction()
         );
     }
 }

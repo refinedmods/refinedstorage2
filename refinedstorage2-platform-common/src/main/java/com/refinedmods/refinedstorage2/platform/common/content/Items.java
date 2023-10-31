@@ -78,6 +78,8 @@ public final class Items {
     private Supplier<WirelessGridItem> wirelessGrid;
     @Nullable
     private Supplier<WirelessGridItem> creativeWirelessGrid;
+    @Nullable
+    private Supplier<Item> configurationCard;
 
     private Items() {
     }
@@ -352,5 +354,13 @@ public final class Items {
 
     public void setCreativeWirelessGrid(final Supplier<WirelessGridItem> supplier) {
         this.creativeWirelessGrid = supplier;
+    }
+
+    public Item getConfigurationCard() {
+        return Objects.requireNonNull(configurationCard).get();
+    }
+
+    public void setConfigurationCard(final Supplier<Item> supplier) {
+        this.configurationCard = supplier;
     }
 }

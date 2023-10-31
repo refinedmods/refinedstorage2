@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Curios integration on Forge.
 -   Trinkets integration on Fabric.
 -   Storage Monitor
+-   Configuration Card. It copies device configurations and can transfer upgrades.
 
 ### Changed
 
