@@ -81,6 +81,8 @@ public final class Items {
     private Supplier<WirelessGridItem> creativeWirelessGrid;
     @Nullable
     private Supplier<Item> configurationCard;
+    @Nullable
+    private Supplier<Item> networkCard;
 
     private Items() {
     }
@@ -371,5 +373,13 @@ public final class Items {
 
     public List<Supplier<BlockItem>> getNetworkReceivers() {
         return Collections.unmodifiableList(allNetworkReceivers);
+    }
+    
+    public Item getNetworkCard() {
+        return Objects.requireNonNull(networkCard).get();
+    }
+
+    public void setNetworkCard(final Supplier<Item> supplier) {
+        this.networkCard = supplier;
     }
 }
