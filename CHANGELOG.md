@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Configuration Card. It copies device configurations and can transfer upgrades.
 -   Network Receiver
+-   Network Card
 
 ## [2.0.0-milestone.3.1] - 2023-10-30
 

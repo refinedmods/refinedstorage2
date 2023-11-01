@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
@@ -36,10 +35,10 @@ public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInser
     }
 
     @Nullable
-    private ContainedFluid tryInsert(final Actor actor,
-                                     final FluidResource configuredResource,
-                                     final ContainedFluid result,
-                                     final StorageChannel<FluidResource> storageChannel) {
+    private Platform.ContainedFluid tryInsert(final Actor actor,
+                                              final FluidResource configuredResource,
+                                              final Platform.ContainedFluid result,
+                                              final StorageChannel<FluidResource> storageChannel) {
         final ResourceAmount<FluidResource> fluid = result.fluid();
         if (!fluid.getResource().equals(configuredResource)) {
             return null;
@@ -55,7 +54,7 @@ public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInser
     }
 
     private ItemStack doInsert(final Actor actor,
-                               final ContainedFluid extracted,
+                               final Platform.ContainedFluid extracted,
                                final StorageChannel<FluidResource> storageChannel) {
         final ResourceAmount<FluidResource> fluid = extracted.fluid();
         storageChannel.insert(

@@ -9,14 +9,14 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-public class WirelessGridOperations<T> implements GridOperations<T> {
+class WirelessGridOperations<T> implements GridOperations<T> {
     private final GridOperations<T> delegate;
     private final NetworkBoundItemSession session;
     private final GridWatchers watchers;
 
-    public WirelessGridOperations(final GridOperations<T> delegate,
-                                  final NetworkBoundItemSession session,
-                                  final GridWatchers watchers) {
+    WirelessGridOperations(final GridOperations<T> delegate,
+                           final NetworkBoundItemSession session,
+                           final GridWatchers watchers) {
         this.delegate = delegate;
         this.session = session;
         this.watchers = watchers;

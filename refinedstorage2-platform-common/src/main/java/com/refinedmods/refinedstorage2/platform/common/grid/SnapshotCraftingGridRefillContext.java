@@ -10,13 +10,13 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
+class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
     private final PlayerActor playerActor;
     private final CraftingGridBlockEntity blockEntity;
     private final ResourceList<ItemResource> available = new ResourceListImpl<>();
     private final ResourceList<ItemResource> used = new ResourceListImpl<>();
 
-    public SnapshotCraftingGridRefillContext(
+    SnapshotCraftingGridRefillContext(
         final Player player,
         final CraftingGridBlockEntity blockEntity,
         final CraftingMatrix craftingMatrix

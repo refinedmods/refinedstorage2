@@ -9,11 +9,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBlockEntityTicker
+class DiskDriveBlockEntityTicker
     extends NetworkNodeBlockEntityTicker<MultiStorageNetworkNode, AbstractDiskDriveBlockEntity> {
 
     @SuppressWarnings("unchecked")
-    public DiskDriveBlockEntityTicker() {
+    DiskDriveBlockEntityTicker() {
         super(() -> (BlockEntityType<AbstractDiskDriveBlockEntity>) BlockEntities.INSTANCE.getDiskDrive());
     }
 

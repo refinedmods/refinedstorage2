@@ -24,13 +24,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockBreakDestructorStrategy implements DestructorStrategy {
+class BlockBreakDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
     private final BlockPos pos;
     private final Direction direction;
     private final ItemStack tool;
 
-    public BlockBreakDestructorStrategy(
+    BlockBreakDestructorStrategy(
         final ServerLevel level,
         final BlockPos pos,
         final Direction direction,

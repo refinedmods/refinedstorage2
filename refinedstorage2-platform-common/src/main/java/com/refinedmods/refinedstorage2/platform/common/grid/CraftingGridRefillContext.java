@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 
 import net.minecraft.world.entity.player.Player;
 
-public interface CraftingGridRefillContext extends AutoCloseable {
+interface CraftingGridRefillContext extends AutoCloseable {
     boolean extract(ItemResource resource, Player player);
 
     @Override

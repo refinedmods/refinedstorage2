@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
+class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "detector.mode");
     private static final MutableComponent SUBTEXT_EQUAL = createTranslation("gui", "detector.mode.equal");
     private static final MutableComponent SUBTEXT_ABOVE = createTranslation("gui", "detector.mode.above");
@@ -16,7 +16,7 @@ public class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
 
     private final ClientProperty<DetectorMode> property;
 
-    public DetectorModeSideButtonWidget(final ClientProperty<DetectorMode> property) {
+    DetectorModeSideButtonWidget(final ClientProperty<DetectorMode> property) {
         super(createPressAction(property));
         this.property = property;
     }

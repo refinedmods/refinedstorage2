@@ -8,13 +8,13 @@ import java.util.function.LongFunction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-public final class StorageTooltipHelper {
+final class StorageTooltipHelper {
     private StorageTooltipHelper() {
     }
 
-    public static void addAmountStoredWithoutCapacity(final List<Component> tooltip,
-                                                      final long stored,
-                                                      final LongFunction<String> quantityFormatter) {
+    static void addAmountStoredWithoutCapacity(final List<Component> tooltip,
+                                               final long stored,
+                                               final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
             "misc",
             "stored",
@@ -22,10 +22,10 @@ public final class StorageTooltipHelper {
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    public static void addAmountStoredWithCapacity(final List<Component> tooltip,
-                                                   final long stored,
-                                                   final long capacity,
-                                                   final LongFunction<String> quantityFormatter) {
+    static void addAmountStoredWithCapacity(final List<Component> tooltip,
+                                            final long stored,
+                                            final long capacity,
+                                            final LongFunction<String> quantityFormatter) {
         if (capacity <= 0) {
             addAmountStoredWithoutCapacity(tooltip, stored, quantityFormatter);
             return;

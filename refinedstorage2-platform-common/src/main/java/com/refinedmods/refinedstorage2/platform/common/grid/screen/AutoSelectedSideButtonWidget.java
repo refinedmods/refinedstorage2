@@ -10,13 +10,13 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.YES;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
+class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.auto_selected");
     private static final Component HELP = createTranslation("gui", "grid.auto_selected.help");
 
     private final AbstractGridContainerMenu menu;
 
-    public AutoSelectedSideButtonWidget(final AbstractGridContainerMenu menu) {
+    AutoSelectedSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }

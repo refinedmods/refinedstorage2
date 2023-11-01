@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.platform.api.support.PlatformNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.common.networking.CableShapeCacheKey;
 
 import java.util.HashMap;
 import java.util.Map;

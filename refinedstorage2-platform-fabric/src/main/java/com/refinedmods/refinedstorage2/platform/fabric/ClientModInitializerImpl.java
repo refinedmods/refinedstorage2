@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.controller.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.support.networkbounditem.NetworkBoundItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
@@ -33,7 +34,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiGridSync
 import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveUnbakedModel;
-import com.refinedmods.refinedstorage2.platform.fabric.support.render.model.EmissiveModelRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.EmissiveModelRegistry;
 
 import java.util.List;
 
@@ -366,6 +367,11 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             Items.INSTANCE.getConfigurationCard(),
             ConfigurationCardItemPropertyFunction.NAME,
             new ConfigurationCardItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getNetworkCard(),
+            NetworkCardItemPropertyFunction.NAME,
+            new NetworkCardItemPropertyFunction()
         );
     }
 }

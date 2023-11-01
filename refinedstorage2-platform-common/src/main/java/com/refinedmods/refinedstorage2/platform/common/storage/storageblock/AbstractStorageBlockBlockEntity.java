@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractStorageBlockBlockEntity<T>
+abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);

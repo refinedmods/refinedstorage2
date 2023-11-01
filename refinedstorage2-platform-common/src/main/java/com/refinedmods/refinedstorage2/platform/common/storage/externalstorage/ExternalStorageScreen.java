@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage.externalstorage;
 import com.refinedmods.refinedstorage2.platform.common.storage.AbstractStorageScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.storage.PrioritySideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.storage.StoragePropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractFilterScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.FilterModeSideButtonWidget;
@@ -33,9 +34,9 @@ public class ExternalStorageScreen extends AbstractFilterScreen<ExternalStorageC
             getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             FuzzyModeSideButtonWidget.Type.STORAGE
         ));
-        addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(PropertyTypes.ACCESS_MODE)));
+        addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(StoragePropertyTypes.ACCESS_MODE)));
         addSideButton(new PrioritySideButtonWidget(
-            getMenu().getProperty(PropertyTypes.PRIORITY),
+            getMenu().getProperty(StoragePropertyTypes.PRIORITY),
             playerInventory,
             this
         ));

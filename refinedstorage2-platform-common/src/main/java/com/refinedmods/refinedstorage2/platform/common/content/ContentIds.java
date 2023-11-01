@@ -50,6 +50,7 @@ public final class ContentIds {
     public static final ResourceLocation STORAGE_MONITOR = createIdentifier("storage_monitor");
     public static final ResourceLocation CONFIGURATION_CARD = createIdentifier("configuration_card");
     public static final ResourceLocation NETWORK_RECEIVER = createIdentifier("network_receiver");
+    public static final ResourceLocation NETWORK_CARD = createIdentifier("network_card");
 
     private ContentIds() {
     }

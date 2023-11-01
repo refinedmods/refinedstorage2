@@ -23,7 +23,7 @@ public class DestructorScreen extends AbstractFilterScreen<DestructorContainerMe
             createTranslation("gui", "destructor.filter_mode.block.help")
         ));
         addSideButton(new DestructorPickupItemsSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.DESTRUCTOR_PICKUP_ITEMS)
+            getMenu().getProperty(ConstructorDestructorPropertyTypes.PICKUP_ITEMS)
         ));
     }
 }

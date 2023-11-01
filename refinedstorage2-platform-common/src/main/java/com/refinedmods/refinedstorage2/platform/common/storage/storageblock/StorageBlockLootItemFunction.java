@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageBlockLootItemFunction implements LootItemFunction {
+class StorageBlockLootItemFunction implements LootItemFunction {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageBlockLootItemFunction.class);
 
     @Override

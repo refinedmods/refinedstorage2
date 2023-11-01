@@ -24,7 +24,7 @@ public class ConstructorScreen extends AbstractFilterScreen<ConstructorContainer
         ));
         addSideButton(new SchedulingModeSideButtonWidget(getMenu().getProperty(PropertyTypes.SCHEDULING_MODE)));
         addSideButton(new ConstructorDropItemsSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.CONSTRUCTOR_DROP_ITEMS)
+            getMenu().getProperty(ConstructorDestructorPropertyTypes.DROP_ITEMS)
         ));
     }
 }

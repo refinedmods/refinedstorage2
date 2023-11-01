@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.render.model;
+package com.refinedmods.refinedstorage2.platform.fabric.support.render;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
@@ -9,10 +9,10 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 
-public class EmissiveTransform implements RenderContext.QuadTransform {
+class EmissiveTransform implements RenderContext.QuadTransform {
     private final ResourceLocation emissiveSprite;
 
-    public EmissiveTransform(final ResourceLocation emissiveSprite) {
+    EmissiveTransform(final ResourceLocation emissiveSprite) {
         this.emissiveSprite = emissiveSprite;
     }
 

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
@@ -119,4 +120,7 @@ public interface Platform {
     void renderTooltip(GuiGraphics graphics, List<ClientTooltipComponent> components, int x, int y);
 
     Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+
+    record ContainedFluid(ItemStack remainderContainer, ResourceAmount<FluidResource> fluid) {
+    }
 }

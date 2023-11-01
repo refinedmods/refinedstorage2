@@ -50,6 +50,7 @@ import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEnt
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.misc.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -330,6 +331,7 @@ public abstract class AbstractModInitializer {
             ContentIds.CONFIGURATION_CARD,
             ConfigurationCardItem::new
         ));
+        Items.INSTANCE.setNetworkCard(callback.register(ContentIds.NETWORK_CARD, NetworkCardItem::new));
     }
 
     private void registerProcessor(final RegistryCallback<Item> callback, final ProcessorItem.Type type) {

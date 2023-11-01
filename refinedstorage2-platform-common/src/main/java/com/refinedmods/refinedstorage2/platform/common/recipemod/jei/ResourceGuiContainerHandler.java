@@ -13,12 +13,12 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IIngredientManager;
 
-public class ResourceGuiContainerHandler implements IGuiContainerHandler<AbstractBaseScreen<?>> {
+class ResourceGuiContainerHandler implements IGuiContainerHandler<AbstractBaseScreen<?>> {
     private final IngredientConverter converter;
     private final IIngredientManager ingredientManager;
 
-    public ResourceGuiContainerHandler(final IngredientConverter converter,
-                                       final IIngredientManager ingredientManager) {
+    ResourceGuiContainerHandler(final IngredientConverter converter,
+                                final IIngredientManager ingredientManager) {
         this.converter = converter;
         this.ingredientManager = ingredientManager;
     }

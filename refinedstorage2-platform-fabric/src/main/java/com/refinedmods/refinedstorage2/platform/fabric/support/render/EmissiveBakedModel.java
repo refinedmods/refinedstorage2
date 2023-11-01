@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.render.model;
+package com.refinedmods.refinedstorage2.platform.fabric.support.render;
 
 import java.util.function.Supplier;
 
@@ -12,10 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class EmissiveBakedModel extends ForwardingBakedModel {
+class EmissiveBakedModel extends ForwardingBakedModel {
     private final EmissiveTransform transform;
 
-    public EmissiveBakedModel(final BakedModel wrapped, final ResourceLocation emissiveSprite) {
+    EmissiveBakedModel(final BakedModel wrapped, final ResourceLocation emissiveSprite) {
         this.wrapped = wrapped;
         this.transform = new EmissiveTransform(emissiveSprite);
     }

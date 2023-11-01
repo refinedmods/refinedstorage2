@@ -22,14 +22,14 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
+class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
     private final EnchantmentInstance enchantment;
     private final ItemStack theResult;
 
-    public UpgradeWithEnchantedBookRecipe(final ResourceLocation recipeId,
-                                          final Enchantment enchantment,
-                                          final int enchantmentLevel,
-                                          final ItemStack theResult) {
+    UpgradeWithEnchantedBookRecipe(final ResourceLocation recipeId,
+                                   final Enchantment enchantment,
+                                   final int enchantmentLevel,
+                                   final ItemStack theResult) {
         super(recipeId, "", CraftingBookCategory.MISC, 3, 3, NonNullList.of(
             Ingredient.EMPTY,
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),

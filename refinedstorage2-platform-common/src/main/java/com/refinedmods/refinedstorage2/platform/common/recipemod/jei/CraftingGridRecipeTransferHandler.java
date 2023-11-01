@@ -22,8 +22,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 
-public class CraftingGridRecipeTransferHandler
-    implements IRecipeTransferHandler<CraftingGridContainerMenu, CraftingRecipe> {
+class CraftingGridRecipeTransferHandler implements IRecipeTransferHandler<CraftingGridContainerMenu, CraftingRecipe> {
     @Override
     public Class<? extends CraftingGridContainerMenu> getContainerClass() {
         return CraftingGridContainerMenu.class;

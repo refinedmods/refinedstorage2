@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.networking;
+package com.refinedmods.refinedstorage2.platform.common.support;
 
 import net.minecraft.world.level.block.state.BlockState;
 

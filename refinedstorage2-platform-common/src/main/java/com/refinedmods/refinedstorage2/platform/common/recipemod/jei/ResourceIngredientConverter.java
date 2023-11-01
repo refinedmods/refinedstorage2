@@ -12,10 +12,10 @@ import java.util.Optional;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import net.minecraft.world.item.ItemStack;
 
-public class ResourceIngredientConverter implements IngredientConverter {
+class ResourceIngredientConverter implements IngredientConverter {
     private final IPlatformFluidHelper<?> fluidHelper;
 
-    public ResourceIngredientConverter(final IPlatformFluidHelper<?> fluidHelper) {
+    ResourceIngredientConverter(final IPlatformFluidHelper<?> fluidHelper) {
         this.fluidHelper = fluidHelper;
     }
 

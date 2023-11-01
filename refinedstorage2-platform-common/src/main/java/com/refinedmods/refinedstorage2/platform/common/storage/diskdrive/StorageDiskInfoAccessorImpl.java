@@ -8,10 +8,10 @@ import java.util.Optional;
 
 import net.minecraft.world.item.ItemStack;
 
-public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
+class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
     private final StorageRepository storageRepository;
 
-    public StorageDiskInfoAccessorImpl(final StorageRepository storageRepository) {
+    StorageDiskInfoAccessorImpl(final StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
     }
 

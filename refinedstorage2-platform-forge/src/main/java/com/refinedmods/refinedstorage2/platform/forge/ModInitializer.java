@@ -18,7 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.Abstrac
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
+import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
 import com.refinedmods.refinedstorage2.platform.forge.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.exporter.ItemHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
@@ -398,7 +398,7 @@ public class ModInitializer extends AbstractModInitializer {
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
-            TickHandler.runQueuedActions();
+            ServerEventQueue.runQueuedActions();
         }
     }
 

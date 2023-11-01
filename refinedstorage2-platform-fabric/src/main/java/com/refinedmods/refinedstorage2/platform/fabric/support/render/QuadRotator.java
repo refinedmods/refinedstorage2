@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.render.model;
+package com.refinedmods.refinedstorage2.platform.fabric.support.render;
 
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 

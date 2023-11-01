@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmo
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
-import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
+import com.refinedmods.refinedstorage2.platform.common.util.MathUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,7 +125,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         if (resourceAmount == null) {
             return;
         }
-        final long newAmount = MathHelper.clamp(amount, 0, getMaxAmount(resourceAmount));
+        final long newAmount = MathUtil.clamp(amount, 0, getMaxAmount(resourceAmount));
         if (newAmount == 0) {
             remove(index);
         } else {

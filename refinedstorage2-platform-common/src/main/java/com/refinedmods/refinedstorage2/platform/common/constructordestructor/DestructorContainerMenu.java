@@ -52,7 +52,7 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<D
     protected void registerClientProperties() {
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(PropertyTypes.DESTRUCTOR_PICKUP_ITEMS, false));
+        registerProperty(new ClientProperty<>(ConstructorDestructorPropertyTypes.PICKUP_ITEMS, false));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<D
             blockEntity::setFilterMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.DESTRUCTOR_PICKUP_ITEMS,
+            ConstructorDestructorPropertyTypes.PICKUP_ITEMS,
             blockEntity::isPickupItems,
             blockEntity::setPickupItems
         ));

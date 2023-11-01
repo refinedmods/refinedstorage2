@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMo
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
-import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
 import javax.annotation.Nullable;
 
@@ -147,7 +146,7 @@ public abstract class AbstractDiskDriveBlockEntity
                                   final boolean newActive,
                                   @Nullable final BooleanProperty activenessProperty) {
         super.activenessChanged(state, newActive, activenessProperty);
-        LevelUtil.updateBlock(level, worldPosition, getBlockState());
+        updateBlock();
     }
 
     @Override
@@ -185,7 +184,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     void onDiskChanged(final int slot) {
         getNode().onStorageChanged(slot);
-        LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
+        updateBlock();
         setChanged();
     }
 
@@ -199,16 +198,14 @@ public abstract class AbstractDiskDriveBlockEntity
         super.onNetworkInNodeInitialized();
         // It's important to sync here as the initial update packet might have failed as the network
         // could possibly be not initialized yet.
-        LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
+        updateBlock();
     }
 
     private void fromClientTag(final CompoundTag tag) {
         if (!tag.contains(TAG_STATES)) {
             return;
         }
-
         final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
-
         driveState = MultiStorageState.of(
             statesList.size(),
             idx -> {
@@ -220,12 +217,11 @@ public abstract class AbstractDiskDriveBlockEntity
                 return values[ordinal];
             }
         );
-
         onDriveStateUpdated();
     }
 
     protected void onDriveStateUpdated() {
-        LevelUtil.updateBlock(level, worldPosition, getBlockState());
+        updateBlock();
     }
 
     @Override

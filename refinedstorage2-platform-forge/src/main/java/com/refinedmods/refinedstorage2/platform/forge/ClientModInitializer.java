@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.controller.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.support.networkbounditem.NetworkBoundItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
@@ -21,7 +22,7 @@ import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.RefinedStora
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage2.platform.forge.support.render.model.DiskDriveGeometryLoader;
+import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveGeometryLoader;
 
 import java.util.List;
 
@@ -221,6 +222,11 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             Items.INSTANCE.getConfigurationCard(),
             ConfigurationCardItemPropertyFunction.NAME,
             new ConfigurationCardItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getNetworkCard(),
+            NetworkCardItemPropertyFunction.NAME,
+            new NetworkCardItemPropertyFunction()
         );
     }
 }

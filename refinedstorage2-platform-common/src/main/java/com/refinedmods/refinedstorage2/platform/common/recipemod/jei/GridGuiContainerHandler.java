@@ -12,11 +12,11 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IIngredientManager;
 
-public class GridGuiContainerHandler implements IGuiContainerHandler<AbstractGridScreen<?>> {
+class GridGuiContainerHandler implements IGuiContainerHandler<AbstractGridScreen<?>> {
     private final IngredientConverter converter;
     private final IIngredientManager ingredientManager;
 
-    public GridGuiContainerHandler(final IngredientConverter converter, final IIngredientManager ingredientManager) {
+    GridGuiContainerHandler(final IngredientConverter converter, final IIngredientManager ingredientManager) {
         this.converter = converter;
         this.ingredientManager = ingredientManager;
     }

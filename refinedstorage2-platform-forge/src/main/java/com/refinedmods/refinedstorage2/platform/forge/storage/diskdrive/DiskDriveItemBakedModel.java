@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.support.render.model;
+package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

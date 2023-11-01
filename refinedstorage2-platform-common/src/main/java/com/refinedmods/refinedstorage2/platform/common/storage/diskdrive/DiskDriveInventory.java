@@ -11,12 +11,12 @@ import javax.annotation.Nullable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider {
+class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider {
     private final AbstractDiskDriveBlockEntity diskDrive;
     @Nullable
     private StorageRepository storageRepository;
 
-    public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive, final int diskCount) {
+    DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive, final int diskCount) {
         super(diskCount);
         this.diskDrive = diskDrive;
     }

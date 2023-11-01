@@ -15,15 +15,15 @@ import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-public class PlatformStorage<T> extends AbstractProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
+class PlatformStorage<T> extends AbstractProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
     private final StorageType<T> type;
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;
 
-    public PlatformStorage(final Storage<T> delegate,
-                           final StorageType<T> type,
-                           final TrackedStorageRepository<T> trackingRepository,
-                           final Runnable listener) {
+    PlatformStorage(final Storage<T> delegate,
+                    final StorageType<T> type,
+                    final TrackedStorageRepository<T> trackingRepository,
+                    final Runnable listener) {
         super(delegate);
         this.type = type;
         this.trackingRepository = trackingRepository;

@@ -8,10 +8,10 @@ import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 
-public class FuzzyDetectorAmountStrategy extends AbstractDetectorAmountStrategy {
+class FuzzyDetectorAmountStrategy extends AbstractDetectorAmountStrategy {
     private final DetectorAmountStrategy fallback;
 
-    public FuzzyDetectorAmountStrategy(final DetectorAmountStrategy fallback) {
+    FuzzyDetectorAmountStrategy(final DetectorAmountStrategy fallback) {
         this.fallback = fallback;
     }
 

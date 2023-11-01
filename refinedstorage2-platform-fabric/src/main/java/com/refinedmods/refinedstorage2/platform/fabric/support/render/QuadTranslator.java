@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.render.model;
+package com.refinedmods.refinedstorage2.platform.fabric.support.render;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;

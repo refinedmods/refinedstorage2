@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.support.amount;
 
-import com.refinedmods.refinedstorage2.platform.common.util.MathHelper;
+import com.refinedmods.refinedstorage2.platform.common.util.MathUtil;
 
-import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class LongAmountOperations implements AmountOperations<Long> {
     public static final AmountOperations<Long> INSTANCE = new LongAmountOperations();
@@ -40,10 +41,10 @@ public class LongAmountOperations implements AmountOperations<Long> {
                              final int delta,
                              @Nullable final Long minAmount,
                              @Nullable final Long maxAmount) {
-        return MathHelper.clamp(
+        return MathUtil.clamp(
             current + delta,
-            Objects.requireNonNullElse(minAmount, Long.MIN_VALUE),
-            Objects.requireNonNullElse(maxAmount, Long.MAX_VALUE)
+            requireNonNullElse(minAmount, Long.MIN_VALUE),
+            requireNonNullElse(maxAmount, Long.MAX_VALUE)
         );
     }
 }

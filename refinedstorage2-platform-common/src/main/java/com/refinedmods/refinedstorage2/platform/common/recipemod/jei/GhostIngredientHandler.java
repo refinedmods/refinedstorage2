@@ -17,10 +17,10 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import net.minecraft.client.renderer.Rect2i;
 
 @SuppressWarnings("rawtypes")
-public class GhostIngredientHandler implements IGhostIngredientHandler<AbstractBaseScreen> {
+class GhostIngredientHandler implements IGhostIngredientHandler<AbstractBaseScreen> {
     private final IngredientConverter ingredientConverter;
 
-    public GhostIngredientHandler(final IngredientConverter ingredientConverter) {
+    GhostIngredientHandler(final IngredientConverter ingredientConverter) {
         this.ingredientConverter = ingredientConverter;
     }
 

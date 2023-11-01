@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.support.render.model;
+package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;

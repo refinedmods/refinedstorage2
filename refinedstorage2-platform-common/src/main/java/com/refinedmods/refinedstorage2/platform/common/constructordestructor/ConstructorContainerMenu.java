@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceCon
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractSchedulingContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
@@ -49,14 +48,14 @@ public class ConstructorContainerMenu extends AbstractSchedulingContainerMenu<Co
     @Override
     protected void registerClientProperties() {
         super.registerClientProperties();
-        registerProperty(new ClientProperty<>(PropertyTypes.CONSTRUCTOR_DROP_ITEMS, false));
+        registerProperty(new ClientProperty<>(ConstructorDestructorPropertyTypes.DROP_ITEMS, false));
     }
 
     @Override
     protected void registerServerProperties(final ConstructorBlockEntity blockEntity) {
         super.registerServerProperties(blockEntity);
         registerProperty(new ServerProperty<>(
-            PropertyTypes.CONSTRUCTOR_DROP_ITEMS,
+            ConstructorDestructorPropertyTypes.DROP_ITEMS,
             blockEntity::isDropItems,
             blockEntity::setDropItems
         ));
