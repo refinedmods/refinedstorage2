@@ -26,7 +26,7 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
     public DetectorContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDetector(), syncId, playerInventory, buf, FILTER_HELP);
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
-        registerProperty(new ClientProperty<>(PropertyTypes.DETECTOR_MODE, DetectorMode.EQUAL));
+        registerProperty(new ClientProperty<>(DetectorPropertyTypes.MODE, DetectorMode.EQUAL));
     }
 
     public DetectorContainerMenu(final int syncId,
@@ -41,7 +41,7 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
             detector::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.DETECTOR_MODE,
+            DetectorPropertyTypes.MODE,
             detector::getMode,
             detector::setMode
         ));

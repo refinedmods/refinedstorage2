@@ -6,6 +6,6 @@ import java.util.Optional;
 
 import net.minecraft.world.item.ItemStack;
 
-public interface StorageDiskInfoAccessor {
+interface StorageDiskInfoAccessor {
     Optional<StorageInfo> getInfo(ItemStack stack);
 }

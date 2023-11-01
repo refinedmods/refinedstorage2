@@ -14,10 +14,10 @@ import net.minecraft.world.inventory.MenuType;
 public abstract class AbstractStorageContainerMenu extends AbstractResourceContainerMenu {
     protected AbstractStorageContainerMenu(final MenuType<?> type, final int syncId) {
         super(type, syncId);
-        registerProperty(new ClientProperty<>(PropertyTypes.PRIORITY, 0));
+        registerProperty(new ClientProperty<>(StoragePropertyTypes.PRIORITY, 0));
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
-        registerProperty(new ClientProperty<>(PropertyTypes.ACCESS_MODE, AccessMode.INSERT_EXTRACT));
+        registerProperty(new ClientProperty<>(StoragePropertyTypes.ACCESS_MODE, AccessMode.INSERT_EXTRACT));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
@@ -27,7 +27,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
                                            final StorageConfigurationContainer configContainer) {
         super(type, syncId, player);
         registerProperty(new ServerProperty<>(
-            PropertyTypes.PRIORITY,
+            StoragePropertyTypes.PRIORITY,
             configContainer::getPriority,
             configContainer::setPriority
         ));
@@ -42,7 +42,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
             configContainer::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.ACCESS_MODE,
+            StoragePropertyTypes.ACCESS_MODE,
             configContainer::getAccessMode,
             configContainer::setAccessMode
         ));

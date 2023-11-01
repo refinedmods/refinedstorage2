@@ -15,13 +15,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
+class WirelessGridExtendedMenuProvider extends GridExtendedMenuProvider {
     private final SlotReference slotReference;
 
-    public WirelessGridExtendedMenuProvider(final Grid grid,
-                                            final PlatformRegistry<PlatformStorageChannelType<?>>
-                                                storageChannelTypeRegistry,
-                                            final SlotReference slotReference) {
+    WirelessGridExtendedMenuProvider(final Grid grid,
+                                     final PlatformRegistry<PlatformStorageChannelType<?>>
+                                         storageChannelTypeRegistry,
+                                     final SlotReference slotReference) {
         super(grid, storageChannelTypeRegistry, new MenuProvider() {
             @Override
             public Component getDisplayName() {

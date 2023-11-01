@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class WirelessGrid implements Grid {
+class WirelessGrid implements Grid {
     private final NetworkBoundItemSession session;
     private final GridWatchers watchers;
 
-    public WirelessGrid(final NetworkBoundItemSession session) {
+    WirelessGrid(final NetworkBoundItemSession session) {
         this.session = session;
         this.watchers = new GridWatchers(PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll());
     }

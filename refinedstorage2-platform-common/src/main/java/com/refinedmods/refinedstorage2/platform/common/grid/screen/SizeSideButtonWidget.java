@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class SizeSideButtonWidget extends AbstractSideButtonWidget {
+class SizeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.size");
 
     private static final MutableComponent SUBTEXT_STRETCH = createTranslation("gui", "grid.size.stretch");
@@ -18,7 +18,7 @@ public class SizeSideButtonWidget extends AbstractSideButtonWidget {
 
     private final AbstractGridContainerMenu menu;
 
-    public SizeSideButtonWidget(final AbstractGridContainerMenu menu) {
+    SizeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractStorageBlock<T extends AbstractStorageBlockBlockEntity<?>> extends AbstractBaseBlock
+abstract class AbstractStorageBlock<T extends AbstractStorageBlockBlockEntity<?>> extends AbstractBaseBlock
     implements EntityBlock {
     private final AbstractBlockEntityTicker<T> ticker;
 

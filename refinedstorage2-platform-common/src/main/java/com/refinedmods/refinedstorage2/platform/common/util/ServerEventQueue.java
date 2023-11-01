@@ -3,10 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.util;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public final class TickHandler {
+public final class ServerEventQueue {
     private static final Deque<Runnable> ACTIONS = new ArrayDeque<>();
 
-    private TickHandler() {
+    private ServerEventQueue() {
     }
 
     public static void runQueuedActions() {
@@ -18,7 +18,7 @@ public final class TickHandler {
         }
     }
 
-    public static void runWhenReady(final Runnable runnable) {
+    public static void queue(final Runnable runnable) {
         synchronized (ACTIONS) {
             ACTIONS.add(runnable);
         }

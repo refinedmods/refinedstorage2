@@ -8,7 +8,7 @@ record LastModified(Type type, long amount) {
     private static final long WEEK = DAY * 7;
     private static final long YEAR = DAY * 365;
 
-    public enum Type {
+    enum Type {
         SECOND,
         MINUTE,
         HOUR,
@@ -17,7 +17,7 @@ record LastModified(Type type, long amount) {
         YEAR
     }
 
-    public static LastModified calculate(final long time, final long now) {
+    static LastModified calculate(final long time, final long now) {
         final long diff = now - time;
         final LastModified lastModified;
         if (diff < MINUTE) {

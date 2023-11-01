@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.common.support.widget.AbstractYe
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DestructorPickupItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
-    public DestructorPickupItemsSideButtonWidget(final ClientProperty<Boolean> property) {
+class DestructorPickupItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
+    DestructorPickupItemsSideButtonWidget(final ClientProperty<Boolean> property) {
         super(property, createTranslation("gui", "destructor.pickup_items"));
     }
 

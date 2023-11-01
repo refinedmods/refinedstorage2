@@ -21,7 +21,7 @@ import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.RefinedStora
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage2.platform.forge.support.render.model.DiskDriveGeometryLoader;
+import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveGeometryLoader;
 
 import java.util.List;
 

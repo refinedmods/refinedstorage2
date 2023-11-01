@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.common.support.widget.AbstractYe
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ConstructorDropItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
-    public ConstructorDropItemsSideButtonWidget(final ClientProperty<Boolean> property) {
+class ConstructorDropItemsSideButtonWidget extends AbstractYesNoSideButtonWidget {
+    ConstructorDropItemsSideButtonWidget(final ClientProperty<Boolean> property) {
         super(property, createTranslation("gui", "constructor.drop_items"));
     }
 

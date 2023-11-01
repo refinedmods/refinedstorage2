@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.support.render.model;
+package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 

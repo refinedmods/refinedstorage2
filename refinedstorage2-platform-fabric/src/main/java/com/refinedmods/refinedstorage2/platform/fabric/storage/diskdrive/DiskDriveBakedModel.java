@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiS
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage2.platform.fabric.support.render.model.QuadRotator;
-import com.refinedmods.refinedstorage2.platform.fabric.support.render.model.QuadTranslator;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotator;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadTranslator;
 
 import java.util.EnumMap;
 import java.util.Map;

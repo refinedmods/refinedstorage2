@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.detector;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 
-public final class DetectorModeSettings {
+final class DetectorModeSettings {
     private static final int UNDER = 0;
     private static final int EQUAL = 1;
     private static final int ABOVE = 2;

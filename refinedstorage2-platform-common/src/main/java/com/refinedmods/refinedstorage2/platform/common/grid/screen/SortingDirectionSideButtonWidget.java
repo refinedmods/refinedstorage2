@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
+class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.sorting.direction");
     private static final MutableComponent SUBTEXT_ASCENDING =
         createTranslation("gui", "grid.sorting.direction.ascending");
@@ -17,7 +17,7 @@ public class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
 
     private final AbstractGridContainerMenu menu;
 
-    public SortingDirectionSideButtonWidget(final AbstractGridContainerMenu menu) {
+    SortingDirectionSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }

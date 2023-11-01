@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResour
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
@@ -23,7 +22,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.support.containermenu.Con
 import com.refinedmods.refinedstorage2.platform.fabric.support.containermenu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.support.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.FluidVariantFluidRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.util.SingleStackStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.util.SimpleSingleStackStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -152,7 +151,7 @@ public final class PlatformImpl extends AbstractPlatform {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        final SingleStackStorageImpl interceptingStorage = new SingleStackStorageImpl(stack);
+        final SimpleSingleStackStorage interceptingStorage = new SimpleSingleStackStorage(stack);
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(stack, ContainerItemContext.ofSingleSlot(
             interceptingStorage
         ));
@@ -181,7 +180,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
-        final SingleStackStorageImpl interceptingStorage = SingleStackStorageImpl.forEmptyBucket();
+        final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forEmptyBucket();
         final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)

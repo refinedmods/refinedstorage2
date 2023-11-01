@@ -9,12 +9,12 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
+class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer");
 
     private final AbstractGridContainerMenu menu;
 
-    public SynchronizationSideButtonWidget(final AbstractGridContainerMenu menu) {
+    SynchronizationSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }

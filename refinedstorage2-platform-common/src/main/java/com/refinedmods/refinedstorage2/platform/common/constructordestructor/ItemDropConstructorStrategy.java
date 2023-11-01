@@ -11,10 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemDropConstructorStrategy extends AbstractItemConstructorStrategy {
+class ItemDropConstructorStrategy extends AbstractItemConstructorStrategy {
     private final long amount;
 
-    public ItemDropConstructorStrategy(
+    ItemDropConstructorStrategy(
         final ServerLevel level,
         final BlockPos pos,
         final Direction direction,

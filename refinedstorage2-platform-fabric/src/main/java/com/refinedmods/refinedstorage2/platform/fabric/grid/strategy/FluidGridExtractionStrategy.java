@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.util.SingleStackStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.util.SimpleSingleStackStorage;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -65,7 +65,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private void extractWithBucketInStorage(final FluidResource fluidResource,
                                             final GridExtractMode mode,
                                             final boolean cursor) {
-        final SingleStackStorageImpl interceptingStorage = SingleStackStorageImpl.forEmptyBucket();
+        final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forEmptyBucket();
         final net.fabricmc.fabric.api.transfer.v1.storage.Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)
@@ -94,7 +94,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                                               final boolean cursor) {
         try (Transaction tx = Transaction.openOuter()) {
             playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx);
-            final SingleStackStorageImpl interceptingStorage = SingleStackStorageImpl.forEmptyBucket();
+            final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forEmptyBucket();
             final net.fabricmc.fabric.api.transfer.v1.storage.Storage<FluidVariant> dest = FluidStorage.ITEM.find(
                 interceptingStorage.getStack(),
                 ContainerItemContext.ofSingleSlot(interceptingStorage)
@@ -123,7 +123,7 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
         }
     }
 
-    private boolean insertResultingBucketIntoInventory(final SingleStackStorageImpl interceptingStorage,
+    private boolean insertResultingBucketIntoInventory(final SimpleSingleStackStorage interceptingStorage,
                                                        final boolean cursor,
                                                        final Transaction innerTx) {
         final net.fabricmc.fabric.api.transfer.v1.storage.Storage<ItemVariant> relevantStorage = cursor

@@ -20,11 +20,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
-public class ItemPickupDestructorStrategy implements DestructorStrategy {
+class ItemPickupDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
     private final BlockPos pos;
 
-    public ItemPickupDestructorStrategy(final ServerLevel level, final BlockPos pos) {
+    ItemPickupDestructorStrategy(final ServerLevel level, final BlockPos pos) {
         this.level = level;
         this.pos = pos;
     }

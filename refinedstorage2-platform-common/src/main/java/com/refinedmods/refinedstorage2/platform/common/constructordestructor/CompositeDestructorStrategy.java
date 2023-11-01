@@ -11,10 +11,10 @@ import java.util.function.Supplier;
 
 import net.minecraft.world.entity.player.Player;
 
-public class CompositeDestructorStrategy implements DestructorStrategy {
+class CompositeDestructorStrategy implements DestructorStrategy {
     private final List<DestructorStrategy> strategies;
 
-    public CompositeDestructorStrategy(final List<DestructorStrategy> strategies) {
+    CompositeDestructorStrategy(final List<DestructorStrategy> strategies) {
         this.strategies = Collections.unmodifiableList(strategies);
     }
 

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
-import com.refinedmods.refinedstorage2.platform.common.networking.CableShapeCacheKey;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionTypeImpl;
 

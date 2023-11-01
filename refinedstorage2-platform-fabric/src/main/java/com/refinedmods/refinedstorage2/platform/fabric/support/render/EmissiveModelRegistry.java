@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.render.model;
+package com.refinedmods.refinedstorage2.platform.fabric.support.render;
 
 import java.util.HashMap;
 import java.util.Map;

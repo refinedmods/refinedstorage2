@@ -9,10 +9,10 @@ import java.util.List;
 
 import net.minecraft.world.entity.player.Player;
 
-public class CompositeConstructorStrategy implements ConstructorStrategy {
+class CompositeConstructorStrategy implements ConstructorStrategy {
     private final List<ConstructorStrategy> strategies;
 
-    public CompositeConstructorStrategy(final List<ConstructorStrategy> strategies) {
+    CompositeConstructorStrategy(final List<ConstructorStrategy> strategies) {
         this.strategies = Collections.unmodifiableList(strategies);
     }
 

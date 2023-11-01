@@ -19,7 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageCh
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
+import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
 import com.refinedmods.refinedstorage2.platform.fabric.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.FluidGridInsertionStrategy;
@@ -357,7 +357,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerTickHandler() {
-        ServerTickEvents.START_SERVER_TICK.register(server -> TickHandler.runQueuedActions());
+        ServerTickEvents.START_SERVER_TICK.register(server -> ServerEventQueue.runQueuedActions());
     }
 
     private void registerSlotReferenceProviders() {

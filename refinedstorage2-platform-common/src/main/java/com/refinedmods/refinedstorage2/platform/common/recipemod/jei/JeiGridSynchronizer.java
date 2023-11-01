@@ -9,7 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class JeiGridSynchronizer extends AbstractGridSynchronizer {
+class JeiGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.jei");
     private static final MutableComponent TITLE_TWO_WAY = createTranslation("gui", "grid.synchronizer.jei.two_way");
     private static final Component HELP = createTranslation("gui", "grid.synchronizer.jei.help");
@@ -18,7 +18,7 @@ public class JeiGridSynchronizer extends AbstractGridSynchronizer {
     private final JeiProxy jeiProxy;
     private final boolean twoWay;
 
-    public JeiGridSynchronizer(final JeiProxy jeiProxy, final boolean twoWay) {
+    JeiGridSynchronizer(final JeiProxy jeiProxy, final boolean twoWay) {
         this.jeiProxy = jeiProxy;
         this.twoWay = twoWay;
     }

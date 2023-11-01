@@ -4,11 +4,11 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.runtime.IClickableIngredient;
 import net.minecraft.client.renderer.Rect2i;
 
-public class ClickableIngredient<T> implements IClickableIngredient<T> {
+class ClickableIngredient<T> implements IClickableIngredient<T> {
     private final ITypedIngredient<T> ingredient;
     private final Rect2i area;
 
-    public ClickableIngredient(final ITypedIngredient<T> ingredient, final int x, final int y) {
+    ClickableIngredient(final ITypedIngredient<T> ingredient, final int x, final int y) {
         this.ingredient = ingredient;
         area = new Rect2i(x, y, 16, 16);
     }

@@ -70,9 +70,9 @@ public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMe
             getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             FuzzyModeSideButtonWidget.Type.STORAGE
         ));
-        addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(PropertyTypes.ACCESS_MODE)));
+        addSideButton(new AccessModeSideButtonWidget(getMenu().getProperty(StoragePropertyTypes.ACCESS_MODE)));
         addSideButton(new PrioritySideButtonWidget(
-            getMenu().getProperty(PropertyTypes.PRIORITY),
+            getMenu().getProperty(StoragePropertyTypes.PRIORITY),
             playerInventory,
             this
         ));

@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResour
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;

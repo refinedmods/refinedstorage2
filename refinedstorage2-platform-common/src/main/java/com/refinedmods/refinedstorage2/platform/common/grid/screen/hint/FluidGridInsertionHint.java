@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.grid.screen.hint;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
@@ -16,7 +15,7 @@ public class FluidGridInsertionHint implements GridInsertionHint {
         return Platform.INSTANCE.getContainedFluid(carried).map(this::createComponent);
     }
 
-    private MouseWithIconClientTooltipComponent createComponent(final ContainedFluid result) {
+    private MouseWithIconClientTooltipComponent createComponent(final Platform.ContainedFluid result) {
         return new MouseWithIconClientTooltipComponent(
             MouseWithIconClientTooltipComponent.Type.RIGHT,
             (graphics, x, y) -> Platform.INSTANCE.getFluidRenderer().render(

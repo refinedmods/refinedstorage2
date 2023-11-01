@@ -4,10 +4,10 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 
 import net.minecraft.world.entity.player.Player;
 
-public class CraftingGridRefillContextImpl implements CraftingGridRefillContext {
+class CraftingGridRefillContextImpl implements CraftingGridRefillContext {
     private final CraftingGridBlockEntity blockEntity;
 
-    public CraftingGridRefillContextImpl(final CraftingGridBlockEntity blockEntity) {
+    CraftingGridRefillContextImpl(final CraftingGridBlockEntity blockEntity) {
         this.blockEntity = blockEntity;
     }
 

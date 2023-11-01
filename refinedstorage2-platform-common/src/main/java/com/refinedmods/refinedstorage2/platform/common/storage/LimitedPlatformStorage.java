@@ -5,13 +5,13 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
 
-public class LimitedPlatformStorage<T> extends PlatformStorage<T> implements LimitedStorage<T> {
+class LimitedPlatformStorage<T> extends PlatformStorage<T> implements LimitedStorage<T> {
     private final LimitedStorageImpl<T> limitedStorage;
 
-    public LimitedPlatformStorage(final LimitedStorageImpl<T> delegate,
-                                  final StorageType<T> type,
-                                  final TrackedStorageRepository<T> trackingRepository,
-                                  final Runnable listener) {
+    LimitedPlatformStorage(final LimitedStorageImpl<T> delegate,
+                           final StorageType<T> type,
+                           final TrackedStorageRepository<T> trackingRepository,
+                           final Runnable listener) {
         super(delegate, type, trackingRepository, listener);
         this.limitedStorage = delegate;
     }

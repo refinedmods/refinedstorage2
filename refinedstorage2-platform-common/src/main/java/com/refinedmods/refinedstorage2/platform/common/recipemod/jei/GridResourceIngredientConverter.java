@@ -9,10 +9,10 @@ import java.util.Optional;
 
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 
-public class GridResourceIngredientConverter implements IngredientConverter {
+class GridResourceIngredientConverter implements IngredientConverter {
     private final IPlatformFluidHelper<?> fluidHelper;
 
-    public GridResourceIngredientConverter(final IPlatformFluidHelper<?> fluidHelper) {
+    GridResourceIngredientConverter(final IPlatformFluidHelper<?> fluidHelper) {
         this.fluidHelper = fluidHelper;
     }
 

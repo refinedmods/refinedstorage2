@@ -1,11 +1,10 @@
-package com.refinedmods.refinedstorage2.platform.forge.support.render.model;
+package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.ForgeDiskDriveBlockEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

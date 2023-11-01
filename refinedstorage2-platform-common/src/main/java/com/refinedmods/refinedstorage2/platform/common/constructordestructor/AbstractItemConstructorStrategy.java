@@ -15,12 +15,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class AbstractItemConstructorStrategy implements ConstructorStrategy {
+abstract class AbstractItemConstructorStrategy implements ConstructorStrategy {
     protected final ServerLevel level;
     protected final BlockPos pos;
     protected final Direction direction;
 
-    protected AbstractItemConstructorStrategy(final ServerLevel level, final BlockPos pos, final Direction direction) {
+    AbstractItemConstructorStrategy(final ServerLevel level, final BlockPos pos, final Direction direction) {
         this.level = level;
         this.pos = pos;
         this.direction = direction;

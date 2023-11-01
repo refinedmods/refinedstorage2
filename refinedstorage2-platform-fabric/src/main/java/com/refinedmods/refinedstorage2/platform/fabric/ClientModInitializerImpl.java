@@ -33,7 +33,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiGridSync
 import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveUnbakedModel;
-import com.refinedmods.refinedstorage2.platform.fabric.support.render.model.EmissiveModelRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.EmissiveModelRegistry;
 
 import java.util.List;
 

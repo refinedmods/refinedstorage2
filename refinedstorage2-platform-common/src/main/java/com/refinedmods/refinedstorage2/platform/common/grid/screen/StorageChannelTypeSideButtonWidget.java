@@ -11,14 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
+class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.storage_channel_type");
     private static final MutableComponent SUBTEXT_ALL = createTranslation("gui", "grid.storage_channel_type.all");
     private static final Component HELP = createTranslation("gui", "grid.storage_channel_type.help");
 
     private final AbstractGridContainerMenu menu;
 
-    public StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
+    StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }

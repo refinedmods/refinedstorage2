@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
-public class MissingItemRecipeTransferError implements IRecipeTransferError {
+class MissingItemRecipeTransferError implements IRecipeTransferError {
     private static final Color COLOR = new Color(1.0f, 0.0f, 0.0f, 0.4f);
     private static final List<FormattedCharSequence> MISSING_MESSAGE = List.of(
         Component.translatable("jei.tooltip.transfer").getVisualOrderText(),
@@ -24,7 +24,7 @@ public class MissingItemRecipeTransferError implements IRecipeTransferError {
 
     private final List<IRecipeSlotView> slotsWithMissingItems;
 
-    public MissingItemRecipeTransferError(final List<IRecipeSlotView> slotsWithMissingItems) {
+    MissingItemRecipeTransferError(final List<IRecipeSlotView> slotsWithMissingItems) {
         this.slotsWithMissingItems = slotsWithMissingItems;
     }
 

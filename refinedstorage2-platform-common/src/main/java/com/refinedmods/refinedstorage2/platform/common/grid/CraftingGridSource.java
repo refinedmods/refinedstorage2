@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
 
-public interface CraftingGridSource {
+interface CraftingGridSource {
     CraftingMatrix getCraftingMatrix();
 
     ResultContainer getCraftingResult();

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
-public final class MathHelper {
-    private MathHelper() {
+public final class MathUtil {
+    private MathUtil() {
     }
 
     public static long clamp(final long value, final long min, final long max) {

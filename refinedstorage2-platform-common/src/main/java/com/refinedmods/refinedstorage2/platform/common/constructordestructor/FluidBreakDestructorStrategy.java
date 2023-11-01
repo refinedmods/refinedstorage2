@@ -23,11 +23,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 
-public class FluidBreakDestructorStrategy implements DestructorStrategy {
+class FluidBreakDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
     private final BlockPos pos;
 
-    public FluidBreakDestructorStrategy(final ServerLevel level, final BlockPos pos) {
+    FluidBreakDestructorStrategy(final ServerLevel level, final BlockPos pos) {
         this.level = level;
         this.pos = pos;
     }

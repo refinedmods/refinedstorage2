@@ -72,7 +72,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemReso
 import com.refinedmods.refinedstorage2.platform.common.upgrade.BuiltinUpgradeDestinationsImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
+import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
 import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.CompositeWirelessTransmitterRangeModifier;
 
 import java.util.ArrayList;
@@ -292,7 +292,7 @@ public class PlatformApiImpl implements PlatformApi {
                                                  final Level level,
                                                  final Runnable callback) {
         final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
-        TickHandler.runWhenReady(() -> {
+        ServerEventQueue.queue(() -> {
             networkBuilder.initialize(container, connectionProvider);
             callback.run();
         });
