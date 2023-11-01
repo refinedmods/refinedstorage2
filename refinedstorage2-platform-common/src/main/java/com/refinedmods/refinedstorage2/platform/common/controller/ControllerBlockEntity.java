@@ -61,24 +61,17 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
             : BlockEntities.INSTANCE.getController();
     }
 
-    void updateEnergyTypeInLevel(final BlockState state) {
-        final ControllerEnergyType currentEnergyType = ControllerEnergyType.ofState(getNode().getState());
-        final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
-
-        if (currentEnergyType != inLevelEnergyType && energyStateChangeRateLimiter.tryAcquire()) {
+    public void updateEnergyTypeInLevel(final BlockState state) {
+        final ControllerEnergyType currentEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+        final ControllerEnergyType newEnergyType = ControllerEnergyType.ofState(getNode().getState());
+        if (newEnergyType != currentEnergyType && level != null && energyStateChangeRateLimiter.tryAcquire()) {
             LOGGER.debug(
                 "Energy type state change for controller at {}: {} -> {}",
                 getBlockPos(),
-                inLevelEnergyType,
-                currentEnergyType
+                currentEnergyType,
+                newEnergyType
             );
-            updateEnergyTypeInLevel(state, currentEnergyType);
-        }
-    }
-
-    private void updateEnergyTypeInLevel(final BlockState state, final ControllerEnergyType energyType) {
-        if (level != null) {
-            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, energyType));
+            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, newEnergyType));
         }
     }
 

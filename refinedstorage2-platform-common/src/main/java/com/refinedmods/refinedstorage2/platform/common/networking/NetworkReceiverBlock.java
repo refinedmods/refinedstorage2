@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.networking;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -9,7 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractColoredBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
-import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +26,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 public class NetworkReceiverBlock extends AbstractColoredBlock<NetworkReceiverBlock> implements EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    private static final AbstractBlockEntityTicker<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> TICKER =
+    private static final AbstractBlockEntityTicker<NetworkReceiverBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getNetworkReceiver, ACTIVE);
 
     public NetworkReceiverBlock(final DyeColor color, final MutableComponent name) {
@@ -55,12 +52,7 @@ public class NetworkReceiverBlock extends AbstractColoredBlock<NetworkReceiverBl
     @Nullable
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return new NetworkNodeContainerBlockEntityImpl<>(
-            BlockEntities.INSTANCE.getNetworkReceiver(),
-            pos,
-            state,
-            new SimpleNetworkNode(Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage())
-        );
+        return new NetworkReceiverBlockEntity(pos, state);
     }
 
     @Nullable

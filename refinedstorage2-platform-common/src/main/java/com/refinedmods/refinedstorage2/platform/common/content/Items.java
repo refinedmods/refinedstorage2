@@ -40,6 +40,7 @@ public final class Items {
     private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allWirelessTransmitters = new ArrayList<>();
     private final List<Supplier<BlockItem>> allNetworkReceivers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allNetworkTransmitters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -374,7 +375,15 @@ public final class Items {
     public List<Supplier<BlockItem>> getNetworkReceivers() {
         return Collections.unmodifiableList(allNetworkReceivers);
     }
-    
+
+    public void addNetworkTransmitter(final Supplier<BlockItem> supplier) {
+        allNetworkTransmitters.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getNetworkTransmitters() {
+        return Collections.unmodifiableList(allNetworkTransmitters);
+    }
+
     public Item getNetworkCard() {
         return Objects.requireNonNull(networkCard).get();
     }

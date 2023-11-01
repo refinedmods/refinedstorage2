@@ -32,6 +32,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.IMPORTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.NETWORK_RECEIVERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.NETWORK_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORAGE_DISKS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
@@ -102,6 +103,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(NETWORK_RECEIVERS,
             Blocks.INSTANCE.getNetworkReceiver().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(NETWORK_TRANSMITTERS,
+            Blocks.INSTANCE.getNetworkTransmitter().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }

@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlockEnt
 import com.refinedmods.refinedstorage2.platform.common.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
@@ -66,7 +68,9 @@ public final class BlockEntities {
     @Nullable
     private Supplier<BlockEntityType<StorageMonitorBlockEntity>> storageMonitor;
     @Nullable
-    private Supplier<BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>>> networkReceiver;
+    private Supplier<BlockEntityType<NetworkReceiverBlockEntity>> networkReceiver;
+    @Nullable
+    private Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> networkTransmitter;
 
     private BlockEntities() {
     }
@@ -211,13 +215,21 @@ public final class BlockEntities {
         this.storageMonitor = supplier;
     }
 
-    public BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> getNetworkReceiver() {
+    public BlockEntityType<NetworkReceiverBlockEntity> getNetworkReceiver() {
         return Objects.requireNonNull(networkReceiver).get();
     }
 
-    public void setNetworkReceiver(
-        final Supplier<BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>>> supplier
-    ) {
+    public void setNetworkReceiver(final Supplier<BlockEntityType<NetworkReceiverBlockEntity>> supplier) {
         this.networkReceiver = supplier;
+    }
+
+    public BlockEntityType<NetworkTransmitterBlockEntity> getNetworkTransmitter() {
+        return Objects.requireNonNull(networkTransmitter).get();
+    }
+
+    public void setNetworkTransmitter(
+        final Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> supplier
+    ) {
+        this.networkTransmitter = supplier;
     }
 }

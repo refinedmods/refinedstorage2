@@ -10,9 +10,9 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 
 public class LootTableProvider extends net.minecraft.data.loot.LootTableProvider {
     public LootTableProvider(final PackOutput output) {
-        super(output, Set.of(), List.of(
-            new SubProviderEntry(BlockDropProvider::new,
-                LootContextParamSet.builder().required(EXPLOSION_RADIUS).build())
+        super(output, Set.of(), List.of(new SubProviderEntry(
+            BlockDropProvider::new,
+            LootContextParamSet.builder().required(EXPLOSION_RADIUS).build())
         ));
     }
 

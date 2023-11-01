@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSi
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,11 +23,16 @@ class ConnectionSinkImpl implements ConnectionSink {
     }
 
     @Override
+    public void tryConnect(final GlobalPos pos) {
+        connections.add(new Connection(pos, null));
+    }
+
+    @Override
     public void tryConnectInSameDimension(final BlockPos pos, final Direction incomingDirection) {
         final GlobalPos globalPos = GlobalPos.of(source.dimension(), pos);
         connections.add(new Connection(globalPos, incomingDirection));
     }
 
-    record Connection(GlobalPos pos, Direction incomingDirection) {
+    record Connection(GlobalPos pos, @Nullable Direction incomingDirection) {
     }
 }

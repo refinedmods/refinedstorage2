@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "state=active": {
+      "model": "refinedstorage2:block/network_transmitter/magenta"
+    },
+    "state=error": {
+      "model": "refinedstorage2:block/network_transmitter/error"
+    },
+    "state=inactive": {
+      "model": "refinedstorage2:block/network_transmitter/inactive"
+    }
+  }
+}

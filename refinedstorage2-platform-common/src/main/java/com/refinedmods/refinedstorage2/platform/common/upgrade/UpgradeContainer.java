@@ -26,8 +26,7 @@ public class UpgradeContainer extends SimpleContainer implements UpgradeState {
     private final UpgradeRegistry registry;
     private final Object2IntMap<UpgradeItem> index = new Object2IntOpenHashMap<>();
 
-    public UpgradeContainer(final UpgradeDestination destination,
-                            final UpgradeRegistry registry) {
+    public UpgradeContainer(final UpgradeDestination destination, final UpgradeRegistry registry) {
         this(destination, registry, () -> {
         });
     }

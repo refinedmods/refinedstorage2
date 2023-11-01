@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.controller.ControllerEner
 import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
@@ -63,6 +64,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerConstructorDestructors(Blocks.INSTANCE.getConstructor(), "constructor");
         registerConstructorDestructors(Blocks.INSTANCE.getDestructor(), "destructor");
         registerNetworkReceivers();
+        registerNetworkTransmitters();
     }
 
     private void registerCables() {
@@ -269,6 +271,24 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
                     model.modelFile(modelFile(createIdentifier("block/network_receiver/" + color.getName())));
                 } else {
                     model.modelFile(inactive);
+                }
+                return model.build();
+            });
+        });
+    }
+
+    private void registerNetworkTransmitters() {
+        final ModelFile inactive = modelFile(createIdentifier("block/network_transmitter/inactive"));
+        final ModelFile error = modelFile(createIdentifier("block/network_transmitter/error"));
+        Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                switch (blockState.getValue(NetworkTransmitterBlock.STATE)) {
+                    case ACTIVE ->
+                        model.modelFile(modelFile(createIdentifier("block/network_transmitter/" + color.getName())));
+                    case ERROR -> model.modelFile(error);
+                    case INACTIVE -> model.modelFile(inactive);
                 }
                 return model.build();
             });

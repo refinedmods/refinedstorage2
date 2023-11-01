@@ -8,9 +8,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,6 +27,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverKey.getDimensionName;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 // TODO: better active texture.
@@ -52,16 +57,18 @@ public class NetworkCardItem extends Item {
         }
         final CompoundTag tag = new CompoundTag();
         tag.putLong(TAG_POS, pos.asLong());
-        tag.putString(TAG_DIMENSION, ctx.getLevel().dimension().location().toString());
+        final ResourceKey<Level> dimension = ctx.getLevel().dimension();
+        tag.putString(TAG_DIMENSION, dimension.location().toString());
         ctx.getItemInHand().setTag(tag);
         ctx.getPlayer().sendSystemMessage(createTranslation(
             "item",
             "network_card.bound",
             pos.getX(),
             pos.getY(),
-            pos.getZ()
+            pos.getZ(),
+            getDimensionName(dimension).withStyle(ChatFormatting.YELLOW)
         ));
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -81,29 +88,36 @@ public class NetworkCardItem extends Item {
                                 final List<Component> lines,
                                 final TooltipFlag flag) {
         super.appendHoverText(stack, level, lines, flag);
-        if (!isActive(stack)) {
-            lines.add(UNBOUND);
-            return;
-        }
-        final BlockPos pos = getPosition(stack);
-        if (pos == null) {
-            return;
-        }
-        lines.add(createTranslation(
+        getLocation(stack).ifPresentOrElse(location -> lines.add(createTranslation(
             "item",
             "network_card.bound",
-            pos.getX(),
-            pos.getY(),
-            pos.getZ()
-        ).withStyle(ChatFormatting.GRAY));
+            location.pos().getX(),
+            location.pos().getY(),
+            location.pos().getZ(),
+            getDimensionName(location.dimension()).withStyle(ChatFormatting.YELLOW)
+        ).withStyle(ChatFormatting.GRAY)), () -> lines.add(UNBOUND));
     }
 
     @Nullable
-    public BlockPos getPosition(final ItemStack stack) {
-        if (stack.getTag() == null) {
+    private ResourceKey<Level> getDimension(final String dimensionKey) {
+        final ResourceLocation name = ResourceLocation.tryParse(dimensionKey);
+        if (name == null) {
             return null;
         }
-        return BlockPos.of(stack.getTag().getLong(TAG_POS));
+        return ResourceKey.create(Registries.DIMENSION, name);
+    }
+
+    Optional<GlobalPos> getLocation(final ItemStack stack) {
+        final CompoundTag tag = stack.getTag();
+        if (tag == null) {
+            return Optional.empty();
+        }
+        final ResourceKey<Level> dimension = getDimension(tag.getString(TAG_DIMENSION));
+        if (dimension == null) {
+            return Optional.empty();
+        }
+        final BlockPos pos = BlockPos.of(tag.getLong(TAG_POS));
+        return Optional.of(GlobalPos.of(dimension, pos));
     }
 
     @Override

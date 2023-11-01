@@ -25,6 +25,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         registerDetectors();
         registerWirelessTransmitters();
         registerNetworkReceivers();
+        registerNetworkTransmitters();
     }
 
     private void registerCables() {
@@ -126,5 +127,25 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
             .texture("particle", baseTexture)
             .texture("all", baseTexture)
             .texture("cutout", createIdentifier("block/network_receiver/cutouts/inactive"));
+    }
+
+    private void registerNetworkTransmitters() {
+        final ResourceLocation emissiveBase = createIdentifier("block/emissive_all_cutout");
+        final ResourceLocation baseTexture = createIdentifier("block/network_transmitter/base");
+        Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, receiver) -> {
+            final ResourceLocation cutout = createIdentifier("block/network_transmitter/cutouts/" + color.getName());
+            withExistingParent("block/network_transmitter/" + color.getName(), emissiveBase)
+                .texture("particle", baseTexture)
+                .texture("all", baseTexture)
+                .texture("cutout", cutout);
+        });
+        withExistingParent("block/network_transmitter/inactive", createIdentifier("block/all_cutout"))
+            .texture("particle", baseTexture)
+            .texture("all", baseTexture)
+            .texture("cutout", createIdentifier("block/network_transmitter/cutouts/inactive"));
+        withExistingParent("block/network_transmitter/error", emissiveBase)
+            .texture("particle", baseTexture)
+            .texture("all", baseTexture)
+            .texture("cutout", createIdentifier("block/network_transmitter/cutouts/error"));
     }
 }

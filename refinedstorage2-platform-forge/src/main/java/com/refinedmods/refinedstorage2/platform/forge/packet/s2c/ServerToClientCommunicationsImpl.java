@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
@@ -84,5 +85,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
                                         final UUID id,
                                         final StorageInfo storageInfo) {
         networkManager.send(player, new StorageInfoResponsePacket(id, storageInfo.stored(), storageInfo.capacity()));
+    }
+
+    @Override
+    public void sendNetworkTransmitterStatus(final ServerPlayer player, final NetworkTransmitterStatus status) {
+        networkManager.send(player, new NetworkTransmitterStatusPacket(status.error(), status.message()));
     }
 }

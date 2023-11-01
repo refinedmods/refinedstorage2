@@ -52,6 +52,9 @@ import com.refinedmods.refinedstorage2.platform.common.importer.ImporterContaine
 import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.misc.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItem;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -133,6 +136,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_RECEIVER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_TRANSMITTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
@@ -274,6 +278,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getWirelessTransmitter().registerBlocks(callback);
         Blocks.INSTANCE.setStorageMonitor(callback.register(STORAGE_MONITOR, StorageMonitorBlock::new));
         Blocks.INSTANCE.getNetworkReceiver().registerBlocks(callback);
+        Blocks.INSTANCE.getNetworkTransmitter().registerBlocks(callback);
     }
 
     protected final void registerItems(
@@ -296,6 +301,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         Blocks.INSTANCE.getWirelessTransmitter().registerItems(callback, Items.INSTANCE::addWirelessTransmitter);
         Blocks.INSTANCE.getNetworkReceiver().registerItems(callback, Items.INSTANCE::addNetworkReceiver);
+        Blocks.INSTANCE.getNetworkTransmitter().registerItems(callback, Items.INSTANCE::addNetworkTransmitter);
         registerStorageItems(callback);
         registerUpgrades(callback, regulatorUpgradeItemSupplier);
         Items.INSTANCE.setWirelessGrid(callback.register(WIRELESS_GRID, wirelessGridItemSupplier));
@@ -573,12 +579,14 @@ public abstract class AbstractModInitializer {
         ));
         BlockEntities.INSTANCE.setNetworkReceiver(callback.register(
             NETWORK_RECEIVER,
-            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
-                BlockEntities.INSTANCE.getNetworkReceiver(),
-                pos,
-                state,
-                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage())
-            ), Blocks.INSTANCE.getNetworkReceiver().toArray())
+            () -> typeFactory.create(NetworkReceiverBlockEntity::new, Blocks.INSTANCE.getNetworkReceiver().toArray())
+        ));
+        BlockEntities.INSTANCE.setNetworkTransmitter(callback.register(
+            NETWORK_TRANSMITTER,
+            () -> typeFactory.create(
+                NetworkTransmitterBlockEntity::new,
+                Blocks.INSTANCE.getNetworkTransmitter().toArray()
+            )
         ));
     }
 
@@ -651,6 +659,10 @@ public abstract class AbstractModInitializer {
         Menus.INSTANCE.setStorageMonitor(callback.register(
             STORAGE_MONITOR,
             () -> menuTypeFactory.create(StorageMonitorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setNetworkTransmitter(callback.register(
+            NETWORK_TRANSMITTER,
+            () -> menuTypeFactory.create(NetworkTransmitterContainerMenu::new)
         ));
     }
 

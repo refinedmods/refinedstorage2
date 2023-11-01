@@ -1,0 +1,8 @@
+{
+  "parent": "refinedstorage2:block/all_cutout",
+  "textures": {
+    "all": "refinedstorage2:block/network_transmitter/base",
+    "cutout": "refinedstorage2:block/network_transmitter/cutouts/inactive",
+    "particle": "refinedstorage2:block/network_transmitter/base"
+  }
+}

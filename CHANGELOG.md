@@ -12,6 +12,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Configuration Card. It copies device configurations and can transfer upgrades.
 -   Network Receiver
 -   Network Card
+-   Network Transmitter
+
+### Changed
+
+-   The Network Transmitter now goes into an "errored" state if there is no connection (anymore) with the Network Receiver (due to chunk unloading for example).
+-   The Network Transmitter will actively try to reconnect with the Network Receiver if connection is lost.
 
 ### Fixed
 

@@ -47,6 +47,7 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Blocks.INSTANCE.getMachineCasing());
         itemConsumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());
         itemConsumer.accept(Blocks.INSTANCE.getStorageMonitor());
+        Items.INSTANCE.getNetworkTransmitters().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getNetworkReceivers().stream().map(Supplier::get).forEach(itemConsumer);
     }
 
