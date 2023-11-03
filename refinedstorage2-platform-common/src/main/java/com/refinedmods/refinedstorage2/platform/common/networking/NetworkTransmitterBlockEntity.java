@@ -25,7 +25,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -54,12 +53,7 @@ public class NetworkTransmitterBlockEntity
 
     private static final String TAG_NETWORK_CARD_INVENTORY = "nc";
 
-    private final SimpleContainer networkCardInventory = new SimpleContainer(1) {
-        @Override
-        public boolean canPlaceItem(final int slot, final ItemStack stack) {
-            return stack.getItem() instanceof NetworkCardItem networkCardItem && networkCardItem.isActive(stack);
-        }
-    };
+    private final NetworkCardInventory networkCardInventory = new NetworkCardInventory();
     private final RateLimiter stateChangeRateLimiter = RateLimiter.create(1);
     private final RateLimiter networkRebuildRetryRateLimiter = RateLimiter.create(1 / 5D);
 
@@ -181,12 +175,7 @@ public class NetworkTransmitterBlockEntity
     }
 
     private void updateReceiverLocation() {
-        final ItemStack stack = networkCardInventory.getItem(0);
-        if (stack.isEmpty()) {
-            receiverKey = null;
-        } else if (stack.getItem() instanceof NetworkCardItem cardItem) {
-            receiverKey = cardItem.getLocation(stack).map(NetworkReceiverKey::new).orElse(null);
-        }
+        receiverKey = networkCardInventory.getReceiverLocation().map(NetworkReceiverKey::new).orElse(null);
     }
 
     @Nullable
@@ -209,7 +198,7 @@ public class NetworkTransmitterBlockEntity
 
     @Override
     public NonNullList<ItemStack> getDrops() {
-        return NonNullList.of(ItemStack.EMPTY, networkCardInventory.getItem(0));
+        return NonNullList.of(ItemStack.EMPTY, networkCardInventory.getNetworkCard());
     }
 
     @Override
