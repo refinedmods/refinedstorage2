@@ -24,7 +24,6 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkNodeContainerBlockEntityImpl.class);
 
     private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
-    private boolean lastActive;
 
     public NetworkNodeContainerBlockEntityImpl(final BlockEntityType<?> type,
                                                final BlockPos pos,
@@ -41,34 +40,37 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
             && getNode().getNetwork().getComponent(EnergyNetworkComponent.class).getStored() >= energyUsage;
     }
 
-    public void updateActiveness(final BlockState state,
-                                 @Nullable final BooleanProperty activenessProperty) {
+    public void updateActiveness(final BlockState state, @Nullable final BooleanProperty activenessProperty) {
         final boolean newActive = isActive();
-        if (newActive != lastActive && activenessChangeRateLimiter.tryAcquire()) {
-            LOGGER.debug("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
-            this.lastActive = newActive;
-            activenessChanged(state, newActive, activenessProperty);
-        }
-    }
-
-    protected void activenessChanged(final BlockState state,
-                                     final boolean newActive,
-                                     @Nullable final BooleanProperty activenessProperty) {
-        getNode().setActive(newActive);
-
-        final boolean needToUpdateBlockState = activenessProperty != null
+        final boolean nodeActivenessNeedsUpdate = newActive != getNode().isActive();
+        final boolean blockStateActivenessNeedsUpdate = activenessProperty != null
             && state.getValue(activenessProperty) != newActive;
-
-        if (needToUpdateBlockState) {
-            LOGGER.debug("Sending block update for block at {} due to state change to {}", getBlockPos(), newActive);
-            updateActivenessState(state, activenessProperty, newActive);
+        final boolean activenessNeedsUpdate = nodeActivenessNeedsUpdate || blockStateActivenessNeedsUpdate;
+        if (activenessNeedsUpdate && activenessChangeRateLimiter.tryAcquire()) {
+            if (nodeActivenessNeedsUpdate) {
+                activenessChanged(newActive);
+            }
+            if (blockStateActivenessNeedsUpdate) {
+                updateActivenessBlockState(state, activenessProperty, newActive);
+            }
         }
     }
 
-    private void updateActivenessState(final BlockState state,
-                                       final BooleanProperty activenessProperty,
-                                       final boolean active) {
+    protected void activenessChanged(final boolean newActive) {
+        LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), getNode().isActive(), newActive);
+        getNode().setActive(newActive);
+    }
+
+    private void updateActivenessBlockState(final BlockState state,
+                                            final BooleanProperty activenessProperty,
+                                            final boolean active) {
         if (level != null) {
+            LOGGER.info(
+                "Sending block update at {} due to activeness change: {} -> {}",
+                getBlockPos(),
+                state.getValue(activenessProperty),
+                active
+            );
             level.setBlockAndUpdate(getBlockPos(), state.setValue(activenessProperty, active));
         }
     }
