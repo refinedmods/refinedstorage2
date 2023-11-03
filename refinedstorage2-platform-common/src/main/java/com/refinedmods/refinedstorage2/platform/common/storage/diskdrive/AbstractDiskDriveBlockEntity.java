@@ -39,7 +39,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,10 +141,8 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
-    public void activenessChanged(final BlockState state,
-                                  final boolean newActive,
-                                  @Nullable final BooleanProperty activenessProperty) {
-        super.activenessChanged(state, newActive, activenessProperty);
+    public void activenessChanged(final boolean newActive) {
+        super.activenessChanged(newActive);
         updateBlock();
     }
 

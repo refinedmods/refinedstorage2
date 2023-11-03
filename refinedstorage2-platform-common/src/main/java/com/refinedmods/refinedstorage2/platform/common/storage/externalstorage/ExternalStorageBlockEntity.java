@@ -29,7 +29,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +82,8 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
-    protected void activenessChanged(final BlockState state,
-                                     final boolean newActive,
-                                     @Nullable final BooleanProperty activenessProperty) {
-        super.activenessChanged(state, newActive, activenessProperty);
+    protected void activenessChanged(final boolean newActive) {
+        super.activenessChanged(newActive);
         if (!initialized && level instanceof ServerLevel serverLevel) {
             LOGGER.debug("Triggering initial load of external storage {}", worldPosition);
             loadStorage(serverLevel);
