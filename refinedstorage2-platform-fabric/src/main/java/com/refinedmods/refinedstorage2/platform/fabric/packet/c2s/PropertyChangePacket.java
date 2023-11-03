@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseContainerMenu;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

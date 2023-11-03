@@ -1,26 +1,28 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.configurationcard.ConfigurationCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
-import com.refinedmods.refinedstorage2.platform.common.render.entity.StorageMonitorBlockEntityRenderer;
-import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
-import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiProxy;
-import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveGeometryLoader;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
+import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.NetworkBoundItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.ResourceClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinationClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.RefinedStorageREIClientPlugin;
+import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiProxy;
+import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveGeometryLoader;
 
 import java.util.List;
 
@@ -208,13 +210,23 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     private static void registerItemProperties() {
         ItemProperties.register(
             Items.INSTANCE.getWirelessGrid(),
-            NetworkItemItemPropertyFunction.NAME,
-            new NetworkItemItemPropertyFunction()
+            NetworkBoundItemItemPropertyFunction.NAME,
+            new NetworkBoundItemItemPropertyFunction()
         );
         ItemProperties.register(
             Items.INSTANCE.getCreativeWirelessGrid(),
-            NetworkItemItemPropertyFunction.NAME,
-            new NetworkItemItemPropertyFunction()
+            NetworkBoundItemItemPropertyFunction.NAME,
+            new NetworkBoundItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getConfigurationCard(),
+            ConfigurationCardItemPropertyFunction.NAME,
+            new ConfigurationCardItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getNetworkCard(),
+            NetworkCardItemPropertyFunction.NAME,
+            new NetworkCardItemPropertyFunction()
         );
     }
 }

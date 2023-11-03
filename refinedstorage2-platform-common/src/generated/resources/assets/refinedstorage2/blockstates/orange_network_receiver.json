@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "refinedstorage2:block/network_receiver/inactive"
+    },
+    "active=true": {
+      "model": "refinedstorage2:block/network_receiver/orange"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
 import java.util.List;
@@ -235,7 +235,8 @@ class RemoveNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(container.getNode().getNetwork()).isNull();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull();
-        assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+        assertThat(
+            unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactlyInAnyOrder(unrelatedContainer);
 
         assertThat(network).isNotNull();

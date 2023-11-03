@@ -2,39 +2,40 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.blockentity.EnergyBlockEntity;
-import com.refinedmods.refinedstorage2.platform.api.item.EnergyItem;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.DirectRegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
-import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfacePlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
-import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.forge.integration.curios.CuriosSlotReferenceFactory;
-import com.refinedmods.refinedstorage2.platform.forge.integration.curios.CuriosSlotReferenceProvider;
-import com.refinedmods.refinedstorage2.platform.forge.internal.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridScrollingStrategy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ResourceContainerFluidHandlerAdapter;
+import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
+import com.refinedmods.refinedstorage2.platform.forge.exporter.FluidHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.exporter.ItemHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.forge.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.FluidGridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.FluidGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.importer.FluidHandlerImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
+import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.support.energy.EnergyStorageAdapter;
+import com.refinedmods.refinedstorage2.platform.forge.support.network.bounditem.CuriosSlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.forge.support.network.bounditem.CuriosSlotReferenceProvider;
+import com.refinedmods.refinedstorage2.platform.forge.support.resource.ResourceContainerFluidHandlerAdapter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -56,6 +57,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -102,7 +104,7 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
-        initializePlatform(new PlatformImpl(new NetworkManager()));
+        PlatformProxy.loadPlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApi();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
@@ -289,20 +291,21 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void registerWrenchingEvent(final PlayerInteractEvent.RightClickBlock e) {
-        final BlockState state = e.getLevel().getBlockState(e.getHitVec().getBlockPos());
-
-        AbstractBaseBlock.tryUseWrench(state, e.getLevel(), e.getHitVec(), e.getEntity(), e.getHand())
-            .or(() -> AbstractBaseBlock.tryUpdateColor(
-                state,
-                e.getLevel(),
-                e.getHitVec().getBlockPos(),
-                e.getEntity(),
-                e.getHand()
-            ))
-            .ifPresent(result -> {
-                e.setCanceled(true);
-                e.setCancellationResult(result);
-            });
+        final Level level = e.getLevel();
+        final BlockState state = level.getBlockState(e.getHitVec().getBlockPos());
+        if (!(state.getBlock() instanceof AbstractBaseBlock block)) {
+            return;
+        }
+        block.tryUseWrench(state, level, e.getHitVec(), e.getEntity(), e.getHand()).or(() -> block.tryUpdateColor(
+            state,
+            level,
+            e.getHitVec().getBlockPos(),
+            e.getEntity(),
+            e.getHand()
+        )).ifPresent(result -> {
+            e.setCanceled(true);
+            e.setCancellationResult(result);
+        });
     }
 
     @SubscribeEvent
@@ -398,7 +401,7 @@ public class ModInitializer extends AbstractModInitializer {
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
-            TickHandler.runQueuedActions();
+            ServerEventQueue.runQueuedActions();
         }
     }
 

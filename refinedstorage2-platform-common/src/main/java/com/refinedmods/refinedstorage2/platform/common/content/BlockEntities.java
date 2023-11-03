@@ -1,23 +1,26 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.StorageMonitorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlockEntity;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,7 +34,7 @@ public final class BlockEntities {
     public static final BlockEntities INSTANCE = new BlockEntities();
 
     @Nullable
-    private Supplier<BlockEntityType<CableBlockEntity>> cable;
+    private Supplier<BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>>> cable;
     @Nullable
     private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
@@ -64,15 +67,21 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> wirelessTransmitter;
     @Nullable
     private Supplier<BlockEntityType<StorageMonitorBlockEntity>> storageMonitor;
+    @Nullable
+    private Supplier<BlockEntityType<NetworkReceiverBlockEntity>> networkReceiver;
+    @Nullable
+    private Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> networkTransmitter;
 
     private BlockEntities() {
     }
 
-    public BlockEntityType<CableBlockEntity> getCable() {
+    public BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> getCable() {
         return Objects.requireNonNull(cable).get();
     }
 
-    public void setCable(final Supplier<BlockEntityType<CableBlockEntity>> supplier) {
+    public void setCable(
+        final Supplier<BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>>> supplier
+    ) {
         this.cable = supplier;
     }
 
@@ -204,5 +213,23 @@ public final class BlockEntities {
 
     public void setStorageMonitor(final Supplier<BlockEntityType<StorageMonitorBlockEntity>> supplier) {
         this.storageMonitor = supplier;
+    }
+
+    public BlockEntityType<NetworkReceiverBlockEntity> getNetworkReceiver() {
+        return Objects.requireNonNull(networkReceiver).get();
+    }
+
+    public void setNetworkReceiver(final Supplier<BlockEntityType<NetworkReceiverBlockEntity>> supplier) {
+        this.networkReceiver = supplier;
+    }
+
+    public BlockEntityType<NetworkTransmitterBlockEntity> getNetworkTransmitter() {
+        return Objects.requireNonNull(networkTransmitter).get();
+    }
+
+    public void setNetworkTransmitter(
+        final Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> supplier
+    ) {
+        this.networkTransmitter = supplier;
     }
 }

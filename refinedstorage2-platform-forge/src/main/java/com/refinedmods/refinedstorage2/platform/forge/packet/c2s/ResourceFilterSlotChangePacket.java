@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
 
 import java.util.Objects;
 import java.util.function.Supplier;

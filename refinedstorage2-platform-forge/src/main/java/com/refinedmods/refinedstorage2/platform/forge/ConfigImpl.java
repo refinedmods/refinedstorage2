@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridMatrixCloseBehavior;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSortingTypes;
 
 import java.util.Optional;
 
@@ -36,6 +36,8 @@ public class ConfigImpl implements Config {
     private final WirelessGridEntry wirelessGrid;
     private final WirelessTransmitterEntry wirelessTransmitter;
     private final SimpleEnergyUsageEntry storageMonitor;
+    private final SimpleEnergyUsageEntry networkReceiver;
+    private final SimpleEnergyUsageEntry networkTransmitter;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -63,6 +65,16 @@ public class ConfigImpl implements Config {
             "storageMonitor",
             "Storage Monitor",
             DefaultEnergyUsage.STORAGE_MONITOR
+        );
+        networkReceiver = new SimpleEnergyUsageEntryImpl(
+            "networkReceiver",
+            "Network Receiver",
+            DefaultEnergyUsage.NETWORK_RECEIVER
+        );
+        networkTransmitter = new SimpleEnergyUsageEntryImpl(
+            "networkTransmitter",
+            "Network Transmitter",
+            DefaultEnergyUsage.NETWORK_TRANSMITTER
         );
         spec = builder.build();
     }
@@ -159,6 +171,16 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getStorageMonitor() {
         return storageMonitor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkReceiver() {
+        return networkReceiver;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkTransmitter() {
+        return networkTransmitter;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {

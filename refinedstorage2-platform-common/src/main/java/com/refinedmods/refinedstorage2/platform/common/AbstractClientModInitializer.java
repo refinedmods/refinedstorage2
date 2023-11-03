@@ -1,32 +1,33 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorScreen;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceRendering;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceRendering;
-import com.refinedmods.refinedstorage2.platform.common.screen.ConstructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DestructorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.RegulatorUpgradeScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.StorageMonitorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.WirelessTransmitterScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.amount.DetectorScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.hint.FluidGridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerScreen;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorScreen;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterScreen;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.screen.CraftingGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.grid.screen.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.FluidGridInsertionHint;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceScreen;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterScreen;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterScreen;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveScreen;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageScreen;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorScreen;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResourceRendering;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeScreen;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterScreen;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -57,6 +58,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
         registration.register(Menus.INSTANCE.getWirelessTransmitter(), WirelessTransmitterScreen::new);
         registration.register(Menus.INSTANCE.getStorageMonitor(), StorageMonitorScreen::new);
+        registration.register(Menus.INSTANCE.getNetworkTransmitter(), NetworkTransmitterScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {

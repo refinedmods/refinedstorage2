@@ -23,13 +23,13 @@
       "com.refinedmods.refinedstorage2.platform.fabric.ClientModInitializerImpl"
     ],
     "modmenu": [
-      "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
+      "com.refinedmods.refinedstorage2.platform.fabric.modmenu.ModMenuApiImpl"
     ],
     "jei_mod_plugin": [
-      "com.refinedmods.refinedstorage2.platform.common.integration.recipemod.jei.RefinedStorageJeiModPlugin"
+      "com.refinedmods.refinedstorage2.platform.common.recipemod.jei.RefinedStorageJeiModPlugin"
     ],
     "rei_client": [
-      "com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin"
+      "com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.RefinedStorageREIClientPlugin"
     ]
   },
   "custom": {

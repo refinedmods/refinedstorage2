@@ -4,26 +4,24 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.menu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.ItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.fabric.grid.view.FabricFluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.grid.view.FabricItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.util.SingleStackStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.support.containermenu.ContainerTransferDestination;
+import com.refinedmods.refinedstorage2.platform.fabric.support.containermenu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.support.energy.EnergyStorageAdapter;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.FluidVariantFluidRenderer;
+import com.refinedmods.refinedstorage2.platform.fabric.util.SimpleSingleStackStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,9 +86,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofFluidVariant;
-import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
-import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil.ofFluidVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil.toFluidVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil.toItemVariant;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
@@ -103,7 +101,6 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(),
             new ClientToServerCommunicationsImpl(),
             new MenuOpenerImpl(),
-            new BucketAmountFormatting(FluidConstants.BUCKET),
             new FluidVariantFluidRenderer(),
             ItemGridInsertionStrategy::new
         );
@@ -152,7 +149,7 @@ public final class PlatformImpl extends AbstractPlatform {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        final SingleStackStorageImpl interceptingStorage = new SingleStackStorageImpl(stack);
+        final SimpleSingleStackStorage interceptingStorage = new SimpleSingleStackStorage(stack);
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(stack, ContainerItemContext.ofSingleSlot(
             interceptingStorage
         ));
@@ -181,7 +178,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
-        final SingleStackStorageImpl interceptingStorage = SingleStackStorageImpl.forEmptyBucket();
+        final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forEmptyBucket();
         final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)

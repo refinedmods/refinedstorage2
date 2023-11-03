@@ -3,9 +3,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
+import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
@@ -99,6 +100,14 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
             bufToSend.writeUUID(id);
             bufToSend.writeLong(storageInfo.stored());
             bufToSend.writeLong(storageInfo.capacity());
+        });
+    }
+
+    @Override
+    public void sendNetworkTransmitterStatus(final ServerPlayer player, final NetworkTransmitterStatus status) {
+        sendToPlayer(player, PacketIds.NETWORK_TRANSMITTER_STATUS, buf -> {
+            buf.writeBoolean(status.error());
+            buf.writeComponent(status.message());
         });
     }
 

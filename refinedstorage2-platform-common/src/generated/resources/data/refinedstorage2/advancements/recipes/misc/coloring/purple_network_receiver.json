@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_network_receivers": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "refinedstorage2:network_receivers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage2:coloring/purple_network_receiver"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_network_receivers",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage2:coloring/purple_network_receiver"
+    ]
+  },
+  "sends_telemetry_event": false
+}

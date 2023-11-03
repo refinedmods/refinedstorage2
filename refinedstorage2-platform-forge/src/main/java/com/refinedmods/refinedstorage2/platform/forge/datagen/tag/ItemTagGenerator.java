@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen.tag;
 
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +31,8 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXTER
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID_STORAGE_DISKS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.GRIDS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.IMPORTERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.NETWORK_RECEIVERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.NETWORK_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORAGE_DISKS;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
@@ -97,6 +99,14 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .toList());
         addAllToTag(WIRELESS_TRANSMITTERS,
             Blocks.INSTANCE.getWirelessTransmitter().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(NETWORK_RECEIVERS,
+            Blocks.INSTANCE.getNetworkReceiver().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(NETWORK_TRANSMITTERS,
+            Blocks.INSTANCE.getNetworkTransmitter().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
     }

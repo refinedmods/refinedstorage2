@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -48,6 +48,10 @@ public final class ContentIds {
     public static final ResourceLocation RANGE_UPGRADE = createIdentifier("range_upgrade");
     public static final ResourceLocation CREATIVE_RANGE_UPGRADE = createIdentifier("creative_range_upgrade");
     public static final ResourceLocation STORAGE_MONITOR = createIdentifier("storage_monitor");
+    public static final ResourceLocation CONFIGURATION_CARD = createIdentifier("configuration_card");
+    public static final ResourceLocation NETWORK_RECEIVER = createIdentifier("network_receiver");
+    public static final ResourceLocation NETWORK_CARD = createIdentifier("network_card");
+    public static final ResourceLocation NETWORK_TRANSMITTER = createIdentifier("network_transmitter");
 
     private ContentIds() {
     }

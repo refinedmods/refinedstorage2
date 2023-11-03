@@ -1,17 +1,19 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractConstructorDestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
-import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.AbstractConstructorDestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerEnergyType;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.CableBlockSupport;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionTypeImpl;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlock;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -61,6 +63,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerWirelessTransmitters();
         registerConstructorDestructors(Blocks.INSTANCE.getConstructor(), "constructor");
         registerConstructorDestructors(Blocks.INSTANCE.getDestructor(), "destructor");
+        registerNetworkReceivers();
+        registerNetworkTransmitters();
     }
 
     private void registerCables() {
@@ -255,6 +259,40 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         final Direction direction = blockState.getValue(DirectionTypeImpl.INSTANCE.getProperty());
         addRotation(model, direction);
         return model.build();
+    }
+
+    private void registerNetworkReceivers() {
+        final ModelFile inactive = modelFile(createIdentifier("block/network_receiver/inactive"));
+        Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                if (Boolean.TRUE.equals(blockState.getValue(NetworkReceiverBlock.ACTIVE))) {
+                    model.modelFile(modelFile(createIdentifier("block/network_receiver/" + color.getName())));
+                } else {
+                    model.modelFile(inactive);
+                }
+                return model.build();
+            });
+        });
+    }
+
+    private void registerNetworkTransmitters() {
+        final ModelFile inactive = modelFile(createIdentifier("block/network_transmitter/inactive"));
+        final ModelFile error = modelFile(createIdentifier("block/network_transmitter/error"));
+        Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, block) -> {
+            final var builder = getVariantBuilder(block.get());
+            builder.forAllStates(blockState -> {
+                final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+                switch (blockState.getValue(NetworkTransmitterBlock.STATE)) {
+                    case ACTIVE ->
+                        model.modelFile(modelFile(createIdentifier("block/network_transmitter/" + color.getName())));
+                    case ERROR -> model.modelFile(error);
+                    case INACTIVE -> model.modelFile(inactive);
+                }
+                return model.build();
+            });
+        });
     }
 
     private void addRotation(final ConfiguredModel.Builder<?> model, final Direction direction) {

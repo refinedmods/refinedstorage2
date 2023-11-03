@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnerg
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.NetworkTransmitterStatusPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.WirelessTransmitterRangePacket;
@@ -174,6 +175,13 @@ public class NetworkManager {
             UseNetworkBoundItemPacket::encode,
             UseNetworkBoundItemPacket::decode,
             UseNetworkBoundItemPacket::handle
+        );
+        handler.registerMessage(
+            id++,
+            NetworkTransmitterStatusPacket.class,
+            NetworkTransmitterStatusPacket::encode,
+            NetworkTransmitterStatusPacket::decode,
+            NetworkTransmitterStatusPacket::handle
         );
     }
 

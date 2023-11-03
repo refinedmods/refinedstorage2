@@ -3,15 +3,15 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
-import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
-import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
+import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +56,6 @@ public interface Platform {
     long getBucketAmount();
 
     TagKey<Item> getWrenchTag();
-
-    BucketAmountFormatting getBucketAmountFormatter();
 
     Config getConfig();
 
@@ -119,4 +117,7 @@ public interface Platform {
     void renderTooltip(GuiGraphics graphics, List<ClientTooltipComponent> components, int x, int y);
 
     Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+
+    record ContainedFluid(ItemStack remainderContainer, ResourceAmount<FluidResource> fluid) {
+    }
 }

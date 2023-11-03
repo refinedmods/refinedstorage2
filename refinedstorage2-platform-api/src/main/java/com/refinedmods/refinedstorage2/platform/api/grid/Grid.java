@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface Grid {
 
     Storage<ItemResource> getItemStorage();
 
-    boolean isActive();
+    boolean isGridActive();
 
     <T> List<TrackedResourceAmount<T>> getResources(StorageChannelType<T> type, Class<? extends Actor> actorType);
 

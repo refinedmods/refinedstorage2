@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +39,8 @@ public final class Items {
     private final List<Supplier<BlockItem>> allDestructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allConstructors = new ArrayList<>();
     private final List<Supplier<BlockItem>> allWirelessTransmitters = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allNetworkReceivers = new ArrayList<>();
+    private final List<Supplier<BlockItem>> allNetworkTransmitters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -78,6 +80,10 @@ public final class Items {
     private Supplier<WirelessGridItem> wirelessGrid;
     @Nullable
     private Supplier<WirelessGridItem> creativeWirelessGrid;
+    @Nullable
+    private Supplier<Item> configurationCard;
+    @Nullable
+    private Supplier<Item> networkCard;
 
     private Items() {
     }
@@ -352,5 +358,37 @@ public final class Items {
 
     public void setCreativeWirelessGrid(final Supplier<WirelessGridItem> supplier) {
         this.creativeWirelessGrid = supplier;
+    }
+
+    public Item getConfigurationCard() {
+        return Objects.requireNonNull(configurationCard).get();
+    }
+
+    public void setConfigurationCard(final Supplier<Item> supplier) {
+        this.configurationCard = supplier;
+    }
+
+    public void addNetworkReceiver(final Supplier<BlockItem> supplier) {
+        allNetworkReceivers.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getNetworkReceivers() {
+        return Collections.unmodifiableList(allNetworkReceivers);
+    }
+
+    public void addNetworkTransmitter(final Supplier<BlockItem> supplier) {
+        allNetworkTransmitters.add(supplier);
+    }
+
+    public List<Supplier<BlockItem>> getNetworkTransmitters() {
+        return Collections.unmodifiableList(allNetworkTransmitters);
+    }
+
+    public Item getNetworkCard() {
+        return Objects.requireNonNull(networkCard).get();
+    }
+
+    public void setNetworkCard(final Supplier<Item> supplier) {
+        this.networkCard = supplier;
     }
 }

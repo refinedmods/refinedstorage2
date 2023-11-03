@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
-import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceList;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FuzzyModeNormalizer;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.list.FuzzyResourceList;
 
 import java.util.Collection;
 

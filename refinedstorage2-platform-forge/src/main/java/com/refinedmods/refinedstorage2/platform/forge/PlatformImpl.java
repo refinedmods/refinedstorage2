@@ -4,24 +4,22 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
-import com.refinedmods.refinedstorage2.platform.common.ContainedFluid;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
-import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
-import com.refinedmods.refinedstorage2.platform.forge.internal.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeFluidGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeItemGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.forge.menu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeFluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientCommunicationsImpl;
-import com.refinedmods.refinedstorage2.platform.forge.render.FluidStackFluidRenderer;
+import com.refinedmods.refinedstorage2.platform.forge.support.containermenu.ContainerTransferDestination;
+import com.refinedmods.refinedstorage2.platform.forge.support.containermenu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage2.platform.forge.support.energy.EnergyStorageAdapter;
+import com.refinedmods.refinedstorage2.platform.forge.support.render.FluidStackFluidRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +80,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
+import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
+import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidStack;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
@@ -98,7 +96,6 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(networkManager),
             new ClientToServerCommunicationsImpl(networkManager),
             new MenuOpenerImpl(),
-            new BucketAmountFormatting(FluidType.BUCKET_VOLUME),
             new FluidStackFluidRenderer(),
             ItemGridInsertionStrategy::new
         );

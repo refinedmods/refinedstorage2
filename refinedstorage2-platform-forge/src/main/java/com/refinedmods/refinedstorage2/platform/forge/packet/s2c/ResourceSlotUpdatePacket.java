@@ -1,10 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
 
 import java.util.function.Supplier;
 import javax.annotation.Nullable;

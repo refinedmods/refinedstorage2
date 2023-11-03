@@ -1,38 +1,41 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.api.item.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.HelpTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.configurationcard.ConfigurationCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.render.NetworkItemItemPropertyFunction;
-import com.refinedmods.refinedstorage2.platform.common.render.entity.StorageMonitorBlockEntityRenderer;
-import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.CompositeClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.HelpClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.ResourceClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.common.screen.tooltip.UpgradeDestinationClientTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiProxy;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerModelPredicateProvider;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
+import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.NetworkBoundItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.HelpClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.support.tooltip.ResourceClientTooltipComponent;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.NetworkTransmitterStatusPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.WirelessTransmitterRangePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
-import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.RefinedStorageREIClientPlugin;
+import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiProxy;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveUnbakedModel;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.EmissiveModelRegistry;
 
 import java.util.List;
 
@@ -107,6 +110,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getConstructor());
         setCutout(Blocks.INSTANCE.getDestructor());
         setCutout(Blocks.INSTANCE.getWirelessTransmitter());
+        setCutout(Blocks.INSTANCE.getNetworkReceiver());
+        setCutout(Blocks.INSTANCE.getNetworkTransmitter());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -142,6 +147,12 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
         Blocks.INSTANCE.getWirelessTransmitter().forEach(
             (color, id, block) -> registerEmissiveWirelessTransmitterModels(color, id)
+        );
+        Blocks.INSTANCE.getNetworkReceiver().forEach(
+            (color, id, block) -> registerEmissiveNetworkReceiverModels(color, id)
+        );
+        Blocks.INSTANCE.getNetworkTransmitter().forEach(
+            (color, id, block) -> registerEmissiveNetworkTransmitterModels(color, id)
         );
     }
 
@@ -222,6 +233,36 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
     }
 
+    private void registerEmissiveNetworkReceiverModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_receiver/" + color.getName()),
+            createIdentifier("block/network_receiver/cutouts/" + color.getName())
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/network_receiver/cutouts/" + color.getName())
+        );
+    }
+
+    private void registerEmissiveNetworkTransmitterModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_transmitter/" + color.getName()),
+            createIdentifier("block/network_transmitter/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_transmitter/error"),
+            createIdentifier("block/network_transmitter/cutouts/error")
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/network_transmitter/cutouts/" + color.getName())
+        );
+    }
+
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
@@ -233,6 +274,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             new WirelessTransmitterRangePacket()
         );
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_SLOT_UPDATE, new ResourceSlotUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(
+            PacketIds.NETWORK_TRANSMITTER_STATUS,
+            new NetworkTransmitterStatusPacket()
+        );
     }
 
     private void registerBlockEntityRenderers() {
@@ -336,13 +381,23 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     private void registerItemProperties() {
         ItemProperties.register(
             Items.INSTANCE.getWirelessGrid(),
-            NetworkItemItemPropertyFunction.NAME,
-            new NetworkItemItemPropertyFunction()
+            NetworkBoundItemItemPropertyFunction.NAME,
+            new NetworkBoundItemItemPropertyFunction()
         );
         ItemProperties.register(
             Items.INSTANCE.getCreativeWirelessGrid(),
-            NetworkItemItemPropertyFunction.NAME,
-            new NetworkItemItemPropertyFunction()
+            NetworkBoundItemItemPropertyFunction.NAME,
+            new NetworkBoundItemItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getConfigurationCard(),
+            ConfigurationCardItemPropertyFunction.NAME,
+            new ConfigurationCardItemPropertyFunction()
+        );
+        ItemProperties.register(
+            Items.INSTANCE.getNetworkCard(),
+            NetworkCardItemPropertyFunction.NAME,
+            new NetworkCardItemPropertyFunction()
         );
     }
 }

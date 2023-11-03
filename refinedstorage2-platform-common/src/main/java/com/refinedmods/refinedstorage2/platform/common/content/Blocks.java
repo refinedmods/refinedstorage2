@@ -1,26 +1,28 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
-import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlock;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlock;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlock;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -115,6 +117,18 @@ public final class Blocks {
         WirelessTransmitterBlock::new,
         ContentIds.WIRELESS_TRANSMITTER,
         ContentNames.WIRELESS_TRANSMITTER,
+        COLOR
+    );
+    private final BlockColorMap<NetworkReceiverBlock> networkReceiver = new BlockColorMap<>(
+        NetworkReceiverBlock::new,
+        ContentIds.NETWORK_RECEIVER,
+        ContentNames.NETWORK_RECEIVER,
+        COLOR
+    );
+    private final BlockColorMap<NetworkTransmitterBlock> networkTransmitter = new BlockColorMap<>(
+        NetworkTransmitterBlock::new,
+        ContentIds.NETWORK_TRANSMITTER,
+        ContentNames.NETWORK_TRANSMITTER,
         COLOR
     );
 
@@ -239,5 +253,13 @@ public final class Blocks {
 
     public StorageMonitorBlock getStorageMonitor() {
         return Objects.requireNonNull(storageMonitor).get();
+    }
+
+    public BlockColorMap<NetworkReceiverBlock> getNetworkReceiver() {
+        return networkReceiver;
+    }
+
+    public BlockColorMap<NetworkTransmitterBlock> getNetworkTransmitter() {
+        return networkTransmitter;
     }
 }

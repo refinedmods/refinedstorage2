@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.internal.item.EnergyItemHelperImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -47,6 +47,8 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Blocks.INSTANCE.getMachineCasing());
         itemConsumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());
         itemConsumer.accept(Blocks.INSTANCE.getStorageMonitor());
+        Items.INSTANCE.getNetworkTransmitters().stream().map(Supplier::get).forEach(itemConsumer);
+        Items.INSTANCE.getNetworkReceivers().stream().map(Supplier::get).forEach(itemConsumer);
     }
 
     private static void appendBlockColors(final Consumer<ItemStack> consumer, final BlockColorMap<?> map) {
@@ -95,5 +97,7 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
         consumer.accept(Items.INSTANCE.getWirelessGrid().createAtEnergyCapacity());
         itemConsumer.accept(Items.INSTANCE.getCreativeWirelessGrid());
+        itemConsumer.accept(Items.INSTANCE.getConfigurationCard());
+        itemConsumer.accept(Items.INSTANCE.getNetworkCard());
     }
 }

@@ -1,30 +1,26 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
-import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
-import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
-import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
+import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
+import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
 
 public abstract class AbstractPlatform implements Platform {
     private final ServerToClientCommunications serverToClientCommunications;
     private final ClientToServerCommunications clientToServerCommunications;
     private final MenuOpener menuOpener;
-    private final BucketAmountFormatting bucketAmountFormatting;
     private final FluidRenderer fluidRenderer;
     private final GridInsertionStrategyFactory defaultGridInsertionStrategyFactory;
 
     protected AbstractPlatform(final ServerToClientCommunications serverToClientCommunications,
                                final ClientToServerCommunications clientToServerCommunications,
                                final MenuOpener menuOpener,
-                               final BucketAmountFormatting bucketAmountFormatting,
                                final FluidRenderer fluidRenderer,
                                final GridInsertionStrategyFactory defaultGridInsertionStrategyFactory) {
         this.serverToClientCommunications = serverToClientCommunications;
         this.clientToServerCommunications = clientToServerCommunications;
         this.menuOpener = menuOpener;
-        this.bucketAmountFormatting = bucketAmountFormatting;
         this.fluidRenderer = fluidRenderer;
         this.defaultGridInsertionStrategyFactory = defaultGridInsertionStrategyFactory;
     }
@@ -42,11 +38,6 @@ public abstract class AbstractPlatform implements Platform {
     @Override
     public MenuOpener getMenuOpener() {
         return menuOpener;
-    }
-
-    @Override
-    public BucketAmountFormatting getBucketAmountFormatter() {
-        return bucketAmountFormatting;
     }
 
     @Override

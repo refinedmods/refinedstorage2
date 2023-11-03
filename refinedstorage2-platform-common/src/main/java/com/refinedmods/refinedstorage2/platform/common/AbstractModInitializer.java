@@ -1,66 +1,26 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
-import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.StorageMonitorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ConstructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.ItemDropConstructorStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceBlockConstructorStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceFireworksConstructorStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.constructor.PlaceFluidConstructorStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.BlockBreakDestructorStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.DestructorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.FluidBreakDestructorStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.destructor.ItemPickupDestructorStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.detector.DetectorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.iface.InterfaceBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.FluidStorageMonitorExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.FluidStorageMonitorInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.ItemStorageMonitorExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.ItemStorageMonitorInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storagemonitor.StorageMonitorBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.BaseWirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.CreativeRangeUpgradeWirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.RangeUpgradeWirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.wirelesstransmitter.WirelessTransmitterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ConstructorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.DestructorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.RegulatorUpgradeContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageMonitorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.WirelessTransmitterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.detector.DetectorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.WirelessGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.configurationcard.ConfigurationCardItem;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.BlockBreakDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.FluidBreakDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ItemDropConstructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ItemPickupDestructorStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.PlaceBlockConstructorStrategy;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.PlaceFireworksConstructorStrategy;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.PlaceFluidConstructorStrategy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -71,28 +31,75 @@ import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceFactory;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.FortuneUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.RangeUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WirelessGridItem;
-import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.loot.EnergyLootItemFunctionSerializer;
-import com.refinedmods.refinedstorage2.platform.common.loot.StorageBlockLootItemFunctionSerializer;
-import com.refinedmods.refinedstorage2.platform.common.recipe.UpgradeWithEnchantedBookRecipeSerializer;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlock;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.misc.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItem;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
+import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.StorageBlockLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.FluidStorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.ItemStorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.FluidStorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.FluidStorageMonitorInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.ItemStorageMonitorExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.ItemStorageMonitorInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlock;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RangeUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.SimpleUpgradeItem;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
+import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeWithEnchantedBookRecipeSerializer;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.BaseWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.CreativeRangeUpgradeWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.RangeUpgradeWirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterContainerMenu;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -128,6 +135,8 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_RECEIVER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_TRANSMITTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
@@ -150,10 +159,6 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public abstract class AbstractModInitializer {
     private static final String FLUID_REGISTRY_KEY = "fluid";
-
-    protected final void initializePlatform(final Platform platform) {
-        ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
-    }
 
     protected final void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
@@ -219,7 +224,7 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             GraphNetworkComponent.class,
-            GraphNetworkComponent::new
+            GraphNetworkComponentImpl::new
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,
@@ -272,6 +277,8 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.setInterface(callback.register(INTERFACE, InterfaceBlock::new));
         Blocks.INSTANCE.getWirelessTransmitter().registerBlocks(callback);
         Blocks.INSTANCE.setStorageMonitor(callback.register(STORAGE_MONITOR, StorageMonitorBlock::new));
+        Blocks.INSTANCE.getNetworkReceiver().registerBlocks(callback);
+        Blocks.INSTANCE.getNetworkTransmitter().registerBlocks(callback);
     }
 
     protected final void registerItems(
@@ -293,6 +300,8 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getConstructor().registerItems(callback, Items.INSTANCE::addConstructor);
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         Blocks.INSTANCE.getWirelessTransmitter().registerItems(callback, Items.INSTANCE::addWirelessTransmitter);
+        Blocks.INSTANCE.getNetworkReceiver().registerItems(callback, Items.INSTANCE::addNetworkReceiver);
+        Blocks.INSTANCE.getNetworkTransmitter().registerItems(callback, Items.INSTANCE::addNetworkTransmitter);
         registerStorageItems(callback);
         registerUpgrades(callback, regulatorUpgradeItemSupplier);
         Items.INSTANCE.setWirelessGrid(callback.register(WIRELESS_GRID, wirelessGridItemSupplier));
@@ -321,6 +330,11 @@ public abstract class AbstractModInitializer {
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
             registerProcessor(callback, type);
         }
+        Items.INSTANCE.setConfigurationCard(callback.register(
+            ContentIds.CONFIGURATION_CARD,
+            ConfigurationCardItem::new
+        ));
+        Items.INSTANCE.setNetworkCard(callback.register(ContentIds.NETWORK_CARD, NetworkCardItem::new));
     }
 
     private void registerProcessor(final RegistryCallback<Item> callback, final ProcessorItem.Type type) {
@@ -471,7 +485,12 @@ public abstract class AbstractModInitializer {
     ) {
         BlockEntities.INSTANCE.setCable(callback.register(
             CABLE,
-            () -> typeFactory.create(CableBlockEntity::new, Blocks.INSTANCE.getCable().toArray())
+            () -> typeFactory.create((pos, state) -> new NetworkNodeContainerBlockEntityImpl<>(
+                BlockEntities.INSTANCE.getCable(),
+                pos,
+                state,
+                new SimpleNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
+            ), Blocks.INSTANCE.getCable().toArray())
         ));
         BlockEntities.INSTANCE.setController(callback.register(
             CONTROLLER,
@@ -558,6 +577,17 @@ public abstract class AbstractModInitializer {
             STORAGE_MONITOR,
             () -> typeFactory.create(StorageMonitorBlockEntity::new, Blocks.INSTANCE.getStorageMonitor())
         ));
+        BlockEntities.INSTANCE.setNetworkReceiver(callback.register(
+            NETWORK_RECEIVER,
+            () -> typeFactory.create(NetworkReceiverBlockEntity::new, Blocks.INSTANCE.getNetworkReceiver().toArray())
+        ));
+        BlockEntities.INSTANCE.setNetworkTransmitter(callback.register(
+            NETWORK_TRANSMITTER,
+            () -> typeFactory.create(
+                NetworkTransmitterBlockEntity::new,
+                Blocks.INSTANCE.getNetworkTransmitter().toArray()
+            )
+        ));
     }
 
     protected final void registerMenus(final RegistryCallback<MenuType<?>> callback,
@@ -629,6 +659,10 @@ public abstract class AbstractModInitializer {
         Menus.INSTANCE.setStorageMonitor(callback.register(
             STORAGE_MONITOR,
             () -> menuTypeFactory.create(StorageMonitorContainerMenu::new)
+        ));
+        Menus.INSTANCE.setNetworkTransmitter(callback.register(
+            NETWORK_TRANSMITTER,
+            () -> menuTypeFactory.create(NetworkTransmitterContainerMenu::new)
         ));
     }
 

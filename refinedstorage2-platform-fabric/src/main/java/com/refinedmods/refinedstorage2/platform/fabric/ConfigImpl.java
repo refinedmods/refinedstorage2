@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridMatrixCloseBehavior;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
 import java.util.Optional;
@@ -73,6 +73,16 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private SimpleEnergyUsageEntryImpl storageMonitor = new SimpleEnergyUsageEntryImpl(
         DefaultEnergyUsage.STORAGE_MONITOR
+    );
+
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl networkReceiver = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.NETWORK_RECEIVER
+    );
+
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl networkTransmitter = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.NETWORK_TRANSMITTER
     );
 
     public static ConfigImpl get() {
@@ -167,6 +177,16 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getStorageMonitor() {
         return storageMonitor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkReceiver() {
+        return networkReceiver;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkTransmitter() {
+        return networkTransmitter;
     }
 
     private static class GridEntryImpl implements GridEntry {

@@ -1,19 +1,21 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ConstructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DetectorBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.WirelessTransmitterBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlock;
+import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
+import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.grid.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterBlock;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +26,9 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
+    private static final String CUTOUT_TEXTURE_KEY = "cutout";
+    private static final String CABLE_TEXTURE_KEY = "cable";
+
     public ItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, MOD_ID, existingFileHelper);
     }
@@ -42,6 +47,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerConstructors();
         registerDestructors();
         registerWirelessTransmitters();
+        registerNetworkReceivers();
+        registerNetworkTransmitters();
     }
 
     private void registerCables() {
@@ -50,7 +57,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName()))
         );
     }
@@ -61,7 +68,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -72,7 +79,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -83,7 +90,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -154,7 +161,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -165,7 +172,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -176,8 +183,30 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cutout",
+            CUTOUT_TEXTURE_KEY,
             createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
+        ));
+    }
+
+    private void registerNetworkReceivers() {
+        final ResourceLocation base = createIdentifier("block/network_receiver/inactive");
+        final ColorMap<NetworkReceiverBlock> blocks = Blocks.INSTANCE.getNetworkReceiver();
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
+            base,
+            CUTOUT_TEXTURE_KEY,
+            createIdentifier("block/network_receiver/cutouts/" + color.getName())
+        ));
+    }
+
+    private void registerNetworkTransmitters() {
+        final ResourceLocation base = createIdentifier("block/network_transmitter/inactive");
+        final ColorMap<NetworkTransmitterBlock> blocks = Blocks.INSTANCE.getNetworkTransmitter();
+        blocks.forEach((color, id, block) -> singleTexture(
+            id.getPath(),
+            base,
+            CUTOUT_TEXTURE_KEY,
+            createIdentifier("block/network_transmitter/cutouts/" + color.getName())
         ));
     }
 

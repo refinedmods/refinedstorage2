@@ -7,6 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.3.2] - 2023-11-03
+
+### Added
+
+-   Configuration Card. It copies device configurations and can transfer upgrades.
+-   Network Receiver
+-   Network Card
+-   Network Transmitter
+
+### Changed
+
+-   The Network Transmitter now goes into an "errored" state if there is no connection (anymore) with the Network Receiver (due to chunk unloading for example).
+-   The Network Transmitter will actively try to reconnect with the Network Receiver if connection is lost.
+
+### Fixed
+
+-   Inactive Wireless Transmitter model being emissive.
+-   Unneeded network graph updating after placing a network device.
+-   Cable blocks not updating connections properly when using wrench.
+
 ## [2.0.0-milestone.3.1] - 2023-10-30
 
 ### Added
@@ -477,7 +497,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.1...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.2...HEAD
+
+[2.0.0-milestone.3.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.1...v2.0.0-milestone.3.2
 
 [2.0.0-milestone.3.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.0...v2.0.0-milestone.3.1
 

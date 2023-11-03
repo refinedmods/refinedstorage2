@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(unrelatedContainer.getNode().getNetwork())
             .isNotNull()
             .isNotEqualTo(container.getNode().getNetwork());
-        assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+        assertThat(
+            unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(unrelatedContainer);
     }
 
@@ -85,7 +86,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(existingContainer1.getNode().getNetwork()).isEqualTo(expectedNetwork);
         assertThat(existingContainer2.getNode().getNetwork()).isEqualTo(expectedNetwork);
         assertThat(newContainer.getNode().getNetwork()).isEqualTo(expectedNetwork);
-        assertThat(expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
+        assertThat(
+            expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
             existingContainer1,
             existingContainer2,
             newContainer
@@ -101,7 +103,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(getNetworkMerges(expectedNetwork)).isEmpty();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
-        assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+        assertThat(
+            unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(unrelatedContainer);
     }
 
@@ -140,7 +143,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(existingContainer2.getNode().getNetwork()).isEqualTo(expectedNetwork);
         assertThat(existingContainer0.getNode().getNetwork()).isEqualTo(expectedNetwork);
         assertThat(newContainer.getNode().getNetwork()).isEqualTo(expectedNetwork);
-        assertThat(expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
+        assertThat(
+            expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
             existingContainer1,
             existingContainer2,
             existingContainer0,
@@ -154,7 +158,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(getNetworkMerges(expectedNetwork)).isEmpty();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
-        assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+        assertThat(
+            unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(unrelatedContainer);
     }
 
@@ -190,7 +195,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(container2.getNode().getNetwork()).isEqualTo(expectedNetwork);
         assertThat(container3.getNode().getNetwork()).isEqualTo(expectedNetwork);
 
-        assertThat(expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
+        assertThat(
+            expectedNetwork.getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
             container1,
             container2,
             container3
@@ -202,7 +208,8 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(getAmountRemoved(expectedNetwork)).isZero();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
-        assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+        assertThat(
+            unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(unrelatedContainer);
     }
 }

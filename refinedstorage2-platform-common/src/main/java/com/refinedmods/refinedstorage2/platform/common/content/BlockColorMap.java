@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.block.BlockItemProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider;
 
 import java.util.Objects;
 import java.util.Optional;

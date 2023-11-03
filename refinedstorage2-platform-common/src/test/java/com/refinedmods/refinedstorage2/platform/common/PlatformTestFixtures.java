@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
-import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.registry.PlatformRegistryImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.StorageTypes;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.registry.PlatformRegistryImpl;
 
 import net.minecraft.resources.ResourceLocation;
 
