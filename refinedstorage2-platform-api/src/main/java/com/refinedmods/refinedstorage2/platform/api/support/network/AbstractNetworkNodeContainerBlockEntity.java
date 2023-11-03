@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.support;
+package com.refinedmods.refinedstorage2.platform.api.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;

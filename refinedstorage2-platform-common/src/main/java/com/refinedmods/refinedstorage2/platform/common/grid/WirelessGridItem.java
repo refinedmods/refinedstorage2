@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractNetworkBoundEnergyItem;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.Optional;

@@ -1,10 +1,10 @@
-package com.refinedmods.refinedstorage2.platform.common.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.common.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.platform.api.support.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.support.PlatformNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemHelper;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 
 import java.util.List;
 import java.util.Objects;

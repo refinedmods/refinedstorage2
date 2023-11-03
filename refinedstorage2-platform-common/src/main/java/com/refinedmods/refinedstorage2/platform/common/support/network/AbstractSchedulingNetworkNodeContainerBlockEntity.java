@@ -1,8 +1,11 @@
-package com.refinedmods.refinedstorage2.platform.common.support;
+package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.support.SchedulingMode;
+import com.refinedmods.refinedstorage2.platform.common.support.SchedulingModeType;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;

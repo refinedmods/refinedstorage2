@@ -1,7 +1,7 @@
-package com.refinedmods.refinedstorage2.platform.common.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.common.support.network.bounditem;
 
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 
 import net.minecraft.network.FriendlyByteBuf;
 

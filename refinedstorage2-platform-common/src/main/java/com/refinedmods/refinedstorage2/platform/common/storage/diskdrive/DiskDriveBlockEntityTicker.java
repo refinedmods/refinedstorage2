@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

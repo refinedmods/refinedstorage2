@@ -1,12 +1,12 @@
-package com.refinedmods.refinedstorage2.platform.common.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.common.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.support.PlatformNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 

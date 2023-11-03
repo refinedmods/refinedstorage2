@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.api.support.network.bounditem;
 
 import net.minecraft.network.FriendlyByteBuf;
 import org.apiguardian.api.API;

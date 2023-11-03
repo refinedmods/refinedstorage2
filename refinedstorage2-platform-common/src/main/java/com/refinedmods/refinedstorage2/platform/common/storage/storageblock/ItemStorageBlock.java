@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

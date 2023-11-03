@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.common.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractNetworkBoundEnergyItem;
 

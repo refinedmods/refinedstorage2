@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainerImpl;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import java.util.Objects;

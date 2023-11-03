@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.Wireless
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 

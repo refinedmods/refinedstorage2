@@ -12,10 +12,10 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceCon
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import java.util.HashMap;

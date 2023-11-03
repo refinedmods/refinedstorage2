@@ -18,7 +18,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemSession;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.api.support.network.bounditem;
 
 import java.util.Optional;
 

@@ -12,8 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider
 import com.refinedmods.refinedstorage2.platform.common.support.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.support.CableShapeCacheKey;
 import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 
 import javax.annotation.Nullable;
 

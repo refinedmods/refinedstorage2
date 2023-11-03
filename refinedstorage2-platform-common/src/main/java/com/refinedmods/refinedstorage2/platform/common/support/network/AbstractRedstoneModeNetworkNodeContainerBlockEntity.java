@@ -1,8 +1,11 @@
-package com.refinedmods.refinedstorage2.platform.common.support;
+package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.support.PlayerAware;
+import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSettings;
 
 import java.util.Collections;
 import java.util.List;

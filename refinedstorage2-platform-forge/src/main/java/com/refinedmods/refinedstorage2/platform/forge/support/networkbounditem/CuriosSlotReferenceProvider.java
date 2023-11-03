@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.networkbounditem;
 
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReferenceProvider;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 
 import java.util.Collections;
 import java.util.List;

@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractSchedulingNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
 import java.util.List;

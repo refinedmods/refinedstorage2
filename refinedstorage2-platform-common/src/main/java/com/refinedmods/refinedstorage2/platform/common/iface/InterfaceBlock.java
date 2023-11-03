@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBlockEntityTicker;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import javax.annotation.Nullable;
 

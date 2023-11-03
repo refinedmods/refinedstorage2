@@ -1,8 +1,10 @@
-package com.refinedmods.refinedstorage2.platform.common.support;
+package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.support.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.network.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
 
 import javax.annotation.Nullable;
 

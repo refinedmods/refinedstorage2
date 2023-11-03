@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import javax.annotation.Nullable;
 

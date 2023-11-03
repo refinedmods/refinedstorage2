@@ -1,9 +1,9 @@
-package com.refinedmods.refinedstorage2.platform.common.support;
+package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.network.Connections;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 
 import java.util.ArrayDeque;
 import java.util.Collections;

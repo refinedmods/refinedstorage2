@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.api.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 

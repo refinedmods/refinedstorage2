@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
 

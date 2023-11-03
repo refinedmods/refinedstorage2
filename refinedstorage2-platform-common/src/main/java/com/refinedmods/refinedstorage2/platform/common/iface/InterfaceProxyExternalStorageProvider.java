@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 
 import java.util.Collections;
 import java.util.Iterator;

@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.controller.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
-import com.refinedmods.refinedstorage2.platform.common.support.networkbounditem.NetworkBoundItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.NetworkBoundItemItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.ResourceClientTooltipComponent;
