@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.grid.screen.hint;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class FluidGridInsertionHint implements GridInsertionHint {
             ),
             result.fluid().getAmount() == Platform.INSTANCE.getBucketAmount()
                 ? null
-                : Platform.INSTANCE.getBucketAmountFormatter().format(result.fluid().getAmount())
+                : FluidResourceRendering.format(result.fluid().getAmount())
         );
     }
 }

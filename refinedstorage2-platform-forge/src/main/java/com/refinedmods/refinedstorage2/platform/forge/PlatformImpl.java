@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeFluidGridResourceFactory;
@@ -97,7 +96,6 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(networkManager),
             new ClientToServerCommunicationsImpl(networkManager),
             new MenuOpenerImpl(),
-            new BucketAmountFormatting(FluidType.BUCKET_VOLUME),
             new FluidStackFluidRenderer(),
             ItemGridInsertionStrategy::new
         );

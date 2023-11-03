@@ -43,195 +43,166 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class PlatformProxy implements Platform {
-    @Nullable
-    private Platform platform;
+public class TestPlatform implements Platform {
+    private final long bucketAmount;
 
-    public static void loadPlatform(final Platform platform) {
-        final PlatformProxy proxy = (PlatformProxy) Platform.INSTANCE;
-        if (proxy.platform != null) {
-            throw new IllegalStateException("Platform already set");
-        }
-        proxy.platform = platform;
+    public TestPlatform(final long bucketAmount) {
+        this.bucketAmount = bucketAmount;
     }
 
     @Override
     public ServerToClientCommunications getServerToClientCommunications() {
-        return ensureLoaded().getServerToClientCommunications();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ClientToServerCommunications getClientToServerCommunications() {
-        return ensureLoaded().getClientToServerCommunications();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public MenuOpener getMenuOpener() {
-        return ensureLoaded().getMenuOpener();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getBucketAmount() {
-        return ensureLoaded().getBucketAmount();
+        return bucketAmount;
     }
 
     @Override
     public TagKey<Item> getWrenchTag() {
-        return ensureLoaded().getWrenchTag();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Config getConfig() {
-        return ensureLoaded().getConfig();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean canEditBoxLoseFocus(final EditBox editBox) {
-        return ensureLoaded().canEditBoxLoseFocus(editBox);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return ensureLoaded().isKeyDown(keyMapping);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public GridResourceFactory getItemGridResourceFactory() {
-        return ensureLoaded().getItemGridResourceFactory();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public GridResourceFactory getFluidGridResourceFactory() {
-        return ensureLoaded().getFluidGridResourceFactory();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory() {
-        return ensureLoaded().getDefaultGridInsertionStrategyFactory();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public FluidRenderer getFluidRenderer() {
-        return ensureLoaded().getFluidRenderer();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<ContainedFluid> getContainedFluid(final ItemStack stack) {
-        return ensureLoaded().getContainedFluid(stack);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<FluidResource> convertJeiIngredientToFluid(final Object ingredient) {
-        return ensureLoaded().convertJeiIngredientToFluid(ingredient);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
-        return ensureLoaded().convertToBucket(fluidResource);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
-        return ensureLoaded().createTransferManager(containerMenu);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public long insertIntoContainer(final Container container,
-                                    final ItemResource itemResource,
-                                    final long amount,
+    public long insertIntoContainer(final Container container, final ItemResource itemResource, final long amount,
                                     final Action action) {
-        return ensureLoaded().insertIntoContainer(container, itemResource, amount, action);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public ItemStack getCloneItemStack(final BlockState state,
-                                       final Level level,
-                                       final BlockHitResult hitResult,
+    public ItemStack getCloneItemStack(final BlockState state, final Level level, final BlockHitResult hitResult,
                                        final Player player) {
-        return ensureLoaded().getCloneItemStack(state, level, hitResult, player);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
-                                                            final CraftingRecipe craftingRecipe,
+    public NonNullList<ItemStack> getRemainingCraftingItems(final Player player, final CraftingRecipe craftingRecipe,
                                                             final CraftingContainer container) {
-        return ensureLoaded().getRemainingCraftingItems(player, craftingRecipe, container);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
-        ensureLoaded().onItemCrafted(player, craftedStack, container);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
-        return ensureLoaded().getFakePlayer(level, playerId);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
-        return ensureLoaded().canBreakBlock(level, pos, state, player);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean placeBlock(final Level level,
-                              final BlockPos pos,
-                              final Direction direction,
-                              final Player player,
+    public boolean placeBlock(final Level level, final BlockPos pos, final Direction direction, final Player player,
                               final ItemStack stack) {
-        return ensureLoaded().placeBlock(level, pos, direction, player, stack);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean placeFluid(final Level level,
-                              final BlockPos pos,
-                              final Direction direction,
-                              final Player player,
+    public boolean placeFluid(final Level level, final BlockPos pos, final Direction direction, final Player player,
                               final FluidResource fluidResource) {
-        return ensureLoaded().placeFluid(level, pos, direction, player, fluidResource);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public ItemStack getBlockAsItemStack(final Block block,
-                                         final BlockState state,
-                                         final Direction direction,
+    public ItemStack getBlockAsItemStack(final Block block, final BlockState state, final Direction direction,
                                          final BlockGetter level,
-                                         final BlockPos pos,
-                                         final Player player) {
-        return ensureLoaded().getBlockAsItemStack(block, state, direction, level, pos, player);
+                                         final BlockPos pos, final Player player) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<SoundEvent> getBucketPickupSound(final LiquidBlock liquidBlock, final BlockState state) {
-        return ensureLoaded().getBucketPickupSound(liquidBlock, state);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack,
-                                                                 final GuiGraphics graphics,
+    public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack, final GuiGraphics graphics,
                                                                  final int mouseX,
                                                                  final Optional<TooltipComponent> imageComponent,
                                                                  final List<Component> components) {
-        return ensureLoaded().processTooltipComponents(stack, graphics, mouseX, imageComponent, components);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void renderTooltip(final GuiGraphics graphics,
-                              final List<ClientTooltipComponent> components,
-                              final int x,
+    public void renderTooltip(final GuiGraphics graphics, final List<ClientTooltipComponent> components, final int x,
                               final int y) {
-        ensureLoaded().renderTooltip(graphics, components, x, y);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return ensureLoaded().getEnergyStorage(stack);
-    }
-
-    private Platform ensureLoaded() {
-        if (platform == null) {
-            throw new IllegalStateException("Platform not loaded yet");
-        }
-        return platform;
+        throw new UnsupportedOperationException();
     }
 }

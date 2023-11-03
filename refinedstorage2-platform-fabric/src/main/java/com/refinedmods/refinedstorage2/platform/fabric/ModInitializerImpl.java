@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -99,7 +100,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     public void onInitialize() {
         AutoConfig.register(ConfigImpl.class, Toml4jConfigSerializer::new);
 
-        initializePlatform(new PlatformImpl());
+        PlatformProxy.loadPlatform(new PlatformImpl());
         initializePlatformApi();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();

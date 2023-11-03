@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
@@ -102,7 +103,7 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
-        initializePlatform(new PlatformImpl(new NetworkManager()));
+        PlatformProxy.loadPlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApi();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
