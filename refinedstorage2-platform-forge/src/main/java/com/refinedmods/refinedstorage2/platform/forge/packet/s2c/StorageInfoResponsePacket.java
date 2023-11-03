@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.storage.ClientStorageRepository;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
 import java.util.UUID;
 import java.util.function.Supplier;

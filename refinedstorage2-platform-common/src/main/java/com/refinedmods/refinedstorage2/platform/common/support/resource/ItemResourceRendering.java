@@ -3,9 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.resource;
 import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +48,10 @@ public class ItemResourceRendering implements ResourceRendering<ItemResource> {
     @Override
     public List<Component> getTooltip(final ItemResource resource) {
         final Minecraft minecraft = Minecraft.getInstance();
-        return ClientProxy.getPlayer().map(player -> getStack(resource).getTooltipLines(
-            player,
+        return getStack(resource).getTooltipLines(
+            minecraft.player,
             minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
-        )).orElse(Collections.emptyList());
+        );
     }
 
     @Override

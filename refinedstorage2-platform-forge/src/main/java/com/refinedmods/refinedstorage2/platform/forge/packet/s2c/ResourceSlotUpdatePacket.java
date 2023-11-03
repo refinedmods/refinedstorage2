@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
 import java.util.function.Supplier;
 import javax.annotation.Nullable;

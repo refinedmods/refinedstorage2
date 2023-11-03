@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterContainerMenu;
 
 import java.util.function.Supplier;
