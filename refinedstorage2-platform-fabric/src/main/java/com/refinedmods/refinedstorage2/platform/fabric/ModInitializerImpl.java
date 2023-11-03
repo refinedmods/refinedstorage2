@@ -376,8 +376,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerWrenchingEvent() {
         UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
             final BlockState state = level.getBlockState(hitResult.getBlockPos());
-            return AbstractBaseBlock.tryUseWrench(state, level, hitResult, player, hand)
-                .or(() -> AbstractBaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
+            if (!(state.getBlock() instanceof AbstractBaseBlock block)) {
+                return InteractionResult.PASS;
+            }
+            return block.tryUseWrench(state, level, hitResult, player, hand)
+                .or(() -> block.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
                 .orElse(InteractionResult.PASS);
         });
     }

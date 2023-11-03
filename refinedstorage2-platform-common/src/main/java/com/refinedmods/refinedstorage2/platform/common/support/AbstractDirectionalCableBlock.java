@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -67,6 +68,12 @@ public abstract class AbstractDirectionalCableBlock
                                   final BlockPos pos,
                                   final BlockPos posFrom) {
         return CableBlockSupport.getState(state, level, pos, getDirection(state));
+    }
+
+    @Override
+    protected BlockState getRotatedBlockState(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockState rotated = super.getRotatedBlockState(state, level, pos);
+        return CableBlockSupport.getState(rotated, level, pos, getDirection(rotated));
     }
 
     @Override

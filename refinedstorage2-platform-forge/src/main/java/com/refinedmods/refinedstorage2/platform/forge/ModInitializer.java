@@ -57,6 +57,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -290,20 +291,21 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void registerWrenchingEvent(final PlayerInteractEvent.RightClickBlock e) {
-        final BlockState state = e.getLevel().getBlockState(e.getHitVec().getBlockPos());
-
-        AbstractBaseBlock.tryUseWrench(state, e.getLevel(), e.getHitVec(), e.getEntity(), e.getHand())
-            .or(() -> AbstractBaseBlock.tryUpdateColor(
-                state,
-                e.getLevel(),
-                e.getHitVec().getBlockPos(),
-                e.getEntity(),
-                e.getHand()
-            ))
-            .ifPresent(result -> {
-                e.setCanceled(true);
-                e.setCancellationResult(result);
-            });
+        final Level level = e.getLevel();
+        final BlockState state = level.getBlockState(e.getHitVec().getBlockPos());
+        if (!(state.getBlock() instanceof AbstractBaseBlock block)) {
+            return;
+        }
+        block.tryUseWrench(state, level, e.getHitVec(), e.getEntity(), e.getHand()).or(() -> block.tryUpdateColor(
+            state,
+            level,
+            e.getHitVec().getBlockPos(),
+            e.getEntity(),
+            e.getHand()
+        )).ifPresent(result -> {
+            e.setCanceled(true);
+            e.setCancellationResult(result);
+        });
     }
 
     @SubscribeEvent
