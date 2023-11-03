@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.StorageExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,8 +25,8 @@ import static com.google.common.collect.Iterators.transform;
 public class StorageImporterSource<T, P> implements ImporterSource<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<P, T> fromPlatformMapper;
-    private final StorageInsertableStorage<T, P> insertTarget;
-    private final StorageExtractableStorage<T, P> extractTarget;
+    private final FabricStorageInsertableStorage<T, P> insertTarget;
+    private final FabricStorageExtractableStorage<T, P> extractTarget;
     private final Direction direction;
 
     public StorageImporterSource(final BlockApiLookup<Storage<P>, Direction> lookup,
@@ -38,7 +38,7 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
                                  final AmountOverride amountOverride) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
-        this.insertTarget = new StorageInsertableStorage<>(
+        this.insertTarget = new FabricStorageInsertableStorage<>(
             lookup,
             toPlatformMapper,
             serverLevel,
@@ -46,7 +46,7 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
             direction,
             AmountOverride.NONE
         );
-        this.extractTarget = new StorageExtractableStorage<>(
+        this.extractTarget = new FabricStorageExtractableStorage<>(
             lookup,
             toPlatformMapper,
             serverLevel,

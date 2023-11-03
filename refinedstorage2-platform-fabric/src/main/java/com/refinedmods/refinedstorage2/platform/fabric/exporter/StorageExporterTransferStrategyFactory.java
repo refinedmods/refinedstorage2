@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.api.exporter.ExporterTransferStr
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.exporter.AbstractFuzzyExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageInsertableStorage;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -46,7 +46,7 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
-        final StorageInsertableStorage<T, P> insertTarget = new StorageInsertableStorage<>(
+        final FabricStorageInsertableStorage<T, P> insertTarget = new FabricStorageInsertableStorage<>(
             lookup,
             toPlatformMapper,
             level,
@@ -61,7 +61,7 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
     }
 
     private AbstractExporterTransferStrategy<T> create(final boolean fuzzyMode,
-                                                       final StorageInsertableStorage<T, P> insertTarget,
+                                                       final FabricStorageInsertableStorage<T, P> insertTarget,
                                                        final long transferQuota) {
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(insertTarget, storageChannelType, transferQuota) {

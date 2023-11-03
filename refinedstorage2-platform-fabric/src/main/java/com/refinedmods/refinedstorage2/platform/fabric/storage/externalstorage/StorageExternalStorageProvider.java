@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.StorageExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,8 +26,8 @@ import static com.google.common.collect.Iterators.transform;
 public class StorageExternalStorageProvider<T, P> implements ExternalStorageProvider<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<P, T> fromPlatformMapper;
-    private final StorageExtractableStorage<T, P> extractTarget;
-    private final StorageInsertableStorage<T, P> insertTarget;
+    private final FabricStorageExtractableStorage<T, P> extractTarget;
+    private final FabricStorageInsertableStorage<T, P> insertTarget;
     private final Direction direction;
 
     public StorageExternalStorageProvider(final BlockApiLookup<Storage<P>, Direction> lookup,
@@ -38,7 +38,7 @@ public class StorageExternalStorageProvider<T, P> implements ExternalStorageProv
                                           final Direction direction) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
-        this.extractTarget = new StorageExtractableStorage<>(
+        this.extractTarget = new FabricStorageExtractableStorage<>(
             lookup,
             toPlatformMapper,
             serverLevel,
@@ -46,7 +46,7 @@ public class StorageExternalStorageProvider<T, P> implements ExternalStorageProv
             direction,
             AmountOverride.NONE
         );
-        this.insertTarget = new StorageInsertableStorage<>(
+        this.insertTarget = new FabricStorageInsertableStorage<>(
             lookup,
             toPlatformMapper,
             serverLevel,

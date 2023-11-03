@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
-import com.refinedmods.refinedstorage2.platform.fabric.util.FabricStorageUtil;
 
 import java.util.function.Function;
 
@@ -16,18 +15,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class StorageExtractableStorage<T, P> implements ExtractableStorage<T> {
+public class FabricStorageExtractableStorage<T, P> implements ExtractableStorage<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<T, P> toPlatformMapper;
     private final Direction direction;
     private final AmountOverride amountOverride;
 
-    public StorageExtractableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                     final Function<T, P> toPlatformMapper,
-                                     final ServerLevel serverLevel,
-                                     final BlockPos pos,
-                                     final Direction direction,
-                                     final AmountOverride amountOverride) {
+    public FabricStorageExtractableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
+                                           final Function<T, P> toPlatformMapper,
+                                           final ServerLevel serverLevel,
+                                           final BlockPos pos,
+                                           final Direction direction,
+                                           final AmountOverride amountOverride) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.toPlatformMapper = toPlatformMapper;
         this.direction = direction;

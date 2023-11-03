@@ -1,13 +1,13 @@
-package com.refinedmods.refinedstorage2.platform.fabric.util;
+package com.refinedmods.refinedstorage2.platform.fabric.storage;
 
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 
-public final class FabricStorageUtil {
+final class FabricStorageUtil {
     private FabricStorageUtil() {
     }
 
-    public static <T> long getCurrentAmount(final Storage<T> storage, final T resource) {
+    static <T> long getCurrentAmount(final Storage<T> storage, final T resource) {
         long amount = 0;
         final Iterable<StorageView<T>> views = storage.nonEmptyViews();
         for (final StorageView<T> view : views) {
