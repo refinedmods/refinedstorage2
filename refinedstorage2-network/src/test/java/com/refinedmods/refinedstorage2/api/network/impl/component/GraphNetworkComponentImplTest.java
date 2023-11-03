@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.impl.component;
 
+import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
@@ -13,12 +14,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GraphNetworkComponentTest {
+class GraphNetworkComponentImplTest {
     GraphNetworkComponent sut;
 
     @BeforeEach
     void setUp() {
-        sut = new GraphNetworkComponent(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
+        sut = new GraphNetworkComponentImpl(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
     }
 
     @Test
@@ -51,7 +52,7 @@ class GraphNetworkComponentTest {
     }
 
     @Test
-    void shouldNotRetrieveContainersByClassThatDontExist() {
+    void shouldNotRetrieveContainersByClassThatDoesNotExist() {
         // Act
         final Set<NetworkNodeContainer1> containers = sut.getContainers(NetworkNodeContainer1.class);
 
@@ -189,6 +190,98 @@ class GraphNetworkComponentTest {
 
         // Assert
         assertThat(containers).isEmpty();
+    }
+
+    @Test
+    void shouldNotRetrieveContainerByIndexThatDoesNotExist() {
+        // Arrange
+        sut.onContainerAdded(() -> new SimpleNetworkNode(0));
+
+        // Act
+        final NetworkNodeContainer container = sut.getContainer("does not exist");
+
+        // Assert
+        assertThat(container).isNull();
+    }
+
+    @Test
+    void shouldRetrieveContainerByIndex() {
+        // Arrange
+        final NetworkNodeContainer container1 = new NetworkNodeContainer() {
+            @Override
+            public NetworkNode getNode() {
+                return new SimpleNetworkNode(0);
+            }
+
+            @Override
+            public Object createKey() {
+                return "key0";
+            }
+        };
+
+        final NetworkNodeContainer container2 = new NetworkNodeContainer() {
+            @Override
+            public NetworkNode getNode() {
+                return new SimpleNetworkNode(0);
+            }
+
+            @Override
+            public Object createKey() {
+                return "key1";
+            }
+        };
+
+        sut.onContainerAdded(container1);
+        sut.onContainerAdded(container2);
+
+        // Act
+        final NetworkNodeContainer foundContainer1 = sut.getContainer("key0");
+        final NetworkNodeContainer foundContainer2 = sut.getContainer("key1");
+
+        // Assert
+        assertThat(foundContainer1).isEqualTo(container1);
+        assertThat(foundContainer2).isEqualTo(container2);
+    }
+
+    @Test
+    void shouldRemoveContainerWithKey() {
+        // Arrange
+        final NetworkNodeContainer container1 = new NetworkNodeContainer() {
+            @Override
+            public NetworkNode getNode() {
+                return new SimpleNetworkNode(0);
+            }
+
+            @Override
+            public Object createKey() {
+                return "key0";
+            }
+        };
+
+        final NetworkNodeContainer container2 = new NetworkNodeContainer() {
+            @Override
+            public NetworkNode getNode() {
+                return new SimpleNetworkNode(0);
+            }
+
+            @Override
+            public Object createKey() {
+                return "key1";
+            }
+        };
+
+        sut.onContainerAdded(container1);
+        sut.onContainerAdded(container2);
+
+        // Act
+        sut.onContainerRemoved(container2);
+
+        // Assert
+        final NetworkNodeContainer foundContainer1 = sut.getContainer("key0");
+        final NetworkNodeContainer foundContainer2 = sut.getContainer("key1");
+
+        assertThat(foundContainer1).isEqualTo(container1);
+        assertThat(foundContainer2).isNull();
     }
 
     private static class NetworkNodeContainer1 implements NetworkNodeContainer, BothImplements {

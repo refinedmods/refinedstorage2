@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -219,7 +220,7 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             GraphNetworkComponent.class,
-            GraphNetworkComponent::new
+            GraphNetworkComponentImpl::new
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,

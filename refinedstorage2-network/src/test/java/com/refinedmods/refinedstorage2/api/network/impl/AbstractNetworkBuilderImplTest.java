@@ -10,11 +10,13 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.BeforeEach;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractNetworkBuilderImplTest {
     protected NetworkBuilder sut;
@@ -30,10 +32,8 @@ abstract class AbstractNetworkBuilderImplTest {
         sut = new NetworkBuilderImpl(new NetworkFactory(componentMapFactory));
     }
 
-    protected void clearTracking(final Network network) {
-        Objects.requireNonNull(network)
-            .getComponent(InterceptingNetworkComponent.class)
-            .clear();
+    protected void clearTracking(@Nullable final Network network) {
+        requireNonNull(network).getComponent(InterceptingNetworkComponent.class).clear();
     }
 
     protected NetworkNodeContainer createContainerWithNetwork() {
