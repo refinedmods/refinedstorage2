@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAm
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAmountStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
+import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -152,23 +153,28 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
-        if (!colorsAllowConnecting(other)) {
+    public void addOutgoingConnections(final ConnectionSink sink) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return;
+        }
+        for (final Direction direction : Direction.values()) {
+            if (direction == myDirection.getOpposite()) {
+                continue;
+            }
+            sink.tryConnectInSameDimension(worldPosition.relative(direction), direction.getOpposite());
+        }
+    }
+
+    @Override
+    public boolean canAcceptIncomingConnection(final Direction incomingDirection, final BlockState connectingState) {
+        if (!colorsAllowConnecting(connectingState)) {
             return false;
         }
         final Direction myDirection = getDirection();
         if (myDirection != null) {
-            return myDirection != direction;
+            return myDirection != incomingDirection.getOpposite();
         }
         return true;
-    }
-
-    @Override
-    public boolean canPerformOutgoingConnection(final Direction direction) {
-        final Direction myDirection = getDirection();
-        if (myDirection == null) {
-            return true;
-        }
-        return myDirection != direction.getOpposite();
     }
 }

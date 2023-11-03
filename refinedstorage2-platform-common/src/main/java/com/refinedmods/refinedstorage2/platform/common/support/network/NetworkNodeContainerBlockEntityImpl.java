@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.support.network.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
 
@@ -77,28 +78,34 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     @Override
-    public boolean canPerformOutgoingConnection(final Direction direction) {
+    public void addOutgoingConnections(final ConnectionSink sink) {
         final Direction myDirection = getDirection();
         if (myDirection == null) {
-            return true;
+            super.addOutgoingConnections(sink);
+            return;
         }
-        return myDirection != direction;
+        for (final Direction direction : Direction.values()) {
+            if (direction == myDirection) {
+                continue;
+            }
+            sink.tryConnectInSameDimension(worldPosition.relative(direction), direction.getOpposite());
+        }
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
-        if (!colorsAllowConnecting(other)) {
+    public boolean canAcceptIncomingConnection(final Direction incomingDirection, final BlockState connectingState) {
+        if (!colorsAllowConnecting(connectingState)) {
             return false;
         }
         final Direction myDirection = getDirection();
         if (myDirection != null) {
-            return myDirection != direction.getOpposite();
+            return myDirection != incomingDirection;
         }
         return true;
     }
 
-    protected final boolean colorsAllowConnecting(final BlockState other) {
-        if (!(other.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
+    protected final boolean colorsAllowConnecting(final BlockState connectingState) {
+        if (!(connectingState.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
             return true;
         }
         final ColorableBlock<?> colorableBlock = getColor();
