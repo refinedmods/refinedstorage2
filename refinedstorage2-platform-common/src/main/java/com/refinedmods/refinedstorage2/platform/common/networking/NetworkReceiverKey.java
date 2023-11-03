@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 record NetworkReceiverKey(GlobalPos pos) {
     int getDistance(final BlockPos from) {
         return (int) Math.sqrt(
-            Math.pow(from.getX() - pos.pos().getX(), 2)
-                + Math.pow(from.getY() - pos.pos().getY(), 2)
-                + Math.pow(from.getZ() - pos.pos().getZ(), 2)
+            Math.pow(from.getX() - (double) pos.pos().getX(), 2)
+                + Math.pow(from.getY() - (double) pos.pos().getY(), 2)
+                + Math.pow(from.getZ() - (double) pos.pos().getZ(), 2)
         );
     }
 

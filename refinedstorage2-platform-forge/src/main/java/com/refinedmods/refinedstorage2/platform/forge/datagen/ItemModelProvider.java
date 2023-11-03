@@ -26,6 +26,9 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
+    private static final String CUTOUT_TEXTURE_KEY = "cutout";
+    private static final String CABLE_TEXTURE_KEY = "cable";
+
     public ItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, MOD_ID, existingFileHelper);
     }
@@ -54,7 +57,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName()))
         );
     }
@@ -65,7 +68,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -76,7 +79,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -87,7 +90,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -158,7 +161,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -169,7 +172,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cable",
+            CABLE_TEXTURE_KEY,
             createIdentifier("block/cable/" + color.getName())
         ));
     }
@@ -180,7 +183,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cutout",
+            CUTOUT_TEXTURE_KEY,
             createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())
         ));
     }
@@ -191,7 +194,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cutout",
+            CUTOUT_TEXTURE_KEY,
             createIdentifier("block/network_receiver/cutouts/" + color.getName())
         ));
     }
@@ -202,7 +205,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         blocks.forEach((color, id, block) -> singleTexture(
             id.getPath(),
             base,
-            "cutout",
+            CUTOUT_TEXTURE_KEY,
             createIdentifier("block/network_transmitter/cutouts/" + color.getName())
         ));
     }

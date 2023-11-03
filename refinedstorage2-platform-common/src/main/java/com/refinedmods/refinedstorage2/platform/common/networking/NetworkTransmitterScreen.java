@@ -31,11 +31,6 @@ public class NetworkTransmitterScreen extends AbstractBaseScreen<NetworkTransmit
     }
 
     @Override
-    protected ResourceLocation getTexture() {
-        return TEXTURE;
-    }
-
-    @Override
     protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
         final NetworkTransmitterStatus status = getMenu().getStatus();
@@ -44,5 +39,10 @@ public class NetworkTransmitterScreen extends AbstractBaseScreen<NetworkTransmit
             graphics.blit(TextureIds.ICONS, displayTextX, 23, 246, 148, 10, 10);
         }
         graphics.drawString(font, status.message(), displayTextX + (status.error() ? (10 + 4) : 0), 25, 4210752, false);
+    }
+
+    @Override
+    protected ResourceLocation getTexture() {
+        return TEXTURE;
     }
 }
