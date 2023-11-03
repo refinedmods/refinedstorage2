@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.constructordestructor.Destru
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
@@ -150,5 +151,11 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
         }
         final Player fakePlayer = getFakePlayer(serverLevel);
         strategy.apply(filter, actor, getNode()::getNetwork, fakePlayer);
+    }
+
+    @Override
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                   final BlockState newBlockState) {
+        return AbstractDirectionalBlock.doesBlockStateChangeWarrantNetworkNodeUpdate(oldBlockState, newBlockState);
     }
 }

@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainerImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
@@ -166,5 +167,11 @@ public class ExternalStorageBlockEntity
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new ExternalStorageContainerMenu(syncId, player, filter.getFilterContainer(), configContainer);
+    }
+    
+    @Override
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                   final BlockState newBlockState) {
+        return AbstractDirectionalBlock.doesBlockStateChangeWarrantNetworkNodeUpdate(oldBlockState, newBlockState);
     }
 }

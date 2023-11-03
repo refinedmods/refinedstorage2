@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.constructordestructor.Constr
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
@@ -143,6 +144,12 @@ public class ConstructorBlockEntity
     @Override
     protected void setTaskExecutor(final TaskExecutor<TaskContext> taskExecutor) {
         this.taskExecutor = taskExecutor;
+    }
+
+    @Override
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                   final BlockState newBlockState) {
+        return AbstractDirectionalBlock.doesBlockStateChangeWarrantNetworkNodeUpdate(oldBlockState, newBlockState);
     }
 
     protected record TaskContext(Network network, Player player) {

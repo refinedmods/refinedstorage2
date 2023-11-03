@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Inactive Wireless Transmitter model being emissive.
+-   Unneeded network graph updating after placing a network device.
 
 ## [2.0.0-milestone.3.1] - 2023-10-30
 

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
@@ -57,7 +58,7 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     protected void activenessChanged(final boolean newActive) {
-        LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), getNode().isActive(), newActive);
+        LOGGER.debug("Activeness change for node at {}: {} -> {}", getBlockPos(), getNode().isActive(), newActive);
         getNode().setActive(newActive);
     }
 
@@ -65,7 +66,7 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
                                             final BooleanProperty activenessProperty,
                                             final boolean active) {
         if (level != null) {
-            LOGGER.info(
+            LOGGER.debug(
                 "Sending block update at {} due to activeness change: {} -> {}",
                 getBlockPos(),
                 state.getValue(activenessProperty),
@@ -141,5 +142,26 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
             return;
         }
         level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    }
+
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(
+        final BlockState oldBlockState,
+        final BlockState newBlockState
+    ) {
+        return false;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void setBlockState(final BlockState newBlockState) {
+        final BlockState oldBlockState = getBlockState();
+        super.setBlockState(newBlockState);
+        if (!doesBlockStateChangeWarrantNetworkNodeUpdate(oldBlockState, newBlockState)) {
+            return;
+        }
+        if (level == null || level.isClientSide || getNode().getNetwork() == null) {
+            return;
+        }
+        PlatformApi.INSTANCE.requestNetworkNodeUpdate(this, level);
     }
 }
