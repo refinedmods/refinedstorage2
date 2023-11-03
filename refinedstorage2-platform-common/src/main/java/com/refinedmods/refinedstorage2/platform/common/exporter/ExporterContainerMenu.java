@@ -27,11 +27,11 @@ public class ExporterContainerMenu extends AbstractSchedulingContainerMenu<Expor
         );
     }
 
-    public ExporterContainerMenu(final int syncId,
-                                 final Player player,
-                                 final ExporterBlockEntity exporter,
-                                 final ResourceContainer resourceContainer,
-                                 final UpgradeContainer upgradeContainer) {
+    ExporterContainerMenu(final int syncId,
+                          final Player player,
+                          final ExporterBlockEntity exporter,
+                          final ResourceContainer resourceContainer,
+                          final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getExporter(),
             syncId,

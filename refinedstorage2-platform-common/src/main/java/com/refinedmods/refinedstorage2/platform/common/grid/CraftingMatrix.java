@@ -13,7 +13,7 @@ public class CraftingMatrix extends TransientCraftingContainer {
         this.listener = listener;
     }
 
-    public void changed() {
+    void changed() {
         if (listener != null) {
             listener.run();
         }

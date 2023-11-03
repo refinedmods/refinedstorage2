@@ -29,7 +29,6 @@ class EmissiveBakedModel extends ForwardingBakedModel {
         context.pushTransform(transform);
         wrapped.emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
-
     }
 
     @Override

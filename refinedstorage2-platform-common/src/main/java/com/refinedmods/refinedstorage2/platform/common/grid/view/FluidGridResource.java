@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.view.AbstractPlatformGr
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.List;
@@ -84,12 +85,12 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
 
     @Override
     public String getDisplayedAmount() {
-        return Platform.INSTANCE.getBucketAmountFormatter().formatWithUnits(getAmount());
+        return FluidResourceRendering.formatWithUnits(getAmount());
     }
 
     @Override
     public String getAmountInTooltip() {
-        return Platform.INSTANCE.getBucketAmountFormatter().format(getAmount());
+        return FluidResourceRendering.format(getAmount());
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.constructordestructor.Constr
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractSchedulingNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractSchedulingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
 import java.util.ArrayList;
@@ -111,11 +111,11 @@ public class ConstructorBlockEntity
         }
     }
 
-    public boolean isDropItems() {
+    boolean isDropItems() {
         return dropItems;
     }
 
-    public void setDropItems(final boolean dropItems) {
+    void setDropItems(final boolean dropItems) {
         this.dropItems = dropItems;
         setChanged();
         if (level instanceof ServerLevel serverLevel) {
@@ -145,7 +145,7 @@ public class ConstructorBlockEntity
         this.taskExecutor = taskExecutor;
     }
 
-    public record TaskContext(Network network, Player player) {
+    protected record TaskContext(Network network, Player player) {
     }
 
     private class TaskImpl implements Task<TaskContext> {

@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.grid.CursorStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInsertableStorage;
 
@@ -21,14 +20,14 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 public class ItemGridExtractionStrategy implements GridExtractionStrategy {
     private final GridOperations<ItemResource> gridOperations;
     private final PlayerMainInvWrapper playerInventoryStorage;
-    private final CursorStorage playerCursorStorage;
+    private final CursorItemHandler playerCursorItemHandler;
 
     public ItemGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                       final Player player,
                                       final Grid grid) {
         this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
         this.playerInventoryStorage = new PlayerMainInvWrapper(player.getInventory());
-        this.playerCursorStorage = new CursorStorage(containerMenu);
+        this.playerCursorItemHandler = new CursorItemHandler(containerMenu);
     }
 
     @Override
@@ -37,7 +36,7 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
                                  final GridExtractMode extractMode,
                                  final boolean cursor) {
         if (resource instanceof ItemResource itemResource) {
-            final IItemHandler handler = cursor ? playerCursorStorage : playerInventoryStorage;
+            final IItemHandler handler = cursor ? playerCursorItemHandler : playerInventoryStorage;
             gridOperations.extract(
                 itemResource,
                 extractMode,

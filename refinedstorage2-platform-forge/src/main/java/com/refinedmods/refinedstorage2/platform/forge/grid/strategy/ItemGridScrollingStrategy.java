@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.grid.CursorStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInsertableStorage;
@@ -28,7 +27,7 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
     private final GridOperations<ItemResource> gridOperations;
     private final Inventory playerInventory;
     private final PlayerMainInvWrapper playerInventoryStorage;
-    private final CursorStorage playerCursorStorage;
+    private final CursorItemHandler playerCursorItemHandler;
 
     public ItemGridScrollingStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
@@ -36,7 +35,7 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
         this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
         this.playerInventory = player.getInventory();
         this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
-        this.playerCursorStorage = new CursorStorage(containerMenu);
+        this.playerCursorItemHandler = new CursorItemHandler(containerMenu);
     }
 
     @Override
@@ -51,7 +50,7 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
             switch (scrollMode) {
                 case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
                 case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);
-                case GRID_TO_CURSOR -> handleGridToInventoryScroll(itemResource, playerCursorStorage);
+                case GRID_TO_CURSOR -> handleGridToInventoryScroll(itemResource, playerCursorItemHandler);
             }
             return true;
         }

@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.grid.screen;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridResultSlot;
 
 import javax.annotation.Nullable;
 
@@ -16,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -75,7 +75,8 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
     @Override
     protected void containerTick() {
         super.containerTick();
-        final boolean mayFilterOnCraftingMatrixItems = hoveredSlot instanceof CraftingGridResultSlot
+        final boolean mayFilterOnCraftingMatrixItems = hoveredSlot != null
+            && hoveredSlot.container instanceof ResultContainer
             && hasShiftDown()
             && hasControlDown();
         if (mayFilterOnCraftingMatrixItems && !filteringBasedOnCraftingMatrixItems) {

@@ -22,7 +22,7 @@ import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
-public class CraftingGridTransferHandler implements TransferHandler {
+class CraftingGridTransferHandler implements TransferHandler {
     private static final Color MISSING_COLOR = new Color(1.0f, 0.0f, 0.0f, 0.4f);
     private static final CategoryIdentifier<?> CRAFTING = CategoryIdentifier.of("minecraft", "plugins/crafting");
 

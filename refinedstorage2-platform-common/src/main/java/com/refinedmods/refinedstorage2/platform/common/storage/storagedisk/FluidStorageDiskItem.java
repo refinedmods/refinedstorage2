@@ -5,11 +5,11 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 
 import javax.annotation.Nullable;
 
@@ -35,7 +35,7 @@ public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidReso
 
     @Override
     protected String formatAmount(final long amount) {
-        return Platform.INSTANCE.getBucketAmountFormatter().format(amount);
+        return FluidResourceRendering.format(amount);
     }
 
     @Override

@@ -7,24 +7,24 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 
-public class MissingIngredients {
+class MissingIngredients {
     private final List<EntryIngredient> ingredients = new ArrayList<>();
     private final IntSet indices = new IntOpenHashSet();
 
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return indices.isEmpty();
     }
 
-    public void addIngredient(final EntryIngredient ingredient, final int slotIndex) {
+    void addIngredient(final EntryIngredient ingredient, final int slotIndex) {
         ingredients.add(ingredient);
         indices.add(slotIndex);
     }
 
-    public List<EntryIngredient> getIngredients() {
+    List<EntryIngredient> getIngredients() {
         return ingredients;
     }
 
-    public boolean isMissing(final int slotIndex) {
+    boolean isMissing(final int slotIndex) {
         return indices.contains(slotIndex);
     }
 }

@@ -81,15 +81,15 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
             .orElse(null);
     }
 
-    public CraftingMatrix getCraftingMatrix() {
+    CraftingMatrix getCraftingMatrix() {
         return craftingMatrix;
     }
 
-    public ResultContainer getCraftingResult() {
+    ResultContainer getCraftingResult() {
         return craftingResult;
     }
 
-    public NonNullList<ItemStack> getRemainingItems(final Player player) {
+    NonNullList<ItemStack> getRemainingItems(final Player player) {
         if (level == null || currentRecipe == null) {
             return NonNullList.create();
         }
@@ -127,7 +127,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         setOutputSilently(level);
     }
 
-    public Optional<Network> getNetwork() {
+    Optional<Network> getNetwork() {
         final GridNetworkNode node = getNode();
         if (!node.isActive()) {
             return Optional.empty();
@@ -135,13 +135,13 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         return Optional.ofNullable(node.getNetwork());
     }
 
-    public Optional<StorageChannel<ItemResource>> getStorageChannel() {
+    Optional<StorageChannel<ItemResource>> getStorageChannel() {
         return getNetwork().map(network -> network
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM));
     }
 
-    public ItemStack insert(final ItemStack stack, final Player player) {
+    ItemStack insert(final ItemStack stack, final Player player) {
         return getStorageChannel().map(storageChannel -> doInsert(stack, player, storageChannel)).orElse(stack);
     }
 
@@ -161,10 +161,10 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         return stack.copyWithCount((int) remainder);
     }
 
-    public long extract(final ItemResource resource, final long amount, final Player player) {
+    long extract(final ItemResource resource, final Player player) {
         return getStorageChannel().map(storageChannel -> storageChannel.extract(
             resource,
-            amount,
+            1,
             Action.EXECUTE,
             new PlayerActor(player)
         )).orElse(0L);

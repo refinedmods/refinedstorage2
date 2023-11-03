@@ -106,23 +106,23 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
     }
 
     private void registerWirelessTransmitters() {
-        final ResourceLocation parent = createIdentifier("block/wireless_transmitter/inactive");
-        Blocks.INSTANCE.getWirelessTransmitter()
-            .forEach((color, id, block) -> withExistingParent("block/wireless_transmitter/" + color.getName(), parent)
+        final ResourceLocation parent = createIdentifier("block/wireless_transmitter/active");
+        Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) ->
+            withExistingParent("block/wireless_transmitter/" + color.getName(), parent)
                 .texture("cutout", createIdentifier("block/wireless_transmitter/cutouts/" + color.getName())));
     }
 
     private void registerNetworkReceivers() {
-        final ResourceLocation base = createIdentifier("block/emissive_all_cutout");
+        final ResourceLocation emissiveBase = createIdentifier("block/emissive_all_cutout");
         final ResourceLocation baseTexture = createIdentifier("block/network_receiver/base");
         Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, receiver) -> {
             final ResourceLocation cutout = createIdentifier("block/network_receiver/cutouts/" + color.getName());
-            withExistingParent("block/network_receiver/" + color.getName(), base)
+            withExistingParent("block/network_receiver/" + color.getName(), emissiveBase)
                 .texture("particle", baseTexture)
                 .texture("all", baseTexture)
                 .texture("cutout", cutout);
         });
-        withExistingParent("block/network_receiver/inactive", base)
+        withExistingParent("block/network_receiver/inactive", createIdentifier("block/all_cutout"))
             .texture("particle", baseTexture)
             .texture("all", baseTexture)
             .texture("cutout", createIdentifier("block/network_receiver/cutouts/inactive"));

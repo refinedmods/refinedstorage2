@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirection
 import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionTypeImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import javax.annotation.Nullable;
 

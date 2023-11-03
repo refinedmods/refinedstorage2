@@ -12,7 +12,7 @@ import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.world.item.ItemStack;
 
-public class ResourceIngredientConverter implements IngredientConverter {
+class ResourceIngredientConverter implements IngredientConverter {
     @Override
     public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
         if (ingredient instanceof FluidStack fluidStack) {

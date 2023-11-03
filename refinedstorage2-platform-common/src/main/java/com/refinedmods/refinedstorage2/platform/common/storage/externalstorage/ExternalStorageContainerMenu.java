@@ -24,10 +24,10 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
         initializeResourceSlots(buf);
     }
 
-    public ExternalStorageContainerMenu(final int syncId,
-                                        final Player player,
-                                        final ResourceContainer resourceContainer,
-                                        final StorageConfigurationContainer configContainer) {
+    ExternalStorageContainerMenu(final int syncId,
+                                 final Player player,
+                                 final ResourceContainer resourceContainer,
+                                 final StorageConfigurationContainer configContainer) {
         super(Menus.INSTANCE.getExternalStorage(), syncId, player, configContainer);
         addSlots(player, resourceContainer);
     }

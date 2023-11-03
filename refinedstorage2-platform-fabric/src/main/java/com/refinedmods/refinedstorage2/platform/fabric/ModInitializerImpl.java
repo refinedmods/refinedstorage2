@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItem;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -20,12 +21,12 @@ import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.Abstrac
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
-import com.refinedmods.refinedstorage2.platform.fabric.exporter.StorageExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.exporter.FabricStorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.ItemGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.ItemGridScrollingStrategy;
-import com.refinedmods.refinedstorage2.platform.fabric.importer.StorageImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.importer.FabricStorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridRecipeTransferPacket;
@@ -40,10 +41,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.SingleAmountCh
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.UseNetworkBoundItemPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.FabricDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.storage.externalstorage.StoragePlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.externalstorage.FabricStoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.support.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage2.platform.fabric.support.networkbounditem.TrinketsSlotReferenceFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.support.networkbounditem.TrinketsSlotReferenceProvider;
+import com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem.TrinketsSlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem.TrinketsSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.support.resource.ResourceContainerFluidStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil;
 
@@ -99,7 +100,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     public void onInitialize() {
         AutoConfig.register(ConfigImpl.class, Toml4jConfigSerializer::new);
 
-        initializePlatform(new PlatformImpl());
+        PlatformProxy.loadPlatform(new PlatformImpl());
         initializePlatformApi();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
@@ -135,7 +136,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerImporterTransferStrategyFactories() {
         PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("item"),
-            new StorageImporterTransferStrategyFactory<>(
+            new FabricStorageImporterTransferStrategyFactory<>(
                 ItemStorage.SIDED,
                 StorageChannelTypes.ITEM,
                 VariantUtil::ofItemVariant,
@@ -145,7 +146,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         );
         PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
-            new StorageImporterTransferStrategyFactory<>(
+            new FabricStorageImporterTransferStrategyFactory<>(
                 FluidStorage.SIDED,
                 StorageChannelTypes.FLUID,
                 VariantUtil::ofFluidVariant,
@@ -158,7 +159,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerExporterTransferStrategyFactories() {
         PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("item"),
-            new StorageExporterTransferStrategyFactory<>(
+            new FabricStorageExporterTransferStrategyFactory<>(
                 ItemStorage.SIDED,
                 StorageChannelTypes.ITEM,
                 resource -> resource instanceof ItemResource itemResource
@@ -170,7 +171,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         );
         PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
-            new StorageExporterTransferStrategyFactory<>(
+            new FabricStorageExporterTransferStrategyFactory<>(
                 FluidStorage.SIDED,
                 StorageChannelTypes.FLUID,
                 resource -> resource instanceof FluidResource fluidResource
@@ -184,18 +185,20 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerExternalStorageProviderFactories() {
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
-            StorageChannelTypes.ITEM,
-            ItemStorage.SIDED,
-            VariantUtil::ofItemVariant,
-            VariantUtil::toItemVariant
-        ));
-        PlatformApi.INSTANCE.addExternalStorageProviderFactory(new StoragePlatformExternalStorageProviderFactory<>(
-            StorageChannelTypes.FLUID,
-            FluidStorage.SIDED,
-            VariantUtil::ofFluidVariant,
-            VariantUtil::toFluidVariant
-        ));
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            new FabricStoragePlatformExternalStorageProviderFactory<>(
+                StorageChannelTypes.ITEM,
+                ItemStorage.SIDED,
+                VariantUtil::ofItemVariant,
+                VariantUtil::toItemVariant
+            ));
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            new FabricStoragePlatformExternalStorageProviderFactory<>(
+                StorageChannelTypes.FLUID,
+                FluidStorage.SIDED,
+                VariantUtil::ofFluidVariant,
+                VariantUtil::toFluidVariant
+            ));
     }
 
     private void registerContent() {

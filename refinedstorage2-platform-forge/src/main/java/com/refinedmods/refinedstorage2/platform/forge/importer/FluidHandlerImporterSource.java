@@ -13,13 +13,13 @@ import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordin
 
 import java.util.Iterator;
 
-public class FluidHandlerImporterSource implements ImporterSource<FluidResource> {
+class FluidHandlerImporterSource implements ImporterSource<FluidResource> {
     private final InteractionCoordinates interactionCoordinates;
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    public FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
-                                      final AmountOverride amountOverride) {
+    FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+                               final AmountOverride amountOverride) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
         this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, amountOverride);

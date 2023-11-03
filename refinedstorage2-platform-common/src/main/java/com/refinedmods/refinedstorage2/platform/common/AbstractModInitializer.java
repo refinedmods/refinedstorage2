@@ -78,11 +78,11 @@ import com.refinedmods.refinedstorage2.platform.common.storagemonitor.ItemStorag
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RangeUpgradeItem;
@@ -154,10 +154,6 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public abstract class AbstractModInitializer {
     private static final String FLUID_REGISTRY_KEY = "fluid";
-
-    protected final void initializePlatform(final Platform platform) {
-        ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
-    }
 
     protected final void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());

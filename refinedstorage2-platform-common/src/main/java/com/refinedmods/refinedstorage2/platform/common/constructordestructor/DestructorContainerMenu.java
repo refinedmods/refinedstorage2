@@ -32,11 +32,11 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<D
         );
     }
 
-    public DestructorContainerMenu(final int syncId,
-                                   final Player player,
-                                   final DestructorBlockEntity destructor,
-                                   final ResourceContainer resourceContainer,
-                                   final UpgradeContainer upgradeContainer) {
+    DestructorContainerMenu(final int syncId,
+                            final Player player,
+                            final DestructorBlockEntity destructor,
+                            final ResourceContainer resourceContainer,
+                            final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getDestructor(),
             syncId,

@@ -29,10 +29,10 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
         registerProperty(new ClientProperty<>(DetectorPropertyTypes.MODE, DetectorMode.EQUAL));
     }
 
-    public DetectorContainerMenu(final int syncId,
-                                 final Player player,
-                                 final DetectorBlockEntity detector,
-                                 final ResourceContainer resourceContainer) {
+    DetectorContainerMenu(final int syncId,
+                          final Player player,
+                          final DetectorBlockEntity detector,
+                          final ResourceContainer resourceContainer) {
         super(Menus.INSTANCE.getDetector(), syncId, player, resourceContainer, FILTER_HELP, null);
         this.detector = detector;
         registerProperty(new ServerProperty<>(

@@ -14,9 +14,9 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceCon
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
 
     private final FilterWithFuzzyMode filter;
     private final RateLimiter displayUpdateRateLimiter = RateLimiter.create(0.25);
-    private final InsertTracker insertTracker = new InsertTracker();
+    private final StorageMonitorInsertTracker insertTracker = new StorageMonitorInsertTracker();
 
     private long currentAmount;
     private boolean currentlyActive;

@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCom
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +56,6 @@ public interface Platform {
     long getBucketAmount();
 
     TagKey<Item> getWrenchTag();
-
-    BucketAmountFormatting getBucketAmountFormatter();
 
     Config getConfig();
 

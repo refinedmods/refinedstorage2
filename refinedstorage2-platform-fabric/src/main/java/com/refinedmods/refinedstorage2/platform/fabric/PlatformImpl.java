@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.view.FabricFluidGridResourceFactory;
@@ -102,7 +101,6 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(),
             new ClientToServerCommunicationsImpl(),
             new MenuOpenerImpl(),
-            new BucketAmountFormatting(FluidConstants.BUCKET),
             new FluidVariantFluidRenderer(),
             ItemGridInsertionStrategy::new
         );

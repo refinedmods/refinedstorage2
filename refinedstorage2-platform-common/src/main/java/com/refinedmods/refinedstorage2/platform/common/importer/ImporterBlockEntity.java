@@ -11,10 +11,10 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractUpgradeableNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
@@ -96,19 +96,19 @@ public class ImporterBlockEntity
         filter.load(tag);
     }
 
-    public boolean isFuzzyMode() {
+    boolean isFuzzyMode() {
         return filter.isFuzzyMode();
     }
 
-    public void setFuzzyMode(final boolean fuzzyMode) {
+    void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
     }
 
-    public FilterMode getFilterMode() {
+    FilterMode getFilterMode() {
         return getNode().getFilterMode();
     }
 
-    public void setFilterMode(final FilterMode mode) {
+    void setFilterMode(final FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }

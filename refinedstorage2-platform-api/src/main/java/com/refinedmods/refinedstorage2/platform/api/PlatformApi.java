@@ -28,10 +28,10 @@ import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.Plat
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.NetworkBoundItemHelper;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReferenceFactory;
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReferenceProvider;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;

@@ -13,7 +13,7 @@ class CraftingGridRefillContextImpl implements CraftingGridRefillContext {
 
     @Override
     public boolean extract(final ItemResource resource, final Player player) {
-        return blockEntity.extract(resource, 1, player) == 1;
+        return blockEntity.extract(resource, player) == 1;
     }
 
     @Override

@@ -10,17 +10,17 @@ public final class SmallText {
     private SmallText() {
     }
 
-    public static float getScale() {
+    static float getScale() {
         return Minecraft.getInstance().isEnforceUnicode() ? 1F : 0.7F;
     }
 
-    public static void render(final Font font,
-                              final FormattedCharSequence text,
-                              final int x,
-                              final int y,
-                              final float scale,
-                              final Matrix4f pose,
-                              final MultiBufferSource.BufferSource buffer) {
+    static void render(final Font font,
+                       final FormattedCharSequence text,
+                       final int x,
+                       final int y,
+                       final float scale,
+                       final Matrix4f pose,
+                       final MultiBufferSource.BufferSource buffer) {
         final Matrix4f scaled = new Matrix4f(pose);
         scaled.scale(scale, scale, 1);
         font.drawInBatch(

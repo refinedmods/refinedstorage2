@@ -12,10 +12,10 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceCon
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class InterfaceBlockEntity
         );
     }
 
-    public static ResourceContainer createFilterContainer() {
+    static ResourceContainer createFilterContainer() {
         return new ResourceContainerImpl(
             EXPORT_SLOTS,
             ResourceContainerType.FILTER_WITH_AMOUNT,
@@ -91,7 +91,7 @@ public class InterfaceBlockEntity
         );
     }
 
-    public static ExportedResourcesContainer createExportedResourcesContainer(final FilterWithFuzzyMode filter) {
+    static ExportedResourcesContainer createExportedResourcesContainer(final FilterWithFuzzyMode filter) {
         return new ExportedResourcesContainer(EXPORT_SLOTS, filter);
     }
 
@@ -128,11 +128,11 @@ public class InterfaceBlockEntity
         filter.load(tag);
     }
 
-    public boolean isFuzzyMode() {
+    boolean isFuzzyMode() {
         return filter.isFuzzyMode();
     }
 
-    public void setFuzzyMode(final boolean fuzzyMode) {
+    void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
     }
 
@@ -178,9 +178,7 @@ public class InterfaceBlockEntity
     }
 
     @SuppressWarnings("unchecked")
-    public <T> InterfaceExternalStorageProvider<T> getExternalStorageProvider(
-        final StorageChannelType<T> storageChannelType
-    ) {
+    <T> InterfaceExternalStorageProvider<T> getExternalStorageProvider(final StorageChannelType<T> storageChannelType) {
         return (InterfaceExternalStorageProvider<T>) externalStorageProviders.get(storageChannelType);
     }
 }

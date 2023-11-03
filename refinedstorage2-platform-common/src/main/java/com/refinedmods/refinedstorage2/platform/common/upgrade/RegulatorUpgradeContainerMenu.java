@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.upgrade;
 
-import com.refinedmods.refinedstorage2.platform.api.support.networkbounditem.SlotReference;
+import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractSingleAmountContainerMenu;
@@ -25,11 +25,11 @@ public class RegulatorUpgradeContainerMenu extends AbstractSingleAmountContainer
         super(Menus.INSTANCE.getRegulatorUpgrade(), syncId, playerInventory, buf, FILTER_HELP);
     }
 
-    public RegulatorUpgradeContainerMenu(final int syncId,
-                                         final Player player,
-                                         final ResourceContainer resourceContainer,
-                                         final Consumer<Double> amountAcceptor,
-                                         final SlotReference slotReference) {
+    RegulatorUpgradeContainerMenu(final int syncId,
+                                  final Player player,
+                                  final ResourceContainer resourceContainer,
+                                  final Consumer<Double> amountAcceptor,
+                                  final SlotReference slotReference) {
         super(
             Menus.INSTANCE.getRegulatorUpgrade(),
             syncId,

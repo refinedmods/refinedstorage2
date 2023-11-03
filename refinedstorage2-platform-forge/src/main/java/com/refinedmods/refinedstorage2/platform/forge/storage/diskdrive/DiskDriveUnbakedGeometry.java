@@ -27,6 +27,9 @@ public class DiskDriveUnbakedGeometry implements IUnbakedGeometry<DiskDriveUnbak
     private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
     private static final ResourceLocation DISK_INACTIVE_MODEL = createIdentifier("block/disk_inactive");
 
+    DiskDriveUnbakedGeometry() {
+    }
+
     @Override
     public void resolveParents(final Function<ResourceLocation, UnbakedModel> modelGetter,
                                final IGeometryBakingContext context) {

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 
 import java.util.function.Supplier;
 

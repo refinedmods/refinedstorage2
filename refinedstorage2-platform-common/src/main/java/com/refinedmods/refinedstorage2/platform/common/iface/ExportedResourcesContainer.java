@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
+public class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
     private final FilterWithFuzzyMode filter;
 
     ExportedResourcesContainer(final int size, final FilterWithFuzzyMode filter) {

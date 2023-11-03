@@ -9,10 +9,10 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceCon
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractSingleAmountContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import javax.annotation.Nullable;
@@ -84,7 +84,7 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
         propagateAmount();
     }
 
-    public void setAmount(final double amount) {
+    void setAmount(final double amount) {
         this.amount = amount;
         propagateAmount();
         setChanged();
@@ -99,25 +99,21 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
         getNode().setAmount(normalizedAmount);
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public boolean isFuzzyMode() {
+    boolean isFuzzyMode() {
         return filter.isFuzzyMode();
     }
 
-    public void setFuzzyMode(final boolean fuzzyMode) {
+    void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
         initialize();
     }
 
-    public void setMode(final DetectorMode mode) {
+    void setMode(final DetectorMode mode) {
         getNode().setMode(mode);
         setChanged();
     }
 
-    public DetectorMode getMode() {
+    DetectorMode getMode() {
         return getNode().getMode();
     }
 

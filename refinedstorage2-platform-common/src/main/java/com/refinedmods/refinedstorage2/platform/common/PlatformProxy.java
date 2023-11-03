@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCom
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +47,12 @@ public class PlatformProxy implements Platform {
     @Nullable
     private Platform platform;
 
-    public void setPlatform(final Platform platform) {
-        if (this.platform != null) {
+    public static void loadPlatform(final Platform platform) {
+        final PlatformProxy proxy = (PlatformProxy) Platform.INSTANCE;
+        if (proxy.platform != null) {
             throw new IllegalStateException("Platform already set");
         }
-        this.platform = platform;
+        proxy.platform = platform;
     }
 
     @Override
@@ -78,11 +78,6 @@ public class PlatformProxy implements Platform {
     @Override
     public TagKey<Item> getWrenchTag() {
         return ensureLoaded().getWrenchTag();
-    }
-
-    @Override
-    public BucketAmountFormatting getBucketAmountFormatter() {
-        return ensureLoaded().getBucketAmountFormatter();
     }
 
     @Override

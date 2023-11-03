@@ -14,11 +14,11 @@ class ExternalStorageWorkRate {
     private int idx = 2; // medium
     private final RateLimiter rateLimiter = RateLimiter.create(RATE_LIMITERS[idx]);
 
-    public boolean canDoWork() {
+    boolean canDoWork() {
         return rateLimiter.tryAcquire();
     }
 
-    public void faster() {
+    void faster() {
         if (idx + 1 >= RATE_LIMITERS.length) {
             return;
         }
@@ -26,7 +26,7 @@ class ExternalStorageWorkRate {
         updateRate();
     }
 
-    public void slower() {
+    void slower() {
         if (idx - 1 < 0) {
             return;
         }

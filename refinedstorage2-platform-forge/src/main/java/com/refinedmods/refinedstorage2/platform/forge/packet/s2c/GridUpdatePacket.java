@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.util.ClientProxy;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.function.Supplier;

@@ -103,7 +103,7 @@ class CraftingGridSourceImpl implements CraftingGridSource {
 
     private void doTransferRecipe(final int index, final List<ItemResource> sortedPossibilities, final Player player) {
         for (final ItemResource possibility : sortedPossibilities) {
-            boolean extracted = blockEntity.extract(possibility, 1, player) == 1;
+            boolean extracted = blockEntity.extract(possibility, player) == 1;
             if (!extracted) {
                 extracted = extractFromPlayerInventory(player, possibility);
             }

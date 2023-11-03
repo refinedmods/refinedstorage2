@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBakedModel extends ForwardingBakedModel {
+class DiskDriveBakedModel extends ForwardingBakedModel {
     private static final QuadTranslator[] TRANSLATORS = new QuadTranslator[8];
     private static final Map<BiDirection, QuadRotator> ROTATORS = new EnumMap<>(BiDirection.class);
 
@@ -48,9 +48,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     private final BakedModel diskModel;
     private final BakedModel diskInactiveModel;
 
-    public DiskDriveBakedModel(final BakedModel baseModel,
-                               final BakedModel diskModel,
-                               final BakedModel diskInactiveModel) {
+    DiskDriveBakedModel(final BakedModel baseModel,
+                        final BakedModel diskModel,
+                        final BakedModel diskInactiveModel) {
         this.wrapped = baseModel;
         this.diskModel = diskModel;
         this.diskInactiveModel = diskInactiveModel;

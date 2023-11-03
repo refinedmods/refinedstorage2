@@ -16,7 +16,7 @@ public class GridContainerMenu extends AbstractGridContainerMenu {
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
-    public GridContainerMenu(final int syncId, final Inventory playerInventory, final GridBlockEntity grid) {
+    GridContainerMenu(final int syncId, final Inventory playerInventory, final GridBlockEntity grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid);
         addSlots(0);
         registerProperty(new ServerProperty<>(

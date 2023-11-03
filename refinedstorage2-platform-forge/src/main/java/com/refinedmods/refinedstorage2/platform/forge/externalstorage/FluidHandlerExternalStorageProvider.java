@@ -14,12 +14,12 @@ import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordin
 
 import java.util.Iterator;
 
-public class FluidHandlerExternalStorageProvider implements ExternalStorageProvider<FluidResource> {
+class FluidHandlerExternalStorageProvider implements ExternalStorageProvider<FluidResource> {
     private final InteractionCoordinates interactionCoordinates;
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    public FluidHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
+    FluidHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
         this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, AmountOverride.NONE);

@@ -32,11 +32,11 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Imp
         );
     }
 
-    public ImporterContainerMenu(final int syncId,
-                                 final Player player,
-                                 final ImporterBlockEntity importer,
-                                 final ResourceContainer resourceContainer,
-                                 final UpgradeContainer upgradeContainer) {
+    ImporterContainerMenu(final int syncId,
+                          final Player player,
+                          final ImporterBlockEntity importer,
+                          final ResourceContainer resourceContainer,
+                          final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getImporter(),
             syncId,

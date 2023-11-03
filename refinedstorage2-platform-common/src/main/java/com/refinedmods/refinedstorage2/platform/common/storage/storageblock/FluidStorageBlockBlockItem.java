@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.AbstractStorageContainerBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -39,7 +39,7 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
 
     @Override
     protected String formatAmount(final long amount) {
-        return Platform.INSTANCE.getBucketAmountFormatter().format(amount);
+        return FluidResourceRendering.format(amount);
     }
 
     @Override

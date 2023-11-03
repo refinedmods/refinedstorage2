@@ -7,10 +7,10 @@ import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEn
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.support.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
@@ -61,7 +61,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
             : BlockEntities.INSTANCE.getController();
     }
 
-    public void updateEnergyTypeInLevel(final BlockState state) {
+    void updateEnergyTypeInLevel(final BlockState state) {
         final ControllerEnergyType currentEnergyType = ControllerEnergyType.ofState(getNode().getState());
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
 
@@ -117,11 +117,11 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
         buf.writeLong(getActualCapacity());
     }
 
-    public long getActualStored() {
+    long getActualStored() {
         return getNode().getActualStored();
     }
 
-    public long getActualCapacity() {
+    long getActualCapacity() {
         return getNode().getActualCapacity();
     }
 

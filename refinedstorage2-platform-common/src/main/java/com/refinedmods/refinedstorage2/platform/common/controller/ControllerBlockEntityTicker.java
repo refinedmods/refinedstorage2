@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.controller;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.platform.common.support.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
 import java.util.function.Supplier;
 

@@ -22,7 +22,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
+public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
     private final EnchantmentInstance enchantment;
     private final ItemStack theResult;
 

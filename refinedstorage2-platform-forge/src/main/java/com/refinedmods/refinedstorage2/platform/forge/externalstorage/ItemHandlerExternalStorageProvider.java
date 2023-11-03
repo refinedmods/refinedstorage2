@@ -14,12 +14,12 @@ import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInserta
 
 import java.util.Iterator;
 
-public class ItemHandlerExternalStorageProvider implements ExternalStorageProvider<ItemResource> {
+class ItemHandlerExternalStorageProvider implements ExternalStorageProvider<ItemResource> {
     private final InteractionCoordinates interactionCoordinates;
     private final InsertableStorage<ItemResource> insertTarget;
     private final ExtractableStorage<ItemResource> extractTarget;
 
-    public ItemHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
+    ItemHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
         this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates, AmountOverride.NONE);

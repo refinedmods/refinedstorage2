@@ -29,11 +29,11 @@ public class ConstructorContainerMenu extends AbstractSchedulingContainerMenu<Co
         );
     }
 
-    public ConstructorContainerMenu(final int syncId,
-                                    final Player player,
-                                    final ConstructorBlockEntity constructor,
-                                    final ResourceContainer resourceContainer,
-                                    final UpgradeContainer upgradeContainer) {
+    ConstructorContainerMenu(final int syncId,
+                             final Player player,
+                             final ConstructorBlockEntity constructor,
+                             final ResourceContainer resourceContainer,
+                             final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getConstructor(),
             syncId,

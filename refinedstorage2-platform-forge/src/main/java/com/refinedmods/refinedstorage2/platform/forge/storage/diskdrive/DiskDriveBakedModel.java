@@ -36,7 +36,7 @@ import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Vector3f;
 
-public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
+class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     private static final Vector3f[] TRANSLATORS = new Vector3f[8];
 
     static {
@@ -64,10 +64,10 @@ public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         .build(new DiskDriveCacheLoader());
     private final Map<Long, DiskDriveItemBakedModel> itemCache = new HashMap<>();
 
-    public DiskDriveBakedModel(final Function<BiDirection, BakedModel> baseModelBakery,
-                               final BakedModel baseModel,
-                               final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery,
-                               final Function<Vector3f, BakedModel> diskItemModelBakery) {
+    DiskDriveBakedModel(final Function<BiDirection, BakedModel> baseModelBakery,
+                        final BakedModel baseModel,
+                        final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery,
+                        final Function<Vector3f, BakedModel> diskItemModelBakery) {
         super(baseModel);
         this.baseModel = baseModel;
         this.baseModelBakery = baseModelBakery;

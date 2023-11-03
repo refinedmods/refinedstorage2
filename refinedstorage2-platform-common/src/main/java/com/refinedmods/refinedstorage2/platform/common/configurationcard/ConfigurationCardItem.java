@@ -199,7 +199,7 @@ public class ConfigurationCardItem extends Item {
         return Optional.of(new HelpTooltipComponent(isActive(stack) ? CONFIGURED_HELP : EMPTY_HELP));
     }
 
-    public boolean isActive(final ItemStack stack) {
+    boolean isActive(final ItemStack stack) {
         return stack.getTag() != null && stack.getTag().contains(TAG_TYPE);
     }
 }
