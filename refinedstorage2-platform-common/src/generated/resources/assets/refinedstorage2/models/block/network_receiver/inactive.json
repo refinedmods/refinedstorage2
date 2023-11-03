@@ -1,5 +1,5 @@
 {
-  "parent": "refinedstorage2:block/emissive_all_cutout",
+  "parent": "refinedstorage2:block/all_cutout",
   "textures": {
     "all": "refinedstorage2:block/network_receiver/base",
     "cutout": "refinedstorage2:block/network_receiver/cutouts/inactive",

@@ -4,8 +4,7 @@
   "ambientocclusion": false,
   "textures": {
     "particle": "refinedstorage2:block/wireless_transmitter/base",
-    "torch": "refinedstorage2:block/wireless_transmitter/base",
-    "cutout": "refinedstorage2:block/wireless_transmitter/cutouts/inactive"
+    "torch": "refinedstorage2:block/wireless_transmitter/base"
   },
   "elements": [
     {
@@ -127,7 +126,11 @@
             9,
             15
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         },
         "up": {
           "uv": [
@@ -136,7 +139,11 @@
             9,
             8
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         }
       }
     },
@@ -160,7 +167,11 @@
             16,
             16
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         },
         "east": {
           "uv": [
@@ -169,7 +180,11 @@
             16,
             16
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         }
       }
     },
@@ -193,7 +208,11 @@
             16,
             16
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         },
         "south": {
           "uv": [
@@ -202,7 +221,11 @@
             16,
             16
           ],
-          "texture": "#cutout"
+          "texture": "#cutout",
+          "forge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         }
       }
     }

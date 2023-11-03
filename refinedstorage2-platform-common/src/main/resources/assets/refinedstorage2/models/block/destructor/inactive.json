@@ -1,5 +1,5 @@
 {
-  "parent": "refinedstorage2:block/constructor_destructor_inactive",
+  "parent": "refinedstorage2:block/constructor_destructor/inactive",
   "textures": {
     "border": "refinedstorage2:block/cable/part_border",
     "front": "refinedstorage2:block/destructor/front",

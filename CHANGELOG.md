@@ -13,6 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Network Receiver
 -   Network Card
 
+### Fixed
+
+-   Inactive Wireless Transmitter model being emissive.
+
 ## [2.0.0-milestone.3.1] - 2023-10-30
 
 ### Added
