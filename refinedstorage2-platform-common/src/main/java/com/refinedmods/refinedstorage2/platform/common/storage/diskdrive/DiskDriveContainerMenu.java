@@ -50,12 +50,12 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         initializeResourceSlots(buf);
     }
 
-    public DiskDriveContainerMenu(final int syncId,
-                                  final Player player,
-                                  final SimpleContainer diskInventory,
-                                  final ResourceContainer resourceContainer,
-                                  final StorageConfigurationContainer configContainer,
-                                  final StorageDiskInfoAccessor storageInfoAccessor) {
+    DiskDriveContainerMenu(final int syncId,
+                           final Player player,
+                           final SimpleContainer diskInventory,
+                           final ResourceContainer resourceContainer,
+                           final StorageConfigurationContainer configContainer,
+                           final StorageDiskInfoAccessor storageInfoAccessor) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, player, configContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceContainer);

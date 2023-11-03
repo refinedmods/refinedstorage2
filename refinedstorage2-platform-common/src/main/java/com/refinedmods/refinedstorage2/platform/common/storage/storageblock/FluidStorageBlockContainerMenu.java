@@ -22,10 +22,10 @@ public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContaine
         );
     }
 
-    public FluidStorageBlockContainerMenu(final int syncId,
-                                          final Player player,
-                                          final ResourceContainer resourceContainer,
-                                          final StorageConfigurationContainer configContainer) {
+    FluidStorageBlockContainerMenu(final int syncId,
+                                   final Player player,
+                                   final ResourceContainer resourceContainer,
+                                   final StorageConfigurationContainer configContainer) {
         super(Menus.INSTANCE.getFluidStorage(), syncId, player, resourceContainer, configContainer);
     }
 

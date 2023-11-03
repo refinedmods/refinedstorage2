@@ -10,16 +10,16 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.world.item.ItemStack;
 
-class InsertTracker {
+class StorageMonitorInsertTracker {
     private static final long MAX_DELAY = 500;
 
     private final Map<UUID, Entry> entries = new HashMap<>();
 
-    public void trackInsertedItem(final GameProfile gameProfile, final ItemStack stack) {
+    void trackInsertedItem(final GameProfile gameProfile, final ItemStack stack) {
         entries.put(gameProfile.getId(), new Entry(System.currentTimeMillis(), ItemResource.ofItemStack(stack)));
     }
 
-    public Optional<ItemResource> getLastInsertedItem(final GameProfile gameProfile) {
+    Optional<ItemResource> getLastInsertedItem(final GameProfile gameProfile) {
         final Entry entry = entries.get(gameProfile.getId());
         if (entry == null) {
             return Optional.empty();

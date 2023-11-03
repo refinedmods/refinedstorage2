@@ -24,12 +24,12 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu {
     private static final int EXPORT_CONFIG_SLOT_Y = 20;
     private static final int EXPORT_OUTPUT_SLOT_Y = 66;
 
-    public InterfaceContainerMenu(final int syncId,
-                                  final Player player,
-                                  final InterfaceBlockEntity blockEntity,
-                                  final ResourceContainer exportConfig,
-                                  final ResourceContainer exportedResources,
-                                  final Container exportedResourcesAsContainer) {
+    InterfaceContainerMenu(final int syncId,
+                           final Player player,
+                           final InterfaceBlockEntity blockEntity,
+                           final ResourceContainer exportConfig,
+                           final ResourceContainer exportedResources,
+                           final Container exportedResourcesAsContainer) {
         super(Menus.INSTANCE.getInterface(), syncId, player);
         addSlots(player, exportConfig, exportedResources, exportedResourcesAsContainer);
         registerProperty(new ServerProperty<>(

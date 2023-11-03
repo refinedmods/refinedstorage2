@@ -61,7 +61,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
             : BlockEntities.INSTANCE.getController();
     }
 
-    public void updateEnergyTypeInLevel(final BlockState state) {
+    void updateEnergyTypeInLevel(final BlockState state) {
         final ControllerEnergyType currentEnergyType = ControllerEnergyType.ofState(getNode().getState());
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
 
@@ -117,11 +117,11 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
         buf.writeLong(getActualCapacity());
     }
 
-    public long getActualStored() {
+    long getActualStored() {
         return getNode().getActualStored();
     }
 
-    public long getActualCapacity() {
+    long getActualCapacity() {
         return getNode().getActualCapacity();
     }
 

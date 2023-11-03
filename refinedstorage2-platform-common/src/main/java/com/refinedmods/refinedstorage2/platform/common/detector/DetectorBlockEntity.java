@@ -84,7 +84,7 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
         propagateAmount();
     }
 
-    public void setAmount(final double amount) {
+    void setAmount(final double amount) {
         this.amount = amount;
         propagateAmount();
         setChanged();
@@ -99,25 +99,21 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
         getNode().setAmount(normalizedAmount);
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public boolean isFuzzyMode() {
+    boolean isFuzzyMode() {
         return filter.isFuzzyMode();
     }
 
-    public void setFuzzyMode(final boolean fuzzyMode) {
+    void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
         initialize();
     }
 
-    public void setMode(final DetectorMode mode) {
+    void setMode(final DetectorMode mode) {
         getNode().setMode(mode);
         setChanged();
     }
 
-    public DetectorMode getMode() {
+    DetectorMode getMode() {
         return getNode().getMode();
     }
 

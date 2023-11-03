@@ -94,7 +94,7 @@ public class ExternalStorageBlockEntity
         }
     }
 
-    public void loadStorage(final ServerLevel serverLevel) {
+    void loadStorage(final ServerLevel serverLevel) {
         final Direction direction = getDirection();
         LOGGER.debug("Loading storage for external storage with direction {} @ {}", direction, worldPosition);
         if (direction == null) {

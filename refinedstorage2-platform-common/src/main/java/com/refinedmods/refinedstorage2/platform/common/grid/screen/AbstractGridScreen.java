@@ -61,7 +61,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     protected final int bottomHeight;
     @Nullable
-    protected GridSearchBoxWidget searchField;
+    GridSearchBoxWidget searchField;
 
     @Nullable
     private ScrollbarWidget scrollbar;

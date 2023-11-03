@@ -28,10 +28,10 @@ public class StorageMonitorContainerMenu extends AbstractResourceContainerMenu {
         initializeResourceSlots(buf);
     }
 
-    public StorageMonitorContainerMenu(final int syncId,
-                                       final Player player,
-                                       final StorageMonitorBlockEntity storageMonitor,
-                                       final ResourceContainer resourceContainer) {
+    StorageMonitorContainerMenu(final int syncId,
+                                final Player player,
+                                final StorageMonitorBlockEntity storageMonitor,
+                                final ResourceContainer resourceContainer) {
         super(Menus.INSTANCE.getStorageMonitor(), syncId, player);
         registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,

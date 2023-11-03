@@ -51,7 +51,7 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
 
     private final FilterWithFuzzyMode filter;
     private final RateLimiter displayUpdateRateLimiter = RateLimiter.create(0.25);
-    private final InsertTracker insertTracker = new InsertTracker();
+    private final StorageMonitorInsertTracker insertTracker = new StorageMonitorInsertTracker();
 
     private long currentAmount;
     private boolean currentlyActive;

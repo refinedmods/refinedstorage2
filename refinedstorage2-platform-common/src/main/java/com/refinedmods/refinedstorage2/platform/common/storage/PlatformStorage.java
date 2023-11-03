@@ -30,7 +30,7 @@ class PlatformStorage<T> extends AbstractProxyStorage<T> implements Serializable
         this.listener = listener;
     }
 
-    public void load(final T resource, final long amount, @Nullable final String changedBy, final long changedAt) {
+    void load(final T resource, final long amount, @Nullable final String changedBy, final long changedAt) {
         super.insert(resource, amount, Action.EXECUTE, EmptyActor.INSTANCE);
         if (changedBy != null && !changedBy.isBlank()) {
             trackingRepository.update(resource, new PlayerActor(changedBy), changedAt);

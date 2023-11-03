@@ -38,10 +38,10 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu {
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
-    public ControllerContainerMenu(final int syncId,
-                                   final Inventory playerInventory,
-                                   final ControllerBlockEntity controller,
-                                   final Player playerEntity) {
+    ControllerContainerMenu(final int syncId,
+                            final Inventory playerInventory,
+                            final ControllerBlockEntity controller,
+                            final Player playerEntity) {
         super(Menus.INSTANCE.getController(), syncId);
 
         this.controller = controller;
@@ -80,11 +80,11 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu {
         this.capacity = newCapacity;
     }
 
-    public long getStored() {
+    long getStored() {
         return stored;
     }
 
-    public long getCapacity() {
+    long getCapacity() {
         return capacity;
     }
 }

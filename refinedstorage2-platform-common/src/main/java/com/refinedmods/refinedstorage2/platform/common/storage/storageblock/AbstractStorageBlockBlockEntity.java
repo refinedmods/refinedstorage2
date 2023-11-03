@@ -90,7 +90,7 @@ abstract class AbstractStorageBlockBlockEntity<T>
         }
     }
 
-    public void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
+    void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
         LOGGER.debug(
             "Storage {} got placed through nbt, replacing with actual storage {}",
             storageId,

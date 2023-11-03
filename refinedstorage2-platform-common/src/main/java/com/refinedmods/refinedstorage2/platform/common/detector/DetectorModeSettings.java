@@ -10,7 +10,7 @@ final class DetectorModeSettings {
     private DetectorModeSettings() {
     }
 
-    public static DetectorMode getDetectorMode(final int detectorMode) {
+    static DetectorMode getDetectorMode(final int detectorMode) {
         return switch (detectorMode) {
             case UNDER -> DetectorMode.UNDER;
             case EQUAL -> DetectorMode.EQUAL;
@@ -19,7 +19,7 @@ final class DetectorModeSettings {
         };
     }
 
-    public static int getDetectorMode(final DetectorMode detectorMode) {
+    static int getDetectorMode(final DetectorMode detectorMode) {
         return switch (detectorMode) {
             case UNDER -> UNDER;
             case EQUAL -> EQUAL;

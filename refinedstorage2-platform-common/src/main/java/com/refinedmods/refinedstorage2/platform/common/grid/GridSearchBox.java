@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.grid.screen;
+package com.refinedmods.refinedstorage2.platform.common.grid;
 
 import java.util.function.Consumer;
 

@@ -45,9 +45,9 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
-    public CraftingGridContainerMenu(final int syncId,
-                                     final Inventory playerInventory,
-                                     final CraftingGridBlockEntity grid) {
+    CraftingGridContainerMenu(final int syncId,
+                              final Inventory playerInventory,
+                              final CraftingGridBlockEntity grid) {
         super(Menus.INSTANCE.getCraftingGrid(), syncId, playerInventory, grid);
         this.source = new CraftingGridSourceImpl(grid);
         this.player = playerInventory.player;

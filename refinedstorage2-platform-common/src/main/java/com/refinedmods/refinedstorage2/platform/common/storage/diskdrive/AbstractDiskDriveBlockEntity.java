@@ -92,7 +92,7 @@ public abstract class AbstractDiskDriveBlockEntity
             && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
-    public void updateDiskStateIfNecessaryInLevel() {
+    void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
         }

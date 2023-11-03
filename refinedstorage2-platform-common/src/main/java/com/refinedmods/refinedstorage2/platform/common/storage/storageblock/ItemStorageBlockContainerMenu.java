@@ -20,10 +20,10 @@ public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainer
         );
     }
 
-    public ItemStorageBlockContainerMenu(final int syncId,
-                                         final Player player,
-                                         final ResourceContainer resourceContainer,
-                                         final StorageConfigurationContainer configContainer) {
+    ItemStorageBlockContainerMenu(final int syncId,
+                                  final Player player,
+                                  final ResourceContainer resourceContainer,
+                                  final StorageConfigurationContainer configContainer) {
         super(Menus.INSTANCE.getItemStorage(), syncId, player, resourceContainer, configContainer);
     }
 

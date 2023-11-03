@@ -96,19 +96,19 @@ public class ImporterBlockEntity
         filter.load(tag);
     }
 
-    public boolean isFuzzyMode() {
+    boolean isFuzzyMode() {
         return filter.isFuzzyMode();
     }
 
-    public void setFuzzyMode(final boolean fuzzyMode) {
+    void setFuzzyMode(final boolean fuzzyMode) {
         filter.setFuzzyMode(fuzzyMode);
     }
 
-    public FilterMode getFilterMode() {
+    FilterMode getFilterMode() {
         return getNode().getFilterMode();
     }
 
-    public void setFilterMode(final FilterMode mode) {
+    void setFilterMode(final FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }

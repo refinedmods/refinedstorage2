@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.grid.screen;
 
+import com.refinedmods.refinedstorage2.platform.common.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
@@ -20,16 +21,16 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
-public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
+class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     private final Set<Consumer<String>> listeners = new HashSet<>();
     private boolean valid = true;
 
-    public GridSearchBoxWidget(final Font textRenderer,
-                               final int x,
-                               final int y,
-                               final int width,
-                               final SyntaxHighlighter syntaxHighlighter,
-                               final History history) {
+    GridSearchBoxWidget(final Font textRenderer,
+                        final int x,
+                        final int y,
+                        final int width,
+                        final SyntaxHighlighter syntaxHighlighter,
+                        final History history) {
         super(textRenderer, x, y, width, history);
         setFormatter((text, firstCharacterIndex) -> format(syntaxHighlighter, text));
         setResponder(text -> listeners.forEach(l -> l.accept(text)));

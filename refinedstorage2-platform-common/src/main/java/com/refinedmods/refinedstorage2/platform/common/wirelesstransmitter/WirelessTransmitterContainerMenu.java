@@ -42,10 +42,10 @@ public class WirelessTransmitterContainerMenu extends AbstractBaseContainerMenu 
         this.player = playerInventory.player;
     }
 
-    public WirelessTransmitterContainerMenu(final int syncId,
-                                            final Inventory playerInventory,
-                                            final WirelessTransmitterBlockEntity wirelessTransmitter,
-                                            final UpgradeContainer upgradeContainer) {
+    WirelessTransmitterContainerMenu(final int syncId,
+                                     final Inventory playerInventory,
+                                     final WirelessTransmitterBlockEntity wirelessTransmitter,
+                                     final UpgradeContainer upgradeContainer) {
         super(Menus.INSTANCE.getWirelessTransmitter(), syncId);
         addSlots(playerInventory, upgradeContainer);
         registerProperty(new ServerProperty<>(
@@ -83,7 +83,7 @@ public class WirelessTransmitterContainerMenu extends AbstractBaseContainerMenu 
         }
     }
 
-    public int getRange() {
+    int getRange() {
         return range;
     }
 

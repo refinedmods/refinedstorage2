@@ -25,11 +25,11 @@ public class RegulatorUpgradeContainerMenu extends AbstractSingleAmountContainer
         super(Menus.INSTANCE.getRegulatorUpgrade(), syncId, playerInventory, buf, FILTER_HELP);
     }
 
-    public RegulatorUpgradeContainerMenu(final int syncId,
-                                         final Player player,
-                                         final ResourceContainer resourceContainer,
-                                         final Consumer<Double> amountAcceptor,
-                                         final SlotReference slotReference) {
+    RegulatorUpgradeContainerMenu(final int syncId,
+                                  final Player player,
+                                  final ResourceContainer resourceContainer,
+                                  final Consumer<Double> amountAcceptor,
+                                  final SlotReference slotReference) {
         super(
             Menus.INSTANCE.getRegulatorUpgrade(),
             syncId,

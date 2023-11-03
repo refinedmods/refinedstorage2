@@ -25,7 +25,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.grid.screen.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.grid.strategy.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.grid.strategy.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.grid.strategy.ClientGridScrollingStrategy;

@@ -111,7 +111,7 @@ public class NetworkCardItem extends Item {
         return Optional.of(new HelpTooltipComponent(isActive(stack) ? BOUND_HELP : UNBOUND_HELP));
     }
 
-    public boolean isActive(final ItemStack stack) {
+    boolean isActive(final ItemStack stack) {
         return stack.getTag() != null && stack.getTag().contains(TAG_POS) && stack.getTag().contains(TAG_DIMENSION);
     }
 }

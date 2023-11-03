@@ -53,7 +53,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
         ));
     }
 
-    public boolean shouldDisplayFilterModeWarning() {
+    boolean shouldDisplayFilterModeWarning() {
         return getProperty(PropertyTypes.FILTER_MODE).getValue() == FilterMode.ALLOW && areAllResourceSlotsEmpty();
     }
 }

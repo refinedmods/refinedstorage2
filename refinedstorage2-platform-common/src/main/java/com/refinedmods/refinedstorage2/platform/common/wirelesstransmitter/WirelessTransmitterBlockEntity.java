@@ -81,7 +81,7 @@ public class WirelessTransmitterBlockEntity
         return new WirelessTransmitterContainerMenu(syncId, inventory, this, upgradeContainer);
     }
 
-    public int getRange() {
+    int getRange() {
         return PlatformApi.INSTANCE.getWirelessTransmitterRangeModifier().modifyRange(upgradeContainer, 0);
     }
 

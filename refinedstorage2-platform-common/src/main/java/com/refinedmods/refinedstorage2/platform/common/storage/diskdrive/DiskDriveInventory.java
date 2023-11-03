@@ -21,7 +21,7 @@ class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider
         this.diskDrive = diskDrive;
     }
 
-    public void setStorageRepository(@Nullable final StorageRepository storageRepository) {
+    void setStorageRepository(@Nullable final StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
     }
 

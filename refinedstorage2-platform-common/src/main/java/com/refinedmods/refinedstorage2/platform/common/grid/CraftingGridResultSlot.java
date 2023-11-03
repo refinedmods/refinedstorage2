@@ -11,13 +11,13 @@ import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
 
-public class CraftingGridResultSlot extends ResultSlot {
+class CraftingGridResultSlot extends ResultSlot {
     private final CraftingGridSource source;
 
-    public CraftingGridResultSlot(final Player player,
-                                  final CraftingGridSource source,
-                                  final int x,
-                                  final int y) {
+    CraftingGridResultSlot(final Player player,
+                           final CraftingGridSource source,
+                           final int x,
+                           final int y) {
         super(player, source.getCraftingMatrix(), source.getCraftingResult(), 0, x, y);
         this.source = source;
     }
