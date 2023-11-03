@@ -1,22 +1,23 @@
-package com.refinedmods.refinedstorage2.platform.forge.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 
 import java.util.Optional;
 
+import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotResult;
 
-public class CuriosSlotReference implements SlotReference {
-    private final String identifier;
+class TrinketsSlotReference implements SlotReference {
+    private final String groupName;
+    private final String slotName;
     private final int index;
 
-    public CuriosSlotReference(final String identifier, final int index) {
-        this.identifier = identifier;
+    TrinketsSlotReference(final String groupName, final String slotName, final int index) {
+        this.groupName = groupName;
+        this.slotName = slotName;
         this.index = index;
     }
 
@@ -27,20 +28,21 @@ public class CuriosSlotReference implements SlotReference {
 
     @Override
     public void writeToBuffer(final FriendlyByteBuf buf) {
-        buf.writeUtf(identifier);
+        buf.writeUtf(groupName);
+        buf.writeUtf(slotName);
         buf.writeInt(index);
     }
 
     @Override
     public Optional<ItemStack> resolve(final Player player) {
-        return CuriosApi.getCuriosInventory(player)
-            .resolve()
-            .flatMap(curiosInventory -> curiosInventory.findCurio(identifier, index))
-            .map(SlotResult::stack);
+        return TrinketsApi.getTrinketComponent(player)
+            .map(trinkets -> trinkets.getInventory().get(groupName))
+            .map(groupMap -> groupMap.get(slotName))
+            .map(trinketInventory -> trinketInventory.getItem(index));
     }
 
     @Override
     public SlotReferenceFactory getFactory() {
-        return CuriosSlotReferenceFactory.INSTANCE;
+        return TrinketsSlotReferenceFactory.INSTANCE;
     }
 }

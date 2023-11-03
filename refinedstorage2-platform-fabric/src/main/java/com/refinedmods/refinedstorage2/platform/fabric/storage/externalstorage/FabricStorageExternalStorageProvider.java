@@ -23,19 +23,19 @@ import net.minecraft.server.level.ServerLevel;
 import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
-public class StorageExternalStorageProvider<T, P> implements ExternalStorageProvider<T> {
+class FabricStorageExternalStorageProvider<T, P> implements ExternalStorageProvider<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<P, T> fromPlatformMapper;
     private final FabricStorageExtractableStorage<T, P> extractTarget;
     private final FabricStorageInsertableStorage<T, P> insertTarget;
     private final Direction direction;
 
-    public StorageExternalStorageProvider(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                          final Function<P, T> fromPlatformMapper,
-                                          final Function<T, P> toPlatformMapper,
-                                          final ServerLevel serverLevel,
-                                          final BlockPos pos,
-                                          final Direction direction) {
+    FabricStorageExternalStorageProvider(final BlockApiLookup<Storage<P>, Direction> lookup,
+                                         final Function<P, T> fromPlatformMapper,
+                                         final Function<T, P> toPlatformMapper,
+                                         final ServerLevel serverLevel,
+                                         final BlockPos pos,
+                                         final Direction direction) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
         this.extractTarget = new FabricStorageExtractableStorage<>(

@@ -17,18 +17,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTransferStrategyFactory {
+public class FabricStorageImporterTransferStrategyFactory<T, P> implements ImporterTransferStrategyFactory {
     private final BlockApiLookup<Storage<P>, Direction> lookup;
     private final StorageChannelType<T> storageChannelType;
     private final Function<P, T> fromPlatformMapper;
     private final Function<T, P> toPlatformMapper;
     private final long singleAmount;
 
-    public StorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                                  final StorageChannelType<T> storageChannelType,
-                                                  final Function<P, T> fromPlatformMapper,
-                                                  final Function<T, P> toPlatformMapper,
-                                                  final long singleAmount) {
+    public FabricStorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
+                                                        final StorageChannelType<T> storageChannelType,
+                                                        final Function<P, T> fromPlatformMapper,
+                                                        final Function<T, P> toPlatformMapper,
+                                                        final long singleAmount) {
         this.lookup = lookup;
         this.storageChannelType = storageChannelType;
         this.fromPlatformMapper = fromPlatformMapper;
@@ -42,7 +42,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
                                            final Direction direction,
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride) {
-        final ImporterSource<T> source = new StorageImporterSource<>(
+        final ImporterSource<T> source = new FabricStorageImporterSource<>(
             lookup,
             fromPlatformMapper,
             toPlatformMapper,

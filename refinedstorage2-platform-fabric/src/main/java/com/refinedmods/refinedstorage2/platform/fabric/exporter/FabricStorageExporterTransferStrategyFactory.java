@@ -20,18 +20,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTransferStrategyFactory {
+public class FabricStorageExporterTransferStrategyFactory<T, P> implements ExporterTransferStrategyFactory {
     private final BlockApiLookup<Storage<P>, Direction> lookup;
     private final StorageChannelType<T> storageChannelType;
     private final Function<T, P> toPlatformMapper;
     private final Function<Object, Optional<T>> mapper;
     private final long singleAmount;
 
-    public StorageExporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                                  final StorageChannelType<T> storageChannelType,
-                                                  final Function<Object, Optional<T>> mapper,
-                                                  final Function<T, P> toPlatformMapper,
-                                                  final long singleAmount) {
+    public FabricStorageExporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
+                                                        final StorageChannelType<T> storageChannelType,
+                                                        final Function<Object, Optional<T>> mapper,
+                                                        final Function<T, P> toPlatformMapper,
+                                                        final long singleAmount) {
         this.lookup = lookup;
         this.storageChannelType = storageChannelType;
         this.mapper = mapper;

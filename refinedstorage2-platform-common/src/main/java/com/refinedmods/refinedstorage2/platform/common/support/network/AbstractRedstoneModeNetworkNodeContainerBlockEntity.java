@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.network;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.support.PlayerAware;
+import com.refinedmods.refinedstorage2.platform.common.support.PlayerAwareBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSettings;
 
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractRedstoneModeNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-    extends NetworkNodeContainerBlockEntityImpl<T> implements PlayerAware, ConfigurationCardTarget {
+    extends NetworkNodeContainerBlockEntityImpl<T> implements PlayerAwareBlockEntity, ConfigurationCardTarget {
     private static final String TAG_REDSTONE_MODE = "rm";
     private static final String TAG_PLACED_BY_PLAYER_ID = "pbpid";
 

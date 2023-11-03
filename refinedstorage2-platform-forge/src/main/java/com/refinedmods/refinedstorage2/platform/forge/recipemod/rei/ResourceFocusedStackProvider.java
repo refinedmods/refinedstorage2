@@ -10,10 +10,10 @@ import me.shedaniel.rei.api.client.registry.screen.FocusedStackProvider;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import net.minecraft.client.gui.screens.Screen;
 
-public class ResourceFocusedStackProvider implements FocusedStackProvider {
+class ResourceFocusedStackProvider implements FocusedStackProvider {
     private final IngredientConverter converter;
 
-    public ResourceFocusedStackProvider(final IngredientConverter converter) {
+    ResourceFocusedStackProvider(final IngredientConverter converter) {
         this.converter = converter;
     }
 

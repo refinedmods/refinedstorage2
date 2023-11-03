@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 public final class InventorySlotReference implements SlotReference {
     private final int slotIndex;
 
-    public InventorySlotReference(final int slotIndex) {
+    InventorySlotReference(final int slotIndex) {
         this.slotIndex = slotIndex;
     }
 

@@ -19,11 +19,11 @@ import me.shedaniel.rei.api.client.gui.drag.DraggedAcceptorResult;
 import me.shedaniel.rei.api.client.gui.drag.DraggingContext;
 import net.minecraft.client.gui.screens.Screen;
 
-public class DraggableStackVisitorImpl
+class DraggableStackVisitorImpl
     implements DraggableStackVisitor<AbstractBaseScreen<? extends AbstractResourceContainerMenu>> {
     private final IngredientConverter ingredientConverter;
 
-    public DraggableStackVisitorImpl(final IngredientConverter ingredientConverter) {
+    DraggableStackVisitorImpl(final IngredientConverter ingredientConverter) {
         this.ingredientConverter = ingredientConverter;
     }
 

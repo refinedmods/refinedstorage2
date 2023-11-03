@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.grid;
+package com.refinedmods.refinedstorage2.platform.forge.grid.strategy;
 
 import javax.annotation.Nonnull;
 
@@ -7,10 +7,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CursorStorage implements IItemHandler {
+class CursorItemHandler implements IItemHandler {
     private final AbstractContainerMenu containerMenu;
 
-    public CursorStorage(final AbstractContainerMenu containerMenu) {
+    CursorItemHandler(final AbstractContainerMenu containerMenu) {
         this.containerMenu = containerMenu;
     }
 

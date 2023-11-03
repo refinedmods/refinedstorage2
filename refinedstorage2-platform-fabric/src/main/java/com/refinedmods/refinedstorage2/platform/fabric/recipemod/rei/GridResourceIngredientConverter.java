@@ -10,7 +10,7 @@ import java.util.Optional;
 import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 
-public class GridResourceIngredientConverter implements IngredientConverter {
+class GridResourceIngredientConverter implements IngredientConverter {
     @Override
     public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
         return Optional.empty();

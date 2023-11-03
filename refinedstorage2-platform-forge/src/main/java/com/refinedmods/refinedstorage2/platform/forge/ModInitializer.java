@@ -33,8 +33,8 @@ import com.refinedmods.refinedstorage2.platform.forge.importer.ItemHandlerImport
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.forge.support.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage2.platform.forge.support.networkbounditem.CuriosSlotReferenceFactory;
-import com.refinedmods.refinedstorage2.platform.forge.support.networkbounditem.CuriosSlotReferenceProvider;
+import com.refinedmods.refinedstorage2.platform.forge.support.network.bounditem.CuriosSlotReferenceFactory;
+import com.refinedmods.refinedstorage2.platform.forge.support.network.bounditem.CuriosSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.forge.support.resource.ResourceContainerFluidHandlerAdapter;
 
 import java.util.Arrays;

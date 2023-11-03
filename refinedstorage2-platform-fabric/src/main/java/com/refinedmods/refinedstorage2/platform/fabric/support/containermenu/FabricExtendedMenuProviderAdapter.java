@@ -12,10 +12,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public class FabricExtendedMenuProviderAdapter implements ExtendedScreenHandlerFactory {
+class FabricExtendedMenuProviderAdapter implements ExtendedScreenHandlerFactory {
     private final ExtendedMenuProvider extendedMenuProvider;
 
-    public FabricExtendedMenuProviderAdapter(final ExtendedMenuProvider extendedMenuProvider) {
+    FabricExtendedMenuProviderAdapter(final ExtendedMenuProvider extendedMenuProvider) {
         this.extendedMenuProvider = extendedMenuProvider;
     }
 

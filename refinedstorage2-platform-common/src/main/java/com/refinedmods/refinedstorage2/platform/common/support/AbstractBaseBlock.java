@@ -121,7 +121,8 @@ public abstract class AbstractBaseBlock extends Block {
                             @Nullable final LivingEntity entity,
                             final ItemStack stack) {
         super.setPlacedBy(level, pos, state, entity, stack);
-        if (entity instanceof Player player && level.getBlockEntity(pos) instanceof PlayerAware playerAware) {
+        if (entity instanceof Player player
+            && level.getBlockEntity(pos) instanceof PlayerAwareBlockEntity playerAware) {
             playerAware.setPlacedBy(player.getGameProfile().getId());
         }
     }

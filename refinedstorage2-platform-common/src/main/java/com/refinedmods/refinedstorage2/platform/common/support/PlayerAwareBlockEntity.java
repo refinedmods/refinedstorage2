@@ -2,6 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.support;
 
 import java.util.UUID;
 
-public interface PlayerAware {
+public interface PlayerAwareBlockEntity {
     void setPlacedBy(UUID playerId);
 }

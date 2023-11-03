@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionS
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.grid.CursorStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerExtractableStorage;
 
@@ -24,14 +23,14 @@ import static com.refinedmods.refinedstorage2.platform.api.support.resource.Item
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridOperations<ItemResource> gridOperations;
-    private final CursorStorage playerCursorStorage;
+    private final CursorItemHandler playerCursorItemHandler;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
                                      final Grid grid) {
         this.containerMenu = containerMenu;
         this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
-        this.playerCursorStorage = new CursorStorage(containerMenu);
+        this.playerCursorItemHandler = new CursorItemHandler(containerMenu);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             itemResource,
             insertMode,
             new ItemHandlerExtractableStorage(
-                InteractionCoordinates.ofItemHandler(playerCursorStorage),
+                InteractionCoordinates.ofItemHandler(playerCursorItemHandler),
                 AmountOverride.NONE
             )
         );

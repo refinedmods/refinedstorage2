@@ -22,20 +22,20 @@ import net.minecraft.server.level.ServerLevel;
 import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
-public class StorageImporterSource<T, P> implements ImporterSource<T> {
+class FabricStorageImporterSource<T, P> implements ImporterSource<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<P, T> fromPlatformMapper;
     private final FabricStorageInsertableStorage<T, P> insertTarget;
     private final FabricStorageExtractableStorage<T, P> extractTarget;
     private final Direction direction;
 
-    public StorageImporterSource(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                 final Function<P, T> fromPlatformMapper,
-                                 final Function<T, P> toPlatformMapper,
-                                 final ServerLevel serverLevel,
-                                 final BlockPos pos,
-                                 final Direction direction,
-                                 final AmountOverride amountOverride) {
+    FabricStorageImporterSource(final BlockApiLookup<Storage<P>, Direction> lookup,
+                                final Function<P, T> fromPlatformMapper,
+                                final Function<T, P> toPlatformMapper,
+                                final ServerLevel serverLevel,
+                                final BlockPos pos,
+                                final Direction direction,
+                                final AmountOverride amountOverride) {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
         this.insertTarget = new FabricStorageInsertableStorage<>(

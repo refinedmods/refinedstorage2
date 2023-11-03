@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.support.networkbounditem;
+package com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem;
 
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;

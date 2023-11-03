@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import org.joml.Vector3f;
 
-public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
+class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     private final BakedModel baseModel;
     private final Function<Vector3f, BakedModel> diskBakery;
     private final Vector3f[] translators;
@@ -29,10 +29,10 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     @Nullable
     private List<BakedQuad> noSideCache;
 
-    public DiskDriveItemBakedModel(final BakedModel baseModel,
-                                   final Function<Vector3f, BakedModel> diskBakery,
-                                   final Vector3f[] translators,
-                                   final long disks) {
+    DiskDriveItemBakedModel(final BakedModel baseModel,
+                            final Function<Vector3f, BakedModel> diskBakery,
+                            final Vector3f[] translators,
+                            final long disks) {
         super(baseModel);
         this.baseModel = baseModel;
         this.diskBakery = diskBakery;

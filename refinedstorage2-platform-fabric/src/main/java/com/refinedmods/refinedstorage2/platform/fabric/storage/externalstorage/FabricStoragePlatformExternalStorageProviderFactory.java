@@ -13,16 +13,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class StoragePlatformExternalStorageProviderFactory<T, P> implements PlatformExternalStorageProviderFactory {
+public class FabricStoragePlatformExternalStorageProviderFactory<T, P>
+    implements PlatformExternalStorageProviderFactory {
     private final StorageChannelType<T> theStorageChannelType;
     private final BlockApiLookup<Storage<P>, Direction> lookup;
     private final Function<P, T> fromPlatformMapper;
     private final Function<T, P> toPlatformMapper;
 
-    public StoragePlatformExternalStorageProviderFactory(final StorageChannelType<T> storageChannelType,
-                                                         final BlockApiLookup<Storage<P>, Direction> lookup,
-                                                         final Function<P, T> fromPlatformMapper,
-                                                         final Function<T, P> toPlatformMapper) {
+    public FabricStoragePlatformExternalStorageProviderFactory(final StorageChannelType<T> storageChannelType,
+                                                               final BlockApiLookup<Storage<P>, Direction> lookup,
+                                                               final Function<P, T> fromPlatformMapper,
+                                                               final Function<T, P> toPlatformMapper) {
         this.theStorageChannelType = storageChannelType;
         this.lookup = lookup;
         this.fromPlatformMapper = fromPlatformMapper;
@@ -38,7 +39,7 @@ public class StoragePlatformExternalStorageProviderFactory<T, P> implements Plat
         if (storageChannelType != theStorageChannelType) {
             return Optional.empty();
         }
-        return Optional.of((ExternalStorageProvider<E>) new StorageExternalStorageProvider<>(
+        return Optional.of((ExternalStorageProvider<E>) new FabricStorageExternalStorageProvider<>(
             lookup,
             fromPlatformMapper,
             toPlatformMapper,

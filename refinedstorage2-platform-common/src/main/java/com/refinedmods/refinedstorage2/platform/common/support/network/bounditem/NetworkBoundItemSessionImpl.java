@@ -82,6 +82,6 @@ public class NetworkBoundItemSessionImpl implements NetworkBoundItemSession {
         );
     }
 
-    public record NetworkReference(ResourceKey<Level> dimensionKey, BlockPos pos) {
+    record NetworkReference(ResourceKey<Level> dimensionKey, BlockPos pos) {
     }
 }

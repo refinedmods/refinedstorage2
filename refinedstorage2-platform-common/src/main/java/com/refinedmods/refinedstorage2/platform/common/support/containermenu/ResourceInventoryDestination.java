@@ -2,8 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.containermenu;
 
 import net.minecraft.world.item.ItemStack;
 
-public record ResourceInventoryDestination(AbstractResourceContainerMenu destination)
-    implements TransferDestination {
+record ResourceInventoryDestination(AbstractResourceContainerMenu destination) implements TransferDestination {
     @Override
     public ItemStack transfer(final ItemStack stack) {
         destination.addToResourceSlotIfNotExisting(stack);

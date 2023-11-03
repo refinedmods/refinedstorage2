@@ -13,13 +13,13 @@ import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInserta
 
 import java.util.Iterator;
 
-public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
+class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
     private final InteractionCoordinates interactionCoordinates;
     private final InsertableStorage<ItemResource> insertTarget;
     private final ExtractableStorage<ItemResource> extractTarget;
 
-    public ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
-                                     final AmountOverride amountOverride) {
+    ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+                              final AmountOverride amountOverride) {
         this.interactionCoordinates = interactionCoordinates;
         this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
         this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates, amountOverride);

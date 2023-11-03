@@ -22,7 +22,6 @@ public class TransferManager {
         this.destinationFactory = destinationFactory;
     }
 
-
     public void addTransfer(final Container from, final Container to) {
         addTransfer(
             destinationFactory.apply(from),
