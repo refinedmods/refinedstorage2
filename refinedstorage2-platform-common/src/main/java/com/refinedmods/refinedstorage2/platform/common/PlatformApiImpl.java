@@ -61,7 +61,7 @@ import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeS
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemEnergyStorage;
-import com.refinedmods.refinedstorage2.platform.common.support.network.LevelConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.common.support.network.ConnectionProviderImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.CompositeSlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.InventorySlotReference;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.InventorySlotReferenceFactory;
@@ -291,7 +291,7 @@ public class PlatformApiImpl implements PlatformApi {
     public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
                                                  final Level level,
                                                  final Runnable callback) {
-        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         ServerEventQueue.queue(() -> {
             networkBuilder.initialize(container, connectionProvider);
             callback.run();
@@ -300,13 +300,13 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
-        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.remove(container, connectionProvider);
     }
 
     @Override
     public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
-        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.update(container, connectionProvider);
     }
 

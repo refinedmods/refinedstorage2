@@ -3,15 +3,15 @@ package com.refinedmods.refinedstorage2.platform.api.support.network;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
+
+import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkNode> extends BlockEntity
@@ -63,12 +63,14 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     }
 
     @Override
-    public boolean canPerformOutgoingConnection(final Direction direction) {
-        return true;
+    public void addOutgoingConnections(final ConnectionSink sink) {
+        for (final Direction direction : Direction.values()) {
+            sink.tryConnectInSameDimension(worldPosition.relative(direction), direction.getOpposite());
+        }
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
+    public boolean canAcceptIncomingConnection(final Direction incomingDirection, final BlockState connectingState) {
         return true;
     }
 
@@ -77,15 +79,9 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
         return getBlockState();
     }
 
-    @Nullable
     @Override
-    public Level getContainerLevel() {
-        return getLevel();
-    }
-
-    @Override
-    public BlockPos getContainerPosition() {
-        return getBlockPos();
+    public GlobalPos getContainerPosition() {
+        return GlobalPos.of(requireNonNull(level).dimension(), worldPosition);
     }
 
     @Override

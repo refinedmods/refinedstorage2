@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitter;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -61,13 +62,21 @@ public class WirelessTransmitterBlockEntity
     }
 
     @Override
-    public boolean canPerformOutgoingConnection(final Direction direction) {
-        return direction == getDirection();
+    public void addOutgoingConnections(final ConnectionSink sink) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return;
+        }
+        sink.tryConnectInSameDimension(worldPosition.relative(myDirection), myDirection.getOpposite());
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
-        return colorsAllowConnecting(other) && direction.getOpposite() == getDirection();
+    public boolean canAcceptIncomingConnection(final Direction incomingDirection, final BlockState connectingState) {
+        if (!colorsAllowConnecting(connectingState)) {
+            return false;
+        }
+        final Direction myDirection = getDirection();
+        return incomingDirection == myDirection;
     }
 
     @Override

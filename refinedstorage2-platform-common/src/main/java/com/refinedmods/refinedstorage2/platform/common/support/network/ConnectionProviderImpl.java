@@ -6,19 +6,17 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 
 import java.util.ArrayDeque;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,12 +24,12 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LevelConnectionProvider implements ConnectionProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LevelConnectionProvider.class);
+public class ConnectionProviderImpl implements ConnectionProvider {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionProviderImpl.class);
 
     private final Level originLevel;
 
-    public LevelConnectionProvider(final Level originLevel) {
+    public ConnectionProviderImpl(final Level originLevel) {
         this.originLevel = originLevel;
     }
 
@@ -44,11 +42,11 @@ public class LevelConnectionProvider implements ConnectionProvider {
             .collect(Collectors.toSet());
         LOGGER.info("Finding connections for pivot {} with {} existing connections", pivot, existingConnections.size());
         final ScanState scanState = new ScanState(existingPlatformConnections);
-        addInitialRequest(pivot, scanState);
-        ScanRequest currentRequest;
+        addStartContainer(pivot, scanState);
+        PlatformNetworkNodeContainer currentContainer;
         int requests = 0;
-        while ((currentRequest = scanState.toCheck.poll()) != null) {
-            visit(scanState, currentRequest);
+        while ((currentContainer = scanState.toCheck.poll()) != null) {
+            visit(scanState, new ScanEntry(currentContainer));
             requests++;
         }
         LOGGER.info(
@@ -62,25 +60,11 @@ public class LevelConnectionProvider implements ConnectionProvider {
         return scanState.toConnections();
     }
 
-    private void addInitialRequest(final NetworkNodeContainer pivot, final ScanState scanState) {
+    private void addStartContainer(final NetworkNodeContainer pivot, final ScanState scanState) {
         if (!(pivot instanceof PlatformNetworkNodeContainer platformPivot)) {
             return;
         }
-        final Level pivotLevel = platformPivot.getContainerLevel();
-        if (pivotLevel == null) {
-            LOGGER.warn("Pivot level was null for {}", pivot);
-            return;
-        }
-        scanState.toCheck.add(new ScanRequest(
-            pivotLevel.dimension(),
-            platformPivot.getContainerPosition()
-        ));
-    }
-
-    private void visit(final ScanState state, final ScanRequest request) {
-        if (getBlockEntity(request.dimension, request.position) instanceof PlatformNetworkNodeContainer container) {
-            visit(state, new ScanEntry(container, originLevel, request.position));
-        }
+        scanState.toCheck.add(platformPivot);
     }
 
     private void visit(final ScanState state, final ScanEntry entry) {
@@ -92,27 +76,38 @@ public class LevelConnectionProvider implements ConnectionProvider {
             state.newEntries.add(entry);
         }
         state.removedEntries.remove(entry);
-        final Set<ScanRequest> connections = findConnectionsAt(entry.getContainer());
+        final List<PlatformNetworkNodeContainer> connections = findConnectionsAt(entry.getContainer());
         state.toCheck.addAll(connections);
     }
 
-    private Set<ScanRequest> findConnectionsAt(final PlatformNetworkNodeContainer from) {
-        final Level level = from.getContainerLevel();
-        if (level == null) {
-            return Collections.emptySet();
-        }
-        final Set<ScanRequest> requests = new HashSet<>();
-        for (final Direction direction : Direction.values()) {
-            if (!from.canPerformOutgoingConnection(direction)) {
-                continue;
-            }
-            final BlockPos offsetPos = from.getContainerPosition().relative(direction);
-            if (getBlockEntity(level, offsetPos) instanceof PlatformNetworkNodeContainer neighborContainer
-                && neighborContainer.canAcceptIncomingConnection(direction, from.getContainerBlockState())) {
-                requests.add(new ScanRequest(level.dimension(), offsetPos));
+    private List<PlatformNetworkNodeContainer> findConnectionsAt(final PlatformNetworkNodeContainer from) {
+        final ConnectionSinkImpl sink = new ConnectionSinkImpl(from.getContainerPosition());
+        from.addOutgoingConnections(sink);
+        final List<PlatformNetworkNodeContainer> connections = new ArrayList<>();
+        for (final ConnectionSinkImpl.Connection connection : sink.getConnections()) {
+            final PlatformNetworkNodeContainer connectionContainer = getConnection(from, connection);
+            if (connectionContainer != null) {
+                connections.add(connectionContainer);
             }
         }
-        return requests;
+        return connections;
+    }
+
+    @Nullable
+    private PlatformNetworkNodeContainer getConnection(final PlatformNetworkNodeContainer from,
+                                                       final ConnectionSinkImpl.Connection connection) {
+        final BlockEntity connectionBlockEntity = getBlockEntitySafely(connection.pos());
+        if (!(connectionBlockEntity instanceof PlatformNetworkNodeContainer connectionContainer)) {
+            return null;
+        }
+        final boolean acceptsIncomingDirection = connectionContainer.canAcceptIncomingConnection(
+            connection.incomingDirection(),
+            from.getContainerBlockState()
+        );
+        if (!acceptsIncomingDirection) {
+            return null;
+        }
+        return connectionContainer;
     }
 
     @Override
@@ -124,20 +119,20 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     @Nullable
-    private BlockEntity getBlockEntity(final ResourceKey<Level> dimension, final BlockPos pos) {
+    private BlockEntity getBlockEntitySafely(final GlobalPos pos) {
         final MinecraftServer server = originLevel.getServer();
         if (server == null) {
             return null;
         }
-        final Level level = server.getLevel(dimension);
+        final Level level = server.getLevel(pos.dimension());
         if (level == null) {
             return null;
         }
-        return getBlockEntity(level, pos);
+        return getBlockEntitySafely(level, pos.pos());
     }
 
     @Nullable
-    private BlockEntity getBlockEntity(final Level level, final BlockPos pos) {
+    private BlockEntity getBlockEntitySafely(final Level level, final BlockPos pos) {
         if (!level.isLoaded(pos)) {
             return null;
         }
@@ -159,7 +154,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
         private final Set<ScanEntry> foundEntries = new HashSet<>();
         private final Set<ScanEntry> newEntries = new HashSet<>();
         private final Set<ScanEntry> removedEntries;
-        private final Queue<ScanRequest> toCheck = new ArrayDeque<>();
+        private final Queue<PlatformNetworkNodeContainer> toCheck = new ArrayDeque<>();
 
         ScanState(final Set<PlatformNetworkNodeContainer> existingConnections) {
             this.currentEntries = toScanEntries(existingConnections);
@@ -179,23 +174,17 @@ public class LevelConnectionProvider implements ConnectionProvider {
         }
 
         private static Set<ScanEntry> toScanEntries(final Set<PlatformNetworkNodeContainer> existingConnections) {
-            return existingConnections.stream().map(container -> new ScanEntry(
-                container,
-                Objects.requireNonNull(container.getContainerLevel()),
-                Objects.requireNonNull(container.getContainerPosition())
-            )).collect(Collectors.toSet());
+            return existingConnections.stream().map(ScanEntry::new).collect(Collectors.toSet());
         }
     }
 
     private static class ScanEntry {
         private final PlatformNetworkNodeContainer container;
-        private final ResourceKey<Level> dimension;
-        private final BlockPos position;
+        private final GlobalPos pos;
 
-        ScanEntry(final PlatformNetworkNodeContainer container, final Level dimension, final BlockPos position) {
+        ScanEntry(final PlatformNetworkNodeContainer container) {
             this.container = container;
-            this.dimension = dimension.dimension();
-            this.position = position;
+            this.pos = container.getContainerPosition();
         }
 
         public PlatformNetworkNodeContainer getContainer() {
@@ -211,15 +200,12 @@ public class LevelConnectionProvider implements ConnectionProvider {
                 return false;
             }
             final ScanEntry that = (ScanEntry) o;
-            return Objects.equals(dimension, that.dimension) && Objects.equals(position, that.position);
+            return pos.equals(that.pos);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(dimension, position);
+            return pos.hashCode();
         }
-    }
-
-    private record ScanRequest(ResourceKey<Level> dimension, BlockPos position) {
     }
 }
