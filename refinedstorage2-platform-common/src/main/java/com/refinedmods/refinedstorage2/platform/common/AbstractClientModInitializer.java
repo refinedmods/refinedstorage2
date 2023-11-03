@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.grid.screen.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.FluidGridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterScreen;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockScreen;
@@ -57,6 +58,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getRegulatorUpgrade(), RegulatorUpgradeScreen::new);
         registration.register(Menus.INSTANCE.getWirelessTransmitter(), WirelessTransmitterScreen::new);
         registration.register(Menus.INSTANCE.getStorageMonitor(), StorageMonitorScreen::new);
+        registration.register(Menus.INSTANCE.getNetworkTransmitter(), NetworkTransmitterScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {

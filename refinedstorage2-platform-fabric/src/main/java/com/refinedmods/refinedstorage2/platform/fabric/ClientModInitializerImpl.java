@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEner
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.NetworkTransmitterStatusPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.WirelessTransmitterRangePacket;
@@ -110,6 +111,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getDestructor());
         setCutout(Blocks.INSTANCE.getWirelessTransmitter());
         setCutout(Blocks.INSTANCE.getNetworkReceiver());
+        setCutout(Blocks.INSTANCE.getNetworkTransmitter());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -148,6 +150,9 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
         Blocks.INSTANCE.getNetworkReceiver().forEach(
             (color, id, block) -> registerEmissiveNetworkReceiverModels(color, id)
+        );
+        Blocks.INSTANCE.getNetworkTransmitter().forEach(
+            (color, id, block) -> registerEmissiveNetworkTransmitterModels(color, id)
         );
     }
 
@@ -241,6 +246,23 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         );
     }
 
+    private void registerEmissiveNetworkTransmitterModels(final DyeColor color, final ResourceLocation id) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_transmitter/" + color.getName()),
+            createIdentifier("block/network_transmitter/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/network_transmitter/error"),
+            createIdentifier("block/network_transmitter/cutouts/error")
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            id,
+            createIdentifier("block/network_transmitter/cutouts/" + color.getName())
+        );
+    }
+
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
@@ -252,6 +274,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             new WirelessTransmitterRangePacket()
         );
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_SLOT_UPDATE, new ResourceSlotUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(
+            PacketIds.NETWORK_TRANSMITTER_STATUS,
+            new NetworkTransmitterStatusPacket()
+        );
     }
 
     private void registerBlockEntityRenderers() {

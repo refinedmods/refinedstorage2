@@ -176,4 +176,5 @@ abstract class AbstractStorageBlockBlockEntity<T>
         buf.writeLong(getNode().getCapacity());
         filter.getFilterContainer().writeToUpdatePacket(buf);
     }
+
 }

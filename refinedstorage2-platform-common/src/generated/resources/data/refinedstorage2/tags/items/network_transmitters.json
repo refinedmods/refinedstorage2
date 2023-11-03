@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage2:white_network_transmitter",
+    "refinedstorage2:orange_network_transmitter",
+    "refinedstorage2:magenta_network_transmitter",
+    "refinedstorage2:network_transmitter",
+    "refinedstorage2:yellow_network_transmitter",
+    "refinedstorage2:lime_network_transmitter",
+    "refinedstorage2:pink_network_transmitter",
+    "refinedstorage2:gray_network_transmitter",
+    "refinedstorage2:light_gray_network_transmitter",
+    "refinedstorage2:cyan_network_transmitter",
+    "refinedstorage2:purple_network_transmitter",
+    "refinedstorage2:blue_network_transmitter",
+    "refinedstorage2:brown_network_transmitter",
+    "refinedstorage2:green_network_transmitter",
+    "refinedstorage2:red_network_transmitter",
+    "refinedstorage2:black_network_transmitter"
+  ]
+}

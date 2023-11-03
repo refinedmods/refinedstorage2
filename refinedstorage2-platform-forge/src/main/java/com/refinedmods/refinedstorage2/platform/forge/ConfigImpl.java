@@ -37,6 +37,7 @@ public class ConfigImpl implements Config {
     private final WirelessTransmitterEntry wirelessTransmitter;
     private final SimpleEnergyUsageEntry storageMonitor;
     private final SimpleEnergyUsageEntry networkReceiver;
+    private final SimpleEnergyUsageEntry networkTransmitter;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -69,6 +70,11 @@ public class ConfigImpl implements Config {
             "networkReceiver",
             "Network Receiver",
             DefaultEnergyUsage.NETWORK_RECEIVER
+        );
+        networkTransmitter = new SimpleEnergyUsageEntryImpl(
+            "networkTransmitter",
+            "Network Transmitter",
+            DefaultEnergyUsage.NETWORK_TRANSMITTER
         );
         spec = builder.build();
     }
@@ -170,6 +176,11 @@ public class ConfigImpl implements Config {
     @Override
     public SimpleEnergyUsageEntry getNetworkReceiver() {
         return networkReceiver;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkTransmitter() {
+        return networkTransmitter;
     }
 
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.Wireless
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
+import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeContainer;
@@ -124,5 +125,11 @@ public class WirelessTransmitterBlockEntity
                 + Math.pow(getBlockPos().getZ() - position.z(), 2)
         );
         return distance <= getRange();
+    }
+
+    @Override
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                   final BlockState newBlockState) {
+        return AbstractDirectionalBlock.doesBlockStateChangeWarrantNetworkNodeUpdate(oldBlockState, newBlockState);
     }
 }

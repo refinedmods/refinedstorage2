@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -30,4 +31,6 @@ public interface ServerToClientCommunications {
                                     int slotIndex);
 
     void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo);
+
+    void sendNetworkTransmitterStatus(ServerPlayer player, NetworkTransmitterStatus status);
 }

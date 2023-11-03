@@ -83,16 +83,16 @@ public final class CableBlockSupport {
 
     public static BlockState getState(
         final BlockState currentState,
-        final LevelAccessor world,
+        final LevelAccessor level,
         final BlockPos pos,
         @Nullable final Direction blacklistedDirection
     ) {
-        final boolean north = hasVisualConnection(currentState, world, pos, Direction.NORTH, blacklistedDirection);
-        final boolean east = hasVisualConnection(currentState, world, pos, Direction.EAST, blacklistedDirection);
-        final boolean south = hasVisualConnection(currentState, world, pos, Direction.SOUTH, blacklistedDirection);
-        final boolean west = hasVisualConnection(currentState, world, pos, Direction.WEST, blacklistedDirection);
-        final boolean up = hasVisualConnection(currentState, world, pos, Direction.UP, blacklistedDirection);
-        final boolean down = hasVisualConnection(currentState, world, pos, Direction.DOWN, blacklistedDirection);
+        final boolean north = hasVisualConnection(currentState, level, pos, Direction.NORTH, blacklistedDirection);
+        final boolean east = hasVisualConnection(currentState, level, pos, Direction.EAST, blacklistedDirection);
+        final boolean south = hasVisualConnection(currentState, level, pos, Direction.SOUTH, blacklistedDirection);
+        final boolean west = hasVisualConnection(currentState, level, pos, Direction.WEST, blacklistedDirection);
+        final boolean up = hasVisualConnection(currentState, level, pos, Direction.UP, blacklistedDirection);
+        final boolean down = hasVisualConnection(currentState, level, pos, Direction.DOWN, blacklistedDirection);
 
         return currentState
             .setValue(NORTH, north)
@@ -105,7 +105,7 @@ public final class CableBlockSupport {
 
     private static boolean hasVisualConnection(
         final BlockState blockState,
-        final LevelAccessor world,
+        final LevelAccessor level,
         final BlockPos pos,
         final Direction direction,
         @Nullable final Direction blacklistedDirection
@@ -114,7 +114,7 @@ public final class CableBlockSupport {
             return false;
         }
         final BlockPos offsetPos = pos.relative(direction);
-        if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer neighboringContainer)) {
+        if (!(level.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer neighboringContainer)) {
             return false;
         }
         return neighboringContainer.canAcceptIncomingConnection(direction.getOpposite(), blockState);

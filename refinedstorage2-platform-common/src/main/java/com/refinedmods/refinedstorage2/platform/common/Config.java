@@ -48,6 +48,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getNetworkReceiver();
 
+    SimpleEnergyUsageEntry getNetworkTransmitter();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.MenuType;
 public interface MenuTypeFactory {
     <T extends AbstractContainerMenu> MenuType<T> create(MenuSupplier<T> supplier);
 
+    @FunctionalInterface
     interface MenuSupplier<T extends AbstractContainerMenu> {
         T create(int syncId, Inventory playerInventory, FriendlyByteBuf data);
     }

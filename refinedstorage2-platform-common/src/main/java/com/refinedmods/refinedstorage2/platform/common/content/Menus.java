@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockContainerMenu;
@@ -61,6 +62,8 @@ public final class Menus {
     private Supplier<MenuType<WirelessTransmitterContainerMenu>> wirelessTransmitter;
     @Nullable
     private Supplier<MenuType<StorageMonitorContainerMenu>> storageMonitor;
+    @Nullable
+    private Supplier<MenuType<NetworkTransmitterContainerMenu>> networkTransmitter;
 
     private Menus() {
     }
@@ -199,5 +202,13 @@ public final class Menus {
 
     public void setStorageMonitor(final Supplier<MenuType<StorageMonitorContainerMenu>> supplier) {
         this.storageMonitor = supplier;
+    }
+
+    public MenuType<NetworkTransmitterContainerMenu> getNetworkTransmitter() {
+        return Objects.requireNonNull(networkTransmitter).get();
+    }
+
+    public void setNetworkTransmitter(final Supplier<MenuType<NetworkTransmitterContainerMenu>> supplier) {
+        this.networkTransmitter = supplier;
     }
 }

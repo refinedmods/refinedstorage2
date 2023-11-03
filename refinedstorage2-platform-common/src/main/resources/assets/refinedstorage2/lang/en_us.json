@@ -29,6 +29,7 @@
   "block.refinedstorage2.wireless_transmitter": "Wireless Transmitter",
   "block.refinedstorage2.storage_monitor": "Storage Monitor",
   "block.refinedstorage2.network_receiver": "Network Receiver",
+  "block.refinedstorage2.network_transmitter": "Network Transmitter",
   "gui.refinedstorage2.controller.redstone_mode_help": "When this device is inactive, the storage network will not be able to use this device as an energy source.",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.storage.redstone_mode_help": "When this device is inactive, the contained storage will no longer be accessible from within the storage network.",
@@ -132,6 +133,10 @@
   "gui.refinedstorage2.filter_slot.right_click_for": "Right click for",
   "gui.refinedstorage2.filter_slot.click_to_clear": "Click to clear",
   "gui.refinedstorage2.regulator_upgrade.filter_help": "The resource that should be regulated in the target.",
+  "gui.refinedstorage2.network_transmitter.status.inactive": "Inactive",
+  "gui.refinedstorage2.network_transmitter.status.missing_network_card": "Missing Network Card",
+  "gui.refinedstorage2.network_transmitter.status.transmitting": "%d block(s)",
+  "gui.refinedstorage2.network_transmitter.status.receiver_unreachable": "Unreachable",
   "item.refinedstorage2.controller.help": "Provides the storage network with energy. Multiple are allowed in a single storage network.",
   "item.refinedstorage2.creative_controller.help": "Provides the storage network with an infinite source of energy.",
   "item.refinedstorage2.disk_drive.help": "Accepts storage disks to provide the storage network with storage space.",
@@ -208,7 +213,7 @@
   "item.refinedstorage2.network_card.unbound_help": "Use while crouching on a Network Receiver.",
   "item.refinedstorage2.network_card.unbound": "Unbound.",
   "item.refinedstorage2.network_card.bound_help": "Insert into a Network Transmitter. Use while crouching to clear binding.",
-  "item.refinedstorage2.network_card.bound": "Bound to %d, %d, %d.",
+  "item.refinedstorage2.network_card.bound": "Bound to %d, %d, %d in %s.",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s (%d%%)",
   "misc.refinedstorage2.total": "%d total",
@@ -343,5 +348,7 @@
   "advancements.refinedstorage2.wireless": "Wireless",
   "advancements.refinedstorage2.wireless.description": "Access your resources wirelessly with a Wireless Grid.",
   "advancements.refinedstorage2.better_than_a_barrel": "Better than a barrel",
-  "advancements.refinedstorage2.better_than_a_barrel.description": "Craft a Storage Monitor to view, insert or extract resources in a storage network"
+  "advancements.refinedstorage2.better_than_a_barrel.description": "Craft a Storage Monitor to view, insert or extract resources in a storage network",
+  "advancements.refinedstorage2.no_cables_required": "No cables required",
+  "advancements.refinedstorage2.no_cables_required.description": "Add extra components to your network without using cables by using a Network Transmitter, Network Receiver and Network Card"
 }

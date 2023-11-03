@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.networking.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
+import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
@@ -122,6 +123,12 @@ public final class Blocks {
         NetworkReceiverBlock::new,
         ContentIds.NETWORK_RECEIVER,
         ContentNames.NETWORK_RECEIVER,
+        COLOR
+    );
+    private final BlockColorMap<NetworkTransmitterBlock> networkTransmitter = new BlockColorMap<>(
+        NetworkTransmitterBlock::new,
+        ContentIds.NETWORK_TRANSMITTER,
+        ContentNames.NETWORK_TRANSMITTER,
         COLOR
     );
 
@@ -250,5 +257,9 @@ public final class Blocks {
 
     public BlockColorMap<NetworkReceiverBlock> getNetworkReceiver() {
         return networkReceiver;
+    }
+
+    public BlockColorMap<NetworkTransmitterBlock> getNetworkTransmitter() {
+        return networkTransmitter;
     }
 }

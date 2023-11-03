@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionType;
 
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
@@ -67,5 +68,19 @@ public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringReprese
             return null;
         }
         return getDirectionType().extractDirection(direction);
+    }
+
+    public static boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                       final BlockState newBlockState) {
+        if (!(newBlockState.getBlock() instanceof AbstractDirectionalBlock<?> newDirectionalBlock)) {
+            return true;
+        }
+        if (!(oldBlockState.getBlock() instanceof AbstractDirectionalBlock<?> oldDirectionalBlock)) {
+            return true;
+        }
+        return !Objects.equals(
+            oldDirectionalBlock.getDirection(oldBlockState),
+            newDirectionalBlock.getDirection(newBlockState)
+        );
     }
 }

@@ -39,13 +39,6 @@ public abstract class AbstractBaseBlock extends Block {
         return getStateDefinition().any();
     }
 
-    @SuppressWarnings("deprecation")
-    private static boolean rotate(final BlockState state, final Level level, final BlockPos pos) {
-        final BlockState rotated = state.rotate(Rotation.CLOCKWISE_90);
-        level.setBlockAndUpdate(pos, rotated);
-        return !state.equals(rotated);
-    }
-
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(final BlockState state,
@@ -127,11 +120,11 @@ public abstract class AbstractBaseBlock extends Block {
         }
     }
 
-    public static Optional<InteractionResult> tryUseWrench(final BlockState state,
-                                                           final Level level,
-                                                           final BlockHitResult hitResult,
-                                                           final Player player,
-                                                           final InteractionHand hand) {
+    public final Optional<InteractionResult> tryUseWrench(final BlockState state,
+                                                          final Level level,
+                                                          final BlockHitResult hitResult,
+                                                          final Player player,
+                                                          final InteractionHand hand) {
         if (player.isSpectator() || !level.mayInteract(player, hitResult.getBlockPos())) {
             return Optional.empty();
         }
@@ -160,33 +153,10 @@ public abstract class AbstractBaseBlock extends Block {
         return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
     }
 
-    public static Optional<InteractionResult> tryUpdateColor(final BlockState state,
-                                                             final Level level,
-                                                             final BlockPos pos,
-                                                             final Player player,
-                                                             final InteractionHand hand) {
-        if (state.getBlock() instanceof ColorableBlock<?> colorableBlock) {
-            return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<InteractionResult> tryUpdateColor(final BlockColorMap<?> blockColorMap,
-                                                              final BlockState state,
-                                                              final Level level,
-                                                              final BlockPos pos,
-                                                              final Player player,
-                                                              final InteractionHand hand) {
-        if (!player.isCrouching()) {
-            return Optional.empty();
-        }
-        return blockColorMap.updateColor(state, player.getItemInHand(hand), level, pos, player);
-    }
-
-    private static boolean dismantleOrRotate(final BlockState state,
-                                             final Level level,
-                                             final BlockHitResult hitResult,
-                                             final Player player) {
+    private boolean dismantleOrRotate(final BlockState state,
+                                      final Level level,
+                                      final BlockHitResult hitResult,
+                                      final Player player) {
         if (player.isCrouching()) {
             dismantle(state, level, hitResult, player);
             return true;
@@ -195,14 +165,24 @@ public abstract class AbstractBaseBlock extends Block {
         }
     }
 
-    private static boolean isWrench(final ItemStack item) {
+    private boolean rotate(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockState rotated = getRotatedBlockState(state, level, pos);
+        level.setBlockAndUpdate(pos, rotated);
+        return !state.equals(rotated);
+    }
+
+    protected BlockState getRotatedBlockState(final BlockState state, final Level level, final BlockPos pos) {
+        return state.rotate(Rotation.CLOCKWISE_90);
+    }
+
+    private boolean isWrench(final ItemStack item) {
         return item.is(Platform.INSTANCE.getWrenchTag());
     }
 
-    private static void dismantle(final BlockState state,
-                                  final Level level,
-                                  final BlockHitResult hitResult,
-                                  final Player player) {
+    private void dismantle(final BlockState state,
+                           final Level level,
+                           final BlockHitResult hitResult,
+                           final Player player) {
         final ItemStack stack = Platform.INSTANCE.getCloneItemStack(state, level, hitResult, player);
         final BlockEntity blockEntity = level.getBlockEntity(hitResult.getBlockPos());
         if (blockEntity != null) {
@@ -218,5 +198,30 @@ public abstract class AbstractBaseBlock extends Block {
             hitResult.getLocation().z,
             stack
         ));
+    }
+
+    public final Optional<InteractionResult> tryUpdateColor(final BlockState state,
+                                                            final Level level,
+                                                            final BlockPos pos,
+                                                            final Player player,
+                                                            final InteractionHand hand) {
+        if (this instanceof ColorableBlock<?> colorableBlock) {
+            return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<InteractionResult> tryUpdateColor(
+        final BlockColorMap<?> blockColorMap,
+        final BlockState state,
+        final Level level,
+        final BlockPos pos,
+        final Player player,
+        final InteractionHand hand
+    ) {
+        if (!player.isCrouching()) {
+            return Optional.empty();
+        }
+        return blockColorMap.updateColor(state, player.getItemInHand(hand), level, pos, player);
     }
 }

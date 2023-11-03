@@ -100,6 +100,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         if (!(connectionBlockEntity instanceof PlatformNetworkNodeContainer connectionContainer)) {
             return null;
         }
+        if (connection.incomingDirection() == null) {
+            return connectionContainer;
+        }
         final boolean acceptsIncomingDirection = connectionContainer.canAcceptIncomingConnection(
             connection.incomingDirection(),
             from.getContainerBlockState()

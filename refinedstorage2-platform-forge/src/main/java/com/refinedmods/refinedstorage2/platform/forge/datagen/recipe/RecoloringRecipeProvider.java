@@ -60,6 +60,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, block) ->
             recolorItems(Tags.NETWORK_RECEIVERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_network_receiver")));
+        Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, block) ->
+            recolorItems(Tags.NETWORK_TRANSMITTERS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_network_transmitter")));
     }
 
     private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {

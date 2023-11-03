@@ -80,6 +80,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         DefaultEnergyUsage.NETWORK_RECEIVER
     );
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl networkTransmitter = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.NETWORK_TRANSMITTER
+    );
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -177,6 +182,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getNetworkReceiver() {
         return networkReceiver;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkTransmitter() {
+        return networkTransmitter;
     }
 
     private static class GridEntryImpl implements GridEntry {
