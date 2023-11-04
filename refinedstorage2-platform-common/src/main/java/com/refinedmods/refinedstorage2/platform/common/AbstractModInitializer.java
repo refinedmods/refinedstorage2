@@ -55,6 +55,10 @@ import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardIte
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.portablegrid.AbstractPortableGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridItem;
+import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -122,6 +126,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_WIRELESS_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
@@ -137,6 +142,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_RECEIVER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_TRANSMITTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
@@ -244,7 +250,9 @@ public abstract class AbstractModInitializer {
 
     protected final void registerBlocks(
         final RegistryCallback<Block> callback,
-        final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> diskDriveBlockEntityFactory
+        final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> diskDriveBlockEntityFactory,
+        final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> portableGridBlockEntityFactory,
+        final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> creativePortableGridBlockEntityFactory
     ) {
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(callback.register(QUARTZ_ENRICHED_IRON_BLOCK, SimpleBlock::new));
         Blocks.INSTANCE.setDiskDrive(
@@ -279,6 +287,14 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.setStorageMonitor(callback.register(STORAGE_MONITOR, StorageMonitorBlock::new));
         Blocks.INSTANCE.getNetworkReceiver().registerBlocks(callback);
         Blocks.INSTANCE.getNetworkTransmitter().registerBlocks(callback);
+        Blocks.INSTANCE.setPortableGrid(callback.register(PORTABLE_GRID, () -> new PortableGridBlock(
+            PortableGridType.NORMAL,
+            portableGridBlockEntityFactory
+        )));
+        Blocks.INSTANCE.setCreativePortableGrid(callback.register(CREATIVE_PORTABLE_GRID, () -> new PortableGridBlock(
+            PortableGridType.CREATIVE,
+            creativePortableGridBlockEntityFactory
+        )));
     }
 
     protected final void registerItems(
@@ -310,6 +326,14 @@ public abstract class AbstractModInitializer {
             creativeWirelessGridItemSupplier
         ));
         callback.register(STORAGE_MONITOR, () -> new SimpleBlockItem(Blocks.INSTANCE.getStorageMonitor()));
+        Items.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> new PortableGridItem(Blocks.INSTANCE.getPortableGrid())
+        ));
+        Items.INSTANCE.setCreativePortableGrid(callback.register(
+            CREATIVE_PORTABLE_GRID,
+            () -> new PortableGridItem(Blocks.INSTANCE.getCreativePortableGrid())
+        ));
     }
 
     private void registerSimpleItems(final RegistryCallback<Item> callback) {
@@ -481,7 +505,11 @@ public abstract class AbstractModInitializer {
         final RegistryCallback<BlockEntityType<?>> callback,
         final BlockEntityTypeFactory typeFactory,
         final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractDiskDriveBlockEntity>
-            diskDriveBlockEntitySupplier
+            diskDriveBlockEntitySupplier,
+        final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>
+            portableGridBlockEntitySupplier,
+        final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>
+            creativePortableGridBlockEntitySupplier
     ) {
         BlockEntities.INSTANCE.setCable(callback.register(
             CABLE,
@@ -586,6 +614,17 @@ public abstract class AbstractModInitializer {
             () -> typeFactory.create(
                 NetworkTransmitterBlockEntity::new,
                 Blocks.INSTANCE.getNetworkTransmitter().toArray()
+            )
+        ));
+        BlockEntities.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> typeFactory.create(portableGridBlockEntitySupplier::create, Blocks.INSTANCE.getPortableGrid())
+        ));
+        BlockEntities.INSTANCE.setCreativePortableGrid(callback.register(
+            CREATIVE_PORTABLE_GRID,
+            () -> typeFactory.create(
+                creativePortableGridBlockEntitySupplier::create,
+                Blocks.INSTANCE.getCreativePortableGrid()
             )
         ));
     }

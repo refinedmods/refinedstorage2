@@ -23,6 +23,8 @@ import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiGridSynch
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveGeometryLoader;
+import com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid.PortableGridBlockEntityRendererImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid.PortableGridGeometryLoader;
 
 import java.util.List;
 
@@ -51,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
@@ -99,6 +102,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     public static void onRegisterModelGeometry(final ModelEvent.RegisterGeometryLoaders e) {
         registerDiskModels();
         e.register(DISK_DRIVE.getPath(), new DiskDriveGeometryLoader());
+        e.register(PORTABLE_GRID.getPath(), new PortableGridGeometryLoader());
     }
 
     @SubscribeEvent
@@ -149,6 +153,14 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getStorageMonitor(),
             ctx -> new StorageMonitorBlockEntityRenderer()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getPortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getCreativePortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
         );
     }
 

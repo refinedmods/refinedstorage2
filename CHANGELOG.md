@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Custom disk models. Fluid disks now have a different model.
+-   Portable Grid
 
 ## [2.0.0-milestone.3.2] - 2023-11-03
 

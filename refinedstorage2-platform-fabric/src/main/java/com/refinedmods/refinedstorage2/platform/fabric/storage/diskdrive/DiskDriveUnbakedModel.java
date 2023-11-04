@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotators;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,6 +26,12 @@ import static java.util.Objects.requireNonNull;
 public class DiskDriveUnbakedModel implements UnbakedModel {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive/base");
     private static final ResourceLocation LED_INACTIVE_MODEL = createIdentifier("block/disk/led_inactive");
+
+    private final QuadRotators quadRotators;
+
+    public DiskDriveUnbakedModel(final QuadRotators quadRotators) {
+        this.quadRotators = quadRotators;
+    }
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
@@ -61,7 +68,8 @@ public class DiskDriveUnbakedModel implements UnbakedModel {
         return new DiskDriveBakedModel(
             requireNonNull(baker.bake(BASE_MODEL, state)),
             diskModels,
-            requireNonNull(baker.bake(LED_INACTIVE_MODEL, state))
+            requireNonNull(baker.bake(LED_INACTIVE_MODEL, state)),
+            quadRotators
         );
     }
 }

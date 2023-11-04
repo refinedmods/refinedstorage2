@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
+import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockEntityWithDrops;
@@ -56,7 +57,7 @@ public abstract class AbstractDiskDriveBlockEntity
     private static final String TAG_DISK_ITEM_ID = "i";
 
     @Nullable
-    protected DiskDriveDisk[] disks;
+    protected Disk[] disks;
 
     private final DiskDriveInventory diskInventory;
     private final FilterWithFuzzyMode filter;
@@ -215,12 +216,12 @@ public abstract class AbstractDiskDriveBlockEntity
             return;
         }
         final ListTag disksList = tag.getList(TAG_DISKS, Tag.TAG_COMPOUND);
-        disks = new DiskDriveDisk[disksList.size()];
+        disks = new Disk[disksList.size()];
         for (int i = 0; i < disksList.size(); ++i) {
             final CompoundTag diskTag = disksList.getCompound(i);
             disks[i] = BuiltInRegistries.ITEM.getHolder(diskTag.getInt(TAG_DISK_ITEM_ID))
-                .map(item -> new DiskDriveDisk(item.value(), getState(diskTag)))
-                .orElse(new DiskDriveDisk(null, StorageState.NONE));
+                .map(item -> new Disk(item.value(), getState(diskTag)))
+                .orElse(new Disk(null, StorageState.NONE));
         }
         onDriveStateUpdated();
     }

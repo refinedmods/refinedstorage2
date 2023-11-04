@@ -36,6 +36,8 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Blocks.INSTANCE.getDiskDrive());
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
         appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
+        itemConsumer.accept(Items.INSTANCE.getPortableGrid());
+        itemConsumer.accept(Items.INSTANCE.getCreativePortableGrid());
         Items.INSTANCE.getDetectors().stream().map(Supplier::get).forEach(itemConsumer);
         itemConsumer.accept(Blocks.INSTANCE.getInterface());
         Arrays.stream(ItemStorageType.Variant.values()).forEach(variant -> itemConsumer.accept(

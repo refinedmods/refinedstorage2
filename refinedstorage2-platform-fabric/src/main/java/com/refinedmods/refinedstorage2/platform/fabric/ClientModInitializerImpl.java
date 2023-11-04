@@ -35,7 +35,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiGridSync
 import com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.DiskDriveUnbakedModel;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid.PortableGridBlockEntityRendererImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid.PortableGridUnbakedModel;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.EmissiveModelRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotators;
 
 import java.util.List;
 
@@ -112,6 +115,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getWirelessTransmitter());
         setCutout(Blocks.INSTANCE.getNetworkReceiver());
         setCutout(Blocks.INSTANCE.getNetworkTransmitter());
+        setCutout(Blocks.INSTANCE.getPortableGrid());
+        setCutout(Blocks.INSTANCE.getCreativePortableGrid());
     }
 
     private void setCutout(final BlockColorMap<?> blockMap) {
@@ -289,6 +294,14 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             BlockEntities.INSTANCE.getStorageMonitor(),
             ctx -> new StorageMonitorBlockEntityRenderer()
         );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getPortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getCreativePortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
+        );
     }
 
     private void registerCustomModels() {
@@ -297,9 +310,22 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
         final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
+        final ResourceLocation portableGridIdentifier = createIdentifier("block/portable_grid");
+        final ResourceLocation portableGridIdentifierItem = createIdentifier("item/portable_grid");
+        final ResourceLocation creativePortableGridIdentifier = createIdentifier("block/creative_portable_grid");
+        final ResourceLocation creativePortableGridIdentifierItem = createIdentifier("item/creative_portable_grid");
+
+        final QuadRotators quadRotators = new QuadRotators();
+
         ModelLoadingPlugin.register(pluginContext -> pluginContext.resolveModel().register(context -> {
             if (context.id().equals(diskDriveIdentifier) || context.id().equals(diskDriveIdentifierItem)) {
-                return new DiskDriveUnbakedModel();
+                return new DiskDriveUnbakedModel(quadRotators);
+            }
+            if (context.id().equals(portableGridIdentifier)
+                || context.id().equals(portableGridIdentifierItem)
+                || context.id().equals(creativePortableGridIdentifier)
+                || context.id().equals(creativePortableGridIdentifierItem)) {
+                return new PortableGridUnbakedModel(quadRotators);
             }
             return null;
         }));

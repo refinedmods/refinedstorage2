@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.cache.CacheBuilder;
@@ -85,12 +84,11 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         return overrides;
     }
 
-    @Nonnull
     @Override
     public List<BakedQuad> getQuads(@Nullable final BlockState state,
                                     @Nullable final Direction side,
-                                    @Nonnull final RandomSource rand,
-                                    @Nonnull final ModelData extraData,
+                                    final RandomSource rand,
+                                    final ModelData extraData,
                                     @Nullable final RenderType renderType) {
         if (state == null || !(state.getBlock() instanceof DiskDriveBlock diskDriveBlock)) {
             return super.getQuads(state, side, rand);
@@ -99,7 +97,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         if (direction == null) {
             return super.getQuads(state, side, rand);
         }
-        final DiskDriveDisk[] disks = extraData.get(ForgeDiskDriveBlockEntity.DISKS_PROPERTY);
+        final Disk[] disks = extraData.get(ForgeDiskDriveBlockEntity.DISKS_PROPERTY);
         if (disks == null) {
             return super.getQuads(state, side, rand);
         }
@@ -144,13 +142,13 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         private final BlockState state;
         @Nullable
         private final Direction side;
-        private final DiskDriveDisk[] disks;
+        private final Disk[] disks;
         private final RandomSource random;
         private final BiDirection direction;
 
         DiskDriveStateCacheKey(final BlockState state,
                                @Nullable final Direction side,
-                               final DiskDriveDisk[] disks,
+                               final Disk[] disks,
                                final RandomSource random,
                                final BiDirection direction) {
             this.state = state;
@@ -185,7 +183,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
             final List<BakedQuad> quads = new ArrayList<>(getBaseQuads(key.state, key.random, key.side, key.direction));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
-                final DiskDriveDisk disk = key.disks[i];
+                final Disk disk = key.disks[i];
                 quads.addAll(getDiskQuads(key, disk, i));
             }
             return quads;
@@ -193,7 +191,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
 
         @SuppressWarnings("deprecation")
         private List<BakedQuad> getDiskQuads(final DiskDriveStateCacheKey key,
-                                             final DiskDriveDisk disk,
+                                             final Disk disk,
                                              final int index) {
             if (disk.state() == StorageState.NONE) {
                 return Collections.emptyList();

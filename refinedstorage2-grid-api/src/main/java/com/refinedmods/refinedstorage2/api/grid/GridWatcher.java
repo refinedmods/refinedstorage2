@@ -36,7 +36,7 @@ public interface GridWatcher {
     );
 
     /**
-     * Called when the grid network has been changed.
+     * Usually called when the grid network has been changed.
      */
-    void onNetworkChanged();
+    void clear();
 }

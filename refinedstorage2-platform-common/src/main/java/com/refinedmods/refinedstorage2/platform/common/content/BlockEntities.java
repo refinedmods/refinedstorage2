@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntit
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.portablegrid.AbstractPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
@@ -24,11 +25,12 @@ import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.Wirel
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import static java.util.Objects.requireNonNull;
 
 public final class BlockEntities {
     public static final BlockEntities INSTANCE = new BlockEntities();
@@ -71,12 +73,16 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<NetworkReceiverBlockEntity>> networkReceiver;
     @Nullable
     private Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> networkTransmitter;
+    @Nullable
+    private Supplier<BlockEntityType<AbstractPortableGridBlockEntity>> portableGrid;
+    @Nullable
+    private Supplier<BlockEntityType<AbstractPortableGridBlockEntity>> creativePortableGrid;
 
     private BlockEntities() {
     }
 
     public BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> getCable() {
-        return Objects.requireNonNull(cable).get();
+        return requireNonNull(cable).get();
     }
 
     public void setCable(
@@ -86,7 +92,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<? extends AbstractDiskDriveBlockEntity> getDiskDrive() {
-        return Objects.requireNonNull(diskDrive).get();
+        return requireNonNull(diskDrive).get();
     }
 
     public void setDiskDrive(final Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> supplier) {
@@ -94,7 +100,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<GridBlockEntity> getGrid() {
-        return Objects.requireNonNull(grid).get();
+        return requireNonNull(grid).get();
     }
 
     public void setGrid(final Supplier<BlockEntityType<GridBlockEntity>> supplier) {
@@ -102,7 +108,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<CraftingGridBlockEntity> getCraftingGrid() {
-        return Objects.requireNonNull(craftingGrid).get();
+        return requireNonNull(craftingGrid).get();
     }
 
     public void setCraftingGrid(final Supplier<BlockEntityType<CraftingGridBlockEntity>> supplier) {
@@ -110,7 +116,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ControllerBlockEntity> getController() {
-        return Objects.requireNonNull(controller).get();
+        return requireNonNull(controller).get();
     }
 
     public void setController(final Supplier<BlockEntityType<ControllerBlockEntity>> supplier) {
@@ -118,7 +124,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ControllerBlockEntity> getCreativeController() {
-        return Objects.requireNonNull(creativeController).get();
+        return requireNonNull(creativeController).get();
     }
 
     public void setCreativeController(final Supplier<BlockEntityType<ControllerBlockEntity>> supplier) {
@@ -144,7 +150,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ImporterBlockEntity> getImporter() {
-        return Objects.requireNonNull(importer).get();
+        return requireNonNull(importer).get();
     }
 
     public void setImporter(final Supplier<BlockEntityType<ImporterBlockEntity>> supplier) {
@@ -152,7 +158,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ExporterBlockEntity> getExporter() {
-        return Objects.requireNonNull(exporter).get();
+        return requireNonNull(exporter).get();
     }
 
     public void setExporter(final Supplier<BlockEntityType<ExporterBlockEntity>> supplier) {
@@ -160,7 +166,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<InterfaceBlockEntity> getInterface() {
-        return Objects.requireNonNull(iface).get();
+        return requireNonNull(iface).get();
     }
 
     public void setInterface(final Supplier<BlockEntityType<InterfaceBlockEntity>> supplier) {
@@ -168,7 +174,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ExternalStorageBlockEntity> getExternalStorage() {
-        return Objects.requireNonNull(externalStorage).get();
+        return requireNonNull(externalStorage).get();
     }
 
     public void setExternalStorage(final Supplier<BlockEntityType<ExternalStorageBlockEntity>> supplier) {
@@ -176,7 +182,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<DetectorBlockEntity> getDetector() {
-        return Objects.requireNonNull(detector).get();
+        return requireNonNull(detector).get();
     }
 
     public void setDetector(final Supplier<BlockEntityType<DetectorBlockEntity>> supplier) {
@@ -184,7 +190,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<DestructorBlockEntity> getDestructor() {
-        return Objects.requireNonNull(destructor).get();
+        return requireNonNull(destructor).get();
     }
 
     public void setDestructor(final Supplier<BlockEntityType<DestructorBlockEntity>> supplier) {
@@ -192,7 +198,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<ConstructorBlockEntity> getConstructor() {
-        return Objects.requireNonNull(constructor).get();
+        return requireNonNull(constructor).get();
     }
 
     public void setConstructor(final Supplier<BlockEntityType<ConstructorBlockEntity>> supplier) {
@@ -200,7 +206,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<WirelessTransmitterBlockEntity> getWirelessTransmitter() {
-        return Objects.requireNonNull(wirelessTransmitter).get();
+        return requireNonNull(wirelessTransmitter).get();
     }
 
     public void setWirelessTransmitter(final Supplier<BlockEntityType<WirelessTransmitterBlockEntity>> supplier) {
@@ -208,7 +214,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<StorageMonitorBlockEntity> getStorageMonitor() {
-        return Objects.requireNonNull(storageMonitor).get();
+        return requireNonNull(storageMonitor).get();
     }
 
     public void setStorageMonitor(final Supplier<BlockEntityType<StorageMonitorBlockEntity>> supplier) {
@@ -216,7 +222,7 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<NetworkReceiverBlockEntity> getNetworkReceiver() {
-        return Objects.requireNonNull(networkReceiver).get();
+        return requireNonNull(networkReceiver).get();
     }
 
     public void setNetworkReceiver(final Supplier<BlockEntityType<NetworkReceiverBlockEntity>> supplier) {
@@ -224,12 +230,26 @@ public final class BlockEntities {
     }
 
     public BlockEntityType<NetworkTransmitterBlockEntity> getNetworkTransmitter() {
-        return Objects.requireNonNull(networkTransmitter).get();
+        return requireNonNull(networkTransmitter).get();
     }
 
-    public void setNetworkTransmitter(
-        final Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> supplier
-    ) {
+    public void setNetworkTransmitter(final Supplier<BlockEntityType<NetworkTransmitterBlockEntity>> supplier) {
         this.networkTransmitter = supplier;
+    }
+
+    public BlockEntityType<AbstractPortableGridBlockEntity> getPortableGrid() {
+        return requireNonNull(portableGrid).get();
+    }
+
+    public void setPortableGrid(final Supplier<BlockEntityType<AbstractPortableGridBlockEntity>> supplier) {
+        this.portableGrid = supplier;
+    }
+
+    public BlockEntityType<AbstractPortableGridBlockEntity> getCreativePortableGrid() {
+        return requireNonNull(creativePortableGrid).get();
+    }
+
+    public void setCreativePortableGrid(final Supplier<BlockEntityType<AbstractPortableGridBlockEntity>> supplier) {
+        this.creativePortableGrid = supplier;
     }
 }

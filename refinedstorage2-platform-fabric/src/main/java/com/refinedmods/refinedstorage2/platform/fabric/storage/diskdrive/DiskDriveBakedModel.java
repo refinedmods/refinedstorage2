@@ -1,14 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotator;
+import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotators;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadTranslator;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 class DiskDriveBakedModel extends ForwardingBakedModel {
     private static final QuadTranslator[] TRANSLATORS = new QuadTranslator[8];
-    private static final Map<BiDirection, QuadRotator> ROTATORS = new EnumMap<>(BiDirection.class);
 
     static {
         int i = 0;
@@ -41,21 +39,20 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                 );
             }
         }
-
-        for (final BiDirection direction : BiDirection.values()) {
-            ROTATORS.put(direction, new QuadRotator(direction));
-        }
     }
 
     private final Map<Item, BakedModel> diskModels;
     private final BakedModel inactiveLedModel;
+    private final QuadRotators quadRotators;
 
     DiskDriveBakedModel(final BakedModel baseModel,
                         final Map<Item, BakedModel> diskModels,
-                        final BakedModel inactiveLedModel) {
+                        final BakedModel inactiveLedModel,
+                        final QuadRotators quadRotators) {
         this.wrapped = baseModel;
         this.diskModels = diskModels;
         this.inactiveLedModel = inactiveLedModel;
+        this.quadRotators = quadRotators;
     }
 
     @Override
@@ -91,19 +88,14 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         if (direction == null) {
             return;
         }
-
-        final QuadRotator rotator = ROTATORS.get(direction);
-        context.pushTransform(rotator);
-
+        context.pushTransform(quadRotators.forDirection(direction));
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
-
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
             final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-            if (renderAttachment instanceof DiskDriveDisk[] disks) {
+            if (renderAttachment instanceof Disk[] disks) {
                 emitDiskQuads(blockView, state, pos, randomSupplier, context, disks);
             }
         }
-
         context.popTransform();
     }
 
@@ -112,9 +104,9 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                                final BlockPos pos,
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context,
-                               final DiskDriveDisk[] disks) {
+                               final Disk[] disks) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            final DiskDriveDisk disk = disks[i];
+            final Disk disk = disks[i];
             emitDiskQuads(blockView, state, pos, randomSupplier, context, disk, i);
         }
     }
@@ -124,7 +116,7 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                                final BlockPos pos,
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context,
-                               final DiskDriveDisk disk,
+                               final Disk disk,
                                final int index) {
         if (disk.state() == StorageState.NONE) {
             return;

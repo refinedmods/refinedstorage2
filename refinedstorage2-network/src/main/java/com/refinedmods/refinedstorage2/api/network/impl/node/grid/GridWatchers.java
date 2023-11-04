@@ -44,7 +44,7 @@ public class GridWatchers {
 
     public void attachAll(final Network network) {
         watchers.forEach((watcher, registration) -> {
-            watcher.onNetworkChanged();
+            watcher.clear();
             attachAll(registration, network);
         });
     }
