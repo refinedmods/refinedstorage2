@@ -56,6 +56,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     private final Function<BiDirection, BakedModel> baseModelBakery;
     private final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery;
     private final Function<Vector3f, BakedModel> diskItemModelBakery;
+    private final Function<Vector3f, BakedModel> ledInactiveModelBakery;
 
     private final ItemOverrides overrides = new DiskDriveItemOverrides();
 
@@ -67,12 +68,14 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     DiskDriveBakedModel(final Function<BiDirection, BakedModel> baseModelBakery,
                         final BakedModel baseModel,
                         final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery,
-                        final Function<Vector3f, BakedModel> diskItemModelBakery) {
+                        final Function<Vector3f, BakedModel> diskItemModelBakery,
+                        final Function<Vector3f, BakedModel> ledInactiveModelBakery) {
         super(baseModel);
         this.baseModel = baseModel;
         this.baseModelBakery = baseModelBakery;
         this.diskModelBakery = diskModelBakery;
         this.diskItemModelBakery = diskItemModelBakery;
+        this.ledInactiveModelBakery = ledInactiveModelBakery;
     }
 
     @Override
@@ -129,6 +132,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
             return itemCache.computeIfAbsent(disks, key -> new DiskDriveItemBakedModel(
                 bakedModel,
                 diskItemModelBakery,
+                ledInactiveModelBakery,
                 TRANSLATORS,
                 key
             ));

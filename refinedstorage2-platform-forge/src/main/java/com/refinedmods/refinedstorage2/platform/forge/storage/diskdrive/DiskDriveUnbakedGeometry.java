@@ -23,9 +23,9 @@ import org.joml.Vector3f;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class DiskDriveUnbakedGeometry implements IUnbakedGeometry<DiskDriveUnbakedGeometry> {
-    private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
-    private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
-    private static final ResourceLocation DISK_INACTIVE_MODEL = createIdentifier("block/disk_inactive");
+    private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive/base");
+    private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk/disk");
+    private static final ResourceLocation LED_INACTIVE_MODEL = createIdentifier("block/disk/led_inactive");
 
     DiskDriveUnbakedGeometry() {
     }
@@ -35,7 +35,7 @@ public class DiskDriveUnbakedGeometry implements IUnbakedGeometry<DiskDriveUnbak
                                final IGeometryBakingContext context) {
         modelGetter.apply(BASE_MODEL).resolveParents(modelGetter);
         modelGetter.apply(DISK_MODEL).resolveParents(modelGetter);
-        modelGetter.apply(DISK_INACTIVE_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(LED_INACTIVE_MODEL).resolveParents(modelGetter);
     }
 
     @Override
@@ -49,7 +49,8 @@ public class DiskDriveUnbakedGeometry implements IUnbakedGeometry<DiskDriveUnbak
             getBaseModelBakery(modelState, baker, spriteGetter),
             Objects.requireNonNull(baker.bake(BASE_MODEL, modelState, spriteGetter)),
             getDiskModelBakery(modelState, baker, spriteGetter),
-            getDiskItemModelBakery(modelState, baker, spriteGetter)
+            getItemModelBakery(modelState, baker, spriteGetter, DISK_MODEL),
+            getItemModelBakery(modelState, baker, spriteGetter, LED_INACTIVE_MODEL)
         );
     }
 
@@ -75,14 +76,14 @@ public class DiskDriveUnbakedGeometry implements IUnbakedGeometry<DiskDriveUnbak
         };
     }
 
-    private Function<Vector3f, BakedModel> getDiskItemModelBakery(final ModelState state,
-                                                                  final ModelBaker baker,
-                                                                  final Function<Material, TextureAtlasSprite>
-                                                                      sg) {
+    private Function<Vector3f, BakedModel> getItemModelBakery(final ModelState state,
+                                                              final ModelBaker baker,
+                                                              final Function<Material, TextureAtlasSprite> sg,
+                                                              final ResourceLocation location) {
         return trans -> {
             final Transformation translation = new Transformation(trans, null, null, null);
             final ModelState wrappedState = new SimpleModelState(translation, state.isUvLocked());
-            return baker.bake(DISK_INACTIVE_MODEL, wrappedState, sg);
+            return baker.bake(location, wrappedState, sg);
         };
     }
 }

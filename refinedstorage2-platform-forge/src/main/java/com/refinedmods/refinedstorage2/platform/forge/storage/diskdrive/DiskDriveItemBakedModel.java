@@ -23,6 +23,7 @@ import org.joml.Vector3f;
 class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     private final BakedModel baseModel;
     private final Function<Vector3f, BakedModel> diskBakery;
+    private final Function<Vector3f, BakedModel> inactiveLedBakery;
     private final Vector3f[] translators;
     private final long disks;
     private final Map<Direction, List<BakedQuad>> cache = new EnumMap<>(Direction.class);
@@ -31,11 +32,13 @@ class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
 
     DiskDriveItemBakedModel(final BakedModel baseModel,
                             final Function<Vector3f, BakedModel> diskBakery,
+                            final Function<Vector3f, BakedModel> inactiveLedBakery,
                             final Vector3f[] translators,
                             final long disks) {
         super(baseModel);
         this.baseModel = baseModel;
         this.diskBakery = diskBakery;
+        this.inactiveLedBakery = inactiveLedBakery;
         this.translators = translators;
         this.disks = disks;
     }
@@ -71,6 +74,7 @@ class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
         for (int i = 0; i < translators.length; ++i) {
             if ((disks & (1L << i)) != 0) {
                 quads.addAll(diskBakery.apply(translators[i]).getQuads(state, side, rand));
+                quads.addAll(inactiveLedBakery.apply(translators[i]).getQuads(state, side, rand));
             }
         }
         return quads;

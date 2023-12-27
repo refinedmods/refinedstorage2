@@ -46,14 +46,14 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     private final BakedModel diskModel;
-    private final BakedModel diskInactiveModel;
+    private final BakedModel inactiveLedModel;
 
     DiskDriveBakedModel(final BakedModel baseModel,
                         final BakedModel diskModel,
-                        final BakedModel diskInactiveModel) {
+                        final BakedModel inactiveLedModel) {
         this.wrapped = baseModel;
         this.diskModel = diskModel;
-        this.diskInactiveModel = diskInactiveModel;
+        this.inactiveLedModel = inactiveLedModel;
     }
 
     @Override
@@ -75,7 +75,8 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            diskInactiveModel.emitItemQuads(stack, randomSupplier, context);
+            diskModel.emitItemQuads(stack, randomSupplier, context);
+            inactiveLedModel.emitItemQuads(stack, randomSupplier, context);
             context.popTransform();
         }
     }
