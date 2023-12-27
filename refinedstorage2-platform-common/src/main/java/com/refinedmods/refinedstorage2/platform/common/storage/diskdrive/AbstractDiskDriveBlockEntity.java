@@ -35,6 +35,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -88,9 +89,17 @@ public abstract class AbstractDiskDriveBlockEntity
         getNode().setNormalizer(filter.createNormalizer());
     }
 
-    public static boolean hasDisk(final CompoundTag tag, final int slot) {
-        return tag.contains(TAG_DISK_INVENTORY)
-            && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
+    @Nullable
+    public static Item getDisk(final CompoundTag tag, final int slot) {
+        if (!tag.contains(TAG_DISK_INVENTORY)) {
+            return null;
+        }
+        final CompoundTag diskInventoryTag = tag.getCompound(TAG_DISK_INVENTORY);
+        if (!ContainerUtil.hasItemInSlot(diskInventoryTag, slot)) {
+            return null;
+        }
+        final ItemStack diskStack = ContainerUtil.getItemInSlot(diskInventoryTag, slot);
+        return diskStack.isEmpty() ? null : diskStack.getItem();
     }
 
     void updateDiskStateIfNecessaryInLevel() {

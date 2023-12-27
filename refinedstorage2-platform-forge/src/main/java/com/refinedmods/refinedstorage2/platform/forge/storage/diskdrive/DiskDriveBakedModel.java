@@ -30,6 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
@@ -54,8 +55,8 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
 
     private final BakedModel baseModel;
     private final Function<BiDirection, BakedModel> baseModelBakery;
-    private final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery;
-    private final Function<Vector3f, BakedModel> diskItemModelBakery;
+    private final Map<Item, BiFunction<BiDirection, Vector3f, BakedModel>> diskModelBakeries;
+    private final Map<Item, Function<Vector3f, BakedModel>> diskItemModelBakeries;
     private final Function<Vector3f, BakedModel> ledInactiveModelBakery;
 
     private final ItemOverrides overrides = new DiskDriveItemOverrides();
@@ -63,18 +64,18 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     private final LoadingCache<DiskDriveStateCacheKey, List<BakedQuad>> cache = CacheBuilder
         .newBuilder()
         .build(new DiskDriveCacheLoader());
-    private final Map<Long, DiskDriveItemBakedModel> itemCache = new HashMap<>();
+    private final Map<List<Item>, DiskDriveItemBakedModel> itemCache = new HashMap<>();
 
     DiskDriveBakedModel(final Function<BiDirection, BakedModel> baseModelBakery,
                         final BakedModel baseModel,
-                        final BiFunction<BiDirection, Vector3f, BakedModel> diskModelBakery,
-                        final Function<Vector3f, BakedModel> diskItemModelBakery,
+                        final Map<Item, BiFunction<BiDirection, Vector3f, BakedModel>> diskModelBakeries,
+                        final Map<Item, Function<Vector3f, BakedModel>> diskItemModelBakeries,
                         final Function<Vector3f, BakedModel> ledInactiveModelBakery) {
         super(baseModel);
         this.baseModel = baseModel;
         this.baseModelBakery = baseModelBakery;
-        this.diskModelBakery = diskModelBakery;
-        this.diskItemModelBakery = diskItemModelBakery;
+        this.diskModelBakeries = diskModelBakeries;
+        this.diskItemModelBakeries = diskItemModelBakeries;
         this.ledInactiveModelBakery = ledInactiveModelBakery;
     }
 
@@ -123,18 +124,17 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
             if (tag == null) {
                 return baseModel.getOverrides().resolve(bakedModel, stack, level, entity, seed);
             }
-            long disks = 0;
+            final List<Item> disks = new ArrayList<>();
             for (int i = 0; i < TRANSLATORS.length; ++i) {
-                if (AbstractDiskDriveBlockEntity.hasDisk(tag, i)) {
-                    disks |= 1 << i;
-                }
+                final Item disk = AbstractDiskDriveBlockEntity.getDisk(tag, i);
+                disks.add(disk);
             }
             return itemCache.computeIfAbsent(disks, key -> new DiskDriveItemBakedModel(
                 bakedModel,
-                diskItemModelBakery,
+                diskItemModelBakeries,
                 ledInactiveModelBakery,
                 TRANSLATORS,
-                key
+                disks
             ));
         }
     }
@@ -181,13 +181,24 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
 
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
+        @SuppressWarnings("deprecation")
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
             final List<BakedQuad> quads = new ArrayList<>(getBaseQuads(key.state, key.random, key.side, key.direction));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 final DiskDriveDisk disk = key.disks[i];
-                if (disk.state() != MultiStorageStorageState.NONE) {
-                    quads.addAll(getDiskModel(key.state, key.random, key.side, key.direction, TRANSLATORS[i]));
+                if (disk.state() == MultiStorageStorageState.NONE) {
+                    continue;
                 }
+                final var diskModelBakery = diskModelBakeries.get(disk.item());
+                if (diskModelBakery == null) {
+                    continue;
+                }
+                final List<BakedQuad> diskQuads = diskModelBakery.apply(key.direction, TRANSLATORS[i]).getQuads(
+                    key.state,
+                    key.side,
+                    key.random
+                );
+                quads.addAll(diskQuads);
             }
             return quads;
         }
@@ -198,19 +209,6 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
                                              @Nullable final Direction side,
                                              final BiDirection direction) {
             return baseModelBakery.apply(direction).getQuads(
-                state,
-                side,
-                rand
-            );
-        }
-
-        @SuppressWarnings("deprecation")
-        private List<BakedQuad> getDiskModel(final BlockState state,
-                                             final RandomSource rand,
-                                             @Nullable final Direction side,
-                                             final BiDirection direction,
-                                             final Vector3f translation) {
-            return diskModelBakery.apply(direction, translation).getQuads(
                 state,
                 side,
                 rand

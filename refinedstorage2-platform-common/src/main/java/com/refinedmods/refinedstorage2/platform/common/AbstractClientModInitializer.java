@@ -19,6 +19,8 @@ import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.FluidGri
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterScreen;
+import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockScreen;
@@ -34,10 +36,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractClientModInitializer {
     protected static void registerScreens(final ScreenRegistration registration) {
@@ -81,6 +86,24 @@ public abstract class AbstractClientModInitializer {
                 player,
                 Items.INSTANCE.getWirelessGrid(),
                 Items.INSTANCE.getCreativeWirelessGrid()
+            );
+        }
+    }
+
+    protected static void registerDiskModels() {
+        final ResourceLocation diskModel = createIdentifier("block/disk/disk");
+        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            PlatformApi.INSTANCE.getStorageContainerItemHelper().registerDiskModel(
+                Items.INSTANCE.getItemStorageDisk(variant),
+                diskModel
+            );
+        }
+
+        final ResourceLocation fluidDiskModel = createIdentifier("block/disk/fluid_disk");
+        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            PlatformApi.INSTANCE.getStorageContainerItemHelper().registerDiskModel(
+                Items.INSTANCE.getFluidStorageDisk(variant),
+                fluidDiskModel
             );
         }
     }

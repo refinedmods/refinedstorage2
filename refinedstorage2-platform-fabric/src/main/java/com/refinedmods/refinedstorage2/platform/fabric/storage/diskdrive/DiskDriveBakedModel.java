@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,14 +46,14 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         }
     }
 
-    private final BakedModel diskModel;
+    private final Map<Item, BakedModel> diskModels;
     private final BakedModel inactiveLedModel;
 
     DiskDriveBakedModel(final BakedModel baseModel,
-                        final BakedModel diskModel,
+                        final Map<Item, BakedModel> diskModels,
                         final BakedModel inactiveLedModel) {
         this.wrapped = baseModel;
-        this.diskModel = diskModel;
+        this.diskModels = diskModels;
         this.inactiveLedModel = inactiveLedModel;
     }
 
@@ -71,7 +72,12 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
             return;
         }
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            if (!AbstractDiskDriveBlockEntity.hasDisk(tag, i)) {
+            final Item diskItem = AbstractDiskDriveBlockEntity.getDisk(tag, i);
+            if (diskItem == null) {
+                continue;
+            }
+            final BakedModel diskModel = diskModels.get(diskItem);
+            if (diskModel == null) {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
@@ -117,11 +123,16 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                                final RenderContext context,
                                final DiskDriveDisk[] disks) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            if (disks[i].state() == MultiStorageStorageState.NONE) {
+            final DiskDriveDisk disk = disks[i];
+            if (disk.state() == MultiStorageStorageState.NONE) {
+                continue;
+            }
+            final BakedModel model = diskModels.get(disk.item());
+            if (model == null) {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            diskModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+            model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
             context.popTransform();
         }
     }
