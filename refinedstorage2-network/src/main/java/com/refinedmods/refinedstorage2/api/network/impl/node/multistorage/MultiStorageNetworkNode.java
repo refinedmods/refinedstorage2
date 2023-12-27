@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -169,17 +170,15 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         return cache.length;
     }
 
-    public MultiStorageStorageState getState(final int index) {
-        return computeState(cache[index]);
-    }
-
-    private MultiStorageStorageState computeState(@Nullable final MultiStorageInternalStorage<?> internalStorage) {
-        if (internalStorage == null) {
-            return MultiStorageStorageState.NONE;
-        } else if (!isActive()) {
-            return MultiStorageStorageState.INACTIVE;
+    public StorageState getState(final int index) {
+        final var storage = cache[index];
+        if (storage == null) {
+            return StorageState.NONE;
         }
-        return internalStorage.computeState();
+        if (!isActive()) {
+            return StorageState.INACTIVE;
+        }
+        return storage.getState();
     }
 
     @Override

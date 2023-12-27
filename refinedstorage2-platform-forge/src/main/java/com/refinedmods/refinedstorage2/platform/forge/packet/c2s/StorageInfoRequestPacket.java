@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.UUID;

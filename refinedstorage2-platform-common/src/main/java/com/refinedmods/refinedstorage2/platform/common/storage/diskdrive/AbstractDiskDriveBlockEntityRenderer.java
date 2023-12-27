@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.common.support.render.CubeBuilder;
 
@@ -94,7 +94,7 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
                             final int y,
                             final int x,
                             final DiskDriveDisk disk) {
-        if (disk.state() == MultiStorageStorageState.NONE) {
+        if (disk.state() == StorageState.NONE) {
             return;
         }
         final int color = getColor(disk.state());
@@ -119,7 +119,7 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
         );
     }
 
-    private int getColor(final MultiStorageStorageState state) {
+    private int getColor(final StorageState state) {
         return switch (state) {
             case NONE -> 0;
             case INACTIVE -> 0x323232;

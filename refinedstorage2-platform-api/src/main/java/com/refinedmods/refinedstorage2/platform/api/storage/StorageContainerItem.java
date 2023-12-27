@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 
 import java.util.Optional;

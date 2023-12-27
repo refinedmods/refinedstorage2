@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItem;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.storage.AbstractStorageContainerMenu;
