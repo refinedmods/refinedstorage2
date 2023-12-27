@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.api.storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.List;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -16,12 +15,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public abstract class AbstractStorageContainerBlockItem extends BlockItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageContainerBlockItem.class);
+
     protected final StorageContainerItemHelper helper;
 
     protected AbstractStorageContainerBlockItem(
@@ -60,7 +62,11 @@ public abstract class AbstractStorageContainerBlockItem extends BlockItem {
     private void updateBlockEntityTag(final BlockPos pos,
                                       final Level level,
                                       final ItemStack stack) {
-        helper.getId(stack).ifPresent(id -> updateBlockEntityWithStorageId(pos, level.getBlockEntity(pos), id));
+        if (level.getBlockEntity(pos) instanceof ItemTransferableStorageBlockEntity blockEntity) {
+            helper.transferToBlockEntity(stack, blockEntity);
+        } else {
+            LOGGER.warn("Storage could not be set, block entity does not exist yet at {}", pos);
+        }
     }
 
     @Override
@@ -84,6 +90,4 @@ public abstract class AbstractStorageContainerBlockItem extends BlockItem {
 
     @Nullable
     protected abstract ItemStack createSecondaryDisassemblyByproduct(int count);
-
-    protected abstract void updateBlockEntityWithStorageId(BlockPos pos, @Nullable BlockEntity blockEntity, UUID id);
 }

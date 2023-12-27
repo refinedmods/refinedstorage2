@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.LongFunction;
 import javax.annotation.Nullable;
 
@@ -38,9 +37,7 @@ public interface StorageContainerItemHelper {
                          LongFunction<String> amountFormatter,
                          boolean hasCapacity);
 
-    // TODO: remove - leaky abstraction
-    Optional<UUID> getId(ItemStack stack);
+    void transferToBlockEntity(ItemStack stack, ItemTransferableStorageBlockEntity blockEntity);
 
-    // TODO: remove - leaky abstraction
-    void setId(ItemStack stack, UUID id);
+    void transferFromBlockEntity(ItemStack stack, ItemTransferableStorageBlockEntity blockEntity);
 }

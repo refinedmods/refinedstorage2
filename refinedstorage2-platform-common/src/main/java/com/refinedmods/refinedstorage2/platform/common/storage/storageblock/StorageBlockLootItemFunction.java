@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.ItemTransferableStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
-
-import java.util.UUID;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,19 +24,9 @@ class StorageBlockLootItemFunction implements LootItemFunction {
     @Override
     public ItemStack apply(final ItemStack stack, final LootContext lootContext) {
         final BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
-        if (blockEntity instanceof AbstractStorageBlockBlockEntity<?> storageBlockEntity) {
-            apply(stack, storageBlockEntity);
+        if (blockEntity instanceof ItemTransferableStorageBlockEntity transferable) {
+            PlatformApi.INSTANCE.getStorageContainerItemHelper().transferFromBlockEntity(stack, transferable);
         }
         return stack;
-    }
-
-    private void apply(final ItemStack stack, final AbstractStorageBlockBlockEntity<?> storageBlockEntity) {
-        final UUID storageId = storageBlockEntity.getStorageId();
-        if (storageId != null) {
-            LOGGER.debug("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
-            PlatformApi.INSTANCE.getStorageContainerItemHelper().setId(stack, storageId);
-        } else {
-            LOGGER.warn("Storage block {} has no associated storage ID!", storageBlockEntity.getBlockPos());
-        }
     }
 }

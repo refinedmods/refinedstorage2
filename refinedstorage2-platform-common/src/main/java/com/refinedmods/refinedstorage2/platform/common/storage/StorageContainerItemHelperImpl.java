@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.ItemTransferableStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
@@ -23,8 +24,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageContainerItemHelperImpl implements StorageContainerItemHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageContainerItemHelperImpl.class);
     private static final String TAG_ID = "id";
 
     @Override
@@ -37,13 +41,6 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
         final UUID id = UUID.randomUUID();
         setId(stack, id);
         storageRepository.set(id, storage);
-    }
-
-    @Override
-    public void setId(final ItemStack stack, final UUID id) {
-        final CompoundTag tag = stack.hasTag() && stack.getTag() != null ? stack.getTag() : new CompoundTag();
-        tag.putUUID(TAG_ID, id);
-        stack.setTag(tag);
     }
 
     @Override
@@ -120,10 +117,37 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
     }
 
     @Override
-    public Optional<UUID> getId(final ItemStack stack) {
+    public void transferToBlockEntity(final ItemStack stack, final ItemTransferableStorageBlockEntity blockEntity) {
+        getId(stack).ifPresentOrElse(
+            id -> {
+                blockEntity.modifyStorageIdAfterAlreadyInitialized(id);
+                LOGGER.debug("Transferred storage {} to block entity {}", id, blockEntity);
+            },
+            () -> LOGGER.warn("Could not transfer storage from stack to block entity {}, it has no id!", blockEntity)
+        );
+    }
+
+    @Override
+    public void transferFromBlockEntity(final ItemStack stack, final ItemTransferableStorageBlockEntity blockEntity) {
+        final UUID storageId = blockEntity.getStorageId();
+        if (storageId != null) {
+            LOGGER.debug("Transferred storage {} from block entity {} to stack", storageId, blockEntity);
+            setId(stack, storageId);
+        } else {
+            LOGGER.warn("Could not transfer storage {} to stack, there is no storage ID!", blockEntity);
+        }
+    }
+
+    private Optional<UUID> getId(final ItemStack stack) {
         if (stack.hasTag() && stack.getTag() != null && stack.getTag().hasUUID(TAG_ID)) {
             return Optional.of(stack.getTag().getUUID(TAG_ID));
         }
         return Optional.empty();
+    }
+
+    private void setId(final ItemStack stack, final UUID id) {
+        final CompoundTag tag = stack.hasTag() && stack.getTag() != null ? stack.getTag() : new CompoundTag();
+        tag.putUUID(TAG_ID, id);
+        stack.setTag(tag);
     }
 }
