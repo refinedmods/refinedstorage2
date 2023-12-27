@@ -1,6 +1,6 @@
 {
   "textures": {
-    "base": "refinedstorage2:block/disk_drive/disk"
+    "base": "refinedstorage2:block/disk/fluid_disk"
   },
   "elements": [
     {
@@ -205,48 +205,6 @@
             3,
             7,
             4
-          ],
-          "texture": "#base"
-        }
-      }
-    },
-    {
-      "name": "Disk led",
-      "from": [
-        12,
-        14,
-        -1
-      ],
-      "to": [
-        13,
-        15,
-        0
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          20,
-          23,
-          7
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            15,
-            15,
-            16,
-            16
-          ],
-          "texture": "#base"
-        },
-        "down": {
-          "uv": [
-            15,
-            15,
-            16,
-            16
           ],
           "texture": "#base"
         }

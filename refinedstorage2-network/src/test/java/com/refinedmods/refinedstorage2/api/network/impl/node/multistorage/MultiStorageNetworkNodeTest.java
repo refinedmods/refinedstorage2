@@ -117,18 +117,15 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        // Act
-        final MultiStorageState states = sut.createState();
-
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
-        assertThat(states.getStates())
-            .hasSize(9)
-            .allMatch(state -> state == MultiStorageStorageState.NONE);
         assertThat(sut.getSize()).isEqualTo(9);
+        for (int i = 0; i < 9; ++i) {
+            assertThat(sut.getState(i)).isEqualTo(MultiStorageStorageState.NONE);
+        }
     }
 
     @ParameterizedTest
@@ -155,20 +152,18 @@ class MultiStorageNetworkNodeTest {
         sut.setProvider(provider);
         sut.setActive(active);
 
-        final MultiStorageState state = sut.createState();
-
         // Assert
-        assertThat(state.getState(0)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(1)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(2)).isEqualTo(
+        assertThat(sut.getState(0)).isEqualTo(MultiStorageStorageState.NONE);
+        assertThat(sut.getState(1)).isEqualTo(MultiStorageStorageState.NONE);
+        assertThat(sut.getState(2)).isEqualTo(
             active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(3)).isEqualTo(
+        assertThat(sut.getState(3)).isEqualTo(
             active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(4)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(5)).isEqualTo(
+        assertThat(sut.getState(4)).isEqualTo(MultiStorageStorageState.NONE);
+        assertThat(sut.getState(5)).isEqualTo(
             active ? MultiStorageStorageState.NEAR_CAPACITY : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(6)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(7)).isEqualTo(
+        assertThat(sut.getState(6)).isEqualTo(MultiStorageStorageState.NONE);
+        assertThat(sut.getState(7)).isEqualTo(
             active ? MultiStorageStorageState.FULL : MultiStorageStorageState.INACTIVE);
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_STORAGE * 4));
     }
@@ -249,11 +244,10 @@ class MultiStorageNetworkNodeTest {
         sut.onStorageChanged(9);
 
         // Assert
-        final MultiStorageState states = sut.createState();
-
-        assertThat(states.getStates())
-            .hasSize(9)
-            .allMatch(state -> state == MultiStorageStorageState.NONE);
+        assertThat(sut.getSize()).isEqualTo(9);
+        for (int i = 0; i < 9; ++i) {
+            assertThat(sut.getState(i)).isEqualTo(MultiStorageStorageState.NONE);
+        }
     }
 
     @Test

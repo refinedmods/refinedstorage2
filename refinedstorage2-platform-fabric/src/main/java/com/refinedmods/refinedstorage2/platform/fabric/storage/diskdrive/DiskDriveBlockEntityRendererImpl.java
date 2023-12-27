@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntityRenderer;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -29,12 +29,12 @@ public class DiskDriveBlockEntityRendererImpl<T extends AbstractDiskDriveBlockEn
     }
 
     @Override
-    protected MultiStorageState getDriveState(final AbstractDiskDriveBlockEntity blockEntity) {
+    protected DiskDriveDisk[] getDisks(final AbstractDiskDriveBlockEntity blockEntity) {
         if (!(blockEntity instanceof FabricDiskDriveBlockEntity fabricDiskDriveBlockEntity)) {
             return null;
         }
-        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof MultiStorageState driveState) {
-            return driveState;
+        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof DiskDriveDisk[] disks) {
+            return disks;
         }
         return null;
     }

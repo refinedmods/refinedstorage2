@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 
 import javax.annotation.Nonnull;
 
@@ -11,7 +11,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 
 public class ForgeDiskDriveBlockEntity extends AbstractDiskDriveBlockEntity {
-    public static final ModelProperty<MultiStorageState> STATE_PROPERTY = new ModelProperty<>();
+    public static final ModelProperty<DiskDriveDisk[]> DISKS_PROPERTY = new ModelProperty<>();
 
     public ForgeDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(pos, state);
@@ -26,6 +26,6 @@ public class ForgeDiskDriveBlockEntity extends AbstractDiskDriveBlockEntity {
     @Nonnull
     @Override
     public ModelData getModelData() {
-        return ModelData.builder().with(STATE_PROPERTY, driveState).build();
+        return ModelData.builder().with(DISKS_PROPERTY, disks).build();
     }
 }

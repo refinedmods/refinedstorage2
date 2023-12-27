@@ -292,6 +292,8 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
     }
 
     private void registerCustomModels() {
+        registerDiskModels();
+
         final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
         final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 

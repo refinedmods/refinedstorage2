@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,20 +24,23 @@ import org.joml.Vector3f;
 
 class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     private final BakedModel baseModel;
-    private final Function<Vector3f, BakedModel> diskBakery;
+    private final Map<Item, Function<Vector3f, BakedModel>> diskItemModelBakeries;
+    private final Function<Vector3f, BakedModel> inactiveLedBakery;
     private final Vector3f[] translators;
-    private final long disks;
     private final Map<Direction, List<BakedQuad>> cache = new EnumMap<>(Direction.class);
     @Nullable
     private List<BakedQuad> noSideCache;
+    private final List<Item> disks;
 
     DiskDriveItemBakedModel(final BakedModel baseModel,
-                            final Function<Vector3f, BakedModel> diskBakery,
+                            final Map<Item, Function<Vector3f, BakedModel>> diskItemModelBakeries,
+                            final Function<Vector3f, BakedModel> inactiveLedBakery,
                             final Vector3f[] translators,
-                            final long disks) {
+                            final List<Item> disks) {
         super(baseModel);
         this.baseModel = baseModel;
-        this.diskBakery = diskBakery;
+        this.diskItemModelBakeries = diskItemModelBakeries;
+        this.inactiveLedBakery = inactiveLedBakery;
         this.translators = translators;
         this.disks = disks;
     }
@@ -62,18 +67,35 @@ class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     @SuppressWarnings("deprecation")
     private List<BakedQuad> createQuads(@Nullable final BlockState state,
                                         @Nullable final Direction side,
-                                        @Nonnull final RandomSource rand) {
+                                        final RandomSource rand) {
         final List<BakedQuad> quads = new ArrayList<>(super.getQuads(
             state,
             side,
             rand
         ));
         for (int i = 0; i < translators.length; ++i) {
-            if ((disks & (1L << i)) != 0) {
-                quads.addAll(diskBakery.apply(translators[i]).getQuads(state, side, rand));
-            }
+            final Item disk = disks.get(i);
+            final List<BakedQuad> diskQuads = getDiskQuads(state, side, rand, disk, i);
+            quads.addAll(diskQuads);
+            quads.addAll(inactiveLedBakery.apply(translators[i]).getQuads(state, side, rand));
         }
         return quads;
+    }
+
+    @SuppressWarnings("deprecation")
+    private List<BakedQuad> getDiskQuads(@Nullable final BlockState state,
+                                         @Nullable final Direction side,
+                                         final RandomSource rand,
+                                         @Nullable final Item diskItem,
+                                         final int i) {
+        if (diskItem == null) {
+            return Collections.emptyList();
+        }
+        final Function<Vector3f, BakedModel> diskModelBakery = diskItemModelBakeries.get(diskItem);
+        if (diskModelBakery == null) {
+            return Collections.emptyList();
+        }
+        return diskModelBakery.apply(translators[i]).getQuads(state, side, rand);
     }
 
     @Override

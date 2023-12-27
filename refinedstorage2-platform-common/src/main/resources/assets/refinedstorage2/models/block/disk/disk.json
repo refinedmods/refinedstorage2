@@ -1,6 +1,6 @@
 {
   "textures": {
-    "base": "refinedstorage2:block/disk_drive/disk"
+    "base": "refinedstorage2:block/disk/disk"
   },
   "elements": [
     {

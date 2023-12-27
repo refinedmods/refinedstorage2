@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.common.support.render.CubeBuilder;
@@ -33,7 +32,7 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
     }
 
     @Nullable
-    protected abstract MultiStorageState getDriveState(T blockEntity);
+    protected abstract DiskDriveDisk[] getDisks(T blockEntity);
 
     @Override
     public void render(final T entity,
@@ -61,7 +60,7 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
                         final PoseStack poseStack,
                         final MultiBufferSource vertexConsumers,
                         final BiDirection direction) {
-        final MultiStorageState driveState = getDriveState(entity);
+        final DiskDriveDisk[] disks = getDisks(entity);
 
         poseStack.pushPose();
 
@@ -71,21 +70,21 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
 
         final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderType);
 
-        if (driveState != null) {
-            renderDisks(poseStack, driveState, vertexConsumer);
+        if (disks != null) {
+            renderDisks(poseStack, disks, vertexConsumer);
         }
 
         poseStack.popPose();
     }
 
     private void renderDisks(final PoseStack poseStack,
-                             final MultiStorageState driveState,
+                             final DiskDriveDisk[] disks,
                              final VertexConsumer vertexConsumer) {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                final MultiStorageStorageState state = driveState.getState(i++);
-                renderDisk(poseStack, vertexConsumer, y, x, state);
+                final DiskDriveDisk disk = disks[i++];
+                renderDisk(poseStack, vertexConsumer, y, x, disk);
             }
         }
     }
@@ -94,19 +93,15 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
                             final VertexConsumer vertexConsumer,
                             final int y,
                             final int x,
-                            final MultiStorageStorageState state) {
-        if (state == MultiStorageStorageState.NONE) {
+                            final DiskDriveDisk disk) {
+        if (disk.state() == MultiStorageStorageState.NONE) {
             return;
         }
-
-        final int color = getColor(state);
-
+        final int color = getColor(disk.state());
         final float x1 = LED_X1 - (x * 7F);
         final float y1 = LED_Y1 - (y * 3F);
-
         final float x2 = LED_X2 - (x * 7F);
         final float y2 = LED_Y2 - (y * 3F);
-
         CubeBuilder.INSTANCE.putCube(
             poseStack,
             vertexConsumer,

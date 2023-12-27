@@ -79,6 +79,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         registerGridSynchronizers();
         registerResourceRendering();
         registerAlternativeGridHints();
+        registerDiskModels();
     }
 
     @SubscribeEvent
@@ -96,6 +97,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onRegisterModelGeometry(final ModelEvent.RegisterGeometryLoaders e) {
+        registerDiskModels();
         e.register(DISK_DRIVE.getPath(), new DiskDriveGeometryLoader());
     }
 

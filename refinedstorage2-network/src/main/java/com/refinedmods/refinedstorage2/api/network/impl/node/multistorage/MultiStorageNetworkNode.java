@@ -165,17 +165,21 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         return energyUsage + (energyUsagePerStorage * activeStorages);
     }
 
-    public MultiStorageState createState() {
-        return MultiStorageState.of(cache.length, idx -> getState(cache[idx]));
+    public int getSize() {
+        return cache.length;
     }
 
-    private MultiStorageStorageState getState(@Nullable final MultiStorageInternalStorage<?> internalStorage) {
+    public MultiStorageStorageState getState(final int index) {
+        return computeState(cache[index]);
+    }
+
+    private MultiStorageStorageState computeState(@Nullable final MultiStorageInternalStorage<?> internalStorage) {
         if (internalStorage == null) {
             return MultiStorageStorageState.NONE;
         } else if (!isActive()) {
             return MultiStorageStorageState.INACTIVE;
         }
-        return internalStorage.getState();
+        return internalStorage.computeState();
     }
 
     @Override
@@ -191,10 +195,6 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
             return Optional.of((Storage<T>) storage);
         }
         return Optional.empty();
-    }
-
-    public int getSize() {
-        return cache.length;
     }
 
     private record StorageChange(boolean removed,

@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -22,7 +21,7 @@ import javax.annotation.Nullable;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.ByteTag;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -36,6 +35,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -51,10 +51,12 @@ public abstract class AbstractDiskDriveBlockEntity
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
 
     private static final String TAG_DISK_INVENTORY = "inv";
-    private static final String TAG_STATES = "states";
+    private static final String TAG_DISKS = "states";
+    private static final String TAG_DISK_STATE = "s";
+    private static final String TAG_DISK_ITEM_ID = "i";
 
     @Nullable
-    protected MultiStorageState driveState;
+    protected DiskDriveDisk[] disks;
 
     private final DiskDriveInventory diskInventory;
     private final FilterWithFuzzyMode filter;
@@ -87,9 +89,17 @@ public abstract class AbstractDiskDriveBlockEntity
         getNode().setNormalizer(filter.createNormalizer());
     }
 
-    public static boolean hasDisk(final CompoundTag tag, final int slot) {
-        return tag.contains(TAG_DISK_INVENTORY)
-            && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
+    @Nullable
+    public static Item getDisk(final CompoundTag tag, final int slot) {
+        if (!tag.contains(TAG_DISK_INVENTORY)) {
+            return null;
+        }
+        final CompoundTag diskInventoryTag = tag.getCompound(TAG_DISK_INVENTORY);
+        if (!ContainerUtil.hasItemInSlot(diskInventoryTag, slot)) {
+            return null;
+        }
+        final ItemStack diskStack = ContainerUtil.getItemInSlot(diskInventoryTag, slot);
+        return diskStack.isEmpty() ? null : diskStack.getItem();
     }
 
     void updateDiskStateIfNecessaryInLevel() {
@@ -199,23 +209,29 @@ public abstract class AbstractDiskDriveBlockEntity
         updateBlock();
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private void fromClientTag(final CompoundTag tag) {
-        if (!tag.contains(TAG_STATES)) {
+        if (!tag.contains(TAG_DISKS)) {
             return;
         }
-        final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
-        driveState = MultiStorageState.of(
-            statesList.size(),
-            idx -> {
-                final int ordinal = ((ByteTag) statesList.get(idx)).getAsInt();
-                final MultiStorageStorageState[] values = MultiStorageStorageState.values();
-                if (ordinal < 0 || ordinal >= values.length) {
-                    return MultiStorageStorageState.NONE;
-                }
-                return values[ordinal];
-            }
-        );
+        final ListTag disksList = tag.getList(TAG_DISKS, Tag.TAG_COMPOUND);
+        disks = new DiskDriveDisk[disksList.size()];
+        for (int i = 0; i < disksList.size(); ++i) {
+            final CompoundTag diskTag = disksList.getCompound(i);
+            disks[i] = BuiltInRegistries.ITEM.getHolder(diskTag.getInt(TAG_DISK_ITEM_ID))
+                .map(item -> new DiskDriveDisk(item.value(), getState(diskTag)))
+                .orElse(new DiskDriveDisk(null, MultiStorageStorageState.NONE));
+        }
         onDriveStateUpdated();
+    }
+
+    private MultiStorageStorageState getState(final CompoundTag tag) {
+        final int stateOrdinal = tag.getByte(TAG_DISK_STATE);
+        final MultiStorageStorageState[] values = MultiStorageStorageState.values();
+        if (stateOrdinal < 0 || stateOrdinal >= values.length) {
+            return MultiStorageStorageState.NONE;
+        }
+        return values[stateOrdinal];
     }
 
     protected void onDriveStateUpdated() {
@@ -228,17 +244,24 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     public CompoundTag getUpdateTag() {
         final CompoundTag tag = new CompoundTag();
         // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
         if (getNode().getNetwork() == null) {
             return tag;
         }
-        final ListTag statesList = new ListTag();
-        for (final MultiStorageStorageState state : getNode().createState().getStates()) {
-            statesList.add(ByteTag.valueOf((byte) state.ordinal()));
+        final ListTag disksList = new ListTag();
+        for (int i = 0; i < getNode().getSize(); ++i) {
+            final CompoundTag disk = new CompoundTag();
+            disk.putByte(TAG_DISK_STATE, (byte) getNode().getState(i).ordinal());
+            final ItemStack diskItem = diskInventory.getItem(i);
+            if (!diskItem.isEmpty()) {
+                disk.putInt(TAG_DISK_ITEM_ID, BuiltInRegistries.ITEM.getId(diskItem.getItem()));
+            }
+            disksList.add(disk);
         }
-        tag.put(TAG_STATES, statesList);
+        tag.put(TAG_DISKS, disksList);
         return tag;
     }
 

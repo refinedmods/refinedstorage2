@@ -82,6 +82,7 @@ public class ConfigurationCardItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private void tryTransferUpgrades(final Player player, final ConfigurationCardTarget target, final CompoundTag tag) {
         final ListTag upgradesTag = tag.getList(TAG_UPGRADES, Tag.TAG_STRING);
         for (final Tag upgradeItemTag : upgradesTag) {
@@ -110,6 +111,7 @@ public class ConfigurationCardItem extends Item {
         return InteractionResult.CONSUME;
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private void writeConfiguration(final ItemStack stack,
                                     final Player player,
                                     final ConfigurationCardTarget target,
@@ -128,6 +130,7 @@ public class ConfigurationCardItem extends Item {
         return tag;
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private ListTag createUpgradesTag(final ConfigurationCardTarget target) {
         final ListTag tag = new ListTag();
         target.getUpgradeItems().forEach(item -> {
@@ -181,11 +184,13 @@ public class ConfigurationCardItem extends Item {
     }
 
     @Nullable
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private BlockEntityType<?> getConfiguredType(final CompoundTag tag) {
         final ResourceLocation type = new ResourceLocation(tag.getString(TAG_TYPE));
         return BuiltInRegistries.BLOCK_ENTITY_TYPE.get(type);
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private MutableComponent getConfiguredTypeTranslation(final BlockEntityType<?> type) {
         final ResourceLocation typeId = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(type);
         if (typeId == null) {
