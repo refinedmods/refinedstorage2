@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -124,7 +125,7 @@ class MultiStorageNetworkNodeTest {
         assertThat(networkStorage.getStored()).isZero();
         assertThat(sut.getSize()).isEqualTo(9);
         for (int i = 0; i < 9; ++i) {
-            assertThat(sut.getState(i)).isEqualTo(MultiStorageStorageState.NONE);
+            assertThat(sut.getState(i)).isEqualTo(StorageState.NONE);
         }
     }
 
@@ -153,18 +154,14 @@ class MultiStorageNetworkNodeTest {
         sut.setActive(active);
 
         // Assert
-        assertThat(sut.getState(0)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(sut.getState(1)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(sut.getState(2)).isEqualTo(
-            active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(sut.getState(3)).isEqualTo(
-            active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(sut.getState(4)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(sut.getState(5)).isEqualTo(
-            active ? MultiStorageStorageState.NEAR_CAPACITY : MultiStorageStorageState.INACTIVE);
-        assertThat(sut.getState(6)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(sut.getState(7)).isEqualTo(
-            active ? MultiStorageStorageState.FULL : MultiStorageStorageState.INACTIVE);
+        assertThat(sut.getState(0)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(1)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(2)).isEqualTo(active ? StorageState.NORMAL : StorageState.INACTIVE);
+        assertThat(sut.getState(3)).isEqualTo(active ? StorageState.NORMAL : StorageState.INACTIVE);
+        assertThat(sut.getState(4)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(5)).isEqualTo(active ? StorageState.NEAR_CAPACITY : StorageState.INACTIVE);
+        assertThat(sut.getState(6)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(7)).isEqualTo(active ? StorageState.FULL : StorageState.INACTIVE);
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_STORAGE * 4));
     }
 
@@ -246,7 +243,7 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(sut.getSize()).isEqualTo(9);
         for (int i = 0; i < 9; ++i) {
-            assertThat(sut.getState(i)).isEqualTo(MultiStorageStorageState.NONE);
+            assertThat(sut.getState(i)).isEqualTo(StorageState.NONE);
         }
     }
 

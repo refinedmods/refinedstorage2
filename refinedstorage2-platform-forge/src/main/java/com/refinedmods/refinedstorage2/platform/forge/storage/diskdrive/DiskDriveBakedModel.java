@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
@@ -195,7 +195,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         private List<BakedQuad> getDiskQuads(final DiskDriveStateCacheKey key,
                                              final DiskDriveDisk disk,
                                              final int index) {
-            if (disk.state() == MultiStorageStorageState.NONE) {
+            if (disk.state() == StorageState.NONE) {
                 return Collections.emptyList();
             }
             final var diskModelBakery = diskModelBakeries.get(disk.item());

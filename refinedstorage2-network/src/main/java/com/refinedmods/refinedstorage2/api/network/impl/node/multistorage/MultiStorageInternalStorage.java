@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
@@ -14,13 +14,11 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
-    private static final double NEAR_CAPACITY_THRESHOLD = .75;
-
     private final Storage<T> delegate;
     private final StorageChannelType<T> storageChannelType;
     @Nullable
     private final MultiStorageListener listener;
-    private MultiStorageStorageState state;
+    private StorageState state;
 
     public MultiStorageInternalStorage(final Storage<T> delegate,
                                        final StorageChannelType<T> storageChannelType,
@@ -28,33 +26,19 @@ public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
         this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
-        this.state = computeState();
+        this.state = getState();
+    }
+
+    StorageState getState() {
+        return StorageState.compute(delegate);
     }
 
     public StorageChannelType<T> getStorageChannelType() {
         return storageChannelType;
     }
 
-    public MultiStorageStorageState computeState() {
-        if (delegate instanceof LimitedStorage<?> limitedStorage) {
-            return computeState(limitedStorage.getCapacity());
-        }
-        return MultiStorageStorageState.NORMAL;
-    }
-
-    private MultiStorageStorageState computeState(final long capacity) {
-        final double fullness = (double) delegate.getStored() / capacity;
-        if (fullness >= 1D) {
-            return MultiStorageStorageState.FULL;
-        } else if (fullness >= NEAR_CAPACITY_THRESHOLD) {
-            return MultiStorageStorageState.NEAR_CAPACITY;
-        } else {
-            return MultiStorageStorageState.NORMAL;
-        }
-    }
-
     private void checkStateChanged() {
-        final MultiStorageStorageState currentState = computeState();
+        final StorageState currentState = getState();
         if (state != currentState) {
             this.state = currentState;
             notifyListener();

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -220,16 +220,16 @@ public abstract class AbstractDiskDriveBlockEntity
             final CompoundTag diskTag = disksList.getCompound(i);
             disks[i] = BuiltInRegistries.ITEM.getHolder(diskTag.getInt(TAG_DISK_ITEM_ID))
                 .map(item -> new DiskDriveDisk(item.value(), getState(diskTag)))
-                .orElse(new DiskDriveDisk(null, MultiStorageStorageState.NONE));
+                .orElse(new DiskDriveDisk(null, StorageState.NONE));
         }
         onDriveStateUpdated();
     }
 
-    private MultiStorageStorageState getState(final CompoundTag tag) {
+    private StorageState getState(final CompoundTag tag) {
         final int stateOrdinal = tag.getByte(TAG_DISK_STATE);
-        final MultiStorageStorageState[] values = MultiStorageStorageState.values();
+        final StorageState[] values = StorageState.values();
         if (stateOrdinal < 0 || stateOrdinal >= values.length) {
-            return MultiStorageStorageState.NONE;
+            return StorageState.NONE;
         }
         return values[stateOrdinal];
     }

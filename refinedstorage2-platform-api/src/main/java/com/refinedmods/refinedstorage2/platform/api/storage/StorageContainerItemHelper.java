@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 
 import java.util.List;
 import java.util.Map;
