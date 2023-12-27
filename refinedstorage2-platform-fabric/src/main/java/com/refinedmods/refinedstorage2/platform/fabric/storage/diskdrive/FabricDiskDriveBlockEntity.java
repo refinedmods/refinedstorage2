@@ -16,6 +16,6 @@ public class FabricDiskDriveBlockEntity extends AbstractDiskDriveBlockEntity imp
     @Override
     @Nullable
     public Object getRenderAttachmentData() {
-        return driveState;
+        return disks;
     }
 }

@@ -28,21 +28,21 @@ public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
         this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
-        this.state = getState();
+        this.state = computeState();
     }
 
     public StorageChannelType<T> getStorageChannelType() {
         return storageChannelType;
     }
 
-    public MultiStorageStorageState getState() {
+    public MultiStorageStorageState computeState() {
         if (delegate instanceof LimitedStorage<?> limitedStorage) {
-            return getStateWithCapacity(limitedStorage.getCapacity());
+            return computeState(limitedStorage.getCapacity());
         }
         return MultiStorageStorageState.NORMAL;
     }
 
-    private MultiStorageStorageState getStateWithCapacity(final long capacity) {
+    private MultiStorageStorageState computeState(final long capacity) {
         final double fullness = (double) delegate.getStored() / capacity;
         if (fullness >= 1D) {
             return MultiStorageStorageState.FULL;
@@ -54,7 +54,7 @@ public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
     }
 
     private void checkStateChanged() {
-        final MultiStorageStorageState currentState = getState();
+        final MultiStorageStorageState currentState = computeState();
         if (state != currentState) {
             this.state = currentState;
             notifyListener();

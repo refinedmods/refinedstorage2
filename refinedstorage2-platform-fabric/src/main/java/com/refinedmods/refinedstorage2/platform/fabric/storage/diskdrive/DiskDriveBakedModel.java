@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotator;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadTranslator;
@@ -102,8 +102,8 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
 
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
             final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-            if (renderAttachment instanceof MultiStorageState states) {
-                emitDiskQuads(blockView, state, pos, randomSupplier, context, states);
+            if (renderAttachment instanceof DiskDriveDisk[] disks) {
+                emitDiskQuads(blockView, state, pos, randomSupplier, context, disks);
             }
         }
 
@@ -115,9 +115,9 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                                final BlockPos pos,
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context,
-                               final MultiStorageState states) {
+                               final DiskDriveDisk[] disks) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            if (states.getState(i) == MultiStorageStorageState.NONE) {
+            if (disks[i].state() == MultiStorageStorageState.NONE) {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);

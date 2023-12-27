@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveDisk;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 
 import java.util.ArrayList;
@@ -97,14 +97,14 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         if (direction == null) {
             return super.getQuads(state, side, rand);
         }
-        final MultiStorageState driveState = extraData.get(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
-        if (driveState == null) {
+        final DiskDriveDisk[] disks = extraData.get(ForgeDiskDriveBlockEntity.DISKS_PROPERTY);
+        if (disks == null) {
             return super.getQuads(state, side, rand);
         }
         final DiskDriveStateCacheKey cacheKey = new DiskDriveStateCacheKey(
             state,
             side,
-            driveState.getStates(),
+            disks,
             rand,
             direction
         );
@@ -143,18 +143,18 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         private final BlockState state;
         @Nullable
         private final Direction side;
-        private final MultiStorageStorageState[] diskStates;
+        private final DiskDriveDisk[] disks;
         private final RandomSource random;
         private final BiDirection direction;
 
         DiskDriveStateCacheKey(final BlockState state,
                                @Nullable final Direction side,
-                               final MultiStorageStorageState[] diskStates,
+                               final DiskDriveDisk[] disks,
                                final RandomSource random,
                                final BiDirection direction) {
             this.state = state;
             this.side = side;
-            this.diskStates = diskStates;
+            this.disks = disks;
             this.random = random;
             this.direction = direction;
         }
@@ -168,13 +168,13 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
                 return false;
             }
             final DiskDriveStateCacheKey that = (DiskDriveStateCacheKey) o;
-            return state.equals(that.state) && side == that.side && Arrays.equals(diskStates, that.diskStates);
+            return state.equals(that.state) && side == that.side && Arrays.equals(disks, that.disks);
         }
 
         @Override
         public int hashCode() {
             int result = Objects.hash(state, side);
-            result = 31 * result + Arrays.hashCode(diskStates);
+            result = 31 * result + Arrays.hashCode(disks);
             return result;
         }
     }
@@ -184,8 +184,8 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
             final List<BakedQuad> quads = new ArrayList<>(getBaseQuads(key.state, key.random, key.side, key.direction));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
-                final MultiStorageStorageState diskState = key.diskStates[i];
-                if (diskState != MultiStorageStorageState.NONE) {
+                final DiskDriveDisk disk = key.disks[i];
+                if (disk.state() != MultiStorageStorageState.NONE) {
                     quads.addAll(getDiskModel(key.state, key.random, key.side, key.direction, TRANSLATORS[i]));
                 }
             }
