@@ -10,12 +10,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class StorageBlockLootItemFunction implements LootItemFunction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageBlockLootItemFunction.class);
-
     @Override
     public LootItemFunctionType getType() {
         return LootFunctions.INSTANCE.getStorageBlock();

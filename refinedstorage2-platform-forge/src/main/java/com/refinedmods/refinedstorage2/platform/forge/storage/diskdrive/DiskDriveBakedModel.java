@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirec
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,26 +182,31 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
 
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
-        @SuppressWarnings("deprecation")
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
             final List<BakedQuad> quads = new ArrayList<>(getBaseQuads(key.state, key.random, key.side, key.direction));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 final DiskDriveDisk disk = key.disks[i];
-                if (disk.state() == MultiStorageStorageState.NONE) {
-                    continue;
-                }
-                final var diskModelBakery = diskModelBakeries.get(disk.item());
-                if (diskModelBakery == null) {
-                    continue;
-                }
-                final List<BakedQuad> diskQuads = diskModelBakery.apply(key.direction, TRANSLATORS[i]).getQuads(
-                    key.state,
-                    key.side,
-                    key.random
-                );
-                quads.addAll(diskQuads);
+                quads.addAll(getDiskQuads(key, disk, i));
             }
             return quads;
+        }
+
+        @SuppressWarnings("deprecation")
+        private List<BakedQuad> getDiskQuads(final DiskDriveStateCacheKey key,
+                                             final DiskDriveDisk disk,
+                                             final int index) {
+            if (disk.state() == MultiStorageStorageState.NONE) {
+                return Collections.emptyList();
+            }
+            final var diskModelBakery = diskModelBakeries.get(disk.item());
+            if (diskModelBakery == null) {
+                return Collections.emptyList();
+            }
+            return diskModelBakery.apply(key.direction, TRANSLATORS[index]).getQuads(
+                key.state,
+                key.side,
+                key.random
+            );
         }
 
         @SuppressWarnings("deprecation")

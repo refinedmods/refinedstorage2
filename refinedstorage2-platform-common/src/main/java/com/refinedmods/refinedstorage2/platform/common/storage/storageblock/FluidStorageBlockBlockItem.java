@@ -12,12 +12,8 @@ import javax.annotation.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockItem {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FluidStorageBlockBlockItem.class);
-
     private final FluidStorageType.Variant variant;
 
     public FluidStorageBlockBlockItem(final Block block, final FluidStorageType.Variant variant) {

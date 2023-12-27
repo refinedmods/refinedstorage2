@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     @SuppressWarnings("deprecation")
     private List<BakedQuad> createQuads(@Nullable final BlockState state,
                                         @Nullable final Direction side,
-                                        @Nonnull final RandomSource rand) {
+                                        final RandomSource rand) {
         final List<BakedQuad> quads = new ArrayList<>(super.getQuads(
             state,
             side,
@@ -74,17 +75,27 @@ class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
         ));
         for (int i = 0; i < translators.length; ++i) {
             final Item disk = disks.get(i);
-            if (disk == null) {
-                continue;
-            }
-            final Function<Vector3f, BakedModel> diskModelBakery = diskItemModelBakeries.get(disk);
-            if (diskModelBakery == null) {
-                continue;
-            }
-            quads.addAll(diskModelBakery.apply(translators[i]).getQuads(state, side, rand));
+            final List<BakedQuad> diskQuads = getDiskQuads(state, side, rand, disk, i);
+            quads.addAll(diskQuads);
             quads.addAll(inactiveLedBakery.apply(translators[i]).getQuads(state, side, rand));
         }
         return quads;
+    }
+
+    @SuppressWarnings("deprecation")
+    private List<BakedQuad> getDiskQuads(@Nullable final BlockState state,
+                                         @Nullable final Direction side,
+                                         final RandomSource rand,
+                                         @Nullable final Item diskItem,
+                                         final int i) {
+        if (diskItem == null) {
+            return Collections.emptyList();
+        }
+        final Function<Vector3f, BakedModel> diskModelBakery = diskItemModelBakeries.get(diskItem);
+        if (diskModelBakery == null) {
+            return Collections.emptyList();
+        }
+        return diskModelBakery.apply(translators[i]).getQuads(state, side, rand);
     }
 
     @Override

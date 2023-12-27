@@ -171,6 +171,7 @@ public abstract class AbstractBaseBlock extends Block {
         return !state.equals(rotated);
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates rotation this way
     protected BlockState getRotatedBlockState(final BlockState state, final Level level, final BlockPos pos) {
         return state.rotate(Rotation.CLOCKWISE_90);
     }

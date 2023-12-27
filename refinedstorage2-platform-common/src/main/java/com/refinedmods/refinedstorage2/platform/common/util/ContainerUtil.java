@@ -21,15 +21,19 @@ public final class ContainerUtil {
 
     public static void read(final CompoundTag tag, final Container container) {
         for (int i = 0; i < container.getContainerSize(); ++i) {
-            if (!hasItemInSlot(tag, i)) {
-                continue;
-            }
-            final ItemStack stack = getItemInSlot(tag, i);
-            if (stack.isEmpty()) {
-                continue;
-            }
-            container.setItem(i, stack);
+            readSlot(tag, container, i);
         }
+    }
+
+    private static void readSlot(final CompoundTag tag, final Container container, final int i) {
+        if (!hasItemInSlot(tag, i)) {
+            return;
+        }
+        final ItemStack stack = getItemInSlot(tag, i);
+        if (stack.isEmpty()) {
+            return;
+        }
+        container.setItem(i, stack);
     }
 
     private static String getSlotKey(final int slot) {

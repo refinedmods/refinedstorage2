@@ -209,6 +209,7 @@ public abstract class AbstractDiskDriveBlockEntity
         updateBlock();
     }
 
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private void fromClientTag(final CompoundTag tag) {
         if (!tag.contains(TAG_DISKS)) {
             return;
@@ -243,6 +244,7 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     public CompoundTag getUpdateTag() {
         final CompoundTag tag = new CompoundTag();
         // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
