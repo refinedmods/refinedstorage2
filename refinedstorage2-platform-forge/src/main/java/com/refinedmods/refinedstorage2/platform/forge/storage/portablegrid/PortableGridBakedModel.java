@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.DiskModelBaker;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.ItemBakedModel;

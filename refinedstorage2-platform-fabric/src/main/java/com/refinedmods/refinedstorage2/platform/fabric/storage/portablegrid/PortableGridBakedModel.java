@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotators;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadTranslator;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class PortableGridBakedModel extends ForwardingBakedModel {
     private static final QuadTranslator MOVE_TO_DISK_LOCATION = new QuadTranslator(0, -12 / 16F, 9 / 16F);
-    
+
     private final BakedModel activeModel;
     private final BakedModel inactiveModel;
     private final Map<Item, BakedModel> diskModels;

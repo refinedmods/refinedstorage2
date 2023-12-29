@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.portablegrid;
+package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;

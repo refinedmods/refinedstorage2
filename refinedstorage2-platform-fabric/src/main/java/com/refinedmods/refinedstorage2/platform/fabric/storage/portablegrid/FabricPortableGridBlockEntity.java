@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.AbstractPortableGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridType;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 
 import javax.annotation.Nullable;
 

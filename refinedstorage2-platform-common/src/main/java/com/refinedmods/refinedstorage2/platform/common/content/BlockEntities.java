@@ -12,11 +12,11 @@ import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntit
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.AbstractPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntity;

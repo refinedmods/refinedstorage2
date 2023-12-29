@@ -13,7 +13,6 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.world.item.Item;
 
-// TODO: Loot function for portable grid.
 public class DiskModelBaker {
     private final Map<Item, RotationTranslationModelBaker> bakers;
 

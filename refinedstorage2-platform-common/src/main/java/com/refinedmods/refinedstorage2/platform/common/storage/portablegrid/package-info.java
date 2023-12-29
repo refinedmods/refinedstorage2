@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.platform.common.portablegrid;
+package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
 

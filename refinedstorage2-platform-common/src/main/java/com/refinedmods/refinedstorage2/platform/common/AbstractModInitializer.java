@@ -55,10 +55,6 @@ import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardIte
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.AbstractPortableGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridItem;
-import com.refinedmods.refinedstorage2.platform.common.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -68,6 +64,11 @@ import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDri
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockItem;
@@ -709,6 +710,10 @@ public abstract class AbstractModInitializer {
         LootFunctions.INSTANCE.setStorageBlock(callback.register(
             STORAGE_BLOCK,
             () -> new LootItemFunctionType(new StorageBlockLootItemFunctionSerializer())
+        ));
+        LootFunctions.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> new LootItemFunctionType(new PortableGridLootItemFunctionSerializer())
         ));
         LootFunctions.INSTANCE.setEnergy(callback.register(
             createIdentifier("energy"),
