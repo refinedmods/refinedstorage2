@@ -30,6 +30,8 @@
   "block.refinedstorage2.storage_monitor": "Storage Monitor",
   "block.refinedstorage2.network_receiver": "Network Receiver",
   "block.refinedstorage2.network_transmitter": "Network Transmitter",
+  "block.refinedstorage2.portable_grid": "Portable Grid",
+  "block.refinedstorage2.creative_portable_grid": "Creative Portable Grid",
   "gui.refinedstorage2.controller.redstone_mode_help": "When this device is inactive, the storage network will not be able to use this device as an energy source.",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.storage.redstone_mode_help": "When this device is inactive, the contained storage will no longer be accessible from within the storage network.",
@@ -350,5 +352,7 @@
   "advancements.refinedstorage2.better_than_a_barrel": "Better than a barrel",
   "advancements.refinedstorage2.better_than_a_barrel.description": "Craft a Storage Monitor to view, insert or extract resources in a storage network",
   "advancements.refinedstorage2.no_cables_required": "No cables required",
-  "advancements.refinedstorage2.no_cables_required.description": "Add extra components to your network without using cables by using a Network Transmitter, Network Receiver and Network Card"
+  "advancements.refinedstorage2.no_cables_required.description": "Add extra components to your network without using cables by using a Network Transmitter, Network Receiver and Network Card",
+  "advancements.refinedstorage2.portable_storage": "Portable storage",
+  "advancements.refinedstorage2.portable_storage.description": "Craft a Portable Grid to access the content of disks without requiring a storage network"
 }

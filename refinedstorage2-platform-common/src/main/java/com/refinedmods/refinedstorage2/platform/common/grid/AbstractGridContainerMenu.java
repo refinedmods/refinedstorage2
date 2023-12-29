@@ -283,7 +283,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Override
-    public void onNetworkChanged() {
+    public void clear() {
         if (playerInventory.player instanceof ServerPlayer serverPlayer) {
             initStrategies();
             Platform.INSTANCE.getServerToClientCommunications().sendGridClear(serverPlayer);

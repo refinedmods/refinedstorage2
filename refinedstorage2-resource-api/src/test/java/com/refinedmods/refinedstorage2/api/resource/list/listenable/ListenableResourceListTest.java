@@ -33,7 +33,6 @@ class ListenableResourceListTest {
         final ResourceListOperationResult<String> result = sut.add("A", 10);
 
         // Assert
-        assertThat(result.id()).isNotNull();
         assertThat(result.change()).isEqualTo(10);
         assertThat(result.resourceAmount().getAmount()).isEqualTo(10);
         assertThat(result.resourceAmount().getResource()).isEqualTo("A");
@@ -47,7 +46,6 @@ class ListenableResourceListTest {
         final ResourceListOperationResult<String> result = sut.add("A", 10);
 
         // Assert
-        assertThat(result.id()).isNotNull();
         assertThat(result.change()).isEqualTo(10);
         assertThat(result.resourceAmount().getAmount()).isEqualTo(10);
         assertThat(result.resourceAmount().getResource()).isEqualTo("A");
@@ -66,7 +64,6 @@ class ListenableResourceListTest {
 
         // Assert
         assertThat(result).isPresent();
-        assertThat(result.get().id()).isNotNull();
         assertThat(result.get().change()).isEqualTo(-10);
         assertThat(result.get().resourceAmount().getAmount()).isEqualTo(10);
         assertThat(result.get().resourceAmount().getResource()).isEqualTo("A");
@@ -84,7 +81,6 @@ class ListenableResourceListTest {
 
         // Assert
         assertThat(result).isPresent();
-        assertThat(result.get().id()).isNotNull();
         assertThat(result.get().change()).isEqualTo(-10);
         assertThat(result.get().resourceAmount().getAmount()).isEqualTo(10);
         assertThat(result.get().resourceAmount().getResource()).isEqualTo("A");

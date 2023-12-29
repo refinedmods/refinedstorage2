@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlock;
@@ -26,11 +27,12 @@ import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.Wirel
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.item.DyeColor;
+
+import static java.util.Objects.requireNonNull;
 
 public final class Blocks {
     public static final DyeColor COLOR = DyeColor.LIGHT_BLUE;
@@ -146,6 +148,10 @@ public final class Blocks {
     private Supplier<InterfaceBlock> iface;
     @Nullable
     private Supplier<StorageMonitorBlock> storageMonitor;
+    @Nullable
+    private Supplier<PortableGridBlock> portableGrid;
+    @Nullable
+    private Supplier<PortableGridBlock> creativePortableGrid;
 
     private Blocks() {
     }
@@ -155,15 +161,15 @@ public final class Blocks {
     }
 
     public SimpleBlock getQuartzEnrichedIronBlock() {
-        return Objects.requireNonNull(quartzEnrichedIronBlock).get();
+        return requireNonNull(quartzEnrichedIronBlock).get();
     }
 
     public DiskDriveBlock getDiskDrive() {
-        return Objects.requireNonNull(diskDrive).get();
+        return requireNonNull(diskDrive).get();
     }
 
     public SimpleBlock getMachineCasing() {
-        return Objects.requireNonNull(machineCasing).get();
+        return requireNonNull(machineCasing).get();
     }
 
     public BlockColorMap<GridBlock> getGrid() {
@@ -224,7 +230,7 @@ public final class Blocks {
     }
 
     public InterfaceBlock getInterface() {
-        return Objects.requireNonNull(iface).get();
+        return requireNonNull(iface).get();
     }
 
     public BlockColorMap<ExternalStorageBlock> getExternalStorage() {
@@ -252,7 +258,7 @@ public final class Blocks {
     }
 
     public StorageMonitorBlock getStorageMonitor() {
-        return Objects.requireNonNull(storageMonitor).get();
+        return requireNonNull(storageMonitor).get();
     }
 
     public BlockColorMap<NetworkReceiverBlock> getNetworkReceiver() {
@@ -261,5 +267,21 @@ public final class Blocks {
 
     public BlockColorMap<NetworkTransmitterBlock> getNetworkTransmitter() {
         return networkTransmitter;
+    }
+
+    public PortableGridBlock getPortableGrid() {
+        return requireNonNull(portableGrid).get();
+    }
+
+    public void setPortableGrid(final Supplier<PortableGridBlock> supplier) {
+        this.portableGrid = supplier;
+    }
+
+    public PortableGridBlock getCreativePortableGrid() {
+        return requireNonNull(creativePortableGrid).get();
+    }
+
+    public void setCreativePortableGrid(final Supplier<PortableGridBlock> supplier) {
+        this.creativePortableGrid = supplier;
     }
 }

@@ -158,7 +158,7 @@ class GridNetworkNodeTest {
         storageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        verify(watcher, times(1)).onNetworkChanged();
+        verify(watcher, times(1)).clear();
 
         final ArgumentCaptor<TrackedResource> trackedResources1 = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(1)).onChanged(

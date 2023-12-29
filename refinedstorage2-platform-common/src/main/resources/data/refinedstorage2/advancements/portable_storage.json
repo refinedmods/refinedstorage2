@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "refinedstorage2:portable_grid"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage2.portable_storage"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage2.portable_storage.description"
+    }
+  },
+  "parent": "refinedstorage2:viewing_your_storage",
+  "criteria": {
+    "portable_grid_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "refinedstorage2:portable_grid"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

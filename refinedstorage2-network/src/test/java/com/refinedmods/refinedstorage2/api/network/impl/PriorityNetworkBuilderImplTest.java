@@ -76,7 +76,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
         // Here we ensure that container 4 (the grid) is initialized *after* container 3 (the storage),
         // according to the priority declared above.
-        verify(watcher, times(1)).onNetworkChanged();
+        verify(watcher, times(1)).clear();
         verify(watcher).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             "N3",

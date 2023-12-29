@@ -9,17 +9,17 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GridWatcherRegistration {
+class GridWatcherRegistration {
     private final GridWatcher watcher;
     private final Class<? extends Actor> actorType;
     private final Map<StorageChannelType<?>, ResourceListListener<?>> listeners = new HashMap<>();
 
-    public GridWatcherRegistration(final GridWatcher watcher, final Class<? extends Actor> actorType) {
+    GridWatcherRegistration(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         this.watcher = watcher;
         this.actorType = actorType;
     }
 
-    public <T> void attach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
+    <T> void attach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
         final ResourceListListener<T> listener = change -> watcher.onChanged(
             storageChannelType,
             change.resourceAmount().getResource(),
@@ -34,7 +34,7 @@ public class GridWatcherRegistration {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void detach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
+    <T> void detach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
         final ResourceListListener<T> listener = (ResourceListListener<T>) listeners.get(storageChannelType);
         storageChannel.removeListener(listener);
         listeners.remove(storageChannelType);

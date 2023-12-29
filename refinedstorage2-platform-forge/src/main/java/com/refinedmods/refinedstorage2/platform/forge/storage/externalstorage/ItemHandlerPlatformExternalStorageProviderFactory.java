@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.externalstorage;
+package com.refinedmods.refinedstorage2.platform.forge.storage.externalstorage;
 
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;

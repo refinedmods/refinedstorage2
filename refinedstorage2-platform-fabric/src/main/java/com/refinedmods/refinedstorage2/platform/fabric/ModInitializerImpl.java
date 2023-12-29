@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntit
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
@@ -42,6 +43,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoReq
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.UseNetworkBoundItemPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.externalstorage.FabricStoragePlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid.FabricPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.support.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem.TrinketsSlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.support.network.bounditem.TrinketsSlotReferenceProvider;
@@ -202,7 +204,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerContent() {
-        registerBlocks(new DirectRegistryCallback<>(BuiltInRegistries.BLOCK), FabricDiskDriveBlockEntity::new);
+        registerBlocks(
+            new DirectRegistryCallback<>(BuiltInRegistries.BLOCK),
+            FabricDiskDriveBlockEntity::new,
+            (pos, state) -> new FabricPortableGridBlockEntity(PortableGridType.NORMAL, pos, state),
+            (pos, state) -> new FabricPortableGridBlockEntity(PortableGridType.CREATIVE, pos, state)
+        );
         registerItems(
             new DirectRegistryCallback<>(BuiltInRegistries.ITEM),
             () -> new RegulatorUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry()) {
@@ -244,7 +251,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
                 }
             },
-            FabricDiskDriveBlockEntity::new
+            FabricDiskDriveBlockEntity::new,
+            (pos, state) -> new FabricPortableGridBlockEntity(PortableGridType.NORMAL, pos, state),
+            (pos, state) -> new FabricPortableGridBlockEntity(PortableGridType.CREATIVE, pos, state)
         );
         registerMenus(new DirectRegistryCallback<>(BuiltInRegistries.MENU), new MenuTypeFactory() {
             @Override

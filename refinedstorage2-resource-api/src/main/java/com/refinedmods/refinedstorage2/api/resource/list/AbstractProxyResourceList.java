@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apiguardian.api.API;
 
@@ -34,11 +33,6 @@ public abstract class AbstractProxyResourceList<T> implements ResourceList<T> {
     @Override
     public Optional<ResourceAmount<T>> get(final T resource) {
         return delegate.get(resource);
-    }
-
-    @Override
-    public Optional<ResourceAmount<T>> get(final UUID id) {
-        return delegate.get(id);
     }
 
     @Override

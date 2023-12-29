@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "refinedstorage2:block/portable_grid"
+    }
+  }
+}
