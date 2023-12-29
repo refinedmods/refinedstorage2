@@ -122,8 +122,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addSideButton(new AutoSelectedSideButtonWidget(getMenu()));
         addSideButton(new StorageChannelTypeSideButtonWidget(getMenu()));
 
-        final PlatformRegistry<GridSynchronizer> registry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        if (!registry.isEmpty()) {
+        final PlatformRegistry<GridSynchronizer> synchronizers = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        if (!synchronizers.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(getMenu()));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
@@ -193,7 +193,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
 
-        graphics.blit(getTexture(), x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
+        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, TOP_HEIGHT);
 
         for (int row = 0; row < visibleRows; ++row) {
             int textureY = 37;
@@ -202,10 +202,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             } else if (row == visibleRows - 1) {
                 textureY = 55;
             }
-            graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
+            graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth, 18);
         }
 
-        graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, bottomHeight);
+        graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth, bottomHeight);
 
         currentGridSlotIndex = -1;
 

@@ -72,11 +72,7 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlock<T> & BlockIt
     public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof Grid grid && blockEntity instanceof MenuProvider menuProvider) {
-            return new GridExtendedMenuProvider(
-                grid,
-                PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
-                menuProvider
-            );
+            return PlatformApi.INSTANCE.getGridMenuProvider(grid, menuProvider);
         }
         return null;
     }

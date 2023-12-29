@@ -3,12 +3,13 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
@@ -32,6 +33,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.MultiStorageNetworkNodeFactory.PROPERTY_ENERGY_USAGE_PER_STORAGE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @NetworkTest
 @SetupNetwork
@@ -657,6 +661,25 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(inserted).isEqualTo(10);
         assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
+    }
+
+    @Test
+    void shouldNotifyListenerWhenStateChanges(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
+        sut.setListener(listener);
+
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        provider.set(1, storage);
+        initializeAndActivate();
+
+        // Act
+        networkStorage.insert("A", 75, Action.EXECUTE, FakeActor.INSTANCE);
+
+        // Assert
+        verify(listener, times(1)).onStorageStateChanged();
     }
 
     private void initializeAndActivate() {

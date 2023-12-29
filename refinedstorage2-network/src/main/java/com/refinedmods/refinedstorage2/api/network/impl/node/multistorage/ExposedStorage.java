@@ -14,9 +14,9 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import java.util.List;
 import java.util.Optional;
 
-class MultiStorageExposedStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
+class ExposedStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
     implements CompositeStorage<T>, CompositeAwareChild<T> {
-    protected MultiStorageExposedStorage(final StorageConfiguration config) {
+    protected ExposedStorage(final StorageConfiguration config) {
         super(config, new CompositeStorageImpl<>(new ResourceListImpl<>()));
     }
 

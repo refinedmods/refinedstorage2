@@ -42,7 +42,7 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
     private final Set<ResourceLocation> diskModels = new HashSet<>();
 
     @Override
-    public Optional<Storage<?>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+    public <T> Optional<Storage<T>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
         return getId(stack).flatMap(storageRepository::get);
     }
 

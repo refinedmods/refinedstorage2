@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 
 import javax.annotation.Nullable;
 

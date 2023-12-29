@@ -14,7 +14,7 @@ public class GridScreen<T extends AbstractGridContainerMenu> extends AbstractGri
     public GridScreen(final T menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title, 99);
         this.inventoryLabelY = 75;
-        this.imageWidth = 227;
+        this.imageWidth = 193;
         this.imageHeight = 176;
     }
 

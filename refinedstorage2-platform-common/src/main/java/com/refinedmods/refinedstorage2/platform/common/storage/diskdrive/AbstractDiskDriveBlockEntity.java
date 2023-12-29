@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.storage.StateTrackedStorage;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
+import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockEntityWithDrops;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
-    implements BlockEntityWithDrops, MultiStorageListener, ExtendedMenuProvider {
+    implements BlockEntityWithDrops, StateTrackedStorage.Listener, ExtendedMenuProvider {
     public static final int AMOUNT_OF_DISKS = 8;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
@@ -59,7 +60,7 @@ public abstract class AbstractDiskDriveBlockEntity
     @Nullable
     protected Disk[] disks;
 
-    private final DiskDriveInventory diskInventory;
+    private final DiskInventory diskInventory;
     private final FilterWithFuzzyMode filter;
     private final StorageConfigurationContainerImpl configContainer;
     private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
@@ -73,7 +74,7 @@ public abstract class AbstractDiskDriveBlockEntity
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
-        this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
+        this.diskInventory = new DiskInventory(this::onDiskChanged, getNode().getSize());
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
@@ -191,14 +192,21 @@ public abstract class AbstractDiskDriveBlockEntity
         return diskInventory;
     }
 
-    void onDiskChanged(final int slot) {
+    private void onDiskChanged(final int slot) {
+        // Level will not yet be present
+        final boolean isJustPlacedIntoLevelOrLoading = level == null || level.isClientSide();
+        // Level will be present, but network not yet
+        final boolean isPlacedThroughDismantlingMode = getNode().getNetwork() == null;
+        if (isJustPlacedIntoLevelOrLoading || isPlacedThroughDismantlingMode) {
+            return;
+        }
         getNode().onStorageChanged(slot);
         updateBlock();
         setChanged();
     }
 
     @Override
-    public void onStorageChanged() {
+    public void onStorageStateChanged() {
         this.syncRequested = true;
     }
 
@@ -223,7 +231,11 @@ public abstract class AbstractDiskDriveBlockEntity
                 .map(item -> new Disk(item.value(), getState(diskTag)))
                 .orElse(new Disk(null, StorageState.NONE));
         }
-        onDriveStateUpdated();
+        onClientDriveStateUpdated();
+    }
+
+    protected void onClientDriveStateUpdated() {
+        updateBlock();
     }
 
     private StorageState getState(final CompoundTag tag) {
@@ -233,10 +245,6 @@ public abstract class AbstractDiskDriveBlockEntity
             return StorageState.NONE;
         }
         return values[stateOrdinal];
-    }
-
-    protected void onDriveStateUpdated() {
-        updateBlock();
     }
 
     @Override

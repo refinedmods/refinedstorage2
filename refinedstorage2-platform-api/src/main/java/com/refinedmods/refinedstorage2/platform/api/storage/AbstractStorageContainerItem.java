@@ -37,7 +37,8 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Optional<TypedStorage<?>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+    public <X> Optional<TypedStorage<X, Storage<X>>> resolve(final StorageRepository storageRepository,
+                                                             final ItemStack stack) {
         return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage(storage, type));
     }
 

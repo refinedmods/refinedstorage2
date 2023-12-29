@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
@@ -9,7 +11,9 @@ import com.refinedmods.refinedstorage2.platform.common.support.direction.Directi
 import java.util.function.BiFunction;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,5 +64,15 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
     @Override
     public BlockEntity newBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         return blockEntityFactory.apply(blockPos, blockState);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Grid grid && blockEntity instanceof MenuProvider menuProvider) {
+            return PlatformApi.INSTANCE.getGridMenuProvider(grid, menuProvider);
+        }
+        return null;
     }
 }

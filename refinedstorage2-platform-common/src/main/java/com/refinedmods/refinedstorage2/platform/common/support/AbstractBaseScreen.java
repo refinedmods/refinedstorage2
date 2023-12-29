@@ -58,11 +58,15 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         this.inventoryLabelX = 7;
     }
 
+    protected int getSideButtonY() {
+        return 6;
+    }
+
     @Override
     protected void init() {
         clearWidgets();
         super.init();
-        sideButtonY = 6;
+        sideButtonY = getSideButtonY();
     }
 
     @Override

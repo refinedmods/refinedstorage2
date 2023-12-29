@@ -1,6 +1,7 @@
-package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
+package com.refinedmods.refinedstorage2.platform.common.storage;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProvider;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
@@ -11,17 +12,17 @@ import javax.annotation.Nullable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider {
-    private final AbstractDiskDriveBlockEntity diskDrive;
+public class DiskInventory extends SimpleContainer implements MultiStorageProvider {
+    private final DiskListener listener;
     @Nullable
     private StorageRepository storageRepository;
 
-    DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive, final int diskCount) {
+    public DiskInventory(final DiskListener listener, final int diskCount) {
         super(diskCount);
-        this.diskDrive = diskDrive;
+        this.listener = listener;
     }
 
-    void setStorageRepository(@Nullable final StorageRepository storageRepository) {
+    public void setStorageRepository(@Nullable final StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
     }
 
@@ -34,26 +35,18 @@ class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider
     public ItemStack removeItem(final int slot, final int amount) {
         // Forge InvWrapper calls this instead of setItem.
         final ItemStack result = super.removeItem(slot, amount);
-        diskDrive.onDiskChanged(slot);
+        listener.onDiskChanged(slot);
         return result;
     }
 
     @Override
     public void setItem(final int slot, final ItemStack stack) {
         super.setItem(slot, stack);
-        // level will not yet be present
-        final boolean isJustPlacedIntoLevelOrLoading = diskDrive.getLevel() == null
-            || diskDrive.getLevel().isClientSide();
-        // level will be present, but network not yet
-        final boolean isPlacedThroughDismantlingMode = diskDrive.getNode().getNetwork() == null;
-        if (isJustPlacedIntoLevelOrLoading || isPlacedThroughDismantlingMode) {
-            return;
-        }
-        diskDrive.onDiskChanged(slot);
+        listener.onDiskChanged(slot);
     }
 
     @Override
-    public Optional<TypedStorage<?>> resolve(final int index) {
+    public <T> Optional<TypedStorage<T, Storage<T>>> resolve(final int index) {
         if (storageRepository == null) {
             return Optional.empty();
         }
@@ -69,5 +62,10 @@ class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider
             return Optional.empty();
         }
         return Optional.of(stack);
+    }
+
+    @FunctionalInterface
+    public interface DiskListener {
+        void onDiskChanged(int slot);
     }
 }

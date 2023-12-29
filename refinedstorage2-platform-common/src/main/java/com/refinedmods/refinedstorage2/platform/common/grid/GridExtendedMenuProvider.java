@@ -20,14 +20,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-class GridExtendedMenuProvider implements ExtendedMenuProvider {
+public class GridExtendedMenuProvider implements ExtendedMenuProvider {
     private final Grid grid;
     private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry;
     private final MenuProvider menuProvider;
 
-    GridExtendedMenuProvider(final Grid grid,
-                             final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
-                             final MenuProvider menuProvider) {
+    public GridExtendedMenuProvider(final Grid grid,
+                                    final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+                                    final MenuProvider menuProvider) {
         this.grid = grid;
         this.storageChannelTypeRegistry = storageChannelTypeRegistry;
         this.menuProvider = menuProvider;

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;

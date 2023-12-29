@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -159,6 +160,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry() {
         return ensureLoaded().getGridSynchronizerRegistry();
+    }
+
+    @Override
+    public MenuProvider getGridMenuProvider(final Grid grid, final MenuProvider menuProvider) {
+        return ensureLoaded().getGridMenuProvider(grid, menuProvider);
     }
 
     @Override

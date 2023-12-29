@@ -1,11 +1,8 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
+package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
@@ -13,32 +10,43 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
+public class StateTrackedStorage<T> implements TrackedStorage<T> {
+    private static final double NEAR_CAPACITY_THRESHOLD = .75;
+
     private final Storage<T> delegate;
-    private final StorageChannelType<T> storageChannelType;
     @Nullable
-    private final MultiStorageListener listener;
+    private final Listener listener;
     private StorageState state;
 
-    public MultiStorageInternalStorage(final Storage<T> delegate,
-                                       final StorageChannelType<T> storageChannelType,
-                                       @Nullable final MultiStorageListener listener) {
+    public StateTrackedStorage(final Storage<T> delegate, @Nullable final Listener listener) {
         this.delegate = delegate;
-        this.storageChannelType = storageChannelType;
         this.listener = listener;
-        this.state = getState();
+        this.state = computeState();
     }
 
-    StorageState getState() {
-        return StorageState.compute(delegate);
+    public StorageState getState() {
+        return state;
     }
 
-    public StorageChannelType<T> getStorageChannelType() {
-        return storageChannelType;
+    private StorageState computeState() {
+        if (delegate instanceof LimitedStorage<T> limitedStorage) {
+            return computeState(limitedStorage.getCapacity(), delegate.getStored());
+        }
+        return StorageState.NORMAL;
+    }
+
+    private StorageState computeState(final long capacity, final long stored) {
+        final double fullness = stored / (double) capacity;
+        if (fullness >= 1D) {
+            return StorageState.FULL;
+        } else if (fullness >= NEAR_CAPACITY_THRESHOLD) {
+            return StorageState.NEAR_CAPACITY;
+        }
+        return StorageState.NORMAL;
     }
 
     private void checkStateChanged() {
-        final StorageState currentState = getState();
+        final StorageState currentState = computeState();
         if (state != currentState) {
             this.state = currentState;
             notifyListener();
@@ -47,7 +55,7 @@ public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
 
     private void notifyListener() {
         if (listener != null) {
-            listener.onStorageChanged();
+            listener.onStorageStateChanged();
         }
     }
 
@@ -85,5 +93,10 @@ public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
         return delegate instanceof TrackedStorage<T> trackedStorage
             ? trackedStorage.findTrackedResourceByActorType(resource, actorType)
             : Optional.empty();
+    }
+
+    @FunctionalInterface
+    public interface Listener {
+        void onStorageStateChanged();
     }
 }

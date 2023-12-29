@@ -19,9 +19,9 @@ public class ForgePortableGridBlockEntity extends AbstractPortableGridBlockEntit
     }
 
     @Override
-    protected void onDriveStateUpdated() {
+    protected void onClientDriveStateUpdated() {
         requestModelDataUpdate();
-        super.onDriveStateUpdated();
+        super.onClientDriveStateUpdated();
     }
 
     @Nonnull
