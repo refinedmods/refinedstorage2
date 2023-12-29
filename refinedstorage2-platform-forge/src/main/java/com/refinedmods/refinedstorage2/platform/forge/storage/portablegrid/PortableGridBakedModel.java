@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.forge.support.render.RotationTra
 import com.refinedmods.refinedstorage2.platform.forge.support.render.TransformationBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -32,36 +33,34 @@ import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Vector3f;
 
-public class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
+class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
     private static final Vector3f MOVE_TO_DISK_LOCATION = new Vector3f(0, -12 / 16F, 9 / 16F);
 
     private final LoadingCache<CacheKey, List<BakedQuad>> cache;
     private final PortableGridItemOverrides itemOverrides = new PortableGridItemOverrides();
 
-    public PortableGridBakedModel(final BakedModel baseModel,
-                                  final RotationTranslationModelBaker activeModelBaker,
-                                  final RotationTranslationModelBaker inactiveModelBaker,
-                                  final DiskModelBaker diskModelBaker) {
+    PortableGridBakedModel(final BakedModel baseModel,
+                           final RotationTranslationModelBaker activeModelBaker,
+                           final RotationTranslationModelBaker inactiveModelBaker,
+                           final DiskModelBaker diskModelBaker) {
         super(baseModel);
         this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(cacheKey -> {
             final RotationTranslationModelBaker baseModelBaker = cacheKey.active
                 ? activeModelBaker
                 : inactiveModelBaker;
             final List<BakedQuad> quads = new ArrayList<>(baseModelBaker.bake(TransformationBuilder.create()
-                    .rotate(cacheKey.direction)
-                    .build())
-                .getQuads(null, cacheKey.side(), RandomSource.create(0)));
+                .rotate(cacheKey.direction)
+                .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
             if (cacheKey.disk.item() == null) {
                 return quads;
             }
             final RotationTranslationModelBaker diskBaker = diskModelBaker.forDisk(cacheKey.disk.item());
             if (diskBaker != null) {
                 quads.addAll(diskBaker.bake(TransformationBuilder.create()
-                        .rotate(cacheKey.direction)
-                        .translate(MOVE_TO_DISK_LOCATION)
-                        .rotate(BiDirection.WEST)
-                        .build())
-                    .getQuads(null, cacheKey.side(), RandomSource.create(0)));
+                    .rotate(cacheKey.direction)
+                    .translate(MOVE_TO_DISK_LOCATION)
+                    .rotate(BiDirection.WEST)
+                    .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
             }
             return quads;
         }));
@@ -94,7 +93,11 @@ public class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
 
     private class PortableGridItemOverrides extends ItemOverrides {
         private final LoadingCache<CacheKey, BakedModel> itemCache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(cacheKey -> new ItemBakedModel(originalModel, cache.getUnchecked(cacheKey)))
+            CacheLoader.from(cacheKey -> new ItemBakedModel(
+                originalModel,
+                cache.getUnchecked(cacheKey),
+                Collections.emptyMap()
+            ))
         );
 
         @Override

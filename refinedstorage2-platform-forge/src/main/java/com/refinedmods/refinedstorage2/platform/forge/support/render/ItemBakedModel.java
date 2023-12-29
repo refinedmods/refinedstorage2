@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.render;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,18 +17,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 
 public class ItemBakedModel extends BakedModelWrapper<BakedModel> {
-    private final List<BakedQuad> quads;
+    private final List<BakedQuad> unculledFaces;
+    private final Map<Direction, List<BakedQuad>> faces;
 
-    public ItemBakedModel(final BakedModel originalModel, final List<BakedQuad> quads) {
+    public ItemBakedModel(final BakedModel originalModel,
+                          final List<BakedQuad> unculledFaces,
+                          final Map<Direction, List<BakedQuad>> faces) {
         super(originalModel);
-        this.quads = quads;
+        this.unculledFaces = unculledFaces;
+        this.faces = faces;
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable final BlockState state,
                                     @Nullable final Direction side,
                                     final RandomSource rand) {
-        return quads;
+        return side == null ? unculledFaces : faces.getOrDefault(side, Collections.emptyList());
     }
 
     @Override

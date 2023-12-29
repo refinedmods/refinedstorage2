@@ -20,7 +20,6 @@ import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static java.util.Objects.requireNonNull;
 
-// TODO: Cleanup model rendering code.
 public class PortableGridUnbakedGeometry implements IUnbakedGeometry<PortableGridUnbakedGeometry> {
     private static final ResourceLocation ACTIVE_MODEL = createIdentifier("block/portable_grid/active");
     private static final ResourceLocation INACTIVE_MODEL = createIdentifier("block/portable_grid/inactive");
