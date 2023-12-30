@@ -97,20 +97,13 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
 
         if (provider != null) {
             provider.resolve(index).ifPresentOrElse(resolved -> {
-                cache[index] = (TypedStorage) trackState(resolved);
+                cache[index] = (TypedStorage) StateTrackedStorage.of(resolved, listener);
                 final ExposedStorage<?> relevantComposite = exposedStorages.get(resolved.storageChannelType());
                 results.add(new StorageChange(false, relevantComposite, cache[index].storage()));
             }, () -> cache[index] = null);
         }
 
         return results;
-    }
-
-    private <T> TypedStorage<T, StateTrackedStorage<T>> trackState(final TypedStorage<T, Storage<T>> resolved) {
-        return new TypedStorage<>(
-            new StateTrackedStorage<>(resolved.storage(), listener),
-            resolved.storageChannelType()
-        );
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

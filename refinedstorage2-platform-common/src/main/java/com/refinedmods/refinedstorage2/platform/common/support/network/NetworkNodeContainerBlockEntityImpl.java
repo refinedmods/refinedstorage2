@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -135,13 +134,6 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
             return null;
         }
         return directionalBlock.extractDirection(blockState);
-    }
-
-    protected final void updateBlock() {
-        if (level == null) {
-            return;
-        }
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(

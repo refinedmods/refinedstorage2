@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.support.render.QuadRotators;
@@ -12,6 +11,7 @@ import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -65,13 +65,32 @@ public class PortableGridBakedModel extends ForwardingBakedModel {
             return;
         }
         context.pushTransform(quadRotators.forDirection(direction));
+        if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
+            final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
+            if (renderAttachment instanceof Disk disk) {
+                emitDiskQuads(blockView, state, pos, randomSupplier, context, disk);
+            }
+        }
+        inactiveModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+        context.popTransform();
+    }
+
+    private void emitDiskQuads(
+        final BlockAndTintGetter blockView,
+        final BlockState state,
+        final BlockPos pos,
+        final Supplier<RandomSource> randomSupplier,
+        final RenderContext context,
+        final Disk disk
+    ) {
+        final BakedModel diskModel = diskModels.get(disk.item());
+        if (diskModel == null) {
+            return;
+        }
         context.pushTransform(MOVE_TO_DISK_LOCATION);
         context.pushTransform(quadRotators.forDirection(BiDirection.WEST));
-        diskModels.get(Items.INSTANCE.getItemStorageDisk(ItemStorageType.Variant.ONE_K))
-            .emitBlockQuads(blockView, state, pos, randomSupplier, context);
+        diskModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
-        context.popTransform();
-        inactiveModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
     }
 }

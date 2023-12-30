@@ -95,6 +95,16 @@ public class StateTrackedStorage<T> implements TrackedStorage<T> {
             : Optional.empty();
     }
 
+    public static <T> TypedStorage<T, StateTrackedStorage<T>> of(
+        final TypedStorage<T, Storage<T>> delegate,
+        @Nullable final Listener listener
+    ) {
+        return new TypedStorage<>(
+            new StateTrackedStorage<>(delegate.storage(), listener),
+            delegate.storageChannelType()
+        );
+    }
+
     @FunctionalInterface
     public interface Listener {
         void onStorageStateChanged();

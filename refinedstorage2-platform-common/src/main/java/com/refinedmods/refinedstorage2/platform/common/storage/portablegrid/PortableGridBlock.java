@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
@@ -16,6 +17,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,13 +30,15 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
     private static final VoxelShape SHAPE_VERTICAL_EAST = box(0, 0, 0, 13.2, 16, 16);
     private static final VoxelShape SHAPE_VERTICAL_WEST = box(16 - 13.2, 0, 0, 16, 16, 16);
 
-    private final PortableGridType type;
+    private final PortableGridBlockEntityTicker ticker;
     private final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> blockEntityFactory;
 
     public PortableGridBlock(final PortableGridType type,
                              final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> factory) {
         super(BlockConstants.PROPERTIES);
-        this.type = type;
+        this.ticker = new PortableGridBlockEntityTicker(() -> type == PortableGridType.NORMAL
+            ? BlockEntities.INSTANCE.getPortableGrid()
+            : BlockEntities.INSTANCE.getCreativePortableGrid());
         this.blockEntityFactory = factory;
     }
 
@@ -67,7 +72,14 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
+                                                                  final BlockState state,
+                                                                  final BlockEntityType<T> type) {
+        return ticker.get(level, type);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation") // Forge deprecates this
     public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof Grid grid && blockEntity instanceof MenuProvider menuProvider) {
