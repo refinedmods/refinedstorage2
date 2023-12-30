@@ -15,15 +15,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
+    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+
     private static final VoxelShape SHAPE_HORIZONTAL = box(0, 0, 0, 16, 13.2, 16);
     private static final VoxelShape SHAPE_VERTICAL_SOUTH = box(0, 0, 0, 16, 16, 13.2);
     private static final VoxelShape SHAPE_VERTICAL_NORTH = box(0, 0, 16 - 13.2, 16, 16, 16);
@@ -40,6 +45,17 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
             ? BlockEntities.INSTANCE.getPortableGrid()
             : BlockEntities.INSTANCE.getCreativePortableGrid());
         this.blockEntityFactory = factory;
+    }
+
+    @Override
+    protected BlockState getDefaultState() {
+        return super.getDefaultState().setValue(ACTIVE, false);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(ACTIVE);
     }
 
     @Override
@@ -78,6 +94,7 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
         return ticker.get(level, type);
     }
 
+    // TODO: can we make everything extended menu provider instead of wrapping it this way?
     @Override
     @SuppressWarnings("deprecation") // Forge deprecates this
     public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {

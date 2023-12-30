@@ -83,7 +83,8 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
         if (disk == null) {
             return super.getQuads(state, side, randomSource);
         }
-        return cache.getUnchecked(new CacheKey(side, direction, true, disk));
+        final boolean active = state.getValue(PortableGridBlock.ACTIVE);
+        return cache.getUnchecked(new CacheKey(side, direction, active, disk));
     }
 
     @Override

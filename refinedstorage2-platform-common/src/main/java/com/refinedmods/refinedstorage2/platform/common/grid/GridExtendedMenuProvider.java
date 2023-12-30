@@ -39,6 +39,9 @@ public class GridExtendedMenuProvider implements ExtendedMenuProvider {
         final List<PlatformStorageChannelType<?>> types = storageChannelTypeRegistry.getAll();
         buf.writeInt(types.size());
         types.forEach(type -> writeStorageChannel(type, buf));
+        if (menuProvider instanceof ExtendedMenuProvider extendedMenuProvider) {
+            extendedMenuProvider.writeScreenOpeningData(player, buf);
+        }
     }
 
     private <T> void writeStorageChannel(final PlatformStorageChannelType<T> storageChannelType,

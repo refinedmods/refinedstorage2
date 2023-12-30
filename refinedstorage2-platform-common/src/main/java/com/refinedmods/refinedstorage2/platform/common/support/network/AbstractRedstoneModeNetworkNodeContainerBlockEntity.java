@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.PlayerAwareBlockE
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSettings;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -16,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -69,16 +66,6 @@ public abstract class AbstractRedstoneModeNetworkNodeContainerBlockEntity<T exte
         if (tag.contains(TAG_REDSTONE_MODE)) {
             redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
         }
-    }
-
-    @Override
-    public List<Item> getUpgradeItems() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean addUpgradeItem(final Item upgradeItem) {
-        return false;
     }
 
     public RedstoneMode getRedstoneMode() {

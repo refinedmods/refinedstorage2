@@ -22,7 +22,7 @@ import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeI
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
@@ -273,7 +273,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_CLEAR, new GridClearPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.ENERGY_INFO, new EnergyInfoPacket());
         ClientPlayNetworking.registerGlobalReceiver(
             PacketIds.WIRELESS_TRANSMITTER_RANGE,
             new WirelessTransmitterRangePacket()

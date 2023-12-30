@@ -71,7 +71,8 @@ public class PortableGridBakedModel extends ForwardingBakedModel {
                 emitDiskQuads(blockView, state, pos, randomSupplier, context, disk);
             }
         }
-        inactiveModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+        final boolean active = state.getValue(PortableGridBlock.ACTIVE);
+        (active ? activeModel : inactiveModel).emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
     }
 

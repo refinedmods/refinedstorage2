@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.support.widget.ProgressWidget;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -15,6 +18,9 @@ public class PortableGridScreen extends AbstractGridScreen<PortableGridContainer
     private static final int DISK_SLOT_HEIGHT = 26;
 
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/portable_grid.png");
+
+    @Nullable
+    private ProgressWidget progressWidget;
 
     public PortableGridScreen(final PortableGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title, 99);
@@ -50,6 +56,22 @@ public class PortableGridScreen extends AbstractGridScreen<PortableGridContainer
             DISK_SLOT_WIDTH,
             DISK_SLOT_HEIGHT
         ));
+        final int progressX = 172;
+        final int progressY = imageHeight - 10 - 70;
+        if (progressWidget == null) {
+            progressWidget = new ProgressWidget(
+                leftPos + progressX,
+                topPos + progressY,
+                16,
+                70,
+                getMenu().getEnergyInfo()::getPercentageFull,
+                getMenu().getEnergyInfo()::createTooltip
+            );
+        } else {
+            progressWidget.setX(leftPos + progressX);
+            progressWidget.setY(topPos + progressY);
+        }
+        addRenderableWidget(progressWidget);
     }
 
     @Override

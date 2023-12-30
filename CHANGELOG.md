@@ -12,6 +12,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Custom disk models. Fluid disks now have a different model.
 -   Portable Grid
 
+### Changed
+
+-   The Portable Grid now shows an energy bar in the UI.
+
 ## [2.0.0-milestone.3.2] - 2023-11-03
 
 ### Added

@@ -21,6 +21,6 @@ class PortableGridBlockEntityTicker extends AbstractBlockEntityTicker<AbstractPo
                      final BlockPos pos,
                      final BlockState state,
                      final AbstractPortableGridBlockEntity blockEntity) {
-        blockEntity.updateDiskStateIfNecessaryInLevel();
+        blockEntity.update(state);
     }
 }
