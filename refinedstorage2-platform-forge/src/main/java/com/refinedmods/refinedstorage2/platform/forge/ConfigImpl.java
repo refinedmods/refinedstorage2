@@ -14,6 +14,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigImpl implements Config {
     private static final String ENERGY_USAGE = "energyUsage";
+    private static final String ENERGY_CAPACITY = "energyCapacity";
 
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
@@ -213,7 +214,7 @@ public class ConfigImpl implements Config {
         private ControllerEntryImpl() {
             builder.push("controller");
             energyCapacity = builder.comment("The energy capacity of the Controller")
-                .defineInRange("energyCapacity", DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -687,7 +688,7 @@ public class ConfigImpl implements Config {
         WirelessGridEntryImpl() {
             builder.push("wirelessGrid");
             energyCapacity = builder.comment("The energy capacity of the Wireless Grid")
-                .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
                 .defineInRange("openEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_OPEN, 0, Long.MAX_VALUE);
             extractEnergyUsage = builder.comment("The energy used by the Wireless Grid to extract resources")
@@ -747,7 +748,7 @@ public class ConfigImpl implements Config {
         PortableGridEntryImpl() {
             builder.push("portableGrid");
             energyCapacity = builder.comment("The energy capacity of the Portable Grid")
-                .defineInRange("energyCapacity", DefaultEnergyUsage.PORTABLE_GRID_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.PORTABLE_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Portable Grid to open")
                 .defineInRange("openEnergyUsage", DefaultEnergyUsage.PORTABLE_GRID_OPEN, 0, Long.MAX_VALUE);
             extractEnergyUsage = builder.comment("The energy used by the Portable Grid to extract resources")

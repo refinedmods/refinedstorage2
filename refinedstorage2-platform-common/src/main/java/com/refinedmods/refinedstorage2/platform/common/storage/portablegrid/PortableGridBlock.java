@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
@@ -12,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.direction.Directi
 import java.util.function.BiFunction;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -92,16 +89,5 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> type) {
         return ticker.get(level, type);
-    }
-
-    // TODO: can we make everything extended menu provider instead of wrapping it this way?
-    @Override
-    @SuppressWarnings("deprecation") // Forge deprecates this
-    public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof Grid grid && blockEntity instanceof MenuProvider menuProvider) {
-            return PlatformApi.INSTANCE.getGridMenuProvider(grid, menuProvider);
-        }
-        return null;
     }
 }

@@ -317,6 +317,8 @@
   "text.autoconfig.refinedstorage2.option.storageMonitor.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.networkReceiver": "Network Receiver",
   "text.autoconfig.refinedstorage2.option.networkReceiver.energyUsage": "Energy usage",
+  "text.autoconfig.refinedstorage2.option.networkTransmitter": "Network Transmitter",
+  "text.autoconfig.refinedstorage2.option.networkTransmitter.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.portableGrid": "Portable Grid",
   "text.autoconfig.refinedstorage2.option.portableGrid.energyCapacity": "Energy capacity",
   "text.autoconfig.refinedstorage2.option.portableGrid.openEnergyUsage": "Open energy usage",

@@ -4,11 +4,15 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
+import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.grid.view.PlatformGridResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -22,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.tooltip.SmallText
 import com.refinedmods.refinedstorage2.platform.common.support.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
 
@@ -34,8 +39,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -631,5 +638,36 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
 
         return super.keyReleased(key, scanCode, modifiers);
+    }
+
+    public static void writeScreenOpeningData(final PlatformRegistry<PlatformStorageChannelType<?>>
+                                                  storageChannelTypeRegistry,
+                                              final Grid grid,
+                                              final FriendlyByteBuf buf) {
+        buf.writeBoolean(grid.isGridActive());
+        final List<PlatformStorageChannelType<?>> types = storageChannelTypeRegistry.getAll();
+        buf.writeInt(types.size());
+        types.forEach(type -> writeStorageChannel(storageChannelTypeRegistry, type, grid, buf));
+    }
+
+    private static <T> void writeStorageChannel(
+        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+        final PlatformStorageChannelType<T> storageChannelType,
+        final Grid grid,
+        final FriendlyByteBuf buf
+    ) {
+        final ResourceLocation id = storageChannelTypeRegistry.getId(storageChannelType).orElseThrow();
+        buf.writeResourceLocation(id);
+        final List<TrackedResourceAmount<T>> resources = grid.getResources(storageChannelType, PlayerActor.class);
+        buf.writeInt(resources.size());
+        resources.forEach(resource -> writeGridResource(storageChannelType, resource, buf));
+    }
+
+    private static <T> void writeGridResource(final PlatformStorageChannelType<T> storageChannelType,
+                                              final TrackedResourceAmount<T> resource,
+                                              final FriendlyByteBuf buf) {
+        storageChannelType.toBuffer(resource.resourceAmount().getResource(), buf);
+        buf.writeLong(resource.resourceAmount().getAmount());
+        PacketUtil.writeTrackedResource(buf, resource.trackedResource());
     }
 }

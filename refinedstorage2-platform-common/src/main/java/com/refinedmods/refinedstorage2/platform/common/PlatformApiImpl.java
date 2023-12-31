@@ -44,8 +44,8 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRen
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage2.platform.common.grid.GridExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.ItemGridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.SingleItemGridInsertionHint;
@@ -96,7 +96,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -280,12 +279,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public MenuProvider getGridMenuProvider(final Grid grid, final MenuProvider menuProvider) {
-        return new GridExtendedMenuProvider(
-            grid,
-            storageChannelTypeRegistry,
-            menuProvider
-        );
+    public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
+        AbstractGridScreen.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
     }
 
     @Override

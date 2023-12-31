@@ -48,7 +48,6 @@ import java.util.Set;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -98,7 +97,7 @@ public interface PlatformApi {
 
     PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry();
 
-    MenuProvider getGridMenuProvider(Grid grid, MenuProvider menuProvider);
+    void writeGridScreenOpeningData(Grid grid, FriendlyByteBuf buf);
 
     UpgradeRegistry getUpgradeRegistry();
 

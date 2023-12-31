@@ -294,6 +294,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
+        PlatformApi.INSTANCE.writeGridScreenOpeningData(this, buf);
         buf.writeLong(energyStorage.getStored());
         buf.writeLong(energyStorage.getCapacity());
     }
