@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 -   The Portable Grid now shows an energy bar in the UI.
+-   The energy bar on creative items now shows the infinity symbol instead of the whole amount.
 
 ## [2.0.0-milestone.3.2] - 2023-11-03
 
