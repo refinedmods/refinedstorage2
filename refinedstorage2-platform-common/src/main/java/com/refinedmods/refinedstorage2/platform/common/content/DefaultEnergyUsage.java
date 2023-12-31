@@ -50,6 +50,11 @@ public final class DefaultEnergyUsage {
     public static final long WIRELESS_TRANSMITTER = 16;
     public static final int WIRELESS_TRANSMITTER_BASE_RANGE = 16;
 
+    public static final long PORTABLE_GRID_CAPACITY = 1000;
+    public static final long PORTABLE_GRID_OPEN = 5;
+    public static final long PORTABLE_GRID_INSERT = 5;
+    public static final long PORTABLE_GRID_EXTRACT = 5;
+
     private DefaultEnergyUsage() {
     }
 }

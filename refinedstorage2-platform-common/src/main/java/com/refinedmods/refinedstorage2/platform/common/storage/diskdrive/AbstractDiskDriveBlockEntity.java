@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
+import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
+import com.refinedmods.refinedstorage2.platform.common.storage.DiskStateChangeListener;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockEntityWithDrops;
@@ -19,12 +19,9 @@ import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import javax.annotation.Nullable;
 
-import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -39,32 +36,23 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
-    implements BlockEntityWithDrops, MultiStorageListener, ExtendedMenuProvider {
+    implements BlockEntityWithDrops, ExtendedMenuProvider {
     public static final int AMOUNT_OF_DISKS = 8;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
-
     private static final String TAG_DISK_INVENTORY = "inv";
-    private static final String TAG_DISKS = "states";
-    private static final String TAG_DISK_STATE = "s";
-    private static final String TAG_DISK_ITEM_ID = "i";
+    private static final String TAG_DISKS = "disks";
 
     @Nullable
     protected Disk[] disks;
 
-    private final DiskDriveInventory diskInventory;
+    private final DiskInventory diskInventory;
     private final FilterWithFuzzyMode filter;
     private final StorageConfigurationContainerImpl configContainer;
-    private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
-
-    private boolean syncRequested;
+    private final DiskStateChangeListener diskStateListener = new DiskStateChangeListener(this);
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
@@ -73,7 +61,7 @@ public abstract class AbstractDiskDriveBlockEntity
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
-        this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
+        this.diskInventory = new DiskInventory(this::onDiskChanged, getNode().getSize());
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
@@ -86,7 +74,7 @@ public abstract class AbstractDiskDriveBlockEntity
             this::getRedstoneMode,
             this::setRedstoneMode
         );
-        getNode().setListener(this);
+        getNode().setListener(diskStateListener);
         getNode().setNormalizer(filter.createNormalizer());
     }
 
@@ -104,20 +92,7 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     void updateDiskStateIfNecessaryInLevel() {
-        if (!syncRequested) {
-            return;
-        }
-        if (diskStateChangeRateLimiter.tryAcquire()) {
-            LOGGER.debug("Disk state change for block at {}", getBlockPos());
-            this.syncRequested = false;
-            sync();
-        }
-    }
-
-    private void sync() {
-        if (level != null) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        }
+        diskStateListener.updateIfNecessary();
     }
 
     @Override
@@ -155,7 +130,7 @@ public abstract class AbstractDiskDriveBlockEntity
     @Override
     public void activenessChanged(final boolean newActive) {
         super.activenessChanged(newActive);
-        updateBlock();
+        diskStateListener.immediateUpdate();
     }
 
     @Override
@@ -191,15 +166,17 @@ public abstract class AbstractDiskDriveBlockEntity
         return diskInventory;
     }
 
-    void onDiskChanged(final int slot) {
+    private void onDiskChanged(final int slot) {
+        // Level will not yet be present
+        final boolean isJustPlacedIntoLevelOrLoading = level == null || level.isClientSide();
+        // Level will be present, but network not yet
+        final boolean isPlacedThroughDismantlingMode = getNode().getNetwork() == null;
+        if (isJustPlacedIntoLevelOrLoading || isPlacedThroughDismantlingMode) {
+            return;
+        }
         getNode().onStorageChanged(slot);
-        updateBlock();
+        diskStateListener.immediateUpdate();
         setChanged();
-    }
-
-    @Override
-    public void onStorageChanged() {
-        this.syncRequested = true;
     }
 
     @Override
@@ -207,36 +184,19 @@ public abstract class AbstractDiskDriveBlockEntity
         super.onNetworkInNodeInitialized();
         // It's important to sync here as the initial update packet might have failed as the network
         // could possibly be not initialized yet.
-        updateBlock();
+        diskStateListener.immediateUpdate();
     }
 
-    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     private void fromClientTag(final CompoundTag tag) {
         if (!tag.contains(TAG_DISKS)) {
             return;
         }
-        final ListTag disksList = tag.getList(TAG_DISKS, Tag.TAG_COMPOUND);
-        disks = new Disk[disksList.size()];
-        for (int i = 0; i < disksList.size(); ++i) {
-            final CompoundTag diskTag = disksList.getCompound(i);
-            disks[i] = BuiltInRegistries.ITEM.getHolder(diskTag.getInt(TAG_DISK_ITEM_ID))
-                .map(item -> new Disk(item.value(), getState(diskTag)))
-                .orElse(new Disk(null, StorageState.NONE));
-        }
-        onDriveStateUpdated();
+        disks = diskInventory.fromSyncTag(tag.getList(TAG_DISKS, Tag.TAG_COMPOUND));
+        onClientDriveStateUpdated();
     }
 
-    private StorageState getState(final CompoundTag tag) {
-        final int stateOrdinal = tag.getByte(TAG_DISK_STATE);
-        final StorageState[] values = StorageState.values();
-        if (stateOrdinal < 0 || stateOrdinal >= values.length) {
-            return StorageState.NONE;
-        }
-        return values[stateOrdinal];
-    }
-
-    protected void onDriveStateUpdated() {
-        updateBlock();
+    protected void onClientDriveStateUpdated() {
+        diskStateListener.immediateUpdate();
     }
 
     @Override
@@ -245,24 +205,13 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
-    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     public CompoundTag getUpdateTag() {
         final CompoundTag tag = new CompoundTag();
         // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
         if (getNode().getNetwork() == null) {
             return tag;
         }
-        final ListTag disksList = new ListTag();
-        for (int i = 0; i < getNode().getSize(); ++i) {
-            final CompoundTag disk = new CompoundTag();
-            disk.putByte(TAG_DISK_STATE, (byte) getNode().getState(i).ordinal());
-            final ItemStack diskItem = diskInventory.getItem(i);
-            if (!diskItem.isEmpty()) {
-                disk.putInt(TAG_DISK_ITEM_ID, BuiltInRegistries.ITEM.getId(diskItem.getItem()));
-            }
-            disksList.add(disk);
-        }
-        tag.put(TAG_DISKS, disksList);
+        tag.put(TAG_DISKS, diskInventory.toSyncTag(getNode()::getState));
         return tag;
     }
 

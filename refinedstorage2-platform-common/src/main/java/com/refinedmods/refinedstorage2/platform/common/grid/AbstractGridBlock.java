@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.grid;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider;
@@ -10,14 +8,10 @@ import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirec
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.DirectionType;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -65,19 +59,5 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlock<T> & BlockIt
     @Override
     public boolean canAlwaysConnect() {
         return true;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof Grid grid && blockEntity instanceof MenuProvider menuProvider) {
-            return new GridExtendedMenuProvider(
-                grid,
-                PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
-                menuProvider
-            );
-        }
-        return null;
     }
 }

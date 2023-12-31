@@ -22,8 +22,8 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendControllerEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
-        networkManager.send(player, new ControllerEnergyInfoPacket(stored, capacity));
+    public void sendEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
+        networkManager.send(player, new EnergyInfoPacket(stored, capacity));
     }
 
     @Override

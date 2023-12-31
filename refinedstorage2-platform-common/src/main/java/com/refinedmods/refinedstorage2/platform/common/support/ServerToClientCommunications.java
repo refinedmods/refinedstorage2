@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface ServerToClientCommunications {
-    void sendControllerEnergyInfo(ServerPlayer player, long stored, long capacity);
+    void sendEnergyInfo(ServerPlayer player, long stored, long capacity);
 
     void sendWirelessTransmitterRange(ServerPlayer player, int range);
 

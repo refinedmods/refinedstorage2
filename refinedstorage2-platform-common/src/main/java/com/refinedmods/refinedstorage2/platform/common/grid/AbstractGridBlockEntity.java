@@ -16,19 +16,21 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 
 import java.util.List;
 import java.util.Objects;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractGridBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<GridNetworkNode>
-    implements Grid, MenuProvider {
+    implements Grid, ExtendedMenuProvider {
     protected AbstractGridBlockEntity(final BlockEntityType<? extends AbstractGridBlockEntity> type,
                                       final BlockPos pos,
                                       final BlockState state,
@@ -37,6 +39,11 @@ public abstract class AbstractGridBlockEntity
             energyUsage,
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
         ));
+    }
+
+    @Override
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
+        PlatformApi.INSTANCE.writeGridScreenOpeningData(this, buf);
     }
 
     @Override

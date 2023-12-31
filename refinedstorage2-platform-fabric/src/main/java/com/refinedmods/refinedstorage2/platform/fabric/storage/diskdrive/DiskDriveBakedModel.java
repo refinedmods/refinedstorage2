@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
@@ -26,24 +26,10 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 class DiskDriveBakedModel extends ForwardingBakedModel {
-    private static final QuadTranslator[] TRANSLATORS = new QuadTranslator[8];
-
-    static {
-        int i = 0;
-        for (int y = 0; y < 4; ++y) {
-            for (int x = 0; x < 2; ++x) {
-                TRANSLATORS[i++] = new QuadTranslator(
-                    x == 0 ? -(2F / 16F) : -(9F / 16F),
-                    -((y * 3F) / 16F) - (2F / 16F),
-                    0
-                );
-            }
-        }
-    }
-
     private final Map<Item, BakedModel> diskModels;
     private final BakedModel inactiveLedModel;
     private final QuadRotators quadRotators;
+    private final QuadTranslator[] diskTranslations = new QuadTranslator[8];
 
     DiskDriveBakedModel(final BakedModel baseModel,
                         final Map<Item, BakedModel> diskModels,
@@ -53,6 +39,16 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         this.diskModels = diskModels;
         this.inactiveLedModel = inactiveLedModel;
         this.quadRotators = quadRotators;
+        int i = 0;
+        for (int y = 0; y < 4; ++y) {
+            for (int x = 0; x < 2; ++x) {
+                diskTranslations[i++] = new QuadTranslator(
+                    x == 0 ? -(2F / 16F) : -(9F / 16F),
+                    -((y * 3F) / 16F) - (2F / 16F),
+                    0
+                );
+            }
+        }
     }
 
     @Override
@@ -69,7 +65,7 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         if (tag == null) {
             return;
         }
-        for (int i = 0; i < TRANSLATORS.length; ++i) {
+        for (int i = 0; i < diskTranslations.length; ++i) {
             final Item diskItem = AbstractDiskDriveBlockEntity.getDisk(tag, i);
             emitDiskQuads(stack, randomSupplier, context, diskItem, i);
         }
@@ -105,7 +101,7 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context,
                                final Disk[] disks) {
-        for (int i = 0; i < TRANSLATORS.length; ++i) {
+        for (int i = 0; i < diskTranslations.length; ++i) {
             final Disk disk = disks[i];
             emitDiskQuads(blockView, state, pos, randomSupplier, context, disk, i);
         }
@@ -125,7 +121,7 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         if (model == null) {
             return;
         }
-        context.pushTransform(TRANSLATORS[index]);
+        context.pushTransform(diskTranslations[index]);
         model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
         context.popTransform();
     }
@@ -143,7 +139,7 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         if (diskModel == null) {
             return;
         }
-        context.pushTransform(TRANSLATORS[index]);
+        context.pushTransform(diskTranslations[index]);
         diskModel.emitItemQuads(stack, randomSupplier, context);
         inactiveLedModel.emitItemQuads(stack, randomSupplier, context);
         context.popTransform();

@@ -12,8 +12,9 @@ class MultiStorageProviderImpl implements MultiStorageProvider {
     private final Map<Integer, Storage<String>> storages = new HashMap<>();
 
     @Override
-    public Optional<TypedStorage<?>> resolve(final int index) {
-        return Optional.ofNullable(storages.get(index)).map(storage -> new TypedStorage<>(
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public <T> Optional<TypedStorage<T, Storage<T>>> resolve(final int index) {
+        return (Optional) Optional.ofNullable(storages.get(index)).map(storage -> new TypedStorage<>(
             storage,
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE
         ));

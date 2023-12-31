@@ -22,8 +22,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ServerToClientCommunicationsImpl implements ServerToClientCommunications {
     @Override
-    public void sendControllerEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
-        sendToPlayer(player, PacketIds.CONTROLLER_ENERGY_INFO, buf -> {
+    public void sendEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
+        sendToPlayer(player, PacketIds.ENERGY_INFO, buf -> {
             buf.writeLong(stored);
             buf.writeLong(capacity);
         });

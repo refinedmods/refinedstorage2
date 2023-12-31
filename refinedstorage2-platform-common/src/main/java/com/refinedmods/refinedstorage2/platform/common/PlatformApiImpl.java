@@ -45,6 +45,7 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestin
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage2.platform.common.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.ItemGridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.SingleItemGridInsertionHint;
@@ -275,6 +276,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry() {
         return gridSynchronizerRegistry;
+    }
+
+    @Override
+    public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
+        AbstractGridScreen.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
     }
 
     @Override

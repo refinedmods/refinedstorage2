@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.configurationcard;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +16,11 @@ public interface ConfigurationCardTarget {
 
     void readConfiguration(CompoundTag tag);
 
-    List<Item> getUpgradeItems();
+    default List<Item> getUpgradeItems() {
+        return Collections.emptyList();
+    }
 
-    boolean addUpgradeItem(Item upgradeItem);
+    default boolean addUpgradeItem(Item upgradeItem) {
+        return false;
+    }
 }

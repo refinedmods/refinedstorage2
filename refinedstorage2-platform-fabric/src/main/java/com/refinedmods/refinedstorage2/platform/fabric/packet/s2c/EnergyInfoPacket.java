@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.common.controller.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ControllerEnergyInfoPacket implements ClientPlayNetworking.PlayChannelHandler {
+public class EnergyInfoPacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
     public void receive(final Minecraft client,
                         final ClientPacketListener handler,
@@ -18,8 +18,8 @@ public class ControllerEnergyInfoPacket implements ClientPlayNetworking.PlayChan
         final long capacity = buf.readLong();
 
         client.execute(() -> {
-            if (client.player.containerMenu instanceof ControllerContainerMenu controller) {
-                controller.setEnergyInfo(stored, capacity);
+            if (client.player.containerMenu instanceof EnergyContainerMenu energyContainer) {
+                energyContainer.getEnergyInfo().setEnergy(stored, capacity);
             }
         });
     }

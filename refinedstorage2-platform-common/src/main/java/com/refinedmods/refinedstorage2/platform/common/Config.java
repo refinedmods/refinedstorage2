@@ -50,6 +50,8 @@ public interface Config {
 
     SimpleEnergyUsageEntry getNetworkTransmitter();
 
+    PortableGridEntry getPortableGrid();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }
@@ -166,5 +168,15 @@ public interface Config {
 
     interface WirelessTransmitterEntry extends SimpleEnergyUsageEntry {
         int getBaseRange();
+    }
+
+    interface PortableGridEntry {
+        long getEnergyCapacity();
+
+        long getOpenEnergyUsage();
+
+        long getInsertEnergyUsage();
+
+        long getExtractEnergyUsage();
     }
 }

@@ -32,7 +32,7 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
     public CraftingGridScreen(final CraftingGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title, 156);
         this.inventoryLabelY = 134;
-        this.imageWidth = 227;
+        this.imageWidth = 193;
         this.imageHeight = 229;
     }
 

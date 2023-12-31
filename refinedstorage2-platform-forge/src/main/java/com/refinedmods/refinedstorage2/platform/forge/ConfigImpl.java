@@ -14,6 +14,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigImpl implements Config {
     private static final String ENERGY_USAGE = "energyUsage";
+    private static final String ENERGY_CAPACITY = "energyCapacity";
 
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
@@ -38,6 +39,7 @@ public class ConfigImpl implements Config {
     private final SimpleEnergyUsageEntry storageMonitor;
     private final SimpleEnergyUsageEntry networkReceiver;
     private final SimpleEnergyUsageEntry networkTransmitter;
+    private final PortableGridEntry portableGrid;
 
     public ConfigImpl() {
         cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
@@ -76,6 +78,7 @@ public class ConfigImpl implements Config {
             "Network Transmitter",
             DefaultEnergyUsage.NETWORK_TRANSMITTER
         );
+        portableGrid = new PortableGridEntryImpl();
         spec = builder.build();
     }
 
@@ -183,6 +186,11 @@ public class ConfigImpl implements Config {
         return networkTransmitter;
     }
 
+    @Override
+    public PortableGridEntry getPortableGrid() {
+        return portableGrid;
+    }
+
     private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
         private final ForgeConfigSpec.LongValue energyUsage;
 
@@ -206,7 +214,7 @@ public class ConfigImpl implements Config {
         private ControllerEntryImpl() {
             builder.push("controller");
             energyCapacity = builder.comment("The energy capacity of the Controller")
-                .defineInRange("energyCapacity", DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -680,7 +688,7 @@ public class ConfigImpl implements Config {
         WirelessGridEntryImpl() {
             builder.push("wirelessGrid");
             energyCapacity = builder.comment("The energy capacity of the Wireless Grid")
-                .defineInRange("energyCapacity", DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
             openEnergyUsage = builder.comment("The energy used by the Wireless Grid to open")
                 .defineInRange("openEnergyUsage", DefaultEnergyUsage.WIRELESS_GRID_OPEN, 0, Long.MAX_VALUE);
             extractEnergyUsage = builder.comment("The energy used by the Wireless Grid to extract resources")
@@ -728,6 +736,42 @@ public class ConfigImpl implements Config {
 
         public int getBaseRange() {
             return baseRange.get();
+        }
+    }
+
+    private class PortableGridEntryImpl implements PortableGridEntry {
+        private final ForgeConfigSpec.LongValue energyCapacity;
+        private final ForgeConfigSpec.LongValue openEnergyUsage;
+        private final ForgeConfigSpec.LongValue extractEnergyUsage;
+        private final ForgeConfigSpec.LongValue insertEnergyUsage;
+
+        PortableGridEntryImpl() {
+            builder.push("portableGrid");
+            energyCapacity = builder.comment("The energy capacity of the Portable Grid")
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.PORTABLE_GRID_CAPACITY, 0, Long.MAX_VALUE);
+            openEnergyUsage = builder.comment("The energy used by the Portable Grid to open")
+                .defineInRange("openEnergyUsage", DefaultEnergyUsage.PORTABLE_GRID_OPEN, 0, Long.MAX_VALUE);
+            extractEnergyUsage = builder.comment("The energy used by the Portable Grid to extract resources")
+                .defineInRange("extractEnergyUsage", DefaultEnergyUsage.PORTABLE_GRID_EXTRACT, 0, Long.MAX_VALUE);
+            insertEnergyUsage = builder.comment("The energy used by the Portable Grid to insert resources")
+                .defineInRange("insertEnergyUsage", DefaultEnergyUsage.PORTABLE_GRID_INSERT, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        public long getEnergyCapacity() {
+            return energyCapacity.get();
+        }
+
+        public long getOpenEnergyUsage() {
+            return openEnergyUsage.get();
+        }
+
+        public long getExtractEnergyUsage() {
+            return extractEnergyUsage.get();
+        }
+
+        public long getInsertEnergyUsage() {
+            return insertEnergyUsage.get();
         }
     }
 }

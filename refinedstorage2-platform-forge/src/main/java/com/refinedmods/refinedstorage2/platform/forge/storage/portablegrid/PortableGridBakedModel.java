@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
@@ -83,7 +83,8 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
         if (disk == null) {
             return super.getQuads(state, side, randomSource);
         }
-        return cache.getUnchecked(new CacheKey(side, direction, true, disk));
+        final boolean active = state.getValue(PortableGridBlock.ACTIVE);
+        return cache.getUnchecked(new CacheKey(side, direction, active, disk));
     }
 
     @Override

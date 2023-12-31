@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceSlotCha
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.UseNetworkBoundItemPacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyInfoPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridUpdatePacket;
@@ -44,10 +44,10 @@ public class NetworkManager {
         int id = 0;
         handler.registerMessage(
             id++,
-            ControllerEnergyInfoPacket.class,
-            ControllerEnergyInfoPacket::encode,
-            ControllerEnergyInfoPacket::decode,
-            ControllerEnergyInfoPacket::handle
+            EnergyInfoPacket.class,
+            EnergyInfoPacket::encode,
+            EnergyInfoPacket::decode,
+            EnergyInfoPacket::handle
         );
         handler.registerMessage(
             id++,

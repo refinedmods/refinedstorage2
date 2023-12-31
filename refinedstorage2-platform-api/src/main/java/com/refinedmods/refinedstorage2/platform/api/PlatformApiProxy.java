@@ -162,6 +162,11 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
+    public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
+        ensureLoaded().writeGridScreenOpeningData(grid, buf);
+    }
+
+    @Override
     public UpgradeRegistry getUpgradeRegistry() {
         return ensureLoaded().getUpgradeRegistry();
     }

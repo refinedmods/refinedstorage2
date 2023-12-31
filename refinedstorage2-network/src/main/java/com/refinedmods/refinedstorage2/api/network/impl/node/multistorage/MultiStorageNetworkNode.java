@@ -1,9 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
-import com.refinedmods.refinedstorage2.api.network.impl.node.StorageState;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
+import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.ArrayList;
@@ -28,13 +30,13 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     @Nullable
     private MultiStorageProvider provider;
     @Nullable
-    private MultiStorageListener listener;
+    private StateTrackedStorage.Listener listener;
 
     private final long energyUsage;
     private final long energyUsagePerStorage;
 
-    private final MultiStorageInternalStorage<?>[] cache;
-    private final Map<StorageChannelType<?>, MultiStorageExposedStorage<?>> exposedStorages;
+    private final TypedStorage<?, StateTrackedStorage<?>>[] cache;
+    private final Map<StorageChannelType<?>, ExposedStorage<?>> exposedStorages;
     private int activeStorages;
 
     public MultiStorageNetworkNode(final long energyUsage,
@@ -44,10 +46,10 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         this.energyUsage = energyUsage;
         this.energyUsagePerStorage = energyUsagePerStorage;
         this.exposedStorages = createExposedStorages(storageChannelTypes);
-        this.cache = new MultiStorageInternalStorage[size];
+        this.cache = new TypedStorage[size];
     }
 
-    private Map<StorageChannelType<?>, MultiStorageExposedStorage<?>> createExposedStorages(
+    private Map<StorageChannelType<?>, ExposedStorage<?>> createExposedStorages(
         final Collection<? extends StorageChannelType<?>> storageChannelTypes
     ) {
         return storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
@@ -56,8 +58,8 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         ));
     }
 
-    private MultiStorageExposedStorage<?> createExposedStorage(final StorageChannelType<?> type) {
-        return new MultiStorageExposedStorage<>(this);
+    private ExposedStorage<?> createExposedStorage(final StorageChannelType<?> type) {
+        return new ExposedStorage<>(this);
     }
 
     public void setProvider(final MultiStorageProvider provider) {
@@ -86,23 +88,18 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     @SuppressWarnings({"rawtypes", "unchecked"})
     private Set<StorageChange> initializeStorage(final int index) {
         final Set<StorageChange> results = new HashSet<>();
+
         if (cache[index] != null) {
-            final StorageChannelType<?> removedType = cache[index].getStorageChannelType();
-            final MultiStorageExposedStorage<?> relevantComposite = exposedStorages.get(removedType);
-            results.add(new StorageChange(true, relevantComposite, cache[index]));
+            final StorageChannelType<?> removedType = cache[index].storageChannelType();
+            final ExposedStorage<?> relevantComposite = exposedStorages.get(removedType);
+            results.add(new StorageChange(true, relevantComposite, cache[index].storage()));
         }
 
         if (provider != null) {
             provider.resolve(index).ifPresentOrElse(resolved -> {
-                cache[index] = new MultiStorageInternalStorage(
-                    resolved.storage(),
-                    resolved.storageChannelType(),
-                    listener
-                );
-                final MultiStorageExposedStorage<?> relevantComposite = exposedStorages.get(
-                    resolved.storageChannelType()
-                );
-                results.add(new StorageChange(false, relevantComposite, cache[index]));
+                cache[index] = (TypedStorage) StateTrackedStorage.of(resolved, listener);
+                final ExposedStorage<?> relevantComposite = exposedStorages.get(resolved.storageChannelType());
+                results.add(new StorageChange(false, relevantComposite, cache[index].storage()));
             }, () -> cache[index] = null);
         }
 
@@ -145,19 +142,19 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void enableAllStoragesForChannel(final StorageChannelType<?> type,
-                                             final MultiStorageExposedStorage<?> exposedStorage) {
-        for (final MultiStorageInternalStorage<?> internalStorage : cache) {
-            if (internalStorage != null && internalStorage.getStorageChannelType() == type) {
-                exposedStorage.addSource((MultiStorageInternalStorage) internalStorage);
+                                             final ExposedStorage<?> exposedStorage) {
+        for (final TypedStorage<?, StateTrackedStorage<?>> internalStorage : cache) {
+            if (internalStorage != null && internalStorage.storageChannelType() == type) {
+                exposedStorage.addSource((StateTrackedStorage) internalStorage.storage());
             }
         }
     }
 
     private void disableAllStorages() {
-        exposedStorages.values().forEach(MultiStorageExposedStorage::clearSources);
+        exposedStorages.values().forEach(ExposedStorage::clearSources);
     }
 
-    public void setListener(final MultiStorageListener listener) {
+    public void setListener(final StateTrackedStorage.Listener listener) {
         this.listener = listener;
     }
 
@@ -178,7 +175,7 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         if (!isActive()) {
             return StorageState.INACTIVE;
         }
-        return storage.getState();
+        return storage.storage().getState();
     }
 
     @Override
@@ -189,7 +186,7 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
-        final MultiStorageExposedStorage<?> storage = exposedStorages.get(channelType);
+        final ExposedStorage<?> storage = exposedStorages.get(channelType);
         if (storage != null) {
             return Optional.of((Storage<T>) storage);
         }
@@ -197,7 +194,7 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     }
 
     private record StorageChange(boolean removed,
-                                 MultiStorageExposedStorage<?> exposedStorage,
-                                 MultiStorageInternalStorage<?> internalStorage) {
+                                 ExposedStorage<?> exposedStorage,
+                                 StateTrackedStorage<?> internalStorage) {
     }
 }

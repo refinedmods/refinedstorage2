@@ -66,6 +66,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.E
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunctionSerializer;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
@@ -703,6 +704,10 @@ public abstract class AbstractModInitializer {
         Menus.INSTANCE.setNetworkTransmitter(callback.register(
             NETWORK_TRANSMITTER,
             () -> menuTypeFactory.create(NetworkTransmitterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> menuTypeFactory.create(PortableGridContainerMenu::new)
         ));
     }
 
