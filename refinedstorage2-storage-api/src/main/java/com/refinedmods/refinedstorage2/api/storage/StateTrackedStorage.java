@@ -62,9 +62,6 @@ public class StateTrackedStorage<T> implements TrackedStorage<T> {
     @Override
     public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         final long extracted = delegate.extract(resource, amount, action, actor);
-        // TODO: https://sonarcloud.io/component_measures?metric=new_coverage&selected=refinedmods_refinedstorage2%3
-        //  Arefinedstorage2-storage-api%2Fsrc%2Fmain%2Fjava%2Fcom%2Frefinedmods%2Frefinedstorage2%2Fapi%2
-        //  Fstorage%2FStateTrackedStorage.java&view=list&pullRequest=465&id=refinedmods_refinedstorage2
         if (extracted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
