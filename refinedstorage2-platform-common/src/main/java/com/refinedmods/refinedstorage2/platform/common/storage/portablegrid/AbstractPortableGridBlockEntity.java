@@ -92,7 +92,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), // TODO
+            Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(),
             blockEntity
         );
     }
@@ -244,6 +244,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
 
     @Override
     public Storage<ItemResource> getItemStorage() {
+        // TODO
         return new InMemoryStorageImpl<>();
     }
 
@@ -252,9 +253,6 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
         return energyStorage.getStored() > 0
             && level != null
             && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
-        // TODO: add energy component
-        // TODO: sync activeness to block state
-        // TODO: energy level in GUI
     }
 
     @Override

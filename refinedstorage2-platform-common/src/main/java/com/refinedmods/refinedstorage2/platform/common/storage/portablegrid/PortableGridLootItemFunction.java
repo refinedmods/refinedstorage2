@@ -15,7 +15,7 @@ class PortableGridLootItemFunction implements LootItemFunction {
 
     @Override
     public ItemStack apply(final ItemStack itemStack, final LootContext lootContext) {
-        // todo !
+        // TODO: item representation of the portable grid
         return itemStack;
     }
 }

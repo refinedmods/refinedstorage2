@@ -85,6 +85,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         DefaultEnergyUsage.NETWORK_TRANSMITTER
     );
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private PortableGridEntryImpl portableGrid = new PortableGridEntryImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -187,6 +190,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public SimpleEnergyUsageEntry getNetworkTransmitter() {
         return networkTransmitter;
+    }
+
+    @Override
+    public PortableGridEntry getPortableGrid() {
+        return portableGrid;
     }
 
     private static class GridEntryImpl implements GridEntry {
@@ -576,6 +584,36 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public int getBaseRange() {
             return baseRange;
+        }
+    }
+
+    private static class PortableGridEntryImpl implements PortableGridEntry {
+        private long energyCapacity = DefaultEnergyUsage.PORTABLE_GRID_CAPACITY;
+
+        private long openEnergyUsage = DefaultEnergyUsage.PORTABLE_GRID_OPEN;
+
+        private long insertEnergyUsage = DefaultEnergyUsage.PORTABLE_GRID_INSERT;
+
+        private long extractEnergyUsage = DefaultEnergyUsage.PORTABLE_GRID_EXTRACT;
+
+        @Override
+        public long getEnergyCapacity() {
+            return energyCapacity;
+        }
+
+        @Override
+        public long getOpenEnergyUsage() {
+            return openEnergyUsage;
+        }
+
+        @Override
+        public long getInsertEnergyUsage() {
+            return insertEnergyUsage;
+        }
+
+        @Override
+        public long getExtractEnergyUsage() {
+            return extractEnergyUsage;
         }
     }
 }
