@@ -37,29 +37,39 @@ public class GridWatchers {
             throw new IllegalArgumentException("Watcher is already registered");
         }
         final GridWatcherRegistration registration = new GridWatcherRegistration(watcher, actorType);
-        attachAll(registration, network);
+        attachAll(registration, network, false);
         watchers.put(watcher, registration);
         LOGGER.info("Added watcher {}, new count is {}", watcher, watchers.size());
     }
 
     public void attachAll(final Network network) {
+        // If we get here we are affected by a network split or network merge.
+        // At this point, all the storages that are affected by the split or merge have not yet been processed
+        // as the grid has the highest priority.
         watchers.forEach((watcher, registration) -> {
+            // Invalidate all watcher data, the resources that were synced earlier are no longer valid because we have
+            // a brand-new network.
             watcher.clear();
-            attachAll(registration, network);
+            // Re-attach the watcher to the new network, and send all the resources from the new network.
+            // Resources from the old network are not part of the new network yet, as mentioned above,
+            // but those will be synced when the storages are re-added.
+            attachAll(registration, network, true);
         });
     }
 
-    private void attachAll(final GridWatcherRegistration registration, final Network network) {
-        storageChannelTypes.forEach(storageChannelType -> attach(registration, storageChannelType, network));
+    private void attachAll(final GridWatcherRegistration registration, final Network network, final boolean replay) {
+        storageChannelTypes.forEach(storageChannelType -> attach(registration, storageChannelType, network, replay));
     }
 
     private <T> void attach(
         final GridWatcherRegistration registration,
         final StorageChannelType<T> storageChannelType,
-        final Network network
+        final Network network,
+        final boolean replay
     ) {
         LOGGER.info("Attaching {} to {}", registration, storageChannelType);
-        registration.attach(getStorageChannel(network, storageChannelType), storageChannelType);
+        final StorageChannel<T> storageChannel = getStorageChannel(network, storageChannelType);
+        registration.attach(storageChannel, storageChannelType, replay);
     }
 
     public void removeWatcher(final GridWatcher watcher, final Network network) {

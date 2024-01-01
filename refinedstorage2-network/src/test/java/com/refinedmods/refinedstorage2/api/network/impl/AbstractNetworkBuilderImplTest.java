@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 abstract class AbstractNetworkBuilderImplTest {
     protected NetworkBuilder sut;
-    private ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
+    protected ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
 
     @BeforeEach
     void setUp() {
