@@ -1,6 +1,5 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
+package com.refinedmods.refinedstorage2.api.grid.watcher;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;

@@ -42,7 +42,6 @@ public class WirelessGridItem extends AbstractNetworkBoundEnergyItem {
     public void use(final ServerPlayer player,
                     final SlotReference slotReference,
                     final NetworkBoundItemSession session) {
-        session.drainEnergy(Platform.INSTANCE.getConfig().getWirelessGrid().getOpenEnergyUsage());
         final Grid grid = new WirelessGrid(session);
         Platform.INSTANCE.getMenuOpener().openMenu(player, new WirelessGridExtendedMenuProvider(grid, slotReference));
     }

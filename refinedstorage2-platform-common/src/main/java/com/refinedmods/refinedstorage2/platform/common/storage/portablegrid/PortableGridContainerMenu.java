@@ -11,13 +11,19 @@ import com.refinedmods.refinedstorage2.platform.common.support.containermenu.Val
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyInfo;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 
 public class PortableGridContainerMenu extends AbstractGridContainerMenu implements EnergyContainerMenu {
     private final SimpleContainer diskInventory;
     private final EnergyInfo energyInfo;
+
+    @Nullable
+    private Slot diskSlot;
 
     public PortableGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getPortableGrid(), syncId, playerInventory, buf);
@@ -52,9 +58,21 @@ public class PortableGridContainerMenu extends AbstractGridContainerMenu impleme
     }
 
     @Override
+    protected boolean canTransferSlot(final Slot slot) {
+        return slot != diskSlot;
+    }
+
+    @Override
     public void addSlots(final int playerInventoryY) {
         super.addSlots(playerInventoryY);
-        addSlot(new ValidatedSlot(diskInventory, 0, -19, 8, stack -> stack.getItem() instanceof StorageContainerItem));
+        diskSlot = new ValidatedSlot(
+            diskInventory,
+            0,
+            -19,
+            8,
+            stack -> stack.getItem() instanceof StorageContainerItem
+        );
+        addSlot(diskSlot);
         transferManager.addBiTransfer(playerInventory, diskInventory);
     }
 

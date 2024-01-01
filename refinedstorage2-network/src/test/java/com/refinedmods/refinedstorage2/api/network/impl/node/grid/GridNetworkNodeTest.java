@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -162,7 +162,7 @@ class GridNetworkNodeTest {
         storageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        verify(watcher, times(1)).clear();
+        verify(watcher, times(1)).invalidate();
 
         final ArgumentCaptor<TrackedResource> trackedResources1 = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(1)).onChanged(

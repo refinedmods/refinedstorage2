@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
@@ -10,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -284,7 +284,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Override
-    public void clear() {
+    public void invalidate() {
         if (playerInventory.player instanceof ServerPlayer serverPlayer) {
             initStrategies();
             Platform.INSTANCE.getServerToClientCommunications().sendGridClear(serverPlayer);
@@ -433,11 +433,15 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
         if (!playerEntity.level().isClientSide() && grid != null && grid.isGridActive()) {
             final Slot slot = getSlot(slotIndex);
-            if (slot.hasItem() && insertionStrategy != null) {
+            if (slot.hasItem() && insertionStrategy != null && canTransferSlot(slot)) {
                 insertionStrategy.onTransfer(slot.index);
             }
         }
         return super.quickMoveStack(playerEntity, slotIndex);
+    }
+
+    protected boolean canTransferSlot(final Slot slot) {
+        return true;
     }
 
     private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,

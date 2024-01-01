@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class NoOpGridSynchronizer extends AbstractGridSynchronizer {
+public class NoopGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.off");
     private static final Component HELP = createTranslation("gui", "grid.synchronizer.off.help");
 

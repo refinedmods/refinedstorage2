@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridStorageChannelProvider;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
@@ -12,7 +13,7 @@ import java.util.function.Predicate;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
-public interface StorageNetworkComponent extends NetworkComponent {
+public interface StorageNetworkComponent extends NetworkComponent, GridStorageChannelProvider {
     <T> StorageChannel<T> getStorageChannel(StorageChannelType<T> type);
 
     boolean hasSource(Predicate<Storage<?>> matcher);
