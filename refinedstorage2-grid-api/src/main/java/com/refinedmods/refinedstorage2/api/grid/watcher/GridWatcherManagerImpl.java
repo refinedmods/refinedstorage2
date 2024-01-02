@@ -10,7 +10,6 @@ import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: test.
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.3")
 public class GridWatcherManagerImpl implements GridWatcherManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridWatcherManagerImpl.class);
