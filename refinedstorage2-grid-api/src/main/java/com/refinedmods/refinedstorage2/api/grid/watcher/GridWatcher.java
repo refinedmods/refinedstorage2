@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.grid;
+package com.refinedmods.refinedstorage2.api.grid.watcher;
 
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -38,5 +38,5 @@ public interface GridWatcher {
     /**
      * Usually called when the grid network has been changed.
      */
-    void clear();
+    void invalidate();
 }

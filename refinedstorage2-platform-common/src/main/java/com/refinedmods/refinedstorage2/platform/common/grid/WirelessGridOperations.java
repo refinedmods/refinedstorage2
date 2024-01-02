@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.grid;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
-import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridWatchers;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManager;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
@@ -12,11 +12,11 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 class WirelessGridOperations<T> implements GridOperations<T> {
     private final GridOperations<T> delegate;
     private final NetworkBoundItemSession session;
-    private final GridWatchers watchers;
+    private final GridWatcherManager watchers;
 
     WirelessGridOperations(final GridOperations<T> delegate,
                            final NetworkBoundItemSession session,
-                           final GridWatchers watchers) {
+                           final GridWatcherManager watchers) {
         this.delegate = delegate;
         this.session = session;
         this.watchers = watchers;

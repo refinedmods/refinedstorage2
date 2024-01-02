@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -74,6 +75,11 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     @Override
     public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
         return (StorageChannel<T>) channels.get(type);
+    }
+
+    @Override
+    public Set<StorageChannelType<?>> getStorageChannelTypes() {
+        return channels.keySet();
     }
 
     @Override

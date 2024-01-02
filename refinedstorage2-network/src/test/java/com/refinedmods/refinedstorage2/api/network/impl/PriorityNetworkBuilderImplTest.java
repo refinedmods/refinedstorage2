@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.impl.node.container.NetworkNodeContainerPriorities;
@@ -52,7 +52,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(slave.nodeB.getNetwork()).isNotSameAs(master.nodeA.getNetwork());
 
         final InOrder inOrder = inOrder(slave.watcher);
-        inOrder.verify(slave.watcher, times(1)).clear();
+        inOrder.verify(slave.watcher, times(1)).invalidate();
         inOrder.verify(slave.watcher, times(1)).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             "slave",
@@ -93,7 +93,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(slave.nodeB.getNetwork()).isSameAs(master.nodeA.getNetwork());
 
         final InOrder inOrder = inOrder(slave.watcher);
-        inOrder.verify(slave.watcher, times(1)).clear();
+        inOrder.verify(slave.watcher, times(1)).invalidate();
         inOrder.verify(slave.watcher).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             "slave",
@@ -131,7 +131,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
             0
         );
         nodeA.setActive(true);
-        final GridNetworkNode nodeB = new GridNetworkNode(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPES);
+        final GridNetworkNode nodeB = new GridNetworkNode(0);
         final NetworkNodeContainer b = createContainerWithNetwork(
             nodeB,
             container -> a.getNode().getNetwork(),

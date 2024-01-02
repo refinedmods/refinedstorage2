@@ -44,7 +44,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRen
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage2.platform.common.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.grid.NoopGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.ItemGridInsertionHint;
@@ -118,7 +118,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry =
         new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
-        new PlatformRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
+        new PlatformRegistryImpl<>(createIdentifier("off"), new NoopGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new PlatformRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, upgradeState, amountOverride) -> (filter, actor, network) -> false);

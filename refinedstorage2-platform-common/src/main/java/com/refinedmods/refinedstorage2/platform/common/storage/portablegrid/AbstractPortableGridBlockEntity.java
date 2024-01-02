@@ -1,20 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.grid.operations.NoopGridOperations;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridStorageChannelProvider;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManager;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManagerImpl;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.api.storage.NoopStorage;
 import com.refinedmods.refinedstorage2.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContaine
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskStateChangeListener;
+import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
@@ -38,6 +39,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -61,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPortableGridBlockEntity extends BlockEntity implements Grid, ExtendedMenuProvider,
-    EnergyBlockEntity, ConfigurationCardTarget {
+    EnergyBlockEntity, ConfigurationCardTarget, GridStorageChannelProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPortableGridBlockEntity.class);
 
     private static final String TAG_DISK_INVENTORY = "inv";
@@ -76,10 +78,11 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     private final DiskStateChangeListener diskStateListener = new DiskStateChangeListener(this);
     private final EnergyStorage energyStorage;
     private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
+    private final GridWatcherManager watchers = new GridWatcherManagerImpl();
 
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     @Nullable
-    private TypedStorage<?, StateTrackedStorage<?>> storage;
+    private PortableGridStorage<?> storage;
 
     protected AbstractPortableGridBlockEntity(final PortableGridType type, final BlockPos pos, final BlockState state) {
         super(getBlockEntityType(type), pos, state);
@@ -103,6 +106,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
         final boolean activenessNeedsUpdate = state.getValue(PortableGridBlock.ACTIVE) != newActive;
         if (activenessNeedsUpdate && activenessChangeRateLimiter.tryAcquire()) {
             updateActivenessBlockState(state, newActive);
+            watchers.activeChanged(newActive);
         }
     }
 
@@ -136,24 +140,32 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
         }
     }
 
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        if (level != null && !level.isClientSide()) {
-            initialize(level);
-        }
-    }
-
     private void initialize(final Level level) {
         diskInventory.setStorageRepository(PlatformApi.INSTANCE.getStorageRepository(level));
         updateStorage();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private void updateStorage() {
+        watchers.detachAll(this);
         this.storage = diskInventory.resolve(0)
-            .map(resolved -> (TypedStorage) StateTrackedStorage.of(resolved, diskStateListener))
+            .map(diskStorage -> StateTrackedStorage.of(diskStorage, diskStateListener))
+            .map(PortableGridStorage::new)
             .orElse(null);
+        watchers.attachAll(this);
+    }
+
+    @Override
+    public Set<StorageChannelType<?>> getStorageChannelTypes() {
+        return storage == null ? Collections.emptySet() : Set.of(storage.getStorageChannelType());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
+        if (storage == null || type != storage.getStorageChannelType()) {
+            throw new IllegalArgumentException();
+        }
+        return (StorageChannel<T>) storage.getStorageChannel();
     }
 
     @Override
@@ -229,23 +241,27 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
         if (!isGridActive()) {
             return StorageState.INACTIVE;
         }
-        return storage.storage().getState();
+        return storage.getState();
     }
 
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
-        // TODO
+        energyStorage.extract(Platform.INSTANCE.getConfig().getPortableGrid().getOpenEnergyUsage(), Action.EXECUTE);
+        watchers.addWatcher(watcher, actorType, this);
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        // TODO
+        watchers.removeWatcher(watcher, this);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Storage<ItemResource> getItemStorage() {
-        // TODO
-        return new InMemoryStorageImpl<>();
+        if (storage == null || storage.getStorageChannelType() != StorageChannelTypes.ITEM) {
+            return new NoopStorage<>();
+        }
+        return (Storage<ItemResource>) storage.getStorageChannel();
     }
 
     @Override
@@ -256,29 +272,29 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
                                                            final Class<? extends Actor> actorType) {
-        // TODO
-        return Collections.emptyList();
+        if (storage == null || storage.getStorageChannelType() != type) {
+            return Collections.emptyList();
+        }
+        final StorageChannel<T> casted = (StorageChannel<T>) storage.getStorageChannel();
+        return casted.getAll().stream().map(resource -> new TrackedResourceAmount<>(
+            resource,
+            casted.findTrackedResourceByActorType(resource.getResource(), actorType).orElse(null)
+        )).toList();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> GridOperations<T> createOperations(final PlatformStorageChannelType<T> storageChannelType,
                                                   final Actor actor) {
-        // TODO
-        return new GridOperations<>() {
-            @Override
-            public boolean extract(final T resource, final GridExtractMode extractMode,
-                                   final InsertableStorage<T> destination) {
-                return false;
-            }
-
-            @Override
-            public boolean insert(final T resource, final GridInsertMode insertMode,
-                                  final ExtractableStorage<T> source) {
-                return false;
-            }
-        };
+        if (storage == null || storage.getStorageChannelType() != storageChannelType) {
+            return new NoopGridOperations<>();
+        }
+        final StorageChannel<T> casted = (StorageChannel<T>) storage.getStorageChannel();
+        final GridOperations<T> operations = storageChannelType.createGridOperations(casted, actor);
+        return new PortableGridOperations<>(operations, energyStorage);
     }
 
     @Override
