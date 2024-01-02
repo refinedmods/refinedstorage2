@@ -146,14 +146,18 @@ class GridNetworkNodeTest {
         sut.addWatcher(watcher, FakeActor.class);
 
         // Act
+        // this one shouldn't be ignored!
         otherStorageChannel.insert("C", 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         sut.setNetwork(otherNetwork);
         network.removeContainer(() -> sut);
         otherNetwork.addContainer(() -> sut);
 
+        // these one shouldn't be ignored either
         otherStorageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
         otherStorageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // these should be ignored
         storageChannel.insert("B", 10, Action.EXECUTE, FakeActor.INSTANCE);
         storageChannel.insert("D", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
@@ -163,11 +167,22 @@ class GridNetworkNodeTest {
         final ArgumentCaptor<TrackedResource> trackedResources1 = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(1)).onChanged(
             eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
-            eq("A"),
+            eq("C"),
             eq(10L),
             trackedResources1.capture()
         );
         assertThat(trackedResources1.getAllValues())
+            .hasSize(1)
+            .allMatch(t -> FakeActor.INSTANCE.getName().equals(t.getSourceName()));
+
+        final ArgumentCaptor<TrackedResource> trackedResources2 = ArgumentCaptor.forClass(TrackedResource.class);
+        verify(watcher, times(1)).onChanged(
+            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
+            eq("A"),
+            eq(10L),
+            trackedResources2.capture()
+        );
+        assertThat(trackedResources2.getAllValues())
             .hasSize(1)
             .allMatch(t -> FakeActor.INSTANCE.getName().equals(t.getSourceName()));
 

@@ -19,7 +19,9 @@ class GridWatcherRegistration {
         this.actorType = actorType;
     }
 
-    <T> void attach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
+    <T> void attach(final StorageChannel<T> storageChannel,
+                    final StorageChannelType<T> storageChannelType,
+                    final boolean replay) {
         final ResourceListListener<T> listener = change -> watcher.onChanged(
             storageChannelType,
             change.resourceAmount().getResource(),
@@ -31,6 +33,17 @@ class GridWatcherRegistration {
         );
         storageChannel.addListener(listener);
         listeners.put(storageChannelType, listener);
+        if (replay) {
+            storageChannel.getAll().forEach(resourceAmount -> watcher.onChanged(
+                storageChannelType,
+                resourceAmount.getResource(),
+                resourceAmount.getAmount(),
+                storageChannel.findTrackedResourceByActorType(
+                    resourceAmount.getResource(),
+                    actorType
+                ).orElse(null)
+            ));
+        }
     }
 
     @SuppressWarnings("unchecked")
