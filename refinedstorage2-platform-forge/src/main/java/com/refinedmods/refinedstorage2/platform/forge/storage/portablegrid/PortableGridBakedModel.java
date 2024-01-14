@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageState;
-import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
-import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItemRenderInfo;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.DiskModelBaker;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.ItemBakedModel;
@@ -35,6 +35,7 @@ import org.joml.Vector3f;
 
 class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
     private static final Vector3f MOVE_TO_DISK_LOCATION = new Vector3f(0, -12 / 16F, 9 / 16F);
+    private static final Vector3f MOVE_TO_DISK_LED_LOCATION = new Vector3f(0, -12 / 16F, 9 / 16F);
 
     private final LoadingCache<CacheKey, List<BakedQuad>> cache;
     private final PortableGridItemOverrides itemOverrides = new PortableGridItemOverrides();
@@ -42,7 +43,8 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
     PortableGridBakedModel(final BakedModel baseModel,
                            final RotationTranslationModelBaker activeModelBaker,
                            final RotationTranslationModelBaker inactiveModelBaker,
-                           final DiskModelBaker diskModelBaker) {
+                           final DiskModelBaker diskModelBaker,
+                           final DiskLedBakers diskLedBakers) {
         super(baseModel);
         this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(cacheKey -> {
             final RotationTranslationModelBaker baseModelBaker = cacheKey.active
@@ -59,6 +61,12 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
                 quads.addAll(diskBaker.bake(TransformationBuilder.create()
                     .rotate(cacheKey.direction)
                     .translate(MOVE_TO_DISK_LOCATION)
+                    .rotate(BiDirection.WEST)
+                    .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
+            }
+            if (cacheKey.includeLed && cacheKey.disk.state() != StorageState.NONE) {
+                quads.addAll(diskLedBakers.forState(cacheKey.disk.state()).bake(TransformationBuilder.create()
+                    .translate(MOVE_TO_DISK_LED_LOCATION)
                     .rotate(BiDirection.WEST)
                     .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
             }
@@ -84,7 +92,7 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
             return super.getQuads(state, side, randomSource);
         }
         final boolean active = state.getValue(PortableGridBlock.ACTIVE);
-        return cache.getUnchecked(new CacheKey(side, direction, active, disk));
+        return cache.getUnchecked(new CacheKey(side, direction, active, disk, false));
     }
 
     @Override
@@ -108,14 +116,21 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
                                   @Nullable final ClientLevel level,
                                   @Nullable final LivingEntity entity,
                                   final int seed) {
-            final Disk disk = new Disk(
-                Items.INSTANCE.getFluidStorageDisk(FluidStorageType.Variant.SIXTY_FOUR_B),
-                StorageState.NEAR_CAPACITY
-            );
-            return itemCache.getUnchecked(new CacheKey(null, BiDirection.NORTH, true, disk));
+            final PortableGridBlockItemRenderInfo renderInfo = PortableGridBlockItem.getRenderInfo(stack, level);
+            return itemCache.getUnchecked(new CacheKey(
+                null,
+                BiDirection.NORTH,
+                renderInfo.active(),
+                renderInfo.disk(),
+                true
+            ));
         }
     }
 
-    private record CacheKey(@Nullable Direction side, BiDirection direction, boolean active, Disk disk) {
+    private record CacheKey(@Nullable Direction side,
+                            BiDirection direction,
+                            boolean active,
+                            Disk disk,
+                            boolean includeLed) {
     }
 }

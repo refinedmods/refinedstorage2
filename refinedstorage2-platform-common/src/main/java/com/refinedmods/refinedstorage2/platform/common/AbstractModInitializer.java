@@ -66,8 +66,9 @@ import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.E
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItemContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
@@ -304,7 +305,9 @@ public abstract class AbstractModInitializer {
         final RegistryCallback<Item> callback,
         final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier,
         final Supplier<WirelessGridItem> wirelessGridItemSupplier,
-        final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier
+        final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier,
+        final Supplier<PortableGridBlockItem> portableGridBlockItemSupplier,
+        final Supplier<PortableGridBlockItem> creativePortableGridBlockItemSupplier
     ) {
         registerSimpleItems(callback);
         Blocks.INSTANCE.getGrid().registerItems(callback);
@@ -329,13 +332,10 @@ public abstract class AbstractModInitializer {
             creativeWirelessGridItemSupplier
         ));
         callback.register(STORAGE_MONITOR, () -> new SimpleBlockItem(Blocks.INSTANCE.getStorageMonitor()));
-        Items.INSTANCE.setPortableGrid(callback.register(
-            PORTABLE_GRID,
-            () -> new PortableGridItem(Blocks.INSTANCE.getPortableGrid())
-        ));
+        Items.INSTANCE.setPortableGrid(callback.register(PORTABLE_GRID, portableGridBlockItemSupplier));
         Items.INSTANCE.setCreativePortableGrid(callback.register(
             CREATIVE_PORTABLE_GRID,
-            () -> new PortableGridItem(Blocks.INSTANCE.getCreativePortableGrid())
+            creativePortableGridBlockItemSupplier
         ));
     }
 
@@ -706,9 +706,13 @@ public abstract class AbstractModInitializer {
             NETWORK_TRANSMITTER,
             () -> menuTypeFactory.create(NetworkTransmitterContainerMenu::new)
         ));
-        Menus.INSTANCE.setPortableGrid(callback.register(
-            PORTABLE_GRID,
-            () -> menuTypeFactory.create(PortableGridContainerMenu::new)
+        Menus.INSTANCE.setPortableGridBlock(callback.register(
+            createIdentifier("portable_grid_block"),
+            () -> menuTypeFactory.create(PortableGridBlockContainerMenu::new)
+        ));
+        Menus.INSTANCE.setPortableGridItem(callback.register(
+            createIdentifier("portable_grid_item"),
+            () -> menuTypeFactory.create(PortableGridItemContainerMenu::new)
         ));
     }
 

@@ -13,7 +13,8 @@ import com.refinedmods.refinedstorage2.platform.common.importer.ImporterContaine
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItemContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorContainerMenu;
@@ -67,7 +68,9 @@ public final class Menus {
     @Nullable
     private Supplier<MenuType<NetworkTransmitterContainerMenu>> networkTransmitter;
     @Nullable
-    private Supplier<MenuType<PortableGridContainerMenu>> portableGrid;
+    private Supplier<MenuType<PortableGridBlockContainerMenu>> portableGridBlock;
+    @Nullable
+    private Supplier<MenuType<PortableGridItemContainerMenu>> portableGridItem;
 
     private Menus() {
     }
@@ -216,11 +219,19 @@ public final class Menus {
         this.networkTransmitter = supplier;
     }
 
-    public MenuType<PortableGridContainerMenu> getPortableGrid() {
-        return requireNonNull(portableGrid).get();
+    public MenuType<PortableGridBlockContainerMenu> getPortableGridBlock() {
+        return requireNonNull(portableGridBlock).get();
     }
 
-    public void setPortableGrid(final Supplier<MenuType<PortableGridContainerMenu>> portableGrid) {
-        this.portableGrid = portableGrid;
+    public void setPortableGridBlock(final Supplier<MenuType<PortableGridBlockContainerMenu>> portableGridBlock) {
+        this.portableGridBlock = portableGridBlock;
+    }
+
+    public MenuType<PortableGridItemContainerMenu> getPortableGridItem() {
+        return requireNonNull(portableGridItem).get();
+    }
+
+    public void setPortableGridItem(final Supplier<MenuType<PortableGridItemContainerMenu>> portableGridItem) {
+        this.portableGridItem = portableGridItem;
     }
 }

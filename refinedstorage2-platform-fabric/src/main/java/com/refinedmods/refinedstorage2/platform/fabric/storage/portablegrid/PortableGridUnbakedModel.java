@@ -24,6 +24,10 @@ import static java.util.Objects.requireNonNull;
 public class PortableGridUnbakedModel implements UnbakedModel {
     private static final ResourceLocation ACTIVE_MODEL = createIdentifier("block/portable_grid/active");
     private static final ResourceLocation INACTIVE_MODEL = createIdentifier("block/portable_grid/inactive");
+    private static final ResourceLocation INACTIVE_LED_MODEL = createIdentifier("block/disk/led_inactive");
+    private static final ResourceLocation NORMAL_LED_MODEL = createIdentifier("block/disk/led_normal");
+    private static final ResourceLocation NEAR_CAPACITY_LED_MODEL = createIdentifier("block/disk/led_near_capacity");
+    private static final ResourceLocation FULL_LED_MODEL = createIdentifier("block/disk/led_full");
 
     private final QuadRotators quadRotators;
 
@@ -40,6 +44,10 @@ public class PortableGridUnbakedModel implements UnbakedModel {
     public void resolveParents(final Function<ResourceLocation, UnbakedModel> modelGetter) {
         modelGetter.apply(ACTIVE_MODEL).resolveParents(modelGetter);
         modelGetter.apply(INACTIVE_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(INACTIVE_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(NORMAL_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(NEAR_CAPACITY_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(FULL_LED_MODEL).resolveParents(modelGetter);
         PlatformApi.INSTANCE.getStorageContainerItemHelper().getDiskModels().forEach(
             diskModel -> modelGetter.apply(diskModel).resolveParents(modelGetter)
         );
@@ -62,7 +70,13 @@ public class PortableGridUnbakedModel implements UnbakedModel {
             requireNonNull(baker.bake(ACTIVE_MODEL, state)),
             requireNonNull(baker.bake(INACTIVE_MODEL, state)),
             diskModels,
-            quadRotators
+            quadRotators,
+            new DiskLeds(
+                requireNonNull(baker.bake(INACTIVE_LED_MODEL, state)),
+                requireNonNull(baker.bake(NORMAL_LED_MODEL, state)),
+                requireNonNull(baker.bake(NEAR_CAPACITY_LED_MODEL, state)),
+                requireNonNull(baker.bake(FULL_LED_MODEL, state))
+            )
         );
     }
 }

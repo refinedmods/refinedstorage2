@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class PortableGridScreen extends AbstractGridScreen<PortableGridContainerMenu> {
+public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridContainerMenu> {
     private static final int DISK_SLOT_WIDTH = 30;
     private static final int DISK_SLOT_HEIGHT = 26;
 
@@ -22,7 +22,9 @@ public class PortableGridScreen extends AbstractGridScreen<PortableGridContainer
     @Nullable
     private ProgressWidget progressWidget;
 
-    public PortableGridScreen(final PortableGridContainerMenu menu, final Inventory inventory, final Component title) {
+    public PortableGridScreen(final AbstractPortableGridContainerMenu menu,
+                              final Inventory inventory,
+                              final Component title) {
         super(menu, inventory, title, 99);
         this.inventoryLabelY = 75;
         this.imageWidth = 193;

@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntit
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
@@ -230,6 +231,24 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                                                        final ItemStack newStack) {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
+            },
+            () -> new PortableGridBlockItem(Blocks.INSTANCE.getPortableGrid(), PortableGridType.NORMAL) {
+                @Override
+                public boolean allowNbtUpdateAnimation(final Player player,
+                                                       final InteractionHand hand,
+                                                       final ItemStack oldStack,
+                                                       final ItemStack newStack) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            },
+            () -> new PortableGridBlockItem(Blocks.INSTANCE.getCreativePortableGrid(), PortableGridType.CREATIVE) {
+                @Override
+                public boolean allowNbtUpdateAnimation(final Player player,
+                                                       final InteractionHand hand,
+                                                       final ItemStack oldStack,
+                                                       final ItemStack newStack) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
             }
         );
         registerUpgradeMappings();
@@ -350,6 +369,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             (stack, context) -> new EnergyStorageAdapter(controller.get().createEnergyStorage(stack)),
             controller.get()
         ));
+        EnergyStorage.ITEM.registerForItems(
+            (stack, context) -> new EnergyStorageAdapter(Items.INSTANCE.getPortableGrid().createEnergyStorage(stack)),
+            Items.INSTANCE.getPortableGrid()
+        );
     }
 
     private void registerTickHandler() {

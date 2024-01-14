@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,9 +88,9 @@ public final class Items {
     @Nullable
     private Supplier<Item> networkCard;
     @Nullable
-    private Supplier<Item> portableGrid;
+    private Supplier<PortableGridBlockItem> portableGrid;
     @Nullable
-    private Supplier<Item> creativePortableGrid;
+    private Supplier<PortableGridBlockItem> creativePortableGrid;
 
     private Items() {
     }
@@ -398,19 +399,19 @@ public final class Items {
         this.networkCard = supplier;
     }
 
-    public Item getPortableGrid() {
+    public PortableGridBlockItem getPortableGrid() {
         return requireNonNull(portableGrid).get();
     }
 
-    public void setPortableGrid(final Supplier<Item> supplier) {
+    public void setPortableGrid(final Supplier<PortableGridBlockItem> supplier) {
         this.portableGrid = supplier;
     }
 
-    public Item getCreativePortableGrid() {
+    public PortableGridBlockItem getCreativePortableGrid() {
         return requireNonNull(creativePortableGrid).get();
     }
 
-    public void setCreativePortableGrid(final Supplier<Item> supplier) {
+    public void setCreativePortableGrid(final Supplier<PortableGridBlockItem> supplier) {
         this.creativePortableGrid = supplier;
     }
 }

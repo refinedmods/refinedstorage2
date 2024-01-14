@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfacePlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
@@ -228,6 +229,22 @@ public class ModInitializer extends AbstractModInitializer {
                                                            final boolean slotChanged) {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
+            },
+            () -> new PortableGridBlockItem(Blocks.INSTANCE.getPortableGrid(), PortableGridType.NORMAL) {
+                @Override
+                public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
+                                                           final ItemStack newStack,
+                                                           final boolean slotChanged) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
+            },
+            () -> new PortableGridBlockItem(Blocks.INSTANCE.getCreativePortableGrid(), PortableGridType.CREATIVE) {
+                @Override
+                public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
+                                                           final ItemStack newStack,
+                                                           final boolean slotChanged) {
+                    return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
+                }
             }
         );
         itemRegistry.register(eventBus);
@@ -296,6 +313,11 @@ public class ModInitializer extends AbstractModInitializer {
             (stack, ctx) -> new EnergyStorageAdapter(controllerItem.get().createEnergyStorage(stack)),
             controllerItem.get()
         ));
+        event.registerItem(
+            Capabilities.EnergyStorage.ITEM,
+            (stack, ctx) -> new EnergyStorageAdapter(Items.INSTANCE.getPortableGrid().createEnergyStorage(stack)),
+            Items.INSTANCE.getPortableGrid()
+        );
     }
 
     private void registerSounds(final IEventBus eventBus) {
