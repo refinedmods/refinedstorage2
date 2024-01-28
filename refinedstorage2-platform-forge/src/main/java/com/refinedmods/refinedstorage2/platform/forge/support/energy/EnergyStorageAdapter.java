@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.support.energy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class EnergyStorageAdapter implements IEnergyStorage {
     private final EnergyStorage energyStorage;

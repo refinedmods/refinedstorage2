@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -24,7 +23,9 @@ public final class CreativeModeTabItems {
     private static void appendBlocks(final Consumer<ItemStack> consumer) {
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
         Items.INSTANCE.getControllers().stream().map(Supplier::get).forEach(itemConsumer);
-        EnergyItemHelperImpl.createAllAtEnergyCapacity(Items.INSTANCE.getControllers()).forEach(consumer);
+        Items.INSTANCE.getControllers().forEach(controllerItem -> consumer.accept(
+            controllerItem.get().createAtEnergyCapacity()
+        ));
         Items.INSTANCE.getCreativeControllers().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(itemConsumer);
         Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(itemConsumer);
@@ -53,7 +54,7 @@ public final class CreativeModeTabItems {
         Items.INSTANCE.getNetworkReceivers().stream().map(Supplier::get).forEach(itemConsumer);
     }
 
-    private static void appendBlockColors(final Consumer<ItemStack> consumer, final BlockColorMap<?> map) {
+    private static void appendBlockColors(final Consumer<ItemStack> consumer, final BlockColorMap<?, ?> map) {
         map.values().forEach(block -> consumer.accept(new ItemStack(block)));
     }
 

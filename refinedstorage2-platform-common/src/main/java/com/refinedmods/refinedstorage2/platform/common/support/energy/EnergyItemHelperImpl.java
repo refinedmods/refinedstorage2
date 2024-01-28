@@ -2,19 +2,15 @@ package com.refinedmods.refinedstorage2.platform.common.support.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractEnergyBlockItem;
-import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.TransferableBlockEntityEnergy;
 
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,18 +61,13 @@ public class EnergyItemHelperImpl implements EnergyItemHelper {
 
     @Override
     public void passEnergyToBlockEntity(final BlockPos pos, final Level level, final ItemStack stack) {
-        if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof EnergyBlockEntity energyBlockEntity)) {
+        if (level.isClientSide()
+            || !(level.getBlockEntity(pos) instanceof TransferableBlockEntityEnergy transferableBlockEntityEnergy)) {
             return;
         }
         PlatformApi.INSTANCE.getEnergyStorage(stack).ifPresent(
-            energyStorage -> energyBlockEntity.getEnergyStorage().receive(energyStorage.getStored(), Action.EXECUTE)
+            energyStorage -> transferableBlockEntityEnergy.getEnergyStorage()
+                .receive(energyStorage.getStored(), Action.EXECUTE)
         );
-    }
-
-    public static Stream<ItemStack> createAllAtEnergyCapacity(final List<Supplier<BlockItem>> items) {
-        return items.stream().map(Supplier::get)
-            .filter(AbstractEnergyBlockItem.class::isInstance)
-            .map(AbstractEnergyBlockItem.class::cast)
-            .map(AbstractEnergyBlockItem::createAtEnergyCapacity);
     }
 }

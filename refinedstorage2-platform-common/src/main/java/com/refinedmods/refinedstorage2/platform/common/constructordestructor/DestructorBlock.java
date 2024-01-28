@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,8 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DestructorBlock extends AbstractConstructorDestructorBlock<DestructorBlock, DestructorBlockEntity>
-    implements BlockItemProvider {
+public class DestructorBlock extends AbstractConstructorDestructorBlock<
+    DestructorBlock, DestructorBlockEntity, NamedBlockItem
+    > implements BlockItemProvider<NamedBlockItem> {
     private static final Component HELP = createTranslation("item", "destructor.help");
 
     public DestructorBlock(final DyeColor color, final MutableComponent name) {
@@ -32,7 +32,7 @@ public class DestructorBlock extends AbstractConstructorDestructorBlock<Destruct
     }
 
     @Override
-    public BlockColorMap<DestructorBlock> getBlockColorMap() {
+    public BlockColorMap<DestructorBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getDestructor();
     }
 
@@ -43,7 +43,7 @@ public class DestructorBlock extends AbstractConstructorDestructorBlock<Destruct
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }

@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.controller;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.TransferableBlockEntityEnergy;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<ControllerNetworkNode>
-    implements ExtendedMenuProvider, EnergyBlockEntity {
+    implements ExtendedMenuProvider, TransferableBlockEntityEnergy {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBlockEntity.class);
 
     private static final String TAG_STORED = "stored";
@@ -62,7 +62,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
     }
 
     public void updateEnergyTypeInLevel(final BlockState state) {
-        final ControllerEnergyType currentEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+        final ControllerEnergyType currentEnergyType = state.getValue(AbstractControllerBlock.ENERGY_TYPE);
         final ControllerEnergyType newEnergyType = ControllerEnergyType.ofState(getNode().getState());
         if (newEnergyType != currentEnergyType && level != null && energyStateChangeRateLimiter.tryAcquire()) {
             LOGGER.debug(
@@ -71,7 +71,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
                 currentEnergyType,
                 newEnergyType
             );
-            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, newEnergyType));
+            level.setBlockAndUpdate(getBlockPos(), state.setValue(AbstractControllerBlock.ENERGY_TYPE, newEnergyType));
         }
     }
 

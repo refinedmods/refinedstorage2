@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemStorageMonitorExtractionStrategy implements StorageMonitorExtractionStrategy {
     @Override
-    @SuppressWarnings("deprecation") // Forge deprecates accessing max stack size this way
     public boolean extract(final Object resource,
                            final boolean fullStack,
                            final Player player,

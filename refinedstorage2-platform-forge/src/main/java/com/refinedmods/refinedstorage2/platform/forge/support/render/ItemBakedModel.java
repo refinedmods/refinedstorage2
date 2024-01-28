@@ -14,7 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.BakedModelWrapper;
+import net.neoforged.neoforge.client.model.BakedModelWrapper;
 
 public class ItemBakedModel extends BakedModelWrapper<BakedModel> {
     private final List<BakedQuad> unculledFaces;

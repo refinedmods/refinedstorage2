@@ -6,25 +6,25 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidStack;
 
 public class FluidHandlerInsertableStorage implements InsertableStorage<FluidResource> {
-    private final InteractionCoordinates interactionCoordinates;
+    private final CapabilityCache capabilityCache;
     private final AmountOverride amountOverride;
 
-    public FluidHandlerInsertableStorage(final InteractionCoordinates interactionCoordinates,
+    public FluidHandlerInsertableStorage(final CapabilityCache capabilityCache,
                                          final AmountOverride amountOverride) {
-        this.interactionCoordinates = interactionCoordinates;
+        this.capabilityCache = capabilityCache;
         this.amountOverride = amountOverride;
     }
 
     @Override
     public long insert(final FluidResource resource, final long amount, final Action action, final Actor actor) {
-        return interactionCoordinates
+        return capabilityCache
             .getFluidHandler()
             .map(fluidHandler -> {
                 final long correctedAmount = amountOverride.overrideAmount(

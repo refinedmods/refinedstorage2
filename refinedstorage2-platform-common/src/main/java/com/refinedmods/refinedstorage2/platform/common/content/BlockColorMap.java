@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
-public class BlockColorMap<T extends Block & BlockItemProvider> extends ColorMap<T> {
+public class BlockColorMap<T extends Block & BlockItemProvider<I>, I extends BlockItem> extends ColorMap<T> {
     private final BlockFactory<T> blockFactory;
     private final MutableComponent baseName;
 
@@ -101,9 +101,9 @@ public class BlockColorMap<T extends Block & BlockItemProvider> extends ColorMap
         });
     }
 
-    public void registerItems(final RegistryCallback<Item> callback, final Consumer<Supplier<BlockItem>> acceptor) {
+    public void registerItems(final RegistryCallback<Item> callback, final Consumer<Supplier<I>> acceptor) {
         forEach((color, id, block) -> {
-            final Supplier<BlockItem> itemSupplier = () -> block.get().createBlockItem();
+            final Supplier<I> itemSupplier = () -> block.get().createBlockItem();
             acceptor.accept(callback.register(id, itemSupplier));
         });
     }

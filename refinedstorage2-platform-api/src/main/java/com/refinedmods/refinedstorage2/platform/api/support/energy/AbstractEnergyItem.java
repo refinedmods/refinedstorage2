@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
-public abstract class AbstractEnergyItem extends Item implements EnergyItem {
+public abstract class AbstractEnergyItem extends Item {
     private final EnergyItemHelper helper;
 
     protected AbstractEnergyItem(final Properties properties, final EnergyItemHelper helper) {

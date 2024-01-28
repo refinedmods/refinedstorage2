@@ -15,13 +15,13 @@ import com.refinedmods.refinedstorage2.platform.common.controller.ControllerMode
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkCardItemPropertyFunction;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.NetworkBoundItemItemPropertyFunction;
+import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.ResourceClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridClearPacket;
@@ -119,7 +119,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         setCutout(Blocks.INSTANCE.getCreativePortableGrid());
     }
 
-    private void setCutout(final BlockColorMap<?> blockMap) {
+    private void setCutout(final BlockColorMap<?, ?> blockMap) {
         blockMap.values().forEach(this::setCutout);
     }
 

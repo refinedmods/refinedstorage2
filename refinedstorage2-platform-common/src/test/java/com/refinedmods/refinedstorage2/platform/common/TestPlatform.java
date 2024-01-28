@@ -36,8 +36,8 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -177,7 +177,7 @@ public class TestPlatform implements Platform {
 
     @Override
     public ItemStack getBlockAsItemStack(final Block block, final BlockState state, final Direction direction,
-                                         final BlockGetter level,
+                                         final LevelReader level,
                                          final BlockPos pos, final Player player) {
         throw new UnsupportedOperationException();
     }

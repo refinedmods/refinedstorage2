@@ -63,7 +63,9 @@ dependencies {
     modRuntimeOnly fabric.wthit
 
     // https://www.curseforge.com/minecraft/mc-mods/trinkets/files
-    modImplementation "dev.emi:trinkets:3.7.1"
+    modImplementation "dev.emi:trinkets:3.8.0"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.4.0"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.4.0"
 }
 
 enablePublishing()

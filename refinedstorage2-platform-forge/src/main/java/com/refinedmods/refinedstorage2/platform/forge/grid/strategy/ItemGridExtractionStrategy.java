@@ -9,13 +9,13 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInsertableStorage;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 public class ItemGridExtractionStrategy implements GridExtractionStrategy {
     private final GridOperations<ItemResource> gridOperations;
@@ -40,7 +40,7 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
             gridOperations.extract(
                 itemResource,
                 extractMode,
-                new ItemHandlerInsertableStorage(InteractionCoordinates.ofItemHandler(handler), AmountOverride.NONE)
+                new ItemHandlerInsertableStorage(CapabilityCache.ofItemHandler(handler), AmountOverride.NONE)
             );
             return true;
         }

@@ -37,8 +37,8 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -100,7 +100,7 @@ public interface Platform {
     ItemStack getBlockAsItemStack(Block block,
                                   BlockState state,
                                   Direction direction,
-                                  BlockGetter level,
+                                  LevelReader level,
                                   BlockPos pos,
                                   Player player);
 

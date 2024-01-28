@@ -6,12 +6,12 @@ import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class BlockModelProvider extends net.minecraftforge.client.model.generators.BlockModelProvider {
+public class BlockModelProvider extends net.neoforged.neoforge.client.model.generators.BlockModelProvider {
     private static final ResourceLocation EMISSIVE_ALL_CUTOUT = createIdentifier("block/emissive_all_cutout");
     private static final ResourceLocation EMISSIVE_NORTH_CUTOUT = createIdentifier("block/emissive_north_cutout");
     private static final ResourceLocation NORTH_CUTOUT = createIdentifier("block/north_cutout");
@@ -59,7 +59,7 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         });
     }
 
-    private void registerGrids(final BlockColorMap<? extends AbstractGridBlock<?>> blockMap, final String name) {
+    private void registerGrids(final BlockColorMap<? extends AbstractGridBlock<?, ?>, ?> blockMap, final String name) {
         blockMap.forEach((color, id, block) -> {
             final ResourceLocation cutout = createIdentifier("block/" + name + "/cutouts/" + color.getName());
             registerEmissiveGrids(name, color.getName(), cutout);

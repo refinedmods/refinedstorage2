@@ -7,27 +7,27 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerInsertableStorage;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
 
 import java.util.Iterator;
 
 class FluidHandlerImporterSource implements ImporterSource<FluidResource> {
-    private final InteractionCoordinates interactionCoordinates;
+    private final CapabilityCache capabilityCache;
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    FluidHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+    FluidHandlerImporterSource(final CapabilityCache capabilityCache,
                                final AmountOverride amountOverride) {
-        this.interactionCoordinates = interactionCoordinates;
-        this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, amountOverride);
+        this.capabilityCache = capabilityCache;
+        this.insertTarget = new FluidHandlerInsertableStorage(capabilityCache, AmountOverride.NONE);
+        this.extractTarget = new FluidHandlerExtractableStorage(capabilityCache, amountOverride);
     }
 
     @Override
     public Iterator<FluidResource> getResources() {
-        return interactionCoordinates.getFluidIterator();
+        return capabilityCache.getFluidIterator();
     }
 
     @Override

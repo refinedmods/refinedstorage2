@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.AbstractConstructorDestructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.controller.AbstractControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.controller.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridBlock;
@@ -26,15 +26,15 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class BlockStateProvider extends net.minecraftforge.client.model.generators.BlockStateProvider {
+public class BlockStateProvider extends net.neoforged.neoforge.client.model.generators.BlockStateProvider {
     private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = new EnumMap<>(Map.of(
         Direction.NORTH, CableBlockSupport.NORTH,
         Direction.EAST, CableBlockSupport.EAST,
@@ -150,7 +150,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     }
 
     private void configureGridVariants(final DyeColor color,
-                                       final Supplier<? extends AbstractGridBlock<?>> block,
+                                       final Supplier<? extends AbstractGridBlock<?, ?>> block,
                                        final String name) {
         final ModelFile inactive = modelFile(createIdentifier("block/" + name + "/inactive"));
         final ModelFile active = modelFile(createIdentifier("block/" + name + "/" + color.getName()));
@@ -180,19 +180,19 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         final ModelFile nearlyOn = modelFile(createIdentifier("block/controller/nearly_on"));
         final var builder = getVariantBuilder(block.get());
         builder.addModels(
-            builder.partialState().with(ControllerBlock.ENERGY_TYPE, ControllerEnergyType.OFF),
+            builder.partialState().with(AbstractControllerBlock.ENERGY_TYPE, ControllerEnergyType.OFF),
             ConfiguredModel.builder().modelFile(off).buildLast()
         );
         builder.addModels(
-            builder.partialState().with(ControllerBlock.ENERGY_TYPE, ControllerEnergyType.NEARLY_OFF),
+            builder.partialState().with(AbstractControllerBlock.ENERGY_TYPE, ControllerEnergyType.NEARLY_OFF),
             ConfiguredModel.builder().modelFile(nearlyOff).buildLast()
         );
         builder.addModels(
-            builder.partialState().with(ControllerBlock.ENERGY_TYPE, ControllerEnergyType.NEARLY_ON),
+            builder.partialState().with(AbstractControllerBlock.ENERGY_TYPE, ControllerEnergyType.NEARLY_ON),
             ConfiguredModel.builder().modelFile(nearlyOn).buildLast()
         );
         builder.addModels(
-            builder.partialState().with(ControllerBlock.ENERGY_TYPE, ControllerEnergyType.ON),
+            builder.partialState().with(AbstractControllerBlock.ENERGY_TYPE, ControllerEnergyType.ON),
             ConfiguredModel.builder()
                 .modelFile(modelFile(createIdentifier("block/controller/" + color.getName())))
                 .buildLast()
@@ -225,7 +225,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         });
     }
 
-    private void registerConstructorDestructors(final BlockColorMap<?> blockMap, final String type) {
+    private void registerConstructorDestructors(final BlockColorMap<?, ?> blockMap, final String type) {
         blockMap.forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
             final ModelFile activeModel = modelFile(createIdentifier("block/" + type + "/active"));

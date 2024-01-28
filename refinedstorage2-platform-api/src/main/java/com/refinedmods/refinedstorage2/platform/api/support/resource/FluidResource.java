@@ -29,7 +29,6 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         return new FluidResource(fluid, null);
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public static CompoundTag toTag(final FluidResource fluidResource) {
         final CompoundTag tag = new CompoundTag();
         if (fluidResource.tag() != null) {
@@ -45,7 +44,6 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         return tag;
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public static Optional<FluidResource> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
         final Fluid fluid = BuiltInRegistries.FLUID.get(id);

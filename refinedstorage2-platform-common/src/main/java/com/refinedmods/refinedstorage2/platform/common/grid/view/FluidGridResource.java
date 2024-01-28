@@ -28,7 +28,6 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
     private final FluidResource fluidResource;
     private final int id;
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,
                              final String name,
                              final String modId,

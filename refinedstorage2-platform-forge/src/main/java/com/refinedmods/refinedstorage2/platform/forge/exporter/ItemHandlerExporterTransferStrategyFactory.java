@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.exporter.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinatesImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInsertableStorage;
 
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
-        final InteractionCoordinatesImpl coordinates = new InteractionCoordinatesImpl(level, pos, direction);
+        final CapabilityCacheImpl coordinates = new CapabilityCacheImpl(level, pos, direction);
         final ItemHandlerInsertableStorage destination = new ItemHandlerInsertableStorage(coordinates, amountOverride);
         final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
         if (fuzzyMode) {

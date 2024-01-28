@@ -72,9 +72,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
@@ -289,7 +289,8 @@ public final class PlatformImpl extends AbstractPlatform {
         final boolean replaceable = blockState.canBeReplaced(content);
         final boolean canPlace = blockState.isAir()
             || replaceable
-            || (block instanceof LiquidBlockContainer lbc && lbc.canPlaceLiquid(level, pos, blockState, content));
+            || (block instanceof LiquidBlockContainer lbc
+            && lbc.canPlaceLiquid(player, level, pos, blockState, content));
         if (!canPlace || blockState.getFluidState().isSource()) {
             return false;
         } else if (block instanceof LiquidBlockContainer lbc && content == Fluids.WATER) {
@@ -332,7 +333,7 @@ public final class PlatformImpl extends AbstractPlatform {
     public ItemStack getBlockAsItemStack(final Block block,
                                          final BlockState state,
                                          final Direction direction,
-                                         final BlockGetter level,
+                                         final LevelReader level,
                                          final BlockPos position,
                                          final Player player) {
         return block.getCloneItemStack(level, position, state);

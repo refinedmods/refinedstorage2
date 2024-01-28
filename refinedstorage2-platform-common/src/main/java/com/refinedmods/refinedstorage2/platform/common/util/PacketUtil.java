@@ -26,13 +26,11 @@ public final class PacketUtil {
         return new ItemResource(Item.byId(id), nbt);
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public static void writeFluidResource(final FriendlyByteBuf buf, final FluidResource itemResource) {
         buf.writeVarInt(BuiltInRegistries.FLUID.getId(itemResource.fluid()));
         buf.writeNbt(itemResource.tag());
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     public static FluidResource readFluidResource(final FriendlyByteBuf buf) {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();

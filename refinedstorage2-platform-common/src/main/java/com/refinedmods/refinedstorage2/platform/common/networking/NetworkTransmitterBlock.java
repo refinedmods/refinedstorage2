@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockConstants;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractColoredBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +47,7 @@ public class NetworkTransmitterBlock extends AbstractColoredBlock<NetworkTransmi
     }
 
     @Override
-    public BlockColorMap<NetworkTransmitterBlock> getBlockColorMap() {
+    public BlockColorMap<NetworkTransmitterBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getNetworkTransmitter();
     }
 

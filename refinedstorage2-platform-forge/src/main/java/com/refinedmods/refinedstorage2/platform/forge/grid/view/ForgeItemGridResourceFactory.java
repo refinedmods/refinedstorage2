@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public class ForgeItemGridResourceFactory extends AbstractItemGridResourceFactory {
     @Override

@@ -68,7 +68,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.Abst
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItem;
-import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
@@ -78,7 +78,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.Item
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.StorageBlockLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.StorageBlockLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.FluidStorageMonitorExtractionStrategy;
@@ -91,7 +91,7 @@ import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMon
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
-import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
@@ -111,6 +111,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -714,15 +715,15 @@ public abstract class AbstractModInitializer {
     protected final void registerLootFunctions(final RegistryCallback<LootItemFunctionType> callback) {
         LootFunctions.INSTANCE.setStorageBlock(callback.register(
             STORAGE_BLOCK,
-            () -> new LootItemFunctionType(new StorageBlockLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(Codec.unit(new StorageBlockLootItemFunction()))
         ));
         LootFunctions.INSTANCE.setPortableGrid(callback.register(
             PORTABLE_GRID,
-            () -> new LootItemFunctionType(new PortableGridLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(Codec.unit(new PortableGridLootItemFunction()))
         ));
         LootFunctions.INSTANCE.setEnergy(callback.register(
             createIdentifier("energy"),
-            () -> new LootItemFunctionType(new EnergyLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(Codec.unit(new EnergyLootItemFunction()))
         ));
     }
 

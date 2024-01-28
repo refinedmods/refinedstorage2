@@ -17,19 +17,19 @@ forgeProject("refinedstorage2", project(":refinedstorage2-platform-common"), api
 archivesBaseName = 'refinedstorage2-platform-forge'
 
 dependencies {
-    compileOnly fg.deobf(common.jei.api.get())
-    testCompileOnly fg.deobf(common.jei.api.get())
-    compileOnly fg.deobf(forge.jei.api.get())
-    runtimeOnly fg.deobf(forge.jei.impl.get())
+    compileOnly common.jei.api
+    testCompileOnly common.jei.api
+    compileOnly forge.jei.api
+    runtimeOnly forge.jei.impl
 
-    compileOnly fg.deobf(forge.rei.impl.get())
-    compileOnly fg.deobf(forge.rei.architectury.get())
-    compileOnly fg.deobf(forge.rei.cloth.math.get())
-//    runtimeOnly fg.deobf(forge.rei.impl.get())
-//    runtimeOnly fg.deobf(forge.rei.architectury.get())
+    compileOnly forge.rei.impl
+    compileOnly forge.rei.architectury
+    compileOnly forge.rei.cloth.math
+//  runtimeOnly forge.rei.impl
+//  runtimeOnly forge.rei.architectury
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0+1.20.1")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0+1.20.1:api")
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.1.0+1.20.4"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:7.1.0+1.20.4:api"
 }
 
 enablePublishing()

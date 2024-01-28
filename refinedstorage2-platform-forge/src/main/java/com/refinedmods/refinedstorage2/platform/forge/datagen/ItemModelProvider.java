@@ -2,14 +2,9 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlock;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorBlock;
-import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
-import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.detector.DetectorBlock;
 import com.refinedmods.refinedstorage2.platform.common.exporter.ExporterBlock;
-import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.importer.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.networking.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverBlock;
@@ -19,13 +14,13 @@ import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.Wirel
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
+public class ItemModelProvider extends net.neoforged.neoforge.client.model.generators.ItemModelProvider {
     private static final String CUTOUT_TEXTURE_KEY = "cutout";
     private static final String CABLE_TEXTURE_KEY = "cable";
 
@@ -101,7 +96,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         final ResourceLocation nearlyOff = createIdentifier("block/controller/nearly_off");
         final ResourceLocation nearlyOn = createIdentifier("block/controller/nearly_on");
         final ResourceLocation stored = createIdentifier("stored_in_controller");
-        final ColorMap<ControllerBlock> blocks = Blocks.INSTANCE.getController();
+        final var blocks = Blocks.INSTANCE.getController();
         blocks.forEach((color, id, block) ->
             withExistingParent(id.getPath(), base)
                 .override()
@@ -124,7 +119,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     }
 
     private void registerCreativeControllers() {
-        final BlockColorMap<ControllerBlock> blocks = Blocks.INSTANCE.getCreativeController();
+        final var blocks = Blocks.INSTANCE.getCreativeController();
         blocks.forEach((color, id, block) -> withExistingParent(
             id.getPath(),
             createIdentifier("block/controller/" + color.getName())
@@ -132,7 +127,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     }
 
     private void registerGrids() {
-        final BlockColorMap<GridBlock> blocks = Blocks.INSTANCE.getGrid();
+        final var blocks = Blocks.INSTANCE.getGrid();
         blocks.forEach((color, id, block) -> withExistingParent(
             id.getPath(),
             createIdentifier("block/grid/" + color.getName())
@@ -140,7 +135,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     }
 
     private void registerCraftingGrids() {
-        final BlockColorMap<CraftingGridBlock> blocks = Blocks.INSTANCE.getCraftingGrid();
+        final var blocks = Blocks.INSTANCE.getCraftingGrid();
         blocks.forEach((color, id, block) -> withExistingParent(
             id.getPath(),
             createIdentifier("block/crafting_grid/" + color.getName())
@@ -148,7 +143,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     }
 
     private void registerDetectors() {
-        final BlockColorMap<DetectorBlock> blocks = Blocks.INSTANCE.getDetector();
+        final var blocks = Blocks.INSTANCE.getDetector();
         blocks.forEach((color, id, block) -> withExistingParent(
             id.getPath(),
             createIdentifier("block/detector/" + color.getName())

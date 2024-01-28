@@ -49,7 +49,6 @@ public abstract class AbstractItemGridResourceFactory implements GridResourceFac
             .collect(Collectors.joining("\n"));
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     private Set<String> getTags(final Item item) {
         return BuiltInRegistries.ITEM.getResourceKey(item)
             .flatMap(BuiltInRegistries.ITEM::getHolder)
