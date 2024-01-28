@@ -17,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -37,7 +36,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class DetectorBlock extends AbstractDirectionalBlock<Direction>
-    implements ColorableBlock<DetectorBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
+    implements ColorableBlock<DetectorBlock, NamedBlockItem>, SimpleWaterloggedBlock, EntityBlock,
+    BlockItemProvider<NamedBlockItem> {
     public static final BooleanProperty POWERED = BooleanProperty.create("powered");
 
     private static final Component HELP = createTranslation("item", "detector.help");
@@ -75,7 +75,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     }
 
     @Override
-    public BlockColorMap<DetectorBlock> getBlockColorMap() {
+    public BlockColorMap<DetectorBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getDetector();
     }
 
@@ -137,7 +137,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

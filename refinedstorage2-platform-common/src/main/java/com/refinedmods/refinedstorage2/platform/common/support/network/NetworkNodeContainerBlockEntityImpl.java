@@ -107,10 +107,10 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     protected final boolean colorsAllowConnecting(final BlockState connectingState) {
-        if (!(connectingState.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
+        if (!(connectingState.getBlock() instanceof ColorableBlock<?, ?> otherColorableBlock)) {
             return true;
         }
-        final ColorableBlock<?> colorableBlock = getColor();
+        final ColorableBlock<?, ?> colorableBlock = getColor();
         if (colorableBlock == null) {
             return true;
         }
@@ -120,8 +120,8 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     @Nullable
-    private ColorableBlock<?> getColor() {
-        if (!(getBlockState().getBlock() instanceof ColorableBlock<?> colorableBlock)) {
+    private ColorableBlock<?, ?> getColor() {
+        if (!(getBlockState().getBlock() instanceof ColorableBlock<?, ?> colorableBlock)) {
             return null;
         }
         return colorableBlock;

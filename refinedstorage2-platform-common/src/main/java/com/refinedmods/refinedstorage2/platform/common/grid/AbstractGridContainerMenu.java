@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
+import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -34,6 +35,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -458,5 +460,36 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     public void onClear() {
         view.clear();
+    }
+
+    public static void writeScreenOpeningData(final PlatformRegistry<PlatformStorageChannelType<?>>
+                                                  storageChannelTypeRegistry,
+                                              final Grid grid,
+                                              final FriendlyByteBuf buf) {
+        buf.writeBoolean(grid.isGridActive());
+        final List<PlatformStorageChannelType<?>> types = storageChannelTypeRegistry.getAll();
+        buf.writeInt(types.size());
+        types.forEach(type -> writeStorageChannel(storageChannelTypeRegistry, type, grid, buf));
+    }
+
+    private static <T> void writeStorageChannel(
+        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+        final PlatformStorageChannelType<T> storageChannelType,
+        final Grid grid,
+        final FriendlyByteBuf buf
+    ) {
+        final ResourceLocation id = storageChannelTypeRegistry.getId(storageChannelType).orElseThrow();
+        buf.writeResourceLocation(id);
+        final List<TrackedResourceAmount<T>> resources = grid.getResources(storageChannelType, PlayerActor.class);
+        buf.writeInt(resources.size());
+        resources.forEach(resource -> writeGridResource(storageChannelType, resource, buf));
+    }
+
+    private static <T> void writeGridResource(final PlatformStorageChannelType<T> storageChannelType,
+                                              final TrackedResourceAmount<T> resource,
+                                              final FriendlyByteBuf buf) {
+        storageChannelType.toBuffer(resource.resourceAmount().getResource(), buf);
+        buf.writeLong(resource.resourceAmount().getAmount());
+        PacketUtil.writeTrackedResource(buf, resource.trackedResource());
     }
 }

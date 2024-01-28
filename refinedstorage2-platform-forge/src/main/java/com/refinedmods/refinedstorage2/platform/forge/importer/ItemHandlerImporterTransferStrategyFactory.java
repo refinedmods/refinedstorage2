@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinatesImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +22,7 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
                                            final Direction direction,
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride) {
-        final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(new InteractionCoordinatesImpl(
+        final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(new CapabilityCacheImpl(
             level,
             pos,
             direction

@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
 
@@ -96,7 +96,7 @@ class CraftingGridResultSlot extends ResultSlot {
         // reimplementation of checkTakeAchievements
         crafted.onCraftedBy(player.level(), player, crafted.getCount());
         Platform.INSTANCE.onItemCrafted(player, crafted, source.getCraftingMatrix());
-        if (container instanceof RecipeHolder recipeHolder) {
+        if (container instanceof RecipeCraftingHolder recipeHolder) {
             recipeHolder.awardUsedRecipes(player, List.of(crafted));
         }
     }

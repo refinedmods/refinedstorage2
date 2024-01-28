@@ -10,7 +10,7 @@ import java.util.Set;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import top.theillusivec4.curios.api.CuriosApi;
 
 public class CuriosSlotReferenceProvider implements SlotReferenceProvider {
@@ -20,7 +20,6 @@ public class CuriosSlotReferenceProvider implements SlotReferenceProvider {
     @Override
     public List<SlotReference> find(final Player player, final Set<Item> validItems) {
         return CuriosApi.getCuriosInventory(player)
-            .resolve()
             .map(curiosInventory -> curiosInventory.findCurios("refinedstorage2"))
             .orElse(Collections.emptyList())
             .stream()

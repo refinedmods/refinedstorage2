@@ -20,7 +20,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.support.energy.TransferableBlockEntityEnergy;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -63,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPortableGridBlockEntity extends BlockEntity implements Grid, ExtendedMenuProvider,
-    EnergyBlockEntity, ConfigurationCardTarget, GridStorageChannelProvider {
+    ConfigurationCardTarget, GridStorageChannelProvider, TransferableBlockEntityEnergy {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPortableGridBlockEntity.class);
 
     private static final String TAG_DISK_INVENTORY = "inv";

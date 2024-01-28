@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -32,8 +31,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ExporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ExporterBlock>, EntityBlock,
-    BlockItemProvider {
+public class ExporterBlock extends AbstractDirectionalCableBlock
+    implements ColorableBlock<ExporterBlock, NamedBlockItem>, EntityBlock, BlockItemProvider<NamedBlockItem> {
     private static final Component HELP = createTranslation("item", "exporter.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExporterBlockEntity> TICKER =
@@ -66,7 +65,7 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Colo
     }
 
     @Override
-    public BlockColorMap<ExporterBlock> getBlockColorMap() {
+    public BlockColorMap<ExporterBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getExporter();
     }
 
@@ -88,7 +87,7 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Colo
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

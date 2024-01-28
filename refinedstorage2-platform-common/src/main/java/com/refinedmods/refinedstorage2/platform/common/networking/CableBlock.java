@@ -8,10 +8,10 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractColoredBlock;
-import com.refinedmods.refinedstorage2.platform.common.support.BlockItemProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.CableBlockSupport;
 import com.refinedmods.refinedstorage2.platform.common.support.CableShapeCacheKey;
 import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 
@@ -41,7 +41,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CableBlock extends AbstractColoredBlock<CableBlock>
-    implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock, BlockItemProvider {
+    implements ColorableBlock<CableBlock, NamedBlockItem>, SimpleWaterloggedBlock, EntityBlock {
     private static final AbstractBlockEntityTicker<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
@@ -119,7 +119,7 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
     }
 
     @Override
-    public BlockColorMap<CableBlock> getBlockColorMap() {
+    public BlockColorMap<CableBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getCable();
     }
 

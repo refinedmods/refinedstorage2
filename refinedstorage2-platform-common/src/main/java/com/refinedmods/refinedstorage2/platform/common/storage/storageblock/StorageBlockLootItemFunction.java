@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-class StorageBlockLootItemFunction implements LootItemFunction {
+public class StorageBlockLootItemFunction implements LootItemFunction {
     @Override
     public LootItemFunctionType getType() {
         return LootFunctions.INSTANCE.getStorageBlock();

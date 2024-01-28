@@ -44,8 +44,8 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRen
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
+import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.grid.NoopGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.ItemGridInsertionHint;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.hint.SingleItemGridInsertionHint;
@@ -101,6 +101,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -168,19 +169,18 @@ public class PlatformApiImpl implements PlatformApi {
         return storageTypeRegistry;
     }
 
+    @SuppressWarnings("DataFlowIssue") // NeoForge makes null datafixer safe
     @Override
     public StorageRepository getStorageRepository(final Level level) {
         if (level.getServer() == null) {
             return clientStorageRepository;
         }
         final ServerLevel serverLevel = Objects.requireNonNull(level.getServer().getLevel(Level.OVERWORLD));
-        return serverLevel
-            .getDataStorage()
-            .computeIfAbsent(
-                this::createStorageRepository,
-                this::createStorageRepository,
-                StorageRepositoryImpl.NAME
-            );
+        return serverLevel.getDataStorage().computeIfAbsent(new SavedData.Factory<>(
+            this::createStorageRepository,
+            this::createStorageRepository,
+            null
+        ), StorageRepositoryImpl.NAME);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
-        AbstractGridScreen.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
+        AbstractGridContainerMenu.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
     }
 
     @Override

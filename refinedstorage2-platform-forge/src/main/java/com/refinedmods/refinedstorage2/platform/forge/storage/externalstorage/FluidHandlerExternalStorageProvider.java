@@ -8,21 +8,21 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerInsertableStorage;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
 
 import java.util.Iterator;
 
 class FluidHandlerExternalStorageProvider implements ExternalStorageProvider<FluidResource> {
-    private final InteractionCoordinates interactionCoordinates;
+    private final CapabilityCache capabilityCache;
     private final InsertableStorage<FluidResource> insertTarget;
     private final ExtractableStorage<FluidResource> extractTarget;
 
-    FluidHandlerExternalStorageProvider(final InteractionCoordinates interactionCoordinates) {
-        this.interactionCoordinates = interactionCoordinates;
-        this.insertTarget = new FluidHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new FluidHandlerExtractableStorage(interactionCoordinates, AmountOverride.NONE);
+    FluidHandlerExternalStorageProvider(final CapabilityCache capabilityCache) {
+        this.capabilityCache = capabilityCache;
+        this.insertTarget = new FluidHandlerInsertableStorage(capabilityCache, AmountOverride.NONE);
+        this.extractTarget = new FluidHandlerExtractableStorage(capabilityCache, AmountOverride.NONE);
     }
 
     @Override
@@ -37,6 +37,6 @@ class FluidHandlerExternalStorageProvider implements ExternalStorageProvider<Flu
 
     @Override
     public Iterator<ResourceAmount<FluidResource>> iterator() {
-        return interactionCoordinates.getFluidAmountIterator();
+        return capabilityCache.getFluidAmountIterator();
     }
 }

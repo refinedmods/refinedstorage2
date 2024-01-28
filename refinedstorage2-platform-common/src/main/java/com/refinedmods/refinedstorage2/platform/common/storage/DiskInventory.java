@@ -72,7 +72,6 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
         return Optional.of(stack);
     }
 
-    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     public ListTag toSyncTag(final IntFunction<StorageState> stateProvider) {
         final ListTag list = new ListTag();
         for (int i = 0; i < getContainerSize(); ++i) {
@@ -87,7 +86,6 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
         return list;
     }
 
-    @SuppressWarnings("deprecation") // Forge deprecates registry access this way
     public Disk[] fromSyncTag(final ListTag list) {
         final Disk[] disks = new Disk[list.size()];
         for (int i = 0; i < list.size(); ++i) {

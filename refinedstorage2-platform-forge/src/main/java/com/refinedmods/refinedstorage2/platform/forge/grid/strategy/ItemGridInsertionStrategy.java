@@ -8,15 +8,15 @@ import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionS
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerExtractableStorage;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.RangedWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource.ofItemStack;
 
@@ -44,7 +44,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             itemResource,
             insertMode,
             new ItemHandlerExtractableStorage(
-                InteractionCoordinates.ofItemHandler(playerCursorItemHandler),
+                CapabilityCache.ofItemHandler(playerCursorItemHandler),
                 AmountOverride.NONE
             )
         );
@@ -68,7 +68,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
             itemResource,
             GridInsertMode.ENTIRE_RESOURCE,
             new ItemHandlerExtractableStorage(
-                InteractionCoordinates.ofItemHandler(storage),
+                CapabilityCache.ofItemHandler(storage),
                 AmountOverride.NONE
             )
         );

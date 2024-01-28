@@ -171,7 +171,6 @@ public abstract class AbstractBaseBlock extends Block {
         return !state.equals(rotated);
     }
 
-    @SuppressWarnings("deprecation") // Forge deprecates rotation this way
     protected BlockState getRotatedBlockState(final BlockState state, final Level level, final BlockPos pos) {
         return state.rotate(Rotation.CLOCKWISE_90);
     }
@@ -206,14 +205,14 @@ public abstract class AbstractBaseBlock extends Block {
                                                             final BlockPos pos,
                                                             final Player player,
                                                             final InteractionHand hand) {
-        if (this instanceof ColorableBlock<?> colorableBlock) {
+        if (this instanceof ColorableBlock<?, ?> colorableBlock) {
             return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
         }
         return Optional.empty();
     }
 
     private Optional<InteractionResult> tryUpdateColor(
-        final BlockColorMap<?> blockColorMap,
+        final BlockColorMap<?, ?> blockColorMap,
         final BlockState state,
         final Level level,
         final BlockPos pos,

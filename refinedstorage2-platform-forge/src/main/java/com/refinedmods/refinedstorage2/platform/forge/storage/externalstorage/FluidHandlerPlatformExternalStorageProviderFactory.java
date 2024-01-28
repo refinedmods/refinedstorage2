@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinatesImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class FluidHandlerPlatformExternalStorageProviderFactory implements Platf
             return Optional.empty();
         }
         return Optional.of((ExternalStorageProvider<T>) new FluidHandlerExternalStorageProvider(
-            new InteractionCoordinatesImpl(level, pos, direction)
+            new CapabilityCacheImpl(level, pos, direction)
         ));
     }
 }

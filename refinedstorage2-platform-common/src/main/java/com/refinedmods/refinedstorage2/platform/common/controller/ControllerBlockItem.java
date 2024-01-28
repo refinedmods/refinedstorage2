@@ -20,7 +20,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class ControllerBlockItem extends AbstractEnergyBlockItem {
     private final Component name;
 
-    public ControllerBlockItem(final Block block, final Component displayName) {
+    ControllerBlockItem(final Block block, final Component displayName) {
         super(block, new Item.Properties().stacksTo(1), PlatformApi.INSTANCE.getEnergyItemHelper());
         this.name = displayName;
     }
@@ -40,11 +40,10 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
         return Optional.of(new HelpTooltipComponent(createTranslation("item", "controller.help")));
     }
 
-    @Override
-    public Optional<EnergyStorage> createEnergyStorage(final ItemStack stack) {
+    public EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
             Platform.INSTANCE.getConfig().getController().getEnergyCapacity()
         );
-        return Optional.of(PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack));
+        return PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
     }
 }

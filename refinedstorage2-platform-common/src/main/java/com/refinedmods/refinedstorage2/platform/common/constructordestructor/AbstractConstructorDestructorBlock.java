@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -24,9 +25,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class AbstractConstructorDestructorBlock<T extends Block & BlockItemProvider, B extends BlockEntity>
+public abstract class AbstractConstructorDestructorBlock<T extends Block & BlockItemProvider<I>,
+    B extends BlockEntity, I extends BlockItem>
     extends AbstractDirectionalCableBlock
-    implements ColorableBlock<T>, EntityBlock {
+    implements ColorableBlock<T, I>, EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
@@ -79,9 +81,9 @@ public abstract class AbstractConstructorDestructorBlock<T extends Block & Block
 
     @Nullable
     @Override
-    public <I extends BlockEntity> BlockEntityTicker<I> getTicker(final Level level,
+    public <E extends BlockEntity> BlockEntityTicker<E> getTicker(final Level level,
                                                                   final BlockState blockState,
-                                                                  final BlockEntityType<I> type) {
+                                                                  final BlockEntityType<E> type) {
         return ticker.get(level, type);
     }
 }

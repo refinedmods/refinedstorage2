@@ -9,12 +9,12 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResour
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinatesImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 public class FluidHandlerImporterTransferStrategyFactory implements ImporterTransferStrategyFactory {
     @Override
@@ -23,7 +23,7 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
                                            final Direction direction,
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride) {
-        final ImporterSource<FluidResource> source = new FluidHandlerImporterSource(new InteractionCoordinatesImpl(
+        final ImporterSource<FluidResource> source = new FluidHandlerImporterSource(new CapabilityCacheImpl(
             level,
             pos,
             direction

@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -39,7 +38,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class WirelessTransmitterBlock extends AbstractDirectionalBlock<Direction>
-    implements ColorableBlock<WirelessTransmitterBlock>, BlockItemProvider, EntityBlock {
+    implements ColorableBlock<WirelessTransmitterBlock, NamedBlockItem>, BlockItemProvider<NamedBlockItem>,
+    EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     private static final AbstractBlockEntityTicker<WirelessTransmitterBlockEntity> TICKER =
@@ -99,7 +99,7 @@ public class WirelessTransmitterBlock extends AbstractDirectionalBlock<Direction
     }
 
     @Override
-    public BlockColorMap<WirelessTransmitterBlock> getBlockColorMap() {
+    public BlockColorMap<WirelessTransmitterBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getWirelessTransmitter();
     }
 
@@ -128,7 +128,7 @@ public class WirelessTransmitterBlock extends AbstractDirectionalBlock<Direction
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }

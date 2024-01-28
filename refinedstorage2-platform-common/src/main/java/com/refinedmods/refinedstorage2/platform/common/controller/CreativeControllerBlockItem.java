@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-class CreativeControllerBlockItem extends NamedBlockItem {
+public class CreativeControllerBlockItem extends NamedBlockItem {
     CreativeControllerBlockItem(final Block block, final Component name) {
         super(block, new Item.Properties().stacksTo(1), name, createTranslation("item", "creative_controller.help"));
     }

@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -24,7 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class GridBlock extends AbstractGridBlock<GridBlock> implements BlockItemProvider {
+public class GridBlock extends AbstractGridBlock<GridBlock, NamedBlockItem>
+    implements BlockItemProvider<NamedBlockItem> {
     private static final Component HELP = createTranslation("item", "grid.help");
     private static final AbstractBlockEntityTicker<GridBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
         BlockEntities.INSTANCE::getGrid,
@@ -35,8 +35,9 @@ public class GridBlock extends AbstractGridBlock<GridBlock> implements BlockItem
         super(name, color);
     }
 
+
     @Override
-    public BlockColorMap<GridBlock> getBlockColorMap() {
+    public BlockColorMap<GridBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getGrid();
     }
 
@@ -55,7 +56,7 @@ public class GridBlock extends AbstractGridBlock<GridBlock> implements BlockItem
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), getName(), HELP);
     }
 }

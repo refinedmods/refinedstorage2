@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.grid.screen;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.widget.HoveredImageButton;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +12,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +25,19 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/crafting_grid.png");
     private static final int CLEAR_BUTTON_SIZE = 7;
+
+    private static final WidgetSprites CLEAR_BUTTON_TO_PLAYER_INVENTORY_SPRITES = new WidgetSprites(
+        createIdentifier("widget/move_down"),
+        createIdentifier("widget/move_down_disabled"),
+        createIdentifier("widget/move_down_focused"),
+        createIdentifier("widget/move_down_disabled")
+    );
+    private static final WidgetSprites CLEAR_BUTTON_TO_NETWORK_SPRITES = new WidgetSprites(
+        createIdentifier("widget/move_up"),
+        createIdentifier("widget/move_up_disabled"),
+        createIdentifier("widget/move_up_focused"),
+        createIdentifier("widget/move_up_disabled")
+    );
 
     @Nullable
     private ImageButton clearToNetworkButton;
@@ -44,11 +59,11 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
         final int clearToInventoryButtonX = clearToNetworkButtonX + CLEAR_BUTTON_SIZE + 3;
         final int clearButtonY = topPos + imageHeight - bottomHeight + 4;
 
-        clearToNetworkButton = createClearButton(clearToNetworkButtonX, clearButtonY, 242, false);
+        clearToNetworkButton = createClearButton(clearToNetworkButtonX, clearButtonY, false);
         setClearToNetworkButtonActive(getMenu().isActive());
         getMenu().setActivenessListener(this::setClearToNetworkButtonActive);
         addRenderableWidget(clearToNetworkButton);
-        addRenderableWidget(createClearButton(clearToInventoryButtonX, clearButtonY, 249, true));
+        addRenderableWidget(createClearButton(clearToInventoryButtonX, clearButtonY, true));
     }
 
     @Override
@@ -101,10 +116,7 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
         clearToNetworkButton.active = active;
     }
 
-    private ImageButton createClearButton(final int x,
-                                          final int y,
-                                          final int textureX,
-                                          final boolean toPlayerInventory) {
+    private ImageButton createClearButton(final int x, final int y, final boolean toPlayerInventory) {
         final MutableComponent text = Component.translatable(
             "gui.refinedstorage2.crafting_grid.move." + (toPlayerInventory ? "inventory" : "network")
         );
@@ -112,17 +124,15 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
         if (keyMapping != null) {
             text.append("\n").append(keyMapping.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.GRAY));
         }
-        final ImageButton button = new ImageButton(
+        final WidgetSprites widgetSprites = toPlayerInventory
+            ? CLEAR_BUTTON_TO_PLAYER_INVENTORY_SPRITES
+            : CLEAR_BUTTON_TO_NETWORK_SPRITES;
+        final HoveredImageButton button = new HoveredImageButton(
             x,
             y,
             CLEAR_BUTTON_SIZE,
             CLEAR_BUTTON_SIZE,
-            textureX,
-            235,
-            CLEAR_BUTTON_SIZE,
-            TEXTURE,
-            256,
-            256,
+            widgetSprites,
             b -> getMenu().clear(toPlayerInventory),
             text
         );

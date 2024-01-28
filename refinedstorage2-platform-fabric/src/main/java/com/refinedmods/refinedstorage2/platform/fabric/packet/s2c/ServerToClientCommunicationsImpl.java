@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
 import java.util.UUID;
 import java.util.function.Consumer;

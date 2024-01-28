@@ -20,7 +20,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExternalStorageBlock extends AbstractDirectionalCableBlock
-    implements ColorableBlock<ExternalStorageBlock>, EntityBlock, BlockItemProvider {
+    implements ColorableBlock<ExternalStorageBlock, NamedBlockItem>, EntityBlock, BlockItemProvider<NamedBlockItem> {
     private static final Component HELP = createTranslation("item", "external_storage.help");
     private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
@@ -88,7 +87,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     }
 
     @Override
-    public BlockColorMap<ExternalStorageBlock> getBlockColorMap() {
+    public BlockColorMap<ExternalStorageBlock, NamedBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getExternalStorage();
     }
 
@@ -110,7 +109,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     }
 
     @Override
-    public BlockItem createBlockItem() {
+    public NamedBlockItem createBlockItem() {
         return new NamedBlockItem(this, new Item.Properties(), name, HELP);
     }
 }

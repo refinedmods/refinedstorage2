@@ -13,12 +13,11 @@ import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceCont
 import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeItemGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
-import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ClientToServerCommunicationsImpl;
-import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.forge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.support.containermenu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.forge.support.energy.EnergyStorageAdapter;
+import com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s.ClientToServerCommunicationsImpl;
+import com.refinedmods.refinedstorage2.platform.forge.support.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.FluidStackFluidRenderer;
 
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPosition
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -54,47 +54,46 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.fluids.FluidActionResult;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidStack;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
-        ForgeRegistries.ITEMS.getRegistryKey(),
+        Registries.ITEM,
         new ResourceLocation("forge", "tools/wrench")
     );
 
     private final ConfigImpl config = new ConfigImpl();
 
-    public PlatformImpl(final NetworkManager networkManager) {
+    public PlatformImpl() {
         super(
-            new ServerToClientCommunicationsImpl(networkManager),
-            new ClientToServerCommunicationsImpl(networkManager),
+            new ServerToClientCommunicationsImpl(),
+            new ClientToServerCommunicationsImpl(),
             new MenuOpenerImpl(),
             new FluidStackFluidRenderer(),
             ItemGridInsertionStrategy::new
@@ -169,7 +168,9 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<ItemStack> convertToBucket(final FluidResource fluidResource) {
-        return new ItemStack(Items.BUCKET).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).map(dest -> {
+        return Optional.ofNullable(
+            new ItemStack(Items.BUCKET).getCapability(Capabilities.FluidHandler.ITEM)
+        ).map(dest -> {
             dest.fill(
                 toFluidStack(fluidResource, FluidType.BUCKET_VOLUME),
                 IFluidHandler.FluidAction.EXECUTE
@@ -206,15 +207,15 @@ public final class PlatformImpl extends AbstractPlatform {
     public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
                                                             final CraftingRecipe craftingRecipe,
                                                             final CraftingContainer container) {
-        ForgeHooks.setCraftingPlayer(player);
+        CommonHooks.setCraftingPlayer(player);
         final NonNullList<ItemStack> remainingItems = craftingRecipe.getRemainingItems(container);
-        ForgeHooks.setCraftingPlayer(null);
+        CommonHooks.setCraftingPlayer(null);
         return remainingItems;
     }
 
     @Override
     public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
-        ForgeEventFactory.firePlayerCraftingEvent(player, craftedStack, container);
+        EventHooks.firePlayerCraftingEvent(player, craftedStack, container);
     }
 
     @Override
@@ -228,7 +229,7 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
         final BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, pos, state, player);
-        return !MinecraftForge.EVENT_BUS.post(e);
+        return !NeoForge.EVENT_BUS.post(e).isCanceled();
     }
 
     @Override
@@ -246,7 +247,7 @@ public final class PlatformImpl extends AbstractPlatform {
             stack,
             new BlockHitResult(Vec3.ZERO, direction, pos, false)
         );
-        final InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(ctx);
+        final InteractionResult result = CommonHooks.onPlaceItemIntoWorld(ctx);
         return result.consumesAction();
     }
 
@@ -278,7 +279,7 @@ public final class PlatformImpl extends AbstractPlatform {
     public ItemStack getBlockAsItemStack(final Block block,
                                          final BlockState state,
                                          final Direction direction,
-                                         final BlockGetter level,
+                                         final LevelReader level,
                                          final BlockPos position,
                                          final Player player) {
         return block.getCloneItemStack(
@@ -303,7 +304,7 @@ public final class PlatformImpl extends AbstractPlatform {
         final Optional<TooltipComponent> imageComponent,
         final List<Component> components
     ) {
-        return new ArrayList<>(ForgeHooksClient.gatherTooltipComponents(
+        return new ArrayList<>(ClientHooks.gatherTooltipComponents(
             stack,
             components,
             imageComponent,
@@ -330,7 +331,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.ENERGY)
+        return Optional.ofNullable(stack.getCapability(Capabilities.EnergyStorage.ITEM))
             .filter(EnergyStorageAdapter.class::isInstance)
             .map(EnergyStorageAdapter.class::cast)
             .map(EnergyStorageAdapter::getEnergyStorage);

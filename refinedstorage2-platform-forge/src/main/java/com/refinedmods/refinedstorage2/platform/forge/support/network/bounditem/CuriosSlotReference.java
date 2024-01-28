@@ -34,7 +34,6 @@ class CuriosSlotReference implements SlotReference {
     @Override
     public Optional<ItemStack> resolve(final Player player) {
         return CuriosApi.getCuriosInventory(player)
-            .resolve()
             .flatMap(curiosInventory -> curiosInventory.findCurio(identifier, index))
             .map(SlotResult::stack);
     }
