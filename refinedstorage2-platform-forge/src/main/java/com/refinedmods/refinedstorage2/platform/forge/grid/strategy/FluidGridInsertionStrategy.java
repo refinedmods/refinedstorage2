@@ -14,9 +14,9 @@ import javax.annotation.Nullable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidAction;
@@ -58,10 +58,9 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
         return getFluidStorage(menu.getCarried());
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
+        return stack.getCapability(Capabilities.FluidHandler.ITEM);
     }
 
     @Override

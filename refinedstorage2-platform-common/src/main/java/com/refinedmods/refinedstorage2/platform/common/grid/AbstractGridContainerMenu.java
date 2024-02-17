@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
@@ -10,6 +9,8 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
+import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -34,8 +35,8 @@ import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -50,6 +51,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
@@ -66,24 +69,24 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     private static String lastSearchQuery = "";
 
-    private final Inventory playerInventory;
+    protected final Inventory playerInventory;
+
     private final GridView view;
     @Nullable
     private Grid grid;
-
+    @Nullable
     private GridInsertionStrategy insertionStrategy;
+    @Nullable
     private GridExtractionStrategy extractionStrategy;
+    @Nullable
     private GridScrollingStrategy scrollingStrategy;
-
     @Nullable
     private Runnable sizeChangedListener;
-
     private GridSynchronizer synchronizer;
     @Nullable
     private PlatformStorageChannelType<?> storageChannelTypeFilter;
     private boolean autoSelected;
     private boolean active;
-
     @Nullable
     private GridSearchBox searchBox;
 
@@ -283,7 +286,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Override
-    public void onNetworkChanged() {
+    public void invalidate() {
         if (playerInventory.player instanceof ServerPlayer serverPlayer) {
             initStrategies();
             Platform.INSTANCE.getServerToClientCommunications().sendGridClear(serverPlayer);
@@ -294,17 +297,17 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid)
+            requireNonNull(grid)
         );
         this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid)
+            requireNonNull(grid)
         );
         this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
             this,
             playerInventory.player,
-            Objects.requireNonNull(grid)
+            requireNonNull(grid)
         );
     }
 
@@ -389,6 +392,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         if (grid != null && !grid.isGridActive()) {
             return false;
         }
+        if (insertionStrategy == null) {
+            return false;
+        }
         return insertionStrategy.onInsert(insertMode, tryAlternatives);
     }
 
@@ -400,6 +406,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         if (grid != null && !grid.isGridActive()) {
             return false;
         }
+        if (extractionStrategy == null) {
+            return false;
+        }
         return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
     }
 
@@ -409,6 +418,9 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
                                 final GridScrollMode scrollMode,
                                 final int slotIndex) {
         if (grid != null && !grid.isGridActive()) {
+            return false;
+        }
+        if (scrollingStrategy == null) {
             return false;
         }
         return scrollingStrategy.onScroll(storageChannelType, resource, scrollMode, slotIndex);
@@ -423,11 +435,15 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
         if (!playerEntity.level().isClientSide() && grid != null && grid.isGridActive()) {
             final Slot slot = getSlot(slotIndex);
-            if (slot.hasItem()) {
+            if (slot.hasItem() && insertionStrategy != null && canTransferSlot(slot)) {
                 insertionStrategy.onTransfer(slot.index);
             }
         }
         return super.quickMoveStack(playerEntity, slotIndex);
+    }
+
+    protected boolean canTransferSlot(final Slot slot) {
+        return true;
     }
 
     private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,
@@ -444,5 +460,36 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     public void onClear() {
         view.clear();
+    }
+
+    public static void writeScreenOpeningData(final PlatformRegistry<PlatformStorageChannelType<?>>
+                                                  storageChannelTypeRegistry,
+                                              final Grid grid,
+                                              final FriendlyByteBuf buf) {
+        buf.writeBoolean(grid.isGridActive());
+        final List<PlatformStorageChannelType<?>> types = storageChannelTypeRegistry.getAll();
+        buf.writeInt(types.size());
+        types.forEach(type -> writeStorageChannel(storageChannelTypeRegistry, type, grid, buf));
+    }
+
+    private static <T> void writeStorageChannel(
+        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+        final PlatformStorageChannelType<T> storageChannelType,
+        final Grid grid,
+        final FriendlyByteBuf buf
+    ) {
+        final ResourceLocation id = storageChannelTypeRegistry.getId(storageChannelType).orElseThrow();
+        buf.writeResourceLocation(id);
+        final List<TrackedResourceAmount<T>> resources = grid.getResources(storageChannelType, PlayerActor.class);
+        buf.writeInt(resources.size());
+        resources.forEach(resource -> writeGridResource(storageChannelType, resource, buf));
+    }
+
+    private static <T> void writeGridResource(final PlatformStorageChannelType<T> storageChannelType,
+                                              final TrackedResourceAmount<T> resource,
+                                              final FriendlyByteBuf buf) {
+        storageChannelType.toBuffer(resource.resourceAmount().getResource(), buf);
+        buf.writeLong(resource.resourceAmount().getAmount());
+        PacketUtil.writeTrackedResource(buf, resource.trackedResource());
     }
 }

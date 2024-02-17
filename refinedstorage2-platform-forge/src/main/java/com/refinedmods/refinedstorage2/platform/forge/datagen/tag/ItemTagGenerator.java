@@ -15,9 +15,10 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CABLES;
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONSTRUCTORS;
@@ -47,7 +48,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
 
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
-        addAllToTag(CABLES, Items.INSTANCE.getCables());
+        addAllToTag2(CABLES, Items.INSTANCE.getCables());
         addAllToTag(CONTROLLERS, Items.INSTANCE.getControllers());
         addAllToTag(CREATIVE_CONTROLLERS, Blocks.INSTANCE.getCreativeController().values().stream()
             .map(Block::asItem)
@@ -112,8 +113,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
     }
 
     private <T extends Item> void addAllToTag(final TagKey<Item> t, final Collection<Supplier<T>> items) {
-        tag(t)
-            .add(items.stream().map(Supplier::get).toArray(Item[]::new))
-            .replace(false);
+        tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
+    }
+
+    private void addAllToTag2(final TagKey<Item> t, final Collection<Supplier<? extends BlockItem>> items) {
+        tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
     }
 }

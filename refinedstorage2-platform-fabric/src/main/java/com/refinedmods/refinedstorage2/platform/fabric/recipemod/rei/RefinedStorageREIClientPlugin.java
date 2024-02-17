@@ -7,9 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Tags;
+import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
-import com.refinedmods.refinedstorage2.platform.common.support.ColorableBlock;
-import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
 
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -73,8 +71,12 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
         registry.group(
             createIdentifier("fully_charged_controller"),
             createTranslation("block", "controller.rei_fully_charged"),
-            EnergyItemHelperImpl.createAllAtEnergyCapacity(Items.INSTANCE.getControllers())
-                .map(EntryStacks::of).collect(Collectors.toList())
+            Items.INSTANCE.getControllers()
+                .stream()
+                .map(Supplier::get)
+                .map(ControllerBlockItem::createAtEnergyCapacity)
+                .map(EntryStacks::of)
+                .collect(Collectors.toList())
         );
         groupItems(
             registry,
@@ -105,7 +107,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
     @SuppressWarnings("UnstableApiUsage")
     private static void groupItems(
         final CollapsibleEntryRegistry registry,
-        final BlockColorMap<? extends ColorableBlock<? extends Block>> blocks,
+        final BlockColorMap<?, ?> blocks,
         final ResourceLocation itemIdentifier,
         final TagKey<Item> tag
     ) {

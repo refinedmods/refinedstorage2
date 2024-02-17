@@ -9,8 +9,8 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
+import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
 import java.util.List;
 import java.util.UUID;

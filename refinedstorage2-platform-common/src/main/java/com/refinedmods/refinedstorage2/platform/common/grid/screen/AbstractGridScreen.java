@@ -122,8 +122,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addSideButton(new AutoSelectedSideButtonWidget(getMenu()));
         addSideButton(new StorageChannelTypeSideButtonWidget(getMenu()));
 
-        final PlatformRegistry<GridSynchronizer> registry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        if (!registry.isEmpty()) {
+        final PlatformRegistry<GridSynchronizer> synchronizers = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        if (!synchronizers.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(getMenu()));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
@@ -193,7 +193,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
 
-        graphics.blit(getTexture(), x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
+        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, TOP_HEIGHT);
 
         for (int row = 0; row < visibleRows; ++row) {
             int textureY = 37;
@@ -202,10 +202,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             } else if (row == visibleRows - 1) {
                 textureY = 55;
             }
-            graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
+            graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth, 18);
         }
 
-        graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, bottomHeight);
+        graphics.blit(getTexture(), x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth, bottomHeight);
 
         currentGridSlotIndex = -1;
 
@@ -518,7 +518,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
         final boolean up = delta > 0;
 
         if (isOverStorageArea((int) x, (int) y)) {
@@ -531,8 +531,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
 
         final boolean didScrollbar =
-            scrollbar != null && !hasShiftDown() && !hasControlDown() && scrollbar.mouseScrolled(x, y, delta);
-        return didScrollbar || super.mouseScrolled(x, y, delta);
+            scrollbar != null && !hasShiftDown() && !hasControlDown() && scrollbar.mouseScrolled(x, y, z, delta);
+        return didScrollbar || super.mouseScrolled(x, y, z, delta);
     }
 
     private void mouseScrolledInInventory(final boolean up, final Slot slot) {

@@ -5,11 +5,11 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.PositionImpl;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 class ItemDropConstructorStrategy extends AbstractItemConstructorStrategy {
     private final long amount;
@@ -36,7 +36,7 @@ class ItemDropConstructorStrategy extends AbstractItemConstructorStrategy {
         final Actor actor,
         final Player actingPlayer
     ) {
-        final PositionImpl position = new PositionImpl(
+        final Vec3 position = new Vec3(
             getDispensePositionX(),
             getDispensePositionY(),
             getDispensePositionZ()

@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -108,10 +107,10 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     protected final boolean colorsAllowConnecting(final BlockState connectingState) {
-        if (!(connectingState.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
+        if (!(connectingState.getBlock() instanceof ColorableBlock<?, ?> otherColorableBlock)) {
             return true;
         }
-        final ColorableBlock<?> colorableBlock = getColor();
+        final ColorableBlock<?, ?> colorableBlock = getColor();
         if (colorableBlock == null) {
             return true;
         }
@@ -121,8 +120,8 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
     }
 
     @Nullable
-    private ColorableBlock<?> getColor() {
-        if (!(getBlockState().getBlock() instanceof ColorableBlock<?> colorableBlock)) {
+    private ColorableBlock<?, ?> getColor() {
+        if (!(getBlockState().getBlock() instanceof ColorableBlock<?, ?> colorableBlock)) {
             return null;
         }
         return colorableBlock;
@@ -135,13 +134,6 @@ public class NetworkNodeContainerBlockEntityImpl<T extends AbstractNetworkNode>
             return null;
         }
         return directionalBlock.extractDirection(blockState);
-    }
-
-    protected final void updateBlock() {
-        if (level == null) {
-            return;
-        }
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(

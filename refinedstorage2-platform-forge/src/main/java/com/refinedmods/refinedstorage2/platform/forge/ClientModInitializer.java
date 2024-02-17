@@ -23,12 +23,13 @@ import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiGridSynch
 import com.refinedmods.refinedstorage2.platform.forge.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.storage.diskdrive.DiskDriveGeometryLoader;
+import com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid.PortableGridBlockEntityRendererImpl;
+import com.refinedmods.refinedstorage2.platform.forge.storage.portablegrid.PortableGridGeometryLoader;
 
 import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -36,21 +37,23 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.client.settings.KeyModifier;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
@@ -63,22 +66,14 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent e) {
-        MinecraftForge.EVENT_BUS.addListener(ClientModInitializer::onKeyInput);
+        NeoForge.EVENT_BUS.addListener(ClientModInitializer::onKeyInput);
         e.enqueueWork(ClientModInitializer::registerModelPredicates);
-        e.enqueueWork(() -> registerScreens(new ScreenRegistration() {
-            @Override
-            public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
-                final MenuType<? extends M> type,
-                final ScreenConstructor<M, U> factory
-            ) {
-                MenuScreens.register(type, factory::create);
-            }
-        }));
         e.enqueueWork(ClientModInitializer::registerItemProperties);
         registerBlockEntityRenderer();
         registerGridSynchronizers();
         registerResourceRendering();
         registerAlternativeGridHints();
+        registerDiskModels();
     }
 
     @SubscribeEvent
@@ -96,7 +91,22 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onRegisterModelGeometry(final ModelEvent.RegisterGeometryLoaders e) {
-        e.register(DISK_DRIVE.getPath(), new DiskDriveGeometryLoader());
+        registerDiskModels();
+        e.register(DISK_DRIVE, new DiskDriveGeometryLoader());
+        e.register(PORTABLE_GRID, new PortableGridGeometryLoader());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterMenuScreens(final RegisterMenuScreensEvent e) {
+        registerScreens(new ScreenRegistration() {
+            @Override
+            public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(
+                final MenuType<? extends M> type,
+                final ScreenConstructor<M, U> factory
+            ) {
+                e.register(type, factory::create);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -147,6 +157,14 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getStorageMonitor(),
             ctx -> new StorageMonitorBlockEntityRenderer()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getPortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getCreativePortableGrid(),
+            ctx -> new PortableGridBlockEntityRendererImpl<>()
         );
     }
 

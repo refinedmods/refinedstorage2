@@ -58,11 +58,15 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         this.inventoryLabelX = 7;
     }
 
+    protected int getSideButtonY() {
+        return 6;
+    }
+
     @Override
     protected void init() {
         clearWidgets();
         super.init();
-        sideButtonY = 6;
+        sideButtonY = getSideButtonY();
     }
 
     @Override
@@ -83,7 +87,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     @Override
     public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float delta) {
-        renderBackground(graphics);
+        renderBackground(graphics, mouseX, mouseY, delta);
         super.render(graphics, mouseX, mouseY, delta);
         renderTooltip(graphics, mouseX, mouseY);
     }

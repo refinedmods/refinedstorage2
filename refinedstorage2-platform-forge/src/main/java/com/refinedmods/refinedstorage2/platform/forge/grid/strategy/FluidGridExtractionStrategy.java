@@ -20,11 +20,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidStack;
@@ -64,10 +64,9 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
+        return stack.getCapability(Capabilities.FluidHandler.ITEM);
     }
 
     private void extract(final FluidResource fluidResource,

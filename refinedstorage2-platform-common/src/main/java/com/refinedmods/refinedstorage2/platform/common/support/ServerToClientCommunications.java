@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface ServerToClientCommunications {
-    void sendControllerEnergyInfo(ServerPlayer player, long stored, long capacity);
+    void sendEnergyInfo(ServerPlayer player, long stored, long capacity);
 
     void sendWirelessTransmitterRange(ServerPlayer player, int range);
 

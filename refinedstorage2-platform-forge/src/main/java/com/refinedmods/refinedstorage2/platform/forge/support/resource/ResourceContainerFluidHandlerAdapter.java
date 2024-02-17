@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageCh
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toAction;

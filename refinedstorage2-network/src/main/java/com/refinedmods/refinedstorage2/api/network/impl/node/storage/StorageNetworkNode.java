@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements StorageProvider {
-    public static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkNode.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkNode.class);
 
     private final long energyUsage;
     private final StorageChannelType<?> type;

@@ -40,10 +40,12 @@ public final class IdentifierUtil {
         return createTranslation(
             "misc",
             "stored_with_capacity",
-            AmountFormatting.format(stored),
-            AmountFormatting.format(capacity),
-            String.valueOf((int) (pct * 100D))
-        );
+            Component.literal(stored == Long.MAX_VALUE ? "∞" : AmountFormatting.format(stored))
+                .withStyle(ChatFormatting.WHITE),
+            Component.literal(capacity == Long.MAX_VALUE ? "∞" : AmountFormatting.format(capacity))
+                .withStyle(ChatFormatting.WHITE),
+            Component.literal(String.valueOf((int) (pct * 100D)))
+        ).withStyle(ChatFormatting.GRAY);
     }
 
     public static MutableComponent createTranslationAsHeading(final String category, final String value) {

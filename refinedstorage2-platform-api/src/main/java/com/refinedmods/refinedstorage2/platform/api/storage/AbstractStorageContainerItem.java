@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -38,7 +37,8 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Optional<TypedStorage<?>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+    public <X> Optional<TypedStorage<X, Storage<X>>> resolve(final StorageRepository storageRepository,
+                                                             final ItemStack stack) {
         return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage(storage, type));
     }
 

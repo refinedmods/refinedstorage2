@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.exporter.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerInsertableStorage;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinatesImpl;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,7 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride,
                                            final boolean fuzzyMode) {
-        final InteractionCoordinates coordinates = new InteractionCoordinatesImpl(level, pos, direction);
+        final CapabilityCache coordinates = new CapabilityCacheImpl(level, pos, direction);
         final FluidHandlerInsertableStorage destination = new FluidHandlerInsertableStorage(
             coordinates,
             amountOverride

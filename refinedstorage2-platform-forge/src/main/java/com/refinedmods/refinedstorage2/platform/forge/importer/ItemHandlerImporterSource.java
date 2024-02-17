@@ -7,27 +7,27 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.forge.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.storage.ItemHandlerInsertableStorage;
 
 import java.util.Iterator;
 
 class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
-    private final InteractionCoordinates interactionCoordinates;
+    private final CapabilityCache capabilityCache;
     private final InsertableStorage<ItemResource> insertTarget;
     private final ExtractableStorage<ItemResource> extractTarget;
 
-    ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates,
+    ItemHandlerImporterSource(final CapabilityCache capabilityCache,
                               final AmountOverride amountOverride) {
-        this.interactionCoordinates = interactionCoordinates;
-        this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates, AmountOverride.NONE);
-        this.extractTarget = new ItemHandlerExtractableStorage(interactionCoordinates, amountOverride);
+        this.capabilityCache = capabilityCache;
+        this.insertTarget = new ItemHandlerInsertableStorage(capabilityCache, AmountOverride.NONE);
+        this.extractTarget = new ItemHandlerExtractableStorage(capabilityCache, amountOverride);
     }
 
     @Override
     public Iterator<ItemResource> getResources() {
-        return interactionCoordinates.getItemIterator();
+        return capabilityCache.getItemIterator();
     }
 
     @Override

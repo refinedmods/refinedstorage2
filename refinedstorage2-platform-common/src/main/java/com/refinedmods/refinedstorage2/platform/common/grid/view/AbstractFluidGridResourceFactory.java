@@ -35,7 +35,6 @@ public abstract class AbstractFluidGridResourceFactory implements GridResourceFa
         ));
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     private Set<String> getTags(final Fluid fluid) {
         return BuiltInRegistries.FLUID.getResourceKey(fluid)
             .flatMap(BuiltInRegistries.FLUID::getHolder)
@@ -45,7 +44,6 @@ public abstract class AbstractFluidGridResourceFactory implements GridResourceFa
             .collect(Collectors.toSet());
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // forge deprecates Registry access
     private String getModId(final FluidResource fluid) {
         return BuiltInRegistries.FLUID.getKey(fluid.fluid()).getNamespace();
     }

@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
-public abstract class AbstractEnergyBlockItem extends BlockItem implements EnergyItem {
+public abstract class AbstractEnergyBlockItem extends BlockItem {
     private final EnergyItemHelper helper;
 
     protected AbstractEnergyBlockItem(final Block block, final Properties properties, final EnergyItemHelper helper) {

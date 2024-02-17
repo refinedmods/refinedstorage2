@@ -7,7 +7,9 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
@@ -31,6 +33,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.MultiStorageNetworkNodeFactory.PROPERTY_ENERGY_USAGE_PER_STORAGE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @NetworkTest
 @SetupNetwork
@@ -117,18 +122,15 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        // Act
-        final MultiStorageState states = sut.createState();
-
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
-        assertThat(states.getStates())
-            .hasSize(9)
-            .allMatch(state -> state == MultiStorageStorageState.NONE);
         assertThat(sut.getSize()).isEqualTo(9);
+        for (int i = 0; i < 9; ++i) {
+            assertThat(sut.getState(i)).isEqualTo(StorageState.NONE);
+        }
     }
 
     @ParameterizedTest
@@ -155,21 +157,15 @@ class MultiStorageNetworkNodeTest {
         sut.setProvider(provider);
         sut.setActive(active);
 
-        final MultiStorageState state = sut.createState();
-
         // Assert
-        assertThat(state.getState(0)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(1)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(2)).isEqualTo(
-            active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(3)).isEqualTo(
-            active ? MultiStorageStorageState.NORMAL : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(4)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(5)).isEqualTo(
-            active ? MultiStorageStorageState.NEAR_CAPACITY : MultiStorageStorageState.INACTIVE);
-        assertThat(state.getState(6)).isEqualTo(MultiStorageStorageState.NONE);
-        assertThat(state.getState(7)).isEqualTo(
-            active ? MultiStorageStorageState.FULL : MultiStorageStorageState.INACTIVE);
+        assertThat(sut.getState(0)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(1)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(2)).isEqualTo(active ? StorageState.NORMAL : StorageState.INACTIVE);
+        assertThat(sut.getState(3)).isEqualTo(active ? StorageState.NORMAL : StorageState.INACTIVE);
+        assertThat(sut.getState(4)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(5)).isEqualTo(active ? StorageState.NEAR_CAPACITY : StorageState.INACTIVE);
+        assertThat(sut.getState(6)).isEqualTo(StorageState.NONE);
+        assertThat(sut.getState(7)).isEqualTo(active ? StorageState.FULL : StorageState.INACTIVE);
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_STORAGE * 4));
     }
 
@@ -249,11 +245,10 @@ class MultiStorageNetworkNodeTest {
         sut.onStorageChanged(9);
 
         // Assert
-        final MultiStorageState states = sut.createState();
-
-        assertThat(states.getStates())
-            .hasSize(9)
-            .allMatch(state -> state == MultiStorageStorageState.NONE);
+        assertThat(sut.getSize()).isEqualTo(9);
+        for (int i = 0; i < 9; ++i) {
+            assertThat(sut.getState(i)).isEqualTo(StorageState.NONE);
+        }
     }
 
     @Test
@@ -666,6 +661,25 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(inserted).isEqualTo(10);
         assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
+    }
+
+    @Test
+    void shouldNotifyListenerWhenStateChanges(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
+        sut.setListener(listener);
+
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        provider.set(1, storage);
+        initializeAndActivate();
+
+        // Act
+        networkStorage.insert("A", 75, Action.EXECUTE, FakeActor.INSTANCE);
+
+        // Assert
+        verify(listener, times(1)).onStorageStateChanged();
     }
 
     private void initializeAndActivate() {

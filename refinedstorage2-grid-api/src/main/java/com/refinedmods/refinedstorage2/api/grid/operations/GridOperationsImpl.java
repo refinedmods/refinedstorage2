@@ -36,7 +36,8 @@ public class GridOperationsImpl<T> implements GridOperations<T> {
     }
 
     @Override
-    public boolean extract(final T resource, final GridExtractMode extractMode,
+    public boolean extract(final T resource,
+                           final GridExtractMode extractMode,
                            final InsertableStorage<T> destination) {
         final long amount = getExtractableAmount(resource, extractMode);
         if (amount == 0) {

@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResour
 
 import java.util.Objects;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

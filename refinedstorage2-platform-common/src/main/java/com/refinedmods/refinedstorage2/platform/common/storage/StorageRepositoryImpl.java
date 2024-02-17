@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;

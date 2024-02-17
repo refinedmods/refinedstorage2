@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apiguardian.api.API;
 
@@ -65,14 +64,6 @@ public interface ResourceList<T> {
      * @return the resource amount if it's present in the list, otherwise an empty {@link Optional}
      */
     Optional<ResourceAmount<T>> get(T resource);
-
-    /**
-     * Retrieves the resource and its amount from the list, identified by ID.
-     *
-     * @param id the id
-     * @return the resource amount if it's present in the list, otherwise an empty {@link Optional}
-     */
-    Optional<ResourceAmount<T>> get(UUID id);
 
     /**
      * Retrieves all resources and their amounts from the list.

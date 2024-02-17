@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;

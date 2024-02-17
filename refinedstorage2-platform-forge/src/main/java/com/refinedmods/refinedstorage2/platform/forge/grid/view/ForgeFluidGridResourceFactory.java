@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.forge.grid.view;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.AbstractFluidGridResourceFactory;
 
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.toFluidStack;
 

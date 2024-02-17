@@ -97,6 +97,8 @@ public interface PlatformApi {
 
     PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry();
 
+    void writeGridScreenOpeningData(Grid grid, FriendlyByteBuf buf);
+
     UpgradeRegistry getUpgradeRegistry();
 
     BuiltinUpgradeDestinations getBuiltinUpgradeDestinations();

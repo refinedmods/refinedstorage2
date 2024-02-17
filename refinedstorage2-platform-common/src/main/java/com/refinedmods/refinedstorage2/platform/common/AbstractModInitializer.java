@@ -64,6 +64,13 @@ import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDri
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.externalstorage.ExternalStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.AbstractPortableGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridItemContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridLootItemFunction;
+import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockBlockItem;
@@ -72,7 +79,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.Item
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.StorageBlockLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.StorageBlockLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.storagedisk.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.FluidStorageMonitorExtractionStrategy;
@@ -85,7 +92,7 @@ import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMon
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
-import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunctionSerializer;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
@@ -105,6 +112,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -122,6 +130,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_WIRELESS_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTOR;
@@ -137,6 +146,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_RECEIVER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.NETWORK_TRANSMITTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
@@ -244,7 +254,9 @@ public abstract class AbstractModInitializer {
 
     protected final void registerBlocks(
         final RegistryCallback<Block> callback,
-        final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> diskDriveBlockEntityFactory
+        final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> diskDriveBlockEntityFactory,
+        final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> portableGridBlockEntityFactory,
+        final BiFunction<BlockPos, BlockState, AbstractPortableGridBlockEntity> creativePortableGridBlockEntityFactory
     ) {
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(callback.register(QUARTZ_ENRICHED_IRON_BLOCK, SimpleBlock::new));
         Blocks.INSTANCE.setDiskDrive(
@@ -279,13 +291,23 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.setStorageMonitor(callback.register(STORAGE_MONITOR, StorageMonitorBlock::new));
         Blocks.INSTANCE.getNetworkReceiver().registerBlocks(callback);
         Blocks.INSTANCE.getNetworkTransmitter().registerBlocks(callback);
+        Blocks.INSTANCE.setPortableGrid(callback.register(PORTABLE_GRID, () -> new PortableGridBlock(
+            PortableGridType.NORMAL,
+            portableGridBlockEntityFactory
+        )));
+        Blocks.INSTANCE.setCreativePortableGrid(callback.register(CREATIVE_PORTABLE_GRID, () -> new PortableGridBlock(
+            PortableGridType.CREATIVE,
+            creativePortableGridBlockEntityFactory
+        )));
     }
 
     protected final void registerItems(
         final RegistryCallback<Item> callback,
         final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier,
         final Supplier<WirelessGridItem> wirelessGridItemSupplier,
-        final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier
+        final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier,
+        final Supplier<PortableGridBlockItem> portableGridBlockItemSupplier,
+        final Supplier<PortableGridBlockItem> creativePortableGridBlockItemSupplier
     ) {
         registerSimpleItems(callback);
         Blocks.INSTANCE.getGrid().registerItems(callback);
@@ -310,6 +332,11 @@ public abstract class AbstractModInitializer {
             creativeWirelessGridItemSupplier
         ));
         callback.register(STORAGE_MONITOR, () -> new SimpleBlockItem(Blocks.INSTANCE.getStorageMonitor()));
+        Items.INSTANCE.setPortableGrid(callback.register(PORTABLE_GRID, portableGridBlockItemSupplier));
+        Items.INSTANCE.setCreativePortableGrid(callback.register(
+            CREATIVE_PORTABLE_GRID,
+            creativePortableGridBlockItemSupplier
+        ));
     }
 
     private void registerSimpleItems(final RegistryCallback<Item> callback) {
@@ -481,7 +508,11 @@ public abstract class AbstractModInitializer {
         final RegistryCallback<BlockEntityType<?>> callback,
         final BlockEntityTypeFactory typeFactory,
         final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractDiskDriveBlockEntity>
-            diskDriveBlockEntitySupplier
+            diskDriveBlockEntitySupplier,
+        final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>
+            portableGridBlockEntitySupplier,
+        final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>
+            creativePortableGridBlockEntitySupplier
     ) {
         BlockEntities.INSTANCE.setCable(callback.register(
             CABLE,
@@ -588,6 +619,17 @@ public abstract class AbstractModInitializer {
                 Blocks.INSTANCE.getNetworkTransmitter().toArray()
             )
         ));
+        BlockEntities.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> typeFactory.create(portableGridBlockEntitySupplier::create, Blocks.INSTANCE.getPortableGrid())
+        ));
+        BlockEntities.INSTANCE.setCreativePortableGrid(callback.register(
+            CREATIVE_PORTABLE_GRID,
+            () -> typeFactory.create(
+                creativePortableGridBlockEntitySupplier::create,
+                Blocks.INSTANCE.getCreativePortableGrid()
+            )
+        ));
     }
 
     protected final void registerMenus(final RegistryCallback<MenuType<?>> callback,
@@ -664,16 +706,28 @@ public abstract class AbstractModInitializer {
             NETWORK_TRANSMITTER,
             () -> menuTypeFactory.create(NetworkTransmitterContainerMenu::new)
         ));
+        Menus.INSTANCE.setPortableGridBlock(callback.register(
+            createIdentifier("portable_grid_block"),
+            () -> menuTypeFactory.create(PortableGridBlockContainerMenu::new)
+        ));
+        Menus.INSTANCE.setPortableGridItem(callback.register(
+            createIdentifier("portable_grid_item"),
+            () -> menuTypeFactory.create(PortableGridItemContainerMenu::new)
+        ));
     }
 
     protected final void registerLootFunctions(final RegistryCallback<LootItemFunctionType> callback) {
         LootFunctions.INSTANCE.setStorageBlock(callback.register(
             STORAGE_BLOCK,
-            () -> new LootItemFunctionType(new StorageBlockLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(Codec.unit(new StorageBlockLootItemFunction()))
+        ));
+        LootFunctions.INSTANCE.setPortableGrid(callback.register(
+            PORTABLE_GRID,
+            () -> new LootItemFunctionType(Codec.unit(new PortableGridLootItemFunction()))
         ));
         LootFunctions.INSTANCE.setEnergy(callback.register(
             createIdentifier("energy"),
-            () -> new LootItemFunctionType(new EnergyLootItemFunctionSerializer())
+            () -> new LootItemFunctionType(Codec.unit(new EnergyLootItemFunction()))
         ));
     }
 

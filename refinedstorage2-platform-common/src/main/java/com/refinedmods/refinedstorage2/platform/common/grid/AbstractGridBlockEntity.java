@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.container.NetworkNodeContainerPriorities;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
@@ -16,33 +16,38 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 
 import java.util.List;
-import java.util.Objects;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static java.util.Objects.requireNonNull;
+
 public abstract class AbstractGridBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<GridNetworkNode>
-    implements Grid, MenuProvider {
+    implements Grid, ExtendedMenuProvider {
     protected AbstractGridBlockEntity(final BlockEntityType<? extends AbstractGridBlockEntity> type,
                                       final BlockPos pos,
                                       final BlockState state,
                                       final long energyUsage) {
-        super(type, pos, state, new GridNetworkNode(
-            energyUsage,
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
-        ));
+        super(type, pos, state, new GridNetworkNode(energyUsage));
+    }
+
+    @Override
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
+        PlatformApi.INSTANCE.writeGridScreenOpeningData(this, buf);
     }
 
     @Override
     public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
                                                            final Class<? extends Actor> actorType) {
-        return Objects.requireNonNull(getNode().getNetwork())
+        return requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
             .getResources(type, actorType);
     }
@@ -50,7 +55,7 @@ public abstract class AbstractGridBlockEntity
     @Override
     public <T> GridOperations<T> createOperations(final PlatformStorageChannelType<T> storageChannelType,
                                                   final Actor actor) {
-        final StorageChannel<T> storageChannel = Objects.requireNonNull(getNode().getNetwork())
+        final StorageChannel<T> storageChannel = requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(storageChannelType);
         return storageChannelType.createGridOperations(storageChannel, actor);
@@ -63,7 +68,7 @@ public abstract class AbstractGridBlockEntity
 
     @Override
     public Storage<ItemResource> getItemStorage() {
-        return Objects.requireNonNull(getNode().getNetwork())
+        return requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM);
     }

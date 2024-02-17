@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.ItemTransferableStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
-    implements ExtendedMenuProvider {
+    implements ExtendedMenuProvider, ItemTransferableStorageBlockEntity {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 
     private static final String TAG_STORAGE_ID = "sid";
@@ -90,9 +91,10 @@ abstract class AbstractStorageBlockBlockEntity<T>
         }
     }
 
-    void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
+    @Override
+    public void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
         LOGGER.debug(
-            "Storage {} got placed through nbt, replacing with actual storage {}",
+            "Storage {} got placed through NBT, replacing with actual storage {}",
             storageId,
             actualStorageId
         );
@@ -161,6 +163,7 @@ abstract class AbstractStorageBlockBlockEntity<T>
         filter.save(tag);
     }
 
+    @Override
     @Nullable
     public UUID getStorageId() {
         return storageId;
@@ -176,5 +179,4 @@ abstract class AbstractStorageBlockBlockEntity<T>
         buf.writeLong(getNode().getCapacity());
         filter.getFilterContainer().writeToUpdatePacket(buf);
     }
-
 }

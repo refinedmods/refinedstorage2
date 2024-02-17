@@ -7,22 +7,22 @@ import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 public class ItemHandlerInsertableStorage implements InsertableStorage<ItemResource> {
-    private final InteractionCoordinates interactionCoordinates;
+    private final CapabilityCache capabilityCache;
     private final AmountOverride amountOverride;
 
-    public ItemHandlerInsertableStorage(final InteractionCoordinates interactionCoordinates,
+    public ItemHandlerInsertableStorage(final CapabilityCache capabilityCache,
                                         final AmountOverride amountOverride) {
-        this.interactionCoordinates = interactionCoordinates;
+        this.capabilityCache = capabilityCache;
         this.amountOverride = amountOverride;
     }
 
     @Override
     public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
-        return interactionCoordinates
+        return capabilityCache
             .getItemHandler()
             .map(itemHandler -> {
                 final long correctedAmount = amountOverride.overrideAmount(

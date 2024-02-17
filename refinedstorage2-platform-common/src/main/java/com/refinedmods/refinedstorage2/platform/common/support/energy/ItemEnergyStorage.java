@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.support.energy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemEnergyStorage implements EnergyStorage {
@@ -15,10 +14,11 @@ public class ItemEnergyStorage implements EnergyStorage {
     public ItemEnergyStorage(final ItemStack stack, final EnergyStorage delegate) {
         this.stack = stack;
         this.delegate = delegate;
-        final CompoundTag tag = stack.getTag();
-        if (tag != null && tag.contains(TAG_STORED)) {
-            delegate.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
-        }
+        delegate.receive(getStored(stack), Action.EXECUTE);
+    }
+
+    public static long getStored(final ItemStack stack) {
+        return stack.getTag() != null ? stack.getTag().getLong(TAG_STORED) : 0;
     }
 
     @Override

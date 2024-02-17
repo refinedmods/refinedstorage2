@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.3.3] - 2024-02-17
+
+### Added
+
+-   Ported to Minecraft 1.20.4.
+-   Custom disk models. Fluid disks now have a different model.
+-   Portable Grid
+-   Chinese translation by [@Jiangsubei](https://github.com/Jiangsubei).
+
+### Changed
+
+-   The Portable Grid now shows an energy bar in the UI.
+-   The energy bar on creative items now shows the infinity symbol instead of the whole amount.
+
+### Fixed
+
+-   Fixed bug where Grid contents weren't synced properly when a network merge occurs.
+-   Fixed incompatibility crash with InvMove on Fabric.
+
 ## [2.0.0-milestone.3.2] - 2023-11-03
 
 ### Added
@@ -497,7 +516,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.2...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.3...HEAD
+
+[2.0.0-milestone.3.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.2...v2.0.0-milestone.3.3
 
 [2.0.0-milestone.3.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.1...v2.0.0-milestone.3.2
 

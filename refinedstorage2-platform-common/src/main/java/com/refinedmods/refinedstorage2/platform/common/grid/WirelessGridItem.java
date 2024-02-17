@@ -9,8 +9,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Ne
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-import java.util.Optional;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,27 +25,18 @@ public class WirelessGridItem extends AbstractNetworkBoundEnergyItem {
         this.creative = creative;
     }
 
-    @Override
-    public Optional<EnergyStorage> createEnergyStorage(final ItemStack stack) {
-        if (creative) {
-            return Optional.empty();
-        }
+    public EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
             Platform.INSTANCE.getConfig().getWirelessGrid().getEnergyCapacity()
         );
-        return Optional.of(PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack));
+        return PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
     }
 
     @Override
     public void use(final ServerPlayer player,
                     final SlotReference slotReference,
                     final NetworkBoundItemSession session) {
-        session.drainEnergy(Platform.INSTANCE.getConfig().getWirelessGrid().getOpenEnergyUsage());
         final Grid grid = new WirelessGrid(session);
-        Platform.INSTANCE.getMenuOpener().openMenu(player, new WirelessGridExtendedMenuProvider(
-            grid,
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
-            slotReference
-        ));
+        Platform.INSTANCE.getMenuOpener().openMenu(player, new WirelessGridExtendedMenuProvider(grid, slotReference));
     }
 }

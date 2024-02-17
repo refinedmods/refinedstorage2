@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -22,8 +22,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ServerToClientCommunicationsImpl implements ServerToClientCommunications {
     @Override
-    public void sendControllerEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
-        sendToPlayer(player, PacketIds.CONTROLLER_ENERGY_INFO, buf -> {
+    public void sendEnergyInfo(final ServerPlayer player, final long stored, final long capacity) {
+        sendToPlayer(player, PacketIds.ENERGY_INFO, buf -> {
             buf.writeLong(stored);
             buf.writeLong(capacity);
         });

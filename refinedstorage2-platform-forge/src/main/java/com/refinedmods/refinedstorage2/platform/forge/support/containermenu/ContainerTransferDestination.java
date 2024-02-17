@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.platform.common.support.containermenu.Tra
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 public record ContainerTransferDestination(Container destination) implements TransferDestination {
     @Override

@@ -24,6 +24,7 @@ public final class ContentNames {
     public static final MutableComponent DISK_DRIVE = createTranslation("block", "disk_drive");
     public static final MutableComponent NETWORK_RECEIVER = createTranslation("block", "network_receiver");
     public static final MutableComponent NETWORK_TRANSMITTER = createTranslation("block", "network_transmitter");
+    public static final MutableComponent PORTABLE_GRID = createTranslation("block", "portable_grid");
 
     private ContentNames() {
     }
