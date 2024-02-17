@@ -8,11 +8,9 @@ import org.joml.Matrix4f;
 
 public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
     private final Component text;
-    private final float scale;
 
     public SmallTextClientTooltipComponent(final Component text) {
         this.text = text;
-        this.scale = SmallText.getScale();
     }
 
     @Override
@@ -21,6 +19,7 @@ public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
                            final int y,
                            final Matrix4f pose,
                            final MultiBufferSource.BufferSource buffer) {
+        final float scale = SmallText.getScale();
         SmallText.render(font, text.getVisualOrderText(), x, y, scale, pose, buffer);
     }
 
@@ -31,6 +30,7 @@ public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
 
     @Override
     public int getWidth(final Font font) {
+        final float scale = SmallText.getScale();
         return (int) (font.width(text) * scale);
     }
 }
