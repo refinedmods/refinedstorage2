@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Ported to Minecraft 1.20.4.
 -   Custom disk models. Fluid disks now have a different model.
 -   Portable Grid
+-   Chinese translation by [@Jiangsubei](https://github.com/Jiangsubei).
 
 ### Changed
 
