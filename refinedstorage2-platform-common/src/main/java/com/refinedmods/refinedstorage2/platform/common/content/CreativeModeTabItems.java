@@ -38,6 +38,7 @@ public final class CreativeModeTabItems {
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
         appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
         itemConsumer.accept(Items.INSTANCE.getPortableGrid());
+        consumer.accept(Items.INSTANCE.getPortableGrid().createAtEnergyCapacity());
         itemConsumer.accept(Items.INSTANCE.getCreativePortableGrid());
         Items.INSTANCE.getDetectors().stream().map(Supplier::get).forEach(itemConsumer);
         itemConsumer.accept(Blocks.INSTANCE.getInterface());

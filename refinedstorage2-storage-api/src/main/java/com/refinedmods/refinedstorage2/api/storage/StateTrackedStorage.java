@@ -35,7 +35,7 @@ public class StateTrackedStorage<T> implements TrackedStorage<T> {
         return StorageState.NORMAL;
     }
 
-    private StorageState computeState(final long capacity, final long stored) {
+    public static StorageState computeState(final long capacity, final long stored) {
         final double fullness = stored / (double) capacity;
         if (fullness >= 1D) {
             return StorageState.FULL;

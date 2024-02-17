@@ -43,14 +43,14 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
     public ItemStack removeItem(final int slot, final int amount) {
         // Forge InvWrapper calls this instead of setItem.
         final ItemStack result = super.removeItem(slot, amount);
-        listener.onDiskChanged(slot);
+        listener.onDiskChanged(this, slot);
         return result;
     }
 
     @Override
     public void setItem(final int slot, final ItemStack stack) {
         super.setItem(slot, stack);
-        listener.onDiskChanged(slot);
+        listener.onDiskChanged(this, slot);
     }
 
     @Override
@@ -108,6 +108,6 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
 
     @FunctionalInterface
     public interface DiskListener {
-        void onDiskChanged(int slot);
+        void onDiskChanged(DiskInventory inventory, int slot);
     }
 }

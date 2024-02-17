@@ -23,6 +23,10 @@ import static java.util.Objects.requireNonNull;
 public class PortableGridUnbakedGeometry implements IUnbakedGeometry<PortableGridUnbakedGeometry> {
     private static final ResourceLocation ACTIVE_MODEL = createIdentifier("block/portable_grid/active");
     private static final ResourceLocation INACTIVE_MODEL = createIdentifier("block/portable_grid/inactive");
+    private static final ResourceLocation INACTIVE_LED_MODEL = createIdentifier("block/disk/led_inactive");
+    private static final ResourceLocation NORMAL_LED_MODEL = createIdentifier("block/disk/led_normal");
+    private static final ResourceLocation NEAR_CAPACITY_LED_MODEL = createIdentifier("block/disk/led_near_capacity");
+    private static final ResourceLocation FULL_LED_MODEL = createIdentifier("block/disk/led_full");
 
     PortableGridUnbakedGeometry() {
     }
@@ -32,6 +36,10 @@ public class PortableGridUnbakedGeometry implements IUnbakedGeometry<PortableGri
                                final IGeometryBakingContext context) {
         modelGetter.apply(ACTIVE_MODEL).resolveParents(modelGetter);
         modelGetter.apply(INACTIVE_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(INACTIVE_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(NORMAL_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(NEAR_CAPACITY_LED_MODEL).resolveParents(modelGetter);
+        modelGetter.apply(FULL_LED_MODEL).resolveParents(modelGetter);
         PlatformApi.INSTANCE.getStorageContainerItemHelper().getDiskModels().forEach(
             diskModel -> modelGetter.apply(diskModel).resolveParents(modelGetter)
         );
@@ -48,7 +56,13 @@ public class PortableGridUnbakedGeometry implements IUnbakedGeometry<PortableGri
             requireNonNull(baker.bake(INACTIVE_MODEL, modelState, spriteGetter)),
             new RotationTranslationModelBaker(modelState, baker, spriteGetter, ACTIVE_MODEL),
             new RotationTranslationModelBaker(modelState, baker, spriteGetter, INACTIVE_MODEL),
-            new DiskModelBaker(modelState, baker, spriteGetter)
+            new DiskModelBaker(modelState, baker, spriteGetter),
+            new DiskLedBakers(
+                new RotationTranslationModelBaker(modelState, baker, spriteGetter, INACTIVE_LED_MODEL),
+                new RotationTranslationModelBaker(modelState, baker, spriteGetter, NORMAL_LED_MODEL),
+                new RotationTranslationModelBaker(modelState, baker, spriteGetter, NEAR_CAPACITY_LED_MODEL),
+                new RotationTranslationModelBaker(modelState, baker, spriteGetter, FULL_LED_MODEL)
+            )
         );
     }
 }

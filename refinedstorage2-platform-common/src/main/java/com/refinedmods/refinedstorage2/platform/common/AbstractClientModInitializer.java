@@ -65,7 +65,8 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getWirelessTransmitter(), WirelessTransmitterScreen::new);
         registration.register(Menus.INSTANCE.getStorageMonitor(), StorageMonitorScreen::new);
         registration.register(Menus.INSTANCE.getNetworkTransmitter(), NetworkTransmitterScreen::new);
-        registration.register(Menus.INSTANCE.getPortableGrid(), PortableGridScreen::new);
+        registration.register(Menus.INSTANCE.getPortableGridBlock(), PortableGridScreen::new);
+        registration.register(Menus.INSTANCE.getPortableGridItem(), PortableGridScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {

@@ -61,7 +61,7 @@ public abstract class AbstractDiskDriveBlockEntity
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
-        this.diskInventory = new DiskInventory(this::onDiskChanged, getNode().getSize());
+        this.diskInventory = new DiskInventory((inventory, slot) -> onDiskChanged(slot), getNode().getSize());
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,

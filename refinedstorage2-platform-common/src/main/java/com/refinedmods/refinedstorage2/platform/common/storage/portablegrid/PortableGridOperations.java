@@ -9,11 +9,11 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-public class PortableGridOperations<T> implements GridOperations<T> {
+class PortableGridOperations<T> implements GridOperations<T> {
     private final GridOperations<T> delegate;
     private final EnergyStorage energyStorage;
 
-    public PortableGridOperations(final GridOperations<T> delegate, final EnergyStorage energyStorage) {
+    PortableGridOperations(final GridOperations<T> delegate, final EnergyStorage energyStorage) {
         this.delegate = delegate;
         this.energyStorage = energyStorage;
     }
