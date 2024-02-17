@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 public abstract class AbstractProxyEnergyStorage implements EnergyStorage {
     private final EnergyStorage energyStorage;
 
-    public AbstractProxyEnergyStorage(final EnergyStorage energyStorage) {
+    protected AbstractProxyEnergyStorage(final EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
     }
 
