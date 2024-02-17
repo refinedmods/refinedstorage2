@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Ported to Minecraft 1.20.4.
+-   Ported to Minecraft 1.20.4.
 -   Custom disk models. Fluid disks now have a different model.
 -   Portable Grid
 
@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Fixed bug where Grid contents weren't synced properly when a network merge occurs.
+-   Fixed incompatibility crash with InvMove on Fabric.
 
 ## [2.0.0-milestone.3.2] - 2023-11-03
 

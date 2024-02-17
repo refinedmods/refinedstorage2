@@ -4,21 +4,16 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -30,29 +25,36 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
+import static java.util.Objects.requireNonNull;
+
 public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
     public static final Codec<UpgradeWithEnchantedBookRecipe> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
-            RegistryFixedCodec.create(Registries.ENCHANTMENT).fieldOf("enchantment")
-                .forGetter(UpgradeWithEnchantedBookRecipe::getEnchantment),
+            Codec.STRING.fieldOf("enchantment")
+                .xmap(ResourceLocation::new, ResourceLocation::toString)
+                .forGetter(UpgradeWithEnchantedBookRecipe::getEnchantmentId),
             Codec.INT.fieldOf("level").orElse(1)
                 .forGetter(UpgradeWithEnchantedBookRecipe::getEnchantmentLevel),
-            RegistryFixedCodec.create(Registries.ITEM).fieldOf("result")
-                .forGetter(UpgradeWithEnchantedBookRecipe::getResultItem)
+            Codec.STRING.fieldOf("result")
+                .xmap(ResourceLocation::new, ResourceLocation::toString)
+                .forGetter(UpgradeWithEnchantedBookRecipe::getResultItemId)
         ).apply(instance, UpgradeWithEnchantedBookRecipe::new)
     );
 
-    private final Holder<Enchantment> enchantment;
+    private final ResourceLocation enchantmentId;
     private final int level;
-    private final Holder<Item> resultItem;
+    private final ResourceLocation resultItemId;
 
-    UpgradeWithEnchantedBookRecipe(final Holder<Enchantment> enchantment,
+    UpgradeWithEnchantedBookRecipe(final ResourceLocation enchantmentId,
                                    final int level,
-                                   final Holder<Item> resultItem) {
+                                   final ResourceLocation resultItemId) {
         super("", CraftingBookCategory.MISC, new ShapedRecipePattern(3, 3, NonNullList.of(
             Ingredient.EMPTY,
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
-            Ingredient.of(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment.value(), level))),
+            Ingredient.of(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(
+                getEnchantment(enchantmentId),
+                level
+            ))),
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
             Ingredient.of(new ItemStack(Blocks.BOOKSHELF)),
             Ingredient.of(new ItemStack(Items.INSTANCE.getUpgrade())),
@@ -60,26 +62,25 @@ public class UpgradeWithEnchantedBookRecipe extends ShapedRecipe {
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron())),
             Ingredient.of(new ItemStack(Items.INSTANCE.getQuartzEnrichedIron()))
-        ), Optional.empty()), new ItemStack(resultItem.value()));
-        this.enchantment = enchantment;
+        ), Optional.empty()), new ItemStack(BuiltInRegistries.ITEM.get(resultItemId)));
+        this.enchantmentId = enchantmentId;
         this.level = level;
-        this.resultItem = resultItem;
+        this.resultItemId = resultItemId;
     }
 
-    public Holder<Item> getResultItem() {
-        return resultItem;
+    private static Enchantment getEnchantment(final ResourceLocation enchantmentId) {
+        return requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantmentId));
     }
 
-    public Holder<Enchantment> getEnchantment() {
-        return enchantment;
+    ResourceLocation getResultItemId() {
+        return resultItemId;
     }
 
-    @Nullable
-    public ResourceLocation getEnchantmentId() {
-        return enchantment.unwrapKey().map(ResourceKey::location).orElse(null);
+    ResourceLocation getEnchantmentId() {
+        return enchantmentId;
     }
 
-    public int getEnchantmentLevel() {
+    int getEnchantmentLevel() {
         return level;
     }
 
