@@ -1,7 +1,8 @@
-package com.refinedmods.refinedstorage2.api.network.node;
+package com.refinedmods.refinedstorage2.api.network.impl.storage;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 
 import javax.annotation.Nullable;
 

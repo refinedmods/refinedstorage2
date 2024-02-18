@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.node;
+package com.refinedmods.refinedstorage2.api.network.impl.storage;
 
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
@@ -16,6 +16,7 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
     private final Filter filter = new Filter();
     private int priority;
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
+    private boolean voidExcess;
 
     @Override
     public int getPriority() {
@@ -50,8 +51,17 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
     @Override
     public void setPriority(final int priority) {
         this.priority = priority;
-
         trySortSources();
+    }
+
+    @Override
+    public boolean isVoidExcess() {
+        return voidExcess;
+    }
+
+    @Override
+    public void setVoidExcess(final boolean voidExcess) {
+        this.voidExcess = voidExcess;
     }
 
     private void trySortSources() {

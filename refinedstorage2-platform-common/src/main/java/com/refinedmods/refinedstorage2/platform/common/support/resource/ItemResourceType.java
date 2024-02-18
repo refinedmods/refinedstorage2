@@ -37,8 +37,8 @@ class ItemResourceType extends AbstractResourceType {
     }
 
     @Override
-    public Optional<GridResource> toGridResource(final PlatformResourceKey resource, final long amount) {
-        return Platform.INSTANCE.getItemGridResourceFactory().apply(new ResourceAmount(resource, amount));
+    public Optional<GridResource> toGridResource(final ResourceAmount resourceAmount) {
+        return Platform.INSTANCE.getItemGridResourceFactory().apply(resourceAmount);
     }
 
     @Override

@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Void excess mode to storages.
+
 ### Fixed
 
 -   Fixed losing disk when using Wrench dismantling on the Portable Grid.

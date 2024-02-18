@@ -21,6 +21,10 @@ public interface StorageConfigurationContainer {
 
     void setAccessMode(AccessMode accessMode);
 
+    boolean isVoidExcess();
+
+    void setVoidExcess(boolean voidExcess);
+
     RedstoneMode getRedstoneMode();
 
     void setRedstoneMode(RedstoneMode redstoneMode);

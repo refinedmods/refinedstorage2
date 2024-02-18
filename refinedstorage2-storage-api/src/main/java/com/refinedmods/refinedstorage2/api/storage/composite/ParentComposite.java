@@ -28,7 +28,6 @@ public interface ParentComposite {
 
     /**
      * Adds a resource to the composite storage cache.
-     * Useful for the {@link ConsumingStorage} to propagate changes manually.
      *
      * @param resource the resource
      * @param amount   the amount
@@ -37,7 +36,6 @@ public interface ParentComposite {
 
     /**
      * Removes a resource from the composite storage cache.
-     * Useful for the {@link ConsumingStorage} to propagate changes manually.
      *
      * @param resource the resource
      * @param amount   the amount

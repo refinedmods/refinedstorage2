@@ -1,12 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractImmutableConfiguredProxyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractImmutableConfiguredProxyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 class ExposedMultiStorage extends AbstractImmutableConfiguredProxyStorage<CompositeStorageImpl>
-    implements CompositeStorage, CompositeAwareChild {
+    implements CompositeStorage {
     protected ExposedMultiStorage(final StorageConfiguration config) {
         super(config, new CompositeStorageImpl(new ResourceListImpl()));
     }

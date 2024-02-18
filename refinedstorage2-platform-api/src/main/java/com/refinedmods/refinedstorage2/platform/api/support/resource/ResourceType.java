@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
@@ -31,7 +32,7 @@ public interface ResourceType {
 
     double getDisplayAmount(long amount);
 
-    Optional<GridResource> toGridResource(PlatformResourceKey resource, long amount);
+    Optional<GridResource> toGridResource(ResourceAmount resourceAmount);
 
     boolean isGridResourceBelonging(GridResource gridResource);
 

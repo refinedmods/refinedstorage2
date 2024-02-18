@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage2.network.test.util.FakeActor;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.junit.jupiter.api.Nested;
@@ -303,6 +304,98 @@ class StorageNetworkNodeTest {
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount(A, 50),
             new ResourceAmount(B, 50)
+        );
+    }
+
+    @Test
+    void shouldNotInsertWhenFull(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 95, Action.EXECUTE, EmptyActor.INSTANCE);
+        activateStorage(storage);
+
+        // Act
+        final long inserted1 = networkStorage.insert(A, 7, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Collection<ResourceAmount> stored1 = networkStorage.getAll();
+        final long inserted2 = networkStorage.insert(A, 7, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Collection<ResourceAmount> stored2 = networkStorage.getAll();
+
+        // Assert
+        assertThat(inserted1).isEqualTo(5);
+        assertThat(stored1).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 100)
+        );
+
+        assertThat(inserted2).isZero();
+        assertThat(stored2).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 100)
+        );
+    }
+
+    @Test
+    void shouldNotInsertWhenFullWhenStorageVoidsExcessButIsNotInAllowlistMode(
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
+    ) {
+        // Arrange
+        final LimitedStorageImpl storage = new LimitedStorageImpl(100);
+        storage.insert(A, 95, Action.EXECUTE, EmptyActor.INSTANCE);
+        activateStorage(storage);
+
+        sut.setVoidExcess(true);
+
+        // Act
+        final long inserted = networkStorage.insert(A, 7, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Assert
+        assertThat(inserted).isEqualTo(5);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 100)
+        );
+    }
+
+    @Test
+    void shouldNotInsertWhenStorageVoidsExcessAndInAllowlistModeWithoutConfiguredFilter(
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
+    ) {
+        // Arrange
+        final LimitedStorageImpl storage = new LimitedStorageImpl(100);
+        activateStorage(storage);
+
+        sut.setVoidExcess(true);
+        sut.setFilterMode(FilterMode.ALLOW);
+
+        // Act
+        final long inserted = networkStorage.insert(A, 7, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Assert
+        assertThat(inserted).isZero();
+        assertThat(storage.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldInsertWhenFullWhenStorageVoidsExcessAndIsInAllowlistMode(
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
+    ) {
+        // Arrange
+        final LimitedStorageImpl storage = new LimitedStorageImpl(100);
+        storage.insert(A, 95, Action.EXECUTE, EmptyActor.INSTANCE);
+        activateStorage(storage);
+
+        sut.setVoidExcess(true);
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilters(Set.of(A));
+
+        // Act
+        final long inserted1 = networkStorage.insert(A, 3, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(A, 7, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long insertedOther = networkStorage.insert(B, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Assert
+        assertThat(inserted1).isEqualTo(3);
+        assertThat(inserted2).isEqualTo(7);
+        assertThat(insertedOther).isZero();
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 100)
         );
     }
 

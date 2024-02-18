@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.importer;
 
+import com.refinedmods.refinedstorage2.platform.common.storage.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractFilterScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
-import com.refinedmods.refinedstorage2.platform.common.support.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.FuzzyModeSideButtonWidget;
 
 import net.minecraft.network.chat.Component;

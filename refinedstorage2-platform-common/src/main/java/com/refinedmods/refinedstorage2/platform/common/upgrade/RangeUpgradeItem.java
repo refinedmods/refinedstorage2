@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import net.minecraft.world.item.Item;
 
-// TODO: improved creative texture.
 public class RangeUpgradeItem extends AbstractUpgradeItem {
     private final boolean creative;
 

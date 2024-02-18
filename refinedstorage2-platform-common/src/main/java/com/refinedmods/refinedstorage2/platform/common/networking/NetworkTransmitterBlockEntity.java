@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: better error texture and better active texture with animation? Reuse controller textures?
 public class NetworkTransmitterBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<SimpleNetworkNode>
     implements ExtendedMenuProvider, BlockEntityWithDrops {

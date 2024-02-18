@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 import static java.util.Objects.requireNonNull;
 
-// TODO: textures
 public class ConfigurationCardItem extends Item {
     private static final Component EMPTY_HELP = createTranslation("item", "configuration_card.empty_help");
     private static final Component CONFIGURED_HELP = createTranslation("item", "configuration_card.configured_help");
