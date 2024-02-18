@@ -12,15 +12,15 @@ import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractEnergyBlockItem;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemEnergyStorage;
-import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -29,11 +29,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class PortableGridBlockItem extends AbstractEnergyBlockItem {
-    private static final String TAG_DISK_INVENTORY = "diskinv";
-
     private final PortableGridType type;
 
     public PortableGridBlockItem(final Block block, final PortableGridType type) {
@@ -43,8 +40,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
 
     public static PortableGridBlockItemRenderInfo getRenderInfo(final ItemStack stack,
                                                                 @Nullable final Level level) {
-        final boolean creative = stack.getItem() instanceof PortableGridBlockItem portableGridBlockItem
-            && portableGridBlockItem.type == PortableGridType.CREATIVE;
+        final boolean creative = isCreative(stack);
         final boolean hasEnergy = creative || ItemEnergyStorage.getStored(stack) > 0;
         final ItemStack diskStack = getDisk(stack);
         final boolean active = hasEnergy && !diskStack.isEmpty();
@@ -53,6 +49,11 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
             getState(diskStack, active, level)
         );
         return new PortableGridBlockItemRenderInfo(active, disk);
+    }
+
+    private static boolean isCreative(final ItemStack stack) {
+        return stack.getItem() instanceof PortableGridBlockItem portableGridBlockItem
+            && portableGridBlockItem.type == PortableGridType.CREATIVE;
     }
 
     private static StorageState getState(final ItemStack diskStack,
@@ -71,17 +72,23 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
     }
 
     private static ItemStack getDisk(final ItemStack stack) {
-        if (stack.getTag() == null) {
+        final CompoundTag tag = getBlockEntityData(stack);
+        if (tag == null) {
             return ItemStack.EMPTY;
         }
-        if (!stack.getTag().contains(TAG_DISK_INVENTORY)) {
-            return ItemStack.EMPTY;
-        }
-        return ContainerUtil.getItemInSlot(stack.getTag().getCompound(TAG_DISK_INVENTORY), 0);
+        return AbstractPortableGridBlockEntity.getDisk(tag);
     }
 
     static void setDiskInventory(final ItemStack stack, final DiskInventory diskInventory) {
-        stack.getOrCreateTag().put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
+        final CompoundTag tag = new CompoundTag();
+        AbstractPortableGridBlockEntity.writeDiskInventory(tag, diskInventory);
+        setBlockEntityData(
+            stack,
+            isCreative(stack)
+                ? BlockEntities.INSTANCE.getCreativePortableGrid()
+                : BlockEntities.INSTANCE.getPortableGrid(),
+            tag
+        );
     }
 
     public EnergyStorage createEnergyStorage(final ItemStack stack) {
@@ -89,23 +96,6 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
             Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()
         );
         return PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
-    }
-
-    @Override
-    protected boolean updateCustomBlockEntityTag(
-        final BlockPos pos,
-        final Level level,
-        @Nullable final Player player,
-        final ItemStack stack,
-        final BlockState blockState
-    ) {
-        final boolean result = super.updateCustomBlockEntityTag(pos, level, player, stack, blockState);
-        if (!level.isClientSide()
-            && level.getBlockEntity(pos) instanceof AbstractPortableGridBlockEntity portableGrid) {
-            final ItemStack diskStack = getDisk(stack);
-            portableGrid.getDiskInventory().setItem(0, diskStack);
-        }
-        return result;
     }
 
     @Override
@@ -145,8 +135,9 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
 
     private DiskInventory createDiskInventory(final ItemStack stack, final DiskInventoryListenerImpl listener) {
         final DiskInventory diskInventory = new DiskInventory(listener, 1);
-        if (stack.getTag() != null && stack.getTag().contains(TAG_DISK_INVENTORY)) {
-            ContainerUtil.read(stack.getTag().getCompound(TAG_DISK_INVENTORY), diskInventory);
+        final CompoundTag tag = getBlockEntityData(stack);
+        if (tag != null) {
+            AbstractPortableGridBlockEntity.readDiskInventory(tag, diskInventory);
         }
         return diskInventory;
     }

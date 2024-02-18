@@ -34,6 +34,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -73,6 +74,23 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
                     && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
             }
         };
+    }
+
+    static void readDiskInventory(final CompoundTag tag, final DiskInventory diskInventory) {
+        if (tag.contains(TAG_DISK_INVENTORY)) {
+            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
+        }
+    }
+
+    static void writeDiskInventory(final CompoundTag tag, final DiskInventory diskInventory) {
+        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
+    }
+
+    static ItemStack getDisk(final CompoundTag tag) {
+        if (!tag.contains(TAG_DISK_INVENTORY)) {
+            return ItemStack.EMPTY;
+        }
+        return ContainerUtil.getItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), 0);
     }
 
     private static EnergyStorage createEnergyStorage(final PortableGridType type, final BlockEntity blockEntity) {
@@ -137,9 +155,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     @Override
     public void load(final CompoundTag tag) {
         fromClientTag(tag);
-        if (tag.contains(TAG_DISK_INVENTORY)) {
-            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
-        }
+        readDiskInventory(tag, diskInventory);
         if (tag.contains(TAG_STORED)) {
             energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
         }
@@ -169,7 +185,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
+        writeDiskInventory(tag, diskInventory);
         tag.putLong(TAG_STORED, energyStorage.getStored());
         writeConfiguration(tag);
     }
