@@ -315,7 +315,7 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         event.registerItem(
             Capabilities.EnergyStorage.ITEM,
-            (stack, ctx) -> new EnergyStorageAdapter(Items.INSTANCE.getPortableGrid().createEnergyStorage(stack)),
+            (stack, ctx) -> new EnergyStorageAdapter(PortableGridBlockItem.createEnergyStorage(stack)),
             Items.INSTANCE.getPortableGrid()
         );
     }

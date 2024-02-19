@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.controller;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.TransferableBlockEntityEnergy;
@@ -10,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -31,7 +31,6 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
     implements ExtendedMenuProvider, TransferableBlockEntityEnergy {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBlockEntity.class);
 
-    private static final String TAG_STORED = "stored";
     private static final String TAG_CAPACITY = "capacity";
 
     private final ControllerType type;
@@ -78,7 +77,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putLong(TAG_STORED, getNode().getActualStored());
+        ItemBlockEnergyStorage.writeToTag(tag, getNode().getActualStored());
         saveRenderingInfo(tag);
     }
 
@@ -89,9 +88,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
     @Override
     public void load(final CompoundTag tag) {
         super.load(tag);
-        if (tag.contains(TAG_STORED)) {
-            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
-        }
+        ItemBlockEnergyStorage.readFromTag(energyStorage, tag);
     }
 
     @Override

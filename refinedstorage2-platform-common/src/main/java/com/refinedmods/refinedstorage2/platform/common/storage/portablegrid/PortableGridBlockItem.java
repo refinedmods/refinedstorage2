@@ -16,7 +16,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.Disk;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
-import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemEnergyStorage;
 
 import javax.annotation.Nullable;
 
@@ -41,7 +40,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
     public static PortableGridBlockItemRenderInfo getRenderInfo(final ItemStack stack,
                                                                 @Nullable final Level level) {
         final boolean creative = isCreative(stack);
-        final boolean hasEnergy = creative || ItemEnergyStorage.getStored(stack) > 0;
+        final boolean hasEnergy = creative || createEnergyStorage(stack).getStored() > 0;
         final ItemStack diskStack = getDisk(stack);
         final boolean active = hasEnergy && !diskStack.isEmpty();
         final Disk disk = new Disk(
@@ -91,11 +90,15 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem {
         );
     }
 
-    public EnergyStorage createEnergyStorage(final ItemStack stack) {
+    public static EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
             Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()
         );
-        return PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
+        return PlatformApi.INSTANCE.asBlockItemEnergyStorage(
+            energyStorage,
+            stack,
+            BlockEntities.INSTANCE.getPortableGrid()
+        );
     }
 
     @Override

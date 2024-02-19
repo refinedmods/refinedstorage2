@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
@@ -18,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSetti
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import javax.annotation.Nullable;
@@ -48,7 +48,6 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
 
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_DISKS = "disks";
-    private static final String TAG_STORED = "stored";
     private static final String TAG_REDSTONE_MODE = "rm";
 
     @Nullable
@@ -156,9 +155,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     public void load(final CompoundTag tag) {
         fromClientTag(tag);
         readDiskInventory(tag, diskInventory);
-        if (tag.contains(TAG_STORED)) {
-            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
-        }
+        ItemBlockEnergyStorage.readFromTag(energyStorage, tag);
         readConfiguration(tag);
         super.load(tag);
     }
@@ -186,7 +183,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         writeDiskInventory(tag, diskInventory);
-        tag.putLong(TAG_STORED, energyStorage.getStored());
+        ItemBlockEnergyStorage.writeToTag(tag, energyStorage.getStored());
         writeConfiguration(tag);
     }
 
