@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.AbstractEnergyBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
 import java.util.Optional;
 
@@ -44,6 +45,10 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
             Platform.INSTANCE.getConfig().getController().getEnergyCapacity()
         );
-        return PlatformApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
+        return PlatformApi.INSTANCE.asBlockItemEnergyStorage(
+            energyStorage,
+            stack,
+            BlockEntities.INSTANCE.getController()
+        );
     }
 }

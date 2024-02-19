@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.RedstoneModeSetti
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -47,7 +49,6 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
 
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_DISKS = "disks";
-    private static final String TAG_STORED = "stored";
     private static final String TAG_REDSTONE_MODE = "rm";
 
     @Nullable
@@ -75,12 +76,29 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
         };
     }
 
+    static void readDiskInventory(final CompoundTag tag, final DiskInventory diskInventory) {
+        if (tag.contains(TAG_DISK_INVENTORY)) {
+            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
+        }
+    }
+
+    static void writeDiskInventory(final CompoundTag tag, final DiskInventory diskInventory) {
+        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
+    }
+
+    static ItemStack getDisk(final CompoundTag tag) {
+        if (!tag.contains(TAG_DISK_INVENTORY)) {
+            return ItemStack.EMPTY;
+        }
+        return ContainerUtil.getItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), 0);
+    }
+
     private static EnergyStorage createEnergyStorage(final PortableGridType type, final BlockEntity blockEntity) {
         if (type == PortableGridType.CREATIVE) {
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(),
+            new EnergyStorageImpl(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()),
             blockEntity
         );
     }
@@ -137,12 +155,8 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     @Override
     public void load(final CompoundTag tag) {
         fromClientTag(tag);
-        if (tag.contains(TAG_DISK_INVENTORY)) {
-            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
-        }
-        if (tag.contains(TAG_STORED)) {
-            energyStorage.receive(tag.getLong(TAG_STORED), Action.EXECUTE);
-        }
+        readDiskInventory(tag, diskInventory);
+        ItemBlockEnergyStorage.readFromTag(energyStorage, tag);
         readConfiguration(tag);
         super.load(tag);
     }
@@ -169,8 +183,8 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
-        tag.putLong(TAG_STORED, energyStorage.getStored());
+        writeDiskInventory(tag, diskInventory);
+        ItemBlockEnergyStorage.writeToTag(tag, energyStorage.getStored());
         writeConfiguration(tag);
     }
 

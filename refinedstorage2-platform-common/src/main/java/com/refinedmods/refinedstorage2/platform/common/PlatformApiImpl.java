@@ -61,6 +61,7 @@ import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageCh
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.network.ConnectionProviderImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.CompositeSlotReferenceProvider;
@@ -101,6 +102,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -466,6 +468,13 @@ public class PlatformApiImpl implements PlatformApi {
     public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage,
                                              final ItemStack stack) {
         return new ItemEnergyStorage(stack, energyStorage);
+    }
+
+    @Override
+    public EnergyStorage asBlockItemEnergyStorage(final EnergyStorage energyStorage,
+                                                  final ItemStack stack,
+                                                  final BlockEntityType<?> blockEntityType) {
+        return new ItemBlockEnergyStorage(energyStorage, stack, blockEntityType);
     }
 
     @Override

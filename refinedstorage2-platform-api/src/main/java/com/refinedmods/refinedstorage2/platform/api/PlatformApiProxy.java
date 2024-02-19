@@ -54,6 +54,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class PlatformApiProxy implements PlatformApi {
     @Nullable
@@ -322,6 +323,13 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack) {
         return ensureLoaded().asItemEnergyStorage(energyStorage, stack);
+    }
+
+    @Override
+    public EnergyStorage asBlockItemEnergyStorage(final EnergyStorage energyStorage,
+                                                  final ItemStack stack,
+                                                  final BlockEntityType<?> blockEntityType) {
+        return ensureLoaded().asBlockItemEnergyStorage(energyStorage, stack, blockEntityType);
     }
 
     @Override

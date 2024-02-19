@@ -370,7 +370,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             controller.get()
         ));
         EnergyStorage.ITEM.registerForItems(
-            (stack, context) -> new EnergyStorageAdapter(Items.INSTANCE.getPortableGrid().createEnergyStorage(stack)),
+            (stack, context) -> new EnergyStorageAdapter(PortableGridBlockItem.createEnergyStorage(stack)),
             Items.INSTANCE.getPortableGrid()
         );
     }
