@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.controller;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.TransferableBlockEntityEnergy;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -49,7 +50,7 @@ public class ControllerBlockEntity extends AbstractRedstoneModeNetworkNodeContai
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+            new EnergyStorageImpl(Platform.INSTANCE.getConfig().getController().getEnergyCapacity()),
             blockEntity
         );
     }

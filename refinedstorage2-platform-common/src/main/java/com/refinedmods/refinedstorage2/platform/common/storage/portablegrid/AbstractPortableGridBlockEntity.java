@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.configurationcard.ConfigurationCardTarget;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
@@ -97,7 +98,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity implem
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(),
+            new EnergyStorageImpl(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()),
             blockEntity
         );
     }
