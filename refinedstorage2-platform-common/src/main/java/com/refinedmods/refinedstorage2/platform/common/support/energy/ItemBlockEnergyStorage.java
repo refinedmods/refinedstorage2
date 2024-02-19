@@ -2,14 +2,14 @@ package com.refinedmods.refinedstorage2.platform.common.support.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.impl.energy.AbstractProxyEnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.AbstractListeningEnergyStorage;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-public class ItemBlockEnergyStorage extends AbstractProxyEnergyStorage {
+public class ItemBlockEnergyStorage extends AbstractListeningEnergyStorage {
     private static final String TAG_STORED = "stored";
 
     private final ItemStack stack;
@@ -28,29 +28,12 @@ public class ItemBlockEnergyStorage extends AbstractProxyEnergyStorage {
     }
 
     @Override
-    public long receive(final long amount, final Action action) {
-        final long received = super.receive(amount, action);
-        if (received > 0 && action == Action.EXECUTE) {
-            updateStored();
-        }
-        return received;
-    }
-
-    @Override
-    public long extract(final long amount, final Action action) {
-        final long extracted = super.extract(amount, action);
-        if (extracted > 0 && action == Action.EXECUTE) {
-            updateStored();
-        }
-        return extracted;
-    }
-
-    private void updateStored() {
+    protected void onStoredChanged(final long stored) {
         CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
             tag = new CompoundTag();
         }
-        writeToTag(tag, getStored());
+        writeToTag(tag, stored);
         BlockItem.setBlockEntityData(stack, blockEntityType, tag);
     }
 
