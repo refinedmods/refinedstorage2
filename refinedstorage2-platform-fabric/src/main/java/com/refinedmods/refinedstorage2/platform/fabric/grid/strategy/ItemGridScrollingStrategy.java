@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
@@ -23,7 +24,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil.toItemVariant;
 
 public class ItemGridScrollingStrategy implements GridScrollingStrategy {
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
@@ -36,9 +37,9 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
     }
 
     @Override
-    public <T> boolean onScroll(
-        final PlatformStorageChannelType<T> storageChannelType,
-        final T resource,
+    public boolean onScroll(
+        final PlatformStorageChannelType storageChannelType,
+        final ResourceKey resource,
         final GridScrollMode scrollMode,
         final int slotIndex
     ) {
@@ -59,8 +60,11 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
     private void handleInventoryToGridScroll(final ItemResource itemResource,
                                              final Storage<ItemVariant> sourceStorage) {
         gridOperations.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 final long extracted = sourceStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -73,7 +77,10 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
     private void handleGridToInventoryScroll(final ItemResource itemResource,
                                              final Storage<ItemVariant> destinationStorage) {
         gridOperations.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
-            final ItemVariant itemVariant = toItemVariant(resource);
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
+            final ItemVariant itemVariant = toItemVariant(itemResource2);
             try (Transaction tx = Transaction.openOuter()) {
                 final long inserted = destinationStorage.insert(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {

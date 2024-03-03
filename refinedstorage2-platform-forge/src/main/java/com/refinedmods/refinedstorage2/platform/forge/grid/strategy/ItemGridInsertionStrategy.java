@@ -22,7 +22,7 @@ import static com.refinedmods.refinedstorage2.platform.api.support.resource.Item
 
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final CursorItemHandler playerCursorItemHandler;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,

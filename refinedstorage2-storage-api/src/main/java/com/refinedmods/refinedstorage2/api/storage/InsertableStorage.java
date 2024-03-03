@@ -1,16 +1,15 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import org.apiguardian.api.API;
 
 /**
  * Represents a storage that can be inserted into.
- *
- * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface InsertableStorage<T> {
+public interface InsertableStorage {
     /**
      * Inserts a resource into a storage.
      *
@@ -20,5 +19,5 @@ public interface InsertableStorage<T> {
      * @param actor    the source
      * @return the amount inserted
      */
-    long insert(T resource, long amount, Action action, Actor actor);
+    long insert(ResourceKey resource, long amount, Action action, Actor actor);
 }

@@ -11,7 +11,7 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
     private long amount;
     private DetectorMode mode = DetectorMode.EQUAL;
     @Nullable
-    private ResourceTemplate<?> template;
+    private ResourceTemplate template;
     @Nullable
     private DetectorAmountStrategy amountStrategy;
 
@@ -24,7 +24,7 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public <T> void setFilterTemplate(@Nullable final ResourceTemplate<T> filterTemplate) {
+    public void setFilterTemplate(@Nullable final ResourceTemplate filterTemplate) {
         this.template = filterTemplate;
     }
 

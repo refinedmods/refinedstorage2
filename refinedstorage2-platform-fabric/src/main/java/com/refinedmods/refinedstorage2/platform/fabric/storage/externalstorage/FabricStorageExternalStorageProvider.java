@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.storage.externalstorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
@@ -23,16 +24,16 @@ import net.minecraft.server.level.ServerLevel;
 import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
-class FabricStorageExternalStorageProvider<T, P> implements ExternalStorageProvider<T> {
+class FabricStorageExternalStorageProvider<P> implements ExternalStorageProvider {
     private final BlockApiCache<Storage<P>, Direction> cache;
-    private final Function<P, T> fromPlatformMapper;
-    private final FabricStorageExtractableStorage<T, P> extractTarget;
-    private final FabricStorageInsertableStorage<T, P> insertTarget;
+    private final Function<P, ResourceKey> fromPlatformMapper;
+    private final FabricStorageExtractableStorage<P> extractTarget;
+    private final FabricStorageInsertableStorage<P> insertTarget;
     private final Direction direction;
 
     FabricStorageExternalStorageProvider(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                         final Function<P, T> fromPlatformMapper,
-                                         final Function<T, P> toPlatformMapper,
+                                         final Function<P, ResourceKey> fromPlatformMapper,
+                                         final Function<ResourceKey, P> toPlatformMapper,
                                          final ServerLevel serverLevel,
                                          final BlockPos pos,
                                          final Direction direction) {
@@ -58,17 +59,17 @@ class FabricStorageExternalStorageProvider<T, P> implements ExternalStorageProvi
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         return extractTarget.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         return insertTarget.insert(resource, amount, action, actor);
     }
 
     @Override
-    public Iterator<ResourceAmount<T>> iterator() {
+    public Iterator<ResourceAmount> iterator() {
         final Storage<P> storage = cache.find(direction);
         if (storage == null) {
             return Collections.emptyListIterator();
@@ -76,7 +77,7 @@ class FabricStorageExternalStorageProvider<T, P> implements ExternalStorageProvi
         final Iterator<StorageView<P>> iterator = storage.iterator();
         return transform(
             filter(iterator, storageView -> !storageView.isResourceBlank() && storageView.getAmount() > 0),
-            storageView -> new ResourceAmount<>(
+            storageView -> new ResourceAmount(
                 fromPlatformMapper.apply(storageView.getResource()),
                 storageView.getAmount()
             )

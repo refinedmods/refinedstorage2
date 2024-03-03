@@ -116,14 +116,14 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
         source.clearMatrix(player, toPlayerInventory);
     }
 
-    public ResourceList<Object> getAvailableListForRecipeTransfer() {
-        final ResourceList<Object> available = getView().copyBackingList();
+    public ResourceList getAvailableListForRecipeTransfer() {
+        final ResourceList available = getView().copyBackingList();
         addContainerToList(source.getCraftingMatrix(), available);
         addContainerToList(player.getInventory(), available);
         return available;
     }
 
-    private void addContainerToList(final Container container, final ResourceList<Object> available) {
+    private void addContainerToList(final Container container, final ResourceList available) {
         for (int i = 0; i < container.getContainerSize(); ++i) {
             final ItemStack stack = container.getItem(i);
             if (stack.isEmpty()) {

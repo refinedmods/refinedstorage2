@@ -38,20 +38,20 @@ class StorageRepositoryImplTest {
         sut = new StorageRepositoryImpl(PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
     }
 
-    private PlatformStorage<ItemResource> createSerializableStorage(final Storage<ItemResource> storage) {
-        if (storage instanceof LimitedStorageImpl<ItemResource> limitedStorage) {
-            return new LimitedPlatformStorage<>(
+    private PlatformStorage createSerializableStorage(final Storage storage) {
+        if (storage instanceof LimitedStorageImpl limitedStorage) {
+            return new LimitedPlatformStorage(
                 limitedStorage,
                 StorageTypes.ITEM,
-                new InMemoryTrackedStorageRepository<>(),
+                new InMemoryTrackedStorageRepository(),
                 () -> {
                 }
             );
         }
-        return new PlatformStorage<>(
+        return new PlatformStorage(
             storage,
             StorageTypes.ITEM,
-            new InMemoryTrackedStorageRepository<>(),
+            new InMemoryTrackedStorageRepository(),
             () -> {
             }
         );
@@ -73,14 +73,14 @@ class StorageRepositoryImplTest {
     void shouldBeAbleToSetAndRetrieveStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        final Storage storage = createSerializableStorage(new InMemoryStorageImpl());
         storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         sut.set(id, storage);
 
         // Assert
-        assertThat(sut.<ItemResource>get(id)).containsSame(storage);
+        assertThat(sut.get(id)).containsSame(storage);
         assertThat(sut.isDirty()).isTrue();
         assertThat(sut.getInfo(id)).usingRecursiveComparison().isEqualTo(new StorageInfo(10, 0));
     }
@@ -89,10 +89,10 @@ class StorageRepositoryImplTest {
     void shouldNotBeAbleToSetStorageWithExistingId() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        sut.set(id, createSerializableStorage(new InMemoryStorageImpl<>()));
+        sut.set(id, createSerializableStorage(new InMemoryStorageImpl()));
 
         // Act
-        final Executable action = () -> sut.set(id, createSerializableStorage(new InMemoryStorageImpl<>()));
+        final Executable action = () -> sut.set(id, createSerializableStorage(new InMemoryStorageImpl()));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);
@@ -102,7 +102,7 @@ class StorageRepositoryImplTest {
     void shouldNotBeAbleToSetUnserializableStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final InMemoryStorageImpl<String> storage = new InMemoryStorageImpl<>();
+        final InMemoryStorageImpl storage = new InMemoryStorageImpl();
 
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> sut.set(id, storage));
@@ -112,7 +112,7 @@ class StorageRepositoryImplTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotBeAbleToSetWithInvalidId() {
         // Arrange
-        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        final Storage storage = createSerializableStorage(new InMemoryStorageImpl());
 
         // Act & assert
         assertThrows(NullPointerException.class, () -> sut.set(null, storage));
@@ -132,12 +132,12 @@ class StorageRepositoryImplTest {
     void shouldRemoveIfEmpty() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        final Storage storage = createSerializableStorage(new InMemoryStorageImpl());
         sut.set(id, storage);
         sut.setDirty(false);
 
         // Act
-        final Optional<Storage<ItemResource>> result = sut.removeIfEmpty(id);
+        final Optional<Storage> result = sut.removeIfEmpty(id);
 
         // Assert
         assertThat(result).get().isEqualTo(storage);
@@ -149,13 +149,13 @@ class StorageRepositoryImplTest {
     void shouldNotRemoveIfEmptyIfNotEmpty() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        final Storage storage = createSerializableStorage(new InMemoryStorageImpl());
         storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.set(id, storage);
         sut.setDirty(false);
 
         // Act
-        final Optional<Storage<String>> result = sut.removeIfEmpty(id);
+        final Optional<Storage> result = sut.removeIfEmpty(id);
 
         // Assert
         assertThat(result).isEmpty();
@@ -166,7 +166,7 @@ class StorageRepositoryImplTest {
     @Test
     void shouldNotRemoveIfEmptyIfNotExists() {
         // Act
-        final Optional<Storage<String>> disassembled = sut.removeIfEmpty(UUID.randomUUID());
+        final Optional<Storage> disassembled = sut.removeIfEmpty(UUID.randomUUID());
 
         // Assert
         assertThat(disassembled).isEmpty();
@@ -186,7 +186,7 @@ class StorageRepositoryImplTest {
     void shouldRetrieveInfoFromLimitedStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = createSerializableStorage(new LimitedStorageImpl<>(10));
+        final Storage storage = createSerializableStorage(new LimitedStorageImpl(10));
         storage.insert(new ItemResource(Items.DIRT, null), 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
@@ -203,7 +203,7 @@ class StorageRepositoryImplTest {
     void shouldRetrieveInfoFromRegularStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        final Storage storage = createSerializableStorage(new InMemoryStorageImpl());
         storage.insert(new ItemResource(Items.DIRT, null), 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
@@ -227,20 +227,19 @@ class StorageRepositoryImplTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
     void shouldSerializeAndDeserialize() {
         // Arrange
-        final InMemoryTrackedStorageRepository<ItemResource> repository = new InMemoryTrackedStorageRepository<>();
-        final PlatformStorage<ItemResource> a = new PlatformStorage<>(
-            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), repository, () -> 123L),
+        final InMemoryTrackedStorageRepository repository = new InMemoryTrackedStorageRepository();
+        final PlatformStorage a = new PlatformStorage(
+            new TrackedStorageImpl(new InMemoryStorageImpl(), repository, () -> 123L),
             StorageTypes.ITEM,
             repository,
             sut::markAsChanged
         );
-        final PlatformStorage<ItemResource> b = new LimitedPlatformStorage<>(
-            new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100),
+        final PlatformStorage b = new LimitedPlatformStorage(
+            new LimitedStorageImpl(new InMemoryStorageImpl(), 100),
             StorageTypes.ITEM,
-            new InMemoryTrackedStorageRepository<>(),
+            new InMemoryTrackedStorageRepository(),
             sut::markAsChanged
         );
 
@@ -266,7 +265,7 @@ class StorageRepositoryImplTest {
             .get()
             .isInstanceOf(PlatformStorage.class);
         assertThat(sut.get(aId).get().getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10)
+            new ResourceAmount(new ItemResource(Items.DIRT, createDummyTag()), 10)
         );
         assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()), PlayerActor.class))
@@ -276,7 +275,7 @@ class StorageRepositoryImplTest {
         assertThat(sut.get(bId)).get().isInstanceOf(LimitedPlatformStorage.class);
         assertThat(((LimitedPlatformStorage) sut.get(bId).get()).getCapacity()).isEqualTo(100);
         assertThat(sut.get(bId).get().getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>(new ItemResource(Items.GLASS, null), 20)
+            new ResourceAmount(new ItemResource(Items.GLASS, null), 20)
         );
     }
 }

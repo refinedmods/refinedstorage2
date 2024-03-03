@@ -14,15 +14,15 @@ import net.minecraft.world.item.ItemStack;
 
 class ResourceIngredientConverter implements IngredientConverter {
     @Override
-    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
+    public Optional<ResourceTemplate> convertToResource(final Object ingredient) {
         if (ingredient instanceof FluidStack fluidStack) {
-            return Optional.of(new ResourceTemplate<>(
+            return Optional.of(new ResourceTemplate(
                 new FluidResource(fluidStack.getFluid(), fluidStack.getTag()),
                 StorageChannelTypes.FLUID
             ));
         }
         if (ingredient instanceof ItemStack itemStack) {
-            return Optional.of(new ResourceTemplate<>(
+            return Optional.of(new ResourceTemplate(
                 ItemResource.ofItemStack(itemStack),
                 StorageChannelTypes.ITEM
             ));
@@ -32,7 +32,7 @@ class ResourceIngredientConverter implements IngredientConverter {
 
     @Override
     public Optional<Object> convertToIngredient(final Object resource) {
-        if (!(resource instanceof ResourceTemplate<?> resourceTemplate)) {
+        if (!(resource instanceof ResourceTemplate resourceTemplate)) {
             return Optional.empty();
         }
         if (resourceTemplate.resource() instanceof ItemResource itemResource) {

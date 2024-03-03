@@ -32,7 +32,7 @@ class ResourceGuiContainerHandler implements IGuiContainerHandler<AbstractBaseSc
         return convertToIngredient(baseScreen.getHoveredResource()).flatMap(this::convertToClickableIngredient);
     }
 
-    public Optional<Object> convertToIngredient(@Nullable final ResourceTemplate<?> resourceTemplate) {
+    public Optional<Object> convertToIngredient(@Nullable final ResourceTemplate resourceTemplate) {
         if (resourceTemplate == null) {
             return Optional.empty();
         }

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.iface;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExportState;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -38,11 +39,12 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
     }
 
     @Override
-    public <T> Collection<T> expandExportCandidates(final StorageChannel<T> storageChannel, final T resource) {
+    public Collection<ResourceKey> expandExportCandidates(final StorageChannel storageChannel,
+                                                          final ResourceKey resource) {
         if (!filter.isFuzzyMode()) {
             return Collections.singletonList(resource);
         }
-        if (!(storageChannel instanceof FuzzyStorageChannel<T> fuzzyStorageChannel)) {
+        if (!(storageChannel instanceof FuzzyStorageChannel fuzzyStorageChannel)) {
             return Collections.singletonList(resource);
         }
         return fuzzyStorageChannel
@@ -53,27 +55,26 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
     }
 
     @Override
-    public <A, B> boolean isExportedResourceValid(final ResourceTemplate<A> want, final ResourceTemplate<B> got) {
+    public boolean isExportedResourceValid(final ResourceTemplate want, final ResourceTemplate got) {
         if (!filter.isFuzzyMode()) {
             return got.equals(want);
         }
-        final B normalizedGot = normalize(got.resource());
-        final A normalizedWant = normalize(want.resource());
+        final ResourceKey normalizedGot = normalize(got.resource());
+        final ResourceKey normalizedWant = normalize(want.resource());
         return normalizedGot.equals(normalizedWant);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T normalize(final T value) {
-        if (value instanceof FuzzyModeNormalizer<?> normalizer) {
-            return (T) normalizer.normalize();
+    private ResourceKey normalize(final ResourceKey resource) {
+        if (resource instanceof FuzzyModeNormalizer normalizer) {
+            return normalizer.normalize();
         }
-        return value;
+        return resource;
     }
 
     @Nullable
     @Override
-    public ResourceTemplate<?> getRequestedResource(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = filter.getFilterContainer().get(slotIndex);
+    public ResourceTemplate getRequestedResource(final int slotIndex) {
+        final ResourceAmountTemplate resourceAmount = filter.getFilterContainer().get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
@@ -82,7 +83,7 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
 
     @Override
     public long getRequestedAmount(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = filter.getFilterContainer().get(slotIndex);
+        final ResourceAmountTemplate resourceAmount = filter.getFilterContainer().get(slotIndex);
         if (resourceAmount == null) {
             return 0;
         }
@@ -91,8 +92,8 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
 
     @Nullable
     @Override
-    public ResourceTemplate<?> getExportedResource(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = get(slotIndex);
+    public ResourceTemplate getExportedResource(final int slotIndex) {
+        final ResourceAmountTemplate resourceAmount = get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
@@ -105,11 +106,11 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
     }
 
     @Override
-    public <T> void setExportSlot(final int slotIndex, final ResourceTemplate<T> resource, final long amount) {
-        set(slotIndex, new ResourceAmountTemplate<>(
+    public void setExportSlot(final int slotIndex, final ResourceTemplate resource, final long amount) {
+        set(slotIndex, new ResourceAmountTemplate(
             resource.resource(),
             amount,
-            (PlatformStorageChannelType<T>) resource.storageChannelType()
+            (PlatformStorageChannelType) resource.storageChannelType()
         ));
     }
 

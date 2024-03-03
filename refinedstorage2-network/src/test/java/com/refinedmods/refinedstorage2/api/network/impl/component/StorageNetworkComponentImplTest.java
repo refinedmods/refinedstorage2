@@ -21,30 +21,32 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class StorageNetworkComponentImplTest {
     private StorageNetworkComponent sut;
 
-    private StorageNetworkNode<String> storage1;
+    private StorageNetworkNode storage1;
     private NetworkNodeContainer storage1Container;
 
-    private StorageNetworkNode<String> storage2;
+    private StorageNetworkNode storage2;
     private NetworkNodeContainer storage2Container;
 
     @BeforeEach
     void setUp() {
         sut = new StorageNetworkComponentImpl(NetworkTestFixtures.STORAGE_CHANNEL_TYPES);
 
-        storage1 = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        storage1 = new StorageNetworkNode(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage1.setStorage(new LimitedStorageImpl<>(100));
+        storage1.setStorage(new LimitedStorageImpl(100));
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        storage2 = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        storage2 = new StorageNetworkNode(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage2.setStorage(new LimitedStorageImpl<>(100));
+        storage2.setStorage(new LimitedStorageImpl(100));
         storage2.setActive(true);
         storage2Container = () -> storage2;
     }
@@ -52,7 +54,7 @@ class StorageNetworkComponentImplTest {
     @Test
     void testInitialState() {
         // Act
-        final Collection<ResourceAmount<String>> resources = sut
+        final Collection<ResourceAmount> resources = sut
             .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
             .getAll();
 
@@ -63,12 +65,12 @@ class StorageNetworkComponentImplTest {
     @Test
     void shouldAddStorageSourceContainer() {
         // Arrange
-        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        final StorageChannel storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
         // Act
-        final long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long insertedPre = storageChannel.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.onContainerAdded(storage1Container);
-        final long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long insertedPost = storageChannel.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(insertedPre).isZero();
@@ -79,19 +81,19 @@ class StorageNetworkComponentImplTest {
     @Test
     void shouldRemoveStorageSourceContainer() {
         // Arrange
-        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        final StorageChannel storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
         sut.onContainerAdded(storage1Container);
         sut.onContainerAdded(storage2Container);
 
         // Ensure that we fill our 2 containers.
-        storageChannel.insert("A", 200, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert(A, 200, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final Collection<ResourceAmount<String>> resourcesPre = new HashSet<>(storageChannel.getAll());
+        final Collection<ResourceAmount> resourcesPre = new HashSet(storageChannel.getAll());
         sut.onContainerRemoved(storage1Container);
         sut.onContainerRemoved(storage2Container);
-        final Collection<ResourceAmount<String>> resourcesPost = storageChannel.getAll();
+        final Collection<ResourceAmount> resourcesPost = storageChannel.getAll();
 
         // Assert
         assertThat(resourcesPre).isNotEmpty();
@@ -119,27 +121,27 @@ class StorageNetworkComponentImplTest {
     @Test
     void shouldRetrieveResources() {
         // Arrange
-        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        final StorageChannel storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         sut.onContainerRemoved(storage1Container);
         sut.onContainerRemoved(storage2Container);
-        storageChannel.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 2L));
-        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageChannel.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new TrackedStorageImpl(new LimitedStorageImpl(1000), () -> 2L));
+        storageChannel.insert(A, 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert(B, 200, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final List<TrackedResourceAmount<String>> resources = sut.getResources(
+        final List<TrackedResourceAmount> resources = sut.getResources(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             EmptyActor.class
         );
 
         // Assert
-        assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new TrackedResourceAmount<>(
-                new ResourceAmount<>("A", 100),
+        assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new TrackedResourceAmount(
+                new ResourceAmount(A, 100),
                 new TrackedResource("Empty", 2L)
             ),
-            new TrackedResourceAmount<>(
-                new ResourceAmount<>("B", 200),
+            new TrackedResourceAmount(
+                new ResourceAmount(B, 200),
                 new TrackedResource("Empty", 2L)
             )
         );

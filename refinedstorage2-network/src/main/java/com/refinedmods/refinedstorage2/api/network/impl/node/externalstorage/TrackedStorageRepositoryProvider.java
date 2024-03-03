@@ -5,5 +5,5 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 
 @FunctionalInterface
 public interface TrackedStorageRepositoryProvider {
-    <T> TrackedStorageRepository<T> getRepository(StorageChannelType<T> type);
+    TrackedStorageRepository getRepository(StorageChannelType type);
 }

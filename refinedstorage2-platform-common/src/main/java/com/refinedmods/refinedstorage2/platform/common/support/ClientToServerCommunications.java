@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
@@ -12,15 +13,15 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ClientToServerCommunications {
-    <T> void sendGridExtract(PlatformStorageChannelType<T> storageChannelType,
-                             T resource,
-                             GridExtractMode mode,
-                             boolean cursor);
+    void sendGridExtract(PlatformStorageChannelType storageChannelType,
+                         ResourceKey resource,
+                         GridExtractMode mode,
+                         boolean cursor);
 
-    <T> void sendGridScroll(PlatformStorageChannelType<T> storageChannelType,
-                            T resource,
-                            GridScrollMode mode,
-                            int slotIndex);
+    void sendGridScroll(PlatformStorageChannelType storageChannelType,
+                        ResourceKey resource,
+                        GridScrollMode mode,
+                        int slotIndex);
 
     void sendGridInsert(GridInsertMode mode, boolean tryAlternatives);
 
@@ -34,7 +35,11 @@ public interface ClientToServerCommunications {
 
     void sendResourceSlotChange(int slotIndex, boolean tryAlternatives);
 
-    <T> void sendResourceFilterSlotChange(PlatformStorageChannelType<T> storageChannelType, T resource, int slotIndex);
+    void sendResourceFilterSlotChange(
+        PlatformStorageChannelType storageChannelType,
+        ResourceKey resource,
+        int slotIndex
+    );
 
     void sendResourceSlotAmountChange(int slotIndex, long amount);
 

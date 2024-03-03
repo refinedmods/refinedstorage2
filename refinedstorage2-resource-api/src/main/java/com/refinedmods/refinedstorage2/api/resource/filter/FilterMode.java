@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core.filter;
+package com.refinedmods.refinedstorage2.api.resource.filter;
 
 import org.apiguardian.api.API;
 

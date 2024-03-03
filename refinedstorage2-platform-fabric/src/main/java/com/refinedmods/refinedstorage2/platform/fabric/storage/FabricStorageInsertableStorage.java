@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
@@ -15,14 +16,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class FabricStorageInsertableStorage<T, P> implements InsertableStorage<T> {
-    private final BlockApiCache<Storage<P>, Direction> cache;
-    private final Function<T, P> toPlatformMapper;
+public class FabricStorageInsertableStorage<T> implements InsertableStorage {
+    private final BlockApiCache<Storage<T>, Direction> cache;
+    private final Function<ResourceKey, T> toPlatformMapper;
     private final Direction direction;
     private final AmountOverride amountOverride;
 
-    public FabricStorageInsertableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                          final Function<T, P> toPlatformMapper,
+    public FabricStorageInsertableStorage(final BlockApiLookup<Storage<T>, Direction> lookup,
+                                          final Function<ResourceKey, T> toPlatformMapper,
                                           final ServerLevel serverLevel,
                                           final BlockPos pos,
                                           final Direction direction,
@@ -34,12 +35,12 @@ public class FabricStorageInsertableStorage<T, P> implements InsertableStorage<T
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
-        final Storage<P> storage = cache.find(direction);
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
+        final Storage<T> storage = cache.find(direction);
         if (storage == null) {
             return 0;
         }
-        final P platformResource = toPlatformMapper.apply(resource);
+        final T platformResource = toPlatformMapper.apply(resource);
         final long correctedAmount = amountOverride.overrideAmount(
             resource,
             amount,
@@ -51,7 +52,7 @@ public class FabricStorageInsertableStorage<T, P> implements InsertableStorage<T
         return doInsert(platformResource, correctedAmount, action, storage);
     }
 
-    private long doInsert(final P platformResource, final long amount, final Action action, final Storage<P> storage) {
+    private long doInsert(final T platformResource, final long amount, final Action action, final Storage<T> storage) {
         try (Transaction tx = Transaction.openOuter()) {
             final long inserted = storage.insert(platformResource, amount, tx);
             if (action == Action.EXECUTE) {

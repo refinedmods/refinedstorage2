@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -47,14 +48,14 @@ class InterfaceNetworkNodeTest {
 
     @Test
     void shouldExportAllWithDefaultTransferQuota(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkStorageChannel final StorageChannel storageChannel,
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("A", Long.MAX_VALUE, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(A, Long.MAX_VALUE, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        exportState.setRequestedResource(1, "A", Long.MAX_VALUE);
+        exportState.setRequestedResource(1, A, Long.MAX_VALUE);
 
         // Act
         sut.doWork();
@@ -62,7 +63,7 @@ class InterfaceNetworkNodeTest {
         // Assert
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
-            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+            new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
         );
         assertThat(exportState.getExportedAmount(1)).isEqualTo(Long.MAX_VALUE);
         assertThat(storageChannel.getAll()).isEmpty();
@@ -71,14 +72,14 @@ class InterfaceNetworkNodeTest {
 
     @Test
     void shouldNotExportAnythingWithoutBeingActive(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkStorageChannel final StorageChannel storageChannel,
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        exportState.setRequestedResource(1, "A", 1);
+        exportState.setRequestedResource(1, A, 1);
 
         sut.setActive(false);
         sut.setTransferQuotaProvider(resource -> 2);
@@ -91,20 +92,20 @@ class InterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(new ResourceAmount<>("A", 10));
+            .containsExactly(new ResourceAmount(A, 10));
         assertThat(energy.getStored()).isEqualTo(1000);
     }
 
     @Test
     void shouldNotExportAnythingWithoutNetwork(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkStorageChannel final StorageChannel storageChannel,
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        exportState.setRequestedResource(1, "A", 1);
+        exportState.setRequestedResource(1, A, 1);
 
         sut.setNetwork(null);
         sut.setTransferQuotaProvider(resource -> 2);
@@ -117,18 +118,18 @@ class InterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(new ResourceAmount<>("A", 10));
+            .containsExactly(new ResourceAmount(A, 10));
         assertThat(energy.getStored()).isEqualTo(1000);
     }
 
     @Test
     void shouldNotExportAnythingWithoutExportState(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkStorageChannel final StorageChannel storageChannel,
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.setExportState(null);
         sut.setTransferQuotaProvider(resource -> 2);
@@ -141,7 +142,7 @@ class InterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(new ResourceAmount<>("A", 10));
+            .containsExactly(new ResourceAmount(A, 10));
         assertThat(energy.getStored()).isEqualTo(1000 - 5);
     }
 }

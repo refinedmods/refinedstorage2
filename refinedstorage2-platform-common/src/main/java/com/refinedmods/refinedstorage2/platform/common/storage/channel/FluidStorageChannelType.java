@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperationsImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -25,14 +26,14 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidResource> {
+class FluidStorageChannelType extends AbstractPlatformStorageChannelType {
     FluidStorageChannelType() {
         super(
             "FLUID",
             () -> {
-                final ResourceList<FluidResource> list = new ResourceListImpl<>();
-                final FuzzyResourceList<FluidResource> fuzzyList = new FuzzyResourceListImpl<>(list);
-                return new FuzzyStorageChannelImpl<>(fuzzyList);
+                final ResourceList list = new ResourceListImpl();
+                final FuzzyResourceList fuzzyList = new FuzzyResourceListImpl(list);
+                return new FuzzyStorageChannelImpl(fuzzyList);
             },
             createTranslation("misc", "storage_channel_type.fluid"),
             TextureIds.ICONS,
@@ -42,8 +43,11 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public void toBuffer(final FluidResource resource, final FriendlyByteBuf buf) {
-        PacketUtil.writeFluidResource(buf, resource);
+    public void toBuffer(final ResourceKey resource, final FriendlyByteBuf buf) {
+        if (!(resource instanceof FluidResource fluidResource)) {
+            throw new UnsupportedOperationException();
+        }
+        PacketUtil.writeFluidResource(buf, fluidResource);
     }
 
     @Override
@@ -52,7 +56,7 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public Optional<GridResource> toGridResource(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> toGridResource(final ResourceAmount resourceAmount) {
         return Platform.INSTANCE.getFluidGridResourceFactory().apply(resourceAmount);
     }
 
@@ -77,9 +81,8 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public GridOperations<FluidResource> createGridOperations(final StorageChannel<FluidResource> storageChannel,
-                                                              final Actor actor) {
-        return new GridOperationsImpl<>(
+    public GridOperations createGridOperations(final StorageChannel storageChannel, final Actor actor) {
+        return new GridOperationsImpl(
             storageChannel,
             actor,
             fluidResource -> Long.MAX_VALUE,
@@ -88,12 +91,15 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public CompoundTag toTag(final FluidResource resource) {
-        return FluidResource.toTag(resource);
+    public CompoundTag toTag(final ResourceKey resource) {
+        if (!(resource instanceof FluidResource fluidResource)) {
+            throw new UnsupportedOperationException();
+        }
+        return FluidResource.toTag(fluidResource);
     }
 
     @Override
-    public Optional<FluidResource> fromTag(final CompoundTag tag) {
+    public Optional<ResourceKey> fromTag(final CompoundTag tag) {
         return FluidResource.fromTag(tag);
     }
 }

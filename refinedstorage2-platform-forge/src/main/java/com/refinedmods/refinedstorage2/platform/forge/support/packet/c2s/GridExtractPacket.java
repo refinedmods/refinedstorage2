@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -11,25 +12,24 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-public record GridExtractPacket<T>(
-    PlatformStorageChannelType<T> storageChannelType,
+public record GridExtractPacket(
+    PlatformStorageChannelType storageChannelType,
     ResourceLocation storageChannelTypeId,
-    T resource,
+    ResourceKey resource,
     GridExtractMode mode,
     boolean cursor
 ) implements CustomPacketPayload {
-    @SuppressWarnings("unchecked")
-    public static GridExtractPacket<?> decode(final FriendlyByteBuf buf) {
+    public static GridExtractPacket decode(final FriendlyByteBuf buf) {
         final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
-        final PlatformStorageChannelType<?> storageChannelType = PlatformApi.INSTANCE
+        final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
             .getStorageChannelTypeRegistry()
             .get(storageChannelTypeId)
             .orElseThrow();
         final GridExtractMode mode = getMode(buf.readByte());
         final boolean cursor = buf.readBoolean();
-        final Object resource = storageChannelType.fromBuffer(buf);
-        return new GridExtractPacket<>(
-            (PlatformStorageChannelType<? super Object>) storageChannelType,
+        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+        return new GridExtractPacket(
+            storageChannelType,
             storageChannelTypeId,
             resource,
             mode,
@@ -37,7 +37,7 @@ public record GridExtractPacket<T>(
         );
     }
 
-    public static <T> void handle(final GridExtractPacket<T> packet, final PlayPayloadContext ctx) {
+    public static void handle(final GridExtractPacket packet, final PlayPayloadContext ctx) {
         ctx.player().ifPresent(player -> ctx.workHandler().submitAsync(() -> {
             if (player.containerMenu instanceof GridExtractionStrategy strategy) {
                 strategy.onExtract(

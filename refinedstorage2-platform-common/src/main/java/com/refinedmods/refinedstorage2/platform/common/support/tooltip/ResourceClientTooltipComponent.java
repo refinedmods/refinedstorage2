@@ -12,11 +12,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 
-public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent {
-    private final ResourceAmountTemplate<T> resourceAmount;
+public class ResourceClientTooltipComponent implements ClientTooltipComponent {
+    private final ResourceAmountTemplate resourceAmount;
     private final Component name;
 
-    public ResourceClientTooltipComponent(final ResourceAmountTemplate<T> resourceAmount) {
+    public ResourceClientTooltipComponent(final ResourceAmountTemplate resourceAmount) {
         this.resourceAmount = resourceAmount;
         this.name = getNameWithAmount(resourceAmount);
     }
@@ -48,8 +48,8 @@ public class ResourceClientTooltipComponent<T> implements ClientTooltipComponent
         );
     }
 
-    private static <T> Component getNameWithAmount(final ResourceAmountTemplate<T> resourceAmount) {
-        final ResourceRendering<T> rendering = PlatformApi.INSTANCE.getResourceRendering(
+    private static Component getNameWithAmount(final ResourceAmountTemplate resourceAmount) {
+        final ResourceRendering rendering = PlatformApi.INSTANCE.getResourceRendering(
             resourceAmount.getResource()
         );
         final String amount = rendering.getDisplayedAmount(resourceAmount.getAmount(), true);

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class FluidStorageMonitorExtractionStrategy implements StorageMonitorExtractionStrategy {
     @Override
-    public boolean extract(final Object resource,
+    public boolean extract(final ResourceKey resource,
                            final boolean fullStack,
                            final Player player,
                            final Actor actor,
@@ -28,7 +29,7 @@ public class FluidStorageMonitorExtractionStrategy implements StorageMonitorExtr
             network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM),
             true
         );
-        final StorageChannel<FluidResource> source = network.getComponent(StorageNetworkComponent.class)
+        final StorageChannel source = network.getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.FLUID);
         return TransferHelper.transfer(
             fluidResource,

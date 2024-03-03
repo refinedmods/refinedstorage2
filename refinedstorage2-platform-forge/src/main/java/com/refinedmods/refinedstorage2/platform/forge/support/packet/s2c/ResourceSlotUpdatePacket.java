@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
@@ -13,33 +14,35 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-public record ResourceSlotUpdatePacket<T>(int slotIndex,
-                                          @Nullable ResourceAmountTemplate<T> resourceAmount,
-                                          @Nullable ResourceLocation storageChannelTypeId)
+public record ResourceSlotUpdatePacket(
+    int slotIndex,
+    @Nullable ResourceAmountTemplate resourceAmount,
+    @Nullable ResourceLocation storageChannelTypeId
+)
     implements CustomPacketPayload {
-    public static ResourceSlotUpdatePacket<?> decode(final FriendlyByteBuf buf) {
+    public static ResourceSlotUpdatePacket decode(final FriendlyByteBuf buf) {
         final int slotIndex = buf.readInt();
         final boolean present = buf.readBoolean();
         if (!present) {
-            return new ResourceSlotUpdatePacket<>(slotIndex, null, null);
+            return new ResourceSlotUpdatePacket(slotIndex, null, null);
         }
         final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
         return PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(storageChannelTypeId).map(
             storageChannelType -> decode(buf, slotIndex, storageChannelType)
-        ).orElseGet(() -> new ResourceSlotUpdatePacket<>(slotIndex, null, null));
+        ).orElseGet(() -> new ResourceSlotUpdatePacket(slotIndex, null, null));
     }
 
-    private static <T> ResourceSlotUpdatePacket<T> decode(final FriendlyByteBuf buf,
-                                                          final int slotIndex,
-                                                          final PlatformStorageChannelType<T> type) {
-        final T resource = type.fromBuffer(buf);
+    private static ResourceSlotUpdatePacket decode(final FriendlyByteBuf buf,
+                                                   final int slotIndex,
+                                                   final PlatformStorageChannelType type) {
+        final ResourceKey resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
-        final ResourceAmountTemplate<T> resourceAmount = new ResourceAmountTemplate<>(resource, amount, type);
-        return new ResourceSlotUpdatePacket<>(slotIndex, resourceAmount, null);
+        final ResourceAmountTemplate resourceAmount = new ResourceAmountTemplate(resource, amount, type);
+        return new ResourceSlotUpdatePacket(slotIndex, resourceAmount, null);
     }
 
-    public static <T> void handle(final ResourceSlotUpdatePacket<T> packet,
-                                  final PlayPayloadContext ctx) {
+    public static void handle(final ResourceSlotUpdatePacket packet,
+                              final PlayPayloadContext ctx) {
         ctx.player().ifPresent(player -> ctx.workHandler().submitAsync(() -> {
             if (player.containerMenu instanceof AbstractResourceContainerMenu containerMenu) {
                 containerMenu.handleResourceSlotUpdate(packet.slotIndex, packet.resourceAmount);

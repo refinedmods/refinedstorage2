@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.importer;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.Set;
@@ -43,11 +44,11 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
         filter.setMode(mode);
     }
 
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
+    public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         filter.setNormalizer(normalizer);
     }
 
-    public void setFilterTemplates(final Set<Object> templates) {
+    public void setFilterTemplates(final Set<ResourceKey> templates) {
         filter.setTemplates(templates);
     }
 

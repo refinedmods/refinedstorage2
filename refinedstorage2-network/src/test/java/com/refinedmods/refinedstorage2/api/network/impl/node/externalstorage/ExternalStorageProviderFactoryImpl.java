@@ -7,13 +7,12 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.Optional;
 
-public record ExternalStorageProviderFactoryImpl(ExternalStorageProvider<String> provider)
+public record ExternalStorageProviderFactoryImpl(ExternalStorageProvider provider)
     implements ExternalStorageProviderFactory {
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<ExternalStorageProvider<T>> create(final StorageChannelType<T> channelType) {
+    public Optional<ExternalStorageProvider> create(final StorageChannelType channelType) {
         if (channelType == NetworkTestFixtures.STORAGE_CHANNEL_TYPE) {
-            return Optional.of((ExternalStorageProvider<T>) provider);
+            return Optional.of(provider);
         }
         return Optional.empty();
     }

@@ -25,7 +25,7 @@ import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.V
 
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
@@ -44,8 +44,11 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridOperations.insert(itemResource, insertMode, (resource, amount, action, source) -> {
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 final long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -67,8 +70,11 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         }
         final ItemResource itemResource = ofItemVariant(itemVariantInSlot);
         gridOperations.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 final long extracted = storage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();

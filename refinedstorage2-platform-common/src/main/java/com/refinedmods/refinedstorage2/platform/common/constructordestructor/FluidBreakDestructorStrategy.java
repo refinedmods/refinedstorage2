@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
@@ -73,7 +73,7 @@ class FluidBreakDestructorStrategy implements DestructorStrategy {
         return true;
     }
 
-    private StorageChannel<FluidResource> getStorageChannel(final Supplier<Network> networkSupplier) {
+    private StorageChannel getStorageChannel(final Supplier<Network> networkSupplier) {
         return networkSupplier.get()
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.FLUID);

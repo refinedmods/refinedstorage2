@@ -77,7 +77,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
     @Override
     protected void readSnapshot(final ResourceContainer snapshot) {
         for (int i = 0; i < snapshot.size(); ++i) {
-            final ResourceAmountTemplate<?> snapshotSlot = snapshot.get(i);
+            final ResourceAmountTemplate snapshotSlot = snapshot.get(i);
             if (snapshotSlot == null) {
                 resourceContainer.remove(i);
             } else {
@@ -95,7 +95,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long extract(final FluidVariant resource, final long maxAmount, final TransactionContext transaction) {
-            final ResourceAmountTemplate<?> slot = resourceContainer.get(index);
+            final ResourceAmountTemplate slot = resourceContainer.get(index);
             if (slot == null
                 || !(slot.getResource() instanceof FluidResource fluidResource)
                 || !resource.equals(toFluidVariant(fluidResource))) {
@@ -116,7 +116,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public FluidVariant getResource() {
-            final ResourceAmountTemplate<?> slot = resourceContainer.get(index);
+            final ResourceAmountTemplate slot = resourceContainer.get(index);
             if (slot == null || !(slot.getResource() instanceof FluidResource fluidResource)) {
                 return FluidVariant.blank();
             }
@@ -125,7 +125,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long getAmount() {
-            final ResourceAmountTemplate<?> slot = resourceContainer.get(index);
+            final ResourceAmountTemplate slot = resourceContainer.get(index);
             if (slot == null) {
                 return 0;
             }
@@ -134,7 +134,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long getCapacity() {
-            final ResourceAmountTemplate<?> slot = resourceContainer.get(index);
+            final ResourceAmountTemplate slot = resourceContainer.get(index);
             if (slot == null) {
                 return 0;
             }

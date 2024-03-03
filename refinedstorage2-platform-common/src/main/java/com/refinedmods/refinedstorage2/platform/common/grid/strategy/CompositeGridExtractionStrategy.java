@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.grid.strategy;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
@@ -15,10 +16,10 @@ public class CompositeGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     @Override
-    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                 final T resource,
-                                 final GridExtractMode extractMode,
-                                 final boolean cursor) {
+    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
+                             final ResourceKey resource,
+                             final GridExtractMode extractMode,
+                             final boolean cursor) {
         for (final GridExtractionStrategy strategy : strategies) {
             if (strategy.onExtract(storageChannelType, resource, extractMode, cursor)) {
                 return true;

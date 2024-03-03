@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBloc
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
@@ -74,7 +73,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
                 .map(Supplier::get)
                 .map(ControllerBlockItem::createAtEnergyCapacity)
                 .map(EntryStacks::of)
-                .collect(Collectors.toList())
+                .toList()
         );
         groupItems(
             registry,

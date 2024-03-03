@@ -12,14 +12,14 @@ import net.minecraft.server.level.ServerLevel;
 
 public class InterfacePlatformExternalStorageProviderFactory implements PlatformExternalStorageProviderFactory {
     @Override
-    public <T> Optional<ExternalStorageProvider<T>> create(final ServerLevel level,
-                                                           final BlockPos pos,
-                                                           final Direction direction,
-                                                           final StorageChannelType<T> storageChannelType) {
+    public Optional<ExternalStorageProvider> create(final ServerLevel level,
+                                                    final BlockPos pos,
+                                                    final Direction direction,
+                                                    final StorageChannelType storageChannelType) {
         if (!(level.getBlockEntity(pos) instanceof InterfaceBlockEntity)) {
             return Optional.empty();
         }
-        return Optional.of(new InterfaceProxyExternalStorageProvider<>(level, pos, storageChannelType));
+        return Optional.of(new InterfaceProxyExternalStorageProvider(level, pos, storageChannelType));
     }
 
     @Override

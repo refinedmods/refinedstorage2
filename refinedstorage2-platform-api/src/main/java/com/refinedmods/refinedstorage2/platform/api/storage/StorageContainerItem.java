@@ -10,7 +10,7 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public interface StorageContainerItem {
-    <T> Optional<TypedStorage<T, Storage<T>>> resolve(StorageRepository storageRepository, ItemStack stack);
+    Optional<TypedStorage<Storage>> resolve(StorageRepository storageRepository, ItemStack stack);
 
     Optional<StorageInfo> getInfo(StorageRepository storageRepository, ItemStack stack);
 }

@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
@@ -22,73 +24,73 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     protected TaskExecutor<ExporterNetworkNode.TaskContext> createTaskExecutor() {
         return new RandomTaskExecutor<>(list -> {
             list.clear();
-            list.add(sut.new TaskImpl("A"));
-            list.add(sut.new TaskImpl("B"));
+            list.add(sut.new TaskImpl(A));
+            list.add(sut.new TaskImpl(B));
         });
     }
 
     @Test
-    void shouldTransfer(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+    void shouldTransfer(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(A, 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert(B, 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final Storage<String> destination = new InMemoryStorageImpl<>();
+        final Storage destination = new InMemoryStorageImpl();
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of("B", "A"));
+        sut.setFilterTemplates(List.of(B, A));
 
         // Act & assert
         sut.doWork();
 
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 95),
-            new ResourceAmount<>("B", 100)
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 95),
+            new ResourceAmount(B, 100)
         );
-        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 5)
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 5)
         );
 
         sut.doWork();
 
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 90),
-            new ResourceAmount<>("B", 100)
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 90),
+            new ResourceAmount(B, 100)
         );
-        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 10)
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 10)
         );
     }
 
     @Test
     void shouldUseNextResourceIfFirstOneIsNotAvailableInSameCycle(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+        @InjectNetworkStorageChannel final StorageChannel storageChannel
     ) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.addSource(new InMemoryStorageImpl());
+        storageChannel.insert(B, 7, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final Storage<String> destination = new InMemoryStorageImpl<>();
+        final Storage destination = new InMemoryStorageImpl();
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of("A", "B"));
+        sut.setFilterTemplates(List.of(A, B));
 
         // Act & assert
         sut.doWork();
 
         assertThat(storageChannel.getAll()).isEmpty();
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 7)
+            new ResourceAmount(B, 7)
         );
 
         sut.doWork();
 
         assertThat(storageChannel.getAll()).isEmpty();
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 7)
+            new ResourceAmount(B, 7)
         );
     }
 }

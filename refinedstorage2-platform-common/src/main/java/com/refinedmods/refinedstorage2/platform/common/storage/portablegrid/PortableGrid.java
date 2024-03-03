@@ -18,7 +18,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
@@ -34,7 +33,7 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
     private final StateTrackedStorage.Listener diskListener;
     @Nullable
-    private PortableGridStorage<?> storage;
+    private PortableGridStorage storage;
 
     PortableGrid(final EnergyStorage energyStorage,
                  final DiskInventory diskInventory,
@@ -79,12 +78,11 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Storage<ItemResource> getItemStorage() {
+    public Storage getItemStorage() {
         if (storage == null || storage.getStorageChannelType() != StorageChannelTypes.ITEM) {
-            return new NoopStorage<>();
+            return new NoopStorage();
         }
-        return (Storage<ItemResource>) storage.getStorageChannel();
+        return storage.getStorageChannel();
     }
 
     @Override
@@ -93,42 +91,39 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
-                                                           final Class<? extends Actor> actorType) {
+    public List<TrackedResourceAmount> getResources(final StorageChannelType type,
+                                                    final Class<? extends Actor> actorType) {
         if (storage == null || storage.getStorageChannelType() != type) {
             return Collections.emptyList();
         }
-        final StorageChannel<T> casted = (StorageChannel<T>) storage.getStorageChannel();
-        return casted.getAll().stream().map(resource -> new TrackedResourceAmount<>(
+        final StorageChannel storageChannel = storage.getStorageChannel();
+        return storageChannel.getAll().stream().map(resource -> new TrackedResourceAmount(
             resource,
-            casted.findTrackedResourceByActorType(resource.getResource(), actorType).orElse(null)
+            storageChannel.findTrackedResourceByActorType(resource.getResource(), actorType).orElse(null)
         )).toList();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> GridOperations<T> createOperations(final PlatformStorageChannelType<T> storageChannelType,
-                                                  final Actor actor) {
+    public GridOperations createOperations(final PlatformStorageChannelType storageChannelType,
+                                           final Actor actor) {
         if (storage == null || storage.getStorageChannelType() != storageChannelType) {
-            return new NoopGridOperations<>();
+            return new NoopGridOperations();
         }
-        final StorageChannel<T> casted = (StorageChannel<T>) storage.getStorageChannel();
-        final GridOperations<T> operations = storageChannelType.createGridOperations(casted, actor);
-        return new PortableGridOperations<>(operations, energyStorage);
+        final StorageChannel storageChannel = this.storage.getStorageChannel();
+        final GridOperations operations = storageChannelType.createGridOperations(storageChannel, actor);
+        return new PortableGridOperations(operations, energyStorage);
     }
 
     @Override
-    public Set<StorageChannelType<?>> getStorageChannelTypes() {
+    public Set<StorageChannelType> getStorageChannelTypes() {
         return storage == null ? Collections.emptySet() : Set.of(storage.getStorageChannelType());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
+    public StorageChannel getStorageChannel(final StorageChannelType type) {
         if (storage == null || type != storage.getStorageChannelType()) {
             throw new IllegalArgumentException();
         }
-        return (StorageChannel<T>) storage.getStorageChannel();
+        return storage.getStorageChannel();
     }
 }

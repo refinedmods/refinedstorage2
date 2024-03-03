@@ -22,7 +22,7 @@ class ResourceFocusedStackProvider implements FocusedStackProvider {
         if (!(screen instanceof AbstractBaseScreen<?> baseScreen)) {
             return CompoundEventResult.pass();
         }
-        final ResourceTemplate<?> hoveredResource = baseScreen.getHoveredResource();
+        final ResourceTemplate hoveredResource = baseScreen.getHoveredResource();
         if (hoveredResource == null) {
             return CompoundEventResult.pass();
         }

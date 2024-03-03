@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LimitedPlatformStorageTest {
-    LimitedPlatformStorage<ItemResource> sut;
+    LimitedPlatformStorage sut;
 
     @BeforeEach
     @SuppressWarnings("ConstantConditions")
     void setUp() {
-        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100);
-        sut = new LimitedPlatformStorage<>(delegate, StorageTypes.ITEM, null, null);
+        final LimitedStorageImpl delegate = new LimitedStorageImpl(new InMemoryStorageImpl(), 100);
+        sut = new LimitedPlatformStorage(delegate, StorageTypes.ITEM, null, null);
     }
 
     @Test

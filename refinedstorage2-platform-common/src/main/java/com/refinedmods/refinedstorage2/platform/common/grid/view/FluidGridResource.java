@@ -24,11 +24,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
-public class FluidGridResource extends AbstractPlatformGridResource<FluidResource> {
+public class FluidGridResource extends AbstractPlatformGridResource {
     private final FluidResource fluidResource;
     private final int id;
 
-    public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,
+    public FluidGridResource(final ResourceAmount resourceAmount,
                              final String name,
                              final String modId,
                              final String modName,
@@ -40,8 +40,8 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
             GridResourceAttributeKeys.TAGS, tags,
             GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = BuiltInRegistries.FLUID.getId(resourceAmount.getResource().fluid());
-        this.fluidResource = resourceAmount.getResource();
+        this.fluidResource = (FluidResource) resourceAmount.getResource();
+        this.id = BuiltInRegistries.FLUID.getId(fluidResource.fluid());
     }
 
     @Override

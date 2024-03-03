@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -30,6 +30,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE2;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.MultiStorageNetworkNodeFactory.PROPERTY_ENERGY_USAGE_PER_STORAGE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,11 +64,11 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldInitializeButNotShowResourcesYet(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
 
         // Act
@@ -76,12 +82,12 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldInitializeAndShowResourcesAfterEnabling(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
 
         // Act
@@ -90,24 +96,24 @@ class MultiStorageNetworkNodeTest {
 
         // Assert
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 50),
-            new ResourceAmount<>("B", 50)
+            new ResourceAmount(A, 50),
+            new ResourceAmount(B, 50)
         );
     }
 
     @Test
     void shouldInitializeMultipleTimes(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(10);
-        storage1.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage1 = new LimitedStorageImpl(10);
+        storage1.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(8, storage1);
         sut.setProvider(provider);
         sut.setActive(true);
 
-        final Storage<String> storage2 = new LimitedStorageImpl<>(10);
-        storage2.insert("B", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage2 = new LimitedStorageImpl(10);
+        storage2.insert(B, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(8, storage2);
 
         // Act
@@ -116,12 +122,12 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 5)
+            new ResourceAmount(B, 5)
         );
     }
 
     @Test
-    void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void testInitialState(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
@@ -137,16 +143,16 @@ class MultiStorageNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void testState(final boolean active) {
         // Arrange
-        final Storage<String> normalStorage = new LimitedStorageImpl<>(100);
-        normalStorage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage normalStorage = new LimitedStorageImpl(100);
+        normalStorage.insert(A, 74, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final Storage<String> nearCapacityStorage = new LimitedStorageImpl<>(100);
-        nearCapacityStorage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage nearCapacityStorage = new LimitedStorageImpl(100);
+        nearCapacityStorage.insert(A, 75, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final Storage<String> fullStorage = new LimitedStorageImpl<>(100);
-        fullStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage fullStorage = new LimitedStorageImpl(100);
+        fullStorage.insert(A, 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final Storage<String> unlimitedStorage = new InMemoryStorageImpl<>();
+        final Storage unlimitedStorage = new InMemoryStorageImpl();
 
         provider.set(2, unlimitedStorage);
         provider.set(3, normalStorage);
@@ -170,12 +176,12 @@ class MultiStorageNetworkNodeTest {
     }
 
     @Test
-    void shouldDetectNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldDetectNewStorage(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
         initializeAndActivate();
 
-        final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(8, storage);
 
         // Act
@@ -184,52 +190,52 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 5)
+            new ResourceAmount(A, 5)
         );
     }
 
     @Test
-    void shouldDetectChangedStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldDetectChangedStorage(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
-        final Storage<String> originalStorage = new LimitedStorageImpl<>(10);
-        originalStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage originalStorage = new LimitedStorageImpl(10);
+        originalStorage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(0, originalStorage);
         initializeAndActivate();
 
-        final Storage<String> replacedStorage = new LimitedStorageImpl<>(10);
-        replacedStorage.insert("B", 2, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage replacedStorage = new LimitedStorageImpl(10);
+        replacedStorage.insert(B, 2, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(0, replacedStorage);
 
         // Act
-        final Collection<ResourceAmount<String>> preChanging = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> preChanging = new HashSet<>(networkStorage.getAll());
         sut.onStorageChanged(0);
-        final Collection<ResourceAmount<String>> postChanging = networkStorage.getAll();
+        final Collection<ResourceAmount> postChanging = networkStorage.getAll();
 
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
         assertThat(preChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 5)
+            new ResourceAmount(A, 5)
         );
         assertThat(postChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 2)
+            new ResourceAmount(B, 2)
         );
         assertThat(networkStorage.getStored()).isEqualTo(2L);
     }
 
     @Test
-    void shouldDetectRemovedStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldDetectRemovedStorage(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(7, storage);
         initializeAndActivate();
 
         provider.remove(7);
 
         // Act
-        final Collection<ResourceAmount<String>> preRemoval = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> preRemoval = new HashSet<>(networkStorage.getAll());
         sut.onStorageChanged(7);
-        final Collection<ResourceAmount<String>> postRemoval = networkStorage.getAll();
+        final Collection<ResourceAmount> postRemoval = networkStorage.getAll();
 
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
@@ -253,20 +259,20 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldNotUpdateNetworkStorageWhenChangingStorageWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final Collection<ResourceAmount<String>> preInactiveness = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> preInactiveness = new HashSet<>(networkStorage.getAll());
         sut.setActive(false);
         sut.onStorageChanged(1);
-        final Collection<ResourceAmount<String>> postInactiveness = networkStorage.getAll();
+        final Collection<ResourceAmount> postInactiveness = networkStorage.getAll();
 
         // Assert
         assertThat(preInactiveness).isNotEmpty();
@@ -276,46 +282,46 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldHaveResourcesFromStoragePresentInNetwork(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
 
         initializeAndActivate();
 
         // Act
-        final Collection<ResourceAmount<String>> resources = networkStorage.getAll();
+        final Collection<ResourceAmount> resources = networkStorage.getAll();
         final long stored = networkStorage.getStored();
 
         // Assert
         assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 50),
-            new ResourceAmount<>("B", 50)
+            new ResourceAmount(A, 50),
+            new ResourceAmount(B, 50)
         );
         assertThat(stored).isEqualTo(100);
     }
 
     @Test
-    void shouldInsert(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldInsert(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(100);
+        final Storage storage1 = new LimitedStorageImpl(100);
         provider.set(1, storage1);
 
-        final Storage<String> storage2 = new LimitedStorageImpl<>(100);
+        final Storage storage2 = new LimitedStorageImpl(100);
         provider.set(2, storage2);
 
-        final Storage<String> storage3 = new LimitedStorageImpl<>(100);
+        final Storage storage3 = new LimitedStorageImpl(100);
         provider.set(3, storage3);
 
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 150, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("B", 300, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 150, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(B, 300, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(150);
@@ -323,83 +329,83 @@ class MultiStorageNetworkNodeTest {
         assertThat(inserted3).isEqualTo(140);
 
         assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 100)
+            new ResourceAmount(A, 100)
         );
         assertThat(storage2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 60),
-            new ResourceAmount<>("B", 40)
+            new ResourceAmount(A, 60),
+            new ResourceAmount(B, 40)
         );
         assertThat(storage3.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 100)
+            new ResourceAmount(B, 100)
         );
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 140),
-            new ResourceAmount<>("A", 160)
+            new ResourceAmount(B, 140),
+            new ResourceAmount(A, 160)
         );
         assertThat(networkStorage.getStored()).isEqualTo(inserted1 + inserted2 + inserted3);
     }
 
     @Test
-    void shouldExtract(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldExtract(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        storage1.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage1.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage1 = new LimitedStorageImpl(100);
+        storage1.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage1.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage1);
 
-        final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        storage2.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage2.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage2 = new LimitedStorageImpl(100);
+        storage2.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage2.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(2, storage2);
 
-        final Storage<String> storage3 = new LimitedStorageImpl<>(100);
-        storage3.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage3 = new LimitedStorageImpl(100);
+        storage3.insert(C, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(3, storage3);
 
         initializeAndActivate();
 
         // Act
-        final long extracted = networkStorage.extract("A", 85, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = networkStorage.extract(A, 85, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(85);
 
         assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 50)
+            new ResourceAmount(B, 50)
         );
         assertThat(storage2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 50),
-            new ResourceAmount<>("A", 15)
+            new ResourceAmount(B, 50),
+            new ResourceAmount(A, 15)
         );
         assertThat(storage3.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("C", 10)
+            new ResourceAmount(C, 10)
         );
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 100),
-            new ResourceAmount<>("A", 15),
-            new ResourceAmount<>("C", 10)
+            new ResourceAmount(B, 100),
+            new ResourceAmount(A, 15),
+            new ResourceAmount(C, 10)
         );
         assertThat(networkStorage.getStored()).isEqualTo(125);
     }
 
     @Test
     void shouldRespectAllowlistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of("A", "B"));
+        sut.setFilterTemplates(Set.of(A, B));
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(B, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(C, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -409,28 +415,31 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldRespectAllowlistWithNormalizerWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of("A"));
+        sut.setFilterTemplates(Set.of(A));
         sut.setNormalizer(resource -> {
-            if (resource instanceof String str) {
-                return str.substring(0, 1);
+            if (resource == A_ALTERNATIVE || resource == A_ALTERNATIVE2) {
+                return A;
+            }
+            if (resource == B_ALTERNATIVE) {
+                return B;
             }
             return resource;
         });
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("A1", 1, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("A2", 1, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted4 = networkStorage.insert("B", 1, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted5 = networkStorage.insert("B1", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(A_ALTERNATIVE, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(A_ALTERNATIVE2, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted4 = networkStorage.insert(B, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted5 = networkStorage.insert(B_ALTERNATIVE, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(1);
@@ -442,20 +451,20 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldRespectEmptyAllowlistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
         sut.setFilterTemplates(Set.of());
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(B, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(C, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -465,20 +474,20 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldRespectBlocklistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of("A", "B"));
+        sut.setFilterTemplates(Set.of(A, B));
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(B, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(C, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -488,20 +497,20 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldRespectEmptyBlocklistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
         sut.setFilterTemplates(Set.of());
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted1 = networkStorage.insert(A, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert(B, 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert(C, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -513,17 +522,17 @@ class MultiStorageNetworkNodeTest {
     @EnumSource(AccessMode.class)
     void shouldRespectAccessModeWhenInserting(
         final AccessMode accessMode,
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setAccessMode(accessMode);
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted = networkStorage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -536,19 +545,19 @@ class MultiStorageNetworkNodeTest {
     @EnumSource(AccessMode.class)
     void shouldRespectAccessModeWhenExtracting(
         final AccessMode accessMode,
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         sut.setAccessMode(accessMode);
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
-        storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 20, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = networkStorage.extract(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -559,17 +568,17 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldNotAllowInsertsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         sut.setActive(false);
 
         // Act
-        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted = networkStorage.insert(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -577,18 +586,18 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldNotAllowExtractsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 20, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
         initializeAndActivate();
 
         sut.setActive(false);
 
         // Act
-        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = networkStorage.extract(A, 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -596,19 +605,19 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldHideFromNetworkWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final Collection<ResourceAmount<String>> preInactiveness = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> preInactiveness = new HashSet<>(networkStorage.getAll());
         sut.setActive(false);
-        final Collection<ResourceAmount<String>> postInactiveness = networkStorage.getAll();
+        final Collection<ResourceAmount> postInactiveness = networkStorage.getAll();
 
         // Assert
         assertThat(preInactiveness).isNotEmpty();
@@ -617,31 +626,31 @@ class MultiStorageNetworkNodeTest {
 
     @Test
     void shouldNoLongerShowOnNetworkWhenRemoved(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetworkStorageChannel final StorageChannel networkStorage,
         @InjectNetwork final Network network
     ) {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        storage1.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage1 = new LimitedStorageImpl(100);
+        storage1.insert(A, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(1, storage1);
         initializeAndActivate();
 
         // Act & assert
-        final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        storage2.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage2 = new LimitedStorageImpl(100);
+        storage2.insert(B, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(2, storage2);
         sut.onStorageChanged(2);
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 50),
-            new ResourceAmount<>("B", 50)
+            new ResourceAmount(A, 50),
+            new ResourceAmount(B, 50)
         );
 
         network.removeContainer(() -> sut);
         assertThat(networkStorage.getAll()).isEmpty();
 
-        final Storage<String> storage3 = new LimitedStorageImpl<>(100);
-        storage3.insert("C", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage3 = new LimitedStorageImpl(100);
+        storage3.insert(C, 50, Action.EXECUTE, EmptyActor.INSTANCE);
         provider.set(3, storage3);
         sut.onStorageChanged(3);
 
@@ -649,34 +658,34 @@ class MultiStorageNetworkNodeTest {
     }
 
     @Test
-    void shouldTrackChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldTrackChanges(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
-        final Storage<String> storage = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
+        final Storage storage = new TrackedStorageImpl(new LimitedStorageImpl(100), () -> 0L);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        final long inserted = networkStorage.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
-        assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
+        assertThat(networkStorage.findTrackedResourceByActorType(A, FakeActor.class)).isNotEmpty();
     }
 
     @Test
     void shouldNotifyListenerWhenStateChanges(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
         sut.setListener(listener);
 
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
         initializeAndActivate();
 
         // Act
-        networkStorage.insert("A", 75, Action.EXECUTE, FakeActor.INSTANCE);
+        networkStorage.insert(A, 75, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         verify(listener, times(1)).onStorageStateChanged();

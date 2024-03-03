@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluidResourceRenderingTest {
+class FluidResourceRenderingTest {
     private static final long BUCKET_AMOUNT = 1000;
 
     @BeforeAll

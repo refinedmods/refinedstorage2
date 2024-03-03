@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperationsImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -25,14 +26,14 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemResource> {
+class ItemStorageChannelType extends AbstractPlatformStorageChannelType {
     ItemStorageChannelType() {
         super(
             "ITEM",
             () -> {
-                final ResourceList<ItemResource> list = new ResourceListImpl<>();
-                final FuzzyResourceList<ItemResource> fuzzyList = new FuzzyResourceListImpl<>(list);
-                return new FuzzyStorageChannelImpl<>(fuzzyList);
+                final ResourceList list = new ResourceListImpl();
+                final FuzzyResourceList fuzzyList = new FuzzyResourceListImpl(list);
+                return new FuzzyStorageChannelImpl(fuzzyList);
             },
             createTranslation("misc", "storage_channel_type.item"),
             TextureIds.ICONS,
@@ -42,8 +43,11 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
-    public void toBuffer(final ItemResource resource, final FriendlyByteBuf buf) {
-        PacketUtil.writeItemResource(buf, resource);
+    public void toBuffer(final ResourceKey resource, final FriendlyByteBuf buf) {
+        if (!(resource instanceof ItemResource itemResource)) {
+            throw new UnsupportedOperationException();
+        }
+        PacketUtil.writeItemResource(buf, itemResource);
     }
 
     @Override
@@ -52,7 +56,7 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
-    public Optional<GridResource> toGridResource(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> toGridResource(final ResourceAmount resourceAmount) {
         return Platform.INSTANCE.getItemGridResourceFactory().apply(resourceAmount);
     }
 
@@ -77,32 +81,33 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public long getInterfaceExportLimit(final ItemResource resource) {
-        return resource.item().getMaxStackSize();
+    public long getInterfaceExportLimit(final ResourceKey resource) {
+        if (!(resource instanceof ItemResource itemResource)) {
+            throw new UnsupportedOperationException();
+        }
+        return itemResource.item().getMaxStackSize();
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public GridOperations<ItemResource> createGridOperations(
-        final StorageChannel<ItemResource> storageChannel,
-        final Actor actor
-    ) {
-        return new GridOperationsImpl<>(
+    public GridOperations createGridOperations(final StorageChannel storageChannel, final Actor actor) {
+        return new GridOperationsImpl(
             storageChannel,
             actor,
-            itemResource -> itemResource.item().getMaxStackSize(),
+            resource -> resource instanceof ItemResource itemResource ? itemResource.item().getMaxStackSize() : 0,
             1
         );
     }
 
     @Override
-    public CompoundTag toTag(final ItemResource resource) {
-        return ItemResource.toTag(resource);
+    public CompoundTag toTag(final ResourceKey resource) {
+        if (!(resource instanceof ItemResource itemResource)) {
+            throw new UnsupportedOperationException();
+        }
+        return ItemResource.toTag(itemResource);
     }
 
     @Override
-    public Optional<ItemResource> fromTag(final CompoundTag tag) {
+    public Optional<ResourceKey> fromTag(final CompoundTag tag) {
         return ItemResource.fromTag(tag);
     }
 }

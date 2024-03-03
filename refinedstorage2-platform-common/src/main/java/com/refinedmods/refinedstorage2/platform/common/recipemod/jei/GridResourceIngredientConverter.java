@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.recipemod.jei;
 
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.ItemGridResource;
 
@@ -17,7 +18,7 @@ class GridResourceIngredientConverter implements IngredientConverter {
     }
 
     @Override
-    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
+    public Optional<ResourceTemplate> convertToResource(final Object ingredient) {
         return Optional.empty();
     }
 
@@ -27,10 +28,11 @@ class GridResourceIngredientConverter implements IngredientConverter {
             return Optional.of(itemGridResource.copyItemStack());
         }
         if (resource instanceof FluidGridResource fluidGridResource) {
+            final FluidResource fluidResource = (FluidResource) fluidGridResource.getResource();
             return Optional.of(fluidHelper.create(
-                fluidGridResource.getResource().fluid(),
+                fluidResource.fluid(),
                 fluidHelper.bucketVolume(),
-                fluidGridResource.getResource().tag()
+                fluidResource.tag()
             ));
         }
         return Optional.empty();

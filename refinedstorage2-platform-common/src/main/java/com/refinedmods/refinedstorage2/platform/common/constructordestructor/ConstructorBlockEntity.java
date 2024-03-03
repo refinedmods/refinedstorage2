@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.network.node.task.Task;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategy;
@@ -56,7 +57,7 @@ public class ConstructorBlockEntity
     }
 
     @Override
-    protected void setFilterTemplates(final List<Object> templates) {
+    protected void setFilterTemplates(final List<ResourceKey> templates) {
         this.tasks.clear();
         this.tasks.addAll(templates.stream().map(TaskImpl::new).toList());
     }
@@ -156,9 +157,9 @@ public class ConstructorBlockEntity
     }
 
     private class TaskImpl implements Task<TaskContext> {
-        private final Object template;
+        private final ResourceKey template;
 
-        private TaskImpl(final Object template) {
+        private TaskImpl(final ResourceKey template) {
             this.template = template;
         }
 

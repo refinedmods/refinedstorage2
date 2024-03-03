@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.container.NetworkNo
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
@@ -18,6 +19,8 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import static com.refinedmods.refinedstorage2.api.network.impl.PriorityNetworkBuilderImplTest.MasterSlave.MASTER;
+import static com.refinedmods.refinedstorage2.api.network.impl.PriorityNetworkBuilderImplTest.MasterSlave.SLAVE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.inOrder;
@@ -31,9 +34,9 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
     void shouldRespectPriorityWhenSplitting() {
         // Arrange
         final Network originalNetwork = new NetworkImpl(componentMapFactory);
-        final NetworkSide master = createNetworkSide("master", () -> originalNetwork);
+        final NetworkSide master = createNetworkSide(MASTER, () -> originalNetwork);
         final NetworkNodeContainer connector = createContainerWithNetwork(container -> originalNetwork);
-        final NetworkSide slave = createNetworkSide("slave", () -> originalNetwork);
+        final NetworkSide slave = createNetworkSide(SLAVE, () -> originalNetwork);
         clearInvocations(master.watcher);
 
         final ConnectionProvider connectionProvider = new FakeConnectionProvider()
@@ -55,7 +58,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         inOrder.verify(slave.watcher, times(1)).invalidate();
         inOrder.verify(slave.watcher, times(1)).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            "slave",
+            SLAVE,
             10L,
             null
         );
@@ -63,7 +66,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
         verify(master.watcher, times(1)).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            "slave",
+            SLAVE,
             -10L,
             null
         );
@@ -73,9 +76,9 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
     @Test
     void shouldRespectPriorityWhenMerging() {
         // Arrange
-        final NetworkSide master = createNetworkSide("master", () -> new NetworkImpl(componentMapFactory));
+        final NetworkSide master = createNetworkSide(MASTER, () -> new NetworkImpl(componentMapFactory));
         final NetworkNodeContainer connector = createContainer();
-        final NetworkSide slave = createNetworkSide("slave", () -> new NetworkImpl(componentMapFactory));
+        final NetworkSide slave = createNetworkSide(SLAVE, () -> new NetworkImpl(componentMapFactory));
 
         final ConnectionProvider connectionProvider = new FakeConnectionProvider()
             .with(master.a, master.b, connector, slave.a, slave.b)
@@ -92,38 +95,38 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(slave.nodeA.getNetwork()).isSameAs(master.nodeA.getNetwork());
         assertThat(slave.nodeB.getNetwork()).isSameAs(master.nodeA.getNetwork());
 
-        final InOrder inOrder = inOrder(slave.watcher);
-        inOrder.verify(slave.watcher, times(1)).invalidate();
-        inOrder.verify(slave.watcher).onChanged(
+        verify(slave.watcher, times(1)).invalidate();
+        verify(slave.watcher).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            "slave",
+            SLAVE,
             10L,
             null
         );
-        inOrder.verify(slave.watcher).onChanged(
+        verify(slave.watcher).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            "master",
+            MASTER,
             10L,
             null
         );
-        inOrder.verifyNoMoreInteractions();
+        verifyNoMoreInteractions(slave.watcher);
 
         verify(master.watcher, times(1)).onChanged(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            "slave",
+            SLAVE,
             10L,
             null
         );
         verifyNoMoreInteractions(master.watcher);
     }
 
-    private NetworkSide createNetworkSide(final String name, final Supplier<Network> networkFactory) {
-        final StorageNetworkNode<String> nodeA = new StorageNetworkNode<>(
+    private NetworkSide createNetworkSide(final MasterSlave side,
+                                          final Supplier<Network> networkFactory) {
+        final StorageNetworkNode nodeA = new StorageNetworkNode(
             0,
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE
         );
-        final InMemoryStorageImpl<String> storage = new InMemoryStorageImpl<>();
-        storage.insert(name, 10, Action.EXECUTE, FakeActor.INSTANCE);
+        final InMemoryStorageImpl storage = new InMemoryStorageImpl();
+        storage.insert(side, 10, Action.EXECUTE, FakeActor.INSTANCE);
         nodeA.setStorage(storage);
         final NetworkNodeContainer a = createContainerWithNetwork(
             nodeA,
@@ -137,7 +140,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
             container -> a.getNode().getNetwork(),
             NetworkNodeContainerPriorities.GRID
         );
-        final GridWatcher watcher = mock(GridWatcher.class, "watcher for " + name);
+        final GridWatcher watcher = mock(GridWatcher.class, "watcher for " + side.name());
         nodeB.setActive(true);
         nodeB.addWatcher(watcher, EmptyActor.class);
         return new NetworkSide(a, nodeA, b, nodeB, watcher);
@@ -145,10 +148,14 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
     private record NetworkSide(
         NetworkNodeContainer a,
-        StorageNetworkNode<String> nodeA,
+        StorageNetworkNode nodeA,
         NetworkNodeContainer b,
         GridNetworkNode nodeB,
         GridWatcher watcher
     ) {
+    }
+
+    protected enum MasterSlave implements ResourceKey {
+        MASTER, SLAVE
     }
 }

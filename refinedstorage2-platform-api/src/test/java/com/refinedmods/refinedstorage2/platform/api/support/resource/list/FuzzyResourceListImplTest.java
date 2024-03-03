@@ -23,11 +23,11 @@ class FuzzyResourceListImplTest {
     private static final ItemResource DUMMY_D = new ItemResource(Items.GLASS, null);
     private static final ItemResource DUMMY_E = new ItemResource(Items.DARK_OAK_DOOR, null);
 
-    FuzzyResourceList<ItemResource> sut;
+    FuzzyResourceList sut;
 
     @BeforeEach
     void setUp() {
-        sut = new FuzzyResourceListImpl<ItemResource>(new ResourceListImpl<>());
+        sut = new FuzzyResourceListImpl(new ResourceListImpl());
     }
 
     @Test
@@ -45,42 +45,42 @@ class FuzzyResourceListImplTest {
         sut.add(DUMMY_D, 15);
 
         // Act
-        final Optional<ResourceAmount<ItemResource>> strictA = sut.get(DUMMY_A);
-        final Optional<ResourceAmount<ItemResource>> strictB = sut.get(DUMMY_B);
-        final Optional<ResourceAmount<ItemResource>> strictC = sut.get(DUMMY_C);
-        final Optional<ResourceAmount<ItemResource>> strictD = sut.get(DUMMY_D);
-        final Optional<ResourceAmount<ItemResource>> strictE = sut.get(DUMMY_E);
+        final Optional<ResourceAmount> strictA = sut.get(DUMMY_A);
+        final Optional<ResourceAmount> strictB = sut.get(DUMMY_B);
+        final Optional<ResourceAmount> strictC = sut.get(DUMMY_C);
+        final Optional<ResourceAmount> strictD = sut.get(DUMMY_D);
+        final Optional<ResourceAmount> strictE = sut.get(DUMMY_E);
 
-        final Collection<ResourceAmount<ItemResource>> fuzzyA = sut.getFuzzy(DUMMY_A);
-        final Collection<ResourceAmount<ItemResource>> fuzzyB = sut.getFuzzy(DUMMY_B);
-        final Collection<ResourceAmount<ItemResource>> fuzzyC = sut.getFuzzy(DUMMY_C);
-        final Collection<ResourceAmount<ItemResource>> fuzzyD = sut.getFuzzy(DUMMY_D);
-        final Collection<ResourceAmount<ItemResource>> fuzzyE = sut.getFuzzy(DUMMY_E);
+        final Collection<ResourceAmount> fuzzyA = sut.getFuzzy(DUMMY_A);
+        final Collection<ResourceAmount> fuzzyB = sut.getFuzzy(DUMMY_B);
+        final Collection<ResourceAmount> fuzzyC = sut.getFuzzy(DUMMY_C);
+        final Collection<ResourceAmount> fuzzyD = sut.getFuzzy(DUMMY_D);
+        final Collection<ResourceAmount> fuzzyE = sut.getFuzzy(DUMMY_E);
 
         // Assert
-        assertThat(strictA).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_A, 1));
-        assertThat(strictB).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_B, 15));
-        assertThat(strictC).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_C, 20));
-        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_D, 25));
+        assertThat(strictA).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_A, 1));
+        assertThat(strictB).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_B, 15));
+        assertThat(strictC).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_C, 20));
+        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_D, 25));
         assertThat(strictE).isNotPresent();
 
         assertThat(fuzzyA).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_A, 1),
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_A, 1),
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyB).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_A, 1),
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_A, 1),
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyC).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_A, 1),
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_A, 1),
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyD).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_D, 25)
+            new ResourceAmount(DUMMY_D, 25)
         );
         assertThat(fuzzyE).isEmpty();
     }
@@ -102,30 +102,30 @@ class FuzzyResourceListImplTest {
         sut.add(DUMMY_D, 15);
 
         // Act
-        final Optional<ResourceAmount<ItemResource>> strictA = sut.get(DUMMY_A);
-        final Optional<ResourceAmount<ItemResource>> strictB = sut.get(DUMMY_B);
-        final Optional<ResourceAmount<ItemResource>> strictC = sut.get(DUMMY_C);
-        final Optional<ResourceAmount<ItemResource>> strictD = sut.get(DUMMY_D);
-        final Optional<ResourceAmount<ItemResource>> strictE = sut.get(DUMMY_E);
+        final Optional<ResourceAmount> strictA = sut.get(DUMMY_A);
+        final Optional<ResourceAmount> strictB = sut.get(DUMMY_B);
+        final Optional<ResourceAmount> strictC = sut.get(DUMMY_C);
+        final Optional<ResourceAmount> strictD = sut.get(DUMMY_D);
+        final Optional<ResourceAmount> strictE = sut.get(DUMMY_E);
 
-        final Collection<ResourceAmount<ItemResource>> fuzzyA = sut.getFuzzy(DUMMY_A);
-        final Collection<ResourceAmount<ItemResource>> fuzzyB = sut.getFuzzy(DUMMY_B);
-        final Collection<ResourceAmount<ItemResource>> fuzzyC = sut.getFuzzy(DUMMY_C);
-        final Collection<ResourceAmount<ItemResource>> fuzzyD = sut.getFuzzy(DUMMY_D);
-        final Collection<ResourceAmount<ItemResource>> fuzzyE = sut.getFuzzy(DUMMY_E);
+        final Collection<ResourceAmount> fuzzyA = sut.getFuzzy(DUMMY_A);
+        final Collection<ResourceAmount> fuzzyB = sut.getFuzzy(DUMMY_B);
+        final Collection<ResourceAmount> fuzzyC = sut.getFuzzy(DUMMY_C);
+        final Collection<ResourceAmount> fuzzyD = sut.getFuzzy(DUMMY_D);
+        final Collection<ResourceAmount> fuzzyE = sut.getFuzzy(DUMMY_E);
 
         // Assert
         assertThat(strictA).isNotPresent();
         assertThat(strictB).isNotPresent();
         assertThat(strictC).isNotPresent();
-        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_D, 25));
+        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_D, 25));
         assertThat(strictE).isNotPresent();
 
         assertThat(fuzzyA).isEmpty();
         assertThat(fuzzyB).isEmpty();
         assertThat(fuzzyC).isEmpty();
         assertThat(fuzzyD).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_D, 25)
+            new ResourceAmount(DUMMY_D, 25)
         );
         assertThat(fuzzyE).isEmpty();
     }
@@ -145,39 +145,39 @@ class FuzzyResourceListImplTest {
         sut.add(DUMMY_D, 15);
 
         // Act
-        final Optional<ResourceAmount<ItemResource>> strictA = sut.get(DUMMY_A);
-        final Optional<ResourceAmount<ItemResource>> strictB = sut.get(DUMMY_B);
-        final Optional<ResourceAmount<ItemResource>> strictC = sut.get(DUMMY_C);
-        final Optional<ResourceAmount<ItemResource>> strictD = sut.get(DUMMY_D);
-        final Optional<ResourceAmount<ItemResource>> strictE = sut.get(DUMMY_E);
+        final Optional<ResourceAmount> strictA = sut.get(DUMMY_A);
+        final Optional<ResourceAmount> strictB = sut.get(DUMMY_B);
+        final Optional<ResourceAmount> strictC = sut.get(DUMMY_C);
+        final Optional<ResourceAmount> strictD = sut.get(DUMMY_D);
+        final Optional<ResourceAmount> strictE = sut.get(DUMMY_E);
 
-        final Collection<ResourceAmount<ItemResource>> fuzzyA = sut.getFuzzy(DUMMY_A);
-        final Collection<ResourceAmount<ItemResource>> fuzzyB = sut.getFuzzy(DUMMY_B);
-        final Collection<ResourceAmount<ItemResource>> fuzzyC = sut.getFuzzy(DUMMY_C);
-        final Collection<ResourceAmount<ItemResource>> fuzzyD = sut.getFuzzy(DUMMY_D);
-        final Collection<ResourceAmount<ItemResource>> fuzzyE = sut.getFuzzy(DUMMY_E);
+        final Collection<ResourceAmount> fuzzyA = sut.getFuzzy(DUMMY_A);
+        final Collection<ResourceAmount> fuzzyB = sut.getFuzzy(DUMMY_B);
+        final Collection<ResourceAmount> fuzzyC = sut.getFuzzy(DUMMY_C);
+        final Collection<ResourceAmount> fuzzyD = sut.getFuzzy(DUMMY_D);
+        final Collection<ResourceAmount> fuzzyE = sut.getFuzzy(DUMMY_E);
 
         // Assert
         assertThat(strictA).isNotPresent();
-        assertThat(strictB).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_B, 15));
-        assertThat(strictC).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_C, 20));
-        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount<>(DUMMY_D, 25));
+        assertThat(strictB).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_B, 15));
+        assertThat(strictC).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_C, 20));
+        assertThat(strictD).get().usingRecursiveComparison().isEqualTo(new ResourceAmount(DUMMY_D, 25));
         assertThat(strictE).isNotPresent();
 
         assertThat(fuzzyA).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyB).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyC).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_B, 15),
-            new ResourceAmount<>(DUMMY_C, 20)
+            new ResourceAmount(DUMMY_B, 15),
+            new ResourceAmount(DUMMY_C, 20)
         );
         assertThat(fuzzyD).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(DUMMY_D, 25)
+            new ResourceAmount(DUMMY_D, 25)
         );
         assertThat(fuzzyE).isEmpty();
     }

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.grid.strategy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
@@ -21,7 +22,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantUtil.toItemVariant;
 
 public class ItemGridExtractionStrategy implements GridExtractionStrategy {
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
@@ -34,13 +35,16 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     @Override
-    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                 final T resource,
-                                 final GridExtractMode extractMode,
-                                 final boolean cursor) {
+    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
+                             final ResourceKey resource,
+                             final GridExtractMode extractMode,
+                             final boolean cursor) {
         if (resource instanceof ItemResource itemResource) {
             gridOperations.extract(itemResource, extractMode, (r, amount, action, source) -> {
-                final ItemVariant itemVariant = toItemVariant(r);
+                if (!(r instanceof ItemResource itemResource2)) {
+                    return 0;
+                }
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 try (Transaction tx = Transaction.openOuter()) {
                     final long inserted = insert(itemVariant, amount, tx, cursor);
                     if (action == Action.EXECUTE) {

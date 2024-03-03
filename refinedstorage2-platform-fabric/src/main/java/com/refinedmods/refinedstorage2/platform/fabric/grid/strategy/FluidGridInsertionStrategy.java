@@ -28,7 +28,7 @@ import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.V
 
 public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridOperations<FluidResource> gridOperations;
+    private final GridOperations gridOperations;
     private final Player player;
     private final PlayerInventoryStorage playerInventoryStorage;
 
@@ -53,7 +53,10 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
         }
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridOperations.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
-            final FluidVariant fluidVariant = toFluidVariant(resource);
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
+            final FluidVariant fluidVariant = toFluidVariant(fluidResource2);
             try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = cursorStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -92,7 +95,10 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
         }
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridOperations.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
-            final FluidVariant fluidVariant = toFluidVariant(resource);
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
+            final FluidVariant fluidVariant = toFluidVariant(fluidResource2);
             try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {

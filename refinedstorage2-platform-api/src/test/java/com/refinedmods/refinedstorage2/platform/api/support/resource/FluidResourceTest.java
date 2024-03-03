@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import java.util.Optional;
@@ -34,27 +34,10 @@ class FluidResourceTest {
 
         // Act
         final CompoundTag serialized = FluidResource.toTag(fluidResource);
-        final Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
+        final Optional<ResourceKey> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(fluidResource);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void testSerializationWithAmount(final boolean hasTag) {
-        // Arrange
-        final CompoundTag fluidTag = hasTag ? createDummyTag() : null;
-        final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
-        final ResourceAmount<FluidResource> resourceAmount = new ResourceAmount<>(fluidResource, 10);
-
-        // Act
-        final CompoundTag serialized = FluidResource.toTagWithAmount(resourceAmount);
-        final Optional<ResourceAmount<FluidResource>> deserialized = FluidResource.fromTagWithAmount(serialized);
-
-        // Assert
-        assertThat(deserialized).isPresent();
-        assertThat(deserialized.get()).usingRecursiveComparison().isEqualTo(resourceAmount);
     }
 
     @Test
@@ -65,7 +48,7 @@ class FluidResourceTest {
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        final Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
+        final Optional<ResourceKey> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();
@@ -79,11 +62,10 @@ class FluidResourceTest {
         final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
 
         // Act
-        final FluidResource normalized = fluidResource.normalize();
+        final ResourceKey normalized = fluidResource.normalize();
 
         // Assert
-        assertThat(normalized.fluid()).isEqualTo(Fluids.WATER);
-        assertThat(normalized.tag()).isNull();
+        assertThat(normalized).usingRecursiveComparison().isEqualTo(new FluidResource(Fluids.WATER, null));
     }
 
     @Test

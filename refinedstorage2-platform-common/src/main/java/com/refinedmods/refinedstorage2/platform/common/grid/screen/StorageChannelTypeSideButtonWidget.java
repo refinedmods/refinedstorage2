@@ -29,7 +29,7 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected ResourceLocation getTextureIdentifier() {
-        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
+        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
         if (storageChannelType == null) {
             return TextureIds.ICONS;
         }
@@ -43,7 +43,7 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected MutableComponent getSubText() {
-        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
+        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
         if (storageChannelType == null) {
             return SUBTEXT_ALL;
         }
@@ -57,7 +57,7 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
+        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
         if (storageChannelType == null) {
             return 32;
         }
@@ -66,7 +66,7 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
+        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
         if (storageChannelType == null) {
             return 128;
         }

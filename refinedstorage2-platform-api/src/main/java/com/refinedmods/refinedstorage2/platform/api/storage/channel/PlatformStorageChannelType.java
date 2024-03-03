@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.api.storage.channel;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -18,20 +19,20 @@ import net.minecraft.resources.ResourceLocation;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.5")
-public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
-    CompoundTag toTag(T resource);
+public interface PlatformStorageChannelType extends StorageChannelType {
+    CompoundTag toTag(ResourceKey resource);
 
-    CompoundTag toTag(T resource, TrackedResource trackedResource);
+    CompoundTag toTag(ResourceKey resource, TrackedResource trackedResource);
 
-    void fromTag(CompoundTag tag, BiConsumer<T, TrackedResource> acceptor);
+    void fromTag(CompoundTag tag, BiConsumer<ResourceKey, TrackedResource> acceptor);
 
-    Optional<T> fromTag(CompoundTag tag);
+    Optional<ResourceKey> fromTag(CompoundTag tag);
 
-    void toBuffer(T resource, FriendlyByteBuf buf);
+    void toBuffer(ResourceKey resource, FriendlyByteBuf buf);
 
-    T fromBuffer(FriendlyByteBuf buf);
+    ResourceKey fromBuffer(FriendlyByteBuf buf);
 
-    Optional<GridResource> toGridResource(ResourceAmount<?> resourceAmount);
+    Optional<GridResource> toGridResource(ResourceAmount resourceAmount);
 
     boolean isGridResourceBelonging(GridResource gridResource);
 
@@ -49,9 +50,9 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
 
     long getInterfaceExportLimit();
 
-    default long getInterfaceExportLimit(T resource) {
+    default long getInterfaceExportLimit(ResourceKey resource) {
         return getInterfaceExportLimit();
     }
 
-    GridOperations<T> createGridOperations(StorageChannel<T> storageChannel, Actor actor);
+    GridOperations createGridOperations(StorageChannel storageChannel, Actor actor);
 }

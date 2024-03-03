@@ -194,7 +194,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
-    @SuppressWarnings("unchecked")
     public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
@@ -215,12 +214,12 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         );
     }
 
-    private static <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final ResourceAmountTemplate<T> filteredResource,
+    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmountTemplate filteredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(
-            new ResourceClientTooltipComponent<>(filteredResource),
+            new ResourceClientTooltipComponent(filteredResource),
             help
         ));
     }

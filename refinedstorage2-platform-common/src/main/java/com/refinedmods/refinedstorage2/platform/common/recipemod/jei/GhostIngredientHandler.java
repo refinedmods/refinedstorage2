@@ -77,9 +77,9 @@ class GhostIngredientHandler implements IGhostIngredientHandler<AbstractBaseScre
             ingredientConverter.convertToResource(ingredient).ifPresent(this::accept);
         }
 
-        private <T> void accept(final ResourceTemplate<T> resource) {
+        private void accept(final ResourceTemplate resource) {
             Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotChange(
-                (PlatformStorageChannelType<T>) resource.storageChannelType(),
+                (PlatformStorageChannelType) resource.storageChannelType(),
                 resource.resource(),
                 slotIndex
             );

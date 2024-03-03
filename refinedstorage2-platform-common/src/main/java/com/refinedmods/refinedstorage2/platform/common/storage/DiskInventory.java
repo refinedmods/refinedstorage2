@@ -54,7 +54,7 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
     }
 
     @Override
-    public <T> Optional<TypedStorage<T, Storage<T>>> resolve(final int index) {
+    public Optional<TypedStorage<Storage>> resolve(final int index) {
         if (storageRepository == null) {
             return Optional.empty();
         }

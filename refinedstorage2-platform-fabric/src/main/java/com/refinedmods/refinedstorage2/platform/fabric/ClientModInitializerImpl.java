@@ -339,7 +339,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             if (data instanceof HelpTooltipComponent component) {
                 return HelpClientTooltipComponent.create(component.text());
             }
-            if (data instanceof RegulatorUpgradeItem.RegulatorTooltipComponent<?> component) {
+            if (data instanceof RegulatorUpgradeItem.RegulatorTooltipComponent component) {
                 final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
                 return component.filteredResource() == null
                     ? help
@@ -349,12 +349,12 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         });
     }
 
-    private <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final ResourceAmountTemplate<T> filteredResource,
+    private CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmountTemplate filteredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(
-            new ResourceClientTooltipComponent<>(filteredResource),
+            new ResourceClientTooltipComponent(filteredResource),
             help
         ));
     }

@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProxyStorageTest {
-    private ActorCapturingStorage<String> backed;
-    private AbstractProxyStorage<String> sut;
+    private ActorCapturingStorage backed;
+    private AbstractProxyStorage sut;
     private final Actor actor = () -> "Custom source";
 
     @BeforeEach
     void setUp() {
-        backed = new ActorCapturingStorage<>(new InMemoryStorageImpl<>());
-        sut = new AbstractProxyStorage<>(backed) {
+        backed = new ActorCapturingStorage(new InMemoryStorageImpl());
+        sut = new AbstractProxyStorage(backed) {
         };
     }
 
@@ -27,25 +27,25 @@ class ProxyStorageTest {
     @SuppressWarnings("ConstantConditions")
     void testInvalidParent() {
         // Act & assert
-        assertThrows(NullPointerException.class, () -> new AbstractProxyStorage<String>(null) {
+        assertThrows(NullPointerException.class, () -> new AbstractProxyStorage(null) {
         });
     }
 
     @Test
     void shouldRetrieveAll() {
         // Arrange
-        sut.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act & assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 10)
+            new ResourceAmount(TestResource.A, 10)
         );
     }
 
     @Test
     void shouldRetrieveStoredAmount() {
         // Arrange
-        sut.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act & assert
         assertThat(sut.getStored()).isEqualTo(10);
@@ -55,12 +55,12 @@ class ProxyStorageTest {
     @EnumSource(Action.class)
     void shouldInsert(final Action action) {
         // Act
-        sut.insert("A", 10, action, actor);
+        sut.insert(TestResource.A, 10, action, actor);
 
         // Assert
         if (action == Action.EXECUTE) {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
+                new ResourceAmount(TestResource.A, 10)
             );
         } else {
             assertThat(backed.getAll()).isEmpty();
@@ -72,20 +72,20 @@ class ProxyStorageTest {
     @EnumSource(Action.class)
     void shouldExtract(final Action action) {
         // Arrange
-        backed.insert("A", 10, Action.EXECUTE, actor);
+        backed.insert(TestResource.A, 10, Action.EXECUTE, actor);
 
         // Act
-        final long extracted = sut.extract("A", 3, action, actor);
+        final long extracted = sut.extract(TestResource.A, 3, action, actor);
 
         // Assert
         assertThat(extracted).isEqualTo(3);
         if (action == Action.EXECUTE) {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 7)
+                new ResourceAmount(TestResource.A, 7)
             );
         } else {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
+                new ResourceAmount(TestResource.A, 10)
             );
         }
         assertThat(backed.getActors()).containsExactly(actor, actor);

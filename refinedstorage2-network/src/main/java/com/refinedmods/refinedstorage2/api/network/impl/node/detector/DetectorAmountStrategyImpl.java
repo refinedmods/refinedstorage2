@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 
 public class DetectorAmountStrategyImpl extends AbstractDetectorAmountStrategy {
     @Override
-    public <T> long getAmount(final Network network, final ResourceTemplate<T> template) {
+    public long getAmount(final Network network, final ResourceTemplate template) {
         return getStorageChannel(network, template)
             .get(template.resource())
             .map(ResourceAmount::getAmount)

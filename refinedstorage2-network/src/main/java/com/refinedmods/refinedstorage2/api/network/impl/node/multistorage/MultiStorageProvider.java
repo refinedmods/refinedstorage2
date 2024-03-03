@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @FunctionalInterface
 public interface MultiStorageProvider {
-    <T> Optional<TypedStorage<T, Storage<T>>> resolve(int index);
+    Optional<TypedStorage<Storage>> resolve(int index);
 }

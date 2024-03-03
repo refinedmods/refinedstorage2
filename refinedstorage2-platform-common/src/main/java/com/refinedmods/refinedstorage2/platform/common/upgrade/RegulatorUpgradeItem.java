@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.upgrade;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
@@ -58,13 +59,13 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(final ItemStack stack) {
-        return Optional.of(new RegulatorTooltipComponent<>(HELP, getFilteredResource(stack)));
+        return Optional.of(new RegulatorTooltipComponent(HELP, getFilteredResource(stack)));
     }
 
     @Nullable
-    private ResourceAmountTemplate<?> getFilteredResource(final ItemStack stack) {
+    private ResourceAmountTemplate getFilteredResource(final ItemStack stack) {
         final ResourceContainer container = getResourceFilterContainer(stack);
-        final ResourceAmountTemplate<?> resourceAmount = container.get(0);
+        final ResourceAmountTemplate resourceAmount = container.get(0);
         if (resourceAmount == null) {
             return null;
         }
@@ -96,9 +97,9 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         return Platform.INSTANCE.getConfig().getUpgrade().getRegulatorUpgradeEnergyUsage();
     }
 
-    public OptionalLong getDesiredAmount(final ItemStack stack, final Object resource) {
+    public OptionalLong getDesiredAmount(final ItemStack stack, final ResourceKey resource) {
         final ResourceContainer container = getResourceFilterContainer(stack);
-        final ResourceAmountTemplate<?> filteredResource = container.get(0);
+        final ResourceAmountTemplate filteredResource = container.get(0);
         if (filteredResource == null) {
             return OptionalLong.empty();
         }
@@ -111,8 +112,8 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
         return OptionalLong.of(normalizedAmount);
     }
 
-    public record RegulatorTooltipComponent<T>(Component helpText,
-                                               @Nullable ResourceAmountTemplate<T> filteredResource)
+    public record RegulatorTooltipComponent(Component helpText,
+                                            @Nullable ResourceAmountTemplate filteredResource)
         implements TooltipComponent {
     }
 

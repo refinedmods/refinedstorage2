@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
@@ -19,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<ItemResource> {
+public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity {
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 
@@ -30,7 +29,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             BlockEntities.INSTANCE.getItemStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
+            new StorageNetworkNode(getEnergyUsage(variant), StorageChannelTypes.ITEM),
             PlatformApi.INSTANCE.getItemResourceFactory()
         );
         this.variant = variant;
@@ -48,7 +47,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
     }
 
     @Override
-    protected Storage<ItemResource> createStorage(final Runnable listener) {
+    protected Storage createStorage(final Runnable listener) {
         return StorageTypes.ITEM.create(variant.getCapacity(), listener);
     }
 

@@ -1,24 +1,39 @@
 package com.refinedmods.refinedstorage2.api.storage.external;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 
-class TransformingStorage extends AbstractProxyStorage<String> {
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.A_TRANSFORMED;
+
+class TransformingStorage extends AbstractProxyStorage {
     TransformingStorage() {
-        super(new InMemoryStorageImpl<>());
+        super(new InMemoryStorageImpl());
+    }
+
+    private ResourceKey transform(final ResourceKey resource) {
+        if (resource == ExternalTestResource.A) {
+            return A_TRANSFORMED;
+        } else if (resource == ExternalTestResource.B) {
+            return ExternalTestResource.B_TRANSFORMED;
+        }
+        return resource;
     }
 
     @Override
-    public long insert(final String resource, final long amount, final Action action, final Actor actor) {
-        return super.insert(resource + "!", amount, action, actor);
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
+        return super.insert(transform(resource), amount, action, actor);
     }
 
     @Override
-    public long extract(final String resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         final long extracted = super.extract(resource, amount, action, actor);
-        super.extract(resource.replace("!", "") + "2!", amount / 2, action, actor);
+        if (resource == A_TRANSFORMED) {
+            super.extract(A_ALTERNATIVE, amount / 2, action, actor);
+        }
         return extracted;
     }
 }

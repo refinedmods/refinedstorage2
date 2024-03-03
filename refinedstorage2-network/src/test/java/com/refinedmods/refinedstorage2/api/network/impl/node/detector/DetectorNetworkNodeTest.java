@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -34,15 +35,15 @@ class DetectorNetworkNodeTest {
     DetectorNetworkNode sut;
 
     @BeforeEach
-    void setUp(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
-        storageChannel.addSource(new InMemoryStorageImpl<>());
+    void setUp(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
+        storageChannel.addSource(new InMemoryStorageImpl());
         sut.setAmountStrategy(new DetectorAmountStrategyImpl());
     }
 
     @Test
     void testWithoutNetwork() {
         // Act
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setNetwork(null);
 
         // Assert
@@ -55,7 +56,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutActiveness() {
         // Act
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setActive(false);
 
         // Assert
@@ -78,7 +79,7 @@ class DetectorNetworkNodeTest {
     @EnumSource(DetectorMode.class)
     void testWithTemplateButWithoutResourceInNetwork(final DetectorMode mode) {
         // Arrange
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
 
         // Act
@@ -119,14 +120,14 @@ class DetectorNetworkNodeTest {
                    final long comparisonAmount,
                    final long amountInNetwork,
                    final boolean expectedActivated,
-                   @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+                   @InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setFilterTemplate(new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         sut.setMode(mode);
         sut.setAmount(comparisonAmount);
 
         if (amountInNetwork > 0) {
-            storageChannel.insert("A", amountInNetwork, Action.EXECUTE, EmptyActor.INSTANCE);
+            storageChannel.insert(A, amountInNetwork, Action.EXECUTE, EmptyActor.INSTANCE);
         }
 
         // Act

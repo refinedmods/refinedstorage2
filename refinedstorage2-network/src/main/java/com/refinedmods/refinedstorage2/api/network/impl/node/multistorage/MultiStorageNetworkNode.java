@@ -35,13 +35,13 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     private final long energyUsage;
     private final long energyUsagePerStorage;
 
-    private final TypedStorage<?, StateTrackedStorage<?>>[] cache;
-    private final Map<StorageChannelType<?>, ExposedStorage<?>> exposedStorages;
+    private final TypedStorage<StateTrackedStorage>[] cache;
+    private final Map<StorageChannelType, ExposedStorage> exposedStorages;
     private int activeStorages;
 
     public MultiStorageNetworkNode(final long energyUsage,
                                    final long energyUsagePerStorage,
-                                   final Collection<? extends StorageChannelType<?>> storageChannelTypes,
+                                   final Collection<? extends StorageChannelType> storageChannelTypes,
                                    final int size) {
         this.energyUsage = energyUsage;
         this.energyUsagePerStorage = energyUsagePerStorage;
@@ -49,8 +49,8 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         this.cache = new TypedStorage[size];
     }
 
-    private Map<StorageChannelType<?>, ExposedStorage<?>> createExposedStorages(
-        final Collection<? extends StorageChannelType<?>> storageChannelTypes
+    private Map<StorageChannelType, ExposedStorage> createExposedStorages(
+        final Collection<? extends StorageChannelType> storageChannelTypes
     ) {
         return storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
             Function.identity(),
@@ -58,8 +58,8 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         ));
     }
 
-    private ExposedStorage<?> createExposedStorage(final StorageChannelType<?> type) {
-        return new ExposedStorage<>(this);
+    private ExposedStorage createExposedStorage(final StorageChannelType type) {
+        return new ExposedStorage(this);
     }
 
     public void setProvider(final MultiStorageProvider provider) {
@@ -85,20 +85,19 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         updateActiveStorageCount();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private Set<StorageChange> initializeStorage(final int index) {
         final Set<StorageChange> results = new HashSet<>();
 
         if (cache[index] != null) {
-            final StorageChannelType<?> removedType = cache[index].storageChannelType();
-            final ExposedStorage<?> relevantComposite = exposedStorages.get(removedType);
+            final StorageChannelType removedType = cache[index].storageChannelType();
+            final ExposedStorage relevantComposite = exposedStorages.get(removedType);
             results.add(new StorageChange(true, relevantComposite, cache[index].storage()));
         }
 
         if (provider != null) {
             provider.resolve(index).ifPresentOrElse(resolved -> {
-                cache[index] = (TypedStorage) StateTrackedStorage.of(resolved, listener);
-                final ExposedStorage<?> relevantComposite = exposedStorages.get(resolved.storageChannelType());
+                cache[index] = StateTrackedStorage.of(resolved, listener);
+                final ExposedStorage relevantComposite = exposedStorages.get(resolved.storageChannelType());
                 results.add(new StorageChange(false, relevantComposite, cache[index].storage()));
             }, () -> cache[index] = null);
         }
@@ -106,15 +105,14 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         return results;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private void processStorageChange(final StorageChange change) {
         if (!isActive()) {
             return;
         }
         if (change.removed) {
-            change.exposedStorage.removeSource((Storage) change.internalStorage);
+            change.exposedStorage.removeSource(change.internalStorage);
         } else {
-            change.exposedStorage.addSource((Storage) change.internalStorage);
+            change.exposedStorage.addSource(change.internalStorage);
         }
     }
 
@@ -140,12 +138,11 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
         exposedStorages.forEach(this::enableAllStoragesForChannel);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private void enableAllStoragesForChannel(final StorageChannelType<?> type,
-                                             final ExposedStorage<?> exposedStorage) {
-        for (final TypedStorage<?, StateTrackedStorage<?>> internalStorage : cache) {
+    private void enableAllStoragesForChannel(final StorageChannelType type,
+                                             final ExposedStorage exposedStorage) {
+        for (final TypedStorage<StateTrackedStorage> internalStorage : cache) {
             if (internalStorage != null && internalStorage.storageChannelType() == type) {
-                exposedStorage.addSource((StateTrackedStorage) internalStorage.storage());
+                exposedStorage.addSource(internalStorage.storage());
             }
         }
     }
@@ -179,22 +176,21 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     }
 
     @Override
-    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<StorageChannelType> getRelevantStorageChannelTypes() {
         return exposedStorages.keySet();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
-        final ExposedStorage<?> storage = exposedStorages.get(channelType);
+    public Optional<Storage> getStorageForChannel(final StorageChannelType channelType) {
+        final ExposedStorage storage = exposedStorages.get(channelType);
         if (storage != null) {
-            return Optional.of((Storage<T>) storage);
+            return Optional.of(storage);
         }
         return Optional.empty();
     }
 
     private record StorageChange(boolean removed,
-                                 ExposedStorage<?> exposedStorage,
-                                 StateTrackedStorage<?> internalStorage) {
+                                 ExposedStorage exposedStorage,
+                                 StateTrackedStorage internalStorage) {
     }
 }

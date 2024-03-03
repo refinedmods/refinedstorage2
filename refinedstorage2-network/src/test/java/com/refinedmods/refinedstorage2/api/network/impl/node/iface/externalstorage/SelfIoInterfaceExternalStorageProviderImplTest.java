@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -32,7 +33,7 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
         exportState = new InterfaceExportStateImpl(2);
         iface.setExportState(exportState);
         iface.setTransferQuotaProvider(resource -> 100);
-        connection.initialize(new ExternalStorageProviderFactoryImpl(new InterfaceExternalStorageProviderImpl<>(
+        connection.initialize(new ExternalStorageProviderFactoryImpl(new InterfaceExternalStorageProviderImpl(
             iface,
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE
         )));
@@ -42,13 +43,13 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
     // IoLoopInterfaceExternalStorageProviderImplTest.
     @Test
     void shouldNotAllowSelfInsertionOrSelfExtraction(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         // this would try to do a self-insert as it's an unwanted resource.
-        exportState.setCurrentlyExported(0, "B", 15);
+        exportState.setCurrentlyExported(0, B, 15);
         // this would try to do a self-extract because we have the resource.
-        exportState.setRequestedResource(1, "B", 1);
+        exportState.setRequestedResource(1, B, 1);
 
         // Act
         iface.doWork();
@@ -56,7 +57,7 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
 
         // Assert
         assertThat(exportState.getExportedResource(0)).usingRecursiveComparison().isEqualTo(
-            new ResourceTemplate<>("B", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+            new ResourceTemplate(B, NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
         );
         assertThat(exportState.getExportedAmount(0)).isEqualTo(15);
 
@@ -64,7 +65,7 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
         assertThat(exportState.getExportedAmount(1)).isZero();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 15)
+            new ResourceAmount(B, 15)
         );
     }
 }

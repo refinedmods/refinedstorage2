@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support.containermenu;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
@@ -28,7 +29,7 @@ public class ResourceSlot extends Slot {
     private final ResourceContainer resourceContainer;
     private final Component helpText;
     @Nullable
-    private ResourceAmountTemplate<?> cachedResource;
+    private ResourceAmountTemplate cachedResource;
 
     public ResourceSlot(final ResourceContainer resourceContainer,
                         final int index,
@@ -92,7 +93,7 @@ public class ResourceSlot extends Slot {
     }
 
     @Nullable
-    public ResourceAmountTemplate<?> getResourceAmount() {
+    public ResourceAmountTemplate getResourceAmount() {
         return resourceContainer.get(getContainerSlot());
     }
 
@@ -104,7 +105,7 @@ public class ResourceSlot extends Slot {
         resourceContainer.change(getContainerSlot(), stack, tryAlternatives);
     }
 
-    public <T> void change(@Nullable final ResourceAmountTemplate<T> instance) {
+    public void change(@Nullable final ResourceAmountTemplate instance) {
         if (instance == null) {
             resourceContainer.remove(getContainerSlot());
         } else {
@@ -112,18 +113,18 @@ public class ResourceSlot extends Slot {
         }
     }
 
-    public <T> void setFilter(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
+    public void setFilter(final PlatformStorageChannelType storageChannelType, final ResourceKey resource) {
         if (!isFilter() || !isValid(resource)) {
             return;
         }
-        resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate<>(
+        resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate(
             resource,
             storageChannelType.normalizeAmount(1D),
             storageChannelType
         ));
     }
 
-    public <T> boolean isValid(final T resource) {
+    public boolean isValid(final ResourceKey resource) {
         return resourceContainer.isValid(resource);
     }
 
@@ -143,7 +144,7 @@ public class ResourceSlot extends Slot {
     }
 
     public void changeAmountOnClient(final double amount) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        final ResourceAmountTemplate resourceAmount = getResourceAmount();
         if (resourceAmount == null) {
             return;
         }
@@ -152,12 +153,12 @@ public class ResourceSlot extends Slot {
     }
 
     public boolean contains(final ItemStack stack) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        final ResourceAmountTemplate resourceAmount = getResourceAmount();
         return resourceAmount != null && ItemStack.matches(stack, resourceAmount.getStackRepresentation());
     }
 
     public void broadcastChanges(final Player player) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        final ResourceAmountTemplate resourceAmount = getResourceAmount();
         if (!Objects.equals(resourceAmount, cachedResource)) {
             LOGGER.debug("Resource slot {} has changed", getContainerSlot());
             this.cachedResource = resourceAmount;
@@ -165,10 +166,9 @@ public class ResourceSlot extends Slot {
         }
     }
 
-    private <T> void broadcastChange(final ServerPlayer player,
-                                     @Nullable final ResourceAmountTemplate<T> contents) {
-        Platform.INSTANCE.getServerToClientCommunications()
-            .sendResourceSlotUpdate(player, contents, index);
+    private void broadcastChange(final ServerPlayer player,
+                                 @Nullable final ResourceAmountTemplate contents) {
+        Platform.INSTANCE.getServerToClientCommunications().sendResourceSlotUpdate(player, contents, index);
     }
 
     public void readFromUpdatePacket(final FriendlyByteBuf buf) {
@@ -186,7 +186,7 @@ public class ResourceSlot extends Slot {
     }
 
     public double getDisplayAmount() {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        final ResourceAmountTemplate resourceAmount = getResourceAmount();
         if (resourceAmount == null) {
             return 0;
         }
@@ -194,7 +194,7 @@ public class ResourceSlot extends Slot {
     }
 
     public double getMaxAmountWhenModifying() {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
+        final ResourceAmountTemplate resourceAmount = getResourceAmount();
         if (resourceAmount == null) {
             return 0;
         }
@@ -205,11 +205,11 @@ public class ResourceSlot extends Slot {
         return helpText;
     }
 
-    public ResourceFactory<?> getPrimaryResourceFactory() {
+    public ResourceFactory getPrimaryResourceFactory() {
         return resourceContainer.getPrimaryResourceFactory();
     }
 
-    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+    public Set<ResourceFactory> getAlternativeResourceFactories() {
         return resourceContainer.getAlternativeResourceFactories();
     }
 }

@@ -14,16 +14,13 @@ import net.minecraft.server.level.ServerLevel;
 
 public class ItemHandlerPlatformExternalStorageProviderFactory implements PlatformExternalStorageProviderFactory {
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<ExternalStorageProvider<T>> create(final ServerLevel level,
-                                                           final BlockPos pos,
-                                                           final Direction direction,
-                                                           final StorageChannelType<T> storageChannelType) {
+    public Optional<ExternalStorageProvider> create(final ServerLevel level,
+                                                    final BlockPos pos,
+                                                    final Direction direction,
+                                                    final StorageChannelType storageChannelType) {
         if (storageChannelType != StorageChannelTypes.ITEM) {
             return Optional.empty();
         }
-        return Optional.of((ExternalStorageProvider<T>) new ItemHandlerExternalStorageProvider(
-            new CapabilityCacheImpl(level, pos, direction)
-        ));
+        return Optional.of(new ItemHandlerExternalStorageProvider(new CapabilityCacheImpl(level, pos, direction)));
     }
 }

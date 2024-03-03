@@ -1,10 +1,7 @@
 package com.refinedmods.refinedstorage2.network.test.nodefactory;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.TrackedStorageRepositoryProvider;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
@@ -17,12 +14,7 @@ public class ExternalStorageNetworkNodeFactory extends AbstractNetworkNodeFactor
         node.initialize(
             NetworkTestFixtures.STORAGE_CHANNEL_TYPES,
             () -> 0L,
-            new TrackedStorageRepositoryProvider() {
-                @Override
-                public <T> TrackedStorageRepository<T> getRepository(final StorageChannelType<T> type) {
-                    return new InMemoryTrackedStorageRepository<>();
-                }
-            }
+            type -> new InMemoryTrackedStorageRepository()
         );
         return node;
     }

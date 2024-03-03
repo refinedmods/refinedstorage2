@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -15,17 +16,21 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE2;
+
 public class InterfaceExportStateImpl implements InterfaceExportState {
-    private final Map<Integer, ResourceAmount<String>> requested = new HashMap<>();
-    private final Map<Integer, ResourceAmount<String>> current = new HashMap<>();
+    private final Map<Integer, ResourceAmount> requested = new HashMap<>();
+    private final Map<Integer, ResourceAmount> current = new HashMap<>();
     private final int slots;
 
     public InterfaceExportStateImpl(final int slots) {
         this.slots = slots;
     }
 
-    public void setRequestedResource(final int index, final String resource, final long amount) {
-        requested.put(index, new ResourceAmount<>(resource, amount));
+    public void setRequestedResource(final int index, final ResourceKey resource, final long amount) {
+        requested.put(index, new ResourceAmount(resource, amount));
     }
 
     public void clearRequestedResources() {
@@ -38,31 +43,31 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Collection<T> expandExportCandidates(final StorageChannel<T> storageChannel, final T resource) {
-        if ("A".equals(resource)) {
-            return (Collection<T>) expandExportCandidates((StorageChannel<String>) storageChannel);
+    public Collection<ResourceKey> expandExportCandidates(final StorageChannel storageChannel,
+                                                          final ResourceKey resource) {
+        if (A.equals(resource)) {
+            return expandExportCandidates(storageChannel);
         }
         return Collections.singletonList(resource);
     }
 
-    private Collection<String> expandExportCandidates(final StorageChannel<String> storageChannel) {
-        final List<String> candidates = new ArrayList<>();
-        candidates.add("A");
-        // simulate the behavior from FuzzyStorageChannel
-        if (storageChannel.get("A1").isPresent()) {
-            candidates.add("A1");
+    private Collection<ResourceKey> expandExportCandidates(final StorageChannel storageChannel) {
+        final List<ResourceKey> candidates = new ArrayList<>();
+        candidates.add(A);
+        // Simulate the behavior from FuzzyStorageChannel
+        if (storageChannel.get(A_ALTERNATIVE).isPresent()) {
+            candidates.add(A_ALTERNATIVE);
         }
-        if (storageChannel.get("A2").isPresent()) {
-            candidates.add("A2");
+        if (storageChannel.get(A_ALTERNATIVE2).isPresent()) {
+            candidates.add(A_ALTERNATIVE2);
         }
         return candidates;
     }
 
     @Override
-    public <A, B> boolean isExportedResourceValid(final ResourceTemplate<A> want, final ResourceTemplate<B> got) {
-        if ("A".equals(want.resource())) {
-            return ((String) got.resource()).startsWith("A");
+    public boolean isExportedResourceValid(final ResourceTemplate want, final ResourceTemplate got) {
+        if (A.equals(want.resource())) {
+            return got.resource() == A || got.resource() == A_ALTERNATIVE || got.resource() == A_ALTERNATIVE2;
         }
         return got.equals(want);
     }
@@ -75,19 +80,19 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
 
     @Nullable
     @Override
-    public ResourceTemplate<?> getRequestedResource(final int slotIndex) {
+    public ResourceTemplate getRequestedResource(final int slotIndex) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = requested.get(slotIndex);
+        final ResourceAmount resourceAmount = requested.get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
-        return new ResourceTemplate<>(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        return new ResourceTemplate(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
     }
 
     @Override
     public long getRequestedAmount(final int slotIndex) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = requested.get(slotIndex);
+        final ResourceAmount resourceAmount = requested.get(slotIndex);
         if (resourceAmount == null) {
             return 0L;
         }
@@ -96,19 +101,19 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
 
     @Nullable
     @Override
-    public ResourceTemplate<?> getExportedResource(final int slotIndex) {
+    public ResourceTemplate getExportedResource(final int slotIndex) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = current.get(slotIndex);
+        final ResourceAmount resourceAmount = current.get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
-        return new ResourceTemplate<>(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        return new ResourceTemplate(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
     }
 
     @Override
     public long getExportedAmount(final int slotIndex) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = current.get(slotIndex);
+        final ResourceAmount resourceAmount = current.get(slotIndex);
         if (resourceAmount == null) {
             return 0L;
         }
@@ -116,19 +121,19 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public <T> void setExportSlot(final int slotIndex, final ResourceTemplate<T> resource, final long amount) {
+    public void setExportSlot(final int slotIndex, final ResourceTemplate resource, final long amount) {
         validateIndex(slotIndex);
-        current.put(slotIndex, new ResourceAmount<>((String) resource.resource(), amount));
+        current.put(slotIndex, new ResourceAmount(resource.resource(), amount));
     }
 
-    public void setCurrentlyExported(final int index, final String resource, final long amount) {
-        setExportSlot(index, new ResourceTemplate<>(resource, NetworkTestFixtures.STORAGE_CHANNEL_TYPE), amount);
+    public void setCurrentlyExported(final int index, final ResourceKey resource, final long amount) {
+        setExportSlot(index, new ResourceTemplate(resource, NetworkTestFixtures.STORAGE_CHANNEL_TYPE), amount);
     }
 
     @Override
     public void shrinkExportedAmount(final int slotIndex, final long amount) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = this.current.get(slotIndex);
+        final ResourceAmount resourceAmount = this.current.get(slotIndex);
         if (resourceAmount.getAmount() - amount <= 0) {
             this.current.remove(slotIndex);
         } else {
@@ -139,20 +144,20 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     @Override
     public void growExportedAmount(final int slotIndex, final long amount) {
         validateIndex(slotIndex);
-        final ResourceAmount<String> resourceAmount = this.current.get(slotIndex);
+        final ResourceAmount resourceAmount = this.current.get(slotIndex);
         resourceAmount.increment(amount);
     }
 
     @Override
-    public <T> long insert(final StorageChannelType<T> storageChannelType,
-                           final T resource,
-                           final long amount,
-                           final Action action) {
+    public long insert(final StorageChannelType storageChannelType,
+                       final ResourceKey resource,
+                       final long amount,
+                       final Action action) {
         for (int i = 0; i < getSlots(); ++i) {
             if (getExportedResource(i) == null) {
                 if (action == Action.EXECUTE) {
-                    final ResourceTemplate<String> template = new ResourceTemplate<>(
-                        (String) resource,
+                    final ResourceTemplate template = new ResourceTemplate(
+                        resource,
                         NetworkTestFixtures.STORAGE_CHANNEL_TYPE
                     );
                     setExportSlot(i, template, amount);
@@ -164,10 +169,10 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public <T> long extract(final T resource, final long amount, final Action action) {
+    public long extract(final ResourceKey resource, final long amount, final Action action) {
         long extracted = 0;
         for (int i = 0; i < getSlots(); ++i) {
-            final ResourceTemplate<?> slot = getExportedResource(i);
+            final ResourceTemplate slot = getExportedResource(i);
             if (slot != null && slot.resource().equals(resource)) {
                 final long maxAmount = Math.min(getExportedAmount(i), amount - extracted);
                 extracted += maxAmount;

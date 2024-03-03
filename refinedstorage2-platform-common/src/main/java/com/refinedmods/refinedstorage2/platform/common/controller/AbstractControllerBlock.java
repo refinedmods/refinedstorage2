@@ -33,10 +33,10 @@ public abstract class AbstractControllerBlock<I extends BlockItem>
     private final ControllerBlockEntityTicker ticker;
     private final DyeColor color;
 
-    public AbstractControllerBlock(final ControllerType type,
-                                   final MutableComponent name,
-                                   final ControllerBlockEntityTicker ticker,
-                                   final DyeColor color) {
+    protected AbstractControllerBlock(final ControllerType type,
+                                      final MutableComponent name,
+                                      final ControllerBlockEntityTicker ticker,
+                                      final DyeColor color) {
         super(BlockConstants.PROPERTIES);
         this.type = type;
         this.name = name;

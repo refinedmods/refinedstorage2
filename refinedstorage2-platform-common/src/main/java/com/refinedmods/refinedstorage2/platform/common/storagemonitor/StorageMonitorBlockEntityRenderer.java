@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
@@ -41,7 +42,7 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
         if (!blockEntity.isCurrentlyActive()) {
             return;
         }
-        final ResourceAmountTemplate<?> template = blockEntity.getFilteredResource();
+        final ResourceAmountTemplate template = blockEntity.getFilteredResource();
         if (template == null) {
             return;
         }
@@ -55,13 +56,13 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
         );
     }
 
-    private <T> void doRender(final Level level,
-                              final PoseStack poseStack,
-                              final MultiBufferSource vertexConsumers,
-                              final BiDirection direction,
-                              final ResourceAmountTemplate<T> template,
-                              final long amount) {
-        final ResourceRendering<T> resourceRendering = PlatformApi.INSTANCE.getResourceRendering(
+    private void doRender(final Level level,
+                          final PoseStack poseStack,
+                          final MultiBufferSource vertexConsumers,
+                          final BiDirection direction,
+                          final ResourceAmountTemplate template,
+                          final long amount) {
+        final ResourceRendering resourceRendering = PlatformApi.INSTANCE.getResourceRendering(
             template.getResource()
         );
         doRender(
@@ -75,13 +76,13 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
         );
     }
 
-    private <T> void doRender(final PoseStack poseStack,
-                              final MultiBufferSource renderTypeBuffer,
-                              final Quaternionf rotation,
-                              final String amount,
-                              final Level level,
-                              final ResourceRendering<T> resourceRendering,
-                              final T resource) {
+    private void doRender(final PoseStack poseStack,
+                          final MultiBufferSource renderTypeBuffer,
+                          final Quaternionf rotation,
+                          final String amount,
+                          final Level level,
+                          final ResourceRendering resourceRendering,
+                          final ResourceKey resource) {
         poseStack.pushPose();
 
         poseStack.translate(0.5, 0.5, 0.5);

@@ -15,8 +15,7 @@ import org.apiguardian.api.API;
 public interface ExternalStorageProviderFactory {
     /**
      * @param channelType the channel type
-     * @param <T>         the resource type
      * @return the external storage provider
      */
-    <T> Optional<ExternalStorageProvider<T>> create(StorageChannelType<T> channelType);
+    Optional<ExternalStorageProvider> create(StorageChannelType channelType);
 }

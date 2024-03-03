@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -23,10 +24,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientToServerCommunicationsImpl implements ClientToServerCommunications {
     @Override
-    public <T> void sendGridExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                    final T resource,
-                                    final GridExtractMode mode,
-                                    final boolean cursor) {
+    public void sendGridExtract(final PlatformStorageChannelType storageChannelType,
+                                final ResourceKey resource,
+                                final GridExtractMode mode,
+                                final boolean cursor) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
             PacketIds.GRID_EXTRACT,
             buf -> {
@@ -39,10 +40,10 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public <T> void sendGridScroll(final PlatformStorageChannelType<T> storageChannelType,
-                                   final T resource,
-                                   final GridScrollMode mode,
-                                   final int slotIndex) {
+    public void sendGridScroll(final PlatformStorageChannelType storageChannelType,
+                               final ResourceKey resource,
+                               final GridScrollMode mode,
+                               final int slotIndex) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
             PacketIds.GRID_SCROLL,
             buf -> {
@@ -103,9 +104,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
 
     @Override
-    public <T> void sendResourceFilterSlotChange(final PlatformStorageChannelType<T> storageChannelType,
-                                                 final T resource,
-                                                 final int slotIndex) {
+    public void sendResourceFilterSlotChange(final PlatformStorageChannelType storageChannelType,
+                                             final ResourceKey resource,
+                                             final int slotIndex) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType)
             .ifPresent(id -> sendToServer(PacketIds.RESOURCE_FILTER_SLOT_CHANGE, buf -> {
                 buf.writeInt(slotIndex);

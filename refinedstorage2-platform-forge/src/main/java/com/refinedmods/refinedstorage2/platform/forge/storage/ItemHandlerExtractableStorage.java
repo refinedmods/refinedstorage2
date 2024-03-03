@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
@@ -9,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResourc
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class ItemHandlerExtractableStorage implements ExtractableStorage<ItemResource> {
+public class ItemHandlerExtractableStorage implements ExtractableStorage {
     private final CapabilityCache capabilityCache;
     private final AmountOverride amountOverride;
 
@@ -20,9 +21,12 @@ public class ItemHandlerExtractableStorage implements ExtractableStorage<ItemRes
     }
 
     @Override
-    public long extract(final ItemResource resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
+        if (!(resource instanceof ItemResource itemResource)) {
+            return 0L;
+        }
         return capabilityCache.getItemHandler().map(itemHandler -> {
-            final ItemStack toExtractStack = resource.toItemStack(amount);
+            final ItemStack toExtractStack = itemResource.toItemStack(amount);
             final long correctedAmount = amountOverride.overrideAmount(
                 resource,
                 amount,

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -36,16 +37,16 @@ class PriorityMultiStorageNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void shouldRespectPriority(
         final boolean multiStorageAHasPriority,
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(100);
+        final Storage storage1 = new LimitedStorageImpl(100);
         final MultiStorageProviderImpl provider1 = new MultiStorageProviderImpl();
         provider1.set(1, storage1);
         a.setProvider(provider1);
         a.setActive(true);
 
-        final Storage<String> storage2 = new LimitedStorageImpl<>(100);
+        final Storage storage2 = new LimitedStorageImpl(100);
         final MultiStorageProviderImpl provider2 = new MultiStorageProviderImpl();
         provider2.set(1, storage2);
         b.setProvider(provider2);
@@ -60,7 +61,7 @@ class PriorityMultiStorageNetworkNodeTest {
         }
 
         // Act
-        networkStorage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        networkStorage.insert(A, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         if (multiStorageAHasPriority) {

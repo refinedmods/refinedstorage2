@@ -27,11 +27,11 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemGridResource extends AbstractPlatformGridResource<ItemResource> {
+public class ItemGridResource extends AbstractPlatformGridResource {
     private final int id;
     private final ItemStack itemStack;
 
-    public ItemGridResource(final ResourceAmount<ItemResource> resourceAmount,
+    public ItemGridResource(final ResourceAmount resourceAmount,
                             final ItemStack itemStack,
                             final String name,
                             final String modId,
@@ -44,7 +44,7 @@ public class ItemGridResource extends AbstractPlatformGridResource<ItemResource>
             GridResourceAttributeKeys.TAGS, tags,
             GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Item.getId(resourceAmount.getResource().item());
+        this.id = Item.getId(((ItemResource) resourceAmount.getResource()).item());
         this.itemStack = itemStack;
     }
 

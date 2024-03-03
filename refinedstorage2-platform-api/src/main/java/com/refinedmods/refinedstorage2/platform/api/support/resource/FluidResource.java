@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -14,10 +14,9 @@ import net.minecraft.world.level.material.Fluids;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<FluidResource> {
+public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements ResourceKey, FuzzyModeNormalizer {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
-    private static final String TAG_AMOUNT = "amount";
 
     public FluidResource(final Fluid fluid, @Nullable final CompoundTag tag) {
         this.fluid = CoreValidations.validateNotNull(fluid, "Fluid must not be null");
@@ -25,7 +24,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
     }
 
     @Override
-    public FluidResource normalize() {
+    public ResourceKey normalize() {
         return new FluidResource(fluid, null);
     }
 
@@ -38,13 +37,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         return tag;
     }
 
-    public static CompoundTag toTagWithAmount(final ResourceAmount<FluidResource> resourceAmount) {
-        final CompoundTag tag = toTag(resourceAmount.getResource());
-        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
-        return tag;
-    }
-
-    public static Optional<FluidResource> fromTag(final CompoundTag tag) {
+    public static Optional<ResourceKey> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
         final Fluid fluid = BuiltInRegistries.FLUID.get(id);
         if (fluid == Fluids.EMPTY) {
@@ -52,9 +45,5 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         }
         final CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
         return Optional.of(new FluidResource(fluid, itemTag));
-    }
-
-    public static Optional<ResourceAmount<FluidResource>> fromTagWithAmount(final CompoundTag tag) {
-        return fromTag(tag).map(fluidResource -> new ResourceAmount<>(fluidResource, tag.getLong(TAG_AMOUNT)));
     }
 }

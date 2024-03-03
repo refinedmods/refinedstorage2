@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 public abstract class AbstractDetectorAmountStrategy implements DetectorAmountStrategy {
-    protected <T> StorageChannel<T> getStorageChannel(final Network network, final ResourceTemplate<T> template) {
+    protected StorageChannel getStorageChannel(final Network network, final ResourceTemplate template) {
         return network.getComponent(StorageNetworkComponent.class).getStorageChannel(template.storageChannelType());
     }
 }

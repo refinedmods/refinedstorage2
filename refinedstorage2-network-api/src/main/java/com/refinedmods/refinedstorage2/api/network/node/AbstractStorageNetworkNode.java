@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -38,7 +39,7 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
     }
 
     @Override
-    public boolean isAllowed(final Object resource) {
+    public boolean isAllowed(final ResourceKey resource) {
         return filter.isAllowed(resource);
     }
 
@@ -62,13 +63,13 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
         getRelevantStorageChannelTypes().forEach(type -> storage.getStorageChannel(type).sortSources());
     }
 
-    protected abstract Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes();
+    protected abstract Set<StorageChannelType> getRelevantStorageChannelTypes();
 
-    public void setFilterTemplates(final Set<Object> templates) {
+    public void setFilterTemplates(final Set<ResourceKey> templates) {
         filter.setTemplates(templates);
     }
 
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
+    public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         filter.setNormalizer(normalizer);
     }
 }

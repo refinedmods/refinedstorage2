@@ -28,7 +28,7 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public FluidStack getFluidInTank(final int tank) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(tank);
+        final ResourceAmountTemplate resourceAmount = container.get(tank);
         if (resourceAmount == null || !(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
             return FluidStack.EMPTY;
         }
@@ -37,7 +37,7 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public int getTankCapacity(final int tank) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(tank);
+        final ResourceAmountTemplate resourceAmount = container.get(tank);
         if (resourceAmount == null || resourceAmount.getResource() instanceof FluidResource) {
             return (int) StorageChannelTypes.FLUID.getInterfaceExportLimit();
         }
@@ -85,7 +85,7 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
     @Nullable
     private FluidResource findExtractableFluidResource() {
         for (int i = 0; i < container.size(); ++i) {
-            final ResourceAmountTemplate<?> resourceAmount = container.get(i);
+            final ResourceAmountTemplate resourceAmount = container.get(i);
             if (resourceAmount == null || !(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
                 continue;
             }

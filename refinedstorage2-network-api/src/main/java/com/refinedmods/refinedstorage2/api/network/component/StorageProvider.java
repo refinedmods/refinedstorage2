@@ -25,8 +25,7 @@ public interface StorageProvider {
      * removed from a network.
      *
      * @param channelType the storage channel type
-     * @param <T>         the type of resource
      * @return the storage for the given channel, if present
      */
-    <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType);
+    Optional<Storage> getStorageForChannel(StorageChannelType channelType);
 }

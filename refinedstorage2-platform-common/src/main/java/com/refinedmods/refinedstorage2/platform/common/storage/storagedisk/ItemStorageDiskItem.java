@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -16,7 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResource> {
+public class ItemStorageDiskItem extends AbstractStorageContainerItem {
     private final ItemStorageType.Variant variant;
 
     public ItemStorageDiskItem(final ItemStorageType.Variant variant) {
@@ -39,7 +38,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
     }
 
     @Override
-    protected Storage<ItemResource> createStorage(final StorageRepository storageRepository) {
+    protected Storage createStorage(final StorageRepository storageRepository) {
         return StorageTypes.ITEM.create(variant.getCapacity(), storageRepository::markAsChanged);
     }
 

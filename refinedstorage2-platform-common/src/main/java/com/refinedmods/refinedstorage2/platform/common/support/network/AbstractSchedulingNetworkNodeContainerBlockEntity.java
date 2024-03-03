@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.support.network;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.SchedulingMode;
@@ -85,5 +86,5 @@ public abstract class AbstractSchedulingNetworkNodeContainerBlockEntity<T extend
 
     protected abstract void setTaskExecutor(TaskExecutor<C> taskExecutor);
 
-    protected abstract void setFilterTemplates(List<Object> templates);
+    protected abstract void setFilterTemplates(List<ResourceKey> templates);
 }

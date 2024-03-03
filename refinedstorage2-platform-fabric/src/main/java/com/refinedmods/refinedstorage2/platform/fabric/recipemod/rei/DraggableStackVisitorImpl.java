@@ -59,11 +59,11 @@ class DraggableStackVisitorImpl
             .orElse(DraggedAcceptorResult.PASS);
     }
 
-    private <T> DraggedAcceptorResult accept(
+    private DraggedAcceptorResult accept(
         final DraggingContext<AbstractBaseScreen<? extends AbstractResourceContainerMenu>> context,
         final AbstractResourceContainerMenu menu,
         final AbstractBaseScreen<? extends AbstractResourceContainerMenu> screen,
-        final ResourceTemplate<T> resource
+        final ResourceTemplate resource
     ) {
         for (final ResourceSlot slot : menu.getResourceSlots()) {
             final Rectangle slotBounds = toRectangle(screen, slot);
@@ -71,7 +71,7 @@ class DraggableStackVisitorImpl
                 continue;
             }
             Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotChange(
-                (PlatformStorageChannelType<T>) resource.storageChannelType(),
+                (PlatformStorageChannelType) resource.storageChannelType(),
                 resource.resource(),
                 slot.index
             );

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -25,7 +26,7 @@ public interface ResourceContainer {
 
     void change(int index, ItemStack stack, boolean tryAlternatives);
 
-    <T> void set(int index, ResourceAmountTemplate<T> resourceAmount);
+    void set(int index, ResourceAmountTemplate resourceAmount);
 
     long getAmount(int index);
 
@@ -35,20 +36,20 @@ public interface ResourceContainer {
 
     void setAmount(int index, long amount);
 
-    <T> long getMaxAmount(ResourceAmountTemplate<T> resourceAmount);
+    long getMaxAmount(ResourceAmountTemplate resourceAmount);
 
-    <T> boolean isValid(T resource);
+    boolean isValid(ResourceKey resource);
 
     void remove(int index);
 
     int size();
 
     @Nullable
-    ResourceAmountTemplate<?> get(int index);
+    ResourceAmountTemplate get(int index);
 
-    Set<Object> getUniqueTemplates();
+    Set<ResourceKey> getUniqueTemplates();
 
-    List<ResourceTemplate<?>> getTemplates();
+    List<ResourceTemplate> getTemplates();
 
     void writeToUpdatePacket(FriendlyByteBuf buf);
 
@@ -58,15 +59,15 @@ public interface ResourceContainer {
 
     void fromTag(CompoundTag tag);
 
-    ResourceFactory<?> getPrimaryResourceFactory();
+    ResourceFactory getPrimaryResourceFactory();
 
-    Set<ResourceFactory<?>> getAlternativeResourceFactories();
+    Set<ResourceFactory> getAlternativeResourceFactories();
 
     Container toItemContainer();
 
-    <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+    long insert(StorageChannelType storageChannelType, ResourceKey resource, long amount, Action action);
 
-    <T> long extract(T resource, long amount, Action action);
+    long extract(ResourceKey resource, long amount, Action action);
 
     ResourceContainer copy();
 }

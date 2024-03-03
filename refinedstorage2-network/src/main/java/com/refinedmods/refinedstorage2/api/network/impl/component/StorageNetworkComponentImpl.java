@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkComponentImpl.class);
 
-    private final Map<StorageChannelType<?>, StorageChannel<?>> channels;
+    private final Map<StorageChannelType, StorageChannel> channels;
 
-    public StorageNetworkComponentImpl(final Collection<? extends StorageChannelType<?>> storageChannelTypes) {
+    public StorageNetworkComponentImpl(final Collection<? extends StorageChannelType> storageChannelTypes) {
         this.channels = storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
             type -> type,
             StorageChannelType::create
@@ -32,18 +32,17 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public void onContainerAdded(final NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageProvider provider) {
-            for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
-                tryAddStorageFromProviderToChannel(provider, (StorageChannelType) entry.getKey(), entry.getValue());
+            for (final Map.Entry<StorageChannelType, StorageChannel> entry : channels.entrySet()) {
+                tryAddStorageFromProviderToChannel(provider, entry.getKey(), entry.getValue());
             }
         }
     }
 
-    private <T> void tryAddStorageFromProviderToChannel(final StorageProvider provider,
-                                                        final StorageChannelType<T> type,
-                                                        final StorageChannel<T> channel) {
+    private void tryAddStorageFromProviderToChannel(final StorageProvider provider,
+                                                    final StorageChannelType type,
+                                                    final StorageChannel channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.debug("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
@@ -51,41 +50,38 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public void onContainerRemoved(final NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageProvider provider) {
-            for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
+            for (final Map.Entry<StorageChannelType, StorageChannel> entry : channels.entrySet()) {
                 final StorageChannelType storageChannelType = entry.getKey();
-                final StorageChannel<?> storageChannel = entry.getValue();
+                final StorageChannel storageChannel = entry.getValue();
                 tryRemoveStorageFromProviderFromChannel(provider, storageChannelType, storageChannel);
             }
         }
     }
 
-    private <T> void tryRemoveStorageFromProviderFromChannel(final StorageProvider provider,
-                                                             final StorageChannelType<T> type,
-                                                             final StorageChannel<T> channel) {
+    private void tryRemoveStorageFromProviderFromChannel(final StorageProvider provider,
+                                                         final StorageChannelType type,
+                                                         final StorageChannel channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.debug("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
-        return (StorageChannel<T>) channels.get(type);
+    public StorageChannel getStorageChannel(final StorageChannelType type) {
+        return channels.get(type);
     }
 
     @Override
-    public Set<StorageChannelType<?>> getStorageChannelTypes() {
+    public Set<StorageChannelType> getStorageChannelTypes() {
         return channels.keySet();
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public boolean hasSource(final Predicate<Storage<?>> matcher) {
-        for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
+    public boolean hasSource(final Predicate<Storage> matcher) {
+        for (final Map.Entry<StorageChannelType, StorageChannel> entry : channels.entrySet()) {
             final StorageChannel storageChannel = entry.getValue();
             if (storageChannel.hasSource(matcher)) {
                 return true;
@@ -95,10 +91,10 @@ public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     }
 
     @Override
-    public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
-                                                           final Class<? extends Actor> actorType) {
-        final StorageChannel<T> storageChannel = getStorageChannel(type);
-        return storageChannel.getAll().stream().map(resourceAmount -> new TrackedResourceAmount<>(
+    public List<TrackedResourceAmount> getResources(final StorageChannelType type,
+                                                    final Class<? extends Actor> actorType) {
+        final StorageChannel storageChannel = getStorageChannel(type);
+        return storageChannel.getAll().stream().map(resourceAmount -> new TrackedResourceAmount(
             resourceAmount,
             storageChannel.findTrackedResourceByActorType(resourceAmount.getResource(), actorType).orElse(null)
         )).toList();

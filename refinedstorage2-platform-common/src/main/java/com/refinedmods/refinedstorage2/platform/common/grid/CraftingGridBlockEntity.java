@@ -137,7 +137,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         return Optional.ofNullable(node.getNetwork());
     }
 
-    Optional<StorageChannel<ItemResource>> getStorageChannel() {
+    Optional<StorageChannel> getStorageChannel() {
         return getNetwork().map(network -> network
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM));
@@ -149,7 +149,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
 
     private ItemStack doInsert(final ItemStack stack,
                                final Player player,
-                               final StorageChannel<ItemResource> storageChannel) {
+                               final StorageChannel storageChannel) {
         final long inserted = storageChannel.insert(
             ItemResource.ofItemStack(stack),
             stack.getCount(),

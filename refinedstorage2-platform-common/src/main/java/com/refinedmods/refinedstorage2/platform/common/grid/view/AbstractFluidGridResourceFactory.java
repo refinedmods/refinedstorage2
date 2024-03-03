@@ -15,8 +15,7 @@ import net.minecraft.world.level.material.Fluid;
 
 public abstract class AbstractFluidGridResourceFactory implements GridResourceFactory {
     @Override
-    @SuppressWarnings("unchecked")
-    public Optional<GridResource> apply(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> apply(final ResourceAmount resourceAmount) {
         if (!(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
             return Optional.empty();
         }
@@ -26,7 +25,7 @@ public abstract class AbstractFluidGridResourceFactory implements GridResourceFa
         final Set<String> tags = getTags(fluidResource.fluid());
         final String tooltip = getTooltip(fluidResource);
         return Optional.of(new FluidGridResource(
-            (ResourceAmount<FluidResource>) resourceAmount,
+            resourceAmount,
             name,
             modId,
             modName,

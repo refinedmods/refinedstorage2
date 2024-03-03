@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.exporter.ExporterTransferStrategyFactory;
@@ -33,8 +34,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
@@ -60,13 +59,13 @@ import org.apiguardian.api.API;
 public interface PlatformApi {
     PlatformApi INSTANCE = new PlatformApiProxy();
 
-    PlatformRegistry<StorageType<?>> getStorageTypeRegistry();
+    PlatformRegistry<StorageType> getStorageTypeRegistry();
 
     StorageRepository getStorageRepository(Level level);
 
     StorageContainerItemHelper getStorageContainerItemHelper();
 
-    PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry();
+    PlatformRegistry<PlatformStorageChannelType> getStorageChannelTypeRegistry();
 
     PlatformRegistry<ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
 
@@ -132,25 +131,25 @@ public interface PlatformApi {
 
     void addGridScrollingStrategyFactory(GridScrollingStrategyFactory scrollingStrategyFactory);
 
-    <T> void addResourceFactory(ResourceFactory<T> factory);
+    void addResourceFactory(ResourceFactory factory);
 
-    ResourceFactory<ItemResource> getItemResourceFactory();
+    ResourceFactory getItemResourceFactory();
 
-    PlatformStorageChannelType<ItemResource> getItemStorageChannelType();
+    PlatformStorageChannelType getItemStorageChannelType();
 
-    StorageType<ItemResource> getItemStorageType();
+    StorageType getItemStorageType();
 
-    ResourceFactory<FluidResource> getFluidResourceFactory();
+    ResourceFactory getFluidResourceFactory();
 
-    PlatformStorageChannelType<FluidResource> getFluidStorageChannelType();
+    PlatformStorageChannelType getFluidStorageChannelType();
 
-    StorageType<FluidResource> getFluidStorageType();
+    StorageType getFluidStorageType();
 
-    Set<ResourceFactory<?>> getAlternativeResourceFactories();
+    Set<ResourceFactory> getAlternativeResourceFactories();
 
-    <T> void registerResourceRendering(Class<T> resourceClass, ResourceRendering<T> rendering);
+    <T extends ResourceKey> void registerResourceRendering(Class<T> resourceClass, ResourceRendering rendering);
 
-    <T> ResourceRendering<T> getResourceRendering(T resource);
+    ResourceRendering getResourceRendering(ResourceKey resource);
 
     void registerIngredientConverter(IngredientConverter converter);
 

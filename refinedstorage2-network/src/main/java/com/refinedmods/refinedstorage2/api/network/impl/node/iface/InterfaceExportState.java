@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -11,28 +12,28 @@ import javax.annotation.Nullable;
 public interface InterfaceExportState {
     int getSlots();
 
-    <T> Collection<T> expandExportCandidates(StorageChannel<T> storageChannel, T resource);
+    Collection<ResourceKey> expandExportCandidates(StorageChannel storageChannel, ResourceKey resource);
 
-    <A, B> boolean isExportedResourceValid(ResourceTemplate<A> want,
-                                           ResourceTemplate<B> got);
+    boolean isExportedResourceValid(ResourceTemplate want,
+                                    ResourceTemplate got);
 
     @Nullable
-    ResourceTemplate<?> getRequestedResource(int slotIndex);
+    ResourceTemplate getRequestedResource(int slotIndex);
 
     long getRequestedAmount(int slotIndex);
 
     @Nullable
-    ResourceTemplate<?> getExportedResource(int slotIndex);
+    ResourceTemplate getExportedResource(int slotIndex);
 
     long getExportedAmount(int slotIndex);
 
-    <T> void setExportSlot(int slotIndex, ResourceTemplate<T> resource, long amount);
+    void setExportSlot(int slotIndex, ResourceTemplate resource, long amount);
 
     void shrinkExportedAmount(int slotIndex, long amount);
 
     void growExportedAmount(int slotIndex, long amount);
 
-    <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+    long insert(StorageChannelType storageChannelType, ResourceKey resource, long amount, Action action);
 
-    <T> long extract(T resource, long amount, Action action);
+    long extract(ResourceKey resource, long amount, Action action);
 }

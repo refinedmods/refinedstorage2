@@ -58,9 +58,9 @@ public class GridWatcherManagerImpl implements GridWatcherManager {
         ));
     }
 
-    private <T> void attach(
+    private void attach(
         final GridWatcherRegistration registration,
-        final StorageChannelType<T> storageChannelType,
+        final StorageChannelType storageChannelType,
         final GridStorageChannelProvider storageChannelProvider,
         final boolean replay
     ) {
@@ -94,9 +94,9 @@ public class GridWatcherManagerImpl implements GridWatcherManager {
         ));
     }
 
-    private <T> void detach(
+    private void detach(
         final GridWatcherRegistration registration,
-        final StorageChannelType<T> storageChannelType,
+        final StorageChannelType storageChannelType,
         final GridStorageChannelProvider storageChannelProvider
     ) {
         LOGGER.info("Detaching {} from {}", registration, storageChannelType);

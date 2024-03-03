@@ -14,17 +14,18 @@ import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.Wirel
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class ItemModelProvider extends net.neoforged.neoforge.client.model.generators.ItemModelProvider {
+public class ItemModelProviderImpl extends ItemModelProvider {
     private static final String CUTOUT_TEXTURE_KEY = "cutout";
     private static final String CABLE_TEXTURE_KEY = "cable";
 
-    public ItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+    public ItemModelProviderImpl(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, MOD_ID, existingFileHelper);
     }
 

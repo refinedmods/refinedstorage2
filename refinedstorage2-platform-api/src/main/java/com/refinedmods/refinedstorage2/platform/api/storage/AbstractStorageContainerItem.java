@@ -23,12 +23,12 @@ import org.apiguardian.api.API;
 // TODO: Immunity for despawning
 // TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public abstract class AbstractStorageContainerItem<T> extends Item implements StorageContainerItem {
+public abstract class AbstractStorageContainerItem extends Item implements StorageContainerItem {
     protected final StorageContainerItemHelper helper;
-    private final StorageChannelType<T> type;
+    private final StorageChannelType type;
 
     protected AbstractStorageContainerItem(final Properties properties,
-                                           final StorageChannelType<T> type,
+                                           final StorageChannelType type,
                                            final StorageContainerItemHelper helper) {
         super(properties);
         this.type = type;
@@ -36,10 +36,8 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public <X> Optional<TypedStorage<X, Storage<X>>> resolve(final StorageRepository storageRepository,
-                                                             final ItemStack stack) {
-        return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage(storage, type));
+    public Optional<TypedStorage<Storage>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+        return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage<>(storage, type));
     }
 
     @Override
@@ -85,7 +83,7 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
 
     protected abstract String formatAmount(long amount);
 
-    protected abstract Storage<T> createStorage(StorageRepository storageRepository);
+    protected abstract Storage createStorage(StorageRepository storageRepository);
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
 

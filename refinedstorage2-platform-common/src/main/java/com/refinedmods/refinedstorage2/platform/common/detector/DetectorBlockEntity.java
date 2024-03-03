@@ -93,7 +93,7 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
     }
 
     private void propagateAmount() {
-        final ResourceAmountTemplate<?> resourceAmount = filter.getFilterContainer().get(0);
+        final ResourceAmountTemplate resourceAmount = filter.getFilterContainer().get(0);
         final long normalizedAmount = resourceAmount == null
             ? (long) amount
             : resourceAmount.getStorageChannelType().normalizeAmount(amount);

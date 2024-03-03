@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -23,10 +24,10 @@ public class GridUpdatePacket implements ClientPlayNetworking.PlayChannelHandler
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id).ifPresent(type -> handle(type, buf, client));
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> type,
-                            final FriendlyByteBuf buf,
-                            final Minecraft client) {
-        final T resource = type.fromBuffer(buf);
+    private void handle(final PlatformStorageChannelType type,
+                        final FriendlyByteBuf buf,
+                        final Minecraft client) {
+        final ResourceKey resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
         final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
         if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {

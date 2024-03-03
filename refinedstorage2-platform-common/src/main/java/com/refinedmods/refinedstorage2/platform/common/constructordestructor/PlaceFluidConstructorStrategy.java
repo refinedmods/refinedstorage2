@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategy;
@@ -28,7 +29,7 @@ public class PlaceFluidConstructorStrategy implements ConstructorStrategy {
 
     @Override
     public boolean apply(
-        final Object resource,
+        final ResourceKey resource,
         final Actor actor,
         final Player actingPlayer,
         final Network network
@@ -39,7 +40,7 @@ public class PlaceFluidConstructorStrategy implements ConstructorStrategy {
         if (!(resource instanceof FluidResource fluidResource)) {
             return false;
         }
-        final StorageChannel<FluidResource> storageChannel = network.getComponent(StorageNetworkComponent.class)
+        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.FLUID);
         final long bucketAmount = Platform.INSTANCE.getBucketAmount();
         final long extractedAmount = storageChannel.extract(

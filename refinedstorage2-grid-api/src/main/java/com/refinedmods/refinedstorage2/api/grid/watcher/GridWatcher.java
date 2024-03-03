@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.watcher;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
@@ -22,15 +23,14 @@ public interface GridWatcher {
     /**
      * Called when a resource is changed.
      *
-     * @param <T>                the resource type
      * @param storageChannelType the relevant storage channel type
      * @param resource           the resource
      * @param change             the changed amount
      * @param trackedResource    the tracked resource, if present
      */
-    <T> void onChanged(
-        StorageChannelType<T> storageChannelType,
-        T resource,
+    void onChanged(
+        StorageChannelType storageChannelType,
+        ResourceKey resource,
         long change,
         @Nullable TrackedResource trackedResource
     );

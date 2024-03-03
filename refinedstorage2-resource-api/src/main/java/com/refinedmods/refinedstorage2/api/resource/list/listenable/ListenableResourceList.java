@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.resource.list.listenable;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.AbstractProxyResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
@@ -15,38 +16,39 @@ import org.apiguardian.api.API;
  * Can easily be used with an existing list by passing it in the constructor.
  * The {@link ResourceListListener#onChanged(ResourceListOperationResult)} method is only called when the change
  * is being performed through this list, not the delegate list.
- *
- * @param <T> the resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class ListenableResourceList<T> extends AbstractProxyResourceList<T> {
-    private final Set<ResourceListListener<T>> listeners = new HashSet<>();
+public class ListenableResourceList extends AbstractProxyResourceList {
+    private final Set<ResourceListListener> listeners = new HashSet<>();
 
-    public ListenableResourceList(final ResourceList<T> delegate) {
+    public ListenableResourceList(final ResourceList delegate) {
         super(delegate);
     }
 
     @Override
-    public ResourceListOperationResult<T> add(final T resource, final long amount) {
-        final ResourceListOperationResult<T> result = super.add(resource, amount);
-        listeners.forEach(listener -> listener.onChanged(result));
+    public ResourceListOperationResult add(final ResourceKey resource, final long amount) {
+        final ResourceListOperationResult result = super.add(resource, amount);
+        notifyListeners(result);
         return result;
     }
 
     @Override
-    public Optional<ResourceListOperationResult<T>> remove(final T resource, final long amount) {
-        return super.remove(resource, amount)
-            .map(result -> {
-                listeners.forEach(listener -> listener.onChanged(result));
-                return result;
-            });
+    public Optional<ResourceListOperationResult> remove(final ResourceKey resource, final long amount) {
+        return super.remove(resource, amount).map(result -> {
+            notifyListeners(result);
+            return result;
+        });
     }
 
-    public void addListener(final ResourceListListener<T> listener) {
+    private void notifyListeners(final ResourceListOperationResult result) {
+        listeners.forEach(listener -> listener.onChanged(result));
+    }
+
+    public void addListener(final ResourceListListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(final ResourceListListener<T> listener) {
+    public void removeListener(final ResourceListListener listener) {
         listeners.remove(listener);
     }
 }

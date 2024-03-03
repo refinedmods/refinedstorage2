@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.grid.strategy;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
@@ -18,7 +19,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 public class ItemGridExtractionStrategy implements GridExtractionStrategy {
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final CursorItemHandler playerCursorItemHandler;
 
@@ -31,10 +32,10 @@ public class ItemGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     @Override
-    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                 final T resource,
-                                 final GridExtractMode extractMode,
-                                 final boolean cursor) {
+    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
+                             final ResourceKey resource,
+                             final GridExtractMode extractMode,
+                             final boolean cursor) {
         if (resource instanceof ItemResource itemResource) {
             final IItemHandler handler = cursor ? playerCursorItemHandler : playerInventoryStorage;
             gridOperations.extract(

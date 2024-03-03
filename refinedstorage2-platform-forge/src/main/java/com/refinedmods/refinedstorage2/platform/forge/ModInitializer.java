@@ -214,7 +214,7 @@ public class ModInitializer extends AbstractModInitializer {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(false) {
+            () -> new WirelessGridItem() {
                 @Override
                 public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
                                                            final ItemStack newStack,
@@ -222,7 +222,7 @@ public class ModInitializer extends AbstractModInitializer {
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(true) {
+            () -> new WirelessGridItem() {
                 @Override
                 public boolean shouldCauseReequipAnimation(final ItemStack oldStack,
                                                            final ItemStack newStack,

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 
@@ -14,7 +15,7 @@ public interface StorageConfiguration extends Priority {
 
     FilterMode getFilterMode();
 
-    boolean isAllowed(Object resource);
+    boolean isAllowed(ResourceKey resource);
 
     void setFilterMode(FilterMode filterMode);
 

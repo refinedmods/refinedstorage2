@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.importer;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.CompositeImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
@@ -137,9 +138,9 @@ public class ImporterBlockEntity
     }
 
     @Override
-    public <T> long overrideAmount(final T resource,
-                                   final long amount,
-                                   final LongSupplier currentAmount) {
+    public long overrideAmount(final ResourceKey resource,
+                               final long amount,
+                               final LongSupplier currentAmount) {
         if (!upgradeContainer.has(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }

@@ -11,17 +11,17 @@ import java.util.Map;
 class GridWatcherRegistration {
     private final GridWatcher watcher;
     private final Class<? extends Actor> actorType;
-    private final Map<StorageChannelType<?>, ResourceListListener<?>> listeners = new HashMap<>();
+    private final Map<StorageChannelType, ResourceListListener> listeners = new HashMap<>();
 
     GridWatcherRegistration(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         this.watcher = watcher;
         this.actorType = actorType;
     }
 
-    <T> void attach(final StorageChannel<T> storageChannel,
-                    final StorageChannelType<T> storageChannelType,
-                    final boolean replay) {
-        final ResourceListListener<T> listener = change -> watcher.onChanged(
+    void attach(final StorageChannel storageChannel,
+                final StorageChannelType storageChannelType,
+                final boolean replay) {
+        final ResourceListListener listener = change -> watcher.onChanged(
             storageChannelType,
             change.resourceAmount().getResource(),
             change.change(),
@@ -45,9 +45,8 @@ class GridWatcherRegistration {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    <T> void detach(final StorageChannel<T> storageChannel, final StorageChannelType<T> storageChannelType) {
-        final ResourceListListener<T> listener = (ResourceListListener<T>) listeners.get(storageChannelType);
+    void detach(final StorageChannel storageChannel, final StorageChannelType storageChannelType) {
+        final ResourceListListener listener = listeners.get(storageChannelType);
         storageChannel.removeListener(listener);
         listeners.remove(storageChannelType);
     }

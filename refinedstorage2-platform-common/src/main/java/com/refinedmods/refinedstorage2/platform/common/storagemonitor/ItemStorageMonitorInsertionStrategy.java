@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemStorageMonitorInsertionStrategy implements StorageMonitorInsertionStrategy {
     @Override
-    public Optional<ItemStack> insert(final Object configuredResource,
+    public Optional<ItemStack> insert(final ResourceKey configuredResource,
                                       final ItemStack stack,
                                       final Actor actor,
                                       final Network network) {

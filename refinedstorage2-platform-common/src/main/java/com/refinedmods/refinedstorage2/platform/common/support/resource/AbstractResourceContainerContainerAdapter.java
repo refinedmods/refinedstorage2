@@ -33,7 +33,7 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public ItemStack getItem(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
+        final ResourceAmountTemplate resourceAmount = container.get(slotIndex);
         if (resourceAmount != null) {
             return resourceAmount.getStackRepresentation();
         }
@@ -42,7 +42,7 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public ItemStack removeItem(final int slotIndex, final int amount) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
+        final ResourceAmountTemplate resourceAmount = container.get(slotIndex);
         if (resourceAmount != null && resourceAmount.getResource() instanceof ItemResource itemResource) {
             final long maxRemove = Math.min(amount, resourceAmount.getAmount());
             container.shrink(slotIndex, maxRemove);
@@ -53,7 +53,7 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public ItemStack removeItemNoUpdate(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
+        final ResourceAmountTemplate resourceAmount = container.get(slotIndex);
         if (resourceAmount != null && resourceAmount.getResource() instanceof ItemResource itemResource) {
             final ItemStack stack = itemResource.toItemStack();
             final long maxRemove = Math.min(stack.getMaxStackSize(), resourceAmount.getAmount());
@@ -70,14 +70,14 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public void setItem(final int slotIndex, final ItemStack itemStack) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
+        final ResourceAmountTemplate resourceAmount = container.get(slotIndex);
         if (itemStack.isEmpty()) {
             if (resourceAmount != null && resourceAmount.getStorageChannelType() == StorageChannelTypes.ITEM) {
                 container.remove(slotIndex);
             }
             return;
         }
-        container.set(slotIndex, new ResourceAmountTemplate<>(
+        container.set(slotIndex, new ResourceAmountTemplate(
             ItemResource.ofItemStack(itemStack),
             itemStack.getCount(),
             StorageChannelTypes.ITEM

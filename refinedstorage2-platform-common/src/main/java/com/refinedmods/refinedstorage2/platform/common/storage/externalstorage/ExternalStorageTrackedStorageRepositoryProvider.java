@@ -18,18 +18,18 @@ class ExternalStorageTrackedStorageRepositoryProvider implements TrackedStorageR
     private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS = "items";
 
-    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry;
-    private final Map<PlatformStorageChannelType<?>, ExternalStorageTrackedStorageRepository<?>> repositoryMap
+    private final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry;
+    private final Map<PlatformStorageChannelType, ExternalStorageTrackedStorageRepository> repositoryMap
         = new HashMap<>();
 
     ExternalStorageTrackedStorageRepositoryProvider(
-        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+        final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry,
         final Runnable listener
     ) {
         this.storageChannelTypeRegistry = storageChannelTypeRegistry;
         storageChannelTypeRegistry.getAll().forEach(type -> repositoryMap.put(
             type,
-            new ExternalStorageTrackedStorageRepository<>(listener, type)
+            new ExternalStorageTrackedStorageRepository(listener, type)
         ));
     }
 
@@ -40,8 +40,7 @@ class ExternalStorageTrackedStorageRepositoryProvider implements TrackedStorageR
         return items;
     }
 
-    private <T> CompoundTag toTag(final ExternalStorageTrackedStorageRepository<T> repo,
-                                  final ResourceLocation id) {
+    private CompoundTag toTag(final ExternalStorageTrackedStorageRepository repo, final ResourceLocation id) {
         final CompoundTag tag = new CompoundTag();
         tag.putString(TAG_TYPE, id.toString());
         tag.put(TAG_ITEMS, repo.toTag());
@@ -58,8 +57,7 @@ class ExternalStorageTrackedStorageRepositoryProvider implements TrackedStorageR
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> TrackedStorageRepository<T> getRepository(final StorageChannelType<T> type) {
-        return (TrackedStorageRepository<T>) repositoryMap.get((PlatformStorageChannelType<?>) type);
+    public TrackedStorageRepository getRepository(final StorageChannelType type) {
+        return repositoryMap.get(type);
     }
 }

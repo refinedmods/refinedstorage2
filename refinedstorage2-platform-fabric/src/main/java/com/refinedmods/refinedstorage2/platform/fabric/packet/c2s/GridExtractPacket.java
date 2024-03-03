@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -28,15 +29,15 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
             .ifPresent(type -> handle(type, buf, player, server));
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> type,
-                            final FriendlyByteBuf buf,
-                            final Player player,
-                            final MinecraftServer server) {
+    private void handle(final PlatformStorageChannelType type,
+                        final FriendlyByteBuf buf,
+                        final Player player,
+                        final MinecraftServer server) {
         final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof GridExtractionStrategy strategy) {
             final GridExtractMode mode = getMode(buf.readByte());
             final boolean cursor = buf.readBoolean();
-            final T resource = type.fromBuffer(buf);
+            final ResourceKey resource = type.fromBuffer(buf);
             server.execute(() -> strategy.onExtract(type, resource, mode, cursor));
         }
     }

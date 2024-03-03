@@ -193,7 +193,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
             .orElseThrow();
     }
 
-    private StorageChannel<String> getNetworkStorageChannel(final String networkId) {
+    private StorageChannel getNetworkStorageChannel(final String networkId) {
         return networkMap
             .get(networkId)
             .getComponent(StorageNetworkComponent.class)

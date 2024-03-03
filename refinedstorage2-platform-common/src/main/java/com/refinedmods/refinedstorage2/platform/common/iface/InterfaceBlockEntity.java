@@ -44,8 +44,7 @@ public class InterfaceBlockEntity
     private final FilterWithFuzzyMode filter;
     private final ExportedResourcesContainer exportedResources;
     private final Container exportedResourcesAsContainer;
-    private final Map<StorageChannelType<?>, InterfaceExternalStorageProvider<?>> externalStorageProviders =
-        new HashMap<>();
+    private final Map<StorageChannelType, InterfaceExternalStorageProvider> externalStorageProviders = new HashMap<>();
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -72,13 +71,10 @@ public class InterfaceBlockEntity
         );
     }
 
-    private <T> InterfaceExternalStorageProviderImpl<T> createExternalStorageProvider(
-        final PlatformStorageChannelType<T> storageChannelType
+    private InterfaceExternalStorageProviderImpl createExternalStorageProvider(
+        final PlatformStorageChannelType storageChannelType
     ) {
-        return new InterfaceExternalStorageProviderImpl<>(
-            getNode(),
-            storageChannelType
-        );
+        return new InterfaceExternalStorageProviderImpl(getNode(), storageChannelType);
     }
 
     static ResourceContainer createFilterContainer() {
@@ -95,8 +91,8 @@ public class InterfaceBlockEntity
         return new ExportedResourcesContainer(EXPORT_SLOTS, filter);
     }
 
-    static <T> long getTransferQuota(final ResourceTemplate<T> resourceTemplate) {
-        if (resourceTemplate.storageChannelType() instanceof PlatformStorageChannelType<T> storageChannelType) {
+    static long getTransferQuota(final ResourceTemplate resourceTemplate) {
+        if (resourceTemplate.storageChannelType() instanceof PlatformStorageChannelType storageChannelType) {
             return storageChannelType.getInterfaceExportLimit(resourceTemplate.resource());
         }
         return 0;
@@ -177,8 +173,7 @@ public class InterfaceBlockEntity
         return drops;
     }
 
-    @SuppressWarnings("unchecked")
-    <T> InterfaceExternalStorageProvider<T> getExternalStorageProvider(final StorageChannelType<T> storageChannelType) {
-        return (InterfaceExternalStorageProvider<T>) externalStorageProviders.get(storageChannelType);
+    InterfaceExternalStorageProvider getExternalStorageProvider(final StorageChannelType storageChannelType) {
+        return externalStorageProviders.get(storageChannelType);
     }
 }

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
@@ -32,13 +33,13 @@ public class ResourceSlotUpdatePacket implements ClientPlayNetworking.PlayChanne
         }
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> type,
-                            final FriendlyByteBuf buf,
-                            final Minecraft client,
-                            final int slotIndex) {
-        final T resource = type.fromBuffer(buf);
+    private void handle(final PlatformStorageChannelType type,
+                        final FriendlyByteBuf buf,
+                        final Minecraft client,
+                        final int slotIndex) {
+        final ResourceKey resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
-        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceAmountTemplate<>(
+        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceAmountTemplate(
             resource,
             amount,
             type

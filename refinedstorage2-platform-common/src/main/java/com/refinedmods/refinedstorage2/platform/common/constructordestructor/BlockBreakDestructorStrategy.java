@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
@@ -75,7 +75,7 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
         return true;
     }
 
-    private static StorageChannel<ItemResource> getStorageChannel(final Supplier<Network> network) {
+    private static StorageChannel getStorageChannel(final Supplier<Network> network) {
         return network.get()
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM);
@@ -109,7 +109,7 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
     private boolean insertDrops(
         final Actor actor,
         final List<ItemStack> drops,
-        final StorageChannel<ItemResource> storage,
+        final StorageChannel storage,
         final Action action
     ) {
         for (final ItemStack drop : drops) {

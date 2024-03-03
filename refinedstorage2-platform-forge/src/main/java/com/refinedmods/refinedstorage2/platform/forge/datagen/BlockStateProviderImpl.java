@@ -26,6 +26,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -34,7 +35,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class BlockStateProvider extends net.neoforged.neoforge.client.model.generators.BlockStateProvider {
+public class BlockStateProviderImpl extends BlockStateProvider {
     private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = new EnumMap<>(Map.of(
         Direction.NORTH, CableBlockSupport.NORTH,
         Direction.EAST, CableBlockSupport.EAST,
@@ -46,7 +47,7 @@ public class BlockStateProvider extends net.neoforged.neoforge.client.model.gene
 
     private final ExistingFileHelper existingFileHelper;
 
-    public BlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+    public BlockStateProviderImpl(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, MOD_ID, existingFileHelper);
         this.existingFileHelper = existingFileHelper;
     }

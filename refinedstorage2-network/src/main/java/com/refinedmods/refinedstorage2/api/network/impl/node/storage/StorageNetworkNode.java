@@ -12,22 +12,22 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements StorageProvider {
+public class StorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkNode.class);
 
     private final long energyUsage;
-    private final StorageChannelType<?> type;
-    private final ExposedStorage<T> exposedStorage = new ExposedStorage<>(this);
+    private final StorageChannelType type;
+    private final ExposedStorage exposedStorage = new ExposedStorage(this);
 
     @Nullable
-    private Storage<T> internalStorage;
+    private Storage internalStorage;
 
-    public StorageNetworkNode(final long energyUsage, final StorageChannelType<T> type) {
+    public StorageNetworkNode(final long energyUsage, final StorageChannelType type) {
         this.energyUsage = energyUsage;
         this.type = type;
     }
 
-    public void setStorage(final Storage<T> storage) {
+    public void setStorage(final Storage storage) {
         LOGGER.debug("Loading storage {}", storage);
         this.internalStorage = storage;
     }
@@ -60,15 +60,14 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
     }
 
     @Override
-    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<StorageChannelType> getRelevantStorageChannelTypes() {
         return Set.of(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <S> Optional<Storage<S>> getStorageForChannel(final StorageChannelType<S> channelType) {
+    public Optional<Storage> getStorageForChannel(final StorageChannelType channelType) {
         if (channelType == this.type) {
-            return Optional.of((Storage<S>) exposedStorage);
+            return Optional.of(exposedStorage);
         }
         return Optional.empty();
     }

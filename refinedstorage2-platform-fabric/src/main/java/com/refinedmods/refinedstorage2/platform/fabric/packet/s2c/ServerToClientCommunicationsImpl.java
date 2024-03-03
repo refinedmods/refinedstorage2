@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
@@ -40,11 +41,11 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendGridUpdate(final ServerPlayer player,
-                                   final PlatformStorageChannelType<T> storageChannelType,
-                                   final T resource,
-                                   final long change,
-                                   @Nullable final TrackedResource trackedResource) {
+    public void sendGridUpdate(final ServerPlayer player,
+                               final PlatformStorageChannelType storageChannelType,
+                               final ResourceKey resource,
+                               final long change,
+                               @Nullable final TrackedResource trackedResource) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToPlayer(
             player,
             PacketIds.GRID_UPDATE,
@@ -64,9 +65,9 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendResourceSlotUpdate(final ServerPlayer player,
-                                           @Nullable final ResourceAmountTemplate<T> resourceAmount,
-                                           final int slotIndex) {
+    public void sendResourceSlotUpdate(final ServerPlayer player,
+                                       @Nullable final ResourceAmountTemplate resourceAmount,
+                                       final int slotIndex) {
         sendToPlayer(player, PacketIds.RESOURCE_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
             if (resourceAmount != null) {
@@ -82,10 +83,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
         });
     }
 
-    private <T> void sendResourceSlotUpdate(final PlatformStorageChannelType<T> storageChannelType,
-                                            final T resource,
-                                            final long amount,
-                                            final FriendlyByteBuf buf) {
+    private void sendResourceSlotUpdate(final PlatformStorageChannelType storageChannelType,
+                                        final ResourceKey resource,
+                                        final long amount,
+                                        final FriendlyByteBuf buf) {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresentOrElse(id -> {
             buf.writeBoolean(true);
             buf.writeResourceLocation(id);

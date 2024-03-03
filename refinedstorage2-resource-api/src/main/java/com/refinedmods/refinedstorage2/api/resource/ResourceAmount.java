@@ -5,27 +5,25 @@ import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import org.apiguardian.api.API;
 
 /**
- * A class representing a resource of an arbitrary type, and a corresponding amount.
+ * A class representing a resource and a corresponding amount.
  * The resource cannot be mutated but the amount can be modified.
- *
- * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public final class ResourceAmount<T> {
-    private final T resource;
+public final class ResourceAmount {
+    private final ResourceKey resource;
     private long amount;
 
     /**
      * @param resource the resource, must be non-null
      * @param amount   the amount, must be larger than 0
      */
-    public ResourceAmount(final T resource, final long amount) {
+    public ResourceAmount(final ResourceKey resource, final long amount) {
         validate(resource, amount);
         this.resource = resource;
         this.amount = amount;
     }
 
-    public T getResource() {
+    public ResourceKey getResource() {
         return resource;
     }
 
@@ -66,7 +64,7 @@ public final class ResourceAmount<T> {
             + '}';
     }
 
-    public static <T> void validate(final T resource, final long amount) {
+    public static void validate(final ResourceKey resource, final long amount) {
         CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
         CoreValidations.validateNotNull(resource, "Resource must not be null");
     }

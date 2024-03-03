@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.grid.strategy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
@@ -30,10 +31,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final GridOperations<FluidResource> gridOperations;
+    private final GridOperations gridOperations;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final net.fabricmc.fabric.api.transfer.v1.storage.Storage<ItemVariant> playerCursorStorage;
-    private final Storage<ItemResource> itemStorage;
+    private final Storage itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
@@ -45,10 +46,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     @Override
-    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                 final T resource,
-                                 final GridExtractMode extractMode,
-                                 final boolean cursor) {
+    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
+                             final ResourceKey resource,
+                             final GridExtractMode extractMode,
+                             final boolean cursor) {
         if (resource instanceof FluidResource fluidResource) {
             final boolean bucketInInventory = hasBucketInInventory();
             final boolean bucketInStorageChannel = hasBucketInStorage();
@@ -74,8 +75,11 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             return;
         }
         gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
+                final long inserted = destination.insert(toFluidVariant(fluidResource2), amount, tx);
                 final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
                     return 0;
@@ -103,8 +107,11 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                 return;
             }
             gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
+                if (!(resource instanceof FluidResource fluidResource2)) {
+                    return 0;
+                }
                 try (Transaction innerTx = tx.openNested()) {
-                    final long inserted = dest.insert(toFluidVariant(resource), amount, innerTx);
+                    final long inserted = dest.insert(toFluidVariant(fluidResource2), amount, innerTx);
                     final boolean couldInsertBucket = insertResultingBucketIntoInventory(
                         interceptingStorage,
                         cursor,

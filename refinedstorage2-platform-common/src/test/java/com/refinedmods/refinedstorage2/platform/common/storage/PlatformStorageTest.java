@@ -24,20 +24,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SetupMinecraft
 class PlatformStorageTest {
-    PlatformStorage<ItemResource> sut;
+    PlatformStorage sut;
     SimpleListener listener;
 
     @BeforeEach
     void setUp() {
-        final TrackedStorageRepository<ItemResource> trackedStorageRepository =
-            new InMemoryTrackedStorageRepository<>();
-        final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
-            new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100),
+        final TrackedStorageRepository trackedStorageRepository = new InMemoryTrackedStorageRepository();
+        final TrackedStorageImpl delegate = new TrackedStorageImpl(
+            new LimitedStorageImpl(new InMemoryStorageImpl(), 100),
             trackedStorageRepository,
             () -> 0L
         );
         listener = new SimpleListener();
-        sut = new PlatformStorage<>(delegate, StorageTypes.ITEM, trackedStorageRepository, listener);
+        sut = new PlatformStorage(delegate, StorageTypes.ITEM, trackedStorageRepository, listener);
     }
 
     @Test
@@ -56,9 +55,9 @@ class PlatformStorageTest {
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(new ItemResource(Items.DIRT, null), 10),
-            new ResourceAmount<>(new ItemResource(Items.GLASS, null), 20),
-            new ResourceAmount<>(new ItemResource(Items.STONE, null), 30)
+            new ResourceAmount(new ItemResource(Items.DIRT, null), 10),
+            new ResourceAmount(new ItemResource(Items.GLASS, null), 20),
+            new ResourceAmount(new ItemResource(Items.STONE, null), 30)
         );
         assertThat(sut.findTrackedResourceByActorType(new ItemResource(Items.DIRT, null), PlayerActor.class))
             .get()
@@ -83,7 +82,7 @@ class PlatformStorageTest {
         if (action == Action.EXECUTE) {
             assertThat(listener.getChanges()).isEqualTo(2);
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>(new ItemResource(Items.DIRT, null), 100)
+                new ResourceAmount(new ItemResource(Items.DIRT, null), 100)
             );
             assertThat(sut.findTrackedResourceByActorType(new ItemResource(Items.DIRT, null), PlayerActor.class))
                 .get()

@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SetupMinecraft
 class ItemStorageTypeTest {
-    StorageType<ItemResource> sut = StorageTypes.ITEM;
+    StorageType sut = StorageTypes.ITEM;
     SimpleListener listener;
 
     @BeforeEach
@@ -38,9 +38,9 @@ class ItemStorageTypeTest {
     @Test
     void shouldSerializeAndDeserializeRegularStorage() {
         // Arrange
-        final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
-        final Storage<ItemResource> storage = new PlatformStorage<>(
-            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
+        final InMemoryTrackedStorageRepository tracker = new InMemoryTrackedStorageRepository();
+        final Storage storage = new PlatformStorage(
+            new TrackedStorageImpl(new InMemoryStorageImpl(), tracker, () -> 123L),
             StorageTypes.ITEM,
             tracker,
             () -> {
@@ -52,20 +52,20 @@ class ItemStorageTypeTest {
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
-        final Storage<ItemResource> deserialized = sut.fromTag(serialized, listener);
+        final Storage deserialized = sut.fromTag(serialized, listener);
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized).isInstanceOf(PlatformStorage.class);
         assertThat(deserialized.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10),
-            new ResourceAmount<>(new ItemResource(Items.GLASS, null), 15)
+            new ResourceAmount(new ItemResource(Items.DIRT, createDummyTag()), 10),
+            new ResourceAmount(new ItemResource(Items.GLASS, null), 15)
         );
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
+        assertThat(((TrackedStorage) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
+        assertThat(((TrackedStorage) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.GLASS, null),
             PlayerActor.class
         )).isEmpty();
@@ -74,9 +74,9 @@ class ItemStorageTypeTest {
     @Test
     void shouldCallListenerOnDeserializedStorage() {
         // Arrange
-        final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
-        final Storage<ItemResource> storage = new PlatformStorage<>(
-            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
+        final InMemoryTrackedStorageRepository tracker = new InMemoryTrackedStorageRepository();
+        final Storage storage = new PlatformStorage(
+            new TrackedStorageImpl(new InMemoryStorageImpl(), tracker, () -> 123L),
             StorageTypes.ITEM,
             tracker,
             () -> {
@@ -85,7 +85,7 @@ class ItemStorageTypeTest {
         storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final CompoundTag serialized = sut.toTag(storage);
-        final Storage<ItemResource> deserialized = sut.fromTag(serialized, listener);
+        final Storage deserialized = sut.fromTag(serialized, listener);
 
         // Act
         final boolean preInsert = listener.isChanged();
@@ -100,9 +100,9 @@ class ItemStorageTypeTest {
     @Test
     void shouldSerializeLimitedStorage() {
         // Arrange
-        final InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
-        final Storage<ItemResource> storage = new LimitedPlatformStorage<>(
-            new LimitedStorageImpl<>(new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L), 100),
+        final InMemoryTrackedStorageRepository tracker = new InMemoryTrackedStorageRepository();
+        final Storage storage = new LimitedPlatformStorage(
+            new LimitedStorageImpl(new TrackedStorageImpl(new InMemoryStorageImpl(), tracker, () -> 123L), 100),
             StorageTypes.ITEM,
             tracker,
             () -> {
@@ -114,21 +114,21 @@ class ItemStorageTypeTest {
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
-        final Storage<ItemResource> deserialized = sut.fromTag(serialized, listener);
+        final Storage deserialized = sut.fromTag(serialized, listener);
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized).isInstanceOf(LimitedStorage.class);
-        assertThat(((LimitedStorage<ItemResource>) deserialized).getCapacity()).isEqualTo(100);
+        assertThat(((LimitedStorage) deserialized).getCapacity()).isEqualTo(100);
         assertThat(deserialized.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10),
-            new ResourceAmount<>(new ItemResource(Items.GLASS, null), 15)
+            new ResourceAmount(new ItemResource(Items.DIRT, createDummyTag()), 10),
+            new ResourceAmount(new ItemResource(Items.GLASS, null), 15)
         );
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
+        assertThat(((TrackedStorage) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
+        assertThat(((TrackedStorage) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.GLASS, null),
             PlayerActor.class
         )).isEmpty();

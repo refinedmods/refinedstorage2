@@ -18,8 +18,7 @@ import net.minecraft.world.item.TooltipFlag;
 
 public abstract class AbstractItemGridResourceFactory implements GridResourceFactory {
     @Override
-    @SuppressWarnings("unchecked")
-    public Optional<GridResource> apply(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> apply(final ResourceAmount resourceAmount) {
         if (!(resourceAmount.getResource() instanceof ItemResource itemResource)) {
             return Optional.empty();
         }
@@ -31,7 +30,7 @@ public abstract class AbstractItemGridResourceFactory implements GridResourceFac
         final Set<String> tags = getTags(item);
         final String tooltip = getTooltip(itemStack);
         return Optional.of(new ItemGridResource(
-            (ResourceAmount<ItemResource>) resourceAmount,
+            resourceAmount,
             itemStack,
             name,
             modId,

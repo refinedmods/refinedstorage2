@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
     private final PlayerActor playerActor;
     private final CraftingGridBlockEntity blockEntity;
-    private final ResourceList<ItemResource> available = new ResourceListImpl<>();
-    private final ResourceList<ItemResource> used = new ResourceListImpl<>();
+    private final ResourceList available = new ResourceListImpl();
+    private final ResourceList used = new ResourceListImpl();
 
     SnapshotCraftingGridRefillContext(
         final Player player,
@@ -35,7 +35,7 @@ class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
     }
 
     private void addAvailableItem(final CraftingMatrix craftingMatrix,
-                                  final StorageChannel<ItemResource> storageChannel,
+                                  final StorageChannel storageChannel,
                                   final int craftingMatrixSlotIndex) {
         final ItemStack craftingMatrixStack = craftingMatrix.getItem(craftingMatrixSlotIndex);
         if (craftingMatrixStack.isEmpty()) {
@@ -44,7 +44,7 @@ class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
         addAvailableItem(storageChannel, craftingMatrixStack);
     }
 
-    private void addAvailableItem(final StorageChannel<ItemResource> storageChannel,
+    private void addAvailableItem(final StorageChannel storageChannel,
                                   final ItemStack craftingMatrixStack) {
         final ItemResource craftingMatrixResource = ItemResource.ofItemStack(craftingMatrixStack);
         // a single resource can occur multiple times in a recipe, only add it once
@@ -70,7 +70,7 @@ class SnapshotCraftingGridRefillContext implements CraftingGridRefillContext {
         blockEntity.getStorageChannel().ifPresent(this::extractUsedItems);
     }
 
-    private void extractUsedItems(final StorageChannel<ItemResource> storageChannel) {
+    private void extractUsedItems(final StorageChannel storageChannel) {
         used.getAll().forEach(u -> storageChannel.extract(u.getResource(), u.getAmount(), Action.EXECUTE, playerActor));
     }
 }

@@ -15,8 +15,8 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.Set;
 
 public final class NetworkTestFixtures {
-    public static final StorageChannelType<String> STORAGE_CHANNEL_TYPE = StorageChannelImpl::new;
-    public static final Set<StorageChannelType<?>> STORAGE_CHANNEL_TYPES = Set.of(STORAGE_CHANNEL_TYPE);
+    public static final StorageChannelType STORAGE_CHANNEL_TYPE = StorageChannelImpl::new;
+    public static final Set<StorageChannelType> STORAGE_CHANNEL_TYPES = Set.of(STORAGE_CHANNEL_TYPE);
     public static final ComponentMapFactory<NetworkComponent, Network> NETWORK_COMPONENT_MAP_FACTORY =
         new ComponentMapFactory<>();
 

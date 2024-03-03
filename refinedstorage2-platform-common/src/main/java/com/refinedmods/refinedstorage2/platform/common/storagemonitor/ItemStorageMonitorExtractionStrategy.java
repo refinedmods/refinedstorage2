@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemStorageMonitorExtractionStrategy implements StorageMonitorExtractionStrategy {
     @Override
-    public boolean extract(final Object resource,
+    public boolean extract(final ResourceKey resource,
                            final boolean fullStack,
                            final Player player,
                            final Actor actor,

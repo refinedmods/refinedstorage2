@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
@@ -12,38 +13,36 @@ import org.apiguardian.api.API;
  * A ResourceAmountTemplate is the combination of a {@link com.refinedmods.refinedstorage2.api.resource.ResourceAmount}
  * and a {@link ResourceTemplate}. It identifies a resource, its storage channel type and an amount.
  * Additionally, for performance reasons, it provides an {@link ItemStack} representation.
- *
- * @param <T> the resource type
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.13")
-public class ResourceAmountTemplate<T> {
-    private final ResourceTemplate<T> resourceTemplate;
+public class ResourceAmountTemplate {
+    private final ResourceTemplate resourceTemplate;
     private final long amount;
     private final ItemStack stackRepresentation;
 
-    public ResourceAmountTemplate(final T resource,
+    public ResourceAmountTemplate(final ResourceKey resource,
                                   final long amount,
-                                  final PlatformStorageChannelType<T> storageChannelType) {
-        this.resourceTemplate = new ResourceTemplate<>(resource, storageChannelType);
+                                  final PlatformStorageChannelType storageChannelType) {
+        this.resourceTemplate = new ResourceTemplate(resource, storageChannelType);
         this.amount = amount;
         this.stackRepresentation = resource instanceof ItemResource itemResource
             ? itemResource.toItemStack(amount)
             : ItemStack.EMPTY;
     }
 
-    public T getResource() {
+    public ResourceKey getResource() {
         return resourceTemplate.resource();
     }
 
-    public PlatformStorageChannelType<T> getStorageChannelType() {
-        return (PlatformStorageChannelType<T>) resourceTemplate.storageChannelType();
+    public PlatformStorageChannelType getStorageChannelType() {
+        return (PlatformStorageChannelType) resourceTemplate.storageChannelType();
     }
 
     public long getAmount() {
         return amount;
     }
 
-    public ResourceTemplate<T> getResourceTemplate() {
+    public ResourceTemplate getResourceTemplate() {
         return resourceTemplate;
     }
 
@@ -51,11 +50,11 @@ public class ResourceAmountTemplate<T> {
         return stackRepresentation;
     }
 
-    public ResourceAmountTemplate<T> withAmount(final long newAmount) {
-        return new ResourceAmountTemplate<>(
+    public ResourceAmountTemplate withAmount(final long newAmount) {
+        return new ResourceAmountTemplate(
             resourceTemplate.resource(),
             newAmount,
-            (PlatformStorageChannelType<T>) resourceTemplate.storageChannelType()
+            (PlatformStorageChannelType) resourceTemplate.storageChannelType()
         );
     }
 
@@ -67,7 +66,7 @@ public class ResourceAmountTemplate<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final ResourceAmountTemplate<?> that = (ResourceAmountTemplate<?>) o;
+        final ResourceAmountTemplate that = (ResourceAmountTemplate) o;
         return Objects.equals(amount, that.amount)
             && Objects.equals(resourceTemplate.resource(), that.resourceTemplate.resource());
     }

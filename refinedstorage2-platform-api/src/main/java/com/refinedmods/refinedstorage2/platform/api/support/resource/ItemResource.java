@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -17,12 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public record ItemResource(Item item, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<ItemResource> {
+public record ItemResource(Item item, @Nullable CompoundTag tag) implements ResourceKey, FuzzyModeNormalizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemResource.class);
 
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
-    private static final String TAG_AMOUNT = "amount";
 
     public ItemResource(final Item item, @Nullable final CompoundTag tag) {
         this.item = CoreValidations.validateNotNull(item, "Item must not be null");
@@ -45,7 +44,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
     }
 
     @Override
-    public ItemResource normalize() {
+    public ResourceKey normalize() {
         return new ItemResource(item, null);
     }
 
@@ -62,13 +61,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         return tag;
     }
 
-    public static CompoundTag toTagWithAmount(final ResourceAmount<ItemResource> resourceAmount) {
-        final CompoundTag tag = toTag(resourceAmount.getResource());
-        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
-        return tag;
-    }
-
-    public static Optional<ItemResource> fromTag(final CompoundTag tag) {
+    public static Optional<ResourceKey> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
         final Item item = BuiltInRegistries.ITEM.get(id);
         if (item == Items.AIR) {
@@ -76,9 +69,5 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         }
         final CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
         return Optional.of(new ItemResource(item, itemTag));
-    }
-
-    public static Optional<ResourceAmount<ItemResource>> fromTagWithAmount(final CompoundTag tag) {
-        return fromTag(tag).map(itemResource -> new ResourceAmount<>(itemResource, tag.getLong(TAG_AMOUNT)));
     }
 }

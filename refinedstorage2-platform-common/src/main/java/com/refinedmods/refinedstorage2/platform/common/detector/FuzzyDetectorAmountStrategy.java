@@ -16,9 +16,9 @@ class FuzzyDetectorAmountStrategy extends AbstractDetectorAmountStrategy {
     }
 
     @Override
-    public <T> long getAmount(final Network network, final ResourceTemplate<T> template) {
-        final StorageChannel<T> storageChannel = getStorageChannel(network, template);
-        if (!(storageChannel instanceof FuzzyStorageChannel<T> fuzzyStorageChannel)) {
+    public long getAmount(final Network network, final ResourceTemplate template) {
+        final StorageChannel storageChannel = getStorageChannel(network, template);
+        if (!(storageChannel instanceof FuzzyStorageChannel fuzzyStorageChannel)) {
             return fallback.getAmount(network, template);
         }
         return fuzzyStorageChannel.getFuzzy(template.resource())

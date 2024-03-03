@@ -14,9 +14,9 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public interface StorageNetworkComponent extends NetworkComponent, GridStorageChannelProvider {
-    <T> StorageChannel<T> getStorageChannel(StorageChannelType<T> type);
+    StorageChannel getStorageChannel(StorageChannelType type);
 
-    boolean hasSource(Predicate<Storage<?>> matcher);
+    boolean hasSource(Predicate<Storage> matcher);
 
-    <T> List<TrackedResourceAmount<T>> getResources(StorageChannelType<T> type, Class<? extends Actor> actorType);
+    List<TrackedResourceAmount> getResources(StorageChannelType type, Class<? extends Actor> actorType);
 }

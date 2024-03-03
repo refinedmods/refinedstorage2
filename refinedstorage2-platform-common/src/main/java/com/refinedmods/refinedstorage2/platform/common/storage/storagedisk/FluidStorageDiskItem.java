@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
@@ -16,7 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidResource> {
+public class FluidStorageDiskItem extends AbstractStorageContainerItem {
     private final FluidStorageType.Variant variant;
 
     public FluidStorageDiskItem(final FluidStorageType.Variant variant) {
@@ -39,7 +38,7 @@ public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidReso
     }
 
     @Override
-    protected Storage<FluidResource> createStorage(final StorageRepository storageRepository) {
+    protected Storage createStorage(final StorageRepository storageRepository) {
         return StorageTypes.FLUID.create(variant.getCapacity(), storageRepository::markAsChanged);
     }
 

@@ -9,31 +9,31 @@ class ResourceAmountTest {
     @Test
     void testValidResource() {
         // Act
-        final ResourceAmount<String> resourceAmount = new ResourceAmount<>("A", 1);
+        final ResourceAmount resourceAmount = new ResourceAmount(TestResource.A, 1);
 
         // Assert
         assertThat(resourceAmount.getAmount()).isEqualTo(1);
-        assertThat(resourceAmount.getResource()).isEqualTo("A");
+        assertThat(resourceAmount.getResource()).isEqualTo(TestResource.A);
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void testInvalidResource() {
         // Act & assert
-        assertThrows(NullPointerException.class, () -> new ResourceAmount<>(null, 1));
+        assertThrows(NullPointerException.class, () -> new ResourceAmount(null, 1));
     }
 
     @Test
     void testInvalidAmount() {
         // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> new ResourceAmount<>("A", 0));
-        assertThrows(IllegalArgumentException.class, () -> new ResourceAmount<>("A", -1));
+        assertThrows(IllegalArgumentException.class, () -> new ResourceAmount(TestResource.A, 0));
+        assertThrows(IllegalArgumentException.class, () -> new ResourceAmount(TestResource.A, -1));
     }
 
     @Test
     void shouldNotIncrementZeroOrNegativeAmount() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 1);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 1);
 
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> sut.increment(0));
@@ -43,7 +43,7 @@ class ResourceAmountTest {
     @Test
     void shouldNotDecrementZeroOrNegativeAmount() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 3);
 
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> sut.decrement(0));
@@ -53,7 +53,7 @@ class ResourceAmountTest {
     @Test
     void shouldNotDecrementLeadingToZeroAmount() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 3);
 
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> sut.decrement(3));
@@ -62,7 +62,7 @@ class ResourceAmountTest {
     @Test
     void shouldIncrement() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 3);
 
         // Act
         sut.increment(2);
@@ -74,7 +74,7 @@ class ResourceAmountTest {
     @Test
     void shouldDecrement() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 3);
 
         // Act
         sut.decrement(2);
@@ -86,7 +86,7 @@ class ResourceAmountTest {
     @Test
     void testToString() {
         // Arrange
-        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+        final ResourceAmount sut = new ResourceAmount(TestResource.A, 3);
 
         // Act & assert
         assertThat(sut).hasToString(

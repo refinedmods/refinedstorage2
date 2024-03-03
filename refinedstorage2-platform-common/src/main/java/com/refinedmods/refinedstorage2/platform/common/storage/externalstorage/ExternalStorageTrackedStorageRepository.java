@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.externalstorage;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -12,17 +13,17 @@ import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
-class ExternalStorageTrackedStorageRepository<T> extends InMemoryTrackedStorageRepository<T> {
-    private final PlatformStorageChannelType<T> type;
+class ExternalStorageTrackedStorageRepository extends InMemoryTrackedStorageRepository {
+    private final PlatformStorageChannelType type;
     private final Runnable listener;
 
-    ExternalStorageTrackedStorageRepository(final Runnable listener, final PlatformStorageChannelType<T> type) {
+    ExternalStorageTrackedStorageRepository(final Runnable listener, final PlatformStorageChannelType type) {
         this.listener = listener;
         this.type = type;
     }
 
     @Override
-    public void update(final T resource, final Actor actor, final long time) {
+    public void update(final ResourceKey resource, final Actor actor, final long time) {
         super.update(resource, actor, time);
         listener.run();
     }
@@ -48,7 +49,7 @@ class ExternalStorageTrackedStorageRepository<T> extends InMemoryTrackedStorageR
         ));
     }
 
-    private Map<T, TrackedResource> getPersistentTrackedResources() {
+    private Map<ResourceKey, TrackedResource> getPersistentTrackedResources() {
         return trackedResourcesByActorType.getOrDefault(
             PlayerActor.class,
             Collections.emptyMap()

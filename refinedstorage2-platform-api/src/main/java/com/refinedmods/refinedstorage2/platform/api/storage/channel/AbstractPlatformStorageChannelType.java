@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -13,19 +14,19 @@ import net.minecraft.resources.ResourceLocation;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public abstract class AbstractPlatformStorageChannelType<T> implements PlatformStorageChannelType<T> {
+public abstract class AbstractPlatformStorageChannelType implements PlatformStorageChannelType {
     private static final String TAG_CHANGED_BY = "cb";
     private static final String TAG_CHANGED_AT = "ca";
 
     private final String name;
-    private final StorageChannelType<T> delegate;
+    private final StorageChannelType delegate;
     private final MutableComponent title;
     private final ResourceLocation textureIdentifier;
     private final int textureX;
     private final int textureY;
 
     protected AbstractPlatformStorageChannelType(final String name,
-                                                 final StorageChannelType<T> delegate,
+                                                 final StorageChannelType delegate,
                                                  final MutableComponent title,
                                                  final ResourceLocation textureIdentifier,
                                                  final int textureX,
@@ -39,7 +40,7 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
     }
 
     @Override
-    public CompoundTag toTag(final T resource, final TrackedResource trackedResource) {
+    public CompoundTag toTag(final ResourceKey resource, final TrackedResource trackedResource) {
         final CompoundTag tag = toTag(resource);
         tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
         tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
@@ -47,7 +48,7 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
     }
 
     @Override
-    public void fromTag(final CompoundTag tag, final BiConsumer<T, TrackedResource> acceptor) {
+    public void fromTag(final CompoundTag tag, final BiConsumer<ResourceKey, TrackedResource> acceptor) {
         fromTag(tag).ifPresent(resource -> {
             final String changedBy = tag.getString(TAG_CHANGED_BY);
             final long changedAt = tag.getLong(TAG_CHANGED_AT);
@@ -56,7 +57,7 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
     }
 
     @Override
-    public StorageChannel<T> create() {
+    public StorageChannel create() {
         return delegate.create();
     }
 

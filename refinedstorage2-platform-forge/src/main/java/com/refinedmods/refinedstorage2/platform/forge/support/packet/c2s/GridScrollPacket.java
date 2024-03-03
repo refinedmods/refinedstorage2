@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
@@ -11,25 +12,24 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-public record GridScrollPacket<T>(
-    PlatformStorageChannelType<T> storageChannelType,
+public record GridScrollPacket(
+    PlatformStorageChannelType storageChannelType,
     ResourceLocation storageChannelTypeId,
-    T resource,
+    ResourceKey resource,
     GridScrollMode mode,
     int slotIndex
 ) implements CustomPacketPayload {
-    @SuppressWarnings("unchecked")
-    public static GridScrollPacket<?> decode(final FriendlyByteBuf buf) {
+    public static GridScrollPacket decode(final FriendlyByteBuf buf) {
         final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
-        final PlatformStorageChannelType<?> storageChannelType = PlatformApi.INSTANCE
+        final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
             .getStorageChannelTypeRegistry()
             .get(storageChannelTypeId)
             .orElseThrow();
         final GridScrollMode mode = getMode(buf.readByte());
         final int slotIndex = buf.readInt();
-        final Object resource = storageChannelType.fromBuffer(buf);
-        return new GridScrollPacket<>(
-            (PlatformStorageChannelType<? super Object>) storageChannelType,
+        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+        return new GridScrollPacket(
+            storageChannelType,
             storageChannelTypeId,
             resource,
             mode,
@@ -37,7 +37,7 @@ public record GridScrollPacket<T>(
         );
     }
 
-    public static <T> void handle(final GridScrollPacket<T> packet, final PlayPayloadContext ctx) {
+    public static void handle(final GridScrollPacket packet, final PlayPayloadContext ctx) {
         ctx.player().ifPresent(player -> ctx.workHandler().submitAsync(() -> {
             if (player.containerMenu instanceof GridScrollingStrategy strategy) {
                 strategy.onScroll(

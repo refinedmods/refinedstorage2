@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
@@ -54,8 +53,8 @@ class WirelessGrid implements Grid {
     }
 
     @Override
-    public Storage<ItemResource> getItemStorage() {
-        return getStorage().map(storage -> (Storage<ItemResource>) storage.getStorageChannel(StorageChannelTypes.ITEM))
+    public Storage getItemStorage() {
+        return getStorage().map(storage -> (Storage) storage.getStorageChannel(StorageChannelTypes.ITEM))
             .orElseGet(NoopStorage::new);
     }
 
@@ -68,18 +67,18 @@ class WirelessGrid implements Grid {
     }
 
     @Override
-    public <T> List<TrackedResourceAmount<T>> getResources(final StorageChannelType<T> type,
-                                                           final Class<? extends Actor> actorType) {
+    public List<TrackedResourceAmount> getResources(final StorageChannelType type,
+                                                    final Class<? extends Actor> actorType) {
         return getStorage().map(storage -> storage.getResources(type, actorType)).orElse(Collections.emptyList());
     }
 
     @Override
-    public <T> GridOperations<T> createOperations(final PlatformStorageChannelType<T> storageChannelType,
-                                                  final Actor actor) {
+    public GridOperations createOperations(final PlatformStorageChannelType storageChannelType,
+                                           final Actor actor) {
         return getStorage()
             .map(storage -> storage.getStorageChannel(storageChannelType))
             .map(storageChannel -> storageChannelType.createGridOperations(storageChannel, actor))
-            .map(gridOperations -> (GridOperations<T>) new WirelessGridOperations<>(gridOperations, session, watchers))
+            .map(gridOperations -> (GridOperations) new WirelessGridOperations(gridOperations, session, watchers))
             .orElseGet(NoopGridOperations::new);
     }
 }

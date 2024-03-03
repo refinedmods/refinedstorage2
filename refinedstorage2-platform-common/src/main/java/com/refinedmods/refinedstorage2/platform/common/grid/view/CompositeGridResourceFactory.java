@@ -9,16 +9,16 @@ import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformReg
 import java.util.Optional;
 
 public class CompositeGridResourceFactory implements GridResourceFactory {
-    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry;
+    private final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry;
 
     public CompositeGridResourceFactory(
-        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry
+        final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry
     ) {
         this.storageChannelTypeRegistry = storageChannelTypeRegistry;
     }
 
     @Override
-    public Optional<GridResource> apply(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> apply(final ResourceAmount resourceAmount) {
         return storageChannelTypeRegistry.getAll()
             .stream()
             .flatMap(type -> type.toGridResource(resourceAmount).stream())

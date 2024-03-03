@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
@@ -26,12 +27,12 @@ public class ResourceFilterSlotChangePacket implements ServerPlayNetworking.Play
             .ifPresent(storageChannelType -> handle(storageChannelType, buf, server, slotIndex, player));
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> storageChannelType,
-                            final FriendlyByteBuf buf,
-                            final MinecraftServer server,
-                            final int slotIndex,
-                            final ServerPlayer serverPlayer) {
-        final T resource = storageChannelType.fromBuffer(buf);
+    private void handle(final PlatformStorageChannelType storageChannelType,
+                        final FriendlyByteBuf buf,
+                        final MinecraftServer server,
+                        final int slotIndex,
+                        final ServerPlayer serverPlayer) {
+        final ResourceKey resource = storageChannelType.fromBuffer(buf);
         server.execute(() -> {
             if (serverPlayer.containerMenu instanceof AbstractResourceContainerMenu containerMenu) {
                 containerMenu.handleResourceFilterSlotUpdate(slotIndex, storageChannelType, resource);

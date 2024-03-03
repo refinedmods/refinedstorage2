@@ -8,15 +8,13 @@ import org.apiguardian.api.API;
 
 /**
  * Represents a storage where the contents can be retrieved.
- *
- * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface StorageView<T> {
+public interface StorageView {
     /**
      * @return a list of resource amounts
      */
-    Collection<ResourceAmount<T>> getAll();
+    Collection<ResourceAmount> getAll();
 
     /**
      * @return the amount stored

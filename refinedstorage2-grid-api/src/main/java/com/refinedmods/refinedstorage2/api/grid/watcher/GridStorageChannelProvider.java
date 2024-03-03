@@ -12,7 +12,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.3")
 public interface GridStorageChannelProvider {
-    Set<StorageChannelType<?>> getStorageChannelTypes();
+    Set<StorageChannelType> getStorageChannelTypes();
 
-    <T> StorageChannel<T> getStorageChannel(StorageChannelType<T> type);
+    StorageChannel getStorageChannel(StorageChannelType type);
 }

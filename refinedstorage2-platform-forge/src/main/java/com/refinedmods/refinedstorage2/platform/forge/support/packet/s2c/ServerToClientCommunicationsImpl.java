@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
@@ -36,15 +37,15 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendGridUpdate(final ServerPlayer player,
-                                   final PlatformStorageChannelType<T> storageChannelType,
-                                   final T resource,
-                                   final long change,
-                                   @Nullable final TrackedResource trackedResource) {
+    public void sendGridUpdate(final ServerPlayer player,
+                               final PlatformStorageChannelType storageChannelType,
+                               final ResourceKey resource,
+                               final long change,
+                               @Nullable final TrackedResource trackedResource) {
         PlatformApi.INSTANCE
             .getStorageChannelTypeRegistry()
             .getId(storageChannelType)
-            .ifPresent(id -> sendToPlayer(player, new GridUpdatePacket<>(
+            .ifPresent(id -> sendToPlayer(player, new GridUpdatePacket(
                 storageChannelType,
                 id,
                 resource,
@@ -59,19 +60,19 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public <T> void sendResourceSlotUpdate(final ServerPlayer player,
-                                           @Nullable final ResourceAmountTemplate<T> resourceAmount,
-                                           final int slotIndex) {
+    public void sendResourceSlotUpdate(final ServerPlayer player,
+                                       @Nullable final ResourceAmountTemplate resourceAmount,
+                                       final int slotIndex) {
         if (resourceAmount != null) {
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
                 .getId(resourceAmount.getStorageChannelType())
-                .ifPresent(id -> sendToPlayer(player, new ResourceSlotUpdatePacket<>(
+                .ifPresent(id -> sendToPlayer(player, new ResourceSlotUpdatePacket(
                     slotIndex,
                     resourceAmount,
                     id
                 )));
         } else {
-            sendToPlayer(player, new ResourceSlotUpdatePacket<>(
+            sendToPlayer(player, new ResourceSlotUpdatePacket(
                 slotIndex,
                 null,
                 null

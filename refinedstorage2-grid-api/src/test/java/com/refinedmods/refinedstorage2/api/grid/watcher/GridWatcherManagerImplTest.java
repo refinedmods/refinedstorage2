@@ -13,6 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import static com.refinedmods.refinedstorage2.api.grid.TestResource.A;
+import static com.refinedmods.refinedstorage2.api.grid.TestResource.B;
+import static com.refinedmods.refinedstorage2.api.grid.TestResource.C;
+import static com.refinedmods.refinedstorage2.api.grid.TestResource.D;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -23,26 +27,25 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GridWatcherManagerImplTest {
     GridWatcherManager sut;
-    StorageChannelType<String> storageChannelType = StorageChannelImpl::new;
-    StorageChannel<String> storageChannel;
+    StorageChannelType storageChannelType = StorageChannelImpl::new;
+    StorageChannel storageChannel;
     GridStorageChannelProvider storageChannelProvider;
 
     @BeforeEach
     void setUp() {
         sut = new GridWatcherManagerImpl();
-        storageChannel = new StorageChannelImpl<>();
-        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel = new StorageChannelImpl();
+        storageChannel.addSource(new InMemoryStorageImpl());
         storageChannelProvider = new GridStorageChannelProvider() {
             @Override
-            public Set<StorageChannelType<?>> getStorageChannelTypes() {
+            public Set<StorageChannelType> getStorageChannelTypes() {
                 return Set.of(storageChannelType);
             }
 
             @Override
-            @SuppressWarnings("unchecked")
-            public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
+            public StorageChannel getStorageChannel(final StorageChannelType type) {
                 if (type == storageChannelType) {
-                    return (StorageChannel<T>) storageChannel;
+                    return storageChannel;
                 }
                 throw new IllegalArgumentException();
             }
@@ -53,14 +56,14 @@ class GridWatcherManagerImplTest {
     void shouldAddWatcherAndNotifyOfChanges() {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        storageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Act
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
-        storageChannel.insert("B", 5, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(B, 5, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
-        verify(watcher, times(1)).onChanged(storageChannelType, "B", 5, null);
+        verify(watcher, times(1)).onChanged(storageChannelType, B, 5, null);
         verifyNoMoreInteractions(watcher);
     }
 
@@ -82,12 +85,12 @@ class GridWatcherManagerImplTest {
     void shouldRemoveWatcher() {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        storageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
 
         // Act
         sut.removeWatcher(watcher, storageChannelProvider);
-        storageChannel.insert("B", 5, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(B, 5, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         verifyNoInteractions(watcher);
@@ -110,19 +113,19 @@ class GridWatcherManagerImplTest {
     void shouldAddAndRemoveAndAddWatcherAgain() {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        storageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Act
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
-        storageChannel.insert("B", 5, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(B, 5, Action.EXECUTE, FakeActor.INSTANCE);
         sut.removeWatcher(watcher, storageChannelProvider);
-        storageChannel.insert("C", 4, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(C, 4, Action.EXECUTE, FakeActor.INSTANCE);
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
-        storageChannel.insert("D", 3, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(D, 3, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
-        verify(watcher, times(1)).onChanged(storageChannelType, "B", 5, null);
-        verify(watcher, times(1)).onChanged(storageChannelType, "D", 3, null);
+        verify(watcher, times(1)).onChanged(storageChannelType, B, 5, null);
+        verify(watcher, times(1)).onChanged(storageChannelType, D, 3, null);
         verifyNoMoreInteractions(watcher);
     }
 
@@ -130,12 +133,12 @@ class GridWatcherManagerImplTest {
     void shouldDetachAll() {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        storageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
 
         // Act
         sut.detachAll(storageChannelProvider);
-        storageChannel.insert("B", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(B, 10, Action.EXECUTE, FakeActor.INSTANCE);
         assertThrows(IllegalArgumentException.class, () -> sut.addWatcher(
             watcher,
             FakeActor.class,
@@ -150,21 +153,21 @@ class GridWatcherManagerImplTest {
     void shouldAttachAll() {
         // Arrange
         final GridWatcher watcher = mock(GridWatcher.class);
-        storageChannel.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(A, 10, Action.EXECUTE, FakeActor.INSTANCE);
         sut.addWatcher(watcher, FakeActor.class, storageChannelProvider);
         sut.detachAll(storageChannelProvider);
-        storageChannel.insert("B", 5, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(B, 5, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Act
         sut.attachAll(storageChannelProvider);
-        storageChannel.insert("C", 4, Action.EXECUTE, FakeActor.INSTANCE);
+        storageChannel.insert(C, 4, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         final InOrder inOrder = inOrder(watcher);
         inOrder.verify(watcher, times(1)).invalidate();
-        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, "A", 10, null);
-        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, "B", 5, null);
-        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, "C", 4, null);
+        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, A, 10, null);
+        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, B, 5, null);
+        inOrder.verify(watcher, times(1)).onChanged(storageChannelType, C, 4, null);
         inOrder.verifyNoMoreInteractions();
     }
 

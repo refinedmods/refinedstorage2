@@ -11,7 +11,7 @@ public class CompositeIngredientConverter implements IngredientConverter {
     private final Collection<IngredientConverter> converters = new HashSet<>();
 
     @Override
-    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
+    public Optional<ResourceTemplate> convertToResource(final Object ingredient) {
         return converters.stream()
             .flatMap(converter -> converter.convertToResource(ingredient).stream())
             .findFirst();

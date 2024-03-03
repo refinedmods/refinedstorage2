@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import java.util.Optional;
@@ -36,27 +36,10 @@ class ItemResourceTest {
 
         // Act
         final CompoundTag serialized = ItemResource.toTag(itemResource);
-        final Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
+        final Optional<ResourceKey> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(itemResource);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void testSerializationWithAmount(final boolean hasTag) {
-        // Arrange
-        final CompoundTag itemTag = hasTag ? createDummyTag() : null;
-        final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
-        final ResourceAmount<ItemResource> resourceAmount = new ResourceAmount<>(itemResource, 10);
-
-        // Act
-        final CompoundTag serialized = ItemResource.toTagWithAmount(resourceAmount);
-        final Optional<ResourceAmount<ItemResource>> deserialized = ItemResource.fromTagWithAmount(serialized);
-
-        // Assert
-        assertThat(deserialized).isPresent();
-        assertThat(deserialized.get()).usingRecursiveComparison().isEqualTo(resourceAmount);
     }
 
     @Test
@@ -67,7 +50,7 @@ class ItemResourceTest {
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        final Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
+        final Optional<ResourceKey> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();
@@ -97,11 +80,10 @@ class ItemResourceTest {
         final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
 
         // Act
-        final ItemResource normalized = itemResource.normalize();
+        final ResourceKey normalized = itemResource.normalize();
 
         // Assert
-        assertThat(normalized.item()).isEqualTo(Items.DIRT);
-        assertThat(normalized.tag()).isNull();
+        assertThat(normalized).usingRecursiveComparison().isEqualTo(new ItemResource(Items.DIRT, null));
     }
 
     @Test

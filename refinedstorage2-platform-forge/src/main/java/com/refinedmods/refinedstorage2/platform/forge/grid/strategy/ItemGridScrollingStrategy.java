@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.grid.strategy;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
@@ -24,7 +25,7 @@ import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 public class ItemGridScrollingStrategy implements GridScrollingStrategy {
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final Inventory playerInventory;
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final CursorItemHandler playerCursorItemHandler;
@@ -39,10 +40,10 @@ public class ItemGridScrollingStrategy implements GridScrollingStrategy {
     }
 
     @Override
-    public <T> boolean onScroll(final PlatformStorageChannelType<T> storageChannelType,
-                                final T resource,
-                                final GridScrollMode scrollMode,
-                                final int slotIndex) {
+    public boolean onScroll(final PlatformStorageChannelType storageChannelType,
+                            final ResourceKey resource,
+                            final GridScrollMode scrollMode,
+                            final int slotIndex) {
         if (resource instanceof ItemResource itemResource) {
             final IItemHandler playerStorage = slotIndex >= 0
                 ? new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1)

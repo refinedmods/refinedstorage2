@@ -19,34 +19,33 @@ import javax.annotation.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private final long energyUsage;
-    private Map<? extends StorageChannelType<?>, DynamicStorage<?>> storages = Collections.emptyMap();
+    private Map<StorageChannelType, DynamicStorage> storages = Collections.emptyMap();
 
     public ExternalStorageNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
-    public void initialize(final Collection<? extends StorageChannelType<?>> storageChannelTypes,
+    public void initialize(final Collection<? extends StorageChannelType> storageChannelTypes,
                            final LongSupplier clock,
                            final TrackedStorageRepositoryProvider trackedStorageRepositoryProvider) {
         this.storages = storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
             type -> type,
-            type -> new DynamicStorage<>(trackedStorageRepositoryProvider.getRepository(type), clock)
+            type -> new DynamicStorage(trackedStorageRepositoryProvider.getRepository(type), clock)
         ));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void initialize(final ExternalStorageProviderFactory factory) {
         storages.forEach((type, storage) -> {
             storage.exposedStorage.tryClearDelegate();
-            initialize(factory, (StorageChannelType) type, storage);
+            initialize(factory, type, storage);
         });
     }
 
-    private <T> void initialize(final ExternalStorageProviderFactory factory,
-                                final StorageChannelType<T> type,
-                                final DynamicStorage<T> dynamicStorage) {
+    private void initialize(final ExternalStorageProviderFactory factory,
+                            final StorageChannelType type,
+                            final DynamicStorage dynamicStorage) {
         factory.create(type).ifPresent(provider -> {
-            dynamicStorage.internalStorage = new ExternalStorage<>(provider, dynamicStorage.exposedStorage);
+            dynamicStorage.internalStorage = new ExternalStorage(provider, dynamicStorage.exposedStorage);
             if (isActive()) {
                 dynamicStorage.setVisible(true);
             }
@@ -69,28 +68,26 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     }
 
     @Override
-    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<StorageChannelType> getRelevantStorageChannelTypes() {
         return storages.keySet();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
-        final DynamicStorage<?> storage = storages.get(channelType);
+    public Optional<Storage> getStorageForChannel(final StorageChannelType channelType) {
+        final DynamicStorage storage = storages.get(channelType);
         if (storage == null) {
             return Optional.empty();
         }
-        return Optional.of((Storage<T>) storage.exposedStorage);
+        return Optional.of(storage.exposedStorage);
     }
 
-    private class DynamicStorage<T> {
-        private final ExposedExternalStorage<T> exposedStorage;
+    private class DynamicStorage {
+        private final ExposedExternalStorage exposedStorage;
         @Nullable
-        private ExternalStorage<T> internalStorage;
+        private ExternalStorage internalStorage;
 
-        private DynamicStorage(final TrackedStorageRepository<T> trackingRepository,
-                               final LongSupplier clock) {
-            this.exposedStorage = new ExposedExternalStorage<>(
+        private DynamicStorage(final TrackedStorageRepository trackingRepository, final LongSupplier clock) {
+            this.exposedStorage = new ExposedExternalStorage(
                 ExternalStorageNetworkNode.this,
                 trackingRepository,
                 clock

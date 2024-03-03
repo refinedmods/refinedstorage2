@@ -12,29 +12,26 @@ public interface StorageRepository {
     /**
      * Retrieves a storage by ID, if it exists.
      *
-     * @param id  the id
-     * @param <T> the resource type
+     * @param id the id
      * @return the storage, if present
      */
-    <T> Optional<Storage<T>> get(UUID id);
+    Optional<Storage> get(UUID id);
 
     /**
      * Sets a storage by ID.
      *
      * @param id      the id
      * @param storage the storage
-     * @param <T>     the resource type
      */
-    <T> void set(UUID id, Storage<T> storage);
+    void set(UUID id, Storage storage);
 
     /**
      * If the storage exists, and is empty, it will remove the storage from the repository.
      *
-     * @param id  the id
-     * @param <T> the resource type
+     * @param id the id
      * @return the removed storage, if it existed and was empty
      */
-    <T> Optional<Storage<T>> removeIfEmpty(UUID id);
+    Optional<Storage> removeIfEmpty(UUID id);
 
     /**
      * Retrieves info for a given storage ID.

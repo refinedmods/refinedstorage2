@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.task.Task;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         taskExecutor.execute(tasks, context);
     }
 
-    public void setFilterTemplates(final List<Object> templates) {
+    public void setFilterTemplates(final List<ResourceKey> templates) {
         tasks.clear();
         tasks.addAll(templates.stream().map(TaskImpl::new).toList());
     }
@@ -61,9 +62,9 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     }
 
     class TaskImpl implements Task<TaskContext> {
-        private final Object template;
+        private final ResourceKey template;
 
-        TaskImpl(final Object template) {
+        TaskImpl(final ResourceKey template) {
             this.template = template;
         }
 

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.grid.strategy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -33,9 +34,9 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
     private final AbstractContainerMenu menu;
-    private final GridOperations<FluidResource> gridOperations;
+    private final GridOperations gridOperations;
     private final PlayerMainInvWrapper playerInventoryStorage;
-    private final Storage<ItemResource> itemStorage;
+    private final Storage itemStorage;
 
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
@@ -47,10 +48,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     }
 
     @Override
-    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                 final T resource,
-                                 final GridExtractMode extractMode,
-                                 final boolean cursor) {
+    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
+                             final ResourceKey resource,
+                             final GridExtractMode extractMode,
+                             final boolean cursor) {
         if (resource instanceof FluidResource fluidResource) {
             final boolean bucketInInventory = hasBucketInInventory();
             final boolean bucketInStorageChannel = hasBucketInStorage();
@@ -78,7 +79,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             return; // shouldn't happen
         }
         gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
-            final int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
+            final int inserted = destination.fill(toFluidStack(fluidResource2, amount), toFluidAction(action));
             if (action == Action.EXECUTE) {
                 extractSourceBucket(bucketFromInventory, source);
                 if (!insertResultingBucket(cursor, destination)) {

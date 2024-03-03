@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import org.apiguardian.api.API;
@@ -9,8 +10,7 @@ import org.apiguardian.api.API;
  *
  * @param resource           the resource
  * @param storageChannelType the storage channel type
- * @param <T>                the resource type
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.13")
-public record ResourceTemplate<T>(T resource, StorageChannelType<T> storageChannelType) {
+public record ResourceTemplate(ResourceKey resource, StorageChannelType storageChannelType) {
 }

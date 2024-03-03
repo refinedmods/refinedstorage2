@@ -14,16 +14,13 @@ import net.minecraft.server.level.ServerLevel;
 
 public class FluidHandlerPlatformExternalStorageProviderFactory implements PlatformExternalStorageProviderFactory {
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<ExternalStorageProvider<T>> create(final ServerLevel level,
-                                                           final BlockPos pos,
-                                                           final Direction direction,
-                                                           final StorageChannelType<T> storageChannelType) {
+    public Optional<ExternalStorageProvider> create(final ServerLevel level,
+                                                    final BlockPos pos,
+                                                    final Direction direction,
+                                                    final StorageChannelType storageChannelType) {
         if (storageChannelType != StorageChannelTypes.FLUID) {
             return Optional.empty();
         }
-        return Optional.of((ExternalStorageProvider<T>) new FluidHandlerExternalStorageProvider(
-            new CapabilityCacheImpl(level, pos, direction)
-        ));
+        return Optional.of(new FluidHandlerExternalStorageProvider(new CapabilityCacheImpl(level, pos, direction)));
     }
 }
