@@ -28,7 +28,6 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
@@ -40,6 +39,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
@@ -56,7 +56,6 @@ import com.refinedmods.refinedstorage2.platform.common.storage.ClientStorageRepo
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
@@ -70,6 +69,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem
 import com.refinedmods.refinedstorage2.platform.common.support.registry.PlatformRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.BuiltinUpgradeDestinationsImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -117,8 +117,8 @@ public class PlatformApiImpl implements PlatformApi {
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
     private final PlatformRegistry<StorageType> storageTypeRegistry =
         new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageTypes.ITEM);
-    private final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry =
-        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
+    private final PlatformRegistry<ResourceType> resourceTypeRegistry =
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ResourceTypes.ITEM);
     private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
         new PlatformRegistryImpl<>(createIdentifier("off"), new NoopGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
@@ -200,8 +200,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry<PlatformStorageChannelType> getStorageChannelTypeRegistry() {
-        return storageChannelTypeRegistry;
+    public PlatformRegistry<ResourceType> getResourceTypeRegistry() {
+        return resourceTypeRegistry;
     }
 
     @Override
@@ -281,7 +281,7 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
-        AbstractGridContainerMenu.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
+        AbstractGridContainerMenu.writeScreenOpeningData(grid, buf);
     }
 
     @Override
@@ -393,11 +393,6 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageChannelType getItemStorageChannelType() {
-        return StorageChannelTypes.ITEM;
-    }
-
-    @Override
     public StorageType getItemStorageType() {
         return StorageTypes.ITEM;
     }
@@ -405,11 +400,6 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public ResourceFactory getFluidResourceFactory() {
         return fluidResourceFactory;
-    }
-
-    @Override
-    public PlatformStorageChannelType getFluidStorageChannelType() {
-        return StorageChannelTypes.FLUID;
     }
 
     @Override

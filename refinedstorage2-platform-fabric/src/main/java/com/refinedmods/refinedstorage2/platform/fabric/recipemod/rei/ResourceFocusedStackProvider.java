@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 
 import dev.architectury.event.CompoundEventResult;
@@ -22,7 +22,7 @@ class ResourceFocusedStackProvider implements FocusedStackProvider {
         if (!(screen instanceof AbstractBaseScreen<?> baseScreen)) {
             return CompoundEventResult.pass();
         }
-        final ResourceTemplate hoveredResource = baseScreen.getHoveredResource();
+        final PlatformResourceKey hoveredResource = baseScreen.getHoveredResource();
         if (hoveredResource == null) {
             return CompoundEventResult.pass();
         }

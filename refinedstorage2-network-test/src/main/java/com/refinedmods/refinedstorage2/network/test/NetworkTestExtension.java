@@ -196,8 +196,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
     private StorageChannel getNetworkStorageChannel(final String networkId) {
         return networkMap
             .get(networkId)
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+            .getComponent(StorageNetworkComponent.class);
     }
 
     private EnergyNetworkComponent getNetworkEnergy(final String networkId) {

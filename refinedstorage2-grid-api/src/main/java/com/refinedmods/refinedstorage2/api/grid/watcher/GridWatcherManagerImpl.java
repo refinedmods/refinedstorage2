@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.api.grid.watcher;
 
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 import org.slf4j.Logger;
@@ -20,19 +21,21 @@ public class GridWatcherManagerImpl implements GridWatcherManager {
     public void addWatcher(
         final GridWatcher watcher,
         final Class<? extends Actor> actorType,
-        final GridStorageChannelProvider storageChannelProvider
+        @Nullable final StorageChannel storageChannel
     ) {
         if (watchers.containsKey(watcher)) {
             throw new IllegalArgumentException("Watcher is already registered");
         }
         final GridWatcherRegistration registration = new GridWatcherRegistration(watcher, actorType);
-        attachAll(registration, storageChannelProvider, false);
+        if (storageChannel != null) {
+            attach(registration, storageChannel, false);
+        }
         watchers.put(watcher, registration);
         LOGGER.info("Added watcher {}, new count is {}", watcher, watchers.size());
     }
 
     @Override
-    public void attachAll(final GridStorageChannelProvider storageChannelProvider) {
+    public void attachAll(@Nullable final StorageChannel storageChannel) {
         // If we get here we are affected by a network split or network merge.
         // At this point, all the storages that are affected by the split or merge have not yet been processed
         // as the grid has the highest priority.
@@ -40,67 +43,46 @@ public class GridWatcherManagerImpl implements GridWatcherManager {
             // Invalidate all watcher data, the resources that were synced earlier are no longer valid because we have
             // a brand-new network.
             watcher.invalidate();
-            // Re-attach the watcher to the new network, and send all the resources from the new network.
-            // Resources from the old network are not part of the new network yet, as mentioned above,
-            // but those will be synced when the storages are re-added.
-            attachAll(registration, storageChannelProvider, true);
+            if (storageChannel != null) {
+                // Re-attach the watcher to the new network, and send all the resources from the new network.
+                // Resources from the old network are not part of the new network yet, as mentioned above,
+                // but those will be synced when the storages are re-added.
+                attach(registration, storageChannel, true);
+            }
         });
-    }
-
-    private void attachAll(final GridWatcherRegistration registration,
-                           final GridStorageChannelProvider storageChannelProvider,
-                           final boolean replay) {
-        storageChannelProvider.getStorageChannelTypes().forEach(storageChannelType -> attach(
-            registration,
-            storageChannelType,
-            storageChannelProvider,
-            replay
-        ));
     }
 
     private void attach(
         final GridWatcherRegistration registration,
-        final StorageChannelType storageChannelType,
-        final GridStorageChannelProvider storageChannelProvider,
+        final StorageChannel storageChannel,
         final boolean replay
     ) {
-        LOGGER.info("Attaching {} to {}", registration, storageChannelType);
-        registration.attach(storageChannelProvider.getStorageChannel(storageChannelType), storageChannelType, replay);
+        LOGGER.info("Attaching {} to {}", registration, storageChannel);
+        registration.attach(storageChannel, replay);
     }
 
     @Override
-    public void removeWatcher(final GridWatcher watcher, final GridStorageChannelProvider storageChannelProvider) {
+    public void removeWatcher(final GridWatcher watcher, @Nullable final StorageChannel storageChannel) {
         final GridWatcherRegistration registration = watchers.get(watcher);
         if (registration == null) {
             throw new IllegalArgumentException("Watcher is not registered");
         }
-        detachAll(registration, storageChannelProvider);
+        if (storageChannel != null) {
+            detach(registration, storageChannel);
+        }
         watchers.remove(watcher);
         LOGGER.info("Removed watcher {}, remaining {}", watcher, watchers.size());
     }
 
     @Override
-    public void detachAll(final GridStorageChannelProvider storageChannelProvider) {
+    public void detachAll(final StorageChannel storageChannel) {
         LOGGER.info("Detaching {} watchers", watchers.size());
-        watchers.values().forEach(w -> detachAll(w, storageChannelProvider));
+        watchers.values().forEach(watcher -> detach(watcher, storageChannel));
     }
 
-    private void detachAll(final GridWatcherRegistration registration,
-                           final GridStorageChannelProvider storageChannelProvider) {
-        storageChannelProvider.getStorageChannelTypes().forEach(storageChannelType -> detach(
-            registration,
-            storageChannelType,
-            storageChannelProvider
-        ));
-    }
-
-    private void detach(
-        final GridWatcherRegistration registration,
-        final StorageChannelType storageChannelType,
-        final GridStorageChannelProvider storageChannelProvider
-    ) {
-        LOGGER.info("Detaching {} from {}", registration, storageChannelType);
-        registration.detach(storageChannelProvider.getStorageChannel(storageChannelType), storageChannelType);
+    private void detach(final GridWatcherRegistration registration, final StorageChannel storageChannel) {
+        LOGGER.info("Detaching {} from {}", registration, storageChannel);
+        registration.detach(storageChannel);
     }
 
     @Override

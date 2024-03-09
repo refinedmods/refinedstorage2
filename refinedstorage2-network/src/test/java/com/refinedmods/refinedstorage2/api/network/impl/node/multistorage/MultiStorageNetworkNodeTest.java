@@ -30,12 +30,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE2;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B_ALTERNATIVE;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE2;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.MultiStorageNetworkNodeFactory.PROPERTY_ENERGY_USAGE_PER_STORAGE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -396,7 +396,7 @@ class MultiStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
@@ -419,7 +419,7 @@ class MultiStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
         sut.setNormalizer(resource -> {
             if (resource == A_ALTERNATIVE || resource == A_ALTERNATIVE2) {
                 return A;
@@ -455,7 +455,7 @@ class MultiStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
@@ -478,7 +478,7 @@ class MultiStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
@@ -501,7 +501,7 @@ class MultiStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);

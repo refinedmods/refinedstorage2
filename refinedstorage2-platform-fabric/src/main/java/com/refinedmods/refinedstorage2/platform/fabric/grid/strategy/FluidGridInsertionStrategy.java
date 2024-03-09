@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +36,7 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
                                       final Player player,
                                       final Grid grid) {
         this.containerMenu = containerMenu;
-        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
+        this.gridOperations = grid.createOperations(ResourceTypes.FLUID, new PlayerActor(player));
         this.player = player;
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
     }

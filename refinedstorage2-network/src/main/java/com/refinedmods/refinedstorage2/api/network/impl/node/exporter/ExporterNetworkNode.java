@@ -44,9 +44,9 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         taskExecutor.execute(tasks, context);
     }
 
-    public void setFilterTemplates(final List<ResourceKey> templates) {
+    public void setFilters(final List<ResourceKey> filters) {
         tasks.clear();
-        tasks.addAll(templates.stream().map(TaskImpl::new).toList());
+        tasks.addAll(filters.stream().map(TaskImpl::new).toList());
     }
 
     public void setEnergyUsage(final long energyUsage) {
@@ -62,10 +62,10 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     }
 
     class TaskImpl implements Task<TaskContext> {
-        private final ResourceKey template;
+        private final ResourceKey filter;
 
-        TaskImpl(final ResourceKey template) {
-            this.template = template;
+        TaskImpl(final ResourceKey filter) {
+            this.filter = filter;
         }
 
         @Override
@@ -73,7 +73,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
             if (transferStrategy == null) {
                 return false;
             }
-            return transferStrategy.transfer(template, context.actor, context.network);
+            return transferStrategy.transfer(filter, context.actor, context.network);
         }
     }
 }

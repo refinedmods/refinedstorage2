@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.fabric.exporter;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
@@ -21,16 +20,13 @@ import net.minecraft.server.level.ServerLevel;
 
 public class FabricStorageExporterTransferStrategyFactory<T> implements ExporterTransferStrategyFactory {
     private final BlockApiLookup<Storage<T>, Direction> lookup;
-    private final StorageChannelType storageChannelType;
     private final Function<ResourceKey, T> toPlatformMapper;
     private final long singleAmount;
 
     public FabricStorageExporterTransferStrategyFactory(final BlockApiLookup<Storage<T>, Direction> lookup,
-                                                        final StorageChannelType storageChannelType,
                                                         final Function<ResourceKey, T> toPlatformMapper,
                                                         final long singleAmount) {
         this.lookup = lookup;
-        this.storageChannelType = storageChannelType;
         this.toPlatformMapper = toPlatformMapper;
         this.singleAmount = singleAmount;
     }
@@ -60,8 +56,8 @@ public class FabricStorageExporterTransferStrategyFactory<T> implements Exporter
                                                 final FabricStorageInsertableStorage<T> insertTarget,
                                                 final long transferQuota) {
         if (fuzzyMode) {
-            return new FuzzyExporterTransferStrategy(insertTarget, storageChannelType, transferQuota);
+            return new FuzzyExporterTransferStrategy(insertTarget, transferQuota);
         }
-        return new ExporterTransferStrategyImpl(insertTarget, storageChannelType, transferQuota);
+        return new ExporterTransferStrategyImpl(insertTarget, transferQuota);
     }
 }

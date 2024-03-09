@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.view.AbstractPlatformGridResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -60,16 +61,17 @@ public class FluidGridResource extends AbstractPlatformGridResource {
         ).stream().toList();
     }
 
+    @Nullable
+    @Override
+    public PlatformResourceKey getUnderlyingResource() {
+        return fluidResource;
+    }
+
     @Override
     public void onExtract(final GridExtractMode extractMode,
                           final boolean cursor,
                           final GridExtractionStrategy extractionStrategy) {
-        extractionStrategy.onExtract(
-            StorageChannelTypes.FLUID,
-            fluidResource,
-            extractMode,
-            cursor
-        );
+        extractionStrategy.onExtract(fluidResource, extractMode, cursor);
     }
 
     @Override

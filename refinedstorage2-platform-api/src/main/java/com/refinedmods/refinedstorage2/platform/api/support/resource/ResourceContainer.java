@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +25,7 @@ public interface ResourceContainer {
 
     void change(int index, ItemStack stack, boolean tryAlternatives);
 
-    void set(int index, ResourceAmountTemplate resourceAmount);
+    void set(int index, ResourceAmount resourceAmount);
 
     long getAmount(int index);
 
@@ -36,7 +35,7 @@ public interface ResourceContainer {
 
     void setAmount(int index, long amount);
 
-    long getMaxAmount(ResourceAmountTemplate resourceAmount);
+    long getMaxAmount(ResourceKey resource);
 
     boolean isValid(ResourceKey resource);
 
@@ -44,12 +43,21 @@ public interface ResourceContainer {
 
     int size();
 
+    default boolean isEmpty(int index) {
+        return get(index) == null;
+    }
+
     @Nullable
-    ResourceAmountTemplate get(int index);
+    ResourceAmount get(int index);
 
-    Set<ResourceKey> getUniqueTemplates();
+    @Nullable
+    PlatformResourceKey getResource(int index);
 
-    List<ResourceTemplate> getTemplates();
+    ItemStack getStackRepresentation(int index);
+
+    Set<ResourceKey> getUniqueResources();
+
+    List<ResourceKey> getResources();
 
     void writeToUpdatePacket(FriendlyByteBuf buf);
 
@@ -65,7 +73,7 @@ public interface ResourceContainer {
 
     Container toItemContainer();
 
-    long insert(StorageChannelType storageChannelType, ResourceKey resource, long amount, Action action);
+    long insert(ResourceKey resource, long amount, Action action);
 
     long extract(ResourceKey resource, long amount, Action action);
 

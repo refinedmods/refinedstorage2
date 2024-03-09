@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
@@ -42,7 +42,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A));
+        sut.setFilters(List.of(A));
 
         // Act
         sut.doWork();
@@ -74,7 +74,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B));
+        sut.setFilters(List.of(A, B));
 
         // Act
         sut.doWork();
@@ -108,7 +108,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 20);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B, C));
+        sut.setFilters(List.of(A, B, C));
 
         // Act & assert
         sut.doWork();

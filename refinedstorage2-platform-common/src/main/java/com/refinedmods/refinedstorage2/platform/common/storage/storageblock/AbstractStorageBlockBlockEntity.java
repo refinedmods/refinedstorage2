@@ -46,10 +46,10 @@ abstract class AbstractStorageBlockBlockEntity
                                               final StorageNetworkNode node,
                                               final ResourceFactory resourceFactory) {
         super(type, pos, state, node);
-        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(resourceFactory),
             this::setChanged,
-            templates -> getNode().setFilterTemplates(templates)
+            filters -> getNode().setFilters(filters)
         );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),

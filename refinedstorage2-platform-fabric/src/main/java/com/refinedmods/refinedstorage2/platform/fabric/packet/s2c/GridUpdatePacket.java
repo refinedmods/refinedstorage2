@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -21,10 +21,10 @@ public class GridUpdatePacket implements ClientPlayNetworking.PlayChannelHandler
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final ResourceLocation id = buf.readResourceLocation();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id).ifPresent(type -> handle(type, buf, client));
+        PlatformApi.INSTANCE.getResourceTypeRegistry().get(id).ifPresent(type -> handle(type, buf, client));
     }
 
-    private void handle(final PlatformStorageChannelType type,
+    private void handle(final ResourceType type,
                         final FriendlyByteBuf buf,
                         final Minecraft client) {
         final ResourceKey resource = type.fromBuffer(buf);

@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
@@ -23,8 +23,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtraction
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.grid.strategy.ClientGridExtractionStrategy;
@@ -85,7 +86,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     private Runnable sizeChangedListener;
     private GridSynchronizer synchronizer;
     @Nullable
-    private PlatformStorageChannelType storageChannelTypeFilter;
+    private ResourceType resourceTypeFilter;
     private boolean autoSelected;
     private boolean active;
     @Nullable
@@ -104,14 +105,14 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.active = buf.readBoolean();
 
         final GridViewBuilder viewBuilder = createViewBuilder();
-        final int amountOfStorageChannels = buf.readInt();
-        for (int i = 0; i < amountOfStorageChannels; ++i) {
-            final ResourceLocation id = buf.readResourceLocation();
-            final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
-                .getStorageChannelTypeRegistry()
-                .get(id)
+        final int resources = buf.readInt();
+        for (int i = 0; i < resources; ++i) {
+            final ResourceLocation resourceTypeId = buf.readResourceLocation();
+            final ResourceType resourceType = PlatformApi.INSTANCE
+                .getResourceTypeRegistry()
+                .get(resourceTypeId)
                 .orElseThrow();
-            readStorageChannelFromBuffer(storageChannelType, buf, viewBuilder);
+            readResource(resourceType, buf, viewBuilder);
         }
         this.view = viewBuilder.build();
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
@@ -119,7 +120,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.view.setFilterAndSort(filterStorageChannel());
 
         this.synchronizer = loadSynchronizer();
-        this.storageChannelTypeFilter = loadStorageChannelType();
+        this.resourceTypeFilter = loadResourceType();
         this.insertionStrategy = new ClientGridInsertionStrategy();
         this.extractionStrategy = new ClientGridExtractionStrategy();
         this.scrollingStrategy = new ClientGridScrollingStrategy();
@@ -148,17 +149,17 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         return gridResource -> Platform.INSTANCE
             .getConfig()
             .getGrid()
-            .getStorageChannelType()
-            .flatMap(storageChannelTypeId -> PlatformApi.INSTANCE
-                .getStorageChannelTypeRegistry()
-                .get(storageChannelTypeId)
+            .getResourceTypeId()
+            .flatMap(resourceTypeId -> PlatformApi.INSTANCE
+                .getResourceTypeRegistry()
+                .get(resourceTypeId)
                 .map(type -> type.isGridResourceBelonging(gridResource))
             ).orElse(true);
     }
 
     private static GridViewBuilder createViewBuilder() {
         return new GridViewBuilderImpl(
-            new CompositeGridResourceFactory(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()),
+            new CompositeGridResourceFactory(PlatformApi.INSTANCE.getResourceTypeRegistry()),
             GridSortingTypes.NAME,
             GridSortingTypes.QUANTITY
         );
@@ -268,19 +269,17 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
 
     @Override
     public void onChanged(
-        final StorageChannelType storageChannelType,
         final ResourceKey resource,
         final long change,
         @Nullable final TrackedResource trackedResource
     ) {
-        if (!(storageChannelType instanceof PlatformStorageChannelType platformStorageChannelType)) {
+        if (!(resource instanceof PlatformResourceKey platformResource)) {
             return;
         }
         LOGGER.info("{} received a change of {} for {}", this, change, resource);
         Platform.INSTANCE.getServerToClientCommunications().sendGridUpdate(
             (ServerPlayer) playerInventory.player,
-            platformStorageChannelType,
-            resource,
+            platformResource,
             change,
             trackedResource
         );
@@ -342,12 +341,12 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Nullable
-    private PlatformStorageChannelType loadStorageChannelType() {
+    private ResourceType loadResourceType() {
         return Platform.INSTANCE
             .getConfig()
             .getGrid()
-            .getStorageChannelType()
-            .flatMap(id -> PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id))
+            .getResourceTypeId()
+            .flatMap(id -> PlatformApi.INSTANCE.getResourceTypeRegistry().get(id))
             .orElse(null);
     }
 
@@ -356,8 +355,8 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Nullable
-    public PlatformStorageChannelType getStorageChannelType() {
-        return storageChannelTypeFilter;
+    public ResourceType getResourceType() {
+        return resourceTypeFilter;
     }
 
     public void toggleSynchronizer() {
@@ -372,19 +371,18 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.synchronizer = newSynchronizer;
     }
 
-    public void toggleStorageChannelType() {
-        final PlatformRegistry<PlatformStorageChannelType> registry =
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry();
+    public void toggleResourceType() {
+        final PlatformRegistry<ResourceType> registry = PlatformApi.INSTANCE.getResourceTypeRegistry();
         final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
-        final PlatformStorageChannelType newStorageChannelType = storageChannelTypeFilter == null
+        final ResourceType newResourceType = resourceTypeFilter == null
             ? registry.getDefault()
-            : registry.nextOrNullIfLast(storageChannelTypeFilter);
-        if (newStorageChannelType == null) {
-            config.clearStorageChannelType();
+            : registry.nextOrNullIfLast(resourceTypeFilter);
+        if (newResourceType == null) {
+            config.clearResourceType();
         } else {
-            registry.getId(newStorageChannelType).ifPresent(config::setStorageChannelType);
+            registry.getId(newResourceType).ifPresent(config::setResourceTypeId);
         }
-        this.storageChannelTypeFilter = newStorageChannelType;
+        this.resourceTypeFilter = newResourceType;
         this.view.sort();
     }
 
@@ -400,8 +398,7 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
     }
 
     @Override
-    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
-                             final ResourceKey resource,
+    public boolean onExtract(final PlatformResourceKey resource,
                              final GridExtractMode extractMode,
                              final boolean cursor) {
         if (grid != null && !grid.isGridActive()) {
@@ -410,21 +407,18 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         if (extractionStrategy == null) {
             return false;
         }
-        return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
+        return extractionStrategy.onExtract(resource, extractMode, cursor);
     }
 
     @Override
-    public boolean onScroll(final PlatformStorageChannelType storageChannelType,
-                            final ResourceKey resource,
-                            final GridScrollMode scrollMode,
-                            final int slotIndex) {
+    public boolean onScroll(final PlatformResourceKey resource, final GridScrollMode scrollMode, final int slotIndex) {
         if (grid != null && !grid.isGridActive()) {
             return false;
         }
         if (scrollingStrategy == null) {
             return false;
         }
-        return scrollingStrategy.onScroll(storageChannelType, resource, scrollMode, slotIndex);
+        return scrollingStrategy.onScroll(resource, scrollMode, slotIndex);
     }
 
     @Override
@@ -447,50 +441,36 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         return true;
     }
 
-    private static void readStorageChannelFromBuffer(final PlatformStorageChannelType type,
-                                                     final FriendlyByteBuf buf,
-                                                     final GridViewBuilder viewBuilder) {
-        final int size = buf.readInt();
-        for (int i = 0; i < size; ++i) {
-            final ResourceKey resource = type.fromBuffer(buf);
-            final long amount = buf.readLong();
-            final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
-            viewBuilder.withResource(resource, amount, trackedResource);
-        }
+    private static void readResource(final ResourceType type,
+                                     final FriendlyByteBuf buf,
+                                     final GridViewBuilder viewBuilder) {
+        final ResourceKey resource = type.fromBuffer(buf);
+        final long amount = buf.readLong();
+        final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+        viewBuilder.withResource(resource, amount, trackedResource);
     }
 
     public void onClear() {
         view.clear();
     }
 
-    public static void writeScreenOpeningData(final PlatformRegistry<PlatformStorageChannelType>
-                                                  storageChannelTypeRegistry,
-                                              final Grid grid,
-                                              final FriendlyByteBuf buf) {
+    public static void writeScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
         buf.writeBoolean(grid.isGridActive());
-        final List<PlatformStorageChannelType> types = storageChannelTypeRegistry.getAll();
-        buf.writeInt(types.size());
-        types.forEach(type -> writeStorageChannel(storageChannelTypeRegistry, type, grid, buf));
-    }
-
-    private static void writeStorageChannel(
-        final PlatformRegistry<PlatformStorageChannelType> storageChannelTypeRegistry,
-        final PlatformStorageChannelType storageChannelType,
-        final Grid grid,
-        final FriendlyByteBuf buf
-    ) {
-        final ResourceLocation id = storageChannelTypeRegistry.getId(storageChannelType).orElseThrow();
-        buf.writeResourceLocation(id);
-        final List<TrackedResourceAmount> resources = grid.getResources(storageChannelType, PlayerActor.class);
+        final List<TrackedResourceAmount> resources = grid.getResources(PlayerActor.class);
         buf.writeInt(resources.size());
-        resources.forEach(resource -> writeGridResource(storageChannelType, resource, buf));
+        resources.forEach(resource -> writeGridResource(resource, buf));
     }
 
-    private static void writeGridResource(final PlatformStorageChannelType storageChannelType,
-                                          final TrackedResourceAmount resource,
+    private static void writeGridResource(final TrackedResourceAmount trackedResourceAmount,
                                           final FriendlyByteBuf buf) {
-        storageChannelType.toBuffer(resource.resourceAmount().getResource(), buf);
-        buf.writeLong(resource.resourceAmount().getAmount());
-        PacketUtil.writeTrackedResource(buf, resource.trackedResource());
+        final ResourceAmount resourceAmount = trackedResourceAmount.resourceAmount();
+        final PlatformResourceKey resource = (PlatformResourceKey) resourceAmount.getResource();
+        final ResourceType resourceType = resource.getResourceType();
+        final ResourceLocation resourceTypeId = PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType)
+            .orElseThrow();
+        buf.writeResourceLocation(resourceTypeId);
+        resource.toBuffer(buf);
+        buf.writeLong(resourceAmount.getAmount());
+        PacketUtil.writeTrackedResource(buf, trackedResourceAmount.trackedResource());
     }
 }

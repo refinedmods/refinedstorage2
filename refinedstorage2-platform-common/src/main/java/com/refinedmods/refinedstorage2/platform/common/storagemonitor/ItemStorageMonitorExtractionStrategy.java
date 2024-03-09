@@ -6,8 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +21,12 @@ public class ItemStorageMonitorExtractionStrategy implements StorageMonitorExtra
         if (!(resource instanceof ItemResource itemResource)) {
             return false;
         }
-        final long extracted = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM)
-            .extract(itemResource, fullStack ? itemResource.item().getMaxStackSize() : 1, Action.EXECUTE, actor);
+        final long extracted = network.getComponent(StorageNetworkComponent.class).extract(
+            itemResource,
+            fullStack ? itemResource.item().getMaxStackSize() : 1,
+            Action.EXECUTE,
+            actor
+        );
         if (extracted > 0) {
             final ItemStack stack = itemResource.toItemStack(extracted);
             if (!player.getInventory().add(stack)) {

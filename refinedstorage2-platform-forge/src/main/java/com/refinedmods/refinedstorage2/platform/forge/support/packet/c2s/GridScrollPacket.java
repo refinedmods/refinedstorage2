@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,24 +13,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public record GridScrollPacket(
-    PlatformStorageChannelType storageChannelType,
-    ResourceLocation storageChannelTypeId,
-    ResourceKey resource,
+    ResourceType resourceType,
+    ResourceLocation resourceTypeId,
+    PlatformResourceKey resource,
     GridScrollMode mode,
     int slotIndex
 ) implements CustomPacketPayload {
     public static GridScrollPacket decode(final FriendlyByteBuf buf) {
-        final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
-        final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
-            .getStorageChannelTypeRegistry()
-            .get(storageChannelTypeId)
+        final ResourceLocation resourceTypeId = buf.readResourceLocation();
+        final ResourceType resourceType = PlatformApi.INSTANCE
+            .getResourceTypeRegistry()
+            .get(resourceTypeId)
             .orElseThrow();
         final GridScrollMode mode = getMode(buf.readByte());
         final int slotIndex = buf.readInt();
-        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+        final PlatformResourceKey resource = resourceType.fromBuffer(buf);
         return new GridScrollPacket(
-            storageChannelType,
-            storageChannelTypeId,
+            resourceType,
+            resourceTypeId,
             resource,
             mode,
             slotIndex
@@ -40,12 +40,7 @@ public record GridScrollPacket(
     public static void handle(final GridScrollPacket packet, final PlayPayloadContext ctx) {
         ctx.player().ifPresent(player -> ctx.workHandler().submitAsync(() -> {
             if (player.containerMenu instanceof GridScrollingStrategy strategy) {
-                strategy.onScroll(
-                    packet.storageChannelType,
-                    packet.resource,
-                    packet.mode,
-                    packet.slotIndex
-                );
+                strategy.onScroll(packet.resource, packet.mode, packet.slotIndex);
             }
         }));
     }
@@ -69,10 +64,10 @@ public record GridScrollPacket(
 
     @Override
     public void write(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(storageChannelTypeId);
+        buf.writeResourceLocation(resourceTypeId);
         writeMode(buf, mode);
         buf.writeInt(slotIndex);
-        storageChannelType.toBuffer(resource, buf);
+        resource.toBuffer(buf);
     }
 
     @Override

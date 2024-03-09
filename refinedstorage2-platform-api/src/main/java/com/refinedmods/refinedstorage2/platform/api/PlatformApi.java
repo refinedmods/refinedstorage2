@@ -24,7 +24,6 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
@@ -36,6 +35,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
@@ -65,7 +65,7 @@ public interface PlatformApi {
 
     StorageContainerItemHelper getStorageContainerItemHelper();
 
-    PlatformRegistry<PlatformStorageChannelType> getStorageChannelTypeRegistry();
+    PlatformRegistry<ResourceType> getResourceTypeRegistry();
 
     PlatformRegistry<ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
 
@@ -135,13 +135,9 @@ public interface PlatformApi {
 
     ResourceFactory getItemResourceFactory();
 
-    PlatformStorageChannelType getItemStorageChannelType();
-
     StorageType getItemStorageType();
 
     ResourceFactory getFluidResourceFactory();
-
-    PlatformStorageChannelType getFluidStorageChannelType();
 
     StorageType getFluidStorageType();
 

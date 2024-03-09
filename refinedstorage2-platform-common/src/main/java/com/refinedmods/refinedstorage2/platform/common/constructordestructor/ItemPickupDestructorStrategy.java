@@ -7,8 +7,7 @@ import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -37,9 +36,7 @@ class ItemPickupDestructorStrategy implements DestructorStrategy {
         if (!level.isLoaded(pos)) {
             return false;
         }
-        final StorageChannel storageChannel = networkSupplier.get()
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM);
+        final StorageChannel storageChannel = networkSupplier.get().getComponent(StorageNetworkComponent.class);
         final List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos));
         for (final ItemEntity itemEntity : items) {
             tryInsert(filter, actor, storageChannel, itemEntity);

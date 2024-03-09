@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -24,12 +24,12 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final ResourceLocation id = buf.readResourceLocation();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+        PlatformApi.INSTANCE.getResourceTypeRegistry()
             .get(id)
             .ifPresent(type -> handle(type, buf, player, server));
     }
 
-    private void handle(final PlatformStorageChannelType type,
+    private void handle(final ResourceType type,
                         final FriendlyByteBuf buf,
                         final Player player,
                         final MinecraftServer server) {
@@ -37,8 +37,8 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
         if (menu instanceof GridExtractionStrategy strategy) {
             final GridExtractMode mode = getMode(buf.readByte());
             final boolean cursor = buf.readBoolean();
-            final ResourceKey resource = type.fromBuffer(buf);
-            server.execute(() -> strategy.onExtract(type, resource, mode, cursor));
+            final PlatformResourceKey resource = type.fromBuffer(buf);
+            server.execute(() -> strategy.onExtract(resource, mode, cursor));
         }
     }
 

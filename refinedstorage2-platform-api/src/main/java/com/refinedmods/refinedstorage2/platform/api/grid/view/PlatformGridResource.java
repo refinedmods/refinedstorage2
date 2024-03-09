@@ -5,9 +5,11 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -37,4 +39,7 @@ public interface PlatformGridResource extends GridResource {
     int getRegistryId();
 
     List<? extends ClientTooltipComponent> getExtractionHints();
+
+    @Nullable
+    PlatformResourceKey getUnderlyingResource();
 }

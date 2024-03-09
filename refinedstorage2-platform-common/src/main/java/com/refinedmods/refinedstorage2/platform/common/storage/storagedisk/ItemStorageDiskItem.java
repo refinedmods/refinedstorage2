@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import javax.annotation.Nullable;
 
@@ -21,7 +20,6 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem {
     public ItemStorageDiskItem(final ItemStorageType.Variant variant) {
         super(
             new Item.Properties().stacksTo(1).fireResistant(),
-            StorageChannelTypes.ITEM,
             PlatformApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;

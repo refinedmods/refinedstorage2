@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.DestructorScreen;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -27,7 +25,9 @@ import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.Port
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.storage.storageblock.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.StorageMonitorScreen;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeScreen;
 import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.WirelessTransmitterScreen;

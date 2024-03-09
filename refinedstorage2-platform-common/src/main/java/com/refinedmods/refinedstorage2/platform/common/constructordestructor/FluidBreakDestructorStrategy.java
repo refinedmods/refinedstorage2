@@ -7,9 +7,8 @@ import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.function.Supplier;
 
@@ -74,8 +73,6 @@ class FluidBreakDestructorStrategy implements DestructorStrategy {
     }
 
     private StorageChannel getStorageChannel(final Supplier<Network> networkSupplier) {
-        return networkSupplier.get()
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.FLUID);
+        return networkSupplier.get().getComponent(StorageNetworkComponent.class);
     }
 }

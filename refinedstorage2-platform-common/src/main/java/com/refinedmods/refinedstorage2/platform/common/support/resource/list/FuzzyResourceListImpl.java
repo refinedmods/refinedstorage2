@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.support.resource.list;
+package com.refinedmods.refinedstorage2.platform.common.support.resource.list;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.AbstractProxyResourceLi
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FuzzyModeNormalizer;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.list.FuzzyResourceList;
 
 import java.util.Collection;
 import java.util.Collections;

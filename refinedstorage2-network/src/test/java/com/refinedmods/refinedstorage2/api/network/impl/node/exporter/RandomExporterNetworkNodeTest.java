@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
@@ -40,7 +40,7 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(B, A));
+        sut.setFilters(List.of(B, A));
 
         // Act & assert
         sut.doWork();
@@ -76,7 +76,7 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B));
+        sut.setFilters(List.of(A, B));
 
         // Act & assert
         sut.doWork();

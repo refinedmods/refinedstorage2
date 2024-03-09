@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.storage.portablegrid;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.operations.NoopGridOperations;
-import com.refinedmods.refinedstorage2.api.grid.watcher.GridStorageChannelProvider;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManager;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManagerImpl;
@@ -15,19 +14,16 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.DiskInventory;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 
-class PortableGrid implements Grid, GridStorageChannelProvider {
+class PortableGrid implements Grid {
     private final EnergyStorage energyStorage;
     private final DiskInventory diskInventory;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
@@ -44,12 +40,16 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     }
 
     void updateStorage() {
-        watchers.detachAll(this);
+        if (storage != null) {
+            watchers.detachAll(storage.getStorageChannel());
+        }
+
         this.storage = diskInventory.resolve(0)
-            .map(diskStorage -> StateTrackedStorage.of(diskStorage, diskListener))
+            .map(diskStorage -> new StateTrackedStorage(diskStorage, diskListener))
             .map(PortableGridStorage::new)
             .orElse(null);
-        watchers.attachAll(this);
+
+        watchers.attachAll(getStorageChannel());
     }
 
     void activeChanged(final boolean active) {
@@ -69,17 +69,22 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         energyStorage.extract(Platform.INSTANCE.getConfig().getPortableGrid().getOpenEnergyUsage(), Action.EXECUTE);
-        watchers.addWatcher(watcher, actorType, this);
+        watchers.addWatcher(watcher, actorType, getStorageChannel());
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        watchers.removeWatcher(watcher, this);
+        watchers.removeWatcher(watcher, getStorageChannel());
+    }
+
+    @Nullable
+    private StorageChannel getStorageChannel() {
+        return storage != null ? storage.getStorageChannel() : null;
     }
 
     @Override
     public Storage getItemStorage() {
-        if (storage == null || storage.getStorageChannelType() != StorageChannelTypes.ITEM) {
+        if (storage == null) {
             return new NoopStorage();
         }
         return storage.getStorageChannel();
@@ -91,9 +96,8 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     }
 
     @Override
-    public List<TrackedResourceAmount> getResources(final StorageChannelType type,
-                                                    final Class<? extends Actor> actorType) {
-        if (storage == null || storage.getStorageChannelType() != type) {
+    public List<TrackedResourceAmount> getResources(final Class<? extends Actor> actorType) {
+        if (storage == null) {
             return Collections.emptyList();
         }
         final StorageChannel storageChannel = storage.getStorageChannel();
@@ -104,26 +108,13 @@ class PortableGrid implements Grid, GridStorageChannelProvider {
     }
 
     @Override
-    public GridOperations createOperations(final PlatformStorageChannelType storageChannelType,
+    public GridOperations createOperations(final ResourceType resourceType,
                                            final Actor actor) {
-        if (storage == null || storage.getStorageChannelType() != storageChannelType) {
+        if (storage == null) {
             return new NoopGridOperations();
         }
         final StorageChannel storageChannel = this.storage.getStorageChannel();
-        final GridOperations operations = storageChannelType.createGridOperations(storageChannel, actor);
+        final GridOperations operations = resourceType.createGridOperations(storageChannel, actor);
         return new PortableGridOperations(operations, energyStorage);
-    }
-
-    @Override
-    public Set<StorageChannelType> getStorageChannelTypes() {
-        return storage == null ? Collections.emptySet() : Set.of(storage.getStorageChannelType());
-    }
-
-    @Override
-    public StorageChannel getStorageChannel(final StorageChannelType type) {
-        if (storage == null || type != storage.getStorageChannelType()) {
-            throw new IllegalArgumentException();
-        }
-        return storage.getStorageChannel();
     }
 }

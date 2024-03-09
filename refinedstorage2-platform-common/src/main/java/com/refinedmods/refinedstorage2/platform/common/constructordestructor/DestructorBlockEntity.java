@@ -54,10 +54,10 @@ public class DestructorBlockEntity extends AbstractUpgradeableNetworkNodeContain
             UpgradeDestinations.DESTRUCTOR
         );
         this.actor = new NetworkNodeActor(getNode());
-        this.filterWithFuzzyMode = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filterWithFuzzyMode = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            filter::setTemplates
+            filter::setFilters
         );
     }
 

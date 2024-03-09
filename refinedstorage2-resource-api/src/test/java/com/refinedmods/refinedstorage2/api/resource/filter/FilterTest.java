@@ -49,7 +49,7 @@ class FilterTest {
     void testAllowlist() {
         // Arrange
         sut.setMode(FilterMode.ALLOW);
-        sut.setTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         // Act
         final boolean allowsDirt = sut.isAllowed(A);
@@ -65,7 +65,7 @@ class FilterTest {
     @Test
     void testBlocklist() {
         // Arrange
-        sut.setTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         // Act
         final boolean allowsDirt = sut.isAllowed(A);
@@ -79,16 +79,16 @@ class FilterTest {
     }
 
     @Test
-    void shouldBeAbleToModifyTemplates() {
+    void shouldBeAbleToModifyFilters() {
         // Arrange
-        sut.setTemplates(Set.of(B));
+        sut.setFilters(Set.of(B));
 
         final boolean allowsDirt = sut.isAllowed(A);
         final boolean allowsStone = sut.isAllowed(B);
         final boolean allowsSponge = sut.isAllowed(C);
 
         // Act
-        sut.setTemplates(Set.of(A, C));
+        sut.setFilters(Set.of(A, C));
 
         final boolean allowsDirtAfter = sut.isAllowed(A);
         final boolean allowsStoneAfter = sut.isAllowed(B);
@@ -114,7 +114,7 @@ class FilterTest {
             return resource;
         });
         sut.setMode(FilterMode.ALLOW);
-        sut.setTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         // Act & assert
         assertThat(sut.isAllowed(A)).isTrue();
@@ -132,7 +132,7 @@ class FilterTest {
             return resource;
         });
         sut.setMode(FilterMode.BLOCK);
-        sut.setTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         // Act & assert
         assertThat(sut.isAllowed(A)).isFalse();

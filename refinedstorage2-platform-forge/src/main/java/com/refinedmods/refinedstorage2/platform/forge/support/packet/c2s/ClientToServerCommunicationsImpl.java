@@ -2,14 +2,14 @@ package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,13 +23,13 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridExtract(final PlatformStorageChannelType storageChannelType,
-                                final ResourceKey resource,
+    public void sendGridExtract(final PlatformResourceKey resource,
                                 final GridExtractMode mode,
                                 final boolean cursor) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType)
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType)
             .ifPresent(id -> sendPacket(new GridExtractPacket(
-                storageChannelType,
+                resourceType,
                 id,
                 resource,
                 mode,
@@ -38,14 +38,14 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridScroll(final PlatformStorageChannelType storageChannelType,
-                               final ResourceKey resource,
+    public void sendGridScroll(final PlatformResourceKey resource,
                                final GridScrollMode mode,
                                final int slotIndex) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
-            .getId(storageChannelType)
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry()
+            .getId(resourceType)
             .ifPresent(id -> sendPacket(new GridScrollPacket(
-                storageChannelType,
+                resourceType,
                 id,
                 resource,
                 mode,
@@ -84,14 +84,13 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotChange(final PlatformStorageChannelType storageChannelType,
-                                             final ResourceKey resource,
-                                             final int slotIndex) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(
+    public void sendResourceFilterSlotChange(final PlatformResourceKey resource, final int slotIndex) {
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(
             id -> sendPacket(new ResourceFilterSlotChangePacket(
                 slotIndex,
                 resource,
-                storageChannelType,
+                resourceType,
                 id
             ))
         );

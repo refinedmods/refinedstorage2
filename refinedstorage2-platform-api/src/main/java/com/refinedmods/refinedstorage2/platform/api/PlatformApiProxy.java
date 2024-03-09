@@ -24,7 +24,6 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
@@ -82,8 +81,8 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry getStorageChannelTypeRegistry() {
-        return ensureLoaded().getStorageChannelTypeRegistry();
+    public PlatformRegistry getResourceTypeRegistry() {
+        return ensureLoaded().getResourceTypeRegistry();
     }
 
     @Override
@@ -250,11 +249,6 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageChannelType getItemStorageChannelType() {
-        return ensureLoaded().getItemStorageChannelType();
-    }
-
-    @Override
     public StorageType getItemStorageType() {
         return ensureLoaded().getItemStorageType();
     }
@@ -262,11 +256,6 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public ResourceFactory getFluidResourceFactory() {
         return ensureLoaded().getFluidResourceFactory();
-    }
-
-    @Override
-    public PlatformStorageChannelType getFluidStorageChannelType() {
-        return ensureLoaded().getFluidStorageChannelType();
     }
 
     @Override

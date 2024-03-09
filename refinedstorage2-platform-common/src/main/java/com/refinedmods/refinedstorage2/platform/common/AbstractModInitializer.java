@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkCompone
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponentImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
@@ -58,7 +57,6 @@ import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmi
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
@@ -94,7 +92,9 @@ import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.network.component.PlatformStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RangeUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeContainerMenu;
@@ -173,7 +173,7 @@ public abstract class AbstractModInitializer {
     protected final void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
         registerAdditionalStorageTypes();
-        registerAdditionalStorageChannelTypes();
+        registerAdditionalResourceTypes();
         registerAdditionalResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
@@ -190,10 +190,10 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    private void registerAdditionalStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
+    private void registerAdditionalResourceTypes() {
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
-            StorageChannelTypes.FLUID
+            ResourceTypes.FLUID
         );
     }
 
@@ -238,9 +238,7 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,
-            network -> new StorageNetworkComponentImpl(
-                PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
-            )
+            network -> new PlatformStorageNetworkComponent()
         );
     }
 

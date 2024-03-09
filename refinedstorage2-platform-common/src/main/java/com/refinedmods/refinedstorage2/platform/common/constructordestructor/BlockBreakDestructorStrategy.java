@@ -7,9 +7,8 @@ import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -76,9 +75,7 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
     }
 
     private static StorageChannel getStorageChannel(final Supplier<Network> network) {
-        return network.get()
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM);
+        return network.get().getComponent(StorageNetworkComponent.class);
     }
 
     private static boolean isFastExit(final BlockState blockState) {

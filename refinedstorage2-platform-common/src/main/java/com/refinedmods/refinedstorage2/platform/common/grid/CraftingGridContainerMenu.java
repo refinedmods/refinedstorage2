@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.common.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.ArrayList;
 import java.util.HashSet;

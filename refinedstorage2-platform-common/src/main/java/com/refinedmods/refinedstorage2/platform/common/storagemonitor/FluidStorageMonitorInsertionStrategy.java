@@ -7,9 +7,8 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -27,8 +26,7 @@ public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInser
         if (!(configuredResource instanceof FluidResource configuredFluidResource)) {
             return Optional.empty();
         }
-        final StorageChannel fluidStorageChannel = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.FLUID);
+        final StorageChannel fluidStorageChannel = network.getComponent(StorageNetworkComponent.class);
         return Platform.INSTANCE.getContainedFluid(stack)
             .map(extracted -> tryInsert(actor, configuredFluidResource, extracted, fluidStorageChannel))
             .map(extracted -> doInsert(actor, extracted, fluidStorageChannel));

@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.util.FakeActor;
 
 import java.util.function.Supplier;
@@ -57,7 +56,6 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         final InOrder inOrder = inOrder(slave.watcher);
         inOrder.verify(slave.watcher, times(1)).invalidate();
         inOrder.verify(slave.watcher, times(1)).onChanged(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             SLAVE,
             10L,
             null
@@ -65,7 +63,6 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         verifyNoMoreInteractions(slave.watcher);
 
         verify(master.watcher, times(1)).onChanged(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             SLAVE,
             -10L,
             null
@@ -97,13 +94,11 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
         verify(slave.watcher, times(1)).invalidate();
         verify(slave.watcher).onChanged(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             SLAVE,
             10L,
             null
         );
         verify(slave.watcher).onChanged(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             MASTER,
             10L,
             null
@@ -111,7 +106,6 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         verifyNoMoreInteractions(slave.watcher);
 
         verify(master.watcher, times(1)).onChanged(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             SLAVE,
             10L,
             null
@@ -121,10 +115,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
     private NetworkSide createNetworkSide(final MasterSlave side,
                                           final Supplier<Network> networkFactory) {
-        final StorageNetworkNode nodeA = new StorageNetworkNode(
-            0,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE
-        );
+        final StorageNetworkNode nodeA = new StorageNetworkNode(0);
         final InMemoryStorageImpl storage = new InMemoryStorageImpl();
         storage.insert(side, 10, Action.EXECUTE, FakeActor.INSTANCE);
         nodeA.setStorage(storage);

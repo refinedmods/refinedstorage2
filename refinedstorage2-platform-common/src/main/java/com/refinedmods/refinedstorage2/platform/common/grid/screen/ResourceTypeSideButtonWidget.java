@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.grid.screen;
 
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.AbstractSideButtonWidget;
@@ -11,29 +11,29 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
-    private static final MutableComponent TITLE = createTranslation("gui", "grid.storage_channel_type");
-    private static final MutableComponent SUBTEXT_ALL = createTranslation("gui", "grid.storage_channel_type.all");
-    private static final Component HELP = createTranslation("gui", "grid.storage_channel_type.help");
+class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.resource_type");
+    private static final MutableComponent SUBTEXT_ALL = createTranslation("gui", "grid.resource_type.all");
+    private static final Component HELP = createTranslation("gui", "grid.resource_type.help");
 
     private final AbstractGridContainerMenu menu;
 
-    StorageChannelTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
+    ResourceTypeSideButtonWidget(final AbstractGridContainerMenu menu) {
         super(createPressAction(menu));
         this.menu = menu;
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu menu) {
-        return btn -> menu.toggleStorageChannelType();
+        return btn -> menu.toggleResourceType();
     }
 
     @Override
     protected ResourceLocation getTextureIdentifier() {
-        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
-        if (storageChannelType == null) {
+        final ResourceType resourceType = menu.getResourceType();
+        if (resourceType == null) {
             return TextureIds.ICONS;
         }
-        return storageChannelType.getTextureIdentifier();
+        return resourceType.getTextureIdentifier();
     }
 
     @Override
@@ -43,11 +43,11 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected MutableComponent getSubText() {
-        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
-        if (storageChannelType == null) {
+        final ResourceType resourceType = menu.getResourceType();
+        if (resourceType == null) {
             return SUBTEXT_ALL;
         }
-        return storageChannelType.getTitle();
+        return resourceType.getTitle();
     }
 
     @Override
@@ -57,19 +57,19 @@ class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
-        if (storageChannelType == null) {
+        final ResourceType resourceType = menu.getResourceType();
+        if (resourceType == null) {
             return 32;
         }
-        return storageChannelType.getXTexture();
+        return resourceType.getXTexture();
     }
 
     @Override
     protected int getYTexture() {
-        final PlatformStorageChannelType storageChannelType = menu.getStorageChannelType();
-        if (storageChannelType == null) {
+        final ResourceType resourceType = menu.getResourceType();
+        if (resourceType == null) {
             return 128;
         }
-        return storageChannelType.getYTexture();
+        return resourceType.getYTexture();
     }
 }

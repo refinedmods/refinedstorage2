@@ -8,14 +8,15 @@ import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtraction
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.view.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 public class ItemGridResource extends AbstractPlatformGridResource {
     private final int id;
     private final ItemStack itemStack;
+    private final ItemResource itemResource;
 
     public ItemGridResource(final ResourceAmount resourceAmount,
                             final ItemStack itemStack,
@@ -44,7 +46,8 @@ public class ItemGridResource extends AbstractPlatformGridResource {
             GridResourceAttributeKeys.TAGS, tags,
             GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Item.getId(((ItemResource) resourceAmount.getResource()).item());
+        this.itemResource = (ItemResource) resourceAmount.getResource();
+        this.id = Item.getId(itemResource.item());
         this.itemStack = itemStack;
     }
 
@@ -52,8 +55,10 @@ public class ItemGridResource extends AbstractPlatformGridResource {
         return itemStack;
     }
 
-    public ItemStack copyItemStack() {
-        return itemStack.copyWithCount(1);
+    @Nullable
+    @Override
+    public PlatformResourceKey getUnderlyingResource() {
+        return itemResource;
     }
 
     @Override
@@ -83,22 +88,12 @@ public class ItemGridResource extends AbstractPlatformGridResource {
     public void onExtract(final GridExtractMode extractMode,
                           final boolean cursor,
                           final GridExtractionStrategy extractionStrategy) {
-        extractionStrategy.onExtract(
-            StorageChannelTypes.ITEM,
-            resourceAmount.getResource(),
-            extractMode,
-            cursor
-        );
+        extractionStrategy.onExtract(itemResource, extractMode, cursor);
     }
 
     @Override
     public void onScroll(final GridScrollMode scrollMode, final GridScrollingStrategy scrollingStrategy) {
-        scrollingStrategy.onScroll(
-            StorageChannelTypes.ITEM,
-            resourceAmount.getResource(),
-            scrollMode,
-            -1
-        );
+        scrollingStrategy.onScroll(itemResource, scrollMode, -1);
     }
 
     @Override

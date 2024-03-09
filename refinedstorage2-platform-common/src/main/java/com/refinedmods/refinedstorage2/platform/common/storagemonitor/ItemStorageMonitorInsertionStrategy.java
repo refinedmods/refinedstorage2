@@ -6,8 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.Optional;
 
@@ -26,9 +25,12 @@ public class ItemStorageMonitorInsertionStrategy implements StorageMonitorInsert
         if (!configuredItemResource.equals(resource)) {
             return Optional.empty();
         }
-        final long inserted = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM)
-            .insert(resource, stack.getCount(), Action.EXECUTE, actor);
+        final long inserted = network.getComponent(StorageNetworkComponent.class).insert(
+            resource,
+            stack.getCount(),
+            Action.EXECUTE,
+            actor
+        );
         final long remainder = stack.getCount() - inserted;
         if (remainder > 0) {
             return Optional.of(resource.toItemStack(remainder));

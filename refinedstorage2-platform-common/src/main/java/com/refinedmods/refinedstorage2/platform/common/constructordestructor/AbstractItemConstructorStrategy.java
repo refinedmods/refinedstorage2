@@ -7,8 +7,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,8 +43,7 @@ abstract class AbstractItemConstructorStrategy implements ConstructorStrategy {
         if (!(resource instanceof ItemResource itemResource)) {
             return false;
         }
-        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM);
+        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class);
         final long amount = getTransferAmount();
         final long extractedAmount = storageChannel.extract(itemResource, amount, Action.SIMULATE, actor);
         if (extractedAmount == 0) {

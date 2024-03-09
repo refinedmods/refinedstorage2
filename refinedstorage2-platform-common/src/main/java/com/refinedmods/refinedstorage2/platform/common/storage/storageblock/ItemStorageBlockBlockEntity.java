@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -29,7 +28,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             BlockEntities.INSTANCE.getItemStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode(getEnergyUsage(variant), StorageChannelTypes.ITEM),
+            new StorageNetworkNode(getEnergyUsage(variant)),
             PlatformApi.INSTANCE.getItemResourceFactory()
         );
         this.variant = variant;

@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 
 import java.util.Collections;
@@ -20,14 +19,10 @@ import net.minecraft.world.level.Level;
 class InterfaceProxyExternalStorageProvider implements InterfaceExternalStorageProvider {
     private final Level level;
     private final BlockPos pos;
-    private final StorageChannelType storageChannelType;
 
-    InterfaceProxyExternalStorageProvider(final Level level,
-                                          final BlockPos pos,
-                                          final StorageChannelType storageChannelType) {
+    InterfaceProxyExternalStorageProvider(final Level level, final BlockPos pos) {
         this.level = level;
         this.pos = pos;
-        this.storageChannelType = storageChannelType;
     }
 
     private Optional<InterfaceBlockEntity> tryGetInterface() {
@@ -38,7 +33,7 @@ class InterfaceProxyExternalStorageProvider implements InterfaceExternalStorageP
     }
 
     private Optional<InterfaceExternalStorageProvider> tryGetProvider() {
-        return tryGetInterface().map(iface -> iface.getExternalStorageProvider(storageChannelType));
+        return tryGetInterface().map(InterfaceBlockEntity::getExternalStorageProvider);
     }
 
     @Override

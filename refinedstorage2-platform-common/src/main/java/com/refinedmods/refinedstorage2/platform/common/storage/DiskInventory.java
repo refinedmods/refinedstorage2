@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageState;
-import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
@@ -54,7 +53,7 @@ public class DiskInventory extends SimpleContainer implements MultiStorageProvid
     }
 
     @Override
-    public Optional<TypedStorage<Storage>> resolve(final int index) {
+    public Optional<Storage> resolve(final int index) {
         if (storageRepository == null) {
             return Optional.empty();
         }

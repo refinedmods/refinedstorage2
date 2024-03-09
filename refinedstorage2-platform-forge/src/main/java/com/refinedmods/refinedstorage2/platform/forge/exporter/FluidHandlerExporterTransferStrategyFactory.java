@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.exporter.FuzzyExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCache;
 import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 import com.refinedmods.refinedstorage2.platform.forge.storage.FluidHandlerInsertableStorage;
@@ -33,8 +32,8 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
         final long transferQuota = (upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1)
             * Platform.INSTANCE.getBucketAmount();
         if (fuzzyMode) {
-            return new FuzzyExporterTransferStrategy(destination, StorageChannelTypes.FLUID, transferQuota);
+            return new FuzzyExporterTransferStrategy(destination, transferQuota);
         }
-        return new ExporterTransferStrategyImpl(destination, StorageChannelTypes.FLUID, transferQuota);
+        return new ExporterTransferStrategyImpl(destination, transferQuota);
     }
 }

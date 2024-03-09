@@ -23,15 +23,17 @@ import javax.annotation.Nullable;
 public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<ExternalStorage>
     implements ConsumingStorage, CompositeAwareChild, TrackedStorage, ExternalStorageListener {
     private final Set<ParentComposite> parents = new HashSet<>();
-    private final TrackedStorageRepository trackingRepository;
     private final LongSupplier clock;
+    @Nullable
+    private TrackedStorageRepository trackingRepository;
 
-    ExposedExternalStorage(final StorageConfiguration config,
-                           final TrackedStorageRepository trackingRepository,
-                           final LongSupplier clock) {
+    ExposedExternalStorage(final StorageConfiguration config, final LongSupplier clock) {
         super(config);
-        this.trackingRepository = trackingRepository;
         this.clock = clock;
+    }
+
+    void setTrackingRepository(final TrackedStorageRepository trackingRepository) {
+        this.trackingRepository = trackingRepository;
     }
 
     @Nullable
@@ -91,11 +93,17 @@ public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<Exter
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
+        if (trackingRepository == null) {
+            return Optional.empty();
+        }
         return trackingRepository.findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override
     public void beforeDetectChanges(final ResourceKey resource, final Actor actor) {
+        if (trackingRepository == null) {
+            return;
+        }
         trackingRepository.update(resource, actor, clock.getAsLong());
     }
 }

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
-import static com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource.ofItemStack;
+import static com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource.ofItemStack;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
 
 public interface CapabilityCache {

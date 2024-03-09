@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -17,22 +16,16 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public class ImporterTransferStrategyImpl implements ImporterTransferStrategy {
     private final ImporterSource source;
-    private final StorageChannelType storageChannelType;
     private final long transferQuota;
 
-    public ImporterTransferStrategyImpl(final ImporterSource source,
-                                        final StorageChannelType storageChannelType,
-                                        final long transferQuota) {
+    public ImporterTransferStrategyImpl(final ImporterSource source, final long transferQuota) {
         this.source = source;
-        this.storageChannelType = storageChannelType;
         this.transferQuota = transferQuota;
     }
 
     @Override
     public boolean transfer(final Filter filter, final Actor actor, final Network network) {
-        final StorageChannel storageChannel = network
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(storageChannelType);
+        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class);
         return transfer(filter, actor, storageChannel);
     }
 

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 
@@ -21,20 +20,20 @@ public final class FilterWithFuzzyMode {
     @Nullable
     private final Runnable listener;
     @Nullable
-    private final Consumer<Set<ResourceKey>> uniqueTemplateListener;
+    private final Consumer<Set<ResourceKey>> uniqueFilterListener;
     @Nullable
-    private final Consumer<List<ResourceTemplate>> templateListener;
+    private final Consumer<List<ResourceKey>> filterListener;
 
     private boolean fuzzyMode;
 
     private FilterWithFuzzyMode(final ResourceContainer filterContainer,
                                 @Nullable final Runnable listener,
-                                @Nullable final Consumer<Set<ResourceKey>> uniqueTemplateListener,
-                                @Nullable final Consumer<List<ResourceTemplate>> templateListener) {
+                                @Nullable final Consumer<Set<ResourceKey>> uniqueFilterListener,
+                                @Nullable final Consumer<List<ResourceKey>> filterListener) {
         this.filterContainer = filterContainer;
         this.listener = listener;
-        this.uniqueTemplateListener = uniqueTemplateListener;
-        this.templateListener = templateListener;
+        this.uniqueFilterListener = uniqueFilterListener;
+        this.filterListener = filterListener;
         this.filterContainer.setListener(this::filterContainerChanged);
     }
 
@@ -55,7 +54,7 @@ public final class FilterWithFuzzyMode {
 
     public void setFuzzyMode(final boolean fuzzyMode) {
         this.fuzzyMode = fuzzyMode;
-        // We need to reload the templates as the normalizer will give different outputs now.
+        // We need to reload the filters as the normalizer will give different outputs now.
         notifyListeners();
         if (listener != null) {
             listener.run();
@@ -73,11 +72,11 @@ public final class FilterWithFuzzyMode {
     }
 
     private void notifyListeners() {
-        if (uniqueTemplateListener != null) {
-            uniqueTemplateListener.accept(filterContainer.getUniqueTemplates());
+        if (uniqueFilterListener != null) {
+            uniqueFilterListener.accept(filterContainer.getUniqueResources());
         }
-        if (templateListener != null) {
-            templateListener.accept(filterContainer.getTemplates());
+        if (filterListener != null) {
+            filterListener.accept(filterContainer.getResources());
         }
     }
 
@@ -103,19 +102,19 @@ public final class FilterWithFuzzyMode {
         return new FilterWithFuzzyMode(resourceContainer, listener, null, null);
     }
 
-    public static FilterWithFuzzyMode createAndListenForTemplates(
+    public static FilterWithFuzzyMode createAndListenForFilters(
         final ResourceContainer resourceContainer,
         final Runnable listener,
-        final Consumer<List<ResourceTemplate>> templateListener
+        final Consumer<List<ResourceKey>> filterListener
     ) {
-        return new FilterWithFuzzyMode(resourceContainer, listener, null, templateListener);
+        return new FilterWithFuzzyMode(resourceContainer, listener, null, filterListener);
     }
 
-    public static FilterWithFuzzyMode createAndListenForUniqueTemplates(
+    public static FilterWithFuzzyMode createAndListenForUniqueFilters(
         final ResourceContainer resourceContainer,
         final Runnable listener,
-        final Consumer<Set<ResourceKey>> templateListener
+        final Consumer<Set<ResourceKey>> filterListener
     ) {
-        return new FilterWithFuzzyMode(resourceContainer, listener, templateListener, null);
+        return new FilterWithFuzzyMode(resourceContainer, listener, filterListener, null);
     }
 }

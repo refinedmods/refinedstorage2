@@ -2,9 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 import javax.annotation.Nullable;
@@ -14,26 +12,25 @@ public interface InterfaceExportState {
 
     Collection<ResourceKey> expandExportCandidates(StorageChannel storageChannel, ResourceKey resource);
 
-    boolean isExportedResourceValid(ResourceTemplate want,
-                                    ResourceTemplate got);
+    boolean isExportedResourceValid(ResourceKey want, ResourceKey got);
 
     @Nullable
-    ResourceTemplate getRequestedResource(int slotIndex);
+    ResourceKey getRequestedResource(int slotIndex);
 
     long getRequestedAmount(int slotIndex);
 
     @Nullable
-    ResourceTemplate getExportedResource(int slotIndex);
+    ResourceKey getExportedResource(int slotIndex);
 
     long getExportedAmount(int slotIndex);
 
-    void setExportSlot(int slotIndex, ResourceTemplate resource, long amount);
+    void setExportSlot(int slotIndex, ResourceKey resource, long amount);
 
     void shrinkExportedAmount(int slotIndex, long amount);
 
     void growExportedAmount(int slotIndex, long amount);
 
-    long insert(StorageChannelType storageChannelType, ResourceKey resource, long amount, Action action);
+    long insert(ResourceKey resource, long amount, Action action);
 
     long extract(ResourceKey resource, long amount, Action action);
 }

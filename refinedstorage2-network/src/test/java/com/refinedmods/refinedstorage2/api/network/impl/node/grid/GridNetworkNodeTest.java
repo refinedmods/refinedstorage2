@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetwork;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.util.FakeActor;
@@ -24,10 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.D;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.D;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -102,7 +101,6 @@ class GridNetworkNodeTest {
         final ArgumentCaptor<ResourceKey> resources = ArgumentCaptor.forClass(ResourceKey.class);
         final ArgumentCaptor<TrackedResource> trackedResources = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(2)).onChanged(
-            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
             resources.capture(),
             anyLong(),
             trackedResources.capture()
@@ -171,7 +169,6 @@ class GridNetworkNodeTest {
 
         final ArgumentCaptor<TrackedResource> trackedResources1 = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(1)).onChanged(
-            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
             eq(C),
             eq(10L),
             trackedResources1.capture()
@@ -182,7 +179,6 @@ class GridNetworkNodeTest {
 
         final ArgumentCaptor<TrackedResource> trackedResources2 = ArgumentCaptor.forClass(TrackedResource.class);
         verify(watcher, times(1)).onChanged(
-            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
             eq(A),
             eq(10L),
             trackedResources2.capture()
@@ -192,7 +188,6 @@ class GridNetworkNodeTest {
             .allMatch(t -> FakeActor.INSTANCE.getName().equals(t.getSourceName()));
 
         verify(watcher, times(1)).onChanged(
-            eq(NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
             eq(D),
             eq(10L),
             isNull()

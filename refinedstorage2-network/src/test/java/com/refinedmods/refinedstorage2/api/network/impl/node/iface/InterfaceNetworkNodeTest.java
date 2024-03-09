@@ -5,19 +5,17 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkEnergyComponent;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -62,9 +60,7 @@ class InterfaceNetworkNodeTest {
 
         // Assert
         assertThat(exportState.getExportedResource(0)).isNull();
-        assertThat(exportState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
-            new ResourceTemplate(A, NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
-        );
+        assertThat(exportState.getExportedResource(1)).isEqualTo(A);
         assertThat(exportState.getExportedAmount(1)).isEqualTo(Long.MAX_VALUE);
         assertThat(storageChannel.getAll()).isEmpty();
         assertThat(energy.getStored()).isEqualTo(1000 - 5);

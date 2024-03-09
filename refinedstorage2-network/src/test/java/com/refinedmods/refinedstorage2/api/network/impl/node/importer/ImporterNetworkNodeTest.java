@@ -16,7 +16,6 @@ import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkEnergyComponent;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.List;
@@ -25,11 +24,11 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE2;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE2;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -96,11 +95,7 @@ class ImporterNetworkNodeTest {
         final FakeImporterSource source = new FakeImporterSource(A, B)
             .add(A, 100)
             .add(B, 100);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
         sut.setActive(false);
 
@@ -124,11 +119,7 @@ class ImporterNetworkNodeTest {
         final FakeImporterSource source = new FakeImporterSource(A, B, A)
             .add(A, 100)
             .add(B, 100);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -158,21 +149,9 @@ class ImporterNetworkNodeTest {
             .add(B, 100);
 
         sut.setTransferStrategy(new CompositeImporterTransferStrategy(List.of(
-            new ImporterTransferStrategyImpl(
-                emptySource,
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-                1
-            ),
-            new ImporterTransferStrategyImpl(
-                source,
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-                1
-            ),
-            new ImporterTransferStrategyImpl(
-                source,
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-                1
-            )
+            new ImporterTransferStrategyImpl(emptySource, 1),
+            new ImporterTransferStrategyImpl(source, 1),
+            new ImporterTransferStrategyImpl(source, 1)
         )));
 
         // Act
@@ -199,11 +178,7 @@ class ImporterNetworkNodeTest {
         final FakeImporterSource source = new FakeImporterSource(A, B)
             .add(A, 100)
             .add(B, 100);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -229,11 +204,7 @@ class ImporterNetworkNodeTest {
         final FakeImporterSource source = new FakeImporterSource(A, B, A, B)
             .add(A, 11)
             .add(B, 6);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            10
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -260,11 +231,7 @@ class ImporterNetworkNodeTest {
             .add(A, 20)
             .add(B, 5);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            10
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -298,11 +265,7 @@ class ImporterNetworkNodeTest {
         final FakeImporterSource source = new FakeImporterSource(A, B, B, B)
             .add(A, 8)
             .add(B, 11);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            10
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -326,11 +289,7 @@ class ImporterNetworkNodeTest {
         storageChannel.addSource(new InMemoryStorageImpl());
 
         final FakeImporterSource source = new FakeImporterSource();
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            10
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -345,7 +304,7 @@ class ImporterNetworkNodeTest {
     void shouldRespectAllowlist(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
@@ -353,11 +312,7 @@ class ImporterNetworkNodeTest {
             .add(B, 10)
             .add(A, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -379,7 +334,7 @@ class ImporterNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
         sut.setNormalizer(resource -> {
             if (resource == A_ALTERNATIVE || resource == A_ALTERNATIVE2) {
                 return A;
@@ -394,11 +349,7 @@ class ImporterNetworkNodeTest {
             .add(A_ALTERNATIVE, 1)
             .add(A_ALTERNATIVE2, 1);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            10
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -421,18 +372,14 @@ class ImporterNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
         final FakeImporterSource source = new FakeImporterSource(B)
             .add(B, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -449,7 +396,7 @@ class ImporterNetworkNodeTest {
     void shouldRespectEmptyAllowlist(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
@@ -457,11 +404,7 @@ class ImporterNetworkNodeTest {
             .add(B, 10)
             .add(A, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -479,7 +422,7 @@ class ImporterNetworkNodeTest {
     void shouldRespectBlocklist(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
@@ -487,11 +430,7 @@ class ImporterNetworkNodeTest {
             .add(A, 10)
             .add(B, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -513,18 +452,14 @@ class ImporterNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of(A));
+        sut.setFilters(Set.of(A));
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
         final FakeImporterSource source = new FakeImporterSource(A)
             .add(A, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act
@@ -541,7 +476,7 @@ class ImporterNetworkNodeTest {
     void shouldRespectEmptyBlocklist(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         storageChannel.addSource(new InMemoryStorageImpl());
 
@@ -549,11 +484,7 @@ class ImporterNetworkNodeTest {
             .add(A, 10)
             .add(B, 10);
 
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
         sut.setTransferStrategy(strategy);
 
         // Act

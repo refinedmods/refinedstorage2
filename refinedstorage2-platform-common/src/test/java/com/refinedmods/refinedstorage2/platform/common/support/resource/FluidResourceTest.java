@@ -1,6 +1,7 @@
-package com.refinedmods.refinedstorage2.platform.api.support.resource;
+package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import java.util.Optional;
@@ -33,8 +34,8 @@ class FluidResourceTest {
         final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
 
         // Act
-        final CompoundTag serialized = FluidResource.toTag(fluidResource);
-        final Optional<ResourceKey> deserialized = FluidResource.fromTag(serialized);
+        final CompoundTag serialized = fluidResource.toTag();
+        final Optional<PlatformResourceKey> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(fluidResource);
@@ -44,11 +45,11 @@ class FluidResourceTest {
     void testDeserializationWithInvalidFluid() {
         // Arrange
         final FluidResource fluidResource = new FluidResource(Fluids.WATER, null);
-        final CompoundTag serialized = FluidResource.toTag(fluidResource);
+        final CompoundTag serialized = fluidResource.toTag();
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        final Optional<ResourceKey> deserialized = FluidResource.fromTag(serialized);
+        final Optional<PlatformResourceKey> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();

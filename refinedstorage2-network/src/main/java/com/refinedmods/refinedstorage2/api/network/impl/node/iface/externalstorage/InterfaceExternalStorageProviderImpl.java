@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +15,9 @@ import java.util.List;
 
 public class InterfaceExternalStorageProviderImpl implements InterfaceExternalStorageProvider {
     private final InterfaceNetworkNode networkNode;
-    private final StorageChannelType storageChannelType;
 
-    public InterfaceExternalStorageProviderImpl(final InterfaceNetworkNode networkNode,
-                                                final StorageChannelType storageChannelType) {
+    public InterfaceExternalStorageProviderImpl(final InterfaceNetworkNode networkNode) {
         this.networkNode = networkNode;
-        this.storageChannelType = storageChannelType;
     }
 
     @Override
@@ -46,7 +41,7 @@ public class InterfaceExternalStorageProviderImpl implements InterfaceExternalSt
         if (exportState == null) {
             return 0;
         }
-        return exportState.insert(storageChannelType, resource, amount, action);
+        return exportState.insert(resource, amount, action);
     }
 
     private boolean isAnotherInterfaceActingAsExternalStorage(final Actor actor) {
@@ -63,8 +58,8 @@ public class InterfaceExternalStorageProviderImpl implements InterfaceExternalSt
         }
         final List<ResourceAmount> slots = new ArrayList<>();
         for (int i = 0; i < exportState.getSlots(); ++i) {
-            final ResourceTemplate resource = exportState.getExportedResource(i);
-            if (resource == null || resource.storageChannelType() != storageChannelType) {
+            final ResourceKey resource = exportState.getExportedResource(i);
+            if (resource == null) {
                 continue;
             }
             slots.add(getResourceAmount(resource, exportState.getExportedAmount(i)));
@@ -72,9 +67,8 @@ public class InterfaceExternalStorageProviderImpl implements InterfaceExternalSt
         return slots.iterator();
     }
 
-    private ResourceAmount getResourceAmount(final ResourceTemplate resource,
-                                             final long amount) {
-        return new ResourceAmount(resource.resource(), amount);
+    private ResourceAmount getResourceAmount(final ResourceKey resource, final long amount) {
+        return new ResourceAmount(resource, amount);
     }
 
     @Override

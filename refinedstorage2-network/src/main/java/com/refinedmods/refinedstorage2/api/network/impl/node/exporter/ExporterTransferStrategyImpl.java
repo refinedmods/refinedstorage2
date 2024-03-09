@@ -8,21 +8,16 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class ExporterTransferStrategyImpl implements ExporterTransferStrategy {
     private final InsertableStorage destination;
-    private final StorageChannelType storageChannelType;
     private final long transferQuota;
 
-    public ExporterTransferStrategyImpl(final InsertableStorage destination,
-                                        final StorageChannelType storageChannelType,
-                                        final long transferQuota) {
+    public ExporterTransferStrategyImpl(final InsertableStorage destination, final long transferQuota) {
         this.destination = destination;
-        this.storageChannelType = storageChannelType;
         this.transferQuota = transferQuota;
     }
 
@@ -37,8 +32,7 @@ public class ExporterTransferStrategyImpl implements ExporterTransferStrategy {
 
     @Override
     public boolean transfer(final ResourceKey resource, final Actor actor, final Network network) {
-        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(storageChannelType);
+        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class);
         final Collection<ResourceKey> expanded = expand(resource, storageChannel);
         return tryTransferExpanded(actor, storageChannel, expanded);
     }

@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.recipemod.rei;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
@@ -38,7 +37,7 @@ class DraggableStackVisitorImpl
         final List<BoundsProvider> bounds = new ArrayList<>();
         ingredientConverter.convertToResource(value).ifPresent(resource -> {
             for (final ResourceSlot slot : menu.getResourceSlots()) {
-                if (slot.isFilter() && slot.isValid(resource.resource())) {
+                if (slot.isFilter() && slot.isValid(resource)) {
                     bounds.add(BoundsProvider.ofRectangle(toRectangle(screen, slot)));
                 }
             }
@@ -55,7 +54,7 @@ class DraggableStackVisitorImpl
         final var menu = screen.getMenu();
         final Object value = stack.getStack().getValue();
         return ingredientConverter.convertToResource(value)
-            .map(resourceTemplate -> accept(context, menu, screen, resourceTemplate))
+            .map(resource -> accept(context, menu, screen, resource))
             .orElse(DraggedAcceptorResult.PASS);
     }
 
@@ -63,18 +62,14 @@ class DraggableStackVisitorImpl
         final DraggingContext<AbstractBaseScreen<? extends AbstractResourceContainerMenu>> context,
         final AbstractResourceContainerMenu menu,
         final AbstractBaseScreen<? extends AbstractResourceContainerMenu> screen,
-        final ResourceTemplate resource
+        final PlatformResourceKey resource
     ) {
         for (final ResourceSlot slot : menu.getResourceSlots()) {
             final Rectangle slotBounds = toRectangle(screen, slot);
             if (!slotBounds.contains(context.getCurrentPosition())) {
                 continue;
             }
-            Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotChange(
-                (PlatformStorageChannelType) resource.storageChannelType(),
-                resource.resource(),
-                slot.index
-            );
+            Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotChange(resource, slot.index);
             return DraggedAcceptorResult.ACCEPTED;
         }
         return DraggedAcceptorResult.PASS;

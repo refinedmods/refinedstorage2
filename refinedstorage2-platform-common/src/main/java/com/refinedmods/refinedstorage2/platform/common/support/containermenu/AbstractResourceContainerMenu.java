@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.support.containermenu;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseContainerMenu;
 
@@ -48,16 +47,12 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
         return Optional.empty();
     }
 
-    public void handleResourceSlotUpdate(final int slotIndex,
-                                         @Nullable final ResourceAmountTemplate resourceAmount) {
+    public void handleResourceSlotUpdate(final int slotIndex, @Nullable final ResourceAmount resourceAmount) {
         getResourceSlot(slotIndex).ifPresent(slot -> slot.change(resourceAmount));
     }
 
-
-    public void handleResourceFilterSlotUpdate(final int slotIndex,
-                                               final PlatformStorageChannelType storageChannelType,
-                                               final ResourceKey resource) {
-        getResourceSlot(slotIndex).ifPresent(slot -> slot.setFilter(storageChannelType, resource));
+    public void handleResourceFilterSlotUpdate(final int slotIndex, final PlatformResourceKey resource) {
+        getResourceSlot(slotIndex).ifPresent(slot -> slot.setFilter(resource));
     }
 
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {

@@ -3,16 +3,15 @@ package com.refinedmods.refinedstorage2.platform.fabric.grid.strategy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.util.SimpleSingleStackStorage;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -39,15 +38,14 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
                                        final Player player,
                                        final Grid grid) {
-        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
+        this.gridOperations = grid.createOperations(ResourceTypes.FLUID, new PlayerActor(player));
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
         this.itemStorage = grid.getItemStorage();
     }
 
     @Override
-    public boolean onExtract(final PlatformStorageChannelType storageChannelType,
-                             final ResourceKey resource,
+    public boolean onExtract(final PlatformResourceKey resource,
                              final GridExtractMode extractMode,
                              final boolean cursor) {
         if (resource instanceof FluidResource fluidResource) {

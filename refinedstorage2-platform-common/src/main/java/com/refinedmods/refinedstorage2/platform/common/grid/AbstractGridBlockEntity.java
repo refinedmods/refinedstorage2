@@ -9,11 +9,9 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
@@ -44,20 +42,18 @@ public abstract class AbstractGridBlockEntity
     }
 
     @Override
-    public List<TrackedResourceAmount> getResources(final StorageChannelType type,
-                                                    final Class<? extends Actor> actorType) {
+    public List<TrackedResourceAmount> getResources(final Class<? extends Actor> actorType) {
         return requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
-            .getResources(type, actorType);
+            .getResources(actorType);
     }
 
     @Override
-    public GridOperations createOperations(final PlatformStorageChannelType storageChannelType,
+    public GridOperations createOperations(final ResourceType resourceType,
                                            final Actor actor) {
         final StorageChannel storageChannel = requireNonNull(getNode().getNetwork())
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(storageChannelType);
-        return storageChannelType.createGridOperations(storageChannel, actor);
+            .getComponent(StorageNetworkComponent.class);
+        return resourceType.createGridOperations(storageChannel, actor);
     }
 
     @Override
@@ -67,9 +63,7 @@ public abstract class AbstractGridBlockEntity
 
     @Override
     public Storage getItemStorage() {
-        return requireNonNull(getNode().getNetwork())
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM);
+        return requireNonNull(getNode().getNetwork()).getComponent(StorageNetworkComponent.class);
     }
 
     @Override

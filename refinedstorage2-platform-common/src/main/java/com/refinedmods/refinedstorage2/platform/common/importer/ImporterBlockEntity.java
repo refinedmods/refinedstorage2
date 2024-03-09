@@ -55,10 +55,10 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            templates -> getNode().setFilterTemplates(templates)
+            filters -> getNode().setFilters(filters)
         );
         getNode().setNormalizer(filter.createNormalizer());
     }

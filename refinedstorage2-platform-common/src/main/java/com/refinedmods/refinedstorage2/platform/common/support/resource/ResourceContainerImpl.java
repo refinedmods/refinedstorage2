@@ -2,15 +2,14 @@ package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.util.MathUtil;
 
 import java.util.ArrayList;
@@ -28,9 +27,9 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 public class ResourceContainerImpl implements ResourceContainer {
-    private final ResourceAmountTemplate[] slots;
+    private final ResourceContainerSlot[] slots;
     private final ResourceContainerType type;
-    private final ToLongFunction<ResourceTemplate> maxAmountProvider;
+    private final ToLongFunction<ResourceKey> maxAmountProvider;
     private final ResourceFactory primaryResourceFactory;
     private final Set<ResourceFactory> alternativeResourceFactories;
 
@@ -39,10 +38,10 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     public ResourceContainerImpl(final int size,
                                  final ResourceContainerType type,
-                                 final ToLongFunction<ResourceTemplate> maxAmountProvider,
+                                 final ToLongFunction<ResourceKey> maxAmountProvider,
                                  final ResourceFactory primaryResourceFactory,
                                  final Set<ResourceFactory> alternativeResourceFactories) {
-        this.slots = new ResourceAmountTemplate[size];
+        this.slots = new ResourceContainerSlot[size];
         this.type = type;
         this.maxAmountProvider = maxAmountProvider;
         this.primaryResourceFactory = primaryResourceFactory;
@@ -77,13 +76,13 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
-    public void set(final int index, final ResourceAmountTemplate resourceAmount) {
+    public void set(final int index, final ResourceAmount resourceAmount) {
         setSilently(index, resourceAmount);
         changed();
     }
 
-    private void setSilently(final int index, final ResourceAmountTemplate resourceAmount) {
-        slots[index] = resourceAmount;
+    private void setSilently(final int index, final ResourceAmount resourceAmount) {
+        slots[index] = new ResourceContainerSlot(resourceAmount);
     }
 
     @Override
@@ -101,11 +100,11 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     public long getAmount(final int index) {
-        final ResourceAmountTemplate resourceAmount = slots[index];
-        if (resourceAmount == null) {
+        final ResourceContainerSlot slot = slots[index];
+        if (slot == null) {
             return 0;
         }
-        return resourceAmount.getAmount();
+        return slot.getResourceAmount().getAmount();
     }
 
     @Override
@@ -122,22 +121,22 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     public void setAmount(final int index, final long amount) {
-        final ResourceAmountTemplate resourceAmount = slots[index];
-        if (resourceAmount == null) {
+        final ResourceContainerSlot slot = slots[index];
+        if (slot == null) {
             return;
         }
-        final long newAmount = MathUtil.clamp(amount, 0, getMaxAmount(resourceAmount));
+        final long newAmount = MathUtil.clamp(amount, 0, getMaxAmount(slot.getResourceAmount().getResource()));
         if (newAmount == 0) {
             remove(index);
         } else {
-            slots[index] = resourceAmount.withAmount(newAmount);
+            slots[index] = slot.withAmount(newAmount);
         }
         changed();
     }
 
     @Override
-    public long getMaxAmount(final ResourceAmountTemplate resourceAmount) {
-        return maxAmountProvider.applyAsLong(resourceAmount.getResourceTemplate());
+    public long getMaxAmount(final ResourceKey resource) {
+        return maxAmountProvider.applyAsLong(resource);
     }
 
     @Override
@@ -157,39 +156,62 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     @Nullable
-    public ResourceAmountTemplate get(final int index) {
-        return slots[index];
+    public ResourceAmount get(final int index) {
+        final ResourceContainerSlot slot = slots[index];
+        if (slot == null) {
+            return null;
+        }
+        return slot.getResourceAmount();
+    }
+
+    @Nullable
+    @Override
+    public PlatformResourceKey getResource(final int index) {
+        final ResourceContainerSlot slot = slots[index];
+        if (slot == null) {
+            return null;
+        }
+        return slot.getPlatformResource();
     }
 
     @Override
-    public Set<ResourceKey> getUniqueTemplates() {
+    public ItemStack getStackRepresentation(final int index) {
+        final ResourceContainerSlot slot = slots[index];
+        if (slot == null) {
+            return ItemStack.EMPTY;
+        }
+        return slot.getStackRepresentation();
+    }
+
+    @Override
+    public Set<ResourceKey> getUniqueResources() {
         final Set<ResourceKey> result = new HashSet<>();
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate resourceAmount = slots[i];
-            if (resourceAmount == null) {
+            final ResourceContainerSlot slot = slots[i];
+            if (slot == null) {
                 continue;
             }
-            result.add(resourceAmount.getResourceTemplate().resource());
+            result.add(slot.getResourceAmount().getResource());
         }
         return result;
     }
 
     @Override
-    public List<ResourceTemplate> getTemplates() {
-        final List<ResourceTemplate> result = new ArrayList<>();
+    public List<ResourceKey> getResources() {
+        final List<ResourceKey> result = new ArrayList<>();
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate resourceAmount = slots[i];
-            if (resourceAmount == null) {
+            final ResourceContainerSlot slot = slots[i];
+            if (slot == null) {
                 continue;
             }
-            result.add(resourceAmount.getResourceTemplate());
+            result.add(slot.getResourceAmount().getResource());
         }
         return result;
     }
 
     @Override
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {
-        for (final ResourceAmountTemplate slot : slots) {
+        for (final ResourceContainerSlot slot : slots) {
             if (slot == null) {
                 buf.writeBoolean(false);
                 continue;
@@ -198,13 +220,13 @@ public class ResourceContainerImpl implements ResourceContainer {
         }
     }
 
-    private void writeToUpdatePacket(final FriendlyByteBuf buf, final ResourceAmountTemplate resourceAmount) {
-        final PlatformStorageChannelType storageChannelType = resourceAmount.getStorageChannelType();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresentOrElse(id -> {
+    private void writeToUpdatePacket(final FriendlyByteBuf buf, final ResourceContainerSlot slot) {
+        final ResourceType resourceType = slot.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresentOrElse(id -> {
             buf.writeBoolean(true);
             buf.writeResourceLocation(id);
-            storageChannelType.toBuffer(resourceAmount.getResource(), buf);
-            buf.writeLong(resourceAmount.getAmount());
+            slot.getPlatformResource().toBuffer(buf);
+            buf.writeLong(slot.getAmount());
         }, () -> buf.writeBoolean(false));
     }
 
@@ -216,24 +238,24 @@ public class ResourceContainerImpl implements ResourceContainer {
             return;
         }
         final ResourceLocation id = buf.readResourceLocation();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id).ifPresent(
-            storageChannelType -> readFromUpdatePacket(index, buf, storageChannelType)
+        PlatformApi.INSTANCE.getResourceTypeRegistry().get(id).ifPresent(
+            resourceType -> readFromUpdatePacket(index, buf, resourceType)
         );
     }
 
     private void readFromUpdatePacket(final int index,
                                       final FriendlyByteBuf buf,
-                                      final PlatformStorageChannelType storageChannelType) {
-        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+                                      final ResourceType resourceType) {
+        final ResourceKey resource = resourceType.fromBuffer(buf);
         final long amount = buf.readLong();
-        setSilently(index, new ResourceAmountTemplate(resource, amount, storageChannelType));
+        setSilently(index, new ResourceAmount(resource, amount));
     }
 
     @Override
     public CompoundTag toTag() {
         final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate resourceAmount = slots[i];
+            final ResourceContainerSlot resourceAmount = slots[i];
             if (resourceAmount == null) {
                 continue;
             }
@@ -244,22 +266,21 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     private void addToTag(final CompoundTag tag,
                           final int index,
-                          final ResourceAmountTemplate resourceAmount) {
-        final PlatformStorageChannelType storageChannelType = resourceAmount.getStorageChannelType();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(
-            storageChannelTypeId -> addToTag(tag, index, resourceAmount, storageChannelType, storageChannelTypeId)
+                          final ResourceContainerSlot resourceAmount) {
+        final ResourceType resourceType = resourceAmount.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(
+            resourceTypeId -> addToTag(tag, index, resourceAmount, resourceTypeId)
         );
     }
 
     private void addToTag(final CompoundTag tag,
                           final int index,
-                          final ResourceAmountTemplate resourceAmount,
-                          final PlatformStorageChannelType storageChannelType,
-                          final ResourceLocation storageChannelTypeId) {
+                          final ResourceContainerSlot slot,
+                          final ResourceLocation resourceTypeId) {
         final CompoundTag serialized = new CompoundTag();
-        serialized.putString("t", storageChannelTypeId.toString());
-        serialized.put("v", storageChannelType.toTag(resourceAmount.getResource()));
-        serialized.putLong("a", resourceAmount.getAmount());
+        serialized.putString("t", resourceTypeId.toString());
+        serialized.put("v", slot.getPlatformResource().toTag());
+        serialized.putLong("a", slot.getAmount());
         tag.put("s" + index, serialized);
     }
 
@@ -277,19 +298,17 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     private void fromTag(final int index, final CompoundTag tag) {
-        final ResourceLocation storageChannelTypeId = new ResourceLocation(tag.getString("t"));
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(storageChannelTypeId).ifPresent(
-            storageChannelType -> fromTag(index, tag, storageChannelType)
+        final ResourceLocation resourceTypeId = new ResourceLocation(tag.getString("t"));
+        PlatformApi.INSTANCE.getResourceTypeRegistry().get(resourceTypeId).ifPresent(
+            resourceType -> fromTag(index, tag, resourceType)
         );
     }
 
-    private void fromTag(final int index,
-                         final CompoundTag tag,
-                         final PlatformStorageChannelType storageChannelType) {
+    private void fromTag(final int index, final CompoundTag tag, final ResourceType resourceType) {
         final long amount = tag.getLong("a");
-        storageChannelType.fromTag(tag.getCompound("v")).ifPresent(resource -> setSilently(
+        resourceType.fromTag(tag.getCompound("v")).ifPresent(resource -> setSilently(
             index,
-            new ResourceAmountTemplate(resource, amount, storageChannelType)
+            new ResourceAmount(resource, amount)
         ));
     }
 
@@ -323,26 +342,22 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
-    public long insert(final StorageChannelType storageChannelType,
-                       final ResourceKey resource,
-                       final long amount,
-                       final Action action) {
-        if (!(storageChannelType instanceof PlatformStorageChannelType platformStorageChannelType)) {
-            return 0;
+    public long insert(final ResourceKey resource, final long amount, final Action action) {
+        if (!(resource instanceof PlatformResourceKey platformResource)) {
+            return 0L;
         }
         long remainder = amount;
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate existing = get(i);
-            if (existing == null) {
-                remainder -= insertIntoEmptySlot(i, resource, action, platformStorageChannelType, remainder);
-            } else if (existing.getResource().equals(resource)) {
+            final ResourceAmount slot = get(i);
+            if (slot == null) {
+                remainder -= insertIntoEmptySlot(i, platformResource, action, remainder);
+            } else if (slot.getResource().equals(resource)) {
                 remainder -= insertIntoExistingSlot(
                     i,
-                    platformStorageChannelType,
-                    resource,
+                    platformResource,
                     action,
                     remainder,
-                    existing
+                    slot
                 );
             }
             if (remainder == 0) {
@@ -353,28 +368,22 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     private long insertIntoEmptySlot(final int slotIndex,
-                                     final ResourceKey resource,
+                                     final PlatformResourceKey resource,
                                      final Action action,
-                                     final PlatformStorageChannelType platformStorageChannelType,
                                      final long amount) {
-        final long inserted = Math.min(platformStorageChannelType.getInterfaceExportLimit(resource), amount);
+        final long inserted = Math.min(resource.getInterfaceExportLimit(), amount);
         if (action == Action.EXECUTE) {
-            set(slotIndex, new ResourceAmountTemplate(
-                resource,
-                inserted,
-                platformStorageChannelType
-            ));
+            set(slotIndex, new ResourceAmount(resource, inserted));
         }
         return inserted;
     }
 
     private long insertIntoExistingSlot(final int slotIndex,
-                                        final PlatformStorageChannelType storageChannelType,
-                                        final ResourceKey resource,
+                                        final PlatformResourceKey resource,
                                         final Action action,
                                         final long amount,
-                                        final ResourceAmountTemplate existing) {
-        final long spaceRemaining = storageChannelType.getInterfaceExportLimit(resource) - existing.getAmount();
+                                        final ResourceAmount existing) {
+        final long spaceRemaining = resource.getInterfaceExportLimit() - existing.getAmount();
         final long inserted = Math.min(spaceRemaining, amount);
         if (action == Action.EXECUTE) {
             grow(slotIndex, inserted);
@@ -386,12 +395,12 @@ public class ResourceContainerImpl implements ResourceContainer {
     public long extract(final ResourceKey resource, final long amount, final Action action) {
         long extracted = 0;
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate slot = get(i);
-            if (slot == null || !resource.equals(slot.getResource())) {
+            final ResourceAmount slotContents = get(i);
+            if (slotContents == null || !resource.equals(slotContents.getResource())) {
                 continue;
             }
             final long stillNeeded = amount - extracted;
-            final long toExtract = Math.min(slot.getAmount(), stillNeeded);
+            final long toExtract = Math.min(slotContents.getAmount(), stillNeeded);
             if (action == Action.EXECUTE) {
                 shrink(i, toExtract);
             }
@@ -410,9 +419,9 @@ public class ResourceContainerImpl implements ResourceContainer {
             alternativeResourceFactories
         );
         for (int i = 0; i < size(); ++i) {
-            final ResourceAmountTemplate resourceAmount = get(i);
-            if (resourceAmount != null) {
-                copy.set(i, resourceAmount);
+            final ResourceAmount slotContents = get(i);
+            if (slotContents != null) {
+                copy.set(i, slotContents);
             }
         }
         return copy;

@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 
 import net.minecraft.core.BlockPos;
@@ -27,6 +26,6 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
             direction
         ), amountOverride);
         final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
-        return new ImporterTransferStrategyImpl(source, StorageChannelTypes.ITEM, transferQuota);
+        return new ImporterTransferStrategyImpl(source, transferQuota);
     }
 }

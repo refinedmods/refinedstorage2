@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;

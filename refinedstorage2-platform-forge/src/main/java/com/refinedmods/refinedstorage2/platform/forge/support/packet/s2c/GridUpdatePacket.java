@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -16,24 +16,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public record GridUpdatePacket(
-    PlatformStorageChannelType storageChannelType,
-    ResourceLocation storageChannelTypeId,
-    ResourceKey resource,
+    ResourceLocation resourceTypeId,
+    PlatformResourceKey resource,
     long amount,
     @Nullable TrackedResource trackedResource
 ) implements CustomPacketPayload {
     public static GridUpdatePacket decode(final FriendlyByteBuf buf) {
-        final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
-        final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
-            .getStorageChannelTypeRegistry()
-            .get(storageChannelTypeId)
+        final ResourceLocation resourceTypeId = buf.readResourceLocation();
+        final ResourceType resourceType = PlatformApi.INSTANCE
+            .getResourceTypeRegistry()
+            .get(resourceTypeId)
             .orElseThrow();
-        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+        final PlatformResourceKey resource = resourceType.fromBuffer(buf);
         final long amount = buf.readLong();
         final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
         return new GridUpdatePacket(
-            storageChannelType,
-            storageChannelTypeId,
+            resourceTypeId,
             resource,
             amount,
             trackedResource
@@ -50,8 +48,8 @@ public record GridUpdatePacket(
 
     @Override
     public void write(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(storageChannelTypeId);
-        storageChannelType.toBuffer(resource, buf);
+        buf.writeResourceLocation(resourceTypeId);
+        resource.toBuffer(buf);
         buf.writeLong(amount);
         PacketUtil.writeTrackedResource(buf, trackedResource);
     }

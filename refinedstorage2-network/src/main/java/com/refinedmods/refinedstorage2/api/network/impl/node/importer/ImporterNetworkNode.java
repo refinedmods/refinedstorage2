@@ -48,8 +48,8 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
         filter.setNormalizer(normalizer);
     }
 
-    public void setFilterTemplates(final Set<ResourceKey> templates) {
-        filter.setTemplates(templates);
+    public void setFilters(final Set<ResourceKey> filters) {
+        filter.setFilters(filters);
     }
 
     public void setEnergyUsage(final long energyUsage) {

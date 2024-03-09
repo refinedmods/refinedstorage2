@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -29,7 +28,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             BlockEntities.INSTANCE.getFluidStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode(getEnergyUsage(variant), StorageChannelTypes.FLUID),
+            new StorageNetworkNode(getEnergyUsage(variant)),
             PlatformApi.INSTANCE.getFluidResourceFactory()
         );
         this.variant = variant;

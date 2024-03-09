@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 
@@ -38,15 +37,11 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendGridUpdate(final ServerPlayer player,
-                               final PlatformStorageChannelType storageChannelType,
-                               final ResourceKey resource,
+                               final PlatformResourceKey resource,
                                final long change,
                                @Nullable final TrackedResource trackedResource) {
-        PlatformApi.INSTANCE
-            .getStorageChannelTypeRegistry()
-            .getId(storageChannelType)
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resource.getResourceType())
             .ifPresent(id -> sendToPlayer(player, new GridUpdatePacket(
-                storageChannelType,
                 id,
                 resource,
                 change,
@@ -61,11 +56,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendResourceSlotUpdate(final ServerPlayer player,
-                                       @Nullable final ResourceAmountTemplate resourceAmount,
+                                       @Nullable final ResourceAmount resourceAmount,
                                        final int slotIndex) {
-        if (resourceAmount != null) {
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
-                .getId(resourceAmount.getStorageChannelType())
+        if (resourceAmount != null && resourceAmount.getResource() instanceof PlatformResourceKey platformResource) {
+            PlatformApi.INSTANCE.getResourceTypeRegistry().getId(platformResource.getResourceType())
                 .ifPresent(id -> sendToPlayer(player, new ResourceSlotUpdatePacket(
                     slotIndex,
                     resourceAmount,

@@ -1,19 +1,13 @@
-package com.refinedmods.refinedstorage2.platform.common.storage.channel;
+package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperationsImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.AbstractPlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannelImpl;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.list.FuzzyResourceList;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.list.FuzzyResourceListImpl;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.AbstractResourceType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.common.support.TextureIds;
@@ -26,16 +20,11 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-class FluidStorageChannelType extends AbstractPlatformStorageChannelType {
-    FluidStorageChannelType() {
+class FluidResourceType extends AbstractResourceType {
+    FluidResourceType() {
         super(
             "FLUID",
-            () -> {
-                final ResourceList list = new ResourceListImpl();
-                final FuzzyResourceList fuzzyList = new FuzzyResourceListImpl(list);
-                return new FuzzyStorageChannelImpl(fuzzyList);
-            },
-            createTranslation("misc", "storage_channel_type.fluid"),
+            createTranslation("misc", "resource_type.fluid"),
             TextureIds.ICONS,
             16,
             128
@@ -43,21 +32,13 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType {
     }
 
     @Override
-    public void toBuffer(final ResourceKey resource, final FriendlyByteBuf buf) {
-        if (!(resource instanceof FluidResource fluidResource)) {
-            throw new UnsupportedOperationException();
-        }
-        PacketUtil.writeFluidResource(buf, fluidResource);
-    }
-
-    @Override
-    public FluidResource fromBuffer(final FriendlyByteBuf buf) {
+    public PlatformResourceKey fromBuffer(final FriendlyByteBuf buf) {
         return PacketUtil.readFluidResource(buf);
     }
 
     @Override
-    public Optional<GridResource> toGridResource(final ResourceAmount resourceAmount) {
-        return Platform.INSTANCE.getFluidGridResourceFactory().apply(resourceAmount);
+    public Optional<GridResource> toGridResource(final PlatformResourceKey resource, final long amount) {
+        return Platform.INSTANCE.getFluidGridResourceFactory().apply(new ResourceAmount(resource, amount));
     }
 
     @Override
@@ -91,15 +72,7 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType {
     }
 
     @Override
-    public CompoundTag toTag(final ResourceKey resource) {
-        if (!(resource instanceof FluidResource fluidResource)) {
-            throw new UnsupportedOperationException();
-        }
-        return FluidResource.toTag(fluidResource);
-    }
-
-    @Override
-    public Optional<ResourceKey> fromTag(final CompoundTag tag) {
+    public Optional<PlatformResourceKey> fromTag(final CompoundTag tag) {
         return FluidResource.fromTag(tag);
     }
 }

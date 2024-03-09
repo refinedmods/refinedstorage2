@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 

@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmitterStatus;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
@@ -42,16 +42,16 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendGridUpdate(final ServerPlayer player,
-                               final PlatformStorageChannelType storageChannelType,
-                               final ResourceKey resource,
+                               final PlatformResourceKey resource,
                                final long change,
                                @Nullable final TrackedResource trackedResource) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToPlayer(
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(id -> sendToPlayer(
             player,
             PacketIds.GRID_UPDATE,
             buf -> {
                 buf.writeResourceLocation(id);
-                storageChannelType.toBuffer(resource, buf);
+                resource.toBuffer(buf);
                 buf.writeLong(change);
                 PacketUtil.writeTrackedResource(buf, trackedResource);
             }
@@ -66,31 +66,27 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendResourceSlotUpdate(final ServerPlayer player,
-                                       @Nullable final ResourceAmountTemplate resourceAmount,
+                                       @Nullable final ResourceAmount resourceAmount,
                                        final int slotIndex) {
         sendToPlayer(player, PacketIds.RESOURCE_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
-            if (resourceAmount != null) {
-                sendResourceSlotUpdate(
-                    resourceAmount.getStorageChannelType(),
-                    resourceAmount.getResource(),
-                    resourceAmount.getAmount(),
-                    buf
-                );
+            if (resourceAmount != null
+                && resourceAmount.getResource() instanceof PlatformResourceKey platformResource) {
+                sendResourceSlotUpdate(platformResource, resourceAmount.getAmount(), buf);
             } else {
                 buf.writeBoolean(false);
             }
         });
     }
 
-    private void sendResourceSlotUpdate(final PlatformStorageChannelType storageChannelType,
-                                        final ResourceKey resource,
+    private void sendResourceSlotUpdate(final PlatformResourceKey resource,
                                         final long amount,
                                         final FriendlyByteBuf buf) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresentOrElse(id -> {
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresentOrElse(id -> {
             buf.writeBoolean(true);
             buf.writeResourceLocation(id);
-            storageChannelType.toBuffer(resource, buf);
+            resource.toBuffer(buf);
             buf.writeLong(amount);
         }, () -> buf.writeBoolean(false));
     }

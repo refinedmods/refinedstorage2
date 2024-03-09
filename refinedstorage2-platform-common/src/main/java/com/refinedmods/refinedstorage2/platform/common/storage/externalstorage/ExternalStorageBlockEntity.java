@@ -37,29 +37,23 @@ public class ExternalStorageBlockEntity
 
     private final FilterWithFuzzyMode filter;
     private final StorageConfigurationContainerImpl configContainer;
-    private final ExternalStorageTrackedStorageRepositoryProvider trackedStorageRepositoryProvider;
+    private final ExternalStorageTrackedStorageRepository trackedStorageRepository =
+        new ExternalStorageTrackedStorageRepository(this::setChanged);
     private final ExternalStorageWorkRate workRate = new ExternalStorageWorkRate();
     private boolean initialized;
 
     public ExternalStorageBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getExternalStorage(), pos, state, new ExternalStorageNetworkNode(
-            Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage()
+            Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage(),
+            System::currentTimeMillis
         ));
-        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            templates -> getNode().setFilterTemplates(templates)
-        );
-        this.trackedStorageRepositoryProvider = new ExternalStorageTrackedStorageRepositoryProvider(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
-            this::setChanged
+            filters -> getNode().setFilters(filters)
         );
         getNode().setNormalizer(filter.createNormalizer());
-        getNode().initialize(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
-            System::currentTimeMillis,
-            trackedStorageRepositoryProvider
-        );
+        getNode().setTrackingRepository(trackedStorageRepository);
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
             filter,
@@ -94,14 +88,13 @@ public class ExternalStorageBlockEntity
         if (direction == null) {
             return;
         }
-        getNode().initialize(channelType -> {
+        getNode().initialize(() -> {
             final Direction incomingDirection = direction.getOpposite();
             final BlockPos sourcePosition = worldPosition.relative(direction);
             return PlatformApi.INSTANCE
                 .getExternalStorageProviderFactories()
                 .stream()
-                .flatMap(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, channelType)
-                    .stream())
+                .flatMap(factory -> factory.create(serverLevel, sourcePosition, incomingDirection).stream())
                 .findFirst();
         });
     }
@@ -123,7 +116,7 @@ public class ExternalStorageBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepositoryProvider.toTag());
+        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepository.toTag());
     }
 
     @Override
@@ -136,7 +129,7 @@ public class ExternalStorageBlockEntity
     @Override
     public void load(final CompoundTag tag) {
         super.load(tag);
-        trackedStorageRepositoryProvider.fromTag(tag.getList(TAG_TRACKED_RESOURCES, Tag.TAG_COMPOUND));
+        trackedStorageRepository.fromTag(tag.getList(TAG_TRACKED_RESOURCES, Tag.TAG_COMPOUND));
     }
 
     @Override

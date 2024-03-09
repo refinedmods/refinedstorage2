@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeMapping;
@@ -103,15 +102,16 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private void tryRenderResourceSlot(final GuiGraphics graphics, final ResourceSlot slot) {
-        final ResourceAmountTemplate resourceAmount = slot.getResourceAmount();
-        if (resourceAmount == null) {
+        final ResourceKey resource = slot.getResource();
+        if (resource == null) {
             return;
         }
         renderResourceSlot(
             graphics,
             leftPos + slot.x,
             topPos + slot.y,
-            resourceAmount,
+            resource,
+            slot.getAmount(),
             slot.shouldRenderAmount()
         );
     }
@@ -119,12 +119,13 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     private void renderResourceSlot(final GuiGraphics graphics,
                                     final int x,
                                     final int y,
-                                    final ResourceAmountTemplate resourceAmount,
+                                    final ResourceKey resource,
+                                    final long amount,
                                     final boolean renderAmount) {
-        final ResourceRendering rendering = PlatformApi.INSTANCE.getResourceRendering(resourceAmount.getResource());
-        rendering.render(resourceAmount.getResource(), graphics, x, y);
+        final ResourceRendering rendering = PlatformApi.INSTANCE.getResourceRendering(resource);
+        rendering.render(resource, graphics, x, y);
         if (renderAmount) {
-            renderResourceSlotAmount(graphics, x, y, resourceAmount.getAmount(), rendering);
+            renderResourceSlotAmount(graphics, x, y, amount, rendering);
         }
     }
 
@@ -206,11 +207,11 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     public List<ClientTooltipComponent> getResourceTooltip(final ItemStack carried, final ResourceSlot resourceSlot) {
-        final ResourceAmountTemplate resourceAmount = resourceSlot.getResourceAmount();
-        if (resourceAmount == null) {
+        final ResourceKey resource = resourceSlot.getResource();
+        if (resource == null) {
             return getTooltipForEmptySlot(carried, resourceSlot);
         }
-        return getTooltipForResource(resourceAmount, resourceSlot);
+        return getTooltipForResource(resource, resourceSlot);
     }
 
     private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried,
@@ -253,11 +254,11 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
     }
 
-    private List<ClientTooltipComponent> getTooltipForResource(final ResourceAmountTemplate resourceAmount,
+    private List<ClientTooltipComponent> getTooltipForResource(final ResourceKey resource,
                                                                final ResourceSlot resourceSlot) {
         final List<ClientTooltipComponent> tooltip = PlatformApi.INSTANCE
-            .getResourceRendering(resourceAmount.getResource())
-            .getTooltip(resourceAmount.getResource())
+            .getResourceRendering(resource)
+            .getTooltip(resource)
             .stream()
             .map(Component::getVisualOrderText)
             .map(ClientTooltipComponent::create)
@@ -283,7 +284,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
-        final boolean isFilterSlot = slot.getResourceAmount() != null;
+        final boolean isFilterSlot = slot.getResource() != null;
         final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
@@ -296,10 +297,11 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Nullable
-    public ResourceTemplate getHoveredResource() {
-        return hoveredSlot instanceof ResourceSlot resourceSlot && resourceSlot.getResourceAmount() != null
-            ? resourceSlot.getResourceAmount().getResourceTemplate()
-            : null;
+    public PlatformResourceKey getHoveredResource() {
+        if (hoveredSlot instanceof ResourceSlot resourceSlot) {
+            return resourceSlot.getResource();
+        }
+        return null;
     }
 
     public int getLeftPos() {

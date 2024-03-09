@@ -57,9 +57,9 @@ public class ConstructorBlockEntity
     }
 
     @Override
-    protected void setFilterTemplates(final List<ResourceKey> templates) {
+    protected void setFilters(final List<ResourceKey> filters) {
         this.tasks.clear();
-        this.tasks.addAll(templates.stream().map(TaskImpl::new).toList());
+        this.tasks.addAll(filters.stream().map(TaskImpl::new).toList());
     }
 
     @Override
@@ -157,10 +157,10 @@ public class ConstructorBlockEntity
     }
 
     private class TaskImpl implements Task<TaskContext> {
-        private final ResourceKey template;
+        private final ResourceKey filter;
 
-        private TaskImpl(final ResourceKey template) {
-            this.template = template;
+        private TaskImpl(final ResourceKey filter) {
+            this.filter = filter;
         }
 
         @Override
@@ -168,7 +168,7 @@ public class ConstructorBlockEntity
             if (strategy == null) {
                 return false;
             }
-            strategy.apply(template, actor, context.player, context.network);
+            strategy.apply(filter, actor, context.player, context.network);
             return true;
         }
     }

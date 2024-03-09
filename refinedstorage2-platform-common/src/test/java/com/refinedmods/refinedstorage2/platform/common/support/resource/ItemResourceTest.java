@@ -1,6 +1,7 @@
-package com.refinedmods.refinedstorage2.platform.api.support.resource;
+package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import java.util.Optional;
@@ -35,8 +36,8 @@ class ItemResourceTest {
         final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
 
         // Act
-        final CompoundTag serialized = ItemResource.toTag(itemResource);
-        final Optional<ResourceKey> deserialized = ItemResource.fromTag(serialized);
+        final CompoundTag serialized = itemResource.toTag();
+        final Optional<PlatformResourceKey> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(itemResource);
@@ -46,11 +47,11 @@ class ItemResourceTest {
     void testDeserializationWithInvalidItem() {
         // Arrange
         final ItemResource itemResource = new ItemResource(Items.DIRT, null);
-        final CompoundTag serialized = ItemResource.toTag(itemResource);
+        final CompoundTag serialized = itemResource.toTag();
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        final Optional<ResourceKey> deserialized = ItemResource.fromTag(serialized);
+        final Optional<PlatformResourceKey> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();

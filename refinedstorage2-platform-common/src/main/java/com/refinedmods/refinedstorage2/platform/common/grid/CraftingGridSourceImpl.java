@@ -4,8 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.Comparator;
 import java.util.List;
@@ -135,7 +134,6 @@ class CraftingGridSourceImpl implements CraftingGridSource {
 
     private void addNetworkItemsIntoList(final ResourceList list) {
         blockEntity.getNetwork().ifPresent(network -> network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM)
             .getAll()
             .forEach(list::add));
     }

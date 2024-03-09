@@ -5,19 +5,14 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class FuzzyExporterTransferStrategy extends ExporterTransferStrategyImpl {
-    public FuzzyExporterTransferStrategy(
-        final InsertableStorage destination,
-        final StorageChannelType storageChannelType,
-        final long transferQuota
-    ) {
-        super(destination, storageChannelType, transferQuota);
+    public FuzzyExporterTransferStrategy(final InsertableStorage destination, final long transferQuota) {
+        super(destination, transferQuota);
     }
 
     @Override

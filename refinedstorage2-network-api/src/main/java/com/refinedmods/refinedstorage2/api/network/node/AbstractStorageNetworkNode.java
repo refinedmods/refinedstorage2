@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Set;
 import java.util.function.UnaryOperator;
@@ -60,13 +59,11 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
             return;
         }
         final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-        getRelevantStorageChannelTypes().forEach(type -> storage.getStorageChannel(type).sortSources());
+        storage.sortSources();
     }
 
-    protected abstract Set<StorageChannelType> getRelevantStorageChannelTypes();
-
-    public void setFilterTemplates(final Set<ResourceKey> templates) {
-        filter.setTemplates(templates);
+    public void setFilters(final Set<ResourceKey> filters) {
+        filter.setFilters(filters);
     }
 
     public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {

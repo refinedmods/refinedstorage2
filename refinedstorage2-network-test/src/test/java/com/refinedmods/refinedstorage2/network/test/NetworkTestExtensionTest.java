@@ -111,12 +111,8 @@ class NetworkTestExtensionTest {
         @InjectNetworkStorageChannel(networkId = "b") final StorageChannel storageChannelB
     ) {
         // Assert
-        assertThat(storageChannelA).isSameAs(
-            a.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
-        assertThat(storageChannelB).isSameAs(
-            b.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(storageChannelA).isSameAs(a.getComponent(StorageNetworkComponent.class));
+        assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class));
     }
 
     @Test

@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,24 +13,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public record GridExtractPacket(
-    PlatformStorageChannelType storageChannelType,
-    ResourceLocation storageChannelTypeId,
-    ResourceKey resource,
+    ResourceType resourceType,
+    ResourceLocation resourceTypeId,
+    PlatformResourceKey resource,
     GridExtractMode mode,
     boolean cursor
 ) implements CustomPacketPayload {
     public static GridExtractPacket decode(final FriendlyByteBuf buf) {
-        final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
-        final PlatformStorageChannelType storageChannelType = PlatformApi.INSTANCE
-            .getStorageChannelTypeRegistry()
-            .get(storageChannelTypeId)
+        final ResourceLocation resourceTypeId = buf.readResourceLocation();
+        final ResourceType resourceType = PlatformApi.INSTANCE
+            .getResourceTypeRegistry()
+            .get(resourceTypeId)
             .orElseThrow();
         final GridExtractMode mode = getMode(buf.readByte());
         final boolean cursor = buf.readBoolean();
-        final ResourceKey resource = storageChannelType.fromBuffer(buf);
+        final PlatformResourceKey resource = resourceType.fromBuffer(buf);
         return new GridExtractPacket(
-            storageChannelType,
-            storageChannelTypeId,
+            resourceType,
+            resourceTypeId,
             resource,
             mode,
             cursor
@@ -40,12 +40,7 @@ public record GridExtractPacket(
     public static void handle(final GridExtractPacket packet, final PlayPayloadContext ctx) {
         ctx.player().ifPresent(player -> ctx.workHandler().submitAsync(() -> {
             if (player.containerMenu instanceof GridExtractionStrategy strategy) {
-                strategy.onExtract(
-                    packet.storageChannelType,
-                    packet.resource,
-                    packet.mode,
-                    packet.cursor
-                );
+                strategy.onExtract(packet.resource, packet.mode, packet.cursor);
             }
         }));
     }
@@ -67,10 +62,10 @@ public record GridExtractPacket(
 
     @Override
     public void write(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(storageChannelTypeId);
+        buf.writeResourceLocation(resourceTypeId);
         writeMode(buf, mode);
         buf.writeBoolean(cursor);
-        storageChannelType.toBuffer(resource, buf);
+        resource.toBuffer(buf);
     }
 
     @Override

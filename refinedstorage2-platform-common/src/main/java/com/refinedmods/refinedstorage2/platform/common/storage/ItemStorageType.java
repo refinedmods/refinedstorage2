@@ -12,7 +12,8 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public class ItemStorageType implements StorageType {
         );
         final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (final Tag stackTag : stacks) {
-            ItemResource.fromTag((CompoundTag) stackTag).ifPresent(resource -> storage.load(
+            ResourceTypes.ITEM.fromTag((CompoundTag) stackTag).ifPresent(resource -> storage.load(
                 resource,
                 ((CompoundTag) stackTag).getLong(TAG_AMOUNT),
                 ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
@@ -97,7 +98,7 @@ public class ItemStorageType implements StorageType {
         if (!(resourceAmount.getResource() instanceof ItemResource itemResource)) {
             throw new UnsupportedOperationException();
         }
-        final CompoundTag tag = ItemResource.toTag(itemResource);
+        final CompoundTag tag = itemResource.toTag();
         tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
         if (storage instanceof TrackedStorage trackedStorage) {
             trackedStorage

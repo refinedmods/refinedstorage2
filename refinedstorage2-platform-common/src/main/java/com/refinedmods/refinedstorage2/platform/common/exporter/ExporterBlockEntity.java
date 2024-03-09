@@ -95,8 +95,8 @@ public class ExporterBlockEntity
     }
 
     @Override
-    protected void setFilterTemplates(final List<ResourceKey> templates) {
-        getNode().setFilterTemplates(templates);
+    protected void setFilters(final List<ResourceKey> filters) {
+        getNode().setFilters(filters);
     }
 
     @Override

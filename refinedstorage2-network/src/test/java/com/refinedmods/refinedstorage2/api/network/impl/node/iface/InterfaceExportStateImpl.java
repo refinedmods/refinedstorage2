@@ -3,10 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.iface;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A_ALTERNATIVE2;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A_ALTERNATIVE2;
 
 public class InterfaceExportStateImpl implements InterfaceExportState {
     private final Map<Integer, ResourceAmount> requested = new HashMap<>();
@@ -65,9 +62,9 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public boolean isExportedResourceValid(final ResourceTemplate want, final ResourceTemplate got) {
-        if (A.equals(want.resource())) {
-            return got.resource() == A || got.resource() == A_ALTERNATIVE || got.resource() == A_ALTERNATIVE2;
+    public boolean isExportedResourceValid(final ResourceKey want, final ResourceKey got) {
+        if (A.equals(want)) {
+            return got == A || got == A_ALTERNATIVE || got == A_ALTERNATIVE2;
         }
         return got.equals(want);
     }
@@ -80,13 +77,13 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
 
     @Nullable
     @Override
-    public ResourceTemplate getRequestedResource(final int slotIndex) {
+    public ResourceKey getRequestedResource(final int slotIndex) {
         validateIndex(slotIndex);
         final ResourceAmount resourceAmount = requested.get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
-        return new ResourceTemplate(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        return resourceAmount.getResource();
     }
 
     @Override
@@ -101,13 +98,13 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
 
     @Nullable
     @Override
-    public ResourceTemplate getExportedResource(final int slotIndex) {
+    public ResourceKey getExportedResource(final int slotIndex) {
         validateIndex(slotIndex);
         final ResourceAmount resourceAmount = current.get(slotIndex);
         if (resourceAmount == null) {
             return null;
         }
-        return new ResourceTemplate(resourceAmount.getResource(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        return resourceAmount.getResource();
     }
 
     @Override
@@ -121,13 +118,13 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public void setExportSlot(final int slotIndex, final ResourceTemplate resource, final long amount) {
+    public void setExportSlot(final int slotIndex, final ResourceKey resource, final long amount) {
         validateIndex(slotIndex);
-        current.put(slotIndex, new ResourceAmount(resource.resource(), amount));
+        current.put(slotIndex, new ResourceAmount(resource, amount));
     }
 
     public void setCurrentlyExported(final int index, final ResourceKey resource, final long amount) {
-        setExportSlot(index, new ResourceTemplate(resource, NetworkTestFixtures.STORAGE_CHANNEL_TYPE), amount);
+        setExportSlot(index, resource, amount);
     }
 
     @Override
@@ -149,18 +146,11 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     }
 
     @Override
-    public long insert(final StorageChannelType storageChannelType,
-                       final ResourceKey resource,
-                       final long amount,
-                       final Action action) {
+    public long insert(final ResourceKey resource, final long amount, final Action action) {
         for (int i = 0; i < getSlots(); ++i) {
             if (getExportedResource(i) == null) {
                 if (action == Action.EXECUTE) {
-                    final ResourceTemplate template = new ResourceTemplate(
-                        resource,
-                        NetworkTestFixtures.STORAGE_CHANNEL_TYPE
-                    );
-                    setExportSlot(i, template, amount);
+                    setExportSlot(i, resource, amount);
                 }
                 return amount;
             }
@@ -172,8 +162,8 @@ public class InterfaceExportStateImpl implements InterfaceExportState {
     public long extract(final ResourceKey resource, final long amount, final Action action) {
         long extracted = 0;
         for (int i = 0; i < getSlots(); ++i) {
-            final ResourceTemplate slot = getExportedResource(i);
-            if (slot != null && slot.resource().equals(resource)) {
+            final ResourceKey slot = getExportedResource(i);
+            if (slot != null && slot.equals(resource)) {
                 final long maxAmount = Math.min(getExportedAmount(i), amount - extracted);
                 extracted += maxAmount;
                 if (action == Action.EXECUTE) {

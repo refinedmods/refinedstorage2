@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.support.tooltip;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 
 import java.util.Objects;
@@ -13,10 +13,10 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 
 public class ResourceClientTooltipComponent implements ClientTooltipComponent {
-    private final ResourceAmountTemplate resourceAmount;
+    private final ResourceAmount resourceAmount;
     private final Component name;
 
-    public ResourceClientTooltipComponent(final ResourceAmountTemplate resourceAmount) {
+    public ResourceClientTooltipComponent(final ResourceAmount resourceAmount) {
         this.resourceAmount = resourceAmount;
         this.name = getNameWithAmount(resourceAmount);
     }
@@ -48,7 +48,7 @@ public class ResourceClientTooltipComponent implements ClientTooltipComponent {
         );
     }
 
-    private static Component getNameWithAmount(final ResourceAmountTemplate resourceAmount) {
+    private static Component getNameWithAmount(final ResourceAmount resourceAmount) {
         final ResourceRendering rendering = PlatformApi.INSTANCE.getResourceRendering(
             resourceAmount.getResource()
         );

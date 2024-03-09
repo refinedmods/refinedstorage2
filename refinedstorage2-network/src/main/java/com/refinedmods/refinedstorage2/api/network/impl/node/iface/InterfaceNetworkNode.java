@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
@@ -21,13 +20,13 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);
     @Nullable
     private InterfaceExportState exportState;
-    private ToLongFunction<ResourceTemplate> transferQuotaProvider = resourceTemplate -> Long.MAX_VALUE;
+    private ToLongFunction<ResourceKey> transferQuotaProvider = resource -> Long.MAX_VALUE;
 
     public InterfaceNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
-    public void setTransferQuotaProvider(final ToLongFunction<ResourceTemplate> transferQuotaProvider) {
+    public void setTransferQuotaProvider(final ToLongFunction<ResourceKey> transferQuotaProvider) {
         this.transferQuotaProvider = transferQuotaProvider;
     }
 
@@ -74,8 +73,8 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
     private void doExport(final InterfaceExportState state,
                           final int index,
                           final StorageNetworkComponent storageComponent) {
-        final ResourceTemplate want = state.getRequestedResource(index);
-        final ResourceTemplate got = state.getExportedResource(index);
+        final ResourceKey want = state.getRequestedResource(index);
+        final ResourceKey got = state.getExportedResource(index);
         if (want == null && got != null) {
             clearExportedResource(state, index, got, storageComponent);
         } else if (want != null && got == null) {
@@ -92,12 +91,11 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
 
     private void clearExportedResource(final InterfaceExportState state,
                                        final int slot,
-                                       final ResourceTemplate got,
-                                       final StorageNetworkComponent storageComponent) {
+                                       final ResourceKey got,
+                                       final StorageChannel storageChannel) {
         final long currentAmount = state.getExportedAmount(slot);
-        final StorageChannel storageChannel = storageComponent.getStorageChannel(got.storageChannelType());
         final long inserted = storageChannel.insert(
-            got.resource(),
+            got,
             Math.min(currentAmount, transferQuotaProvider.applyAsLong(got)),
             Action.EXECUTE,
             actor
@@ -110,11 +108,10 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
 
     private void doInitialExport(final InterfaceExportState state,
                                  final int slot,
-                                 final ResourceTemplate want,
-                                 final StorageNetworkComponent storageComponent) {
+                                 final ResourceKey want,
+                                 final StorageChannel storageChannel) {
         final long wantedAmount = state.getRequestedAmount(slot);
-        final StorageChannel storageChannel = storageComponent.getStorageChannel(want.storageChannelType());
-        final Collection<ResourceKey> candidates = state.expandExportCandidates(storageChannel, want.resource());
+        final Collection<ResourceKey> candidates = state.expandExportCandidates(storageChannel, want);
         for (final ResourceKey candidate : candidates) {
             final long extracted = storageChannel.extract(
                 candidate,
@@ -123,11 +120,7 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
                 actor
             );
             if (extracted > 0) {
-                state.setExportSlot(
-                    slot,
-                    new ResourceTemplate(candidate, want.storageChannelType()),
-                    extracted
-                );
+                state.setExportSlot(slot, candidate, extracted);
                 break;
             }
         }
@@ -135,7 +128,7 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
 
     private void doExportWithExistingResource(final InterfaceExportState state,
                                               final int slot,
-                                              final ResourceTemplate got,
+                                              final ResourceKey got,
                                               final StorageNetworkComponent storageComponent) {
         final long wantedAmount = state.getRequestedAmount(slot);
         final long currentAmount = state.getExportedAmount(slot);
@@ -149,12 +142,11 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
 
     private void exportAdditionalResources(final InterfaceExportState state,
                                            final int slot,
-                                           final ResourceTemplate got,
+                                           final ResourceKey got,
                                            final long amount,
-                                           final StorageNetworkComponent storageComponent) {
+                                           final StorageChannel storageChannel) {
         final long correctedAmount = Math.min(transferQuotaProvider.applyAsLong(got), amount);
-        final StorageChannel storageChannel = storageComponent.getStorageChannel(got.storageChannelType());
-        final long extracted = storageChannel.extract(got.resource(), correctedAmount, Action.EXECUTE, actor);
+        final long extracted = storageChannel.extract(got, correctedAmount, Action.EXECUTE, actor);
         if (extracted == 0) {
             return;
         }
@@ -163,12 +155,11 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
 
     private void returnExportedResource(final InterfaceExportState state,
                                         final int slot,
-                                        final ResourceTemplate got,
+                                        final ResourceKey got,
                                         final long amount,
-                                        final StorageNetworkComponent storageComponent) {
-        final StorageChannel storageChannel = storageComponent.getStorageChannel(got.storageChannelType());
+                                        final StorageChannel storageChannel) {
         final long correctedAmount = Math.min(transferQuotaProvider.applyAsLong(got), Math.abs(amount));
-        final long inserted = storageChannel.insert(got.resource(), correctedAmount, Action.EXECUTE, actor);
+        final long inserted = storageChannel.insert(got, correctedAmount, Action.EXECUTE, actor);
         if (inserted == 0) {
             return;
         }

@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.List;
@@ -25,19 +23,15 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class AbstractStorageContainerItem extends Item implements StorageContainerItem {
     protected final StorageContainerItemHelper helper;
-    private final StorageChannelType type;
 
-    protected AbstractStorageContainerItem(final Properties properties,
-                                           final StorageChannelType type,
-                                           final StorageContainerItemHelper helper) {
+    protected AbstractStorageContainerItem(final Properties properties, final StorageContainerItemHelper helper) {
         super(properties);
-        this.type = type;
         this.helper = helper;
     }
 
     @Override
-    public Optional<TypedStorage<Storage>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
-        return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage<>(storage, type));
+    public Optional<Storage> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+        return helper.resolve(storageRepository, stack);
     }
 
     @Override

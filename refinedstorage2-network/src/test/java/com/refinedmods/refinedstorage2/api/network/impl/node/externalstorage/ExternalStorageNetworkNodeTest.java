@@ -30,9 +30,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
 import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,7 +157,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldRespectAllowlistWhenInserting(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         final Storage storage = new InMemoryStorageImpl();
         final ExternalStorageProvider provider = new StorageExternalStorageProvider(storage);
@@ -180,7 +180,7 @@ class ExternalStorageNetworkNodeTest {
     ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         final Storage storage = new InMemoryStorageImpl();
         final ExternalStorageProvider provider = new StorageExternalStorageProvider(storage);
@@ -201,7 +201,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldRespectBlocklistWhenInserting(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of(A, B));
+        sut.setFilters(Set.of(A, B));
 
         final Storage storage = new InMemoryStorageImpl();
         final ExternalStorageProvider provider = new StorageExternalStorageProvider(storage);
@@ -223,7 +223,7 @@ class ExternalStorageNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel networkStorage) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
-        sut.setFilterTemplates(Set.of());
+        sut.setFilters(Set.of());
 
         final Storage storage = new InMemoryStorageImpl();
         final ExternalStorageProvider provider = new StorageExternalStorageProvider(storage);

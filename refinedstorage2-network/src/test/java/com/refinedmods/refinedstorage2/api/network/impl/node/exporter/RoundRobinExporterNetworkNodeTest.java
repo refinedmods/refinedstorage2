@@ -16,10 +16,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.A;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.B;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.C;
-import static com.refinedmods.refinedstorage2.network.test.TestResourceKey.D;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.C;
+import static com.refinedmods.refinedstorage2.network.test.TestResource.D;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -51,7 +51,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B));
+        sut.setFilters(List.of(A, B));
 
         // Act & assert
         sut.doWork();
@@ -100,7 +100,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B));
+        sut.setFilters(List.of(A, B));
 
         // Act & assert
         sut.doWork();
@@ -120,7 +120,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B, C, D));
+        sut.setFilters(List.of(A, B, C, D));
 
         // Act & assert
         sut.doWork();
@@ -184,7 +184,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
     }
 
     @Test
-    void shouldResetRoundRobinStateAfterChangingTemplates(
+    void shouldResetRoundRobinStateAfterChangingFilters(
         @InjectNetworkStorageChannel final StorageChannel storageChannel
     ) {
         // Arrange
@@ -197,7 +197,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
         sut.setTransferStrategy(strategy);
-        sut.setFilterTemplates(List.of(A, B, C));
+        sut.setFilters(List.of(A, B, C));
 
         // Act & assert
         sut.doWork();
@@ -224,7 +224,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         );
 
         // Now C would be the next one, but we expect to go back to A.
-        sut.setFilterTemplates(List.of(A, C));
+        sut.setFilters(List.of(A, C));
         sut.doWork();
 
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(

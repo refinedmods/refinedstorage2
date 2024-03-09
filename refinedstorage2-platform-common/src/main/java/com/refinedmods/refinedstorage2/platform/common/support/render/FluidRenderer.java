@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support.render;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.List;
 

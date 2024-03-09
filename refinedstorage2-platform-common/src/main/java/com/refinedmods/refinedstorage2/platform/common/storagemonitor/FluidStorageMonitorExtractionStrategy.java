@@ -7,10 +7,9 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.storage.BucketPlayerInventoryInsertableStorage;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import net.minecraft.world.entity.player.Player;
 
@@ -26,11 +25,10 @@ public class FluidStorageMonitorExtractionStrategy implements StorageMonitorExtr
         }
         final BucketPlayerInventoryInsertableStorage target = new BucketPlayerInventoryInsertableStorage(
             player.getInventory(),
-            network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM),
+            network.getComponent(StorageNetworkComponent.class),
             true
         );
-        final StorageChannel source = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.FLUID);
+        final StorageChannel source = network.getComponent(StorageNetworkComponent.class);
         return TransferHelper.transfer(
             fluidResource,
             Platform.INSTANCE.getBucketAmount(),
