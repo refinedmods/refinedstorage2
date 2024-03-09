@@ -41,7 +41,7 @@ public class DataGenerators {
                                                     final ExistingFileHelper existingFileHelper) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
 
-        mainPack.addProvider(output -> new BlockStateProvider(output, existingFileHelper));
+        mainPack.addProvider(output -> new BlockStateProviderImpl(output, existingFileHelper));
     }
 
     private static void registerBlockModelProviders(final DataGenerator generator,
@@ -55,7 +55,7 @@ public class DataGenerators {
                                                    final ExistingFileHelper existingFileHelper) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
 
-        mainPack.addProvider(output -> new ItemModelProvider(output, existingFileHelper));
+        mainPack.addProvider(output -> new ItemModelProviderImpl(output, existingFileHelper));
     }
 
     private static void registerLootTableProviders(final DataGenerator generator) {

@@ -217,7 +217,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private String synchronizer = "";
 
-        private String storageChannelType = "";
+        private String resourceTypeId = "";
 
         private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
@@ -325,22 +325,22 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public Optional<ResourceLocation> getStorageChannelType() {
-            if (storageChannelType == null || storageChannelType.trim().isBlank()) {
+        public Optional<ResourceLocation> getResourceTypeId() {
+            if (resourceTypeId == null || resourceTypeId.trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(storageChannelType).map(ResourceLocation::new);
+            return Optional.of(resourceTypeId).map(ResourceLocation::new);
         }
 
         @Override
-        public void setStorageChannelType(final ResourceLocation storageChannelTypeId) {
-            this.storageChannelType = storageChannelTypeId.toString();
+        public void setResourceTypeId(final ResourceLocation resourceTypeId) {
+            this.resourceTypeId = resourceTypeId.toString();
             save();
         }
 
         @Override
-        public void clearStorageChannelType() {
-            this.storageChannelType = "";
+        public void clearResourceType() {
+            this.resourceTypeId = "";
             save();
         }
 

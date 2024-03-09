@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import javax.annotation.Nullable;
 
@@ -15,23 +16,13 @@ public final class PacketUtil {
     private PacketUtil() {
     }
 
-    public static void writeItemResource(final FriendlyByteBuf buf, final ItemResource itemResource) {
-        buf.writeVarInt(Item.getId(itemResource.item()));
-        buf.writeNbt(itemResource.tag());
-    }
-
     public static ItemResource readItemResource(final FriendlyByteBuf buf) {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();
         return new ItemResource(Item.byId(id), nbt);
     }
 
-    public static void writeFluidResource(final FriendlyByteBuf buf, final FluidResource itemResource) {
-        buf.writeVarInt(BuiltInRegistries.FLUID.getId(itemResource.fluid()));
-        buf.writeNbt(itemResource.tag());
-    }
-
-    public static FluidResource readFluidResource(final FriendlyByteBuf buf) {
+    public static PlatformResourceKey readFluidResource(final FriendlyByteBuf buf) {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();
         return new FluidResource(BuiltInRegistries.FLUID.byId(id), nbt);

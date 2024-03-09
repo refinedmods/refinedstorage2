@@ -5,17 +5,16 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.Ext
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExportStateImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResource.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -32,39 +31,34 @@ class SelfIoInterfaceExternalStorageProviderImplTest {
         exportState = new InterfaceExportStateImpl(2);
         iface.setExportState(exportState);
         iface.setTransferQuotaProvider(resource -> 100);
-        connection.initialize(new ExternalStorageProviderFactoryImpl(new InterfaceExternalStorageProviderImpl<>(
-            iface,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE
-        )));
+        connection.initialize(new ExternalStorageProviderFactoryImpl(new InterfaceExternalStorageProviderImpl(iface)));
     }
 
     // We don't allow self-insertions and self-extractions for the same reasons mentioned in
     // IoLoopInterfaceExternalStorageProviderImplTest.
     @Test
     void shouldNotAllowSelfInsertionOrSelfExtraction(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Arrange
         // this would try to do a self-insert as it's an unwanted resource.
-        exportState.setCurrentlyExported(0, "B", 15);
+        exportState.setCurrentlyExported(0, B, 15);
         // this would try to do a self-extract because we have the resource.
-        exportState.setRequestedResource(1, "B", 1);
+        exportState.setRequestedResource(1, B, 1);
 
         // Act
         iface.doWork();
         connection.detectChanges();
 
         // Assert
-        assertThat(exportState.getExportedResource(0)).usingRecursiveComparison().isEqualTo(
-            new ResourceTemplate<>("B", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
-        );
+        assertThat(exportState.getExportedResource(0)).isEqualTo(B);
         assertThat(exportState.getExportedAmount(0)).isEqualTo(15);
 
         assertThat(exportState.getExportedResource(1)).isNull();
         assertThat(exportState.getExportedAmount(1)).isZero();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B", 15)
+            new ResourceAmount(B, 15)
         );
     }
 }

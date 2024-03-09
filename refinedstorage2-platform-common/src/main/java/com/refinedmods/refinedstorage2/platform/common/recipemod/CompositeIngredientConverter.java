@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.recipemod;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,14 +11,14 @@ public class CompositeIngredientConverter implements IngredientConverter {
     private final Collection<IngredientConverter> converters = new HashSet<>();
 
     @Override
-    public Optional<ResourceTemplate<?>> convertToResource(final Object ingredient) {
+    public Optional<PlatformResourceKey> convertToResource(final Object ingredient) {
         return converters.stream()
             .flatMap(converter -> converter.convertToResource(ingredient).stream())
             .findFirst();
     }
 
     @Override
-    public Optional<Object> convertToIngredient(final Object resource) {
+    public Optional<Object> convertToIngredient(final PlatformResourceKey resource) {
         return converters.stream()
             .flatMap(converter -> converter.convertToIngredient(resource).stream())
             .findFirst();

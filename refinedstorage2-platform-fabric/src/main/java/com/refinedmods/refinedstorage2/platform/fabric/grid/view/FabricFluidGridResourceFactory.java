@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.grid.view;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.AbstractFluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.stream.Collectors;
 

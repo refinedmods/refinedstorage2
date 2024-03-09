@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.api.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import java.util.List;
 import java.util.Set;
@@ -25,7 +25,7 @@ public interface ResourceContainer {
 
     void change(int index, ItemStack stack, boolean tryAlternatives);
 
-    <T> void set(int index, ResourceAmountTemplate<T> resourceAmount);
+    void set(int index, ResourceAmount resourceAmount);
 
     long getAmount(int index);
 
@@ -35,20 +35,29 @@ public interface ResourceContainer {
 
     void setAmount(int index, long amount);
 
-    <T> long getMaxAmount(ResourceAmountTemplate<T> resourceAmount);
+    long getMaxAmount(ResourceKey resource);
 
-    <T> boolean isValid(T resource);
+    boolean isValid(ResourceKey resource);
 
     void remove(int index);
 
     int size();
 
+    default boolean isEmpty(int index) {
+        return get(index) == null;
+    }
+
     @Nullable
-    ResourceAmountTemplate<?> get(int index);
+    ResourceAmount get(int index);
 
-    Set<Object> getUniqueTemplates();
+    @Nullable
+    PlatformResourceKey getResource(int index);
 
-    List<ResourceTemplate<?>> getTemplates();
+    ItemStack getStackRepresentation(int index);
+
+    Set<ResourceKey> getUniqueResources();
+
+    List<ResourceKey> getResources();
 
     void writeToUpdatePacket(FriendlyByteBuf buf);
 
@@ -58,15 +67,15 @@ public interface ResourceContainer {
 
     void fromTag(CompoundTag tag);
 
-    ResourceFactory<?> getPrimaryResourceFactory();
+    ResourceFactory getPrimaryResourceFactory();
 
-    Set<ResourceFactory<?>> getAlternativeResourceFactories();
+    Set<ResourceFactory> getAlternativeResourceFactories();
 
     Container toItemContainer();
 
-    <T> long insert(StorageChannelType<T> storageChannelType, T resource, long amount, Action action);
+    long insert(ResourceKey resource, long amount, Action action);
 
-    <T> long extract(T resource, long amount, Action action);
+    long extract(ResourceKey resource, long amount, Action action);
 
     ResourceContainer copy();
 }

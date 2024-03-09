@@ -23,11 +23,11 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
     private long stored;
     private long capacity;
 
-    protected <T> AbstractStorageBlockContainerMenu(final MenuType<?> type,
-                                                    final int syncId,
-                                                    final Player player,
-                                                    final FriendlyByteBuf buf,
-                                                    final ResourceFactory<T> resourceFactory) {
+    protected AbstractStorageBlockContainerMenu(final MenuType<?> type,
+                                                final int syncId,
+                                                final Player player,
+                                                final FriendlyByteBuf buf,
+                                                final ResourceFactory resourceFactory) {
         super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();

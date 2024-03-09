@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.List;
@@ -23,23 +21,17 @@ import org.apiguardian.api.API;
 // TODO: Immunity for despawning
 // TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public abstract class AbstractStorageContainerItem<T> extends Item implements StorageContainerItem {
+public abstract class AbstractStorageContainerItem extends Item implements StorageContainerItem {
     protected final StorageContainerItemHelper helper;
-    private final StorageChannelType<T> type;
 
-    protected AbstractStorageContainerItem(final Properties properties,
-                                           final StorageChannelType<T> type,
-                                           final StorageContainerItemHelper helper) {
+    protected AbstractStorageContainerItem(final Properties properties, final StorageContainerItemHelper helper) {
         super(properties);
-        this.type = type;
         this.helper = helper;
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public <X> Optional<TypedStorage<X, Storage<X>>> resolve(final StorageRepository storageRepository,
-                                                             final ItemStack stack) {
-        return helper.resolve(storageRepository, stack).map(storage -> new TypedStorage(storage, type));
+    public Optional<Storage> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+        return helper.resolve(storageRepository, stack);
     }
 
     @Override
@@ -85,7 +77,7 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
 
     protected abstract String formatAmount(long amount);
 
-    protected abstract Storage<T> createStorage(StorageRepository storageRepository);
+    protected abstract Storage createStorage(StorageRepository storageRepository);
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
 

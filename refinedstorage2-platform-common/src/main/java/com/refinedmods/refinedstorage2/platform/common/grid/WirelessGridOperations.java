@@ -4,17 +4,18 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManager;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemSession;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-class WirelessGridOperations<T> implements GridOperations<T> {
-    private final GridOperations<T> delegate;
+class WirelessGridOperations implements GridOperations {
+    private final GridOperations delegate;
     private final NetworkBoundItemSession session;
     private final GridWatcherManager watchers;
 
-    WirelessGridOperations(final GridOperations<T> delegate,
+    WirelessGridOperations(final GridOperations delegate,
                            final NetworkBoundItemSession session,
                            final GridWatcherManager watchers) {
         this.delegate = delegate;
@@ -23,9 +24,9 @@ class WirelessGridOperations<T> implements GridOperations<T> {
     }
 
     @Override
-    public boolean extract(final T resource,
+    public boolean extract(final ResourceKey resource,
                            final GridExtractMode extractMode,
-                           final InsertableStorage<T> destination) {
+                           final InsertableStorage destination) {
         final boolean success = delegate.extract(resource, extractMode, destination);
         if (success) {
             drain(Platform.INSTANCE.getConfig().getWirelessGrid().getExtractEnergyUsage());
@@ -34,9 +35,9 @@ class WirelessGridOperations<T> implements GridOperations<T> {
     }
 
     @Override
-    public boolean insert(final T resource,
+    public boolean insert(final ResourceKey resource,
                           final GridInsertMode insertMode,
-                          final ExtractableStorage<T> source) {
+                          final ExtractableStorage source) {
         final boolean success = delegate.insert(resource, insertMode, source);
         if (success) {
             drain(Platform.INSTANCE.getConfig().getWirelessGrid().getInsertEnergyUsage());

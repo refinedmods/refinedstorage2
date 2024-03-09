@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
 
 import java.util.function.Consumer;
@@ -24,7 +25,7 @@ public class ResourceSlotUpdatePacket implements ClientPlayNetworking.PlayChanne
         final boolean present = buf.readBoolean();
         if (present) {
             final ResourceLocation id = buf.readResourceLocation();
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id).ifPresent(
+            PlatformApi.INSTANCE.getResourceTypeRegistry().get(id).ifPresent(
                 type -> handle(type, buf, client, slotIndex)
             );
         } else {
@@ -32,16 +33,15 @@ public class ResourceSlotUpdatePacket implements ClientPlayNetworking.PlayChanne
         }
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> type,
-                            final FriendlyByteBuf buf,
-                            final Minecraft client,
-                            final int slotIndex) {
-        final T resource = type.fromBuffer(buf);
+    private void handle(final ResourceType type,
+                        final FriendlyByteBuf buf,
+                        final Minecraft client,
+                        final int slotIndex) {
+        final ResourceKey resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
-        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceAmountTemplate<>(
+        handle(client, containerMenu -> containerMenu.handleResourceSlotUpdate(slotIndex, new ResourceAmount(
             resource,
-            amount,
-            type
+            amount
         )));
     }
 

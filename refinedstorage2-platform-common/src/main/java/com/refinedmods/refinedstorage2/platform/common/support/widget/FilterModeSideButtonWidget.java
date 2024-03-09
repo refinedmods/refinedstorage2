@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support.widget;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
 
 import net.minecraft.network.chat.Component;

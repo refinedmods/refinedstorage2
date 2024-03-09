@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.recipemod.jei;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.view.PlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 
 import java.util.Optional;
@@ -27,13 +28,17 @@ class GridGuiContainerHandler implements IGuiContainerHandler<AbstractGridScreen
         final double mouseX,
         final double mouseY
     ) {
-        final GridResource resource = screen.getCurrentGridResource();
+        final PlatformGridResource resource = screen.getCurrentGridResource();
         if (resource == null) {
             return Optional.empty();
         }
-        return converter
-            .convertToIngredient(resource)
-            .flatMap(ingredient -> convertToClickableIngredient(mouseX, mouseY, ingredient));
+        final PlatformResourceKey underlyingResource = resource.getUnderlyingResource();
+        if (underlyingResource == null) {
+            return Optional.empty();
+        }
+        return converter.convertToIngredient(underlyingResource).flatMap(
+            ingredient -> convertToClickableIngredient(mouseX, mouseY, ingredient)
+        );
     }
 
     private Optional<IClickableIngredient<?>> convertToClickableIngredient(final double x,

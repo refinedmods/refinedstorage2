@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 
 import javax.annotation.Nullable;
 
@@ -24,11 +24,11 @@ import static com.refinedmods.refinedstorage2.platform.forge.support.resource.Va
 
 public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu menu;
-    private final GridOperations<FluidResource> gridOperations;
+    private final GridOperations gridOperations;
 
     public FluidGridInsertionStrategy(final AbstractContainerMenu menu, final Player player, final Grid grid) {
         this.menu = menu;
-        this.gridOperations = grid.createOperations(StorageChannelTypes.FLUID, new PlayerActor(player));
+        this.gridOperations = grid.createOperations(ResourceTypes.FLUID, new PlayerActor(player));
     }
 
     @Override
@@ -43,7 +43,13 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
         }
         final FluidResource fluidResource = ofFluidStack(extractableResource);
         gridOperations.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
-            final FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
+            final FluidStack toDrain = toFluidStack(
+                fluidResource2,
+                amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount
+            );
             final FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
                 menu.setCarried(cursorStorage.getContainer());

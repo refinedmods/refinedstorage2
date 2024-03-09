@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
@@ -15,14 +16,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-public class FabricStorageExtractableStorage<T, P> implements ExtractableStorage<T> {
+public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
     private final BlockApiCache<Storage<P>, Direction> cache;
-    private final Function<T, P> toPlatformMapper;
+    private final Function<ResourceKey, P> toPlatformMapper;
     private final Direction direction;
     private final AmountOverride amountOverride;
 
     public FabricStorageExtractableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                           final Function<T, P> toPlatformMapper,
+                                           final Function<ResourceKey, P> toPlatformMapper,
                                            final ServerLevel serverLevel,
                                            final BlockPos pos,
                                            final Direction direction,
@@ -34,7 +35,7 @@ public class FabricStorageExtractableStorage<T, P> implements ExtractableStorage
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         final Storage<P> storage = cache.find(direction);
         if (storage == null) {
             return 0L;
@@ -51,7 +52,10 @@ public class FabricStorageExtractableStorage<T, P> implements ExtractableStorage
         return doExtract(resource, correctedAmount, action, storage);
     }
 
-    private long doExtract(final T resource, final long amount, final Action action, final Storage<P> storage) {
+    private long doExtract(final ResourceKey resource,
+                           final long amount,
+                           final Action action,
+                           final Storage<P> storage) {
         try (Transaction tx = Transaction.openOuter()) {
             final long extract = storage.extract(toPlatformMapper.apply(resource), amount, tx);
             if (action == Action.EXECUTE) {

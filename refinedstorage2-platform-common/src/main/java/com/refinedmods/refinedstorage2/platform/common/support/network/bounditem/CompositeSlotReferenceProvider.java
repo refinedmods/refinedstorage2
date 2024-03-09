@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +25,7 @@ public class CompositeSlotReferenceProvider implements SlotReferenceProvider {
 
     @Override
     public List<SlotReference> find(final Player player, final Set<Item> validItems) {
-        return providers.stream().flatMap(p -> p.find(player, validItems).stream()).collect(Collectors.toList());
+        return providers.stream().flatMap(p -> p.find(player, validItems).stream()).toList();
     }
 
     public Optional<SlotReference> findForUse(final Player player,

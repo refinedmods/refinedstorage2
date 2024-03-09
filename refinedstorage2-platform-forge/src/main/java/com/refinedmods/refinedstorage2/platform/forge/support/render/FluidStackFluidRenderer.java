@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.render;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.support.render.AbstractFluidRenderer;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.Collections;
 import java.util.HashMap;

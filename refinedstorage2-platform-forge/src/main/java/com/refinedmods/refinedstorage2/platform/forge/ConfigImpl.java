@@ -258,7 +258,7 @@ public class ConfigImpl implements Config {
         private final ModConfigSpec.BooleanValue smoothScrolling;
         private final ModConfigSpec.BooleanValue autoSelected;
         private final ModConfigSpec.ConfigValue<String> synchronizer;
-        private final ModConfigSpec.ConfigValue<String> storageChannelType;
+        private final ModConfigSpec.ConfigValue<String> resourceType;
         private final ModConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
         private final ModConfigSpec.EnumValue<GridSortingTypes> sortingType;
         private final ModConfigSpec.EnumValue<GridSize> size;
@@ -292,9 +292,9 @@ public class ConfigImpl implements Config {
             synchronizer = builder
                 .comment("The synchronization type of the Grid search box")
                 .define("synchronizer", "");
-            storageChannelType = builder
-                .comment("The storage channel type to be shown")
-                .define("storageChannelType", "");
+            resourceType = builder
+                .comment("The resource type to be shown")
+                .define("resourceType", "");
             sortingDirection = builder
                 .comment("The sorting direction")
                 .defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
@@ -401,21 +401,21 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public Optional<ResourceLocation> getStorageChannelType() {
-            if (storageChannelType == null || storageChannelType.get().trim().isBlank()) {
+        public Optional<ResourceLocation> getResourceTypeId() {
+            if (resourceType == null || resourceType.get().trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(storageChannelType.get()).map(ResourceLocation::new);
+            return Optional.of(resourceType.get()).map(ResourceLocation::new);
         }
 
         @Override
-        public void setStorageChannelType(final ResourceLocation storageChannelTypeId) {
-            this.storageChannelType.set(storageChannelTypeId.toString());
+        public void setResourceTypeId(final ResourceLocation resourceTypeId) {
+            this.resourceType.set(resourceTypeId.toString());
         }
 
         @Override
-        public void clearStorageChannelType() {
-            this.storageChannelType.set("");
+        public void clearResourceType() {
+            this.resourceType.set("");
         }
     }
 

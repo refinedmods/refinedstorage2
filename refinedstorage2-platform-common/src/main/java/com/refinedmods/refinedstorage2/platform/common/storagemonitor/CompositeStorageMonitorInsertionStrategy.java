@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 
@@ -19,7 +20,7 @@ public class CompositeStorageMonitorInsertionStrategy implements StorageMonitorI
 
     @Override
     public Optional<ItemStack> insert(
-        final Object configuredResource,
+        final ResourceKey configuredResource,
         final ItemStack stack,
         final Actor actor,
         final Network network

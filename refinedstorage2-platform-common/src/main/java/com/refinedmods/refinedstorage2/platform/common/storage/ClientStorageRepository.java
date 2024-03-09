@@ -30,17 +30,17 @@ public class ClientStorageRepository implements StorageRepository {
     }
 
     @Override
-    public <T> Optional<Storage<T>> get(final UUID id) {
+    public Optional<Storage> get(final UUID id) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> void set(final UUID id, final Storage<T> storage) {
+    public void set(final UUID id, final Storage storage) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> Optional<Storage<T>> removeIfEmpty(final UUID id) {
+    public Optional<Storage> removeIfEmpty(final UUID id) {
         throw new UnsupportedOperationException();
     }
 

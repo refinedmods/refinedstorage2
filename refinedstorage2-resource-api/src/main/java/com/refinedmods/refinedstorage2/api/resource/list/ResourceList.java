@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.resource.list;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -10,11 +11,9 @@ import org.apiguardian.api.API;
 /**
  * Represents a list of a resource of an arbitrary type.
  * A basic implementation of this class can be found in {@link ResourceListImpl}.
- *
- * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface ResourceList<T> {
+public interface ResourceList {
     /**
      * Adds a given resource to the list.
      *
@@ -22,16 +21,16 @@ public interface ResourceList<T> {
      * @param amount   the amount, must be larger than 0
      * @return the result of the operation
      */
-    ResourceListOperationResult<T> add(T resource, long amount);
+    ResourceListOperationResult add(ResourceKey resource, long amount);
 
     /**
      * Adds a given resource to the list.
-     * Shorthand for {@link #add(Object, long)}.
+     * Shorthand for {@link #add(ResourceKey, long)}.
      *
      * @param resourceAmount the resource and the amount
      * @return the result of the operation
      */
-    default ResourceListOperationResult<T> add(ResourceAmount<T> resourceAmount) {
+    default ResourceListOperationResult add(ResourceAmount resourceAmount) {
         return add(resourceAmount.getResource(), resourceAmount.getAmount());
     }
 
@@ -43,17 +42,17 @@ public interface ResourceList<T> {
      * @param amount   the amount, must be larger than 0
      * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
      */
-    Optional<ResourceListOperationResult<T>> remove(T resource, long amount);
+    Optional<ResourceListOperationResult> remove(ResourceKey resource, long amount);
 
     /**
      * Removes an amount of a certain resource in the list.
      * If the amount reaches 0 due to this removal, the resource is removed from the list.
-     * Shorthand for {@link #remove(Object, long)}.
+     * Shorthand for {@link #remove(ResourceKey, long)}.
      *
      * @param resourceAmount the resource and the amount
      * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
      */
-    default Optional<ResourceListOperationResult<T>> remove(ResourceAmount<T> resourceAmount) {
+    default Optional<ResourceListOperationResult> remove(ResourceAmount resourceAmount) {
         return remove(resourceAmount.getResource(), resourceAmount.getAmount());
     }
 
@@ -63,14 +62,14 @@ public interface ResourceList<T> {
      * @param resource the resource
      * @return the resource amount if it's present in the list, otherwise an empty {@link Optional}
      */
-    Optional<ResourceAmount<T>> get(T resource);
+    Optional<ResourceAmount> get(ResourceKey resource);
 
     /**
      * Retrieves all resources and their amounts from the list.
      *
      * @return a list of resource amounts
      */
-    Collection<ResourceAmount<T>> getAll();
+    Collection<ResourceAmount> getAll();
 
     /**
      * Clears the list.

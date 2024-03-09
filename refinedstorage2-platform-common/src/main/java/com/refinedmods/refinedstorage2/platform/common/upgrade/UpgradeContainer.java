@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.upgrade;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeDestination;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeItem;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeMapping;
@@ -66,7 +67,7 @@ public class UpgradeContainer extends SimpleContainer implements UpgradeState {
         return registry.getByDestination(destination);
     }
 
-    public <T> OptionalLong getRegulatedAmount(final T resource) {
+    public OptionalLong getRegulatedAmount(final ResourceKey resource) {
         return IntStream.range(0, getContainerSize())
             .mapToObj(this::getItem)
             .filter(stack -> stack.getItem() instanceof RegulatorUpgradeItem)

@@ -3,12 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -19,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<FluidResource> {
+public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity {
     private final FluidStorageType.Variant variant;
     private final Component displayName;
 
@@ -30,7 +28,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             BlockEntities.INSTANCE.getFluidStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
+            new StorageNetworkNode(getEnergyUsage(variant)),
             PlatformApi.INSTANCE.getFluidResourceFactory()
         );
         this.variant = variant;
@@ -52,7 +50,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
     }
 
     @Override
-    protected Storage<FluidResource> createStorage(final Runnable listener) {
+    protected Storage createStorage(final Runnable listener) {
         return StorageTypes.FLUID.create(variant.getCapacity(), listener);
     }
 

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.HashMap;
 import java.util.Map;

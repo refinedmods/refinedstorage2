@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import javax.annotation.Nullable;
 
@@ -29,15 +30,14 @@ public final class TransferHelper {
      * @param source      the source to extract from
      * @param destination the destination to insert to
      * @param fallback    the fallback to insert leftovers in
-     * @param <T>         the resource type
      * @return the amount transferred
      */
-    public static <T> long transfer(final T resource,
-                                    final long amount,
-                                    final Actor actor,
-                                    final ExtractableStorage<T> source,
-                                    final InsertableStorage<T> destination,
-                                    @Nullable final InsertableStorage<T> fallback) {
+    public static long transfer(final ResourceKey resource,
+                                final long amount,
+                                final Actor actor,
+                                final ExtractableStorage source,
+                                final InsertableStorage destination,
+                                @Nullable final InsertableStorage fallback) {
         final long extractedSimulated = source.extract(resource, amount, Action.SIMULATE, actor);
         if (extractedSimulated == 0) {
             return 0;
@@ -64,10 +64,10 @@ public final class TransferHelper {
         return inserted;
     }
 
-    private static <T> void handleLeftover(final T resource,
-                                           final Actor actor,
-                                           final InsertableStorage<T> fallback,
-                                           final long leftover) {
+    private static void handleLeftover(final ResourceKey resource,
+                                       final Actor actor,
+                                       final InsertableStorage fallback,
+                                       final long leftover) {
         final long leftoverInserted = fallback.insert(resource, leftover, Action.EXECUTE, actor);
         final long leftoverNotInserted = leftover - leftoverInserted;
         if (leftoverNotInserted > 0) {

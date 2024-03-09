@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
@@ -58,11 +59,10 @@ public interface GridView {
     void setSortingDirection(GridSortingDirection sortingDirection);
 
     /**
-     * @param <T>      the resource type
      * @param resource the resource
      * @return the tracked resource, if present
      */
-    <T> Optional<TrackedResource> getTrackedResource(T resource);
+    Optional<TrackedResource> getTrackedResource(ResourceKey resource);
 
     /**
      * Sorts the view list.
@@ -74,12 +74,11 @@ public interface GridView {
      * Applies a change to a resource. Will update the backing list, and will also update the view list (depending
      * if the view is preventing sorting).
      *
-     * @param <T>             the resource type
      * @param resource        the resource
      * @param amount          the amount, can be negative or positive
      * @param trackedResource the tracked resource, can be null
      */
-    <T> void onChange(T resource, long amount, @Nullable TrackedResource trackedResource);
+    void onChange(ResourceKey resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @return the view list
@@ -89,7 +88,7 @@ public interface GridView {
     /**
      * @return a copy of the backing list
      */
-    ResourceList<Object> copyBackingList();
+    ResourceList copyBackingList();
 
     /**
      * Clears the backing list, view list and tracked resources index.

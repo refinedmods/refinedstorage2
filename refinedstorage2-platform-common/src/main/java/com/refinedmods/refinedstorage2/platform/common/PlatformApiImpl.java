@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
@@ -27,7 +28,6 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
@@ -37,10 +37,9 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
@@ -57,7 +56,6 @@ import com.refinedmods.refinedstorage2.platform.common.storage.ClientStorageRepo
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
@@ -71,6 +69,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem
 import com.refinedmods.refinedstorage2.platform.common.support.registry.PlatformRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.BuiltinUpgradeDestinationsImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -116,10 +115,10 @@ public class PlatformApiImpl implements PlatformApi {
         new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder =
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
-    private final PlatformRegistry<StorageType<?>> storageTypeRegistry =
+    private final PlatformRegistry<StorageType> storageTypeRegistry =
         new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageTypes.ITEM);
-    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry =
-        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
+    private final PlatformRegistry<ResourceType> resourceTypeRegistry =
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ResourceTypes.ITEM);
     private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
         new PlatformRegistryImpl<>(createIdentifier("off"), new NoopGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
@@ -152,10 +151,10 @@ public class PlatformApiImpl implements PlatformApi {
     );
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
-    private final ResourceFactory<ItemResource> itemResourceFactory = new ItemResourceFactory();
-    private final ResourceFactory<FluidResource> fluidResourceFactory = new FluidResourceFactory();
-    private final Set<ResourceFactory<?>> resourceFactories = new HashSet<>();
-    private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
+    private final ResourceFactory itemResourceFactory = new ItemResourceFactory();
+    private final ResourceFactory fluidResourceFactory = new FluidResourceFactory();
+    private final Set<ResourceFactory> resourceFactories = new HashSet<>();
+    private final Map<Class<?>, ResourceRendering> resourceRenderingMap = new HashMap<>();
     private final CompositeWirelessTransmitterRangeModifier wirelessTransmitterRangeModifier =
         new CompositeWirelessTransmitterRangeModifier();
     private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
@@ -167,7 +166,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final CompositeSlotReferenceProvider slotReferenceProvider = new CompositeSlotReferenceProvider();
 
     @Override
-    public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
+    public PlatformRegistry<StorageType> getStorageTypeRegistry() {
         return storageTypeRegistry;
     }
 
@@ -201,8 +200,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
-        return storageChannelTypeRegistry;
+    public PlatformRegistry<ResourceType> getResourceTypeRegistry() {
+        return resourceTypeRegistry;
     }
 
     @Override
@@ -282,7 +281,7 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
-        AbstractGridContainerMenu.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
+        AbstractGridContainerMenu.writeScreenOpeningData(grid, buf);
     }
 
     @Override
@@ -384,54 +383,44 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public <T> void addResourceFactory(final ResourceFactory<T> factory) {
+    public void addResourceFactory(final ResourceFactory factory) {
         resourceFactories.add(factory);
     }
 
     @Override
-    public ResourceFactory<ItemResource> getItemResourceFactory() {
+    public ResourceFactory getItemResourceFactory() {
         return itemResourceFactory;
     }
 
     @Override
-    public PlatformStorageChannelType<ItemResource> getItemStorageChannelType() {
-        return StorageChannelTypes.ITEM;
-    }
-
-    @Override
-    public StorageType<ItemResource> getItemStorageType() {
+    public StorageType getItemStorageType() {
         return StorageTypes.ITEM;
     }
 
     @Override
-    public ResourceFactory<FluidResource> getFluidResourceFactory() {
+    public ResourceFactory getFluidResourceFactory() {
         return fluidResourceFactory;
     }
 
     @Override
-    public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
-        return StorageChannelTypes.FLUID;
-    }
-
-    @Override
-    public StorageType<FluidResource> getFluidStorageType() {
+    public StorageType getFluidStorageType() {
         return StorageTypes.FLUID;
     }
 
     @Override
-    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+    public Set<ResourceFactory> getAlternativeResourceFactories() {
         return resourceFactories;
     }
 
     @Override
-    public <T> void registerResourceRendering(final Class<T> resourceClass, final ResourceRendering<T> rendering) {
+    public <T extends ResourceKey> void registerResourceRendering(final Class<T> resourceClass,
+                                                                  final ResourceRendering rendering) {
         resourceRenderingMap.put(resourceClass, rendering);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ResourceRendering<T> getResourceRendering(final T resource) {
-        return (ResourceRendering<T>) resourceRenderingMap.get(resource.getClass());
+    public ResourceRendering getResourceRendering(final ResourceKey resource) {
+        return resourceRenderingMap.get(resource.getClass());
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorAm
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.detector.DetectorNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.support.network.ConnectionSink;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -51,15 +51,13 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
             Platform.INSTANCE.getConfig().getDetector().getEnergyUsage()
         ));
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
-        this.filter = FilterWithFuzzyMode.createAndListenForTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForFilters(
             resourceContainer,
             () -> {
                 propagateAmount();
                 setChanged();
             },
-            templates -> getNode().setFilterTemplate(
-                templates.isEmpty() ? null : templates.get(0)
-            )
+            filters -> getNode().setConfiguredResource(filters.isEmpty() ? null : filters.get(0))
         );
         initialize();
     }
@@ -93,10 +91,10 @@ public class DetectorBlockEntity extends AbstractRedstoneModeNetworkNodeContaine
     }
 
     private void propagateAmount() {
-        final ResourceAmountTemplate<?> resourceAmount = filter.getFilterContainer().get(0);
-        final long normalizedAmount = resourceAmount == null
+        final PlatformResourceKey configuredResource = filter.getFilterContainer().getResource(0);
+        final long normalizedAmount = configuredResource == null
             ? (long) amount
-            : resourceAmount.getStorageChannelType().normalizeAmount(amount);
+            : configuredResource.getResourceType().normalizeAmount(amount);
         LOGGER.debug("Updating detector amount of {} normalized as {}", amount, normalizedAmount);
         getNode().setAmount(normalizedAmount);
     }

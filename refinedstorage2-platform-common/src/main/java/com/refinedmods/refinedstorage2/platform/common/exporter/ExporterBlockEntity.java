@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.CompositeE
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.exporter.ExporterTransferStrategyFactory;
@@ -94,12 +95,12 @@ public class ExporterBlockEntity
     }
 
     @Override
-    protected void setFilterTemplates(final List<Object> templates) {
-        getNode().setFilterTemplates(templates);
+    protected void setFilters(final List<ResourceKey> filters) {
+        getNode().setFilters(filters);
     }
 
     @Override
-    public <T> long overrideAmount(final T resource, final long amount, final LongSupplier currentAmount) {
+    public long overrideAmount(final ResourceKey resource, final long amount, final LongSupplier currentAmount) {
         if (!upgradeContainer.has(Items.INSTANCE.getRegulatorUpgrade())) {
             return amount;
         }

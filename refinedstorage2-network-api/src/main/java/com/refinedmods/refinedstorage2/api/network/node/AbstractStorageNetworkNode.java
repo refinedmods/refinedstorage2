@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Set;
 import java.util.function.UnaryOperator;
@@ -38,7 +38,7 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
     }
 
     @Override
-    public boolean isAllowed(final Object resource) {
+    public boolean isAllowed(final ResourceKey resource) {
         return filter.isAllowed(resource);
     }
 
@@ -59,16 +59,14 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
             return;
         }
         final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-        getRelevantStorageChannelTypes().forEach(type -> storage.getStorageChannel(type).sortSources());
+        storage.sortSources();
     }
 
-    protected abstract Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes();
-
-    public void setFilterTemplates(final Set<Object> templates) {
-        filter.setTemplates(templates);
+    public void setFilters(final Set<ResourceKey> filters) {
+        filter.setFilters(filters);
     }
 
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
+    public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         filter.setNormalizer(normalizer);
     }
 }

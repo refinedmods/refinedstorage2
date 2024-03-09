@@ -6,11 +6,10 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
 import java.util.Optional;
@@ -137,10 +136,8 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
         return Optional.ofNullable(node.getNetwork());
     }
 
-    Optional<StorageChannel<ItemResource>> getStorageChannel() {
-        return getNetwork().map(network -> network
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM));
+    Optional<StorageChannel> getStorageChannel() {
+        return getNetwork().map(network -> network.getComponent(StorageNetworkComponent.class));
     }
 
     ItemStack insert(final ItemStack stack, final Player player) {
@@ -149,7 +146,7 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
 
     private ItemStack doInsert(final ItemStack stack,
                                final Player player,
-                               final StorageChannel<ItemResource> storageChannel) {
+                               final StorageChannel storageChannel) {
         final long inserted = storageChannel.insert(
             ItemResource.ofItemStack(stack),
             stack.getCount(),

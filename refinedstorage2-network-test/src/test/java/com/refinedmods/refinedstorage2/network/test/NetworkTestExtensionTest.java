@@ -36,7 +36,7 @@ class NetworkTestExtensionTest {
     @AddNetworkNode(networkId = "a", properties = {
         @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE, longValue = 10)
     })
-    StorageNetworkNode<String> storageInA;
+    StorageNetworkNode storageInA;
 
     @AddNetworkNode(networkId = "b", properties = {
         @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ACTIVE, boolValue = false)
@@ -107,16 +107,12 @@ class NetworkTestExtensionTest {
 
     @Test
     void shouldInjectStorageChannel(
-        @InjectNetworkStorageChannel(networkId = "a") final StorageChannel<String> storageChannelA,
-        @InjectNetworkStorageChannel(networkId = "b") final StorageChannel<String> storageChannelB
+        @InjectNetworkStorageChannel(networkId = "a") final StorageChannel storageChannelA,
+        @InjectNetworkStorageChannel(networkId = "b") final StorageChannel storageChannelB
     ) {
         // Assert
-        assertThat(storageChannelA).isSameAs(
-            a.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
-        assertThat(storageChannelB).isSameAs(
-            b.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(storageChannelA).isSameAs(a.getComponent(StorageNetworkComponent.class));
+        assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class));
     }
 
     @Test
@@ -146,7 +142,7 @@ class NetworkTestExtensionTest {
         Network nestedNetwork;
 
         @AddNetworkNode(networkId = "a")
-        StorageNetworkNode<String> nodeInA;
+        StorageNetworkNode nodeInA;
 
         @Test
         void testNestedNetworkAndNestedNetworkNode() {

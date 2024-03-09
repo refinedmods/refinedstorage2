@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.resource;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.Objects;
 

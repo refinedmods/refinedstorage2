@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;

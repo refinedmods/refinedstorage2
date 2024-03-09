@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.api.grid.view;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collections;
@@ -13,13 +14,13 @@ import java.util.Set;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.0")
-public abstract class AbstractPlatformGridResource<T> implements PlatformGridResource {
-    protected final ResourceAmount<T> resourceAmount;
+public abstract class AbstractPlatformGridResource implements PlatformGridResource {
+    protected final ResourceAmount resourceAmount;
     private final String name;
     private final Map<GridResourceAttributeKey, Set<String>> attributes;
     private boolean zeroed;
 
-    protected AbstractPlatformGridResource(final ResourceAmount<T> resourceAmount,
+    protected AbstractPlatformGridResource(final ResourceAmount resourceAmount,
                                            final String name,
                                            final Map<GridResourceAttributeKey, Set<String>> attributes) {
         this.resourceAmount = resourceAmount;
@@ -27,7 +28,7 @@ public abstract class AbstractPlatformGridResource<T> implements PlatformGridRes
         this.attributes = attributes;
     }
 
-    public T getResource() {
+    public ResourceKey getResource() {
         return resourceAmount.getResource();
     }
 

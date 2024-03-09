@@ -10,25 +10,24 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetw
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetwork;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
 class IoLoopInterfaceExternalStorageProviderImplTest {
-    Storage<String> regularStorageInNetwork;
+    Storage regularStorageInNetwork;
 
     @AddNetworkNode
     InterfaceNetworkNode interfaceWithExternalStorage;
@@ -46,48 +45,43 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
     InterfaceNetworkNode regularInterface;
     InterfaceExportStateImpl regularInterfaceState;
 
-    // this has no usages, but it's useful to bring an external storage in the network ctx that has no delegate
+    // This has no usages, but it's useful to bring an external storage in the network context that has no delegate
     @AddNetworkNode
+    @SuppressWarnings("unused")
     ExternalStorageNetworkNode externalStorageWithoutConnection;
 
     @AddNetworkNode
     ExternalStorageNetworkNode externalStorageWithNonInterfaceConnection;
 
     @BeforeEach
-    void setUp(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void setUp(@InjectNetworkStorageChannel final StorageChannel networkStorage) {
         interfaceWithExternalStorageState = new InterfaceExportStateImpl(2);
-        interfaceWithExternalStorageState.setRequestedResource(1, "A", 10);
+        interfaceWithExternalStorageState.setRequestedResource(1, A, 10);
         interfaceWithExternalStorage.setExportState(interfaceWithExternalStorageState);
         interfaceWithExternalStorage.setTransferQuotaProvider(resource -> 100);
         externalStorageConnectionToInterface.initialize(new ExternalStorageProviderFactoryImpl(
-            new InterfaceExternalStorageProviderImpl<>(
-                interfaceWithExternalStorage,
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE
-            )
+            new InterfaceExternalStorageProviderImpl(interfaceWithExternalStorage)
         ));
 
         interfaceWithExternalStorageState2 = new InterfaceExportStateImpl(2);
-        interfaceWithExternalStorageState2.setRequestedResource(1, "A", 10);
+        interfaceWithExternalStorageState2.setRequestedResource(1, A, 10);
         interfaceWithExternalStorage2.setExportState(interfaceWithExternalStorageState2);
         interfaceWithExternalStorage2.setTransferQuotaProvider(resource -> 100);
         externalStorageConnectionToInterface2.initialize(new ExternalStorageProviderFactoryImpl(
-            new InterfaceExternalStorageProviderImpl<>(
-                interfaceWithExternalStorage2,
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE
-            )
+            new InterfaceExternalStorageProviderImpl(interfaceWithExternalStorage2)
         ));
 
         regularInterfaceState = new InterfaceExportStateImpl(2);
-        regularInterfaceState.setRequestedResource(1, "A", 10);
+        regularInterfaceState.setRequestedResource(1, A, 10);
         regularInterface.setExportState(regularInterfaceState);
         regularInterface.setTransferQuotaProvider(resource -> 100);
 
-        regularStorageInNetwork = new InMemoryStorageImpl<>();
-        regularStorageInNetwork.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        regularStorageInNetwork = new InMemoryStorageImpl();
+        regularStorageInNetwork.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         networkStorage.addSource(regularStorageInNetwork);
 
         externalStorageWithNonInterfaceConnection.initialize(new ExternalStorageProviderFactoryImpl(
-            new StorageExternalStorageProvider<>(new InMemoryStorageImpl<>())
+            new StorageExternalStorageProvider(new InMemoryStorageImpl())
         ));
     }
 
@@ -98,14 +92,14 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
     // and would double count them because the External Storage update is later.
     @Test
     void shouldNotAllowInsertionByAnotherInterfaceIfThatInterfaceIsActingAsExternalStorage(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetworkStorageChannel final StorageChannel networkStorage,
         @InjectNetwork final Network network
     ) {
         // Arrange
         networkStorage.removeSource(regularStorageInNetwork);
         network.removeContainer(() -> externalStorageWithNonInterfaceConnection);
 
-        interfaceWithExternalStorageState.setCurrentlyExported(0, "A", 15);
+        interfaceWithExternalStorageState.setCurrentlyExported(0, A, 15);
         interfaceWithExternalStorageState.clearRequestedResources();
 
         // Act
@@ -114,38 +108,34 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
         interfaceWithExternalStorage.doWork();
 
         // Assert
-        assertThat(interfaceWithExternalStorageState.getExportedResource(0))
-            .usingRecursiveComparison()
-            .isEqualTo(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(interfaceWithExternalStorageState.getExportedResource(0)).isEqualTo(A);
         assertThat(interfaceWithExternalStorageState.getExportedAmount(0)).isEqualTo(15);
 
         assertThat(interfaceWithExternalStorageState2.getExportedResource(0)).isNull();
         assertThat(interfaceWithExternalStorageState2.getExportedAmount(0)).isZero();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 15)
+            new ResourceAmount(A, 15)
         );
     }
 
     @Test
     void shouldAllowInsertionByAnotherInterfaceIfThatInterfaceIsNotActingAsExternalStorage(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetworkStorageChannel final StorageChannel networkStorage,
         @InjectNetwork final Network network
     ) {
         // Arrange
         networkStorage.removeSource(regularStorageInNetwork);
         network.removeContainer(() -> externalStorageWithNonInterfaceConnection);
 
-        regularInterfaceState.setCurrentlyExported(0, "A", 10);
+        regularInterfaceState.setCurrentlyExported(0, A, 10);
         regularInterfaceState.clearRequestedResources();
 
         // Act
         regularInterface.doWork();
 
         // Assert
-        assertThat(interfaceWithExternalStorageState.getExportedResource(0))
-            .usingRecursiveComparison()
-            .isEqualTo(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(interfaceWithExternalStorageState.getExportedResource(0)).isEqualTo(A);
         assertThat(interfaceWithExternalStorageState.getExportedAmount(0)).isEqualTo(10);
 
         assertThat(interfaceWithExternalStorageState2.getExportedResource(0)).isNull();
@@ -155,7 +145,7 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
         assertThat(regularInterfaceState.getExportedAmount(1)).isZero();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 10)
+            new ResourceAmount(A, 10)
         );
     }
 
@@ -165,16 +155,14 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
     // isn't allowed as it would create an extraction loop causing the Interfaces to constantly steal from each other.
     @Test
     void shouldNotAllowExtractionRequestedByAnotherInterfaceIfThatInterfaceIsActingAsExternalStorage(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Act & assert
         interfaceWithExternalStorage.doWork();
         externalStorageConnectionToInterface.detectChanges();
 
         assertThat(interfaceWithExternalStorageState.getExportedResource(0)).isNull();
-        assertThat(interfaceWithExternalStorageState.getExportedResource(1))
-            .usingRecursiveComparison()
-            .isEqualTo(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(interfaceWithExternalStorageState.getExportedResource(1)).isEqualTo(A);
         assertThat(interfaceWithExternalStorageState.getExportedAmount(1)).isEqualTo(10);
 
         assertThat(interfaceWithExternalStorageState2.getExportedResource(0)).isNull();
@@ -183,16 +171,14 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
 
         assertThat(regularStorageInNetwork.getAll()).isEmpty();
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 10)
+            new ResourceAmount(A, 10)
         );
 
         interfaceWithExternalStorage2.doWork();
         externalStorageConnectionToInterface2.detectChanges();
 
         assertThat(interfaceWithExternalStorageState.getExportedResource(0)).isNull();
-        assertThat(interfaceWithExternalStorageState.getExportedResource(1))
-            .usingRecursiveComparison()
-            .isEqualTo(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(interfaceWithExternalStorageState.getExportedResource(1)).isEqualTo(A);
         assertThat(interfaceWithExternalStorageState.getExportedAmount(1)).isEqualTo(10);
 
         assertThat(interfaceWithExternalStorageState2.getExportedResource(0)).isNull();
@@ -201,22 +187,20 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
 
         assertThat(regularStorageInNetwork.getAll()).isEmpty();
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 10)
+            new ResourceAmount(A, 10)
         );
     }
 
     @Test
     void shouldAllowExtractionRequestedByAnotherInterfaceIfThatInterfaceIsNotActingAsExternalStorage(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        @InjectNetworkStorageChannel final StorageChannel networkStorage
     ) {
         // Act & assert
         interfaceWithExternalStorage.doWork();
         externalStorageConnectionToInterface.detectChanges();
 
         assertThat(interfaceWithExternalStorageState.getExportedResource(0)).isNull();
-        assertThat(interfaceWithExternalStorageState.getExportedResource(1))
-            .usingRecursiveComparison()
-            .isEqualTo(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(interfaceWithExternalStorageState.getExportedResource(1)).isEqualTo(A);
         assertThat(interfaceWithExternalStorageState.getExportedAmount(1)).isEqualTo(10);
 
         assertThat(regularInterfaceState.getExportedResource(0)).isNull();
@@ -225,7 +209,7 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
 
         assertThat(regularStorageInNetwork.getAll()).isEmpty();
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 10)
+            new ResourceAmount(A, 10)
         );
 
         regularInterface.doWork();
@@ -238,9 +222,7 @@ class IoLoopInterfaceExternalStorageProviderImplTest {
         assertThat(interfaceWithExternalStorageState.getExportedAmount(1)).isZero();
 
         assertThat(regularInterfaceState.getExportedResource(0)).isNull();
-        assertThat(regularInterfaceState.getExportedResource(1)).usingRecursiveComparison().isEqualTo(
-            new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
-        );
+        assertThat(regularInterfaceState.getExportedResource(1)).isEqualTo(A);
         assertThat(regularInterfaceState.getExportedAmount(1)).isEqualTo(10);
 
         assertThat(regularStorageInNetwork.getAll()).isEmpty();

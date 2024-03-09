@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.exporter.ExporterTransferStrategyFactory;
@@ -23,7 +24,6 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
@@ -33,8 +33,6 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
@@ -68,7 +66,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
+    public PlatformRegistry<StorageType> getStorageTypeRegistry() {
         return ensureLoaded().getStorageTypeRegistry();
     }
 
@@ -83,8 +81,8 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
-        return ensureLoaded().getStorageChannelTypeRegistry();
+    public PlatformRegistry getResourceTypeRegistry() {
+        return ensureLoaded().getResourceTypeRegistry();
     }
 
     @Override
@@ -241,52 +239,43 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public <T> void addResourceFactory(final ResourceFactory<T> factory) {
+    public void addResourceFactory(final ResourceFactory factory) {
         ensureLoaded().addResourceFactory(factory);
     }
 
     @Override
-    public ResourceFactory<ItemResource> getItemResourceFactory() {
+    public ResourceFactory getItemResourceFactory() {
         return ensureLoaded().getItemResourceFactory();
     }
 
     @Override
-    public PlatformStorageChannelType<ItemResource> getItemStorageChannelType() {
-        return ensureLoaded().getItemStorageChannelType();
-    }
-
-    @Override
-    public StorageType<ItemResource> getItemStorageType() {
+    public StorageType getItemStorageType() {
         return ensureLoaded().getItemStorageType();
     }
 
     @Override
-    public ResourceFactory<FluidResource> getFluidResourceFactory() {
+    public ResourceFactory getFluidResourceFactory() {
         return ensureLoaded().getFluidResourceFactory();
     }
 
     @Override
-    public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
-        return ensureLoaded().getFluidStorageChannelType();
-    }
-
-    @Override
-    public StorageType<FluidResource> getFluidStorageType() {
+    public StorageType getFluidStorageType() {
         return ensureLoaded().getFluidStorageType();
     }
 
     @Override
-    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+    public Set<ResourceFactory> getAlternativeResourceFactories() {
         return ensureLoaded().getAlternativeResourceFactories();
     }
 
     @Override
-    public <T> void registerResourceRendering(final Class<T> resourceClass, final ResourceRendering<T> rendering) {
+    public <T extends ResourceKey> void registerResourceRendering(final Class<T> resourceClass,
+                                                                  final ResourceRendering rendering) {
         ensureLoaded().registerResourceRendering(resourceClass, rendering);
     }
 
     @Override
-    public <T> ResourceRendering<T> getResourceRendering(final T resource) {
+    public ResourceRendering getResourceRendering(final ResourceKey resource) {
         return ensureLoaded().getResourceRendering(resource);
     }
 

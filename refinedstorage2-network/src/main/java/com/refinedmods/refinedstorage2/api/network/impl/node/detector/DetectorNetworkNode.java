@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.detector;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import javax.annotation.Nullable;
 
@@ -11,7 +11,7 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
     private long amount;
     private DetectorMode mode = DetectorMode.EQUAL;
     @Nullable
-    private ResourceTemplate<?> template;
+    private ResourceKey configuredResource;
     @Nullable
     private DetectorAmountStrategy amountStrategy;
 
@@ -24,8 +24,8 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public <T> void setFilterTemplate(@Nullable final ResourceTemplate<T> filterTemplate) {
-        this.template = filterTemplate;
+    public void setConfiguredResource(@Nullable final ResourceKey configuredResource) {
+        this.configuredResource = configuredResource;
     }
 
     public DetectorMode getMode() {
@@ -49,10 +49,10 @@ public class DetectorNetworkNode extends AbstractNetworkNode {
     }
 
     public boolean isActivated() {
-        if (template == null || network == null || !isActive() || amountStrategy == null) {
+        if (configuredResource == null || network == null || !isActive() || amountStrategy == null) {
             return false;
         }
-        final long amountInNetwork = amountStrategy.getAmount(network, template);
+        final long amountInNetwork = amountStrategy.getAmount(network, configuredResource);
         return switch (mode) {
             case UNDER -> amountInNetwork < amount;
             case EQUAL -> amountInNetwork == amount;

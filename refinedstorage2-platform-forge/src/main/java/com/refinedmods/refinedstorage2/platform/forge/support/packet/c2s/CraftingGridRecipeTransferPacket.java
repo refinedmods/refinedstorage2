@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public record CraftingGridRecipeTransferPacket(List<List<ItemResource>> recipe) 
         for (final List<ItemResource> slotPossibilities : recipe) {
             buf.writeInt(slotPossibilities.size());
             for (final ItemResource slotPossibility : slotPossibilities) {
-                PacketUtil.writeItemResource(buf, slotPossibility);
+                slotPossibility.toBuffer(buf);
             }
         }
     }

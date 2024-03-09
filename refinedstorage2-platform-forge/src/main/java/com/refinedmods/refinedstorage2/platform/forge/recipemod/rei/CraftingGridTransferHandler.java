@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.recipemod.rei;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.awt.Color;
 import java.util.List;
@@ -38,7 +38,7 @@ class CraftingGridTransferHandler implements TransferHandler {
             doTransfer(ingredients, containerMenu);
             return Result.createSuccessful().blocksFurtherHandling();
         }
-        final ResourceList<Object> available = containerMenu.getAvailableListForRecipeTransfer();
+        final ResourceList available = containerMenu.getAvailableListForRecipeTransfer();
         final MissingIngredients missingIngredients = findMissingIngredients(ingredients, available);
         if (missingIngredients.isEmpty()) {
             return Result.createSuccessful().blocksFurtherHandling();
@@ -56,7 +56,7 @@ class CraftingGridTransferHandler implements TransferHandler {
     }
 
     private MissingIngredients findMissingIngredients(final List<EntryIngredient> ingredients,
-                                                      final ResourceList<Object> available) {
+                                                      final ResourceList available) {
         final MissingIngredients missingIngredients = new MissingIngredients();
         for (int i = 0; i < ingredients.size(); ++i) {
             final EntryIngredient ingredient = ingredients.get(i);
@@ -70,7 +70,7 @@ class CraftingGridTransferHandler implements TransferHandler {
         return missingIngredients;
     }
 
-    private boolean isAvailable(final ResourceList<Object> available, final EntryIngredient ingredient) {
+    private boolean isAvailable(final ResourceList available, final EntryIngredient ingredient) {
         final List<ItemStack> possibilities = convertIngredientToItemStacks(ingredient);
         for (final ItemStack possibility : possibilities) {
             final ItemResource possibilityResource = ItemResource.ofItemStack(possibility);

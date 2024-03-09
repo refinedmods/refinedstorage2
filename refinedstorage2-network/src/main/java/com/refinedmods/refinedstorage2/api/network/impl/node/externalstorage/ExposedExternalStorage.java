@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractConfiguredProxyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.ConsumingStorage;
@@ -19,23 +20,25 @@ import java.util.Set;
 import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
-public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
-    implements ConsumingStorage<T>, CompositeAwareChild<T>, TrackedStorage<T>, ExternalStorageListener<T> {
-    private final Set<ParentComposite<T>> parents = new HashSet<>();
-    private final TrackedStorageRepository<T> trackingRepository;
+public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<ExternalStorage>
+    implements ConsumingStorage, CompositeAwareChild, TrackedStorage, ExternalStorageListener {
+    private final Set<ParentComposite> parents = new HashSet<>();
     private final LongSupplier clock;
+    @Nullable
+    private TrackedStorageRepository trackingRepository;
 
-    ExposedExternalStorage(final StorageConfiguration config,
-                           final TrackedStorageRepository<T> trackingRepository,
-                           final LongSupplier clock) {
+    ExposedExternalStorage(final StorageConfiguration config, final LongSupplier clock) {
         super(config);
-        this.trackingRepository = trackingRepository;
         this.clock = clock;
     }
 
+    void setTrackingRepository(final TrackedStorageRepository trackingRepository) {
+        this.trackingRepository = trackingRepository;
+    }
+
     @Nullable
-    public ExternalStorageProvider<T> getExternalStorageProvider() {
-        final ExternalStorage<T> delegate = getUnsafeDelegate();
+    public ExternalStorageProvider getExternalStorageProvider() {
+        final ExternalStorage delegate = getUnsafeDelegate();
         if (delegate == null) {
             return null;
         }
@@ -43,25 +46,25 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
     }
 
     @Override
-    public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
+    public void onAddedIntoComposite(final ParentComposite parentComposite) {
         parents.add(parentComposite);
-        final ExternalStorage<T> delegate = getUnsafeDelegate();
+        final ExternalStorage delegate = getUnsafeDelegate();
         if (delegate != null) {
             delegate.onAddedIntoComposite(parentComposite);
         }
     }
 
     @Override
-    public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
+    public void onRemovedFromComposite(final ParentComposite parentComposite) {
         parents.remove(parentComposite);
-        final ExternalStorage<T> delegate = getUnsafeDelegate();
+        final ExternalStorage delegate = getUnsafeDelegate();
         if (delegate != null) {
             delegate.onRemovedFromComposite(parentComposite);
         }
     }
 
     @Override
-    public void setDelegate(final ExternalStorage<T> newDelegate) {
+    public void setDelegate(final ExternalStorage newDelegate) {
         super.setDelegate(newDelegate);
         parents.forEach(parent -> {
             parent.onSourceAddedToChild(newDelegate);
@@ -71,7 +74,7 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
 
     @Override
     public void clearDelegate() {
-        final ExternalStorage<T> delegate = getDelegate();
+        final ExternalStorage delegate = getDelegate();
         parents.forEach(parent -> {
             parent.onSourceRemovedFromChild(delegate);
             delegate.onRemovedFromComposite(parent);
@@ -80,7 +83,7 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
     }
 
     public boolean detectChanges() {
-        final ExternalStorage<T> delegate = getUnsafeDelegate();
+        final ExternalStorage delegate = getUnsafeDelegate();
         if (delegate == null) {
             return false;
         }
@@ -88,13 +91,19 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+    public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
+        if (trackingRepository == null) {
+            return Optional.empty();
+        }
         return trackingRepository.findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override
-    public void beforeDetectChanges(final T resource, final Actor actor) {
+    public void beforeDetectChanges(final ResourceKey resource, final Actor actor) {
+        if (trackingRepository == null) {
+            return;
+        }
         trackingRepository.update(resource, actor, clock.getAsLong());
     }
 }

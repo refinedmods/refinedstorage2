@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.support.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
@@ -28,7 +29,7 @@ public class ResourceSlot extends Slot {
     private final ResourceContainer resourceContainer;
     private final Component helpText;
     @Nullable
-    private ResourceAmountTemplate<?> cachedResource;
+    private ResourceAmount cachedResource;
 
     public ResourceSlot(final ResourceContainer resourceContainer,
                         final int index,
@@ -92,19 +93,27 @@ public class ResourceSlot extends Slot {
     }
 
     @Nullable
-    public ResourceAmountTemplate<?> getResourceAmount() {
-        return resourceContainer.get(getContainerSlot());
+    public PlatformResourceKey getResource() {
+        return resourceContainer.getResource(getContainerSlot());
+    }
+
+    public long getAmount() {
+        return resourceContainer.getAmount(getContainerSlot());
+    }
+
+    private ItemStack getStackRepresentation() {
+        return resourceContainer.getStackRepresentation(getContainerSlot());
     }
 
     public boolean isEmpty() {
-        return getResourceAmount() == null;
+        return resourceContainer.isEmpty(getContainerSlot());
     }
 
     public void change(final ItemStack stack, final boolean tryAlternatives) {
         resourceContainer.change(getContainerSlot(), stack, tryAlternatives);
     }
 
-    public <T> void change(@Nullable final ResourceAmountTemplate<T> instance) {
+    public void change(@Nullable final ResourceAmount instance) {
         if (instance == null) {
             resourceContainer.remove(getContainerSlot());
         } else {
@@ -112,18 +121,17 @@ public class ResourceSlot extends Slot {
         }
     }
 
-    public <T> void setFilter(final PlatformStorageChannelType<T> storageChannelType, final T resource) {
+    public void setFilter(final PlatformResourceKey resource) {
         if (!isFilter() || !isValid(resource)) {
             return;
         }
-        resourceContainer.set(getContainerSlot(), new ResourceAmountTemplate<>(
+        resourceContainer.set(getContainerSlot(), new ResourceAmount(
             resource,
-            storageChannelType.normalizeAmount(1D),
-            storageChannelType
+            resource.getResourceType().normalizeAmount(1D)
         ));
     }
 
-    public <T> boolean isValid(final T resource) {
+    public boolean isValid(final ResourceKey resource) {
         return resourceContainer.isValid(resource);
     }
 
@@ -143,32 +151,29 @@ public class ResourceSlot extends Slot {
     }
 
     public void changeAmountOnClient(final double amount) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        if (resourceAmount == null) {
+        final PlatformResourceKey resource = getResource();
+        if (resource == null) {
             return;
         }
-        final long normalizedAmount = resourceAmount.getStorageChannelType().normalizeAmount(amount);
+        final long normalizedAmount = resource.getResourceType().normalizeAmount(amount);
         Platform.INSTANCE.getClientToServerCommunications().sendResourceSlotAmountChange(index, normalizedAmount);
     }
 
     public boolean contains(final ItemStack stack) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        return resourceAmount != null && ItemStack.matches(stack, resourceAmount.getStackRepresentation());
+        return ItemStack.matches(stack, getStackRepresentation());
     }
 
     public void broadcastChanges(final Player player) {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        if (!Objects.equals(resourceAmount, cachedResource)) {
+        final ResourceAmount currentResourceAmount = resourceContainer.get(getContainerSlot());
+        if (!Objects.equals(currentResourceAmount, cachedResource)) {
             LOGGER.debug("Resource slot {} has changed", getContainerSlot());
-            this.cachedResource = resourceAmount;
-            broadcastChange((ServerPlayer) player, resourceAmount);
+            this.cachedResource = currentResourceAmount;
+            broadcastChange((ServerPlayer) player, currentResourceAmount);
         }
     }
 
-    private <T> void broadcastChange(final ServerPlayer player,
-                                     @Nullable final ResourceAmountTemplate<T> contents) {
-        Platform.INSTANCE.getServerToClientCommunications()
-            .sendResourceSlotUpdate(player, contents, index);
+    private void broadcastChange(final ServerPlayer player, @Nullable final ResourceAmount contents) {
+        Platform.INSTANCE.getServerToClientCommunications().sendResourceSlotUpdate(player, contents, index);
     }
 
     public void readFromUpdatePacket(final FriendlyByteBuf buf) {
@@ -186,30 +191,30 @@ public class ResourceSlot extends Slot {
     }
 
     public double getDisplayAmount() {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        if (resourceAmount == null) {
+        final PlatformResourceKey resource = getResource();
+        if (resource == null) {
             return 0;
         }
-        return resourceAmount.getStorageChannelType().getDisplayAmount(resourceAmount.getAmount());
+        return resource.getResourceType().getDisplayAmount(getAmount());
     }
 
     public double getMaxAmountWhenModifying() {
-        final ResourceAmountTemplate<?> resourceAmount = getResourceAmount();
-        if (resourceAmount == null) {
+        final ResourceKey resource = getResource();
+        if (resource == null) {
             return 0;
         }
-        return resourceContainer.getMaxAmount(resourceAmount);
+        return resourceContainer.getMaxAmount(resource);
     }
 
     public Component getHelpText() {
         return helpText;
     }
 
-    public ResourceFactory<?> getPrimaryResourceFactory() {
+    public ResourceFactory getPrimaryResourceFactory() {
         return resourceContainer.getPrimaryResourceFactory();
     }
 
-    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+    public Set<ResourceFactory> getAlternativeResourceFactories() {
         return resourceContainer.getAlternativeResourceFactories();
     }
 }

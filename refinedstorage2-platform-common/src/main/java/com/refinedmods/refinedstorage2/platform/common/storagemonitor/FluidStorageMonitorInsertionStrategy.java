@@ -3,13 +3,12 @@ package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -19,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInsertionStrategy {
     @Override
     public Optional<ItemStack> insert(
-        final Object configuredResource,
+        final ResourceKey configuredResource,
         final ItemStack stack,
         final Actor actor,
         final Network network
@@ -27,8 +26,7 @@ public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInser
         if (!(configuredResource instanceof FluidResource configuredFluidResource)) {
             return Optional.empty();
         }
-        final StorageChannel<FluidResource> fluidStorageChannel = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.FLUID);
+        final StorageChannel fluidStorageChannel = network.getComponent(StorageNetworkComponent.class);
         return Platform.INSTANCE.getContainedFluid(stack)
             .map(extracted -> tryInsert(actor, configuredFluidResource, extracted, fluidStorageChannel))
             .map(extracted -> doInsert(actor, extracted, fluidStorageChannel));
@@ -38,28 +36,26 @@ public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInser
     private Platform.ContainedFluid tryInsert(final Actor actor,
                                               final FluidResource configuredResource,
                                               final Platform.ContainedFluid result,
-                                              final StorageChannel<FluidResource> storageChannel) {
-        final ResourceAmount<FluidResource> fluid = result.fluid();
-        if (!fluid.getResource().equals(configuredResource)) {
+                                              final StorageChannel storageChannel) {
+        if (!result.fluid().equals(configuredResource)) {
             return null;
         }
         final long insertedSimulated = storageChannel.insert(
-            fluid.getResource(),
-            fluid.getAmount(),
+            result.fluid(),
+            result.amount(),
             Action.SIMULATE,
             actor
         );
-        final boolean insertedSuccessfully = insertedSimulated == fluid.getAmount();
+        final boolean insertedSuccessfully = insertedSimulated == result.amount();
         return insertedSuccessfully ? result : null;
     }
 
     private ItemStack doInsert(final Actor actor,
                                final Platform.ContainedFluid extracted,
-                               final StorageChannel<FluidResource> storageChannel) {
-        final ResourceAmount<FluidResource> fluid = extracted.fluid();
+                               final StorageChannel storageChannel) {
         storageChannel.insert(
-            fluid.getResource(),
-            fluid.getAmount(),
+            extracted.fluid(),
+            extracted.amount(),
             Action.EXECUTE,
             actor
         );

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvi
 
 import javax.annotation.Nullable;
 
-public interface InterfaceExternalStorageProvider<T> extends ExternalStorageProvider<T> {
+public interface InterfaceExternalStorageProvider extends ExternalStorageProvider {
     @Nullable
     InterfaceNetworkNode getInterface();
 }

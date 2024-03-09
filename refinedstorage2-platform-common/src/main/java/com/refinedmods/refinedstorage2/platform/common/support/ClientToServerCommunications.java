@@ -3,24 +3,18 @@ package com.refinedmods.refinedstorage2.platform.common.support;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ClientToServerCommunications {
-    <T> void sendGridExtract(PlatformStorageChannelType<T> storageChannelType,
-                             T resource,
-                             GridExtractMode mode,
-                             boolean cursor);
+    void sendGridExtract(PlatformResourceKey resource, GridExtractMode mode, boolean cursor);
 
-    <T> void sendGridScroll(PlatformStorageChannelType<T> storageChannelType,
-                            T resource,
-                            GridScrollMode mode,
-                            int slotIndex);
+    void sendGridScroll(PlatformResourceKey resource, GridScrollMode mode, int slotIndex);
 
     void sendGridInsert(GridInsertMode mode, boolean tryAlternatives);
 
@@ -34,7 +28,7 @@ public interface ClientToServerCommunications {
 
     void sendResourceSlotChange(int slotIndex, boolean tryAlternatives);
 
-    <T> void sendResourceFilterSlotChange(PlatformStorageChannelType<T> storageChannelType, T resource, int slotIndex);
+    void sendResourceFilterSlotChange(PlatformResourceKey resource, int slotIndex);
 
     void sendResourceSlotAmountChange(int slotIndex, long amount);
 

@@ -31,28 +31,27 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
     private static final String TAG_STORAGE_TYPE = "type";
     private static final String TAG_STORAGE_DATA = "data";
 
-    private final Map<UUID, Storage<?>> entries = new HashMap<>();
-    private final PlatformRegistry<StorageType<?>> storageTypeRegistry;
+    private final Map<UUID, Storage> entries = new HashMap<>();
+    private final PlatformRegistry<StorageType> storageTypeRegistry;
 
-    public StorageRepositoryImpl(final PlatformRegistry<StorageType<?>> storageTypeRegistry) {
+    public StorageRepositoryImpl(final PlatformRegistry<StorageType> storageTypeRegistry) {
         this.storageTypeRegistry = storageTypeRegistry;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> Optional<Storage<T>> get(final UUID id) {
-        return Optional.ofNullable((Storage<T>) entries.get(id));
+    public Optional<Storage> get(final UUID id) {
+        return Optional.ofNullable(entries.get(id));
     }
 
     @Override
-    public <T> void set(final UUID id, final Storage<T> storage) {
+    public void set(final UUID id, final Storage storage) {
         setSilently(id, storage);
         setDirty();
     }
 
-    private <T> void setSilently(final UUID id, final Storage<T> storage) {
+    private void setSilently(final UUID id, final Storage storage) {
         CoreValidations.validateNotNull(storage, "Storage must not be null");
-        if (!(storage instanceof SerializableStorage<?>)) {
+        if (!(storage instanceof SerializableStorage)) {
             throw new IllegalArgumentException("Storage is not serializable");
         }
         CoreValidations.validateNotNull(id, "ID must not be null");
@@ -63,8 +62,8 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
     }
 
     @Override
-    public <T> Optional<Storage<T>> removeIfEmpty(final UUID id) {
-        return this.<T>get(id).map(storage -> {
+    public Optional<Storage> removeIfEmpty(final UUID id) {
+        return get(id).map(storage -> {
             if (storage.getStored() == 0) {
                 entries.remove(id);
                 setDirty();
@@ -101,10 +100,9 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public CompoundTag save(final CompoundTag tag) {
         final ListTag storageList = new ListTag();
-        for (final Map.Entry<UUID, Storage<?>> entry : entries.entrySet()) {
+        for (final Map.Entry<UUID, Storage> entry : entries.entrySet()) {
             if (entry.getValue() instanceof SerializableStorage serializableStorage) {
                 storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), serializableStorage));
             } else {
@@ -115,8 +113,9 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
         return tag;
     }
 
-    private <T> Tag convertStorageToTag(final UUID id, final Storage<T> storage,
-                                        final SerializableStorage<T> serializableStorage) {
+    private Tag convertStorageToTag(final UUID id,
+                                    final Storage storage,
+                                    final SerializableStorage serializableStorage) {
         final ResourceLocation typeIdentifier = storageTypeRegistry
             .getId(serializableStorage.getType())
             .orElseThrow(() -> new RuntimeException("Storage type is not registered"));

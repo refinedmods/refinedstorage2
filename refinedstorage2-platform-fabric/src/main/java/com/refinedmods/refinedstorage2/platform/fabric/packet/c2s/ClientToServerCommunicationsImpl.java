@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.operations.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,33 +23,29 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientToServerCommunicationsImpl implements ClientToServerCommunications {
     @Override
-    public <T> void sendGridExtract(final PlatformStorageChannelType<T> storageChannelType,
-                                    final T resource,
-                                    final GridExtractMode mode,
-                                    final boolean cursor) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
+    public void sendGridExtract(final PlatformResourceKey resource, final GridExtractMode mode, final boolean cursor) {
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(id -> sendToServer(
             PacketIds.GRID_EXTRACT,
             buf -> {
                 buf.writeResourceLocation(id);
                 GridExtractPacket.writeMode(buf, mode);
                 buf.writeBoolean(cursor);
-                storageChannelType.toBuffer(resource, buf);
+                resource.toBuffer(buf);
             }
         ));
     }
 
     @Override
-    public <T> void sendGridScroll(final PlatformStorageChannelType<T> storageChannelType,
-                                   final T resource,
-                                   final GridScrollMode mode,
-                                   final int slotIndex) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
+    public void sendGridScroll(final PlatformResourceKey resource, final GridScrollMode mode, final int slotIndex) {
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(id -> sendToServer(
             PacketIds.GRID_SCROLL,
             buf -> {
                 buf.writeResourceLocation(id);
                 GridScrollPacket.writeMode(buf, mode);
                 buf.writeInt(slotIndex);
-                storageChannelType.toBuffer(resource, buf);
+                resource.toBuffer(buf);
             }
         ));
     }
@@ -74,7 +70,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
             for (final List<ItemResource> slotPossibilities : recipe) {
                 buf.writeInt(slotPossibilities.size());
                 for (final ItemResource slotPossibility : slotPossibilities) {
-                    PacketUtil.writeItemResource(buf, slotPossibility);
+                    slotPossibility.toBuffer(buf);
                 }
             }
         });
@@ -101,16 +97,14 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
         });
     }
 
-
     @Override
-    public <T> void sendResourceFilterSlotChange(final PlatformStorageChannelType<T> storageChannelType,
-                                                 final T resource,
-                                                 final int slotIndex) {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType)
+    public void sendResourceFilterSlotChange(final PlatformResourceKey resource, final int slotIndex) {
+        final ResourceType resourceType = resource.getResourceType();
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType)
             .ifPresent(id -> sendToServer(PacketIds.RESOURCE_FILTER_SLOT_CHANGE, buf -> {
                 buf.writeInt(slotIndex);
                 buf.writeResourceLocation(id);
-                storageChannelType.toBuffer(resource, buf);
+                resource.toBuffer(buf);
             }));
     }
 

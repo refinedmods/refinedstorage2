@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.node;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> implements Storage<T>, Priority {
+public abstract class AbstractConfiguredProxyStorage<S extends Storage> implements Storage, Priority {
     @Nullable
     private S delegate;
     private final StorageConfiguration config;
@@ -31,7 +32,7 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         if (delegate == null || config.getAccessMode() == AccessMode.INSERT || !config.isActive()) {
             return 0;
         }
@@ -39,7 +40,7 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         if (delegate == null
             || config.getAccessMode() == AccessMode.EXTRACT
             || !config.isActive()
@@ -50,7 +51,7 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     }
 
     @Override
-    public Collection<ResourceAmount<T>> getAll() {
+    public Collection<ResourceAmount> getAll() {
         return delegate == null ? Collections.emptySet() : delegate.getAll();
     }
 

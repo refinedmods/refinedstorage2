@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -15,12 +13,13 @@ import com.refinedmods.refinedstorage2.platform.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.iface.InterfacePlatformExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.support.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.util.ServerEventQueue;
 import com.refinedmods.refinedstorage2.platform.fabric.exporter.FabricStorageExporterTransferStrategyFactory;
@@ -52,7 +51,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.support.resource.VariantU
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -133,9 +131,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             createIdentifier("item"),
             new FabricStorageImporterTransferStrategyFactory<>(
                 ItemStorage.SIDED,
-                StorageChannelTypes.ITEM,
                 VariantUtil::ofItemVariant,
-                VariantUtil::toItemVariant,
+                resource -> resource instanceof ItemResource itemResource
+                    ? VariantUtil.toItemVariant(itemResource) : null,
                 1
             )
         );
@@ -143,9 +141,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             createIdentifier("fluid"),
             new FabricStorageImporterTransferStrategyFactory<>(
                 FluidStorage.SIDED,
-                StorageChannelTypes.FLUID,
                 VariantUtil::ofFluidVariant,
-                VariantUtil::toFluidVariant,
+                resource -> resource instanceof FluidResource fluidResource
+                    ? VariantUtil.toFluidVariant(fluidResource) : null,
                 FluidConstants.BUCKET
             )
         );
@@ -156,11 +154,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             createIdentifier("item"),
             new FabricStorageExporterTransferStrategyFactory<>(
                 ItemStorage.SIDED,
-                StorageChannelTypes.ITEM,
                 resource -> resource instanceof ItemResource itemResource
-                    ? Optional.of(itemResource)
-                    : Optional.empty(),
-                VariantUtil::toItemVariant,
+                    ? VariantUtil.toItemVariant(itemResource) : null,
                 1
             )
         );
@@ -168,11 +163,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             createIdentifier("fluid"),
             new FabricStorageExporterTransferStrategyFactory<>(
                 FluidStorage.SIDED,
-                StorageChannelTypes.FLUID,
                 resource -> resource instanceof FluidResource fluidResource
-                    ? Optional.of(fluidResource)
-                    : Optional.empty(),
-                VariantUtil::toFluidVariant,
+                    ? VariantUtil.toFluidVariant(fluidResource) : null,
                 FluidConstants.BUCKET
             )
         );
@@ -182,17 +174,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(new InterfacePlatformExternalStorageProviderFactory());
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             new FabricStoragePlatformExternalStorageProviderFactory<>(
-                StorageChannelTypes.ITEM,
                 ItemStorage.SIDED,
                 VariantUtil::ofItemVariant,
-                VariantUtil::toItemVariant
+                resource -> resource instanceof ItemResource itemResource
+                    ? VariantUtil.toItemVariant(itemResource) : null
             ));
         PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             new FabricStoragePlatformExternalStorageProviderFactory<>(
-                StorageChannelTypes.FLUID,
                 FluidStorage.SIDED,
                 VariantUtil::ofFluidVariant,
-                VariantUtil::toFluidVariant
+                resource -> resource instanceof FluidResource fluidResource
+                    ? VariantUtil.toFluidVariant(fluidResource) : null
             ));
     }
 
@@ -214,7 +206,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(false) {
+            () -> new WirelessGridItem() {
                 @Override
                 public boolean allowNbtUpdateAnimation(final Player player,
                                                        final InteractionHand hand,
@@ -223,7 +215,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     return AbstractModInitializer.allowNbtUpdateAnimation(oldStack, newStack);
                 }
             },
-            () -> new WirelessGridItem(true) {
+            () -> new WirelessGridItem() {
                 @Override
                 public boolean allowNbtUpdateAnimation(final Player player,
                                                        final InteractionHand hand,
@@ -314,7 +306,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.USE_NETWORK_BOUND_ITEM, new UseNetworkBoundItemPacket());
     }
 
-    @SuppressWarnings("checkstyle:Indentation")
     private void registerSidedHandlers() {
         registerItemStorage(
             AbstractDiskDriveBlockEntity.class::isInstance,

@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
-import static com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource.ofItemStack;
+import static com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource.ofItemStack;
 import static com.refinedmods.refinedstorage2.platform.forge.support.resource.VariantUtil.ofFluidStack;
 
 public interface CapabilityCache {
@@ -23,13 +22,13 @@ public interface CapabilityCache {
         return Optional.empty();
     }
 
-    default Iterator<ItemResource> getItemIterator() {
-        return getItemHandler().map(handler -> (Iterator<ItemResource>) new AbstractIterator<ItemResource>() {
+    default Iterator<ResourceKey> getItemIterator() {
+        return getItemHandler().map(handler -> (Iterator<ResourceKey>) new AbstractIterator<ResourceKey>() {
             private int index;
 
             @Nullable
             @Override
-            protected ItemResource computeNext() {
+            protected ResourceKey computeNext() {
                 if (index > handler.getSlots()) {
                     return endOfData();
                 }
@@ -45,14 +44,14 @@ public interface CapabilityCache {
         }).orElse(Collections.emptyListIterator());
     }
 
-    default Iterator<ResourceAmount<ItemResource>> getItemAmountIterator() {
+    default Iterator<ResourceAmount> getItemAmountIterator() {
         return getItemHandler().map(
-            handler -> (Iterator<ResourceAmount<ItemResource>>) new AbstractIterator<ResourceAmount<ItemResource>>() {
+            handler -> (Iterator<ResourceAmount>) new AbstractIterator<ResourceAmount>() {
                 private int index;
 
                 @Nullable
                 @Override
-                protected ResourceAmount<ItemResource> computeNext() {
+                protected ResourceAmount computeNext() {
                     if (index > handler.getSlots()) {
                         return endOfData();
                     }
@@ -60,7 +59,7 @@ public interface CapabilityCache {
                         final ItemStack slot = handler.getStackInSlot(index);
                         if (!slot.isEmpty()) {
                             index++;
-                            return new ResourceAmount<>(ofItemStack(slot), slot.getCount());
+                            return new ResourceAmount(ofItemStack(slot), slot.getCount());
                         }
                     }
                     return endOfData();
@@ -73,13 +72,13 @@ public interface CapabilityCache {
         return Optional.empty();
     }
 
-    default Iterator<FluidResource> getFluidIterator() {
-        return getFluidHandler().map(handler -> (Iterator<FluidResource>) new AbstractIterator<FluidResource>() {
+    default Iterator<ResourceKey> getFluidIterator() {
+        return getFluidHandler().map(handler -> (Iterator<ResourceKey>) new AbstractIterator<ResourceKey>() {
             private int index;
 
             @Nullable
             @Override
-            protected FluidResource computeNext() {
+            protected ResourceKey computeNext() {
                 if (index > handler.getTanks()) {
                     return endOfData();
                 }
@@ -95,14 +94,14 @@ public interface CapabilityCache {
         }).orElse(Collections.emptyListIterator());
     }
 
-    default Iterator<ResourceAmount<FluidResource>> getFluidAmountIterator() {
+    default Iterator<ResourceAmount> getFluidAmountIterator() {
         return getFluidHandler().map(
-            handler -> (Iterator<ResourceAmount<FluidResource>>) new AbstractIterator<ResourceAmount<FluidResource>>() {
+            handler -> (Iterator<ResourceAmount>) new AbstractIterator<ResourceAmount>() {
                 private int index;
 
                 @Nullable
                 @Override
-                protected ResourceAmount<FluidResource> computeNext() {
+                protected ResourceAmount computeNext() {
                     if (index > handler.getTanks()) {
                         return endOfData();
                     }
@@ -110,7 +109,7 @@ public interface CapabilityCache {
                         final FluidStack slot = handler.getFluidInTank(index);
                         if (!slot.isEmpty()) {
                             index++;
-                            return new ResourceAmount<>(ofFluidStack(slot), slot.getAmount());
+                            return new ResourceAmount(ofFluidStack(slot), slot.getAmount());
                         }
                     }
                     return endOfData();
