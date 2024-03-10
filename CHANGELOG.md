@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed losing disk when using Wrench dismantling on the Portable Grid.
 -   Fixed losing energy when using Wrench dismantling on the Portable Grid and the Controller.
 -   Fixed changing side buttons not working on Forge.
+-   Fixed External Storage not displaying empty allowlist warning.
 
 ## [2.0.0-milestone.3.3] - 2024-02-17
 
