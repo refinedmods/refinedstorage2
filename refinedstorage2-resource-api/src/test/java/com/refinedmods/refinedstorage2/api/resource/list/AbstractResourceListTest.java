@@ -27,7 +27,7 @@ abstract class AbstractResourceListTest {
     @Test
     void shouldAddNewResource() {
         // Act
-        final ResourceListOperationResult result = list.add(TestResource.A, 10);
+        final ResourceList.OperationResult result = list.add(TestResource.A, 10);
 
         // Assert
         assertThat(result.change()).isEqualTo(10);
@@ -43,7 +43,7 @@ abstract class AbstractResourceListTest {
     @Test
     void shouldAddNewResourceWithResourceAmountDirectly() {
         // Act
-        final ResourceListOperationResult result = list.add(new ResourceAmount(TestResource.A, 10));
+        final ResourceList.OperationResult result = list.add(new ResourceAmount(TestResource.A, 10));
 
         // Assert
         assertThat(result.change()).isEqualTo(10);
@@ -59,8 +59,8 @@ abstract class AbstractResourceListTest {
     @Test
     void shouldAddMultipleOfSameResource() {
         // Act
-        final ResourceListOperationResult result1 = list.add(TestResource.A, 10);
-        final ResourceListOperationResult result2 = list.add(TestResource.A, 5);
+        final ResourceList.OperationResult result1 = list.add(TestResource.A, 10);
+        final ResourceList.OperationResult result2 = list.add(TestResource.A, 5);
 
         // Assert
         assertThat(result1.change()).isEqualTo(10);
@@ -81,9 +81,9 @@ abstract class AbstractResourceListTest {
     @Test
     void shouldAddMultipleOfDifferentResources() {
         // Act
-        final ResourceListOperationResult result1 = list.add(TestResource.A, 10);
-        final ResourceListOperationResult result2 = list.add(TestResource.A, 5);
-        final ResourceListOperationResult result3 = list.add(TestResource.B, 3);
+        final ResourceList.OperationResult result1 = list.add(TestResource.A, 10);
+        final ResourceList.OperationResult result2 = list.add(TestResource.A, 5);
+        final ResourceList.OperationResult result3 = list.add(TestResource.B, 3);
 
         // Assert
         assertThat(result1.change()).isEqualTo(10);
@@ -124,7 +124,7 @@ abstract class AbstractResourceListTest {
     @Test
     void shouldNotRemoveResourceWhenItIsNotAvailable() {
         // Act
-        final Optional<ResourceListOperationResult> result = list.remove(TestResource.A, 10);
+        final Optional<ResourceList.OperationResult> result = list.remove(TestResource.A, 10);
 
         // Assert
         assertThat(result).isEmpty();
@@ -137,7 +137,7 @@ abstract class AbstractResourceListTest {
         list.add(TestResource.B, 6);
 
         // Act
-        final Optional<ResourceListOperationResult> result2 = list.remove(TestResource.A, 5);
+        final Optional<ResourceList.OperationResult> result2 = list.remove(TestResource.A, 5);
 
         // Assert
         assertThat(result2).isPresent();
@@ -159,7 +159,7 @@ abstract class AbstractResourceListTest {
         list.add(TestResource.B, 6);
 
         // Act
-        final Optional<ResourceListOperationResult> result2 = list.remove(new ResourceAmount(
+        final Optional<ResourceList.OperationResult> result2 = list.remove(new ResourceAmount(
             TestResource.A,
             5
         ));
@@ -184,7 +184,7 @@ abstract class AbstractResourceListTest {
         list.add(TestResource.B, 6);
 
         // Act
-        final Optional<ResourceListOperationResult> result2 = list.remove(TestResource.A, 20);
+        final Optional<ResourceList.OperationResult> result2 = list.remove(TestResource.A, 20);
 
         // Assert
         assertThat(result2).isPresent();
@@ -205,7 +205,7 @@ abstract class AbstractResourceListTest {
         list.add(TestResource.B, 6);
 
         // Act
-        final Optional<ResourceListOperationResult> result2 = list.remove(new ResourceAmount(
+        final Optional<ResourceList.OperationResult> result2 = list.remove(new ResourceAmount(
             TestResource.A,
             20
         ));
@@ -229,7 +229,7 @@ abstract class AbstractResourceListTest {
         list.add(TestResource.B, 6);
 
         // Act
-        final Optional<ResourceListOperationResult> result2 = list.remove(TestResource.A, 21);
+        final Optional<ResourceList.OperationResult> result2 = list.remove(TestResource.A, 21);
 
         // Assert
         assertThat(result2).isPresent();

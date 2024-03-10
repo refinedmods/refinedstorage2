@@ -18,7 +18,7 @@ public class ResourceListImpl implements ResourceList {
     private final Map<ResourceKey, ResourceAmount> entries = new HashMap<>();
 
     @Override
-    public ResourceListOperationResult add(final ResourceKey resource, final long amount) {
+    public OperationResult add(final ResourceKey resource, final long amount) {
         final ResourceAmount existing = entries.get(resource);
         if (existing != null) {
             return addToExisting(existing, amount);
@@ -27,20 +27,20 @@ public class ResourceListImpl implements ResourceList {
         }
     }
 
-    private ResourceListOperationResult addToExisting(final ResourceAmount resourceAmount, final long amount) {
+    private OperationResult addToExisting(final ResourceAmount resourceAmount, final long amount) {
         resourceAmount.increment(amount);
 
-        return new ResourceListOperationResult(resourceAmount, amount, true);
+        return new OperationResult(resourceAmount, amount, true);
     }
 
-    private ResourceListOperationResult addNew(final ResourceKey resource, final long amount) {
+    private OperationResult addNew(final ResourceKey resource, final long amount) {
         final ResourceAmount resourceAmount = new ResourceAmount(resource, amount);
         entries.put(resource, resourceAmount);
-        return new ResourceListOperationResult(resourceAmount, amount, true);
+        return new OperationResult(resourceAmount, amount, true);
     }
 
     @Override
-    public Optional<ResourceListOperationResult> remove(final ResourceKey resource, final long amount) {
+    public Optional<OperationResult> remove(final ResourceKey resource, final long amount) {
         ResourceAmount.validate(resource, amount);
 
         final ResourceAmount existing = entries.get(resource);
@@ -55,17 +55,17 @@ public class ResourceListImpl implements ResourceList {
         return Optional.empty();
     }
 
-    private Optional<ResourceListOperationResult> removePartly(final long amount,
-                                                               final ResourceAmount resourceAmount) {
+    private Optional<OperationResult> removePartly(final long amount,
+                                                   final ResourceAmount resourceAmount) {
         resourceAmount.decrement(amount);
 
-        return Optional.of(new ResourceListOperationResult(resourceAmount, -amount, true));
+        return Optional.of(new OperationResult(resourceAmount, -amount, true));
     }
 
-    private Optional<ResourceListOperationResult> removeCompletely(final ResourceAmount resourceAmount) {
+    private Optional<OperationResult> removeCompletely(final ResourceAmount resourceAmount) {
         entries.remove(resourceAmount.getResource());
 
-        return Optional.of(new ResourceListOperationResult(
+        return Optional.of(new OperationResult(
             resourceAmount,
             -resourceAmount.getAmount(),
             false

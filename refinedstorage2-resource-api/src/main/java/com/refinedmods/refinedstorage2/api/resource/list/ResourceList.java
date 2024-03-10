@@ -21,7 +21,7 @@ public interface ResourceList {
      * @param amount   the amount, must be larger than 0
      * @return the result of the operation
      */
-    ResourceListOperationResult add(ResourceKey resource, long amount);
+    OperationResult add(ResourceKey resource, long amount);
 
     /**
      * Adds a given resource to the list.
@@ -30,7 +30,7 @@ public interface ResourceList {
      * @param resourceAmount the resource and the amount
      * @return the result of the operation
      */
-    default ResourceListOperationResult add(ResourceAmount resourceAmount) {
+    default OperationResult add(ResourceAmount resourceAmount) {
         return add(resourceAmount.getResource(), resourceAmount.getAmount());
     }
 
@@ -42,7 +42,7 @@ public interface ResourceList {
      * @param amount   the amount, must be larger than 0
      * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
      */
-    Optional<ResourceListOperationResult> remove(ResourceKey resource, long amount);
+    Optional<OperationResult> remove(ResourceKey resource, long amount);
 
     /**
      * Removes an amount of a certain resource in the list.
@@ -52,7 +52,7 @@ public interface ResourceList {
      * @param resourceAmount the resource and the amount
      * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
      */
-    default Optional<ResourceListOperationResult> remove(ResourceAmount resourceAmount) {
+    default Optional<OperationResult> remove(ResourceAmount resourceAmount) {
         return remove(resourceAmount.getResource(), resourceAmount.getAmount());
     }
 
@@ -75,4 +75,15 @@ public interface ResourceList {
      * Clears the list.
      */
     void clear();
+
+    /**
+     * Represents the result of an operation in a {@link ResourceList}.
+     *
+     * @param resourceAmount the current resource amount in the list
+     * @param change         the delta caused by the operation
+     * @param available      whether this resource is still available in the list, or if it was removed
+     */
+    @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
+    record OperationResult(ResourceAmount resourceAmount, long change, boolean available) {
+    }
 }

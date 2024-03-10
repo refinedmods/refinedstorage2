@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -106,7 +106,7 @@ class StorageChannelImplTest {
         final ResourceListListener listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
-        final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        final var changedResource = ArgumentCaptor.forClass(ResourceList.OperationResult.class);
 
         // Act
         sut.insert(A, 8, action, EmptyActor.INSTANCE);
@@ -137,7 +137,7 @@ class StorageChannelImplTest {
         final ResourceListListener listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
-        final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        final var changedResource = ArgumentCaptor.forClass(ResourceList.OperationResult.class);
 
         // Act
         sut.extract(A, 5, action, EmptyActor.INSTANCE);
