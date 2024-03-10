@@ -54,7 +54,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
                      | IllegalAccessException
                      | InvocationTargetException
                      | NoSuchMethodException e) {
-                throw new RuntimeException(e);
+                throw new NetworkTextException("Could not register network node factory", e);
             }
         }
     }
@@ -166,7 +166,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
             field.setAccessible(true);
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new NetworkTextException("Could not set field", e);
         }
     }
 
