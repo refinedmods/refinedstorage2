@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
@@ -22,7 +21,6 @@ public class ExportedResourcesContainer extends ResourceContainerImpl implements
     ExportedResourcesContainer(final int size, final FilterWithFuzzyMode filter) {
         super(
             size,
-            ResourceContainerType.CONTAINER,
             InterfaceBlockEntity::getTransferQuota,
             PlatformApi.INSTANCE.getItemResourceFactory(),
             PlatformApi.INSTANCE.getAlternativeResourceFactories()

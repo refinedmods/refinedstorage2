@@ -15,12 +15,10 @@ import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
 
 /**
- * Represents a {@link Container} that can hold any resource type.
+ * Represents a {@link Container} that can hold any {@link ResourceType}.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.13")
 public interface ResourceContainer {
-    ResourceContainerType getType();
-
     void setListener(@Nullable Runnable listener);
 
     void change(int index, ItemStack stack, boolean tryAlternatives);

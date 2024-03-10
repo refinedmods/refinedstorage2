@@ -72,6 +72,6 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
 
     private Slot createFilterSlot(final ResourceContainer resourceContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
-        return new ResourceSlot(resourceContainer, i, filterHelp, x, FILTER_SLOT_Y);
+        return new ResourceSlot(resourceContainer, i, filterHelp, x, FILTER_SLOT_Y, ResourceSlotType.FILTER);
     }
 }
