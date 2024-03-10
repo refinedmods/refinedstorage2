@@ -28,7 +28,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     protected SlotReference disabledSlot;
     private final Map<PropertyType<?>, Property<?>> propertyMap = new HashMap<>();
 
-    protected AbstractBaseContainerMenu(final MenuType<?> type, final int syncId) {
+    protected AbstractBaseContainerMenu(@Nullable final MenuType<?> type, final int syncId) {
         super(type, syncId);
         this.transferManager = Platform.INSTANCE.createTransferManager(this);
     }
