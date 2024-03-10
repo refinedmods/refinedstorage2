@@ -38,7 +38,7 @@ public final class BlockEntities {
     @Nullable
     private Supplier<BlockEntityType<NetworkNodeContainerBlockEntityImpl<SimpleNetworkNode>>> cable;
     @Nullable
-    private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
+    private Supplier<BlockEntityType<AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
     private Supplier<BlockEntityType<GridBlockEntity>> grid;
     @Nullable
@@ -91,11 +91,11 @@ public final class BlockEntities {
         this.cable = supplier;
     }
 
-    public BlockEntityType<? extends AbstractDiskDriveBlockEntity> getDiskDrive() {
+    public BlockEntityType<AbstractDiskDriveBlockEntity> getDiskDrive() {
         return requireNonNull(diskDrive).get();
     }
 
-    public void setDiskDrive(final Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> supplier) {
+    public void setDiskDrive(final Supplier<BlockEntityType<AbstractDiskDriveBlockEntity>> supplier) {
         this.diskDrive = supplier;
     }
 

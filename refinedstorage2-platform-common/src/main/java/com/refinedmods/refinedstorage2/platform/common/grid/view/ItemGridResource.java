@@ -67,7 +67,7 @@ public class ItemGridResource extends AbstractPlatformGridResource {
     }
 
     @Override
-    public List<? extends ClientTooltipComponent> getExtractionHints() {
+    public List<ClientTooltipComponent> getExtractionHints() {
         final long extractableAmount = Math.min(getAmount(), itemStack.getMaxStackSize());
         final long halfExtractionAmount = extractableAmount == 1 ? 1 : extractableAmount / 2;
         return List.of(
