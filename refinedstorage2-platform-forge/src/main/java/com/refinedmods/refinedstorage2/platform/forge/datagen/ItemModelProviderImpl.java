@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.wirelesstransmitter.Wirel
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -50,45 +51,25 @@ public class ItemModelProviderImpl extends ItemModelProvider {
     private void registerCables() {
         final ResourceLocation base = createIdentifier("item/cable/base");
         final ColorMap<CableBlock> blocks = Blocks.INSTANCE.getCable();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName()))
-        );
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerExporters() {
         final ResourceLocation base = createIdentifier("item/exporter/base");
         final ColorMap<ExporterBlock> blocks = Blocks.INSTANCE.getExporter();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName())
-        ));
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerImporters() {
         final ResourceLocation base = createIdentifier("item/importer/base");
         final ColorMap<ImporterBlock> blocks = Blocks.INSTANCE.getImporter();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName())
-        ));
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerExternalStorages() {
         final ResourceLocation base = createIdentifier("item/external_storage/base");
         final ColorMap<ExternalStorageBlock> blocks = Blocks.INSTANCE.getExternalStorage();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName())
-        ));
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerControllers() {
@@ -154,23 +135,13 @@ public class ItemModelProviderImpl extends ItemModelProvider {
     private void registerConstructors() {
         final ResourceLocation base = createIdentifier("item/constructor/base");
         final ColorMap<ConstructorBlock> blocks = Blocks.INSTANCE.getConstructor();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName())
-        ));
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerDestructors() {
         final ResourceLocation base = createIdentifier("item/destructor/base");
         final ColorMap<DestructorBlock> blocks = Blocks.INSTANCE.getDestructor();
-        blocks.forEach((color, id, block) -> singleTexture(
-            id.getPath(),
-            base,
-            CABLE_TEXTURE_KEY,
-            createIdentifier("block/cable/" + color.getName())
-        ));
+        blocks.forEach((color, id, block) -> addCableTexture(color, id, base));
     }
 
     private void registerWirelessTransmitters() {
@@ -208,5 +179,16 @@ public class ItemModelProviderImpl extends ItemModelProvider {
 
     private ModelFile modelFile(final ResourceLocation location) {
         return new ModelFile.ExistingModelFile(location, existingFileHelper);
+    }
+
+    private void addCableTexture(final DyeColor color,
+                                 final ResourceLocation id,
+                                 final ResourceLocation base) {
+        singleTexture(
+            id.getPath(),
+            base,
+            CABLE_TEXTURE_KEY,
+            createIdentifier("block/cable/" + color.getName())
+        );
     }
 }

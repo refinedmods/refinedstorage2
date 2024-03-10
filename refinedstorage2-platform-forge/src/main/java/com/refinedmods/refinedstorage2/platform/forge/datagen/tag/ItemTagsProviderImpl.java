@@ -38,11 +38,11 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORA
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 
-public class ItemTagGenerator extends ItemTagsProvider {
-    public ItemTagGenerator(final PackOutput packOutput,
-                            final CompletableFuture<HolderLookup.Provider> registries,
-                            final TagsProvider<Block> blockTagsProvider,
-                            final ExistingFileHelper existingFileHelper) {
+public class ItemTagsProviderImpl extends ItemTagsProvider {
+    public ItemTagsProviderImpl(final PackOutput packOutput,
+                                final CompletableFuture<HolderLookup.Provider> registries,
+                                final TagsProvider<Block> blockTagsProvider,
+                                final ExistingFileHelper existingFileHelper) {
         super(packOutput, registries, blockTagsProvider.contentsGetter(), MOD_ID, existingFileHelper);
     }
 

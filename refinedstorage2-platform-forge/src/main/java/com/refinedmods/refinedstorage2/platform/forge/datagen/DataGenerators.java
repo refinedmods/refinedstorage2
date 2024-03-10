@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
-import com.refinedmods.refinedstorage2.platform.forge.datagen.loot.LootTableProvider;
+import com.refinedmods.refinedstorage2.platform.forge.datagen.loot.LootTableProviderImpl;
 import com.refinedmods.refinedstorage2.platform.forge.datagen.recipe.RecoloringRecipeProvider;
 import com.refinedmods.refinedstorage2.platform.forge.datagen.tag.BlockTagsProvider;
-import com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator;
+import com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagsProviderImpl;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -48,7 +48,7 @@ public class DataGenerators {
                                                     final ExistingFileHelper existingFileHelper) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
 
-        mainPack.addProvider(output -> new BlockModelProvider(output, existingFileHelper));
+        mainPack.addProvider(output -> new BlockModelProviderImpl(output, existingFileHelper));
     }
 
     private static void registerItemModelProviders(final DataGenerator generator,
@@ -61,7 +61,7 @@ public class DataGenerators {
     private static void registerLootTableProviders(final DataGenerator generator) {
         final PackGenerator mainPack = generator.getVanillaPack(true);
 
-        mainPack.addProvider(LootTableProvider::new);
+        mainPack.addProvider(LootTableProviderImpl::new);
     }
 
     private static void registerRecipeProviders(final DataGenerator generator) {
@@ -79,7 +79,7 @@ public class DataGenerators {
         final BlockTagsProvider blockTagsProvider = mainPack.addProvider(
             output -> new BlockTagsProvider(output, lookupProvider, existingFileHelper)
         );
-        mainPack.addProvider(output -> new ItemTagGenerator(
+        mainPack.addProvider(output -> new ItemTagsProviderImpl(
             output,
             lookupProvider,
             blockTagsProvider,
