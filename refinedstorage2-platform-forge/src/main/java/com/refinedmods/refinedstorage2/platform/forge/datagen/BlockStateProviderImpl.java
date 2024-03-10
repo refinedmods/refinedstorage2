@@ -140,6 +140,9 @@ public class BlockStateProviderImpl extends BlockStateProvider {
             case DOWN -> part.rotationX(90);
             case WEST -> part.rotationY(270);
             case EAST -> part.rotationY(90);
+            default -> {
+                // do nothing
+            }
         }
     }
 
