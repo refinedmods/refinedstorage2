@@ -62,6 +62,7 @@ class ItemResourceType extends AbstractResourceType {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public GridOperations createGridOperations(final StorageChannel storageChannel, final Actor actor) {
         return new GridOperationsImpl(
             storageChannel,

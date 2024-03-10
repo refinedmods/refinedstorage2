@@ -21,12 +21,12 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
     @Nullable
     private final Player player;
 
-    protected AbstractResourceContainerMenu(final MenuType<?> type, final int syncId, final Player player) {
+    protected AbstractResourceContainerMenu(@Nullable final MenuType<?> type, final int syncId, final Player player) {
         super(type, syncId);
         this.player = player;
     }
 
-    protected AbstractResourceContainerMenu(final MenuType<?> type, final int syncId) {
+    protected AbstractResourceContainerMenu(@Nullable final MenuType<?> type, final int syncId) {
         super(type, syncId);
         this.player = null;
     }

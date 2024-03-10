@@ -36,6 +36,8 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class BlockStateProviderImpl extends BlockStateProvider {
+    private static final String BLOCK_PREFIX = "block";
+
     private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = new EnumMap<>(Map.of(
         Direction.NORTH, CableBlockSupport.NORTH,
         Direction.EAST, CableBlockSupport.EAST,
@@ -153,8 +155,8 @@ public class BlockStateProviderImpl extends BlockStateProvider {
     private void configureGridVariants(final DyeColor color,
                                        final Supplier<? extends AbstractGridBlock<?, ?>> block,
                                        final String name) {
-        final ModelFile inactive = modelFile(createIdentifier("block/" + name + "/inactive"));
-        final ModelFile active = modelFile(createIdentifier("block/" + name + "/" + color.getName()));
+        final ModelFile inactive = modelFile(createIdentifier(BLOCK_PREFIX + "/" + name + "/inactive"));
+        final ModelFile active = modelFile(createIdentifier(BLOCK_PREFIX + "/" + name + "/" + color.getName()));
         final var builder = getVariantBuilder(block.get());
         builder.forAllStates(blockState -> {
             final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
@@ -229,8 +231,8 @@ public class BlockStateProviderImpl extends BlockStateProvider {
     private void registerConstructorDestructors(final BlockColorMap<?, ?> blockMap, final String type) {
         blockMap.forEach((color, id, block) -> {
             final MultiPartBlockStateBuilder builder = addCableWithExtensions(block.get(), color);
-            final ModelFile activeModel = modelFile(createIdentifier("block/" + type + "/active"));
-            final ModelFile inactiveModel = modelFile(createIdentifier("block/" + type + "/inactive"));
+            final ModelFile activeModel = modelFile(createIdentifier(BLOCK_PREFIX + "/" + type + "/active"));
+            final ModelFile inactiveModel = modelFile(createIdentifier(BLOCK_PREFIX + "/" + type + "/inactive"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
                 addDirectionalRotation(direction, part);

@@ -53,6 +53,7 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public InteractionResult use(final BlockState state,
                                  final Level level,
                                  final BlockPos pos,

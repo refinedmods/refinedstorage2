@@ -38,7 +38,7 @@ public interface PlatformGridResource extends GridResource {
 
     int getRegistryId();
 
-    List<? extends ClientTooltipComponent> getExtractionHints();
+    List<ClientTooltipComponent> getExtractionHints();
 
     @Nullable
     PlatformResourceKey getUnderlyingResource();

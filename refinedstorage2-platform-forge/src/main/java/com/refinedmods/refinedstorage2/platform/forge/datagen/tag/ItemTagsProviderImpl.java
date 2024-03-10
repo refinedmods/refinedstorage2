@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +16,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -38,11 +38,11 @@ import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORA
 import static com.refinedmods.refinedstorage2.platform.common.content.Tags.WIRELESS_TRANSMITTERS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
 
-public class ItemTagGenerator extends ItemTagsProvider {
-    public ItemTagGenerator(final PackOutput packOutput,
-                            final CompletableFuture<HolderLookup.Provider> registries,
-                            final TagsProvider<Block> blockTagsProvider,
-                            final ExistingFileHelper existingFileHelper) {
+public class ItemTagsProviderImpl extends ItemTagsProvider {
+    public ItemTagsProviderImpl(final PackOutput packOutput,
+                                final CompletableFuture<HolderLookup.Provider> registries,
+                                final TagsProvider<Block> blockTagsProvider,
+                                final ExistingFileHelper existingFileHelper) {
         super(packOutput, registries, blockTagsProvider.contentsGetter(), MOD_ID, existingFileHelper);
     }
 
@@ -116,7 +116,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
         tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
     }
 
-    private void addAllToTag2(final TagKey<Item> t, final Collection<Supplier<? extends BlockItem>> items) {
+    private void addAllToTag2(final TagKey<Item> t, final Collection<Supplier<NamedBlockItem>> items) {
         tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
     }
 }

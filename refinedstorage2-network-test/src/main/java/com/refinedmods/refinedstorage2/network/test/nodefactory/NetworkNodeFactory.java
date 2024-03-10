@@ -6,6 +6,6 @@ import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import java.util.Map;
 
 @FunctionalInterface
-public interface NetworkNodeFactory<T extends NetworkNode> {
-    T create(AddNetworkNode ctx, Map<String, Object> properties);
+public interface NetworkNodeFactory {
+    NetworkNode create(AddNetworkNode ctx, Map<String, Object> properties);
 }

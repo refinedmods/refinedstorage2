@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Repeatable(RegisterNetworkNodes.class)
 public @interface RegisterNetworkNode {
-    Class<? extends NetworkNodeFactory<?>> value();
+    Class<? extends NetworkNodeFactory> value();
 
     Class<? extends NetworkNode> clazz();
 }

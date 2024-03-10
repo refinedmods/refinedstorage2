@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemStorageMonitorExtractionStrategy implements StorageMonitorExtractionStrategy {
     @Override
+    @SuppressWarnings("deprecation")
     public boolean extract(final ResourceKey resource,
                            final boolean fullStack,
                            final Player player,

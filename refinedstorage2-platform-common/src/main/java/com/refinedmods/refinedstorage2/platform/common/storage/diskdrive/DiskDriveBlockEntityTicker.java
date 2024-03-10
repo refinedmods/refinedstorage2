@@ -6,15 +6,13 @@ import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNo
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 class DiskDriveBlockEntityTicker
     extends NetworkNodeBlockEntityTicker<MultiStorageNetworkNode, AbstractDiskDriveBlockEntity> {
 
-    @SuppressWarnings("unchecked")
     DiskDriveBlockEntityTicker() {
-        super(() -> (BlockEntityType<AbstractDiskDriveBlockEntity>) BlockEntities.INSTANCE.getDiskDrive());
+        super(BlockEntities.INSTANCE::getDiskDrive);
     }
 
     @Override

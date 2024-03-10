@@ -2,11 +2,13 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.controller.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.controller.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage2.platform.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.portablegrid.PortableGridBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.support.NamedBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +18,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
 import static java.util.Objects.requireNonNull;
@@ -33,17 +34,17 @@ public final class Items {
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageDisks
         = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<Supplier<ControllerBlockItem>> allControllers = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allCreativeControllers = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allCables = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allExporters = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allImporters = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allExternalStorages = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allDetectors = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allDestructors = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allConstructors = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allWirelessTransmitters = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allNetworkReceivers = new ArrayList<>();
-    private final List<Supplier<? extends BlockItem>> allNetworkTransmitters = new ArrayList<>();
+    private final List<Supplier<CreativeControllerBlockItem>> allCreativeControllers = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allCables = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allExporters = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allImporters = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allExternalStorages = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allDetectors = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allDestructors = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allConstructors = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allWirelessTransmitters = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allNetworkReceivers = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allNetworkTransmitters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -62,23 +63,23 @@ public final class Items {
     @Nullable
     private Supplier<Item> upgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> speedUpgrade;
+    private Supplier<AbstractUpgradeItem> speedUpgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> stackUpgrade;
+    private Supplier<AbstractUpgradeItem> stackUpgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> fortune1Upgrade;
+    private Supplier<AbstractUpgradeItem> fortune1Upgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> fortune2Upgrade;
+    private Supplier<AbstractUpgradeItem> fortune2Upgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> fortune3Upgrade;
+    private Supplier<AbstractUpgradeItem> fortune3Upgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade;
+    private Supplier<AbstractUpgradeItem> silkTouchUpgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> regulatorUpgrade;
+    private Supplier<AbstractUpgradeItem> regulatorUpgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> rangeUpgrade;
+    private Supplier<AbstractUpgradeItem> rangeUpgrade;
     @Nullable
-    private Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade;
+    private Supplier<AbstractUpgradeItem> creativeRangeUpgrade;
     @Nullable
     private Supplier<WirelessGridItem> wirelessGrid;
     @Nullable
@@ -183,11 +184,11 @@ public final class Items {
         return requireNonNull(destructionCore).get();
     }
 
-    public void addCreativeController(final Supplier<? extends BlockItem> supplier) {
+    public void addCreativeController(final Supplier<CreativeControllerBlockItem> supplier) {
         allCreativeControllers.add(supplier);
     }
 
-    public List<Supplier<? extends Item>> getCreativeControllers() {
+    public List<Supplier<CreativeControllerBlockItem>> getCreativeControllers() {
         return Collections.unmodifiableList(allCreativeControllers);
     }
 
@@ -199,67 +200,67 @@ public final class Items {
         return Collections.unmodifiableList(allControllers);
     }
 
-    public void addCable(final Supplier<? extends BlockItem> supplier) {
+    public void addCable(final Supplier<NamedBlockItem> supplier) {
         allCables.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getCables() {
+    public List<Supplier<NamedBlockItem>> getCables() {
         return Collections.unmodifiableList(allCables);
     }
 
-    public void addExporter(final Supplier<? extends BlockItem> supplier) {
+    public void addExporter(final Supplier<NamedBlockItem> supplier) {
         allExporters.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getExporters() {
+    public List<Supplier<NamedBlockItem>> getExporters() {
         return Collections.unmodifiableList(allExporters);
     }
 
-    public void addImporter(final Supplier<? extends BlockItem> supplier) {
+    public void addImporter(final Supplier<NamedBlockItem> supplier) {
         allImporters.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getImporters() {
+    public List<Supplier<NamedBlockItem>> getImporters() {
         return Collections.unmodifiableList(allImporters);
     }
 
-    public void addExternalStorage(final Supplier<? extends BlockItem> supplier) {
+    public void addExternalStorage(final Supplier<NamedBlockItem> supplier) {
         allExternalStorages.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getExternalStorages() {
+    public List<Supplier<NamedBlockItem>> getExternalStorages() {
         return Collections.unmodifiableList(allExternalStorages);
     }
 
-    public void addDetector(final Supplier<? extends BlockItem> supplier) {
+    public void addDetector(final Supplier<NamedBlockItem> supplier) {
         allDetectors.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getDetectors() {
+    public List<Supplier<NamedBlockItem>> getDetectors() {
         return Collections.unmodifiableList(allDetectors);
     }
 
-    public void addDestructor(final Supplier<? extends BlockItem> supplier) {
+    public void addDestructor(final Supplier<NamedBlockItem> supplier) {
         allDestructors.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getDestructors() {
+    public List<Supplier<NamedBlockItem>> getDestructors() {
         return Collections.unmodifiableList(allDestructors);
     }
 
-    public void addConstructor(final Supplier<? extends BlockItem> supplier) {
+    public void addConstructor(final Supplier<NamedBlockItem> supplier) {
         allConstructors.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getConstructors() {
+    public List<Supplier<NamedBlockItem>> getConstructors() {
         return Collections.unmodifiableList(allConstructors);
     }
 
-    public void addWirelessTransmitter(final Supplier<? extends BlockItem> supplier) {
+    public void addWirelessTransmitter(final Supplier<NamedBlockItem> supplier) {
         allWirelessTransmitters.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getWirelessTransmitters() {
+    public List<Supplier<NamedBlockItem>> getWirelessTransmitters() {
         return Collections.unmodifiableList(allWirelessTransmitters);
     }
 
@@ -283,7 +284,7 @@ public final class Items {
         return requireNonNull(speedUpgrade).get();
     }
 
-    public void setSpeedUpgrade(final Supplier<? extends AbstractUpgradeItem> supplier) {
+    public void setSpeedUpgrade(final Supplier<AbstractUpgradeItem> supplier) {
         this.speedUpgrade = supplier;
     }
 
@@ -291,7 +292,7 @@ public final class Items {
         return requireNonNull(stackUpgrade).get();
     }
 
-    public void setStackUpgrade(final Supplier<? extends AbstractUpgradeItem> supplier) {
+    public void setStackUpgrade(final Supplier<AbstractUpgradeItem> supplier) {
         this.stackUpgrade = supplier;
     }
 
@@ -299,7 +300,7 @@ public final class Items {
         return requireNonNull(fortune1Upgrade).get();
     }
 
-    public void setFortune1Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune1Upgrade) {
+    public void setFortune1Upgrade(final Supplier<AbstractUpgradeItem> fortune1Upgrade) {
         this.fortune1Upgrade = fortune1Upgrade;
     }
 
@@ -307,7 +308,7 @@ public final class Items {
         return requireNonNull(fortune2Upgrade).get();
     }
 
-    public void setFortune2Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune2Upgrade) {
+    public void setFortune2Upgrade(final Supplier<AbstractUpgradeItem> fortune2Upgrade) {
         this.fortune2Upgrade = fortune2Upgrade;
     }
 
@@ -315,7 +316,7 @@ public final class Items {
         return requireNonNull(fortune3Upgrade).get();
     }
 
-    public void setFortune3Upgrade(final Supplier<? extends AbstractUpgradeItem> fortune3Upgrade) {
+    public void setFortune3Upgrade(final Supplier<AbstractUpgradeItem> fortune3Upgrade) {
         this.fortune3Upgrade = fortune3Upgrade;
     }
 
@@ -323,7 +324,7 @@ public final class Items {
         return requireNonNull(silkTouchUpgrade).get();
     }
 
-    public void setSilkTouchUpgrade(final Supplier<? extends AbstractUpgradeItem> silkTouchUpgrade) {
+    public void setSilkTouchUpgrade(final Supplier<AbstractUpgradeItem> silkTouchUpgrade) {
         this.silkTouchUpgrade = silkTouchUpgrade;
     }
 
@@ -331,7 +332,7 @@ public final class Items {
         return requireNonNull(regulatorUpgrade).get();
     }
 
-    public void setRegulatorUpgrade(final Supplier<? extends AbstractUpgradeItem> regulatorUpgrade) {
+    public void setRegulatorUpgrade(final Supplier<AbstractUpgradeItem> regulatorUpgrade) {
         this.regulatorUpgrade = regulatorUpgrade;
     }
 
@@ -339,7 +340,7 @@ public final class Items {
         return requireNonNull(rangeUpgrade).get();
     }
 
-    public void setRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> rangeUpgrade) {
+    public void setRangeUpgrade(final Supplier<AbstractUpgradeItem> rangeUpgrade) {
         this.rangeUpgrade = rangeUpgrade;
     }
 
@@ -347,7 +348,7 @@ public final class Items {
         return requireNonNull(creativeRangeUpgrade).get();
     }
 
-    public void setCreativeRangeUpgrade(final Supplier<? extends AbstractUpgradeItem> creativeRangeUpgrade) {
+    public void setCreativeRangeUpgrade(final Supplier<AbstractUpgradeItem> creativeRangeUpgrade) {
         this.creativeRangeUpgrade = creativeRangeUpgrade;
     }
 
@@ -375,19 +376,19 @@ public final class Items {
         this.configurationCard = supplier;
     }
 
-    public void addNetworkReceiver(final Supplier<? extends BlockItem> supplier) {
+    public void addNetworkReceiver(final Supplier<NamedBlockItem> supplier) {
         allNetworkReceivers.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getNetworkReceivers() {
+    public List<Supplier<NamedBlockItem>> getNetworkReceivers() {
         return Collections.unmodifiableList(allNetworkReceivers);
     }
 
-    public void addNetworkTransmitter(final Supplier<? extends BlockItem> supplier) {
+    public void addNetworkTransmitter(final Supplier<NamedBlockItem> supplier) {
         allNetworkTransmitters.add(supplier);
     }
 
-    public List<Supplier<? extends BlockItem>> getNetworkTransmitters() {
+    public List<Supplier<NamedBlockItem>> getNetworkTransmitters() {
         return Collections.unmodifiableList(allNetworkTransmitters);
     }
 

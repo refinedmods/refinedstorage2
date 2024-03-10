@@ -69,6 +69,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Plat
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public long getInterfaceExportLimit() {
         return item.getMaxStackSize();
     }
