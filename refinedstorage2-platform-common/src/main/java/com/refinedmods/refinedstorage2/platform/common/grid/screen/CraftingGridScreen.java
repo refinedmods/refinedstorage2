@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.grid.screen;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.HoveredImageButton;
 
 import javax.annotation.Nullable;
@@ -166,9 +167,13 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
 
     @Override
     public void onClose() {
-        switch (Platform.INSTANCE.getConfig().getCraftingGrid().getCraftingMatrixCloseBehavior()) {
-            case CLEAR_TO_NETWORK -> getMenu().clear(false);
-            case CLEAR_TO_INVENTORY -> getMenu().clear(true);
+        final CraftingGridMatrixCloseBehavior behavior = Platform.INSTANCE.getConfig()
+            .getCraftingGrid()
+            .getCraftingMatrixCloseBehavior();
+        if (behavior == CraftingGridMatrixCloseBehavior.CLEAR_TO_NETWORK) {
+            getMenu().clear(false);
+        } else if (behavior == CraftingGridMatrixCloseBehavior.CLEAR_TO_INVENTORY) {
+            getMenu().clear(true);
         }
         super.onClose();
     }

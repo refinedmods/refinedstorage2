@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.model.BakedModel;
@@ -96,11 +95,9 @@ public class PortableGridBakedModel extends ForwardingBakedModel {
             return;
         }
         context.pushTransform(quadRotators.forDirection(direction));
-        if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
-            final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-            if (renderAttachment instanceof Disk disk) {
-                emitDiskQuads(blockView, state, pos, randomSupplier, context, disk);
-            }
+        final Object renderAttachment = blockView.getBlockEntityRenderData(pos);
+        if (renderAttachment instanceof Disk disk) {
+            emitDiskQuads(blockView, state, pos, randomSupplier, context, disk);
         }
         final boolean active = state.getValue(PortableGridBlock.ACTIVE);
         (active ? activeModel : inactiveModel).emitBlockQuads(blockView, state, pos, randomSupplier, context);

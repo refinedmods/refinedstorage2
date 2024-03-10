@@ -35,6 +35,7 @@ import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.Sl
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
@@ -81,7 +82,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry getResourceTypeRegistry() {
+    public PlatformRegistry<ResourceType> getResourceTypeRegistry() {
         return ensureLoaded().getResourceTypeRegistry();
     }
 

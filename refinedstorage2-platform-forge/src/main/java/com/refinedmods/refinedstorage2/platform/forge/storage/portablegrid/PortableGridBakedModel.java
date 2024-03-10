@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.forge.support.render.ItemBakedMo
 import com.refinedmods.refinedstorage2.platform.forge.support.render.RotationTranslationModelBaker;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.TransformationBuilder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -50,9 +49,11 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
             final RotationTranslationModelBaker baseModelBaker = cacheKey.active
                 ? activeModelBaker
                 : inactiveModelBaker;
-            final List<BakedQuad> quads = new ArrayList<>(baseModelBaker.bake(TransformationBuilder.create()
-                .rotate(cacheKey.direction)
-                .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
+            final List<BakedQuad> quads = baseModelBaker.bake(
+                TransformationBuilder.create().rotate(cacheKey.direction).build(),
+                cacheKey.side(),
+                RandomSource.create()
+            );
             if (cacheKey.disk.item() == null) {
                 return quads;
             }
@@ -62,13 +63,13 @@ class PortableGridBakedModel extends BakedModelWrapper<BakedModel> {
                     .rotate(cacheKey.direction)
                     .translate(MOVE_TO_DISK_LOCATION)
                     .rotate(BiDirection.WEST)
-                    .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
+                    .build(), cacheKey.side(), RandomSource.create()));
             }
             if (cacheKey.includeLed && cacheKey.disk.state() != StorageState.NONE) {
                 quads.addAll(diskLedBakers.forState(cacheKey.disk.state()).bake(TransformationBuilder.create()
                     .translate(MOVE_TO_DISK_LED_LOCATION)
                     .rotate(BiDirection.WEST)
-                    .build()).getQuads(null, cacheKey.side(), RandomSource.create()));
+                    .build(), cacheKey.side(), RandomSource.create()));
             }
             return quads;
         }));

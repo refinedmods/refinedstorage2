@@ -16,7 +16,7 @@ public class DiskDriveBlockEntityRendererImpl<T extends AbstractDiskDriveBlockEn
         if (!(blockEntity instanceof FabricDiskDriveBlockEntity fabricDiskDriveBlockEntity)) {
             return null;
         }
-        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof Disk[] disks) {
+        if (fabricDiskDriveBlockEntity.getRenderData() instanceof Disk[] disks) {
             return disks;
         }
         return null;

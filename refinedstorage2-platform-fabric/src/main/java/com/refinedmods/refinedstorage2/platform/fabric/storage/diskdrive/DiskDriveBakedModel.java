@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -86,11 +85,9 @@ class DiskDriveBakedModel extends ForwardingBakedModel {
         }
         context.pushTransform(quadRotators.forDirection(direction));
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
-        if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
-            final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-            if (renderAttachment instanceof Disk[] disks) {
-                emitDiskQuads(blockView, state, pos, randomSupplier, context, disks);
-            }
+        final Object renderAttachment = blockView.getBlockEntityRenderData(pos);
+        if (renderAttachment instanceof Disk[] disks) {
+            emitDiskQuads(blockView, state, pos, randomSupplier, context, disks);
         }
         context.popTransform();
     }
