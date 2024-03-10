@@ -1,7 +1,8 @@
-package com.refinedmods.refinedstorage2.platform.common.support.widget;
+package com.refinedmods.refinedstorage2.platform.common.storage;
 
 import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
+import com.refinedmods.refinedstorage2.platform.common.support.widget.AbstractSideButtonWidget;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -12,6 +13,7 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "filter_mode");
     private static final MutableComponent SUBTEXT_BLOCK = createTranslation("gui", "filter_mode.block");
     private static final MutableComponent SUBTEXT_ALLOW = createTranslation("gui", "filter_mode.allow");
+    private static final Component FILTER_MODE_WARNING = createTranslation("gui", "storage.filter_mode.empty_warning");
 
     private final ClientProperty<FilterMode> property;
     private final Component helpAllow;
@@ -24,6 +26,14 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
         this.property = property;
         this.helpAllow = helpAllow;
         this.helpBlock = helpBlock;
+    }
+
+    public void setWarningVisible(final boolean visible) {
+        if (visible) {
+            setWarning(FILTER_MODE_WARNING);
+        } else {
+            setWarning(null);
+        }
     }
 
     private static OnPress createPressAction(final ClientProperty<FilterMode> property) {

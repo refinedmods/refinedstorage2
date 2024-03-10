@@ -18,8 +18,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
-// TODO: Immunity for despawning
-// TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class AbstractStorageContainerItem extends Item implements StorageContainerItem {
     protected final StorageContainerItemHelper helper;

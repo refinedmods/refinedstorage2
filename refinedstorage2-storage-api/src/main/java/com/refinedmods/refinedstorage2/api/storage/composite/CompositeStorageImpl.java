@@ -79,11 +79,15 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
         long remaining = amount;
         long toRemoveFromList = 0;
         for (final Storage source : sources) {
-            final long extractedFromSource = source.extract(resource, remaining, action, actor);
-            if (!(source instanceof ConsumingStorage)) {
-                toRemoveFromList += extractedFromSource;
+            if (source instanceof CompositeAwareChild compositeAwareChild) {
+                final Amount extracted = compositeAwareChild.compositeExtract(resource, remaining, action, actor);
+                remaining -= extracted.amount();
+                toRemoveFromList += extracted.amountForList();
+            } else {
+                final long extracted = source.extract(resource, remaining, action, actor);
+                remaining -= extracted;
+                toRemoveFromList += extracted;
             }
-            remaining -= extractedFromSource;
             if (remaining == 0) {
                 break;
             }
@@ -100,11 +104,20 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
         long inserted = 0;
         long toInsertIntoList = 0;
         for (final Storage source : sources) {
-            final long insertedIntoSource = source.insert(resource, amount - inserted, action, actor);
-            if (!(source instanceof ConsumingStorage)) {
-                toInsertIntoList += insertedIntoSource;
+            if (source instanceof CompositeAwareChild compositeAwareChild) {
+                final Amount insertedAmount = compositeAwareChild.compositeInsert(
+                    resource,
+                    amount - inserted,
+                    action,
+                    actor
+                );
+                inserted += insertedAmount.amount();
+                toInsertIntoList += insertedAmount.amountForList();
+            } else {
+                final long insertedAmount = source.insert(resource, amount - inserted, action, actor);
+                inserted += insertedAmount;
+                toInsertIntoList += insertedAmount;
             }
-            inserted += insertedIntoSource;
             if (inserted == amount) {
                 break;
             }
@@ -144,6 +157,22 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
     @Override
     public void onRemovedFromComposite(final ParentComposite parentComposite) {
         parentComposites.remove(parentComposite);
+    }
+
+    @Override
+    public Amount compositeInsert(final ResourceKey resource,
+                                  final long amount,
+                                  final Action action,
+                                  final Actor actor) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Amount compositeExtract(final ResourceKey resource,
+                                   final long amount,
+                                   final Action action,
+                                   final Actor actor) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

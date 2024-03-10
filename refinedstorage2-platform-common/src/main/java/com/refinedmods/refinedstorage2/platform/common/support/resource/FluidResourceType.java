@@ -37,8 +37,8 @@ class FluidResourceType extends AbstractResourceType {
     }
 
     @Override
-    public Optional<GridResource> toGridResource(final PlatformResourceKey resource, final long amount) {
-        return Platform.INSTANCE.getFluidGridResourceFactory().apply(new ResourceAmount(resource, amount));
+    public Optional<GridResource> toGridResource(final ResourceAmount resourceAmount) {
+        return Platform.INSTANCE.getFluidGridResourceFactory().apply(resourceAmount);
     }
 
     @Override

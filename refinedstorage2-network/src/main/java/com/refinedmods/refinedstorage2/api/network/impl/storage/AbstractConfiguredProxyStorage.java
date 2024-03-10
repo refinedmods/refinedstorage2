@@ -1,12 +1,13 @@
-package com.refinedmods.refinedstorage2.api.network.node;
+package com.refinedmods.refinedstorage2.api.network.impl.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public abstract class AbstractConfiguredProxyStorage<S extends Storage> implements Storage, Priority {
+public abstract class AbstractConfiguredProxyStorage<S extends Storage> implements CompositeAwareChild, Priority {
     @Nullable
     private S delegate;
     private final StorageConfiguration config;
@@ -33,21 +34,39 @@ public abstract class AbstractConfiguredProxyStorage<S extends Storage> implemen
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        if (delegate == null || config.getAccessMode() == AccessMode.INSERT || !config.isActive()) {
-            return 0;
-        }
-        return delegate.extract(resource, amount, action, actor);
+        throw new UnsupportedOperationException("Immediate extract is not allowed");
     }
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        if (delegate == null
-            || config.getAccessMode() == AccessMode.EXTRACT
-            || !config.isActive()
-            || !config.isAllowed(resource)) {
-            return 0;
+        throw new UnsupportedOperationException("Immediate insert is not allowed");
+    }
+
+    @Override
+    public Amount compositeInsert(final ResourceKey resource,
+                                  final long amount,
+                                  final Action action,
+                                  final Actor actor) {
+        if (delegate == null || config.isExtractOnly() || !config.isActive() || !config.isAllowed(resource)) {
+            return Amount.ZERO;
         }
-        return delegate.insert(resource, amount, action, actor);
+        final long inserted = delegate.insert(resource, amount, action, actor);
+        if ((config.isVoidExcess() && config.getFilterMode() == FilterMode.ALLOW) && inserted < amount) {
+            return new Amount(amount, inserted);
+        }
+        return new Amount(inserted, inserted);
+    }
+
+    @Override
+    public Amount compositeExtract(final ResourceKey resource,
+                                   final long amount,
+                                   final Action action,
+                                   final Actor actor) {
+        if (delegate == null || config.isInsertOnly() || !config.isActive()) {
+            return Amount.ZERO;
+        }
+        final long extracted = delegate.extract(resource, amount, action, actor);
+        return new Amount(extracted, extracted);
     }
 
     @Override

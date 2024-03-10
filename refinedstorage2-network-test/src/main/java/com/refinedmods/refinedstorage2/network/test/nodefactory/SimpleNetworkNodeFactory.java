@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.network.test.nodefactory;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 
 import java.util.Map;

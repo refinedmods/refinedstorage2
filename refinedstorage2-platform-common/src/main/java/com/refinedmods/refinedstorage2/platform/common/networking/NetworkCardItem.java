@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage2.platform.common.networking.NetworkReceiverKey.getDimensionName;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: better active texture.
 public class NetworkCardItem extends Item {
     private static final MutableComponent UNBOUND_HELP = createTranslation("item", "network_card.unbound_help");
     private static final MutableComponent BOUND_HELP = createTranslation("item", "network_card.bound_help");

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import javax.annotation.Nullable;

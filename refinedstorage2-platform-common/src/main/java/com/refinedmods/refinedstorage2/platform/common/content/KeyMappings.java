@@ -28,7 +28,7 @@ public final class KeyMappings {
         this.focusSearchBar = focusSearchBar;
     }
 
-    @Nullable // TODO - implement on Fabric
+    @Nullable
     public KeyMapping getClearCraftingGridMatrixToNetwork() {
         return clearCraftingGridMatrixToNetwork;
     }
@@ -37,7 +37,7 @@ public final class KeyMappings {
         this.clearCraftingGridMatrixToNetwork = clearCraftingGridMatrixToNetwork;
     }
 
-    @Nullable // TODO - implement on Fabric
+    @Nullable
     public KeyMapping getClearCraftingGridMatrixToInventory() {
         return clearCraftingGridMatrixToInventory;
     }

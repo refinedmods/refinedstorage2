@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractConfiguredProxyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractConfiguredProxyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
-import com.refinedmods.refinedstorage2.api.storage.composite.ConsumingStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageListener;
@@ -21,7 +20,7 @@ import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
 public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<ExternalStorage>
-    implements ConsumingStorage, CompositeAwareChild, TrackedStorage, ExternalStorageListener {
+    implements TrackedStorage, ExternalStorageListener {
     private final Set<ParentComposite> parents = new HashSet<>();
     private final LongSupplier clock;
     @Nullable
@@ -61,6 +60,24 @@ public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<Exter
         if (delegate != null) {
             delegate.onRemovedFromComposite(parentComposite);
         }
+    }
+
+    @Override
+    public Amount compositeInsert(final ResourceKey resource,
+                                  final long amount,
+                                  final Action action,
+                                  final Actor actor) {
+        final Amount inserted = super.compositeInsert(resource, amount, action, actor);
+        return inserted.withoutNotifyingList();
+    }
+
+    @Override
+    public Amount compositeExtract(final ResourceKey resource,
+                                   final long amount,
+                                   final Action action,
+                                   final Actor actor) {
+        final Amount extracted = super.compositeExtract(resource, amount, action, actor);
+        return extracted.withoutNotifyingList();
     }
 
     @Override

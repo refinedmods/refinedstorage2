@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManager;
 import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcherManagerImpl;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import javax.annotation.Nullable;

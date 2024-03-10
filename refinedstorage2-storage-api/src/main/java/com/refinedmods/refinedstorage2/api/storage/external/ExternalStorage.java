@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
-import com.refinedmods.refinedstorage2.api.storage.composite.ConsumingStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 
 import java.util.Collection;
@@ -18,7 +17,7 @@ import java.util.Set;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public class ExternalStorage implements ConsumingStorage, CompositeAwareChild {
+public class ExternalStorage implements CompositeAwareChild {
     private final ExternalStorageProvider provider;
     private final Set<ParentComposite> parents = new HashSet<>();
     private final ResourceList cache = new ResourceListImpl();
@@ -135,5 +134,23 @@ public class ExternalStorage implements ConsumingStorage, CompositeAwareChild {
     @Override
     public void onRemovedFromComposite(final ParentComposite parentComposite) {
         parents.remove(parentComposite);
+    }
+
+    @Override
+    public Amount compositeInsert(final ResourceKey resource,
+                                  final long amount,
+                                  final Action action,
+                                  final Actor actor) {
+        final long inserted = insert(resource, amount, action, actor);
+        return new Amount(inserted, 0);
+    }
+
+    @Override
+    public Amount compositeExtract(final ResourceKey resource,
+                                   final long amount,
+                                   final Action action,
+                                   final Actor actor) {
+        final long extracted = extract(resource, amount, action, actor);
+        return new Amount(extracted, 0);
     }
 }

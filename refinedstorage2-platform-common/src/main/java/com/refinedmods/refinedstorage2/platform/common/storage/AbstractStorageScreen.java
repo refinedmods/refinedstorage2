@@ -3,53 +3,29 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 import com.refinedmods.refinedstorage2.platform.api.support.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
-import com.refinedmods.refinedstorage2.platform.common.support.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.FuzzyModeSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.common.support.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.RedstoneModeSideButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMenu & StorageAccessor>
-    extends AbstractBaseScreen<T> {
-    public static final Component ALLOW_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.allow.help");
-    public static final Component BLOCK_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.block.help");
+public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMenu> extends AbstractBaseScreen<T> {
+    private static final Component ALLOW_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.allow.help");
+    private static final Component BLOCK_FILTER_MODE_HELP = createTranslation("gui", "storage.filter_mode.block.help");
 
-    private static final Component FILTER_MODE_WARNING = createTranslation("gui", "storage.filter_mode.empty_warning");
-
-    private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
     @Nullable
     private FilterModeSideButtonWidget filterModeSideButtonWidget;
+    @Nullable
+    private VoidExcessSideButtonWidget voidExcessSideButtonWidget;
 
-    protected AbstractStorageScreen(final T menu,
-                                    final Inventory inventory,
-                                    final Component title,
-                                    final int progressWidgetX) {
+    protected AbstractStorageScreen(final T menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
-
-        this.inventoryLabelY = 129;
-        this.imageWidth = 176;
-        this.imageHeight = 223;
         this.playerInventory = inventory;
-
-        this.progressWidget = new ProgressWidget(
-            progressWidgetX,
-            54,
-            16,
-            70,
-            menu::getProgress,
-            this::createTooltip
-        );
-        addRenderableWidget(progressWidget);
     }
 
     @Override
@@ -76,47 +52,24 @@ public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMe
             playerInventory,
             this
         ));
+        voidExcessSideButtonWidget = new VoidExcessSideButtonWidget(
+            getMenu().getProperty(StoragePropertyTypes.VOID_EXCESS)
+        );
+        addSideButton(voidExcessSideButtonWidget);
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
-        updateFilterModeWarning();
-    }
-
-    private void updateFilterModeWarning() {
-        if (filterModeSideButtonWidget == null) {
-            return;
+        if (filterModeSideButtonWidget != null) {
+            filterModeSideButtonWidget.setWarningVisible(getMenu().shouldDisplayFilterModeWarning());
         }
-        if (getMenu().shouldDisplayFilterModeWarning()) {
-            filterModeSideButtonWidget.setWarning(FILTER_MODE_WARNING);
-            return;
+        if (voidExcessSideButtonWidget != null) {
+            voidExcessSideButtonWidget.setWarningVisible(getMenu().shouldDisplayVoidExcessModeWarning());
         }
-        filterModeSideButtonWidget.setWarning(null);
-    }
-
-    private List<Component> createTooltip() {
-        final List<Component> tooltip = new ArrayList<>();
-        if (menu.hasCapacity()) {
-            StorageTooltipHelper.addAmountStoredWithCapacity(
-                tooltip,
-                menu.getStored(),
-                menu.getCapacity(),
-                this::formatQuantity
-            );
-        } else {
-            StorageTooltipHelper.addAmountStoredWithoutCapacity(tooltip, menu.getStored(), this::formatQuantity);
-        }
-        return tooltip;
     }
 
     protected String formatQuantity(final long qty) {
         return AmountFormatting.format(qty);
-    }
-
-    @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
-        progressWidget.render(graphics, mouseX - leftPos, mouseY - topPos, 0);
     }
 }

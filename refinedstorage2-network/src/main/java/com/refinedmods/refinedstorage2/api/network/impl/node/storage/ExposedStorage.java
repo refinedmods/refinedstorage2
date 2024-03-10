@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractConfiguredProxyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractConfiguredProxyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -15,8 +14,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-class ExposedStorage extends AbstractConfiguredProxyStorage<Storage>
-    implements TrackedStorage, CompositeAwareChild {
+class ExposedStorage extends AbstractConfiguredProxyStorage<Storage> implements TrackedStorage {
     private final Set<ParentComposite> parents = new HashSet<>();
 
     ExposedStorage(final StorageConfiguration config) {
