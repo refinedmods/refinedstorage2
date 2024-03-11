@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
@@ -28,6 +27,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.Plat
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
@@ -177,19 +177,19 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
+    public void requestNetworkNodeInitialization(final PlatformNetworkNodeContainer container,
                                                  final Level level,
                                                  final Runnable callback) {
         ensureLoaded().requestNetworkNodeInitialization(container, level, callback);
     }
 
     @Override
-    public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeRemoval(final PlatformNetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeRemoval(container, level);
     }
 
     @Override
-    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeUpdate(final PlatformNetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeUpdate(container, level);
     }
 

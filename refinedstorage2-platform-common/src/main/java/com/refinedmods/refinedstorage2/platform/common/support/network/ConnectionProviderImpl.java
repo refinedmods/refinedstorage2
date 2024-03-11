@@ -141,7 +141,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         }
         // Avoid using EntityCreationType.IMMEDIATE.
         // By default, the block is removed first and then the block entity (see BaseBlock#onRemove).
-        // But, when using mods like Carrier or Carpet that allow for moving block entities,
+        // But, when using mods like "Carrier", "Carpet" or "Carry On" that allow for moving block entities,
         // they remove the block entity first and then the block.
         // When removing a block with Carrier for example,
         // this causes a problematic situation that the block entity IS gone,

@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
@@ -28,6 +27,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.Plat
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
@@ -103,11 +103,11 @@ public interface PlatformApi {
 
     BuiltinUpgradeDestinations getBuiltinUpgradeDestinations();
 
-    void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
+    void requestNetworkNodeInitialization(PlatformNetworkNodeContainer container, Level level, Runnable callback);
 
-    void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level);
+    void requestNetworkNodeRemoval(PlatformNetworkNodeContainer container, Level level);
 
-    void requestNetworkNodeUpdate(NetworkNodeContainer container, Level level);
+    void requestNetworkNodeUpdate(PlatformNetworkNodeContainer container, Level level);
 
     GridInsertionStrategy createGridInsertionStrategy(AbstractContainerMenu containerMenu,
                                                       Player player,
