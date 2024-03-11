@@ -20,12 +20,12 @@ public abstract class AbstractProxyResourceList implements ResourceList {
     }
 
     @Override
-    public ResourceListOperationResult add(final ResourceKey resource, final long amount) {
+    public OperationResult add(final ResourceKey resource, final long amount) {
         return delegate.add(resource, amount);
     }
 
     @Override
-    public Optional<ResourceListOperationResult> remove(final ResourceKey resource, final long amount) {
+    public Optional<OperationResult> remove(final ResourceKey resource, final long amount) {
         return delegate.remove(resource, amount);
     }
 

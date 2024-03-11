@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.ArrayList;
@@ -120,7 +119,7 @@ public class GridViewImpl implements GridView {
     public void onChange(final ResourceKey resource,
                          final long amount,
                          @Nullable final TrackedResource trackedResource) {
-        final ResourceListOperationResult operationResult = updateBackingList(resource, amount);
+        final ResourceList.OperationResult operationResult = updateBackingList(resource, amount);
 
         updateOrRemoveTrackedResource(resource, trackedResource);
 
@@ -138,7 +137,7 @@ public class GridViewImpl implements GridView {
         }
     }
 
-    private ResourceListOperationResult updateBackingList(final ResourceKey resource, final long amount) {
+    private ResourceList.OperationResult updateBackingList(final ResourceKey resource, final long amount) {
         if (amount < 0) {
             return backingList.remove(resource, Math.abs(amount)).orElseThrow(RuntimeException::new);
         } else {
@@ -156,7 +155,7 @@ public class GridViewImpl implements GridView {
     }
 
     private void reinsertZeroedResourceIntoViewList(final ResourceKey resource,
-                                                    final ResourceListOperationResult operationResult,
+                                                    final ResourceList.OperationResult operationResult,
                                                     final GridResource oldGridResource) {
         LOGGER.debug("{} was zeroed, unzeroing", resource);
         final GridResource newResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
@@ -169,7 +168,7 @@ public class GridViewImpl implements GridView {
     }
 
     private void handleChangeForExistingResource(final ResourceKey resource,
-                                                 final ResourceListOperationResult operationResult,
+                                                 final ResourceList.OperationResult operationResult,
                                                  final GridResource gridResource) {
         final boolean noLongerAvailable = !operationResult.available();
         final boolean canBeSorted = !preventSorting;
@@ -198,7 +197,7 @@ public class GridViewImpl implements GridView {
     }
 
     private void handleChangeForNewResource(final ResourceKey resource,
-                                            final ResourceListOperationResult operationResult) {
+                                            final ResourceList.OperationResult operationResult) {
         final GridResource gridResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
         if (filter.test(gridResource)) {
             LOGGER.debug("Filter allowed, actually adding {}", resource);

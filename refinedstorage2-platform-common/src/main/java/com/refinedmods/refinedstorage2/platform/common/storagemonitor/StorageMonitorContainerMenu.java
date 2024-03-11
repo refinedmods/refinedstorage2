@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.containermenu.Abs
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlot;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlotType;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
@@ -47,7 +48,7 @@ public class StorageMonitorContainerMenu extends AbstractResourceContainerMenu {
     }
 
     private void addSlots(final Inventory playerInventory, final ResourceContainer resourceContainer) {
-        addSlot(new ResourceSlot(resourceContainer, 0, FILTER_HELP, 80, 20));
+        addSlot(new ResourceSlot(resourceContainer, 0, FILTER_HELP, 80, 20, ResourceSlotType.FILTER));
         addPlayerInventory(playerInventory, 8, 55);
         transferManager.addFilterTransfer(playerInventory);
     }

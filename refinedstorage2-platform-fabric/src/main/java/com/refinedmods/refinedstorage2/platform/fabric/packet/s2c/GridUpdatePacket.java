@@ -30,8 +30,11 @@ public class GridUpdatePacket implements ClientPlayNetworking.PlayChannelHandler
         final ResourceKey resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
         final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
-        if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
-            containerMenu.onResourceUpdate(resource, amount, trackedResource);
-        }
+
+        client.execute(() -> {
+            if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
+                containerMenu.onResourceUpdate(resource, amount, trackedResource);
+            }
+        });
     }
 }

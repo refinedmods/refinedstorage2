@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.util.MathUtil;
@@ -28,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 
 public class ResourceContainerImpl implements ResourceContainer {
     private final ResourceContainerSlot[] slots;
-    private final ResourceContainerType type;
     private final ToLongFunction<ResourceKey> maxAmountProvider;
     private final ResourceFactory primaryResourceFactory;
     private final Set<ResourceFactory> alternativeResourceFactories;
@@ -37,20 +35,13 @@ public class ResourceContainerImpl implements ResourceContainer {
     private Runnable listener;
 
     public ResourceContainerImpl(final int size,
-                                 final ResourceContainerType type,
                                  final ToLongFunction<ResourceKey> maxAmountProvider,
                                  final ResourceFactory primaryResourceFactory,
                                  final Set<ResourceFactory> alternativeResourceFactories) {
         this.slots = new ResourceContainerSlot[size];
-        this.type = type;
         this.maxAmountProvider = maxAmountProvider;
         this.primaryResourceFactory = primaryResourceFactory;
         this.alternativeResourceFactories = alternativeResourceFactories;
-    }
-
-    @Override
-    public ResourceContainerType getType() {
-        return type;
     }
 
     @Override
@@ -255,21 +246,21 @@ public class ResourceContainerImpl implements ResourceContainer {
     public CompoundTag toTag() {
         final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            final ResourceContainerSlot resourceAmount = slots[i];
-            if (resourceAmount == null) {
+            final ResourceContainerSlot slot = slots[i];
+            if (slot == null) {
                 continue;
             }
-            addToTag(tag, i, resourceAmount);
+            addToTag(tag, i, slot);
         }
         return tag;
     }
 
     private void addToTag(final CompoundTag tag,
                           final int index,
-                          final ResourceContainerSlot resourceAmount) {
-        final ResourceType resourceType = resourceAmount.getResourceType();
+                          final ResourceContainerSlot slot) {
+        final ResourceType resourceType = slot.getResourceType();
         PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(
-            resourceTypeId -> addToTag(tag, index, resourceAmount, resourceTypeId)
+            resourceTypeId -> addToTag(tag, index, slot, resourceTypeId)
         );
     }
 
@@ -330,9 +321,6 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     public Container toItemContainer() {
-        if (type != ResourceContainerType.CONTAINER) {
-            throw new UnsupportedOperationException();
-        }
         return new AbstractResourceContainerContainerAdapter(this) {
             @Override
             public void setChanged() {
@@ -413,7 +401,6 @@ public class ResourceContainerImpl implements ResourceContainer {
     public ResourceContainer copy() {
         final ResourceContainer copy = new ResourceContainerImpl(
             slots.length,
-            type,
             maxAmountProvider,
             primaryResourceFactory,
             alternativeResourceFactories
@@ -432,13 +419,8 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     public static ResourceContainer createForFilter(final int size) {
-        return createForFilter(size, ResourceContainerType.FILTER);
-    }
-
-    public static ResourceContainer createForFilter(final int size, final ResourceContainerType type) {
         return new ResourceContainerImpl(
             size,
-            type,
             resource -> Long.MAX_VALUE,
             PlatformApi.INSTANCE.getItemResourceFactory(),
             PlatformApi.INSTANCE.getAlternativeResourceFactories()
@@ -448,7 +430,6 @@ public class ResourceContainerImpl implements ResourceContainer {
     public static ResourceContainer createForFilter(final ResourceFactory resourceFactory) {
         return new ResourceContainerImpl(
             9,
-            ResourceContainerType.FILTER,
             resource -> Long.MAX_VALUE,
             resourceFactory,
             Collections.emptySet()

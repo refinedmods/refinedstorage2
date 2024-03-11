@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
@@ -28,6 +27,7 @@ public class ResourceSlot extends Slot {
 
     private final ResourceContainer resourceContainer;
     private final Component helpText;
+    private final ResourceSlotType type;
     @Nullable
     private ResourceAmount cachedResource;
 
@@ -35,8 +35,9 @@ public class ResourceSlot extends Slot {
                         final int index,
                         final Component helpText,
                         final int x,
-                        final int y) {
-        this(resourceContainer, new SimpleContainer(resourceContainer.size()), index, helpText, x, y);
+                        final int y,
+                        final ResourceSlotType type) {
+        this(resourceContainer, new SimpleContainer(resourceContainer.size()), index, helpText, x, y, type);
     }
 
     public ResourceSlot(final ResourceContainer resourceContainer,
@@ -44,15 +45,17 @@ public class ResourceSlot extends Slot {
                         final int index,
                         final Component helpText,
                         final int x,
-                        final int y) {
+                        final int y,
+                        final ResourceSlotType type) {
         super(resourceContainerAsContainer, index, x, y);
         this.resourceContainer = resourceContainer;
         this.helpText = helpText;
         this.cachedResource = resourceContainer.get(index);
+        this.type = type;
     }
 
     public ResourceSlot forAmountScreen(final int newX, final int newY) {
-        return new ResourceSlot(resourceContainer, container, index, helpText, newX, newY) {
+        return new ResourceSlot(resourceContainer, container, index, helpText, newX, newY, type) {
             @Override
             public boolean canModifyAmount() {
                 return false;
@@ -71,21 +74,21 @@ public class ResourceSlot extends Slot {
     }
 
     public boolean shouldRenderAmount() {
-        return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT
-            || resourceContainer.getType() == ResourceContainerType.CONTAINER;
+        return type == ResourceSlotType.FILTER_WITH_AMOUNT
+            || type == ResourceSlotType.CONTAINER;
     }
 
     public boolean isFilter() {
-        return resourceContainer.getType() == ResourceContainerType.FILTER
-            || resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
+        return type == ResourceSlotType.FILTER
+            || type == ResourceSlotType.FILTER_WITH_AMOUNT;
     }
 
     public boolean canModifyAmount() {
-        return resourceContainer.getType() == ResourceContainerType.FILTER_WITH_AMOUNT;
+        return type == ResourceSlotType.FILTER_WITH_AMOUNT;
     }
 
     public boolean supportsItemSlotInteractions() {
-        return resourceContainer.getType() == ResourceContainerType.CONTAINER;
+        return type == ResourceSlotType.CONTAINER;
     }
 
     public boolean isDisabled() {
@@ -144,7 +147,7 @@ public class ResourceSlot extends Slot {
     }
 
     public void changeAmount(final long amount) {
-        if (resourceContainer.getType() != ResourceContainerType.FILTER_WITH_AMOUNT) {
+        if (type != ResourceSlotType.FILTER_WITH_AMOUNT) {
             return;
         }
         resourceContainer.setAmount(getContainerSlot(), amount);

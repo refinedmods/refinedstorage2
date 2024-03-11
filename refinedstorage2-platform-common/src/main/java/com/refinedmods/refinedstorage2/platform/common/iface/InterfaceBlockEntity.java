@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
@@ -62,7 +61,6 @@ public class InterfaceBlockEntity
     static ResourceContainer createFilterContainer() {
         return new ResourceContainerImpl(
             EXPORT_SLOTS,
-            ResourceContainerType.FILTER_WITH_AMOUNT,
             InterfaceBlockEntity::getTransferQuota,
             PlatformApi.INSTANCE.getItemResourceFactory(),
             PlatformApi.INSTANCE.getAlternativeResourceFactories()

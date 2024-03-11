@@ -15,6 +15,7 @@ public class WirelessTransmitterRangePacket implements ClientPlayNetworking.Play
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final int range = buf.readInt();
+
         client.execute(() -> {
             if (client.player.containerMenu instanceof WirelessTransmitterContainerMenu containerMenu) {
                 containerMenu.setRange(range);
