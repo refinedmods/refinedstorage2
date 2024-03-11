@@ -246,21 +246,21 @@ public class ResourceContainerImpl implements ResourceContainer {
     public CompoundTag toTag() {
         final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            final ResourceContainerSlot resourceAmount = slots[i];
-            if (resourceAmount == null) {
+            final ResourceContainerSlot slot = slots[i];
+            if (slot == null) {
                 continue;
             }
-            addToTag(tag, i, resourceAmount);
+            addToTag(tag, i, slot);
         }
         return tag;
     }
 
     private void addToTag(final CompoundTag tag,
                           final int index,
-                          final ResourceContainerSlot resourceAmount) {
-        final ResourceType resourceType = resourceAmount.getResourceType();
+                          final ResourceContainerSlot slot) {
+        final ResourceType resourceType = slot.getResourceType();
         PlatformApi.INSTANCE.getResourceTypeRegistry().getId(resourceType).ifPresent(
-            resourceTypeId -> addToTag(tag, index, resourceAmount, resourceTypeId)
+            resourceTypeId -> addToTag(tag, index, slot, resourceTypeId)
         );
     }
 
