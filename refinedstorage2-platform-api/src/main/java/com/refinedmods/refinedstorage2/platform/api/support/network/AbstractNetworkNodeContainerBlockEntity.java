@@ -35,6 +35,11 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
         PlatformApi.INSTANCE.requestNetworkNodeInitialization(this, level, this::onNetworkInNodeInitialized);
     }
 
+    @Override
+    public boolean isContainerRemoved() {
+        return isRemoved();
+    }
+
     protected void onNetworkInNodeInitialized() {
     }
 

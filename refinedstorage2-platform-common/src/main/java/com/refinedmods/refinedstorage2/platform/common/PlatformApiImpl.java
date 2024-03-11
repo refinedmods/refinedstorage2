@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
@@ -32,6 +31,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.Plat
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
@@ -295,24 +295,40 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
+    public void requestNetworkNodeInitialization(final PlatformNetworkNodeContainer container,
                                                  final Level level,
                                                  final Runnable callback) {
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         ServerEventQueue.queue(() -> {
+            // The container could've been removed by the time it has been placed, and by the time the event queue has
+            // run. In that case, don't initialize the network node because it no longer exists.
+            // This is a workaround for the "Carry On" mod. The mod places the block (which creates a block entity and
+            // requests this network node initialization) and then overrides the placed block entity with their own
+            // block entity. This triggers a new initialization, but then this one can no longer run!
+            if (container.isContainerRemoved()) {
+                return;
+            }
             networkBuilder.initialize(container, connectionProvider);
             callback.run();
         });
     }
 
     @Override
-    public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeRemoval(final PlatformNetworkNodeContainer container, final Level level) {
+        // "Carry On" mod places the block (which creates a block entity and requests network node initialization)
+        // and then overrides the placed block entity with their own information.
+        // However, when the placed block entity is replaced, the server event queue hasn't run yet and there is
+        // no network loaded yet, even though the network node initialization was requested.
+        // Stop continuing here to avoid further code failing due to a missing network.
+        if (container.getNode().getNetwork() == null) {
+            return;
+        }
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.remove(container, connectionProvider);
     }
 
     @Override
-    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeUpdate(final PlatformNetworkNodeContainer container, final Level level) {
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.update(container, connectionProvider);
     }

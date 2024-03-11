@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed changing side buttons not working on Forge.
 -   Fixed External Storage not displaying empty allowlist warning.
 -   Fixed incrementing starting from 1 in amount screens not having an intended off-by-one.
+-   Fixed problems moving network devices with "Carry On" mod.
 
 ## [2.0.0-milestone.3.3] - 2024-02-17
 

@@ -14,7 +14,8 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * Called when a node is about to be added into the network graph.
      * Add outgoing connections here.
      * If the outgoing connections ever change, call {@link
-     * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(NetworkNodeContainer, Level)}.
+     * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(
+     *PlatformNetworkNodeContainer, Level)}.
      *
      * @param sink the sink that accepts outgoing connections
      */
@@ -24,7 +25,8 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * Returns whether the (not yet discovered) node can accept an incoming connection.
      * Changes to this return value won't cause a rebuild of the network state.
      * If the return value ever changes, call {@link
-     * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(NetworkNodeContainer, Level)}.
+     * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(
+     *PlatformNetworkNodeContainer, Level)}.
      *
      * @param incomingDirection the incoming direction
      * @param connectingState   the state wanting to connect
@@ -35,4 +37,6 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
     BlockState getContainerBlockState();
 
     GlobalPos getContainerPosition();
+
+    boolean isContainerRemoved();
 }
