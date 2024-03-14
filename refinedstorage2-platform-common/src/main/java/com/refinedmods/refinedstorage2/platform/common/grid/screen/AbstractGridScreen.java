@@ -596,13 +596,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         // First do the prevent sorting.
-        // Order matters. In Auto-selected mode, the search field will swallow the SHIFT key.
+        // Order matters. In auto-selected mode, the search field will swallow the SHIFT key.
         if (hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
             getMenu().getView().setPreventSorting(true);
         }
 
-        if (searchField != null
-            && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+        if (searchField != null && searchField.keyPressed(key, scanCode, modifiers)) {
             return true;
         }
 

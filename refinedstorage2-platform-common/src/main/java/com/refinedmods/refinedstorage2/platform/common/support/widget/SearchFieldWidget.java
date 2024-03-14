@@ -44,40 +44,43 @@ public class SearchFieldWidget extends EditBox {
     @Override
     public boolean keyPressed(final int keyCode, final int scanCode, final int modifier) {
         final boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
-        if (isFocused() && handleKeyCode(keyCode, canLoseFocus)) {
-            return true;
+        // The search field takes control over everything if it's active and focused.
+        // Calculate this here because "shouldMoveControlToParent" may change the focus.
+        final boolean havingControl = isActive() && isFocused();
+        // Sometimes pressing a special key (like ESC) should return control to the parent.
+        if (havingControl && shouldMoveControlToParent(keyCode, canLoseFocus)) {
+            return false;
         }
         if (Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
-            return handleFocusToggle();
+            toggleFocus();
         }
-        return super.keyPressed(keyCode, scanCode, modifier);
+        // Call the parent to process more special characters.
+        super.keyPressed(keyCode, scanCode, modifier);
+        return havingControl;
     }
 
-    private boolean handleKeyCode(final int keyCode,
-                                  final boolean canLoseFocus) {
+    private boolean shouldMoveControlToParent(final int keyCode, final boolean canLoseFocus) {
         if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
             final String newValue = keyCode == GLFW.GLFW_KEY_UP ? history.older() : history.newer();
             setValue(newValue);
-            return true;
         } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
             saveHistory();
             if (canLoseFocus) {
                 setFocused(false);
             }
-            return true;
         } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             saveHistory();
             setFocused(false);
-            // If we can't lose focus, "fail" and let bubble it up so that the screen can be closed.
-            return canLoseFocus;
+            // If we are autoselected, we need to move control back to the parent straight away.
+            // If we are not autoselected, we can just unfocus (which will require another ESC press to close).
+            return !canLoseFocus;
         }
         return false;
     }
 
-    private boolean handleFocusToggle() {
+    private void toggleFocus() {
         setFocused(!isFocused());
         saveHistory();
-        return true;
     }
 
     private void saveHistory() {
