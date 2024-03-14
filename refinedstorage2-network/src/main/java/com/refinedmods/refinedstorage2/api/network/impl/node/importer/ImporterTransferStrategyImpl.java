@@ -1,7 +1,8 @@
-package com.refinedmods.refinedstorage2.api.network.node.importer;
+package com.refinedmods.refinedstorage2.api.network.impl.node.importer;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;

@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 public class StorageNetworkComponentImpl extends StorageChannelImpl implements StorageNetworkComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkComponentImpl.class);
 
-    public StorageNetworkComponentImpl() {
-    }
-
-    protected StorageNetworkComponentImpl(final ResourceList list) {
+    public StorageNetworkComponentImpl(final ResourceList list) {
         super(list);
     }
 

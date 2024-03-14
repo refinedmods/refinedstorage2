@@ -23,11 +23,4 @@ public class CompositeExporterTransferStrategy implements ExporterTransferStrate
         }
         return false;
     }
-
-    @Override
-    public String toString() {
-        return "CompositeExporterTransferStrategy{"
-            + "strategies=" + strategies
-            + '}';
-    }
 }

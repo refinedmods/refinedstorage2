@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
