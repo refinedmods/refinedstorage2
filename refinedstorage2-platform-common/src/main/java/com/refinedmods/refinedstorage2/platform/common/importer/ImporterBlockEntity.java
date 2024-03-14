@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.importer;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.importer.CompositeImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
@@ -65,21 +64,20 @@ public class ImporterBlockEntity
 
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
-        final CompositeImporterTransferStrategy strategy = createStrategy(level, direction);
-        LOGGER.debug("Initialized importer at {} with strategy {}", worldPosition, strategy);
-        getNode().setTransferStrategy(strategy);
+        final List<ImporterTransferStrategy> strategies = createStrategies(level, direction);
+        LOGGER.debug("Initialized importer at {} with strategies {}", worldPosition, strategies);
+        getNode().setTransferStrategies(strategies);
     }
 
-    private CompositeImporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
+    private List<ImporterTransferStrategy> createStrategies(final ServerLevel serverLevel, final Direction direction) {
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ImporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
-        final List<ImporterTransferStrategy> strategies = factories
+        return factories
             .stream()
             .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, upgradeContainer, this))
             .toList();
-        return new CompositeImporterTransferStrategy(strategies);
     }
 
     @Override

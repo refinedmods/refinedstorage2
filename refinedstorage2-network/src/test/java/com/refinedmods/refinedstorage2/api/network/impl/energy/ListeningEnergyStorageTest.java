@@ -136,4 +136,21 @@ class ListeningEnergyStorageTest {
             assertThat(changeCount).isZero();
         }
     }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void shouldNotExtractEnergyWhenThereIsNone(final Action action) {
+        // Arrange
+        sut.receive(100, Action.EXECUTE);
+        sut.extract(100, Action.EXECUTE);
+        changeCount = 0;
+
+        // Act
+        final long extracted = sut.extract(1, action);
+
+        // Assert
+        assertThat(extracted).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(changeCount).isZero();
+    }
 }

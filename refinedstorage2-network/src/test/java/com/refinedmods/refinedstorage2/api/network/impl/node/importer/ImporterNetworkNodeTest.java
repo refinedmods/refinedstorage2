@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.importer;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
@@ -65,7 +64,7 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
-    void shouldNotWorkWithoutTransferStrategy(
+    void shouldNotWorkWithoutAnyTransferStrategy(
         @InjectNetworkStorageChannel final StorageChannel storageChannel,
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
@@ -96,7 +95,7 @@ class ImporterNetworkNodeTest {
             .add(A, 100)
             .add(B, 100);
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
         sut.setActive(false);
 
         // Act
@@ -120,7 +119,7 @@ class ImporterNetworkNodeTest {
             .add(A, 100)
             .add(B, 100);
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -143,16 +142,20 @@ class ImporterNetworkNodeTest {
         storageChannel.addSource(new InMemoryStorageImpl());
 
         final FakeImporterSource emptySource = new FakeImporterSource();
-
+        final FakeImporterSource outdatedSource = new FakeImporterSource(C)
+            .add(C, 100);
         final FakeImporterSource source = new FakeImporterSource(A, B, A)
             .add(A, 100)
             .add(B, 100);
 
-        sut.setTransferStrategy(new CompositeImporterTransferStrategy(List.of(
+        sut.setTransferStrategies(List.of(
+            new ImporterTransferStrategyImpl(outdatedSource, 1)
+        ));
+        sut.setTransferStrategies(List.of(
             new ImporterTransferStrategyImpl(emptySource, 1),
             new ImporterTransferStrategyImpl(source, 1),
             new ImporterTransferStrategyImpl(source, 1)
-        )));
+        ));
 
         // Act
         sut.doWork();
@@ -179,7 +182,7 @@ class ImporterNetworkNodeTest {
             .add(A, 100)
             .add(B, 100);
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -205,7 +208,7 @@ class ImporterNetworkNodeTest {
             .add(A, 11)
             .add(B, 6);
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -232,7 +235,7 @@ class ImporterNetworkNodeTest {
             .add(B, 5);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -266,7 +269,7 @@ class ImporterNetworkNodeTest {
             .add(A, 8)
             .add(B, 11);
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -290,7 +293,7 @@ class ImporterNetworkNodeTest {
 
         final FakeImporterSource source = new FakeImporterSource();
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -313,7 +316,7 @@ class ImporterNetworkNodeTest {
             .add(A, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -350,7 +353,7 @@ class ImporterNetworkNodeTest {
             .add(A_ALTERNATIVE2, 1);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 10);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -380,7 +383,7 @@ class ImporterNetworkNodeTest {
             .add(B, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -405,7 +408,7 @@ class ImporterNetworkNodeTest {
             .add(A, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -431,7 +434,7 @@ class ImporterNetworkNodeTest {
             .add(B, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -460,7 +463,7 @@ class ImporterNetworkNodeTest {
             .add(A, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();
@@ -485,7 +488,7 @@ class ImporterNetworkNodeTest {
             .add(B, 10);
 
         final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl(source, 1);
-        sut.setTransferStrategy(strategy);
+        sut.setTransferStrategies(List.of(strategy));
 
         // Act
         sut.doWork();

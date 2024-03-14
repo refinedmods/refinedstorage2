@@ -8,32 +8,37 @@ import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
 
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Filter filter = new Filter();
     private final Actor actor = new NetworkNodeActor(this);
-    @Nullable
-    private ImporterTransferStrategy transferStrategy;
+    private final List<ImporterTransferStrategy> transferStrategies = new ArrayList<>();
 
     public ImporterNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
-    public void setTransferStrategy(@Nullable final ImporterTransferStrategy transferStrategy) {
-        this.transferStrategy = transferStrategy;
+    public void setTransferStrategies(final List<ImporterTransferStrategy> transferStrategies) {
+        this.transferStrategies.clear();
+        this.transferStrategies.addAll(transferStrategies);
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || transferStrategy == null) {
+        if (network == null || !isActive()) {
             return;
         }
-        transferStrategy.transfer(filter, actor, network);
+        for (final ImporterTransferStrategy transferStrategy : transferStrategies) {
+            if (transferStrategy.transfer(filter, actor, network)) {
+                return;
+            }
+        }
     }
 
     public FilterMode getFilterMode() {

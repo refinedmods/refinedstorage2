@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;

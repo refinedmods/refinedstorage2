@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.importer;
 
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;

@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 
 public final class NetworkTestFixtures {
     public static final ComponentMapFactory<NetworkComponent, Network> NETWORK_COMPONENT_MAP_FACTORY =
@@ -25,7 +26,7 @@ public final class NetworkTestFixtures {
         );
         NETWORK_COMPONENT_MAP_FACTORY.addFactory(
             StorageNetworkComponent.class,
-            network -> new StorageNetworkComponentImpl()
+            network -> new StorageNetworkComponentImpl(new ResourceListImpl())
         );
     }
 
