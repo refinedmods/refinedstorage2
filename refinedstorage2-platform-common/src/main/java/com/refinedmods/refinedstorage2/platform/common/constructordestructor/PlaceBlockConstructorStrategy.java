@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -8,6 +8,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -23,47 +24,51 @@ public class RecoloringRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(final RecipeOutput output) {
         Blocks.INSTANCE.getCable().forEach((color, id, block) ->
-            recolorItems(Tags.CABLES, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_cable")));
+            recipe(Tags.CABLES, block.get().asItem(), color)
+                .save(output, recipeId(color, "cable")));
         Blocks.INSTANCE.getImporter().forEach((color, id, block) ->
-            recolorItems(Tags.IMPORTERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_importer")));
+            recipe(Tags.IMPORTERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "importer")));
         Blocks.INSTANCE.getExporter().forEach((color, id, block) ->
-            recolorItems(Tags.EXPORTERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_exporter")));
+            recipe(Tags.EXPORTERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "exporter")));
         Blocks.INSTANCE.getExternalStorage().forEach((color, id, block) ->
-            recolorItems(Tags.EXTERNAL_STORAGES, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_external_storage")));
+            recipe(Tags.EXTERNAL_STORAGES, block.get().asItem(), color)
+                .save(output, recipeId(color, "external_storage")));
         Blocks.INSTANCE.getController().forEach((color, id, block) ->
-            recolorItems(Tags.CONTROLLERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_controller")));
+            recipe(Tags.CONTROLLERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "controller")));
         Blocks.INSTANCE.getGrid().forEach((color, id, block) ->
-            recolorItems(Tags.GRIDS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_grid")));
+            recipe(Tags.GRIDS, block.get().asItem(), color)
+                .save(output, recipeId(color, "grid")));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, id, block) ->
-            recolorItems(Tags.CRAFTING_GRIDS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_crafting_grid")));
+            recipe(Tags.CRAFTING_GRIDS, block.get().asItem(), color)
+                .save(output, recipeId(color, "crafting_grid")));
         Blocks.INSTANCE.getDetector().forEach((color, id, block) ->
-            recolorItems(Tags.DETECTORS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_detector")));
+            recipe(Tags.DETECTORS, block.get().asItem(), color)
+                .save(output, recipeId(color, "detector")));
         Blocks.INSTANCE.getConstructor().forEach((color, id, block) ->
-            recolorItems(Tags.CONSTRUCTORS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_constructor")));
+            recipe(Tags.CONSTRUCTORS, block.get().asItem(), color)
+                .save(output, recipeId(color, "constructor")));
         Blocks.INSTANCE.getDestructor().forEach((color, id, block) ->
-            recolorItems(Tags.DESTRUCTORS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_destructor")));
+            recipe(Tags.DESTRUCTORS, block.get().asItem(), color)
+                .save(output, recipeId(color, "destructor")));
         Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) ->
-            recolorItems(Tags.WIRELESS_TRANSMITTERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_wireless_transmitter")));
+            recipe(Tags.WIRELESS_TRANSMITTERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "wireless_transmitter")));
         Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, block) ->
-            recolorItems(Tags.NETWORK_RECEIVERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_network_receiver")));
+            recipe(Tags.NETWORK_RECEIVERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "network_receiver")));
         Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, block) ->
-            recolorItems(Tags.NETWORK_TRANSMITTERS, block.get().asItem(), color)
-                .save(output, createIdentifier("coloring/" + color.getName() + "_network_transmitter")));
+            recipe(Tags.NETWORK_TRANSMITTERS, block.get().asItem(), color)
+                .save(output, recipeId(color, "network_transmitter")));
     }
 
-    private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {
+    private ResourceLocation recipeId(final DyeColor color, final String suffix) {
+        return createIdentifier("coloring/" + color.getName() + "_" + suffix);
+    }
+
+    private ShapelessRecipeBuilder recipe(final TagKey<Item> dyeable, final Item result, final DyeColor color) {
         return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result)
             .requires(dyeable)
             .requires(getDyeItem(color))

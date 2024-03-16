@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategyFactory;
@@ -27,20 +27,19 @@ import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverte
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storagemonitor.StorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.support.energy.EnergyItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.support.network.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.NetworkBoundItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReference;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.network.bounditem.SlotReferenceProvider;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.BuiltinUpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
@@ -57,10 +56,10 @@ import com.refinedmods.refinedstorage2.platform.common.storage.ClientStorageRepo
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageContainerItemHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.storagemonitor.CompositeStorageMonitorInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyItemHelperImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.ItemEnergyStorage;
 import com.refinedmods.refinedstorage2.platform.common.support.network.ConnectionProviderImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem.CompositeSlotReferenceProvider;
@@ -70,6 +69,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.network.bounditem
 import com.refinedmods.refinedstorage2.platform.common.support.registry.PlatformRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.BuiltinUpgradeDestinationsImpl;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -101,6 +101,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -114,10 +115,10 @@ public class PlatformApiImpl implements PlatformApi {
         new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder =
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
-    private final PlatformRegistry<StorageType<?>> storageTypeRegistry =
+    private final PlatformRegistry<StorageType> storageTypeRegistry =
         new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageTypes.ITEM);
-    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry =
-        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
+    private final PlatformRegistry<ResourceType> resourceTypeRegistry =
+        new PlatformRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ResourceTypes.ITEM);
     private final PlatformRegistry<GridSynchronizer> gridSynchronizerRegistry =
         new PlatformRegistryImpl<>(createIdentifier("off"), new NoopGridSynchronizer());
     private final PlatformRegistry<ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
@@ -150,10 +151,10 @@ public class PlatformApiImpl implements PlatformApi {
     );
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
-    private final ResourceFactory<ItemResource> itemResourceFactory = new ItemResourceFactory();
-    private final ResourceFactory<FluidResource> fluidResourceFactory = new FluidResourceFactory();
-    private final Set<ResourceFactory<?>> resourceFactories = new HashSet<>();
-    private final Map<Class<?>, ResourceRendering<?>> resourceRenderingMap = new HashMap<>();
+    private final ResourceFactory itemResourceFactory = new ItemResourceFactory();
+    private final ResourceFactory fluidResourceFactory = new FluidResourceFactory();
+    private final Set<ResourceFactory> resourceFactories = new HashSet<>();
+    private final Map<Class<?>, ResourceRendering> resourceRenderingMap = new HashMap<>();
     private final CompositeWirelessTransmitterRangeModifier wirelessTransmitterRangeModifier =
         new CompositeWirelessTransmitterRangeModifier();
     private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
@@ -165,7 +166,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final CompositeSlotReferenceProvider slotReferenceProvider = new CompositeSlotReferenceProvider();
 
     @Override
-    public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
+    public PlatformRegistry<StorageType> getStorageTypeRegistry() {
         return storageTypeRegistry;
     }
 
@@ -199,8 +200,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
-        return storageChannelTypeRegistry;
+    public PlatformRegistry<ResourceType> getResourceTypeRegistry() {
+        return resourceTypeRegistry;
     }
 
     @Override
@@ -280,7 +281,7 @@ public class PlatformApiImpl implements PlatformApi {
 
     @Override
     public void writeGridScreenOpeningData(final Grid grid, final FriendlyByteBuf buf) {
-        AbstractGridContainerMenu.writeScreenOpeningData(storageChannelTypeRegistry, grid, buf);
+        AbstractGridContainerMenu.writeScreenOpeningData(grid, buf);
     }
 
     @Override
@@ -294,24 +295,40 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
+    public void requestNetworkNodeInitialization(final PlatformNetworkNodeContainer container,
                                                  final Level level,
                                                  final Runnable callback) {
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         ServerEventQueue.queue(() -> {
+            // The container could've been removed by the time it has been placed, and by the time the event queue has
+            // run. In that case, don't initialize the network node because it no longer exists.
+            // This is a workaround for the "Carry On" mod. The mod places the block (which creates a block entity and
+            // requests this network node initialization) and then overrides the placed block entity with their own
+            // block entity. This triggers a new initialization, but then this one can no longer run!
+            if (container.isContainerRemoved()) {
+                return;
+            }
             networkBuilder.initialize(container, connectionProvider);
             callback.run();
         });
     }
 
     @Override
-    public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeRemoval(final PlatformNetworkNodeContainer container, final Level level) {
+        // "Carry On" mod places the block (which creates a block entity and requests network node initialization)
+        // and then overrides the placed block entity with their own information.
+        // However, when the placed block entity is replaced, the server event queue hasn't run yet and there is
+        // no network loaded yet, even though the network node initialization was requested.
+        // Stop continuing here to avoid further code failing due to a missing network.
+        if (container.getNode().getNetwork() == null) {
+            return;
+        }
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.remove(container, connectionProvider);
     }
 
     @Override
-    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+    public void requestNetworkNodeUpdate(final PlatformNetworkNodeContainer container, final Level level) {
         final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(level);
         networkBuilder.update(container, connectionProvider);
     }
@@ -382,54 +399,44 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public <T> void addResourceFactory(final ResourceFactory<T> factory) {
+    public void addResourceFactory(final ResourceFactory factory) {
         resourceFactories.add(factory);
     }
 
     @Override
-    public ResourceFactory<ItemResource> getItemResourceFactory() {
+    public ResourceFactory getItemResourceFactory() {
         return itemResourceFactory;
     }
 
     @Override
-    public PlatformStorageChannelType<ItemResource> getItemStorageChannelType() {
-        return StorageChannelTypes.ITEM;
-    }
-
-    @Override
-    public StorageType<ItemResource> getItemStorageType() {
+    public StorageType getItemStorageType() {
         return StorageTypes.ITEM;
     }
 
     @Override
-    public ResourceFactory<FluidResource> getFluidResourceFactory() {
+    public ResourceFactory getFluidResourceFactory() {
         return fluidResourceFactory;
     }
 
     @Override
-    public PlatformStorageChannelType<FluidResource> getFluidStorageChannelType() {
-        return StorageChannelTypes.FLUID;
-    }
-
-    @Override
-    public StorageType<FluidResource> getFluidStorageType() {
+    public StorageType getFluidStorageType() {
         return StorageTypes.FLUID;
     }
 
     @Override
-    public Set<ResourceFactory<?>> getAlternativeResourceFactories() {
+    public Set<ResourceFactory> getAlternativeResourceFactories() {
         return resourceFactories;
     }
 
     @Override
-    public <T> void registerResourceRendering(final Class<T> resourceClass, final ResourceRendering<T> rendering) {
+    public <T extends ResourceKey> void registerResourceRendering(final Class<T> resourceClass,
+                                                                  final ResourceRendering rendering) {
         resourceRenderingMap.put(resourceClass, rendering);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ResourceRendering<T> getResourceRendering(final T resource) {
-        return (ResourceRendering<T>) resourceRenderingMap.get(resource.getClass());
+    public ResourceRendering getResourceRendering(final ResourceKey resource) {
+        return resourceRenderingMap.get(resource.getClass());
     }
 
     @Override
@@ -466,6 +473,13 @@ public class PlatformApiImpl implements PlatformApi {
     public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage,
                                              final ItemStack stack) {
         return new ItemEnergyStorage(stack, energyStorage);
+    }
+
+    @Override
+    public EnergyStorage asBlockItemEnergyStorage(final EnergyStorage energyStorage,
+                                                  final ItemStack stack,
+                                                  final BlockEntityType<?> blockEntityType) {
+        return new ItemBlockEnergyStorage(energyStorage, stack, blockEntityType);
     }
 
     @Override

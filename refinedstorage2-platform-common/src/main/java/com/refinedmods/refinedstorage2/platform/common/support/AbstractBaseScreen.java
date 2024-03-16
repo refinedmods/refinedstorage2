@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeMapping;
@@ -20,7 +20,6 @@ import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeSlot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
@@ -37,6 +36,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationAsHeading;
+import static java.util.Objects.requireNonNullElse;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private static final SmallTextClientTooltipComponent CLICK_TO_CLEAR = new SmallTextClientTooltipComponent(
@@ -102,44 +102,44 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private void tryRenderResourceSlot(final GuiGraphics graphics, final ResourceSlot slot) {
-        final ResourceAmountTemplate<?> resourceAmount = slot.getResourceAmount();
-        if (resourceAmount == null) {
+        final ResourceKey resource = slot.getResource();
+        if (resource == null) {
             return;
         }
         renderResourceSlot(
             graphics,
             leftPos + slot.x,
             topPos + slot.y,
-            resourceAmount,
+            resource,
+            slot.getAmount(),
             slot.shouldRenderAmount()
         );
     }
 
-    private <R> void renderResourceSlot(final GuiGraphics graphics,
-                                        final int x,
-                                        final int y,
-                                        final ResourceAmountTemplate<R> resourceAmount,
-                                        final boolean renderAmount) {
-        final ResourceRendering<R> rendering = PlatformApi.INSTANCE.getResourceRendering(
-            resourceAmount.getResource()
-        );
-        rendering.render(resourceAmount.getResource(), graphics, x, y);
+    private void renderResourceSlot(final GuiGraphics graphics,
+                                    final int x,
+                                    final int y,
+                                    final ResourceKey resource,
+                                    final long amount,
+                                    final boolean renderAmount) {
+        final ResourceRendering rendering = PlatformApi.INSTANCE.getResourceRendering(resource);
+        rendering.render(resource, graphics, x, y);
         if (renderAmount) {
-            renderResourceSlotAmount(graphics, x, y, resourceAmount.getAmount(), rendering);
+            renderResourceSlotAmount(graphics, x, y, amount, rendering);
         }
     }
 
-    private <R> void renderResourceSlotAmount(final GuiGraphics graphics,
-                                              final int x,
-                                              final int y,
-                                              final long amount,
-                                              final ResourceRendering<R> rendering) {
+    private void renderResourceSlotAmount(final GuiGraphics graphics,
+                                          final int x,
+                                          final int y,
+                                          final long amount,
+                                          final ResourceRendering rendering) {
         renderAmount(
             graphics,
             x,
             y,
             rendering.getDisplayedAmount(amount, true),
-            Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
+            requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
             true
         );
     }
@@ -207,11 +207,11 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     public List<ClientTooltipComponent> getResourceTooltip(final ItemStack carried, final ResourceSlot resourceSlot) {
-        final ResourceAmountTemplate<?> resourceAmount = resourceSlot.getResourceAmount();
-        if (resourceAmount == null) {
+        final ResourceKey resource = resourceSlot.getResource();
+        if (resource == null) {
             return getTooltipForEmptySlot(carried, resourceSlot);
         }
-        return getTooltipForResource(resourceAmount, resourceSlot);
+        return getTooltipForResource(resource, resourceSlot);
     }
 
     private List<ClientTooltipComponent> getTooltipForEmptySlot(final ItemStack carried,
@@ -239,7 +239,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                 null
             )
         ));
-        for (final ResourceFactory<?> alternativeResourceFactory : resourceSlot.getAlternativeResourceFactories()) {
+        for (final ResourceFactory alternativeResourceFactory : resourceSlot.getAlternativeResourceFactories()) {
             final var result = alternativeResourceFactory.create(carried);
             result.ifPresent(alternativeResourceInstance -> lines.add(new MouseWithIconClientTooltipComponent(
                 MouseWithIconClientTooltipComponent.Type.RIGHT,
@@ -250,15 +250,15 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         return lines;
     }
 
-    public static <T> MouseWithIconClientTooltipComponent.IconRenderer getResourceRendering(final T resource) {
+    public static MouseWithIconClientTooltipComponent.IconRenderer getResourceRendering(final ResourceKey resource) {
         return (graphics, x, y) -> PlatformApi.INSTANCE.getResourceRendering(resource).render(resource, graphics, x, y);
     }
 
-    private <R> List<ClientTooltipComponent> getTooltipForResource(final ResourceAmountTemplate<R> resourceAmount,
-                                                                   final ResourceSlot resourceSlot) {
+    private List<ClientTooltipComponent> getTooltipForResource(final ResourceKey resource,
+                                                               final ResourceSlot resourceSlot) {
         final List<ClientTooltipComponent> tooltip = PlatformApi.INSTANCE
-            .getResourceRendering(resourceAmount.getResource())
-            .getTooltip(resourceAmount.getResource())
+            .getResourceRendering(resource)
+            .getTooltip(resource)
             .stream()
             .map(Component::getVisualOrderText)
             .map(ClientTooltipComponent::create)
@@ -284,7 +284,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     private boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
-        final boolean isFilterSlot = slot.getResourceAmount() != null;
+        final boolean isFilterSlot = slot.getResource() != null;
         final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
         final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
@@ -297,10 +297,11 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Nullable
-    public ResourceTemplate<?> getHoveredResource() {
-        return hoveredSlot instanceof ResourceSlot resourceSlot && resourceSlot.getResourceAmount() != null
-            ? resourceSlot.getResourceAmount().getResourceTemplate()
-            : null;
+    public PlatformResourceKey getHoveredResource() {
+        if (hoveredSlot instanceof ResourceSlot resourceSlot) {
+            return resourceSlot.getResource();
+        }
+        return null;
     }
 
     public int getLeftPos() {

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.recipemod.jei;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +52,7 @@ class CraftingGridRecipeTransferHandler implements
             doTransfer(recipeSlots, containerMenu);
             return null;
         }
-        final ResourceList<Object> available = containerMenu.getAvailableListForRecipeTransfer();
+        final ResourceList available = containerMenu.getAvailableListForRecipeTransfer();
         final List<IRecipeSlotView> missingSlots = findMissingSlots(recipeSlots, available);
         return missingSlots.isEmpty() ? null : new MissingItemRecipeTransferError(missingSlots);
     }
@@ -62,8 +62,7 @@ class CraftingGridRecipeTransferHandler implements
         containerMenu.transferRecipe(inputs);
     }
 
-    private List<IRecipeSlotView> findMissingSlots(final IRecipeSlotsView recipeSlots,
-                                                   final ResourceList<Object> available) {
+    private List<IRecipeSlotView> findMissingSlots(final IRecipeSlotsView recipeSlots, final ResourceList available) {
         return recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).stream().filter(slotView -> {
             if (slotView.isEmpty()) {
                 return false;
@@ -72,7 +71,7 @@ class CraftingGridRecipeTransferHandler implements
         }).toList();
     }
 
-    private boolean isAvailable(final ResourceList<Object> available, final IRecipeSlotView slotView) {
+    private boolean isAvailable(final ResourceList available, final IRecipeSlotView slotView) {
         final List<ItemStack> possibilities = slotView.getItemStacks().toList();
         for (final ItemStack possibility : possibilities) {
             final ItemResource possibilityResource = ItemResource.ofItemStack(possibility);

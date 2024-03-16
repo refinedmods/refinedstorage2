@@ -3,12 +3,11 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.forge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.grid.view.ForgeFluidGridResourceFactory;
@@ -152,9 +151,11 @@ public final class PlatformImpl extends AbstractPlatform {
         if (!result.isSuccess() || tank.isEmpty()) {
             return Optional.empty();
         }
+        final FluidResource fluidResource = ofFluidStack(tank.getFluid());
         return Optional.of(new ContainedFluid(
             result.getResult(),
-            new ResourceAmount<>(ofFluidStack(tank.getFluid()), tank.getFluidAmount())
+            fluidResource,
+            tank.getFluidAmount()
         ));
     }
 
@@ -204,6 +205,7 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
+    @SuppressWarnings("DataFlowIssue") // NeoForge allows null
     public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
                                                             final CraftingRecipe craftingRecipe,
                                                             final CraftingContainer container) {

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 
@@ -20,6 +20,10 @@ public interface StorageConfigurationContainer {
     AccessMode getAccessMode();
 
     void setAccessMode(AccessMode accessMode);
+
+    boolean isVoidExcess();
+
+    void setVoidExcess(boolean voidExcess);
 
     RedstoneMode getRedstoneMode();
 

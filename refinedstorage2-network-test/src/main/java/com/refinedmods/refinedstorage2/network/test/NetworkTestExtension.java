@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 
 public class NetworkTestExtension implements BeforeEachCallback, ParameterResolver {
     private final Map<String, Network> networkMap = new HashMap<>();
-    private final Map<Class<? extends NetworkNode>, NetworkNodeFactory<?>> networkNodeFactories = new HashMap<>();
+    private final Map<Class<? extends NetworkNode>, NetworkNodeFactory> networkNodeFactories = new HashMap<>();
 
     @Override
     public void beforeEach(final ExtensionContext extensionContext) {
@@ -48,13 +48,13 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
     private void registerNetworkNodes(final Object testInstance) {
         for (final RegisterNetworkNode annotation : getAnnotations(testInstance, RegisterNetworkNode.class)) {
             try {
-                final NetworkNodeFactory<?> factory = annotation.value().getDeclaredConstructor().newInstance();
+                final NetworkNodeFactory factory = annotation.value().getDeclaredConstructor().newInstance();
                 networkNodeFactories.put(annotation.clazz(), factory);
             } catch (InstantiationException
                      | IllegalAccessException
                      | InvocationTargetException
                      | NoSuchMethodException e) {
-                throw new RuntimeException(e);
+                // shouldn't happen
             }
         }
     }
@@ -166,7 +166,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
             field.setAccessible(true);
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            // shouldn't happen
         }
     }
 
@@ -193,11 +193,10 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
             .orElseThrow();
     }
 
-    private StorageChannel<String> getNetworkStorageChannel(final String networkId) {
+    private StorageChannel getNetworkStorageChannel(final String networkId) {
         return networkMap
             .get(networkId)
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+            .getComponent(StorageNetworkComponent.class);
     }
 
     private EnergyNetworkComponent getNetworkEnergy(final String networkId) {

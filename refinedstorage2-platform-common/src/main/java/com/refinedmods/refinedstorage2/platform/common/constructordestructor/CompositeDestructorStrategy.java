@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
 

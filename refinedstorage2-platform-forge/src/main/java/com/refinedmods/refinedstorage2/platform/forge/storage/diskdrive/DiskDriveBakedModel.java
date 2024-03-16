@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.forge.support.render.ItemBakedMo
 import com.refinedmods.refinedstorage2.platform.forge.support.render.RotationTranslationModelBaker;
 import com.refinedmods.refinedstorage2.platform.forge.support.render.TransformationBuilder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -58,9 +57,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(cacheKey -> {
             final Transformation rotation = TransformationBuilder.create().rotate(cacheKey.direction).build();
             final RandomSource rand = RandomSource.create();
-            final List<BakedQuad> quads = new ArrayList<>(
-                baseModelBaker.bake(rotation).getQuads(null, cacheKey.side, rand)
-            );
+            final List<BakedQuad> quads = baseModelBaker.bake(rotation, cacheKey.side, rand);
             for (int j = 0; j < diskTranslations.length; ++j) {
                 final Disk disk = cacheKey.disks[j];
                 quads.addAll(getDiskQuads(diskModelBaker, cacheKey, disk, j));
@@ -70,7 +67,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
                         .rotate(cacheKey.direction)
                         .translate(diskTranslations[j])
                         .build();
-                    quads.addAll(ledInactiveModelBaker.bake(ledTransform).getQuads(null, cacheKey.side, rand));
+                    quads.addAll(ledInactiveModelBaker.bake(ledTransform, cacheKey.side, rand));
                 }
             }
             return quads;
@@ -117,7 +114,7 @@ class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
             .rotate(cacheKey.direction)
             .translate(diskTranslations[index])
             .build();
-        return diskBaker.bake(diskTransform).getQuads(null, cacheKey.side, RandomSource.create());
+        return diskBaker.bake(diskTransform, cacheKey.side, RandomSource.create());
     }
 
     private static Vector3f getDiskTranslation(final int x, final int y) {

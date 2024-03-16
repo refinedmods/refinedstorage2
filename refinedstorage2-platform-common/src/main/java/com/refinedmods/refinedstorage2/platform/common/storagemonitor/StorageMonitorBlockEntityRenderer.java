@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storagemonitor;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirection;
 import com.refinedmods.refinedstorage2.platform.common.support.direction.BiDirectionType;
@@ -41,8 +41,8 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
         if (!blockEntity.isCurrentlyActive()) {
             return;
         }
-        final ResourceAmountTemplate<?> template = blockEntity.getFilteredResource();
-        if (template == null) {
+        final ResourceKey resource = blockEntity.getConfiguredResource();
+        if (resource == null) {
             return;
         }
         doRender(
@@ -50,20 +50,18 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
             poseStack,
             vertexConsumers,
             direction,
-            template,
+            resource,
             blockEntity.getCurrentAmount()
         );
     }
 
-    private <T> void doRender(final Level level,
-                              final PoseStack poseStack,
-                              final MultiBufferSource vertexConsumers,
-                              final BiDirection direction,
-                              final ResourceAmountTemplate<T> template,
-                              final long amount) {
-        final ResourceRendering<T> resourceRendering = PlatformApi.INSTANCE.getResourceRendering(
-            template.getResource()
-        );
+    private void doRender(final Level level,
+                          final PoseStack poseStack,
+                          final MultiBufferSource vertexConsumers,
+                          final BiDirection direction,
+                          final ResourceKey resource,
+                          final long amount) {
+        final ResourceRendering resourceRendering = PlatformApi.INSTANCE.getResourceRendering(resource);
         doRender(
             poseStack,
             vertexConsumers,
@@ -71,17 +69,17 @@ public class StorageMonitorBlockEntityRenderer implements BlockEntityRenderer<St
             resourceRendering.getDisplayedAmount(amount, false),
             level,
             resourceRendering,
-            template.getResource()
+            resource
         );
     }
 
-    private <T> void doRender(final PoseStack poseStack,
-                              final MultiBufferSource renderTypeBuffer,
-                              final Quaternionf rotation,
-                              final String amount,
-                              final Level level,
-                              final ResourceRendering<T> resourceRendering,
-                              final T resource) {
+    private void doRender(final PoseStack poseStack,
+                          final MultiBufferSource renderTypeBuffer,
+                          final Quaternionf rotation,
+                          final String amount,
+                          final Level level,
+                          final ResourceRendering resourceRendering,
+                          final ResourceKey resource) {
         poseStack.pushPose();
 
         poseStack.translate(0.5, 0.5, 0.5);

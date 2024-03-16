@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.view.AbstractPlatformGridResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceRendering;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.MouseWithIconClientTooltipComponent;
 
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -24,11 +25,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
-public class FluidGridResource extends AbstractPlatformGridResource<FluidResource> {
+public class FluidGridResource extends AbstractPlatformGridResource {
     private final FluidResource fluidResource;
     private final int id;
 
-    public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,
+    public FluidGridResource(final ResourceAmount resourceAmount,
                              final String name,
                              final String modId,
                              final String modName,
@@ -40,8 +41,8 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
             GridResourceAttributeKeys.TAGS, tags,
             GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = BuiltInRegistries.FLUID.getId(resourceAmount.getResource().fluid());
-        this.fluidResource = resourceAmount.getResource();
+        this.fluidResource = (FluidResource) resourceAmount.getResource();
+        this.id = BuiltInRegistries.FLUID.getId(fluidResource.fluid());
     }
 
     @Override
@@ -50,9 +51,9 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
     }
 
     @Override
-    public List<? extends ClientTooltipComponent> getExtractionHints() {
+    public List<ClientTooltipComponent> getExtractionHints() {
         return Platform.INSTANCE.convertToBucket(fluidResource).map(
-            bucket -> new MouseWithIconClientTooltipComponent(
+            bucket -> (ClientTooltipComponent) new MouseWithIconClientTooltipComponent(
                 MouseWithIconClientTooltipComponent.Type.LEFT,
                 (graphics, x, y) -> graphics.renderItem(bucket, x, y),
                 null
@@ -60,16 +61,17 @@ public class FluidGridResource extends AbstractPlatformGridResource<FluidResourc
         ).stream().toList();
     }
 
+    @Nullable
+    @Override
+    public PlatformResourceKey getUnderlyingResource() {
+        return fluidResource;
+    }
+
     @Override
     public void onExtract(final GridExtractMode extractMode,
                           final boolean cursor,
                           final GridExtractionStrategy extractionStrategy) {
-        extractionStrategy.onExtract(
-            StorageChannelTypes.FLUID,
-            fluidResource,
-            extractMode,
-            cursor
-        );
+        extractionStrategy.onExtract(fluidResource, extractMode, cursor);
     }
 
     @Override

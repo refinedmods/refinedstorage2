@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
@@ -18,6 +18,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(StoragePropertyTypes.ACCESS_MODE, AccessMode.INSERT_EXTRACT));
+        registerProperty(new ClientProperty<>(StoragePropertyTypes.VOID_EXCESS, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
@@ -47,6 +48,11 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
             configContainer::setAccessMode
         ));
         registerProperty(new ServerProperty<>(
+            StoragePropertyTypes.VOID_EXCESS,
+            configContainer::isVoidExcess,
+            configContainer::setVoidExcess
+        ));
+        registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
             configContainer::getRedstoneMode,
             configContainer::setRedstoneMode
@@ -55,5 +61,10 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceConta
 
     boolean shouldDisplayFilterModeWarning() {
         return getProperty(PropertyTypes.FILTER_MODE).getValue() == FilterMode.ALLOW && areAllResourceSlotsEmpty();
+    }
+
+    boolean shouldDisplayVoidExcessModeWarning() {
+        return Boolean.TRUE.equals(getProperty(StoragePropertyTypes.VOID_EXCESS).getValue())
+            && getProperty(PropertyTypes.FILTER_MODE).getValue() != FilterMode.ALLOW;
     }
 }

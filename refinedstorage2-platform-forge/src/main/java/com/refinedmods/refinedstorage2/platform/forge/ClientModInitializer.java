@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.support.HelpTooltipComponent;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.configurationcard.ConfigurationCardItemPropertyFunction;
@@ -194,7 +194,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
-    @SuppressWarnings("unchecked")
     public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
@@ -208,19 +207,19 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             RegulatorUpgradeItem.RegulatorTooltipComponent.class,
             component -> {
                 final ClientTooltipComponent help = HelpClientTooltipComponent.create(component.helpText());
-                return component.filteredResource() == null
+                return component.configuredResource() == null
                     ? help
-                    : createRegulatorUpgradeClientTooltipComponent(component.filteredResource(), help);
+                    : createRegulatorUpgradeClientTooltipComponent(component.configuredResource(), help);
             }
         );
     }
 
-    private static <T> CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
-        final ResourceAmountTemplate<T> filteredResource,
+    private static CompositeClientTooltipComponent createRegulatorUpgradeClientTooltipComponent(
+        final ResourceAmount configuredResource,
         final ClientTooltipComponent help
     ) {
         return new CompositeClientTooltipComponent(List.of(
-            new ResourceClientTooltipComponent<>(filteredResource),
+            new ResourceClientTooltipComponent(configuredResource),
             help
         ));
     }

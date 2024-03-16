@@ -47,7 +47,7 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
     }
 
     private void addSlots(final Player player, final ResourceContainer resourceContainer) {
-        addSlot(new ResourceSlot(resourceContainer, 0, filterHelpText, 116, 47));
+        addSlot(new ResourceSlot(resourceContainer, 0, filterHelpText, 116, 47, ResourceSlotType.FILTER));
         addPlayerInventory(player.getInventory(), 8, 106);
         transferManager.addFilterTransfer(player.getInventory());
     }

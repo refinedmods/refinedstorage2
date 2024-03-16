@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import javax.annotation.Nullable;
@@ -14,13 +15,12 @@ public interface GridViewBuilder {
     /**
      * Adds a resource in the backing and view list.
      *
-     * @param <T>             the resource type
      * @param resource        the resource
      * @param amount          the amount
      * @param trackedResource the tracked resource, can be null
      * @return this builder
      */
-    <T> GridViewBuilder withResource(T resource, long amount, @Nullable TrackedResource trackedResource);
+    GridViewBuilder withResource(ResourceKey resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @return a {@link GridView} with the specified resources

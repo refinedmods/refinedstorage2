@@ -9,6 +9,6 @@ import java.util.Iterator;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public interface ExternalStorageProvider<T> extends InsertableStorage<T>, ExtractableStorage<T> {
-    Iterator<ResourceAmount<T>> iterator();
+public interface ExternalStorageProvider extends InsertableStorage, ExtractableStorage {
+    Iterator<ResourceAmount> iterator();
 }

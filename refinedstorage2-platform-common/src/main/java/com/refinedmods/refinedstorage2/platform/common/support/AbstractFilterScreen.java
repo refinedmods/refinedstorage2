@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> extends AbstractBaseScreen<T> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/generic_filter.png");
+    public static final ResourceLocation TEXTURE = createIdentifier("textures/gui/generic_filter.png");
 
     protected AbstractFilterScreen(final T menu,
                                    final Inventory playerInventory,

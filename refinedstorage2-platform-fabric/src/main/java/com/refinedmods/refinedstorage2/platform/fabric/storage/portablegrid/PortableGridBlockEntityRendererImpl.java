@@ -19,7 +19,7 @@ public class PortableGridBlockEntityRendererImpl<T extends AbstractPortableGridB
         if (!(blockEntity instanceof FabricPortableGridBlockEntity fabricDiskDriveBlockEntity)) {
             return null;
         }
-        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof Disk disk) {
+        if (fabricDiskDriveBlockEntity.getRenderData() instanceof Disk disk) {
             return disk;
         }
         return null;

@@ -154,14 +154,22 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             return;
         }
         getAndValidateAmount().ifPresent(oldAmount -> {
+            final int correctedDelta = correctDelta(oldAmount, delta);
             final N newAmount = amountOperations.changeAmount(
                 oldAmount,
-                delta,
+                correctedDelta,
                 configuration.getMinAmount(),
                 configuration.getMaxAmount()
             );
             amountField.setValue(amountOperations.format(newAmount));
         });
+    }
+
+    private int correctDelta(final N oldAmount, final int delta) {
+        if (oldAmount.intValue() == 1 && delta > 0) {
+            return delta - 1;
+        }
+        return delta;
     }
 
     @Override

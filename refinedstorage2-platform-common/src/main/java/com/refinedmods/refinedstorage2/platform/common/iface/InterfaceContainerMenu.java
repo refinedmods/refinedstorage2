@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.containermenu.Abs
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlot;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlotType;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ServerProperty;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -81,7 +82,8 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu {
             index,
             createTranslation("gui", "interface.filter_help"),
             x,
-            EXPORT_CONFIG_SLOT_Y
+            EXPORT_CONFIG_SLOT_Y,
+            ResourceSlotType.FILTER_WITH_AMOUNT
         );
     }
 
@@ -97,7 +99,8 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu {
             index,
             Component.empty(),
             x,
-            EXPORT_OUTPUT_SLOT_Y
+            EXPORT_OUTPUT_SLOT_Y,
+            ResourceSlotType.CONTAINER
         );
     }
 

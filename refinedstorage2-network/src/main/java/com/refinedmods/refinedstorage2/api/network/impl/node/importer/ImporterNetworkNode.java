@@ -1,38 +1,44 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.importer;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
 
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Filter filter = new Filter();
     private final Actor actor = new NetworkNodeActor(this);
-    @Nullable
-    private ImporterTransferStrategy transferStrategy;
+    private final List<ImporterTransferStrategy> transferStrategies = new ArrayList<>();
 
     public ImporterNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
-    public void setTransferStrategy(@Nullable final ImporterTransferStrategy transferStrategy) {
-        this.transferStrategy = transferStrategy;
+    public void setTransferStrategies(final List<ImporterTransferStrategy> transferStrategies) {
+        this.transferStrategies.clear();
+        this.transferStrategies.addAll(transferStrategies);
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || transferStrategy == null) {
+        if (network == null || !isActive()) {
             return;
         }
-        transferStrategy.transfer(filter, actor, network);
+        for (final ImporterTransferStrategy transferStrategy : transferStrategies) {
+            if (transferStrategy.transfer(filter, actor, network)) {
+                return;
+            }
+        }
     }
 
     public FilterMode getFilterMode() {
@@ -43,12 +49,12 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
         filter.setMode(mode);
     }
 
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
+    public void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         filter.setNormalizer(normalizer);
     }
 
-    public void setFilterTemplates(final Set<Object> templates) {
-        filter.setTemplates(templates);
+    public void setFilters(final Set<ResourceKey> filters) {
+        filter.setFilters(filters);
     }
 
     public void setEnergyUsage(final long energyUsage) {

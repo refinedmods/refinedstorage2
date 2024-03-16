@@ -12,20 +12,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InMemoryStorageImplTest {
-    private final Storage<String> sut = new InMemoryStorageImpl<>();
+    private final Storage sut = new InMemoryStorageImpl();
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void shouldInsertResource(final Action action) {
         // Act
-        final long inserted = sut.insert("A", 64, action, EmptyActor.INSTANCE);
+        final long inserted = sut.insert(TestResource.A, 64, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(64);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 64)
+                new ResourceAmount(TestResource.A, 64)
             );
             assertThat(sut.getStored()).isEqualTo(64);
         } else {
@@ -38,8 +38,8 @@ class InMemoryStorageImplTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotInsertInvalidResourceOrAmount() {
         // Act
-        final Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptyActor.INSTANCE);
-        final Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action1 = () -> sut.insert(TestResource.A, 0, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action2 = () -> sut.insert(TestResource.A, -1, Action.EXECUTE, EmptyActor.INSTANCE);
         final Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
@@ -51,7 +51,7 @@ class InMemoryStorageImplTest {
     @Test
     void shouldNotExtractNonexistentResource() {
         // Act
-        final long extracted = sut.extract("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(TestResource.A, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -62,22 +62,22 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldExtractResourcePartly(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 2, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(TestResource.A, 2, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(2);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 30)
+                new ResourceAmount(TestResource.A, 30)
             );
             assertThat(sut.getStored()).isEqualTo(30);
         } else {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 32)
+                new ResourceAmount(TestResource.A, 32)
             );
             assertThat(sut.getStored()).isEqualTo(32);
         }
@@ -87,10 +87,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldExtractResourceCompletely(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 32, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(TestResource.A, 32, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -100,7 +100,7 @@ class InMemoryStorageImplTest {
             assertThat(sut.getStored()).isZero();
         } else {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 32)
+                new ResourceAmount(TestResource.A, 32)
             );
             assertThat(sut.getStored()).isEqualTo(32);
         }
@@ -110,10 +110,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldNotExtractMoreThanIsAvailable(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 33, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(TestResource.A, 33, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -123,7 +123,7 @@ class InMemoryStorageImplTest {
             assertThat(sut.getStored()).isZero();
         } else {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 32)
+                new ResourceAmount(TestResource.A, 32)
             );
             assertThat(sut.getStored()).isEqualTo(32);
         }
@@ -133,8 +133,8 @@ class InMemoryStorageImplTest {
     @Test
     void shouldNotExtractInvalidResourceOrAmount() {
         // Act
-        final Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE, EmptyActor.INSTANCE);
-        final Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action1 = () -> sut.extract(TestResource.A, 0, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action2 = () -> sut.extract(TestResource.A, -1, Action.EXECUTE, EmptyActor.INSTANCE);
         final Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert

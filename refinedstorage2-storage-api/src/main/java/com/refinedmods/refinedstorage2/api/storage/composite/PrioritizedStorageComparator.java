@@ -4,10 +4,10 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.Comparator;
 
-class PrioritizedStorageComparator implements Comparator<Storage<?>> {
-    static final Comparator<Storage<?>> INSTANCE = new PrioritizedStorageComparator();
+class PrioritizedStorageComparator implements Comparator<Storage> {
+    static final Comparator<Storage> INSTANCE = new PrioritizedStorageComparator();
 
-    private static int getPriority(final Storage<?> storage) {
+    private static int getPriority(final Storage storage) {
         if (storage instanceof Priority priority) {
             return priority.getPriority();
         }
@@ -15,7 +15,7 @@ class PrioritizedStorageComparator implements Comparator<Storage<?>> {
     }
 
     @Override
-    public int compare(final Storage<?> a, final Storage<?> b) {
+    public int compare(final Storage a, final Storage b) {
         return Integer.compare(getPriority(b), getPriority(a));
     }
 }

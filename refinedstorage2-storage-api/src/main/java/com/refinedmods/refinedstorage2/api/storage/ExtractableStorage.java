@@ -1,16 +1,15 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 
 import org.apiguardian.api.API;
 
 /**
  * Represents a storage that can be extracted from.
- *
- * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface ExtractableStorage<T> {
+public interface ExtractableStorage {
     /**
      * Extracts a resource from a storage.
      *
@@ -20,5 +19,5 @@ public interface ExtractableStorage<T> {
      * @param actor    the source
      * @return the amount extracted
      */
-    long extract(T resource, long amount, Action action, Actor actor);
+    long extract(ResourceKey resource, long amount, Action action, Actor actor);
 }

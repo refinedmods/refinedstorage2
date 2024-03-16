@@ -3,12 +3,11 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.grid.view.FabricFluidGridResourceFactory;
@@ -160,7 +159,8 @@ public final class PlatformImpl extends AbstractPlatform {
             }
             return Optional.of(new ContainedFluid(
                 interceptingStorage.getStack(),
-                new ResourceAmount<>(ofFluidVariant(extracted.resource()), extracted.amount())
+                ofFluidVariant(extracted.resource()),
+                extracted.amount()
             ));
         }
     }

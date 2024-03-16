@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.recipemod.jei;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 
 import java.util.Optional;
@@ -32,11 +32,11 @@ class ResourceGuiContainerHandler implements IGuiContainerHandler<AbstractBaseSc
         return convertToIngredient(baseScreen.getHoveredResource()).flatMap(this::convertToClickableIngredient);
     }
 
-    public Optional<Object> convertToIngredient(@Nullable final ResourceTemplate<?> resourceTemplate) {
-        if (resourceTemplate == null) {
+    public Optional<Object> convertToIngredient(@Nullable final PlatformResourceKey resource) {
+        if (resource == null) {
             return Optional.empty();
         }
-        return converter.convertToIngredient(resourceTemplate);
+        return converter.convertToIngredient(resource);
     }
 
     private Optional<IClickableIngredient<?>> convertToClickableIngredient(final Object ingredient) {

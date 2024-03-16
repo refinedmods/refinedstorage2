@@ -14,15 +14,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class WirelessGridItem extends AbstractNetworkBoundEnergyItem {
-    private final boolean creative;
-
-    public WirelessGridItem(final boolean creative) {
+    public WirelessGridItem() {
         super(
             new Item.Properties().stacksTo(1),
             PlatformApi.INSTANCE.getEnergyItemHelper(),
             PlatformApi.INSTANCE.getNetworkBoundItemHelper()
         );
-        this.creative = creative;
     }
 
     public EnergyStorage createEnergyStorage(final ItemStack stack) {

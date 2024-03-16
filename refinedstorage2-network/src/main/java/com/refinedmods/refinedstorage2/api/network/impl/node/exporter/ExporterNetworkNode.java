@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.task.Task;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.ArrayList;
@@ -43,9 +44,9 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         taskExecutor.execute(tasks, context);
     }
 
-    public void setFilterTemplates(final List<Object> templates) {
+    public void setFilters(final List<ResourceKey> filters) {
         tasks.clear();
-        tasks.addAll(templates.stream().map(TaskImpl::new).toList());
+        tasks.addAll(filters.stream().map(TaskImpl::new).toList());
     }
 
     public void setEnergyUsage(final long energyUsage) {
@@ -61,10 +62,10 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     }
 
     class TaskImpl implements Task<TaskContext> {
-        private final Object template;
+        private final ResourceKey filter;
 
-        TaskImpl(final Object template) {
-            this.template = template;
+        TaskImpl(final ResourceKey filter) {
+            this.filter = filter;
         }
 
         @Override
@@ -72,7 +73,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
             if (transferStrategy == null) {
                 return false;
             }
-            return transferStrategy.transfer(template, context.actor, context.network);
+            return transferStrategy.transfer(filter, context.actor, context.network);
         }
     }
 }

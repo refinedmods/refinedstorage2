@@ -26,9 +26,9 @@ class StateTrackedStorageTest {
     void testStates(final long amount, final StorageState expectedState) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        underlyingStorage.insert("A", amount, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        underlyingStorage.insert(TestResource.A, amount, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
         final StorageState state = sut.getState();
@@ -51,9 +51,9 @@ class StateTrackedStorageTest {
     void shouldSetInitialState() {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new InMemoryStorageImpl<>();
-        underlyingStorage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new InMemoryStorageImpl();
+        underlyingStorage.insert(TestResource.A, 75, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
         final StorageState state = sut.getState();
@@ -62,7 +62,7 @@ class StateTrackedStorageTest {
         verify(listener, never()).onStorageStateChanged();
         assertThat(state).isEqualTo(StorageState.NORMAL);
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 75)
+            new ResourceAmount(TestResource.A, 75)
         );
         assertThat(sut.getStored()).isEqualTo(75);
     }
@@ -72,9 +72,9 @@ class StateTrackedStorageTest {
     void shouldSetInitialStateForLimitedStorage() {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        underlyingStorage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        underlyingStorage.insert(TestResource.A, 75, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
         final StorageState state = sut.getState();
@@ -87,17 +87,17 @@ class StateTrackedStorageTest {
     @Test
     void shouldUseStorageTracking() {
         // Arrange
-        final Storage<String> underlyingStorage = new TrackedStorageImpl<>(
-            new LimitedStorageImpl<>(100),
+        final Storage underlyingStorage = new TrackedStorageImpl(
+            new LimitedStorageImpl(100),
             () -> 0L
         );
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, null);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, null);
 
         // Act
-        sut.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 75, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        assertThat(sut.findTrackedResourceByActorType("A", EmptyActor.class)).isNotEmpty();
+        assertThat(sut.findTrackedResourceByActorType(TestResource.A, EmptyActor.class)).isNotEmpty();
     }
 
     @ParameterizedTest
@@ -105,19 +105,19 @@ class StateTrackedStorageTest {
     void shouldCallStateChangeListenerWhenExtracting(final Action action) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        underlyingStorage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        underlyingStorage.insert(TestResource.A, 75, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
-        final long extracted = sut.extract("A", 1, action, EmptyActor.INSTANCE);
-        sut.extract("A", 1, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(TestResource.A, 1, action, EmptyActor.INSTANCE);
+        sut.extract(TestResource.A, 1, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(1);
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
         verify(listener, expectedTimes).onStorageStateChanged();
-        assertThat(sut.findTrackedResourceByActorType("A", EmptyActor.class)).isEmpty();
+        assertThat(sut.findTrackedResourceByActorType(TestResource.A, EmptyActor.class)).isEmpty();
     }
 
     @ParameterizedTest
@@ -125,13 +125,13 @@ class StateTrackedStorageTest {
     void shouldCallStateChangeListenerWhenInserting(final Action action) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        underlyingStorage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        underlyingStorage.insert(TestResource.A, 74, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
-        final long inserted = sut.insert("A", 1, action, EmptyActor.INSTANCE);
-        sut.insert("A", 1, action, EmptyActor.INSTANCE);
+        final long inserted = sut.insert(TestResource.A, 1, action, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 1, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(1);
@@ -144,12 +144,12 @@ class StateTrackedStorageTest {
     void shouldNotCallStateChangeListenerWhenUnnecessaryOnExtracting(final Action action) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        underlyingStorage.insert("A", 76, Action.EXECUTE, EmptyActor.INSTANCE);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        underlyingStorage.insert(TestResource.A, 76, Action.EXECUTE, EmptyActor.INSTANCE);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
-        sut.extract("A", 1, action, EmptyActor.INSTANCE);
+        sut.extract(TestResource.A, 1, action, EmptyActor.INSTANCE);
 
         // Assert
         verify(listener, never()).onStorageStateChanged();
@@ -160,11 +160,11 @@ class StateTrackedStorageTest {
     void shouldNotCallStateChangeListenerWhenUnnecessaryOnInserting(final Action action) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        final Storage<String> underlyingStorage = new LimitedStorageImpl<>(100);
-        final StateTrackedStorage<String> sut = new StateTrackedStorage<>(underlyingStorage, listener);
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, listener);
 
         // Act
-        sut.insert("A", 74, action, EmptyActor.INSTANCE);
+        sut.insert(TestResource.A, 74, action, EmptyActor.INSTANCE);
 
         // Assert
         verify(listener, never()).onStorageStateChanged();

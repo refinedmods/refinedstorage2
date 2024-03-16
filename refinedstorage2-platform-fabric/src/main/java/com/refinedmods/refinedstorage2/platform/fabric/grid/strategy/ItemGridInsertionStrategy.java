@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.grid.operations.GridOperations;
 import com.refinedmods.refinedstorage2.platform.api.grid.Grid;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -25,14 +25,14 @@ import static com.refinedmods.refinedstorage2.platform.fabric.support.resource.V
 
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
-    private final GridOperations<ItemResource> gridOperations;
+    private final GridOperations gridOperations;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
                                      final Grid grid) {
         this.containerMenu = containerMenu;
-        this.gridOperations = grid.createOperations(StorageChannelTypes.ITEM, new PlayerActor(player));
+        this.gridOperations = grid.createOperations(ResourceTypes.ITEM, new PlayerActor(player));
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }
 
@@ -44,8 +44,11 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridOperations.insert(itemResource, insertMode, (resource, amount, action, source) -> {
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 final long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -67,8 +70,11 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
         }
         final ItemResource itemResource = ofItemVariant(itemVariantInSlot);
         gridOperations.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
+            if (!(resource instanceof ItemResource itemResource2)) {
+                return 0;
+            }
             try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
+                final ItemVariant itemVariant = toItemVariant(itemResource2);
                 final long extracted = storage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();

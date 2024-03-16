@@ -23,11 +23,11 @@ public class FluidGridInsertionHint implements GridInsertionHint {
                 graphics.pose(),
                 x,
                 y,
-                result.fluid().getResource()
+                result.fluid()
             ),
-            result.fluid().getAmount() == Platform.INSTANCE.getBucketAmount()
+            result.amount() == Platform.INSTANCE.getBucketAmount()
                 ? null
-                : FluidResourceRendering.format(result.fluid().getAmount())
+                : FluidResourceRendering.format(result.amount())
         );
     }
 }

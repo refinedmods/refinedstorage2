@@ -27,8 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractStorageBlockBlockEntity<T>
-    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
+abstract class AbstractStorageBlockBlockEntity
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode>
     implements ExtendedMenuProvider, ItemTransferableStorageBlockEntity {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 
@@ -43,13 +43,13 @@ abstract class AbstractStorageBlockBlockEntity<T>
     protected AbstractStorageBlockBlockEntity(final BlockEntityType<?> type,
                                               final BlockPos pos,
                                               final BlockState state,
-                                              final StorageNetworkNode<T> node,
-                                              final ResourceFactory<T> resourceFactory) {
+                                              final StorageNetworkNode node,
+                                              final ResourceFactory resourceFactory) {
         super(type, pos, state, node);
-        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(resourceFactory),
             this::setChanged,
-            templates -> getNode().setFilterTemplates(templates)
+            filters -> getNode().setFilters(filters)
         );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
@@ -61,10 +61,9 @@ abstract class AbstractStorageBlockBlockEntity<T>
         getNode().setNormalizer(filter.createNormalizer());
     }
 
-    protected abstract Storage<T> createStorage(Runnable listener);
+    protected abstract Storage createStorage(Runnable listener);
 
     @Override
-    @SuppressWarnings("unchecked")
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (level.isClientSide()) {
@@ -79,13 +78,13 @@ abstract class AbstractStorageBlockBlockEntity<T>
             //   (#setLevel(Level) -> #modifyStorageAfterAlreadyInitialized(UUID)).
             // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
-            final Storage<T> storage = createStorage(storageRepository::markAsChanged);
+            final Storage storage = createStorage(storageRepository::markAsChanged);
             storageRepository.set(storageId, storage);
             getNode().setStorage(storage);
         } else {
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
             storageRepository.get(storageId).ifPresentOrElse(
-                storage -> getNode().setStorage((Storage<T>) storage),
+                storage -> getNode().setStorage(storage),
                 () -> LOGGER.warn("Storage {} could not be resolved", storageId)
             );
         }
@@ -126,7 +125,6 @@ abstract class AbstractStorageBlockBlockEntity<T>
         filter.load(tag);
     }
 
-    @SuppressWarnings("unchecked")
     private void cleanupUnneededInitialStorageAndReinitialize(final UUID actualStorageId) {
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
@@ -138,7 +136,7 @@ abstract class AbstractStorageBlockBlockEntity<T>
             () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
         storageRepository.get(actualStorageId).ifPresentOrElse(
-            storage -> getNode().setStorage((Storage<T>) storage),
+            storage -> getNode().setStorage(storage),
             () -> LOGGER.warn("Actual storage ID {} could not be resolved!", actualStorageId)
         );
     }

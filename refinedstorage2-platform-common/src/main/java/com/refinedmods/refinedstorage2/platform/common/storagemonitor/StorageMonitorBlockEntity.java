@@ -4,12 +4,11 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -18,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.AbstractDirection
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import javax.annotation.Nullable;
@@ -86,24 +86,23 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
     }
 
     private long getAmount() {
-        final ResourceAmountTemplate<?> template = filter.getFilterContainer().get(0);
-        if (template == null) {
+        final ResourceKey configuredResource = getConfiguredResource();
+        if (configuredResource == null) {
             return 0;
         }
         final Network network = getNode().getNetwork();
         if (network == null) {
             return 0;
         }
-        return getAmount(network, template);
+        return getAmount(network, configuredResource);
     }
 
-    private <T> long getAmount(final Network network, final ResourceAmountTemplate<T> template) {
-        final StorageChannel<T> storageChannel = network.getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(template.getStorageChannelType());
-        if (!filter.isFuzzyMode() || !(storageChannel instanceof FuzzyStorageChannel<T> fuzzyStorageChannel)) {
-            return storageChannel.get(template.getResource()).map(ResourceAmount::getAmount).orElse(0L);
+    private long getAmount(final Network network, final ResourceKey configuredResource) {
+        final StorageChannel storageChannel = network.getComponent(StorageNetworkComponent.class);
+        if (!filter.isFuzzyMode() || !(storageChannel instanceof FuzzyStorageChannel fuzzyStorageChannel)) {
+            return storageChannel.get(configuredResource).map(ResourceAmount::getAmount).orElse(0L);
         }
-        return fuzzyStorageChannel.getFuzzy(template.getResource()).stream().mapToLong(ResourceAmount::getAmount).sum();
+        return fuzzyStorageChannel.getFuzzy(configuredResource).stream().mapToLong(ResourceAmount::getAmount).sum();
     }
 
     public void extract(final Player player) {
@@ -114,21 +113,21 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
         if (network == null) {
             return;
         }
-        final ResourceAmountTemplate<?> template = getFilteredResource();
-        if (template == null) {
+        final ResourceKey configuredResource = getConfiguredResource();
+        if (configuredResource == null) {
             return;
         }
-        extract(level, player, template.getResource(), network);
+        doExtract(level, player, configuredResource, network);
     }
 
-    private <T> void extract(
+    private void doExtract(
         final Level level,
         final Player player,
-        final T template,
+        final ResourceKey configuredResource,
         final Network network
     ) {
         final boolean success = PlatformApi.INSTANCE.getStorageMonitorExtractionStrategy().extract(
-            template,
+            configuredResource,
             !player.isShiftKeyDown(),
             player,
             new PlayerActor(player),
@@ -159,26 +158,26 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
         if (network == null) {
             return false;
         }
-        final ResourceAmountTemplate<?> template = getFilteredResource();
-        if (template == null) {
+        final ResourceKey configuredResource = getConfiguredResource();
+        if (configuredResource == null) {
             return false;
         }
         final ItemStack heldStack = player.getItemInHand(hand);
         if (heldStack.isEmpty()) {
             return doInsertAll(player);
         }
-        return doInsert(player, hand, heldStack, template.getResource(), network);
+        return doInsert(player, hand, heldStack, configuredResource, network);
     }
 
-    private <T> boolean doInsert(
+    private boolean doInsert(
         final Player player,
         final InteractionHand hand,
         final ItemStack heldStack,
-        final T template,
+        final ResourceKey configuredResource,
         final Network network
     ) {
         return PlatformApi.INSTANCE.getStorageMonitorInsertionStrategy().insert(
-            template,
+            configuredResource,
             heldStack,
             new PlayerActor(player),
             network
@@ -200,22 +199,22 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
         if (network == null) {
             return false;
         }
-        final ResourceAmountTemplate<?> template = getFilteredResource();
-        if (template == null) {
+        final ResourceKey configuredResource = getConfiguredResource();
+        if (configuredResource == null) {
             return false;
         }
         boolean success = false;
         for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-            success |= tryInsertSlot(player, lastInsertedItem, i, template.getResource(), network);
+            success |= tryInsertSlot(player, lastInsertedItem, i, configuredResource, network);
         }
         return success;
     }
 
-    private <T> boolean tryInsertSlot(
+    private boolean tryInsertSlot(
         final Player player,
         final ItemResource lastInsertedItem,
         final int inventorySlotIndex,
-        final T template,
+        final ResourceKey configuredResource,
         final Network network
     ) {
         final ItemStack slot = player.getInventory().getItem(inventorySlotIndex);
@@ -227,7 +226,7 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
             return false;
         }
         return PlatformApi.INSTANCE.getStorageMonitorInsertionStrategy().insert(
-            template,
+            configuredResource,
             slot,
             new PlayerActor(player),
             network
@@ -246,8 +245,8 @@ public class StorageMonitorBlockEntity extends AbstractRedstoneModeNetworkNodeCo
     }
 
     @Nullable
-    public ResourceAmountTemplate<?> getFilteredResource() {
-        return filter.getFilterContainer().get(0);
+    public ResourceKey getConfiguredResource() {
+        return filter.getFilterContainer().getResource(0);
     }
 
     public long getCurrentAmount() {

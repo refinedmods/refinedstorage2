@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.support.resource;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +29,7 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public FluidStack getFluidInTank(final int tank) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(tank);
+        final ResourceAmount resourceAmount = container.get(tank);
         if (resourceAmount == null || !(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
             return FluidStack.EMPTY;
         }
@@ -37,9 +38,9 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public int getTankCapacity(final int tank) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(tank);
-        if (resourceAmount == null || resourceAmount.getResource() instanceof FluidResource) {
-            return (int) StorageChannelTypes.FLUID.getInterfaceExportLimit();
+        final ResourceKey resource = container.getResource(tank);
+        if (resource == null || resource instanceof FluidResource) {
+            return (int) ResourceTypes.FLUID.getInterfaceExportLimit();
         }
         return 0;
     }
@@ -51,12 +52,7 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public int fill(final FluidStack resource, final FluidAction action) {
-        return (int) container.insert(
-            StorageChannelTypes.FLUID,
-            ofFluidStack(resource),
-            resource.getAmount(),
-            toAction(action)
-        );
+        return (int) container.insert(ofFluidStack(resource), resource.getAmount(), toAction(action));
     }
 
     @Override
@@ -85,8 +81,8 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
     @Nullable
     private FluidResource findExtractableFluidResource() {
         for (int i = 0; i < container.size(); ++i) {
-            final ResourceAmountTemplate<?> resourceAmount = container.get(i);
-            if (resourceAmount == null || !(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
+            final ResourceKey resource = container.getResource(i);
+            if (!(resource instanceof FluidResource fluidResource)) {
                 continue;
             }
             return fluidResource;

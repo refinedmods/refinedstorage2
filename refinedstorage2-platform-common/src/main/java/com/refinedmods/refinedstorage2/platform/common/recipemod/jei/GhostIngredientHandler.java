@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.recipemod.jei;
 
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.AbstractResourceContainerMenu;
@@ -40,7 +39,7 @@ class GhostIngredientHandler implements IGhostIngredientHandler<AbstractBaseScre
         final List<Target<I>> targets = new ArrayList<>();
         ingredientConverter.convertToResource(ingredient).ifPresent(resource -> {
             for (final ResourceSlot slot : menu.getResourceSlots()) {
-                if (slot.isFilter() && slot.isValid(resource.resource())) {
+                if (slot.isFilter() && slot.isValid(resource)) {
                     final Rect2i bounds = getBounds(screen, slot);
                     targets.add(new TargetImpl<>(bounds, slot.index));
                 }
@@ -77,10 +76,9 @@ class GhostIngredientHandler implements IGhostIngredientHandler<AbstractBaseScre
             ingredientConverter.convertToResource(ingredient).ifPresent(this::accept);
         }
 
-        private <T> void accept(final ResourceTemplate<T> resource) {
+        private void accept(final PlatformResourceKey resource) {
             Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotChange(
-                (PlatformStorageChannelType<T>) resource.storageChannelType(),
-                resource.resource(),
+                resource,
                 slotIndex
             );
         }

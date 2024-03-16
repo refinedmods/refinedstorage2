@@ -21,9 +21,9 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.5")
 public interface StorageContainerItemHelper {
-    <T> Optional<Storage<T>> resolve(StorageRepository storageRepository, ItemStack stack);
+    Optional<Storage> resolve(StorageRepository storageRepository, ItemStack stack);
 
-    void set(StorageRepository storageRepository, ItemStack stack, Storage<?> storage);
+    void set(StorageRepository storageRepository, ItemStack stack, Storage storage);
 
     Optional<StorageInfo> getInfo(StorageRepository storageRepository, ItemStack stack);
 

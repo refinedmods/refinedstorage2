@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.StorageConfiguration;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
@@ -16,6 +16,7 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
     private static final String TAG_ACCESS_MODE = "am";
+    private static final String TAG_VOID_EXCESS = "ve";
 
     private final StorageConfiguration config;
     private final FilterWithFuzzyMode filter;
@@ -45,12 +46,16 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
         if (tag.contains(TAG_ACCESS_MODE)) {
             config.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
         }
+        if (tag.contains(TAG_VOID_EXCESS)) {
+            config.setVoidExcess(tag.getBoolean(TAG_VOID_EXCESS));
+        }
     }
 
     public void save(final CompoundTag tag) {
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(config.getFilterMode()));
         tag.putInt(TAG_PRIORITY, config.getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(config.getAccessMode()));
+        tag.putBoolean(TAG_VOID_EXCESS, config.isVoidExcess());
     }
 
     @Override
@@ -94,6 +99,17 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
     @Override
     public void setAccessMode(final AccessMode accessMode) {
         config.setAccessMode(accessMode);
+        listener.run();
+    }
+
+    @Override
+    public boolean isVoidExcess() {
+        return config.isVoidExcess();
+    }
+
+    @Override
+    public void setVoidExcess(final boolean voidExcess) {
+        config.setVoidExcess(voidExcess);
         listener.run();
     }
 

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support.network;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,6 +28,7 @@ public abstract class AbstractLevelInteractingNetworkNodeContainerBlockEntity<T 
 
     // used to handle rotations
     @Override
+    @SuppressWarnings("deprecation")
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
         if (!(level instanceof ServerLevel serverLevel)) {

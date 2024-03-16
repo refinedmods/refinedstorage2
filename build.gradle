@@ -5,13 +5,13 @@ subprojects {
 
     ext {
         apis = [
-            ':refinedstorage2-core-api',
-            ':refinedstorage2-resource-api',
-            ':refinedstorage2-storage-api',
-            ':refinedstorage2-network-api',
-            ':refinedstorage2-network',
-            ':refinedstorage2-grid-api',
-            ':refinedstorage2-query-parser'
+                ':refinedstorage2-core-api',
+                ':refinedstorage2-resource-api',
+                ':refinedstorage2-storage-api',
+                ':refinedstorage2-network-api',
+                ':refinedstorage2-network',
+                ':refinedstorage2-grid-api',
+                ':refinedstorage2-query-parser'
         ]
         compileApis = [':refinedstorage2-platform-api']
     }
@@ -22,7 +22,6 @@ enableSonarQube("refinedmods_refinedstorage2")
 sonarqube {
     properties {
         property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*,refinedstorage2-platform-api/**/*"
-        // TODO: REI code is duplicated as reusing it in a common module isn't possible/too difficult. Fix this.
         property "sonar.cpd.exclusions", "refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/recipemod/rei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/recipemod/rei/*"
     }
 }

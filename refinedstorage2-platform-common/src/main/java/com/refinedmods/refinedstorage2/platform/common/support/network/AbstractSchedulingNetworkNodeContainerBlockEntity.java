@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.support.network;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.task.TaskExecutor;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.support.SchedulingMode;
 import com.refinedmods.refinedstorage2.platform.common.support.SchedulingModeType;
@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.resource.Resource
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -36,12 +35,10 @@ public abstract class AbstractSchedulingNetworkNodeContainerBlockEntity<T extend
     ) {
         super(type, pos, state, node, destination);
         this.schedulingMode = new SchedulingMode<>(this::setChanged, this::setTaskExecutor);
-        this.filter = FilterWithFuzzyMode.createAndListenForTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            templates -> setFilterTemplates(
-                templates.stream().map(ResourceTemplate::resource).collect(Collectors.toList())
-            )
+            this::setFilters
         );
     }
 
@@ -85,5 +82,5 @@ public abstract class AbstractSchedulingNetworkNodeContainerBlockEntity<T extend
 
     protected abstract void setTaskExecutor(TaskExecutor<C> taskExecutor);
 
-    protected abstract void setFilterTemplates(List<Object> templates);
+    protected abstract void setFilters(List<ResourceKey> filters);
 }

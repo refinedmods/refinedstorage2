@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractNetworkNode;
 
 public class SimpleNetworkNode extends AbstractNetworkNode {
     private long energyUsage;

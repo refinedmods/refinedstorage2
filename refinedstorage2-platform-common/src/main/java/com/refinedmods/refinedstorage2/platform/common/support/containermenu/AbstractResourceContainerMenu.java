@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.support.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseContainerMenu;
 
@@ -21,12 +21,12 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
     @Nullable
     private final Player player;
 
-    protected AbstractResourceContainerMenu(final MenuType<?> type, final int syncId, final Player player) {
+    protected AbstractResourceContainerMenu(@Nullable final MenuType<?> type, final int syncId, final Player player) {
         super(type, syncId);
         this.player = player;
     }
 
-    protected AbstractResourceContainerMenu(final MenuType<?> type, final int syncId) {
+    protected AbstractResourceContainerMenu(@Nullable final MenuType<?> type, final int syncId) {
         super(type, syncId);
         this.player = null;
     }
@@ -47,16 +47,12 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
         return Optional.empty();
     }
 
-    public <T> void handleResourceSlotUpdate(final int slotIndex,
-                                             @Nullable final ResourceAmountTemplate<T> resourceAmount) {
+    public void handleResourceSlotUpdate(final int slotIndex, @Nullable final ResourceAmount resourceAmount) {
         getResourceSlot(slotIndex).ifPresent(slot -> slot.change(resourceAmount));
     }
 
-
-    public <T> void handleResourceFilterSlotUpdate(final int slotIndex,
-                                                   final PlatformStorageChannelType<T> storageChannelType,
-                                                   final T resource) {
-        getResourceSlot(slotIndex).ifPresent(slot -> slot.setFilter(storageChannelType, resource));
+    public void handleResourceFilterSlotUpdate(final int slotIndex, final PlatformResourceKey resource) {
+        getResourceSlot(slotIndex).ifPresent(slot -> slot.setFilter(resource));
     }
 
     public void handleResourceSlotChange(final int slotIndex, final boolean tryAlternatives) {

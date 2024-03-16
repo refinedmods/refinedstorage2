@@ -3,12 +3,10 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.detector;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 
@@ -21,6 +19,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static com.refinedmods.refinedstorage2.network.test.TestResource.A;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -34,15 +33,15 @@ class DetectorNetworkNodeTest {
     DetectorNetworkNode sut;
 
     @BeforeEach
-    void setUp(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
-        storageChannel.addSource(new InMemoryStorageImpl<>());
+    void setUp(@InjectNetworkStorageChannel final StorageChannel storageChannel) {
+        storageChannel.addSource(new InMemoryStorageImpl());
         sut.setAmountStrategy(new DetectorAmountStrategyImpl());
     }
 
     @Test
     void testWithoutNetwork() {
         // Act
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setConfiguredResource(A);
         sut.setNetwork(null);
 
         // Assert
@@ -55,7 +54,7 @@ class DetectorNetworkNodeTest {
     @Test
     void testWithoutActiveness() {
         // Act
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setConfiguredResource(A);
         sut.setActive(false);
 
         // Assert
@@ -66,7 +65,7 @@ class DetectorNetworkNodeTest {
     }
 
     @Test
-    void testWithoutTemplate() {
+    void testWithoutConfiguredResource() {
         // Assert
         assertThat(sut.isActivated()).isFalse();
         assertThat(sut.getAmount()).isZero();
@@ -76,9 +75,9 @@ class DetectorNetworkNodeTest {
 
     @ParameterizedTest
     @EnumSource(DetectorMode.class)
-    void testWithTemplateButWithoutResourceInNetwork(final DetectorMode mode) {
+    void testWithConfiguredResourceButWithoutResourceInNetwork(final DetectorMode mode) {
         // Arrange
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setConfiguredResource(A);
         sut.setMode(mode);
 
         // Act
@@ -119,14 +118,14 @@ class DetectorNetworkNodeTest {
                    final long comparisonAmount,
                    final long amountInNetwork,
                    final boolean expectedActivated,
-                   @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+                   @InjectNetworkStorageChannel final StorageChannel storageChannel) {
         // Arrange
-        sut.setFilterTemplate(new ResourceTemplate<>("A", NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        sut.setConfiguredResource(A);
         sut.setMode(mode);
         sut.setAmount(comparisonAmount);
 
         if (amountInNetwork > 0) {
-            storageChannel.insert("A", amountInNetwork, Action.EXECUTE, EmptyActor.INSTANCE);
+            storageChannel.insert(A, amountInNetwork, Action.EXECUTE, EmptyActor.INSTANCE);
         }
 
         // Act

@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.fabric.storage.FabricStorageExtractableStorage;
@@ -22,16 +23,16 @@ import net.minecraft.server.level.ServerLevel;
 import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
-class FabricStorageImporterSource<T, P> implements ImporterSource<T> {
-    private final BlockApiCache<Storage<P>, Direction> cache;
-    private final Function<P, T> fromPlatformMapper;
-    private final FabricStorageInsertableStorage<T, P> insertTarget;
-    private final FabricStorageExtractableStorage<T, P> extractTarget;
+class FabricStorageImporterSource<T> implements ImporterSource {
+    private final BlockApiCache<Storage<T>, Direction> cache;
+    private final Function<T, ResourceKey> fromPlatformMapper;
+    private final FabricStorageInsertableStorage<T> insertTarget;
+    private final FabricStorageExtractableStorage<T> extractTarget;
     private final Direction direction;
 
-    FabricStorageImporterSource(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                final Function<P, T> fromPlatformMapper,
-                                final Function<T, P> toPlatformMapper,
+    FabricStorageImporterSource(final BlockApiLookup<Storage<T>, Direction> lookup,
+                                final Function<T, ResourceKey> fromPlatformMapper,
+                                final Function<ResourceKey, T> toPlatformMapper,
                                 final ServerLevel serverLevel,
                                 final BlockPos pos,
                                 final Direction direction,
@@ -58,12 +59,12 @@ class FabricStorageImporterSource<T, P> implements ImporterSource<T> {
     }
 
     @Override
-    public Iterator<T> getResources() {
-        final Storage<P> storage = cache.find(direction);
+    public Iterator<ResourceKey> getResources() {
+        final Storage<T> storage = cache.find(direction);
         if (storage == null) {
             return Collections.emptyListIterator();
         }
-        final Iterator<StorageView<P>> iterator = storage.iterator();
+        final Iterator<StorageView<T>> iterator = storage.iterator();
         return transform(
             filter(iterator, storageView -> !storageView.isResourceBlank()),
             storageView -> fromPlatformMapper.apply(storageView.getResource())
@@ -71,12 +72,12 @@ class FabricStorageImporterSource<T, P> implements ImporterSource<T> {
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         return extractTarget.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         return insertTarget.insert(resource, amount, action, actor);
     }
 }

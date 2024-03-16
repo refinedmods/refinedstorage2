@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.A;
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.A_ALTERNATIVE;
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.A_TRANSFORMED;
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.B;
+import static com.refinedmods.refinedstorage2.api.storage.external.ExternalTestResource.B_TRANSFORMED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExternalStorageTest {
@@ -24,11 +29,11 @@ class ExternalStorageTest {
     @Test
     void shouldNotTakeExistingResourcesIntoConsiderationWhenBuildingInitialState() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new TransformingStorage();
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Assert
         assertThat(sut.getAll()).isEmpty();
@@ -40,9 +45,9 @@ class ExternalStorageTest {
     @Test
     void shouldTakeExistingResourcesIntoConsiderationWhenDetectingChanges() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Act
         final boolean hasChanges = sut.detectChanges();
@@ -50,7 +55,7 @@ class ExternalStorageTest {
         // Assert
         assertThat(hasChanges).isTrue();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 10)
+            new ResourceAmount(A_TRANSFORMED, 10)
         );
         assertThat(sut.getStored()).isEqualTo(10);
         assertThat(listener.resources).isEmpty();
@@ -60,17 +65,17 @@ class ExternalStorageTest {
     @Test
     void shouldDetectCompletelyNewResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Act
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
         assertThat(hasChanges).isTrue();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 10)
+            new ResourceAmount(A_TRANSFORMED, 10)
         );
         assertThat(sut.getStored()).isEqualTo(10);
         assertThat(listener.resources).isEmpty();
@@ -80,20 +85,20 @@ class ExternalStorageTest {
     @Test
     void shouldDetectAdditionToExistingResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
-        storage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 1, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
         assertThat(hasChanges).isTrue();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 11)
+            new ResourceAmount(A_TRANSFORMED, 11)
         );
         assertThat(sut.getStored()).isEqualTo(11);
         assertThat(listener.resources).isEmpty();
@@ -104,20 +109,20 @@ class ExternalStorageTest {
     @Test
     void shouldDetectPartialRemovalOfExistingResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
-        storage.extract("A!", 2, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.extract(A_TRANSFORMED, 2, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
         assertThat(hasChanges).isTrue();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 8)
+            new ResourceAmount(A_TRANSFORMED, 8)
         );
         assertThat(sut.getStored()).isEqualTo(8);
         assertThat(listener.resources).isEmpty();
@@ -127,14 +132,14 @@ class ExternalStorageTest {
     @Test
     void shouldDetectCompleteRemovalOfExistingResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
-        storage.extract("A!", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.extract(A_TRANSFORMED, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
@@ -148,21 +153,21 @@ class ExternalStorageTest {
     @Test
     void shouldDetectCompleteRemovalOfExistingResourceAndAdditionOfNewResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
-        storage.extract("A!", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.extract(A_TRANSFORMED, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
         assertThat(hasChanges).isTrue();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("B!", 10)
+            new ResourceAmount(B_TRANSFORMED, 10)
         );
         assertThat(sut.getStored()).isEqualTo(10);
         assertThat(listener.resources).isEmpty();
@@ -172,22 +177,22 @@ class ExternalStorageTest {
     @Test
     void shouldDetectAdditionOfExistingResourceAndAdditionOfNewResource() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 1, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean hasChanges = sut.detectChanges();
 
         // Assert
         assertThat(hasChanges).isTrue();
-        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 20),
-            new ResourceAmount<>("B!", 1)
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A_TRANSFORMED, 20),
+            new ResourceAmount(B_TRANSFORMED, 1)
         );
         assertThat(sut.getStored()).isEqualTo(21);
         assertThat(listener.resources).isEmpty();
@@ -197,14 +202,14 @@ class ExternalStorageTest {
     @Test
     void shouldNotDetectAnyChangesWhenNoChangesAreMade() {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final ExternalStorage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final ExternalStorage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.extract("A!", 5, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.extract("B!", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert(B, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.extract(A_TRANSFORMED, 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.extract(B_TRANSFORMED, 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.detectChanges();
 
         // Act
@@ -213,7 +218,7 @@ class ExternalStorageTest {
         // Assert
         assertThat(hasChanges).isFalse();
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A!", 15)
+            new ResourceAmount(A_TRANSFORMED, 15)
         );
         assertThat(sut.getStored()).isEqualTo(15);
         assertThat(listener.resources).isEmpty();
@@ -224,13 +229,13 @@ class ExternalStorageTest {
     @EnumSource(Action.class)
     void shouldInsertAndDetectChanges(final Action action) {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Act
-        final long insertedA1 = sut.insert("A", 10, action, EmptyActor.INSTANCE);
-        final long insertedA2 = sut.insert("A", 1, action, EmptyActor.INSTANCE);
-        final long insertedB = sut.insert("B", 5, action, EmptyActor.INSTANCE);
+        final long insertedA1 = sut.insert(A, 10, action, EmptyActor.INSTANCE);
+        final long insertedA2 = sut.insert(A, 1, action, EmptyActor.INSTANCE);
+        final long insertedB = sut.insert(B, 5, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(insertedA1).isEqualTo(10);
@@ -238,12 +243,12 @@ class ExternalStorageTest {
         assertThat(insertedB).isEqualTo(5);
 
         if (action == Action.EXECUTE) {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A!", 11),
-                new ResourceAmount<>("B!", 5)
+            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A_TRANSFORMED, 11),
+                new ResourceAmount(B_TRANSFORMED, 5)
             );
             assertThat(sut.getStored()).isEqualTo(16);
-            assertThat(listener.resources).containsExactly("A", "A", "B");
+            assertThat(listener.resources).containsExactly(A, A, B);
             assertThat(listener.actors).containsOnly(EmptyActor.INSTANCE);
         } else {
             assertThat(sut.getAll()).isEmpty();
@@ -257,11 +262,11 @@ class ExternalStorageTest {
     @EnumSource(Action.class)
     void shouldNotCallListenerWhenInsertionFailed(final Action action) {
         // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(0);
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new LimitedStorageImpl(0);
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Act
-        final long extracted = sut.insert("A", 1, action, EmptyActor.INSTANCE);
+        final long extracted = sut.insert(A, 1, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -275,36 +280,36 @@ class ExternalStorageTest {
     @EnumSource(Action.class)
     void shouldPartiallyExtractAndDetectChanges(final Action action) {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
-        sut.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.insert("A2", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new TransformingStorage();
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
+        sut.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(A_ALTERNATIVE, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(B, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         // this will try to extract A!(5) and A2!(5/2)
-        final long extracted = sut.extract("A!", 5, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(A_TRANSFORMED, 5, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(5);
 
         if (action == Action.EXECUTE) {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A!", 5),
-                new ResourceAmount<>("A2!", 8),
-                new ResourceAmount<>("B!", 10)
+            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A_TRANSFORMED, 5),
+                new ResourceAmount(A_ALTERNATIVE, 8),
+                new ResourceAmount(B_TRANSFORMED, 10)
             );
             assertThat(sut.getStored()).isEqualTo(23);
-            assertThat(listener.resources).containsExactly("A", "A2", "B", "A!");
+            assertThat(listener.resources).containsExactly(A, A_ALTERNATIVE, B, A_TRANSFORMED);
             assertThat(listener.actors).containsOnly(EmptyActor.INSTANCE);
         } else {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A!", 10),
-                new ResourceAmount<>("A2!", 10),
-                new ResourceAmount<>("B!", 10)
+            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A_TRANSFORMED, 10),
+                new ResourceAmount(A_ALTERNATIVE, 10),
+                new ResourceAmount(B_TRANSFORMED, 10)
             );
             assertThat(sut.getStored()).isEqualTo(30);
-            assertThat(listener.resources).containsExactly("A", "A2", "B");
+            assertThat(listener.resources).containsExactly(A, A_ALTERNATIVE, B);
             assertThat(listener.actors).containsOnly(EmptyActor.INSTANCE);
         }
     }
@@ -313,35 +318,35 @@ class ExternalStorageTest {
     @EnumSource(Action.class)
     void shouldCompletelyExtractAndDetectChanges(final Action action) {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
-        sut.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.insert("A2", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Storage storage = new TransformingStorage();
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
+        sut.insert(A, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(A_ALTERNATIVE, 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.insert(B, 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         // this will try to extract A!(10) and A2!(10/2)
-        final long extracted = sut.extract("A!", 10, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(A_TRANSFORMED, 10, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(10);
 
         if (action == Action.EXECUTE) {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A2!", 5),
-                new ResourceAmount<>("B!", 10)
+            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A_ALTERNATIVE, 5),
+                new ResourceAmount(B_TRANSFORMED, 10)
             );
             assertThat(sut.getStored()).isEqualTo(15);
-            assertThat(listener.resources).containsExactly("A", "A2", "B", "A!");
+            assertThat(listener.resources).containsExactly(A, A_ALTERNATIVE, B, A_TRANSFORMED);
             assertThat(listener.actors).containsOnly(EmptyActor.INSTANCE);
         } else {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A!", 10),
-                new ResourceAmount<>("A2!", 10),
-                new ResourceAmount<>("B!", 10)
+            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A_TRANSFORMED, 10),
+                new ResourceAmount(A_ALTERNATIVE, 10),
+                new ResourceAmount(B_TRANSFORMED, 10)
             );
             assertThat(sut.getStored()).isEqualTo(30);
-            assertThat(listener.resources).containsExactly("A", "A2", "B");
+            assertThat(listener.resources).containsExactly(A, A_ALTERNATIVE, B);
             assertThat(listener.actors).containsOnly(EmptyActor.INSTANCE);
         }
     }
@@ -350,11 +355,11 @@ class ExternalStorageTest {
     @EnumSource(Action.class)
     void shouldNotCallListenerWhenExtractionFailed(final Action action) {
         // Arrange
-        final Storage<String> storage = new TransformingStorage();
-        final Storage<String> sut = new ExternalStorage<>(new ExternalStorageProviderImpl<>(storage), listener);
+        final Storage storage = new TransformingStorage();
+        final Storage sut = new ExternalStorage(new ExternalStorageProviderImpl(storage), listener);
 
         // Act
-        final long extracted = sut.extract("A", 10, action, EmptyActor.INSTANCE);
+        final long extracted = sut.extract(A, 10, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();

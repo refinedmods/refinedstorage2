@@ -5,27 +5,23 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExpo
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExternalStorageProvider<T> {
+public class InterfaceExternalStorageProviderImpl implements InterfaceExternalStorageProvider {
     private final InterfaceNetworkNode networkNode;
-    private final StorageChannelType<T> storageChannelType;
 
-    public InterfaceExternalStorageProviderImpl(final InterfaceNetworkNode networkNode,
-                                                final StorageChannelType<T> storageChannelType) {
+    public InterfaceExternalStorageProviderImpl(final InterfaceNetworkNode networkNode) {
         this.networkNode = networkNode;
-        this.storageChannelType = storageChannelType;
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         if (isAnotherInterfaceActingAsExternalStorage(actor)) {
             return 0;
         }
@@ -37,7 +33,7 @@ public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExterna
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         if (isAnotherInterfaceActingAsExternalStorage(actor)) {
             return 0;
         }
@@ -45,7 +41,7 @@ public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExterna
         if (exportState == null) {
             return 0;
         }
-        return exportState.insert(storageChannelType, resource, amount, action);
+        return exportState.insert(resource, amount, action);
     }
 
     private boolean isAnotherInterfaceActingAsExternalStorage(final Actor actor) {
@@ -55,26 +51,24 @@ public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExterna
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Iterator<ResourceAmount<T>> iterator() {
+    public Iterator<ResourceAmount> iterator() {
         final InterfaceExportState exportState = networkNode.getExportState();
         if (exportState == null) {
             return Collections.emptyIterator();
         }
-        final List<ResourceAmount<T>> slots = new ArrayList<>();
+        final List<ResourceAmount> slots = new ArrayList<>();
         for (int i = 0; i < exportState.getSlots(); ++i) {
-            final ResourceTemplate<?> resource = exportState.getExportedResource(i);
-            if (resource == null || resource.storageChannelType() != storageChannelType) {
+            final ResourceKey resource = exportState.getExportedResource(i);
+            if (resource == null) {
                 continue;
             }
-            slots.add(getResourceAmount((ResourceTemplate<T>) resource, exportState.getExportedAmount(i)));
+            slots.add(getResourceAmount(resource, exportState.getExportedAmount(i)));
         }
         return slots.iterator();
     }
 
-    private ResourceAmount<T> getResourceAmount(final ResourceTemplate<T> resource,
-                                                final long amount) {
-        return new ResourceAmount<>(resource.resource(), amount);
+    private ResourceAmount getResourceAmount(final ResourceKey resource, final long amount) {
+        return new ResourceAmount(resource, amount);
     }
 
     @Override

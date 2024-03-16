@@ -1,14 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.forge.importer;
 
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterSource;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.platform.api.exporter.AmountOverride;
 import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.storage.CapabilityCacheImpl;
 
 import net.minecraft.core.BlockPos;
@@ -22,12 +20,12 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
                                            final Direction direction,
                                            final UpgradeState upgradeState,
                                            final AmountOverride amountOverride) {
-        final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(new CapabilityCacheImpl(
+        final ImporterSource source = new ItemHandlerImporterSource(new CapabilityCacheImpl(
             level,
             pos,
             direction
         ), amountOverride);
         final int transferQuota = upgradeState.has(Items.INSTANCE.getStackUpgrade()) ? 64 : 1;
-        return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.ITEM, transferQuota);
+        return new ImporterTransferStrategyImpl(source, transferQuota);
     }
 }

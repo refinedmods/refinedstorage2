@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridScrollingStrategy;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -23,21 +24,21 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final ResourceLocation id = buf.readResourceLocation();
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+        PlatformApi.INSTANCE.getResourceTypeRegistry()
             .get(id)
             .ifPresent(type -> handle(type, buf, player, server));
     }
 
-    private <T> void handle(final PlatformStorageChannelType<T> type,
-                            final FriendlyByteBuf buf,
-                            final Player player,
-                            final MinecraftServer server) {
+    private void handle(final ResourceType type,
+                        final FriendlyByteBuf buf,
+                        final Player player,
+                        final MinecraftServer server) {
         final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof GridScrollingStrategy strategy) {
             final GridScrollMode mode = getMode(buf.readByte());
             final int slotIndex = buf.readInt();
-            final T resource = type.fromBuffer(buf);
-            server.execute(() -> strategy.onScroll(type, resource, mode, slotIndex));
+            final PlatformResourceKey resource = type.fromBuffer(buf);
+            server.execute(() -> strategy.onScroll(resource, mode, slotIndex));
         }
     }
 

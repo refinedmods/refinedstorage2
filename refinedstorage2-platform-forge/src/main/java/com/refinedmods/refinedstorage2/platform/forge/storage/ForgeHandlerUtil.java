@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.storage;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;

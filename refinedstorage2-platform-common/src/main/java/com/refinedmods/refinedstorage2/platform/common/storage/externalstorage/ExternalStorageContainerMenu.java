@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlot;
+import com.refinedmods.refinedstorage2.platform.common.support.containermenu.ResourceSlotType;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -48,7 +49,8 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
             i,
             createTranslation("gui", "storage.filter_help"),
             x,
-            FILTER_SLOT_Y
+            FILTER_SLOT_Y,
+            ResourceSlotType.FILTER
         );
     }
 }

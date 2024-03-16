@@ -10,14 +10,14 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.grid.view.PlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.support.registry.PlatformRegistry;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.ItemGridResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.DisabledSlot;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.tooltip.SmallTextClientTooltipComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.support.widget.RedstoneModeSideButtonWidget;
@@ -120,7 +120,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         addSideButton(new SortingTypeSideButtonWidget(getMenu()));
         addSideButton(new SizeSideButtonWidget(getMenu()));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu()));
-        addSideButton(new StorageChannelTypeSideButtonWidget(getMenu()));
+        addSideButton(new ResourceTypeSideButtonWidget(getMenu()));
 
         final PlatformRegistry<GridSynchronizer> synchronizers = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         if (!synchronizers.isEmpty()) {
@@ -343,9 +343,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     private void renderOverStorageAreaTooltip(final GuiGraphics graphics, final int x, final int y) {
-        final GridResource resource = getCurrentGridResource();
+        final PlatformGridResource resource = getCurrentGridResource();
         if (resource != null) {
-            renderHoveredResourceTooltip(graphics, x, y, resource);
+            renderHoveredResourceTooltip(graphics, x, y, menu.getView(), resource);
             return;
         }
         final ItemStack carried = getMenu().getCarried();
@@ -354,16 +354,6 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
         final List<ClientTooltipComponent> hints = PlatformApi.INSTANCE.getGridInsertionHints().getHints(carried);
         Platform.INSTANCE.renderTooltip(graphics, hints, x, y);
-    }
-
-    private void renderHoveredResourceTooltip(final GuiGraphics graphics,
-                                              final int mouseX,
-                                              final int mouseY,
-                                              final GridResource resource) {
-        if (!(resource instanceof PlatformGridResource platformResource)) {
-            return;
-        }
-        renderHoveredResourceTooltip(graphics, mouseX, mouseY, getMenu().getView(), platformResource);
     }
 
     private void renderHoveredResourceTooltip(final GuiGraphics graphics,
@@ -428,9 +418,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
-
     @Nullable
-    public GridResource getCurrentGridResource() {
+    public PlatformGridResource getCurrentGridResource() {
         if (currentGridSlotIndex < 0) {
             return null;
         }
@@ -438,7 +427,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (currentGridSlotIndex >= viewList.size()) {
             return null;
         }
-        return viewList.get(currentGridSlotIndex);
+        return (PlatformGridResource) viewList.get(currentGridSlotIndex);
+    }
+
+    @Nullable
+    public PlatformResourceKey getCurrentResource() {
+        final PlatformGridResource resource = getCurrentGridResource();
+        return resource != null ? resource.getUnderlyingResource() : null;
     }
 
     @Override
@@ -459,7 +454,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
 
         final ItemStack carriedStack = getMenu().getCarried();
-        final GridResource resource = getCurrentGridResource();
+        final PlatformGridResource resource = getCurrentGridResource();
 
         if (resource != null && carriedStack.isEmpty()) {
             mouseClickedInGrid(clickedButton, resource);
@@ -483,14 +478,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         getMenu().onInsert(mode, tryAlternatives);
     }
 
-    protected void mouseClickedInGrid(final int clickedButton, final GridResource resource) {
-        if (resource instanceof PlatformGridResource platformGridResource) {
-            platformGridResource.onExtract(
-                getExtractMode(clickedButton),
-                shouldExtractToCursor(),
-                getMenu()
-            );
-        }
+    protected void mouseClickedInGrid(final int clickedButton, final PlatformGridResource resource) {
+        resource.onExtract(
+            getExtractMode(clickedButton),
+            shouldExtractToCursor(),
+            getMenu()
+        );
     }
 
     private static GridExtractMode getExtractMode(final int clickedButton) {
@@ -522,7 +515,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final boolean up = delta > 0;
 
         if (isOverStorageArea((int) x, (int) y)) {
-            final GridResource resource = getCurrentGridResource();
+            final PlatformGridResource resource = getCurrentGridResource();
             if (resource != null) {
                 mouseScrolledInGrid(up, resource);
             }
@@ -546,24 +539,16 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (scrollMode == null) {
             return;
         }
-        getMenu().onScroll(
-            StorageChannelTypes.ITEM,
-            ItemResource.ofItemStack(stack),
-            scrollMode,
-            slotIndex
-        );
+        getMenu().onScroll(ItemResource.ofItemStack(stack), scrollMode, slotIndex);
     }
 
-    private void mouseScrolledInGrid(final boolean up, final GridResource resource) {
+    private void mouseScrolledInGrid(final boolean up, final PlatformGridResource resource) {
         getMenu().getView().setPreventSorting(true);
         final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
         if (scrollMode == null) {
             return;
         }
-        if (!(resource instanceof PlatformGridResource platformGridResource)) {
-            return;
-        }
-        platformGridResource.onScroll(scrollMode, getMenu());
+        resource.onScroll(scrollMode, getMenu());
     }
 
     @Nullable
@@ -611,13 +596,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         // First do the prevent sorting.
-        // Order matters. In Auto-selected mode, the search field will swallow the SHIFT key.
+        // Order matters. In auto-selected mode, the search field will swallow the SHIFT key.
         if (hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
             getMenu().getView().setPreventSorting(true);
         }
 
-        if (searchField != null
-            && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+        if (searchField != null && searchField.keyPressed(key, scanCode, modifiers)) {
             return true;
         }
 

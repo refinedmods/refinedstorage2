@@ -14,8 +14,10 @@ public class GridClearPacket implements ClientPlayNetworking.PlayChannelHandler 
                         final ClientPacketListener handler,
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
-        if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
-            containerMenu.onClear();
-        }
+        client.execute(() -> {
+            if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
+                containerMenu.onClear();
+            }
+        });
     }
 }

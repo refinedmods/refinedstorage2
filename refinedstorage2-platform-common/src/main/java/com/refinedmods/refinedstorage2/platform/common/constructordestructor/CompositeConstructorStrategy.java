@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.ConstructorStrategy;
 
@@ -17,7 +18,10 @@ class CompositeConstructorStrategy implements ConstructorStrategy {
     }
 
     @Override
-    public boolean apply(final Object resource, final Actor actor, final Player actingPlayer, final Network network) {
+    public boolean apply(final ResourceKey resource,
+                         final Actor actor,
+                         final Player actingPlayer,
+                         final Network network) {
         for (final ConstructorStrategy strategy : strategies) {
             if (strategy.apply(resource, actor, actingPlayer, network)) {
                 return true;

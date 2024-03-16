@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.support.resource;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceAmountTemplate;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +23,7 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
     @Override
     public boolean isEmpty() {
         for (int i = 0; i < container.size(); ++i) {
-            if (container.get(i) != null) {
+            if (!container.isEmpty(i)) {
                 return false;
             }
         }
@@ -33,18 +32,14 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public ItemStack getItem(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
-        if (resourceAmount != null) {
-            return resourceAmount.getStackRepresentation();
-        }
-        return ItemStack.EMPTY;
+        return container.getStackRepresentation(slotIndex);
     }
 
     @Override
     public ItemStack removeItem(final int slotIndex, final int amount) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
-        if (resourceAmount != null && resourceAmount.getResource() instanceof ItemResource itemResource) {
-            final long maxRemove = Math.min(amount, resourceAmount.getAmount());
+        final ResourceKey resource = container.getResource(slotIndex);
+        if (resource instanceof ItemResource itemResource) {
+            final long maxRemove = Math.min(amount, container.getAmount(slotIndex));
             container.shrink(slotIndex, maxRemove);
             return itemResource.toItemStack(maxRemove);
         }
@@ -53,10 +48,10 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public ItemStack removeItemNoUpdate(final int slotIndex) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
-        if (resourceAmount != null && resourceAmount.getResource() instanceof ItemResource itemResource) {
+        final ResourceKey resource = container.getResource(slotIndex);
+        if (resource instanceof ItemResource itemResource) {
             final ItemStack stack = itemResource.toItemStack();
-            final long maxRemove = Math.min(stack.getMaxStackSize(), resourceAmount.getAmount());
+            final long maxRemove = Math.min(stack.getMaxStackSize(), container.getAmount(slotIndex));
             container.shrink(slotIndex, maxRemove);
             return stack.copyWithCount((int) maxRemove);
         }
@@ -65,22 +60,21 @@ abstract class AbstractResourceContainerContainerAdapter implements Container {
 
     @Override
     public boolean canPlaceItem(final int slot, final ItemStack stack) {
-        return container.get(slot) == null;
+        return container.isEmpty(slot);
     }
 
     @Override
     public void setItem(final int slotIndex, final ItemStack itemStack) {
-        final ResourceAmountTemplate<?> resourceAmount = container.get(slotIndex);
+        final ResourceKey resource = container.getResource(slotIndex);
         if (itemStack.isEmpty()) {
-            if (resourceAmount != null && resourceAmount.getStorageChannelType() == StorageChannelTypes.ITEM) {
+            if (resource instanceof ItemResource) {
                 container.remove(slotIndex);
             }
             return;
         }
-        container.set(slotIndex, new ResourceAmountTemplate<>(
+        container.set(slotIndex, new ResourceAmount(
             ItemResource.ofItemStack(itemStack),
-            itemStack.getCount(),
-            StorageChannelTypes.ITEM
+            itemStack.getCount()
         ));
     }
 

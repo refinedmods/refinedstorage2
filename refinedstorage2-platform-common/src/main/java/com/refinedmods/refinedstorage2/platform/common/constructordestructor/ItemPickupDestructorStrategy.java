@@ -1,14 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.constructordestructor;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.constructordestructor.DestructorStrategy;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -37,9 +36,7 @@ class ItemPickupDestructorStrategy implements DestructorStrategy {
         if (!level.isLoaded(pos)) {
             return false;
         }
-        final StorageChannel<ItemResource> storageChannel = networkSupplier.get()
-            .getComponent(StorageNetworkComponent.class)
-            .getStorageChannel(StorageChannelTypes.ITEM);
+        final StorageChannel storageChannel = networkSupplier.get().getComponent(StorageNetworkComponent.class);
         final List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos));
         for (final ItemEntity itemEntity : items) {
             tryInsert(filter, actor, storageChannel, itemEntity);
@@ -49,7 +46,7 @@ class ItemPickupDestructorStrategy implements DestructorStrategy {
 
     private void tryInsert(final Filter filter,
                            final Actor actor,
-                           final StorageChannel<ItemResource> storageChannel,
+                           final StorageChannel storageChannel,
                            final ItemEntity itemEntity) {
         if (itemEntity.isRemoved()) {
             return;

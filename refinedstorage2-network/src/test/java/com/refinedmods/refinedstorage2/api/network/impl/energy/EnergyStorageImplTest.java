@@ -14,18 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EnergyStorageImplTest {
     EnergyStorage sut;
-    int changeCount;
 
     @BeforeEach
     void setUp() {
-        changeCount = 0;
-        sut = new EnergyStorageImpl(100) {
-            @Override
-            protected void changed() {
-                super.changed();
-                changeCount++;
-            }
-        };
+        sut = new EnergyStorageImpl(100);
     }
 
     @Test
@@ -41,20 +33,13 @@ class EnergyStorageImplTest {
     @EnumSource(Action.class)
     void shouldNotReceiveEnergyOnZeroCapacityStorage(final Action action) {
         // Arrange
-        final EnergyStorage zeroCapacitySut = new EnergyStorageImpl(0) {
-            @Override
-            protected void changed() {
-                super.changed();
-                changeCount++;
-            }
-        };
+        final EnergyStorage zeroCapacitySut = new EnergyStorageImpl(0);
 
         // Act
         final long inserted = zeroCapacitySut.receive(1, action);
 
         // Assert
         assertThat(inserted).isZero();
-        assertThat(changeCount).isZero();
         assertThat(zeroCapacitySut.getStored()).isZero();
     }
 
@@ -69,10 +54,8 @@ class EnergyStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getStored()).isEqualTo(50);
-            assertThat(changeCount).isEqualTo(1);
         } else {
             assertThat(sut.getStored()).isZero();
-            assertThat(changeCount).isZero();
         }
     }
 
@@ -87,10 +70,8 @@ class EnergyStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getStored()).isEqualTo(100);
-            assertThat(changeCount).isEqualTo(1);
         } else {
             assertThat(sut.getStored()).isZero();
-            assertThat(changeCount).isZero();
         }
     }
 
@@ -105,10 +86,8 @@ class EnergyStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getStored()).isEqualTo(100);
-            assertThat(changeCount).isEqualTo(1);
         } else {
             assertThat(sut.getStored()).isZero();
-            assertThat(changeCount).isZero();
         }
     }
 
@@ -117,14 +96,12 @@ class EnergyStorageImplTest {
     void shouldNotReceiveEnergyWhenFull(final Action action) {
         // Arrange
         sut.receive(100, Action.EXECUTE);
-        changeCount = 0;
 
         // Act
         final long inserted = sut.receive(100, action);
 
         // Assert
         assertThat(inserted).isZero();
-        assertThat(changeCount).isZero();
         assertThat(sut.getStored()).isEqualTo(100);
     }
 
@@ -133,7 +110,6 @@ class EnergyStorageImplTest {
     void shouldExtractEnergyPartly(final Action action) {
         // Arrange
         sut.receive(100, Action.EXECUTE);
-        changeCount = 0;
 
         // Act
         final long extracted = sut.extract(99, action);
@@ -143,10 +119,8 @@ class EnergyStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getStored()).isEqualTo(1);
-            assertThat(changeCount).isEqualTo(1);
         } else {
             assertThat(sut.getStored()).isEqualTo(100);
-            assertThat(changeCount).isZero();
         }
     }
 
@@ -155,7 +129,6 @@ class EnergyStorageImplTest {
     void shouldExtractEnergyCompletely(final Action action) {
         // Arrange
         sut.receive(50, Action.EXECUTE);
-        changeCount = 0;
 
         // Act
         final long extracted = sut.extract(51, action);
@@ -165,10 +138,8 @@ class EnergyStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getStored()).isZero();
-            assertThat(changeCount).isEqualTo(1);
         } else {
             assertThat(sut.getStored()).isEqualTo(50);
-            assertThat(changeCount).isZero();
         }
     }
 }

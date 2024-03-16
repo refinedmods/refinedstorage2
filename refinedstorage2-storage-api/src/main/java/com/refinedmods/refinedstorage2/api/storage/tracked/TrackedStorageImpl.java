@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage.tracked;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -12,8 +13,8 @@ import java.util.function.LongSupplier;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
-public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements TrackedStorage<T> {
-    private final TrackedStorageRepository<T> repository;
+public class TrackedStorageImpl extends AbstractProxyStorage implements TrackedStorage {
+    private final TrackedStorageRepository repository;
     private final LongSupplier clock;
 
     /**
@@ -22,8 +23,8 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
      * @param delegate the storage that is being decorated
      * @param clock    a supplier for unix timestamps
      */
-    public TrackedStorageImpl(final Storage<T> delegate, final LongSupplier clock) {
-        this(delegate, new InMemoryTrackedStorageRepository<>(), clock);
+    public TrackedStorageImpl(final Storage delegate, final LongSupplier clock) {
+        this(delegate, new InMemoryTrackedStorageRepository(), clock);
     }
 
     /**
@@ -31,8 +32,8 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
      * @param repository a repository for persisting and retrieving tracked resources
      * @param clock      a supplier for unix timestamps
      */
-    public TrackedStorageImpl(final Storage<T> delegate,
-                              final TrackedStorageRepository<T> repository,
+    public TrackedStorageImpl(final Storage delegate,
+                              final TrackedStorageRepository repository,
                               final LongSupplier clock) {
         super(delegate);
         this.repository = repository;
@@ -40,7 +41,7 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+    public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         CoreValidations.validateNotNull(actor, "Source must not be null");
         final long inserted = super.insert(resource, amount, action, actor);
         if (inserted > 0 && action == Action.EXECUTE) {
@@ -50,7 +51,7 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+    public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
         CoreValidations.validateNotNull(actor, "Source must not be null");
         final long extracted = super.extract(resource, amount, action, actor);
         if (extracted > 0 && action == Action.EXECUTE) {
@@ -60,7 +61,7 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+    public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
         return repository.findTrackedResourceByActorType(resource, actorType);
     }

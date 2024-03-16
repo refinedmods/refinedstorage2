@@ -58,14 +58,13 @@ public abstract class AbstractDiskDriveBlockEntity
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskInventory((inventory, slot) -> onDiskChanged(slot), getNode().getSize());
-        this.filter = FilterWithFuzzyMode.createAndListenForUniqueTemplates(
+        this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            templates -> getNode().setFilterTemplates(templates)
+            filters -> getNode().setFilters(filters)
         );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),

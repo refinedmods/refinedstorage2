@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.support;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
 
 public class FilterModeSettings {
     private static final int BLOCK = 0;

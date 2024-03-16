@@ -3,12 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.iface;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProviderImpl;
-import com.refinedmods.refinedstorage2.api.storage.ResourceTemplate;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceContainerType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentNames;
@@ -18,8 +16,6 @@ import com.refinedmods.refinedstorage2.platform.common.support.containermenu.Ext
 import com.refinedmods.refinedstorage2.platform.common.support.network.AbstractRedstoneModeNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceContainerImpl;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -44,8 +40,7 @@ public class InterfaceBlockEntity
     private final FilterWithFuzzyMode filter;
     private final ExportedResourcesContainer exportedResources;
     private final Container exportedResourcesAsContainer;
-    private final Map<StorageChannelType<?>, InterfaceExternalStorageProvider<?>> externalStorageProviders =
-        new HashMap<>();
+    private final InterfaceExternalStorageProvider externalStorageProvider;
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -60,31 +55,12 @@ public class InterfaceBlockEntity
         this.exportedResources.setListener(this::setChanged);
         getNode().setExportState(exportedResources);
         this.exportedResourcesAsContainer = exportedResources.toItemContainer();
-        addExternalStorageProviders();
-    }
-
-    private void addExternalStorageProviders() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll().forEach(
-            storageChannelType -> externalStorageProviders.put(
-                storageChannelType,
-                createExternalStorageProvider(storageChannelType)
-            )
-        );
-    }
-
-    private <T> InterfaceExternalStorageProviderImpl<T> createExternalStorageProvider(
-        final PlatformStorageChannelType<T> storageChannelType
-    ) {
-        return new InterfaceExternalStorageProviderImpl<>(
-            getNode(),
-            storageChannelType
-        );
+        this.externalStorageProvider = new InterfaceExternalStorageProviderImpl(getNode());
     }
 
     static ResourceContainer createFilterContainer() {
         return new ResourceContainerImpl(
             EXPORT_SLOTS,
-            ResourceContainerType.FILTER_WITH_AMOUNT,
             InterfaceBlockEntity::getTransferQuota,
             PlatformApi.INSTANCE.getItemResourceFactory(),
             PlatformApi.INSTANCE.getAlternativeResourceFactories()
@@ -95,9 +71,9 @@ public class InterfaceBlockEntity
         return new ExportedResourcesContainer(EXPORT_SLOTS, filter);
     }
 
-    static <T> long getTransferQuota(final ResourceTemplate<T> resourceTemplate) {
-        if (resourceTemplate.storageChannelType() instanceof PlatformStorageChannelType<T> storageChannelType) {
-            return storageChannelType.getInterfaceExportLimit(resourceTemplate.resource());
+    static long getTransferQuota(final ResourceKey resource) {
+        if (resource instanceof PlatformResourceKey platformResource) {
+            return platformResource.getInterfaceExportLimit();
         }
         return 0;
     }
@@ -177,8 +153,7 @@ public class InterfaceBlockEntity
         return drops;
     }
 
-    @SuppressWarnings("unchecked")
-    <T> InterfaceExternalStorageProvider<T> getExternalStorageProvider(final StorageChannelType<T> storageChannelType) {
-        return (InterfaceExternalStorageProvider<T>) externalStorageProviders.get(storageChannelType);
+    InterfaceExternalStorageProvider getExternalStorageProvider() {
+        return externalStorageProvider;
     }
 }

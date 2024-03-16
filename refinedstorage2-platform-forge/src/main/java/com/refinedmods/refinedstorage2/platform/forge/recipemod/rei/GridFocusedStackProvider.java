@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.recipemod.rei;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.api.recipemod.IngredientConverter;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage2.platform.common.grid.screen.AbstractGridScreen;
 
 import dev.architectury.event.CompoundEventResult;
@@ -22,11 +22,11 @@ class GridFocusedStackProvider implements FocusedStackProvider {
         if (!(screen instanceof AbstractGridScreen<?> gridScreen)) {
             return CompoundEventResult.pass();
         }
-        final GridResource resource = gridScreen.getCurrentGridResource();
-        if (resource == null) {
+        final PlatformResourceKey underlyingResource = gridScreen.getCurrentResource();
+        if (underlyingResource == null) {
             return CompoundEventResult.pass();
         }
-        final Object converted = converter.convertToIngredient(resource).orElse(null);
+        final Object converted = converter.convertToIngredient(underlyingResource).orElse(null);
         if (converted instanceof EntryStack<?> stack) {
             return CompoundEventResult.interruptTrue(stack);
         }

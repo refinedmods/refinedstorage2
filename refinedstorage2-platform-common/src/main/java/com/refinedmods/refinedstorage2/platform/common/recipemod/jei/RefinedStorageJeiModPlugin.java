@@ -87,7 +87,6 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
     }
 
     private void registerIngredientConverters(final IPlatformFluidHelper<?> fluidHelper) {
-        PlatformApi.INSTANCE.registerIngredientConverter(new GridResourceIngredientConverter(fluidHelper));
-        PlatformApi.INSTANCE.registerIngredientConverter(new ResourceIngredientConverter(fluidHelper));
+        PlatformApi.INSTANCE.registerIngredientConverter(new IngredientConvertImpl(fluidHelper));
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.grid.view;
 
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.grid.view.AbstractFluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
 
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.fluids.FluidType;

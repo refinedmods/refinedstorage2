@@ -91,11 +91,11 @@ public interface Config {
 
         void setSize(GridSize size);
 
-        Optional<ResourceLocation> getStorageChannelType();
+        Optional<ResourceLocation> getResourceTypeId();
 
-        void setStorageChannelType(ResourceLocation storageChannelTypeId);
+        void setResourceTypeId(ResourceLocation resourceTypeId);
 
-        void clearStorageChannelType();
+        void clearResourceType();
     }
 
     interface CraftingGridEntry extends SimpleEnergyUsageEntry {

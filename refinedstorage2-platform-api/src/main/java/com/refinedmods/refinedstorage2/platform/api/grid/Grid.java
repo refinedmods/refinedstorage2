@@ -5,9 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.watcher.GridWatcher;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.TrackedResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.support.resource.ResourceType;
 
 import java.util.List;
 
@@ -19,11 +17,11 @@ public interface Grid {
 
     void removeWatcher(GridWatcher watcher);
 
-    Storage<ItemResource> getItemStorage();
+    Storage getItemStorage();
 
     boolean isGridActive();
 
-    <T> List<TrackedResourceAmount<T>> getResources(StorageChannelType<T> type, Class<? extends Actor> actorType);
+    List<TrackedResourceAmount> getResources(Class<? extends Actor> actorType);
 
-    <T> GridOperations<T> createOperations(PlatformStorageChannelType<T> storageChannelType, Actor actor);
+    GridOperations createOperations(ResourceType resourceType, Actor actor);
 }

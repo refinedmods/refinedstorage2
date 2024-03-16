@@ -5,10 +5,10 @@ import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkCompone
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponentImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.configurationcard.ConfigurationCardItem;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.BlockBreakDestructorStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.constructordestructor.ConstructorBlockEntity;
@@ -58,7 +58,6 @@ import com.refinedmods.refinedstorage2.platform.common.networking.NetworkTransmi
 import com.refinedmods.refinedstorage2.platform.common.storage.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.storage.StorageTypes;
-import com.refinedmods.refinedstorage2.platform.common.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.storage.diskdrive.DiskDriveContainerMenu;
@@ -94,11 +93,12 @@ import com.refinedmods.refinedstorage2.platform.common.support.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.support.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.support.energy.EnergyLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.common.support.network.component.PlatformStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RangeUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeWithEnchantedBookRecipeSerializer;
@@ -173,7 +173,7 @@ public abstract class AbstractModInitializer {
     protected final void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
         registerAdditionalStorageTypes();
-        registerAdditionalStorageChannelTypes();
+        registerAdditionalResourceTypes();
         registerAdditionalResourceFactories();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
@@ -190,10 +190,10 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    private void registerAdditionalStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
+    private void registerAdditionalResourceTypes() {
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
-            StorageChannelTypes.FLUID
+            ResourceTypes.FLUID
         );
     }
 
@@ -238,9 +238,7 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,
-            network -> new StorageNetworkComponentImpl(
-                PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
-            )
+            network -> new PlatformStorageNetworkComponent()
         );
     }
 
@@ -303,7 +301,7 @@ public abstract class AbstractModInitializer {
 
     protected final void registerItems(
         final RegistryCallback<Item> callback,
-        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier,
+        final Supplier<AbstractUpgradeItem> regulatorUpgradeItemSupplier,
         final Supplier<WirelessGridItem> wirelessGridItemSupplier,
         final Supplier<WirelessGridItem> creativeWirelessGridItemSupplier,
         final Supplier<PortableGridBlockItem> portableGridBlockItemSupplier,
@@ -415,13 +413,13 @@ public abstract class AbstractModInitializer {
 
     private void registerUpgrades(
         final RegistryCallback<Item> callback,
-        final Supplier<RegulatorUpgradeItem> regulatorUpgradeItemSupplier
+        final Supplier<AbstractUpgradeItem> regulatorUpgradeItemSupplier
     ) {
         Items.INSTANCE.setUpgrade(callback.register(
             ContentIds.UPGRADE,
             SimpleItem::new
         ));
-        final Supplier<SimpleUpgradeItem> speedUpgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> speedUpgrade = callback.register(
             ContentIds.SPEED_UPGRADE,
             () -> new SimpleUpgradeItem(
                 PlatformApi.INSTANCE.getUpgradeRegistry(),
@@ -430,7 +428,7 @@ public abstract class AbstractModInitializer {
             )
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
-        final Supplier<SimpleUpgradeItem> stackUpgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> stackUpgrade = callback.register(
             ContentIds.STACK_UPGRADE,
             () -> new SimpleUpgradeItem(
                 PlatformApi.INSTANCE.getUpgradeRegistry(),
@@ -439,22 +437,22 @@ public abstract class AbstractModInitializer {
             )
         );
         Items.INSTANCE.setStackUpgrade(stackUpgrade);
-        final Supplier<FortuneUpgradeItem> fortune1Upgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> fortune1Upgrade = callback.register(
             ContentIds.FORTUNE_1_UPGRADE,
             () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 1)
         );
         Items.INSTANCE.setFortune1Upgrade(fortune1Upgrade);
-        final Supplier<FortuneUpgradeItem> fortune2Upgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> fortune2Upgrade = callback.register(
             ContentIds.FORTUNE_2_UPGRADE,
             () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 2)
         );
         Items.INSTANCE.setFortune2Upgrade(fortune2Upgrade);
-        final Supplier<FortuneUpgradeItem> fortune3Upgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> fortune3Upgrade = callback.register(
             ContentIds.FORTUNE_3_UPGRADE,
             () -> new FortuneUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry(), 3)
         );
         Items.INSTANCE.setFortune3Upgrade(fortune3Upgrade);
-        final Supplier<SimpleUpgradeItem> silkTouchUpgrade = callback.register(
+        final Supplier<AbstractUpgradeItem> silkTouchUpgrade = callback.register(
             ContentIds.SILK_TOUCH_UPGRADE,
             () -> new SimpleUpgradeItem(
                 PlatformApi.INSTANCE.getUpgradeRegistry(),
@@ -507,8 +505,7 @@ public abstract class AbstractModInitializer {
     protected final void registerBlockEntities(
         final RegistryCallback<BlockEntityType<?>> callback,
         final BlockEntityTypeFactory typeFactory,
-        final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractDiskDriveBlockEntity>
-            diskDriveBlockEntitySupplier,
+        final BlockEntityTypeFactory.BlockEntitySupplier<AbstractDiskDriveBlockEntity> diskDriveBlockEntitySupplier,
         final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>
             portableGridBlockEntitySupplier,
         final BlockEntityTypeFactory.BlockEntitySupplier<? extends AbstractPortableGridBlockEntity>

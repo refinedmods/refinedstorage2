@@ -31,7 +31,7 @@ class NetworkNodeFactoryTest {
     @AddNetworkNode
     SimpleNetworkNode simple;
     @AddNetworkNode
-    StorageNetworkNode<String> storage;
+    StorageNetworkNode storage;
     @AddNetworkNode
     InterfaceNetworkNode interfaceNode;
     @AddNetworkNode

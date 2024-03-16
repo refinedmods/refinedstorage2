@@ -7,6 +7,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.3.4] - 2024-03-16
+
+### Added
+
+-   Void excess mode to storages.
+
+### Fixed
+
+-   Fixed losing disk when using Wrench dismantling on the Portable Grid.
+-   Fixed losing energy when using Wrench dismantling on the Portable Grid and the Controller.
+-   Fixed changing side buttons not working on Forge.
+-   Fixed External Storage not displaying empty allowlist warning.
+-   Fixed incrementing starting from 1 in amount screens not having an intended off-by-one.
+-   Fixed problems moving network devices with "Carry On" mod.
+-   Fixed escape key not working on auto-selected Grid search box.
+
 ## [2.0.0-milestone.3.3] - 2024-02-17
 
 ### Added
@@ -516,7 +532,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.3...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.4...HEAD
+
+[2.0.0-milestone.3.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.3...v2.0.0-milestone.3.4
 
 [2.0.0-milestone.3.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.3.2...v2.0.0-milestone.3.3
 

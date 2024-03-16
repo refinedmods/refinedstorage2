@@ -3,15 +3,14 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.strategy.GridInsertionStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.support.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.support.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.support.render.FluidRenderer;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.Optional;
@@ -118,6 +117,6 @@ public interface Platform {
 
     Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
 
-    record ContainedFluid(ItemStack remainderContainer, ResourceAmount<FluidResource> fluid) {
+    record ContainedFluid(ItemStack remainderContainer, FluidResource fluid, long amount) {
     }
 }

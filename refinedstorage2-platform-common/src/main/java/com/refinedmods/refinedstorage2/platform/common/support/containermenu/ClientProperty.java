@@ -26,10 +26,7 @@ public class ClientProperty<T> extends DataSlot implements Property<T> {
     }
 
     public void setValue(final T newValue) {
-        Platform.INSTANCE.getClientToServerCommunications().sendPropertyChange(
-            type,
-            newValue
-        );
+        Platform.INSTANCE.getClientToServerCommunications().sendPropertyChange(type, newValue);
     }
 
     @Override
