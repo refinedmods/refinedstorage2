@@ -1,7 +1,10 @@
 project_identifier: refined-storage-2
-commit_message: "chore: update translations from crowdin"
+commit_message: "chore: update translation %language% from crowdin"
+append_commit_message: false
 api_key_env: CROWDIN_API_KEY
 base_path: .
+pull_request_labels:
+  - skip-changelog
 files:
   - source: /refinedstorage2-platform-common/src/main/resources/assets/refinedstorage2/lang/en_us.json
     translation: /refinedstorage2-platform-common/src/main/resources/assets/refinedstorage2/lang/%locale_with_underscore%.json
