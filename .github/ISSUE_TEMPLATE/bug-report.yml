@@ -2,60 +2,59 @@ name: Bug report
 description: Found a bug or encountered a crash? Please report it here.
 labels: [ bug ]
 body:
-    -   type: markdown
-        attributes:
-            value: |
-                Provide a summary of the issue in the title above.
-    -   type: textarea
-        id: description
-        attributes:
-            label: Describe the bug
-            description: |
-                Be as detailed as possible.
-                If applicable, also tell us what you expected to happen instead.
-        validations:
-            required: true
-    -   type: textarea
-        id: reproduce
-        attributes:
-            label: How can we reproduce this bug or crash?
-            description: |
-                Provide us with steps on how to reproduce this issue.
-                Try to reproduce the issue with only Refined Storage 2 installed, if possible.
-            placeholder: |
-                1.
-                2.
-                3.
-        validations:
-            required: true
-    -   type: dropdown
-        id: minecraft
-        attributes:
-            label: What Minecraft version is this happening on?
-            description: |
-                If your Minecraft version isn't listed here, it means that it isn't supported. In that case, don't create an issue.
-            options:
-                - Minecraft 1.19.4
-                - Minecraft 1.20.1
-        validations:
-            required: true
-    -   type: input
-        id: modloader-version
-        attributes:
-            label: What Forge or Fabric version is this happening on?
-        validations:
-            required: true
-    -   type: input
-        id: version
-        attributes:
-            label: What Refined Storage version is this happening on?
-            description: |
-                Ensure that you are using the latest version.
-        validations:
-            required: true
-    -   type: textarea
-        id: logs
-        attributes:
-            label: Relevant log output
-            description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-            render: shell
+  - type: markdown
+    attributes:
+      value: |
+        Provide a summary of the issue in the title above.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: |
+        Be as detailed as possible.
+        If applicable, also tell us what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce this bug or crash?
+      description: |
+        Provide us with steps on how to reproduce this issue.
+        Try to reproduce the issue with only Refined Storage 2 installed, if possible.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: dropdown
+    id: minecraft
+    attributes:
+      label: What Minecraft version is this happening on?
+      description: |
+        If your Minecraft version isn't listed here, it means that it isn't supported. In that case, don't create an issue.
+      options:
+        - Minecraft 1.20.4
+    validations:
+      required: true
+  - type: input
+    id: modloader-version
+    attributes:
+      label: What NeoForge or Fabric version is this happening on?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: What Refined Storage version is this happening on?
+      description: |
+        Ensure that you are using the latest version.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell

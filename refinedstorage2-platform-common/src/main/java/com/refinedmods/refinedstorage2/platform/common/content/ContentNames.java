@@ -16,7 +16,7 @@ public final class ContentNames {
     public static final MutableComponent DESTRUCTOR = name("destructor");
     public static final MutableComponent CONTROLLER = name("controller");
     public static final MutableComponent CREATIVE_CONTROLLER = name("creative_controller");
-    public static final MutableComponent WIRELESS_GRID = name("wireless_grid");
+    public static final MutableComponent WIRELESS_GRID = createTranslation("item", "wireless_grid");
     public static final MutableComponent WIRELESS_TRANSMITTER = name("wireless_transmitter");
     public static final MutableComponent REGULATOR_UPGRADE = name("regulator_upgrade");
     public static final MutableComponent STORAGE_MONITOR = name("storage_monitor");
