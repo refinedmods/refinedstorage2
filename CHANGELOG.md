@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Wireless Grid name not being correct in the GUI.
+
 ## [2.0.0-milestone.3.4] - 2024-03-16
 
 ### Added
