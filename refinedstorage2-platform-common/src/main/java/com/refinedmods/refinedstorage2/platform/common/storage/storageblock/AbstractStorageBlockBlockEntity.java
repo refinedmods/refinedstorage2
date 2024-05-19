@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 
+import com.refinedmods.refinedstorage2.api.network.impl.node.AbstractStorageContainerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractStorageBlockBlockEntity
     extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode>
-    implements NetworkNodeMenuProvider, StorageBlockEntity, StorageNetworkNode.Provider {
+    implements NetworkNodeMenuProvider, StorageBlockEntity, AbstractStorageContainerNetworkNode.Provider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 
     private static final String TAG_STORAGE_ID = "sid";
