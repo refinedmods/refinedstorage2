@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.fake.FakeActor;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -115,10 +116,10 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
     private NetworkSide createNetworkSide(final MasterSlave side,
                                           final Supplier<Network> networkFactory) {
-        final StorageNetworkNode nodeA = new StorageNetworkNode(0);
+        final StorageNetworkNode nodeA = new StorageNetworkNode(0, 0, 1);
         final InMemoryStorageImpl storage = new InMemoryStorageImpl();
         storage.insert(side, 10, Action.EXECUTE, FakeActor.INSTANCE);
-        nodeA.setStorage(storage);
+        nodeA.setProvider(index -> Optional.of(storage));
         final NetworkNodeContainer a = createContainerWithNetwork(
             nodeA,
             container -> networkFactory.get(),

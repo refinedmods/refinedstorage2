@@ -3,14 +3,12 @@ package com.refinedmods.refinedstorage2.network.test;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.security.SecurityNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
-import com.refinedmods.refinedstorage2.network.test.nodefactory.MultiStorageNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.SimpleNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.StorageNetworkNodeFactory;
 
@@ -23,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith({NetworkTestExtension.class})
 @SetupNetwork(id = "a", energyCapacity = 100, energyStored = 50)
 @SetupNetwork(id = "b")
-@RegisterNetworkNode(value = MultiStorageNetworkNodeFactory.class, clazz = MultiStorageNetworkNode.class)
+@RegisterNetworkNode(value = StorageNetworkNodeFactory.class, clazz = StorageNetworkNode.class)
 @RegisterNetworkNode(value = StorageNetworkNodeFactory.class, clazz = StorageNetworkNode.class)
 @RegisterNetworkNode(value = SimpleNetworkNodeFactory.class, clazz = SimpleNetworkNode.class)
 class NetworkTestExtensionTest {
@@ -41,7 +39,7 @@ class NetworkTestExtensionTest {
     @AddNetworkNode(networkId = "b", properties = {
         @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ACTIVE, boolValue = false)
     })
-    MultiStorageNetworkNode storageInB;
+    StorageNetworkNode storageInB;
 
     @AddNetworkNode(networkId = "nonexistent")
     SimpleNetworkNode nonexistentNetworkNode;

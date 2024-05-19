@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.ItemTransferableStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
@@ -127,15 +127,15 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
     }
 
     @Override
-    public void transferToBlockEntity(final ItemStack stack, final ItemTransferableStorageBlockEntity blockEntity) {
+    public void transferToBlockEntity(final ItemStack stack, final StorageBlockEntity blockEntity) {
         getId(stack).ifPresent(id -> {
-            blockEntity.modifyStorageIdAfterAlreadyInitialized(id);
+            blockEntity.setStorageId(id);
             LOGGER.debug("Transferred storage {} to block entity {}", id, blockEntity);
         });
     }
 
     @Override
-    public void transferFromBlockEntity(final ItemStack stack, final ItemTransferableStorageBlockEntity blockEntity) {
+    public void transferFromBlockEntity(final ItemStack stack, final StorageBlockEntity blockEntity) {
         final UUID storageId = blockEntity.getStorageId();
         if (storageId != null) {
             LOGGER.debug("Transferred storage {} from block entity {} to stack", storageId, blockEntity);

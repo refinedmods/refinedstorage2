@@ -65,8 +65,8 @@ class StateTrackedStorageTest {
             new ResourceAmount(TestResource.A, 75)
         );
         assertThat(sut.getStored()).isEqualTo(75);
+        assertThat(sut.getCapacity()).isZero();
     }
-
 
     @Test
     void shouldSetInitialStateForLimitedStorage() {
@@ -82,6 +82,8 @@ class StateTrackedStorageTest {
         // Assert
         verify(listener, never()).onStorageStateChanged();
         assertThat(state).isEqualTo(StorageState.NEAR_CAPACITY);
+        assertThat(sut.getStored()).isEqualTo(75);
+        assertThat(sut.getCapacity()).isEqualTo(100);
     }
 
     @Test

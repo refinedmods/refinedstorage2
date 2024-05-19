@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.support.network.NetworkNodeBlockEntityTicker;
 
@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 class DiskDriveBlockEntityTicker
-    extends NetworkNodeBlockEntityTicker<MultiStorageNetworkNode, AbstractDiskDriveBlockEntity> {
+    extends NetworkNodeBlockEntityTicker<StorageNetworkNode, AbstractDiskDriveBlockEntity> {
 
     DiskDriveBlockEntityTicker() {
         super(BlockEntities.INSTANCE::getDiskDrive);

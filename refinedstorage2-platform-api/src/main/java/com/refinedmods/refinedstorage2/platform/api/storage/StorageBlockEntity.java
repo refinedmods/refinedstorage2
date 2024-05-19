@@ -10,9 +10,9 @@ import org.apiguardian.api.API;
  * The "storage block" is an example of such an item.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.3")
-public interface ItemTransferableStorageBlockEntity {
+public interface StorageBlockEntity {
     @Nullable
     UUID getStorageId();
 
-    void modifyStorageIdAfterAlreadyInitialized(UUID id);
+    void setStorageId(UUID storageId);
 }

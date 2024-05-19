@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -39,7 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractDiskDriveBlockEntity
-    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
+    extends AbstractRedstoneModeNetworkNodeContainerBlockEntity<StorageNetworkNode>
     implements BlockEntityWithDrops, NetworkNodeMenuProvider {
     public static final int AMOUNT_OF_DISKS = 8;
 
@@ -55,7 +55,7 @@ public abstract class AbstractDiskDriveBlockEntity
     private final DiskStateChangeListener diskStateListener = new DiskStateChangeListener(this);
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
-        super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
+        super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new StorageNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
             AMOUNT_OF_DISKS

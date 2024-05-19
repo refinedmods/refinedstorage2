@@ -62,7 +62,7 @@ public abstract class AbstractStorageContainerBlockItem extends BlockItem {
     private void updateBlockEntityTag(final BlockPos pos,
                                       final Level level,
                                       final ItemStack stack) {
-        if (level.getBlockEntity(pos) instanceof ItemTransferableStorageBlockEntity blockEntity) {
+        if (level.getBlockEntity(pos) instanceof StorageBlockEntity blockEntity) {
             helper.transferToBlockEntity(stack, blockEntity);
         } else {
             LOGGER.warn("Storage could not be set, block entity does not exist yet at {}", pos);

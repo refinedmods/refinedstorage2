@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.storage.storageblock;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.storage.ItemTransferableStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ public class StorageBlockLootItemFunction implements LootItemFunction {
     @Override
     public ItemStack apply(final ItemStack stack, final LootContext lootContext) {
         final BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
-        if (blockEntity instanceof ItemTransferableStorageBlockEntity transferable) {
+        if (blockEntity instanceof StorageBlockEntity transferable) {
             PlatformApi.INSTANCE.getStorageContainerItemHelper().transferFromBlockEntity(stack, transferable);
         }
         return stack;

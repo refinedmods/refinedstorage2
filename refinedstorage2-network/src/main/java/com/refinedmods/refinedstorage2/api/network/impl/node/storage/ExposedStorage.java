@@ -1,60 +1,76 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
-import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractConfiguredProxyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.storage.AbstractImmutableConfiguredProxyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-class ExposedStorage extends AbstractConfiguredProxyStorage<Storage> implements TrackedStorage {
-    private final Set<ParentComposite> parents = new HashSet<>();
+class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeStorageImpl> implements CompositeStorage {
+    protected ExposedStorage(final StorageConfiguration config) {
+        super(config, new CompositeStorageImpl(new ResourceListImpl()));
+    }
 
-    ExposedStorage(final StorageConfiguration config) {
-        super(config);
+    long getCapacity() {
+        final CompositeStorageImpl delegate = getUnsafeDelegate();
+        if (delegate == null) {
+            return 0;
+        }
+        return delegate.getSources()
+            .stream()
+            .filter(LimitedStorage.class::isInstance)
+            .map(LimitedStorage.class::cast)
+            .mapToLong(LimitedStorage::getCapacity)
+            .sum();
+    }
+
+    @Override
+    public void sortSources() {
+        // no-op: cannot sort individual storages.
+    }
+
+    @Override
+    public void addSource(final Storage source) {
+        getDelegate().addSource(source);
+    }
+
+    @Override
+    public void removeSource(final Storage source) {
+        getDelegate().removeSource(source);
+    }
+
+    @Override
+    public List<Storage> getSources() {
+        return getDelegate().getSources();
+    }
+
+    @Override
+    public void clearSources() {
+        getDelegate().clearSources();
     }
 
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
-        return getUnsafeDelegate() instanceof TrackedStorage trackedStorage
-            ? trackedStorage.findTrackedResourceByActorType(resource, actorType)
-            : Optional.empty();
+        return getDelegate().findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override
     public void onAddedIntoComposite(final ParentComposite parentComposite) {
-        parents.add(parentComposite);
+        getDelegate().onAddedIntoComposite(parentComposite);
     }
 
     @Override
     public void onRemovedFromComposite(final ParentComposite parentComposite) {
-        parents.remove(parentComposite);
-    }
-
-    public long getCapacity() {
-        return getUnsafeDelegate() instanceof LimitedStorage limitedStorage
-            ? limitedStorage.getCapacity()
-            : 0L;
-    }
-
-    @Override
-    public void setDelegate(final Storage newDelegate) {
-        super.setDelegate(newDelegate);
-        parents.forEach(parent -> parent.onSourceAddedToChild(newDelegate));
-    }
-
-    @Override
-    public void clearDelegate() {
-        final Storage delegate = getDelegate();
-        parents.forEach(parent -> parent.onSourceRemovedFromChild(delegate));
-        super.clearDelegate();
+        getDelegate().onRemovedFromComposite(parentComposite);
     }
 }

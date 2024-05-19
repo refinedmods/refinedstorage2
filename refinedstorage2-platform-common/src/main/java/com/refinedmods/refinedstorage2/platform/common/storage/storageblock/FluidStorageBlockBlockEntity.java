@@ -28,7 +28,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             BlockEntities.INSTANCE.getFluidStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode(getEnergyUsage(variant)),
+            new StorageNetworkNode(getEnergyUsage(variant), 0, 1),
             PlatformApi.INSTANCE.getFluidResourceFactory()
         );
         this.variant = variant;

@@ -40,9 +40,9 @@ public interface StorageContainerItemHelper {
                          LongFunction<String> amountFormatter,
                          boolean hasCapacity);
 
-    void transferToBlockEntity(ItemStack stack, ItemTransferableStorageBlockEntity blockEntity);
+    void transferToBlockEntity(ItemStack stack, StorageBlockEntity blockEntity);
 
-    void transferFromBlockEntity(ItemStack stack, ItemTransferableStorageBlockEntity blockEntity);
+    void transferFromBlockEntity(ItemStack stack, StorageBlockEntity blockEntity);
 
     void registerDiskModel(Item item, ResourceLocation model);
 

@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,15 +39,17 @@ class StorageNetworkComponentImplTest {
     void setUp() {
         sut = new StorageNetworkComponentImpl(new ResourceListImpl());
 
-        storage1 = new StorageNetworkNode(0);
+        storage1 = new StorageNetworkNode(0, 0, 1);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage1.setStorage(new LimitedStorageImpl(100));
+        final var storage1S = new LimitedStorageImpl(100);
+        storage1.setProvider(index -> Optional.of(storage1S));
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        storage2 = new StorageNetworkNode(0);
+        storage2 = new StorageNetworkNode(0, 0, 1);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage2.setStorage(new LimitedStorageImpl(100));
+        final var storage2S = new LimitedStorageImpl(100);
+        storage2.setProvider(index -> Optional.of(storage2S));
         storage2.setActive(true);
         storage2Container = () -> storage2;
     }

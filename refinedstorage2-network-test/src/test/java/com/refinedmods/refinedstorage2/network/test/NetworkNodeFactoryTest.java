@@ -8,7 +8,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.Ext
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayInputNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayOutputNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NetworkNodeFactoryTest {
     @AddNetworkNode
     ControllerNetworkNode controller;
-    @AddNetworkNode
-    MultiStorageNetworkNode multiStorage;
     @AddNetworkNode
     ExporterNetworkNode exporter;
     @AddNetworkNode
@@ -38,6 +37,10 @@ class NetworkNodeFactoryTest {
     ExternalStorageNetworkNode externalStorage;
     @AddNetworkNode
     DetectorNetworkNode detector;
+    @AddNetworkNode
+    RelayInputNetworkNode relayInput;
+    @AddNetworkNode
+    RelayOutputNetworkNode relayOutput;
 
     @Test
     void testInitialization() {

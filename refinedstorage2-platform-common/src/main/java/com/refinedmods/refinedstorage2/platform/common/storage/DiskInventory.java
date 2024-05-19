@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.storage;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageState;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageContainerItem;
@@ -16,7 +16,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskInventory extends SimpleContainer implements MultiStorageProvider {
+public class DiskInventory extends SimpleContainer implements StorageNetworkNode.Provider {
     private static final String TAG_DISK_STATE = "s";
     private static final String TAG_DISK_ITEM_ID = "i";
 

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
+package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.storage.StorageNetworkComponent;
@@ -19,40 +19,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-class PriorityMultiStorageNetworkNodeTest {
+class PriorityStorageNetworkNodeTest {
     @AddNetworkNode
-    MultiStorageNetworkNode a;
+    StorageNetworkNode a;
 
     @AddNetworkNode
-    MultiStorageNetworkNode b;
+    StorageNetworkNode b;
 
-    MultiStorageProviderImpl provider;
+    StorageNetworkNodeProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new MultiStorageProviderImpl();
+        provider = new StorageNetworkNodeProviderImpl();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void shouldRespectPriority(
-        final boolean multiStorageAHasPriority,
+        final boolean storageAHasPriority,
         @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
     ) {
         // Arrange
         final Storage storage1 = new LimitedStorageImpl(100);
-        final MultiStorageProviderImpl provider1 = new MultiStorageProviderImpl();
+        final StorageNetworkNodeProviderImpl provider1 = new StorageNetworkNodeProviderImpl();
         provider1.set(1, storage1);
         a.setProvider(provider1);
         a.setActive(true);
 
         final Storage storage2 = new LimitedStorageImpl(100);
-        final MultiStorageProviderImpl provider2 = new MultiStorageProviderImpl();
+        final StorageNetworkNodeProviderImpl provider2 = new StorageNetworkNodeProviderImpl();
         provider2.set(1, storage2);
         b.setProvider(provider2);
         b.setActive(true);
 
-        if (multiStorageAHasPriority) {
+        if (storageAHasPriority) {
             a.setPriority(5);
             b.setPriority(2);
         } else {
@@ -64,7 +64,7 @@ class PriorityMultiStorageNetworkNodeTest {
         networkStorage.insert(A, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        if (multiStorageAHasPriority) {
+        if (storageAHasPriority) {
             assertThat(storage1.getAll()).isNotEmpty();
             assertThat(storage2.getAll()).isEmpty();
         } else {

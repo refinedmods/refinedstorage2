@@ -28,7 +28,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             BlockEntities.INSTANCE.getItemStorageBlock(variant),
             pos,
             state,
-            new StorageNetworkNode(getEnergyUsage(variant)),
+            new StorageNetworkNode(getEnergyUsage(variant), 0, 1),
             PlatformApi.INSTANCE.getItemResourceFactory()
         );
         this.variant = variant;
