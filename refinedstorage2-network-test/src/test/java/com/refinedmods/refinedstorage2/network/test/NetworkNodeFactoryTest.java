@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNe
 import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayInputNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayOutputNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storagetransfer.StorageTransferNetworkNode;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +42,8 @@ class NetworkNodeFactoryTest {
     RelayInputNetworkNode relayInput;
     @AddNetworkNode
     RelayOutputNetworkNode relayOutput;
+    @AddNetworkNode
+    StorageTransferNetworkNode storageTransfer;
 
     @Test
     void testInitialization() {

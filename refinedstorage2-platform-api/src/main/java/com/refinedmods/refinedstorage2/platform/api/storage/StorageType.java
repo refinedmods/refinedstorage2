@@ -17,4 +17,6 @@ public interface StorageType {
     CompoundTag toTag(Storage storage);
 
     boolean isAllowed(ResourceKey resource);
+
+    long
 }

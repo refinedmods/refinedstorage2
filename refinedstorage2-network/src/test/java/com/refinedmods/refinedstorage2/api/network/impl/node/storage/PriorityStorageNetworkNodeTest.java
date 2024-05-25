@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.impl.node.ProviderImpl;
 import com.refinedmods.refinedstorage2.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -26,11 +27,11 @@ class PriorityStorageNetworkNodeTest {
     @AddNetworkNode
     StorageNetworkNode b;
 
-    StorageNetworkNodeProviderImpl provider;
+    ProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new StorageNetworkNodeProviderImpl();
+        provider = new ProviderImpl();
     }
 
     @ParameterizedTest
@@ -41,13 +42,13 @@ class PriorityStorageNetworkNodeTest {
     ) {
         // Arrange
         final Storage storage1 = new LimitedStorageImpl(100);
-        final StorageNetworkNodeProviderImpl provider1 = new StorageNetworkNodeProviderImpl();
+        final ProviderImpl provider1 = new ProviderImpl();
         provider1.set(1, storage1);
         a.setProvider(provider1);
         a.setActive(true);
 
         final Storage storage2 = new LimitedStorageImpl(100);
-        final StorageNetworkNodeProviderImpl provider2 = new StorageNetworkNodeProviderImpl();
+        final ProviderImpl provider2 = new ProviderImpl();
         provider2.set(1, storage2);
         b.setProvider(provider2);
         b.setActive(true);

@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNe
 import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayInputNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.relay.RelayOutputNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storagetransfer.StorageTransferNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.ControllerNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.DetectorNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.ExporterNetworkNodeFactory;
@@ -22,6 +23,7 @@ import com.refinedmods.refinedstorage2.network.test.nodefactory.RelayInputNetwor
 import com.refinedmods.refinedstorage2.network.test.nodefactory.RelayOutputNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.SimpleNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.StorageNetworkNodeFactory;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.StorageTransferNetworkNodeFactory;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -44,5 +46,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @RegisterNetworkNode(value = DetectorNetworkNodeFactory.class, clazz = DetectorNetworkNode.class)
 @RegisterNetworkNode(value = RelayInputNetworkNodeFactory.class, clazz = RelayInputNetworkNode.class)
 @RegisterNetworkNode(value = RelayOutputNetworkNodeFactory.class, clazz = RelayOutputNetworkNode.class)
+@RegisterNetworkNode(value = StorageTransferNetworkNodeFactory.class, clazz = StorageTransferNetworkNode.class)
 public @interface NetworkTest {
 }
