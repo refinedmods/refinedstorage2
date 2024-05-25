@@ -17,6 +17,7 @@ public class StateTrackedStorage implements TrackedStorage, LimitedStorage {
     private final Storage delegate;
     @Nullable
     private final Listener listener;
+
     private StorageState state;
 
     public StateTrackedStorage(final Storage delegate, @Nullable final Listener listener) {

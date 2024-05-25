@@ -11,11 +11,19 @@ import java.util.Optional;
 import org.apiguardian.api.API;
 
 /**
- * An implementation of a {@link ResourceList} that stores the resource entries in a {@link HashMap}.
+ * An implementation of a {@link ResourceList} that stores the resource entries in memory.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ResourceListImpl implements ResourceList {
-    private final Map<ResourceKey, ResourceAmount> entries = new HashMap<>();
+    private final Map<ResourceKey, ResourceAmount> entries;
+
+    public ResourceListImpl(final Map<ResourceKey, ResourceAmount> entries) {
+        this.entries = entries;
+    }
+
+    public ResourceListImpl() {
+        this(new HashMap<>());
+    }
 
     @Override
     public OperationResult add(final ResourceKey resource, final long amount) {

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.impl.node.ProviderImpl;
 import com.refinedmods.refinedstorage2.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.filter.FilterMode;
@@ -55,11 +56,11 @@ class StorageNetworkNodeTest {
     })
     StorageNetworkNode sut;
 
-    StorageNetworkNodeProviderImpl provider;
+    ProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new StorageNetworkNodeProviderImpl();
+        provider = new ProviderImpl();
     }
 
     @Test

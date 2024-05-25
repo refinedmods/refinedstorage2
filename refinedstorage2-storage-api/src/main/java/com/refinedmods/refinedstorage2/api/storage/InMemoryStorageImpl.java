@@ -15,8 +15,16 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class InMemoryStorageImpl implements Storage {
-    private final ResourceList list = new ResourceListImpl();
+    private final ResourceList list;
     private long stored;
+
+    public InMemoryStorageImpl(final ResourceList list) {
+        this.list = list;
+    }
+
+    public InMemoryStorageImpl() {
+        this(new ResourceListImpl());
+    }
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
