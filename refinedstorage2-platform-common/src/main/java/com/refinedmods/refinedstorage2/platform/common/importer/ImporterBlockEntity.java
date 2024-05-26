@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.support.resource.Resource
 import com.refinedmods.refinedstorage2.platform.common.upgrade.UpgradeDestinations;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
@@ -57,7 +58,7 @@ public class ImporterBlockEntity
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
-            mainNode::setFilters
+            this::setFilters
         );
         this.mainNode.setNormalizer(filter.createNormalizer());
     }
@@ -94,6 +95,10 @@ public class ImporterBlockEntity
             mainNode.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
         filter.load(tag);
+    }
+
+    protected void setFilters(final Set<ResourceKey> filters) {
+        mainNode.setFilters(filters);
     }
 
     boolean isFuzzyMode() {
