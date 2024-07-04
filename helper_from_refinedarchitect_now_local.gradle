@@ -1,0 +1,347 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+        maven {
+            name = 'NeoForge'
+            url = 'https://maven.neoforged.net/releases'
+        }
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'CurseForgeGradle'
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.4.1.3373'
+        classpath 'org.spongepowered:vanillagradle:0.2.1-SNAPSHOT'
+        classpath 'net.neoforged.gradle:userdev:7.0.152'
+        classpath 'fabric-loom:fabric-loom.gradle.plugin:1.7-SNAPSHOT'
+        classpath 'net.darkhax.curseforgegradle:CurseForgeGradle:1.1.18'
+        classpath 'com.modrinth.minotaur:Minotaur:2.+'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+    apply plugin: 'jacoco'
+
+    version = '0.0.0'
+
+    if (System.getenv('GITHUB_SHA') != null) {
+        version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
+    }
+
+    if (System.getenv('RELEASE_VERSION') != null) {
+        version = System.getenv('RELEASE_VERSION')
+    }
+
+    apply plugin: 'java'
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = 'UTF-8'
+        it.options.release.set(21)
+        it.options.deprecation = true
+        it.options.compilerArgs << "-Xmaxerrs" << "999"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "com.google.code.findbugs:jsr305:3.0.2"
+    }
+
+    apply plugin: 'checkstyle'
+    checkstyle {
+        toolVersion = "10.13.0"
+    }
+    // https://github.com/checkstyle/checkstyle/issues/14211#issuecomment-1884129948
+    configurations.checkstyle {
+        resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
+            select("com.google.guava:guava:0")
+        }
+    }
+
+    processResources {
+        inputs.property 'version', project.version
+
+        filesMatching(['fabric.mod.json', 'META-INF/neoforge.mods.toml']) {
+            expand 'version': project.version
+        }
+    }
+
+    ext {
+        minecraftVersion = "1.21"
+        forgeVersion = "21.0.42-beta"
+        fabricLoaderVersion = "0.15.11"
+        fabricApiVersion = "0.100.4+1.21"
+    }
+
+    ext.enableMutationTesting = {
+        apply plugin: info.solidsoft.gradle.pitest.PitestPlugin
+        pitest {
+            junit5PluginVersion = "1.2.1"
+            pitestVersion = "1.15.3"
+            outputFormats.set(['HTML'])
+            mutationThreshold.set(90)
+            coverageThreshold.set(80)
+        }
+        dependencies {
+            testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
+                because("required for pitest")
+            }
+        }
+    }
+
+    ext.enableJavadoc = {
+        ext.javadocEnabled = true
+    }
+
+    apply plugin: 'maven-publish'
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/" + System.getenv("GITHUB_REPOSITORY"))
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+            maven {
+                name = "CreeperHost"
+                url = uri("https://maven.creeperhost.net/release")
+                credentials {
+                    username = System.getenv("CREEPERHOST_MAVEN_USERNAME")
+                    password = System.getenv("CREEPERHOST_MAVEN_TOKEN")
+                }
+            }
+        }
+    }
+    ext.enablePublishing = {
+        publishing {
+            publications {
+                gpr(MavenPublication) {
+                    from(components.java)
+                }
+            }
+        }
+    }
+
+    ext.enableCurseForge = { int projectId ->
+        task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+            apiToken = System.getenv("CURSEFORGE_TOKEN")
+            def mainFile = upload(projectId, jar)
+            mainFile.releaseType = project.version.toString().contains('beta') ? 'beta' : (project.version.toString().contains('alpha') ? 'alpha' : 'release')
+            mainFile.changelog = System.getenv("RELEASE_CHANGELOG")
+            mainFile.changelogType = 'markdown'
+            mainFile.displayName = 'v' + project.version
+        }
+    }
+
+    ext.enableModrinth = { String modrinthProjectId ->
+        apply plugin: com.modrinth.minotaur.Minotaur
+        modrinth {
+            token = System.getenv("MODRINTH_TOKEN")
+            projectId = modrinthProjectId
+            uploadFile = jar
+            versionType = project.version.toString().contains('beta') ? 'beta' : (project.version.toString().contains('alpha') ? 'alpha' : 'release')
+            versionNumber = project.version
+            versionName = 'v' + project.version
+            changelog = System.getenv("RELEASE_CHANGELOG")
+        }
+    }
+
+    ext.commonProject = {
+        apply plugin: org.spongepowered.gradle.vanilla.VanillaGradle
+        minecraft {
+            version(minecraftVersion)
+        }
+        sourceSets {
+            main.resources.srcDirs += 'src/generated/resources'
+        }
+        dependencies {
+            compileOnly "org.spongepowered:mixin:0.8.5"
+        }
+    }
+
+    ext.forgeProject = { String modId, Project commonProject = null, ArrayList apis = [], ArrayList compileApis = [] ->
+        apply plugin: net.neoforged.gradle.userdev.UserDevPlugin
+        if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+            minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+        }
+        runs {
+            configureEach {
+                modSource project.sourceSets.main
+            }
+            client {
+                systemProperty 'neoforge.enabledGameTestNamespaces', modId
+            }
+            server {
+                systemProperty 'neoforge.enabledGameTestNamespaces', modId
+                programArgument '--nogui'
+            }
+            gameTestServer {
+                systemProperty 'neoforge.enabledGameTestNamespaces', modId
+                modSource project.sourceSets.test
+            }
+            data {
+                var destinationProject = commonProject != null ? commonProject : project
+                var existingProject = commonProject != null ? commonProject : project
+                programArguments.addAll '--mod', modId, '--all', '--output', destinationProject.file('src/generated/resources/').getAbsolutePath(), '--existing', existingProject.file('src/main/resources/').getAbsolutePath()
+            }
+        }
+        dependencies {
+            implementation "net.neoforged:neoforge:${forgeVersion}"
+            testImplementation "net.neoforged:testframework:${forgeVersion}"
+            apis.collect {
+                implementation project(it)
+            }
+            compileApis.collect {
+                implementation project(it)
+            }
+            if (commonProject != null) {
+                implementation commonProject
+            }
+        }
+        sourceSets {
+            main.resources.srcDirs += 'src/generated/resources'
+        }
+        processResources {
+            if (commonProject != null) {
+                from commonProject.sourceSets.main.resources
+            }
+            from project.sourceSets.main.resources
+        }
+        Spec<Task> notNeoTask = { Task t -> !t.name.startsWith("neo") } as Spec<Task>
+        tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
+            apis.collect {
+                source(project(it).sourceSets.main.allSource)
+            }
+            compileApis.collect {
+                source(project(it).sourceSets.main.allSource)
+            }
+            if (commonProject != null) {
+                source(commonProject.sourceSets.main.allSource)
+            }
+        }
+    }
+
+    ext.fabricProject = { String modId, Project commonProject = null, ArrayList apis = [], ArrayList compileApis = [] ->
+        repositories {
+            maven {
+                name = 'Parchment'
+                url 'https://maven.parchmentmc.org'
+            }
+        }
+        apply plugin: net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap
+        dependencies {
+            minecraft "com.mojang:minecraft:${minecraftVersion}"
+            mappings loom.layered() {
+                officialMojangMappings()
+            }
+            modImplementation "net.fabricmc:fabric-loader:${fabricLoaderVersion}"
+            modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}"
+            apis.collect {
+                api project(it)
+                include project(it)
+            }
+            compileApis.collect {
+                api project(it)
+            }
+            if (commonProject != null) {
+                api commonProject
+            }
+        }
+        processResources {
+            if (commonProject != null) {
+                from commonProject.sourceSets.main.resources
+            }
+            from project.sourceSets.main.resources
+        }
+        tasks.withType(JavaCompile) {
+            compileApis.collect {
+                source(project(it).sourceSets.main.allSource)
+            }
+            if (commonProject != null) {
+                source(commonProject.sourceSets.main.allSource)
+            }
+        }
+        jar {
+            from '../LICENSE.md'
+        }
+        loom {
+            def accessWidenerFile = file("src/main/resources/${modId}.accesswidener")
+            if (accessWidenerFile.exists()) {
+                accessWidenerPath = accessWidenerFile
+            }
+            runs {
+                client {
+                    client()
+                    setConfigName("Fabric Client")
+                    ideConfigGenerated(true)
+                    runDir("run")
+                }
+                server {
+                    server()
+                    setConfigName("Fabric Server")
+                    ideConfigGenerated(true)
+                    runDir("run")
+                }
+            }
+            mixin {
+                showMessageTypes = true
+                messages {
+                    // silence the warning from shadowing a synthetic field
+                    TARGET_ELEMENT_NOT_FOUND = 'disabled'
+                }
+            }
+        }
+    }
+}
+
+tasks.register('allJavadoc', Javadoc) {
+    def projects = allprojects.stream().filter { p -> p.hasProperty('javadocEnabled') }.toList()
+    source projects*.sourceSets.main.allJava
+    classpath += files(projects*.sourceSets.main.compileClasspath)
+    destinationDir = file("build/docs/javadoc")
+}
+
+tasks.register('codeCoverageReport', JacocoReport) {
+    subprojects.each {
+        sourceSets it.sourceSets.main
+        it.tasks.withType(Test).each {
+            executionData it
+            dependsOn it
+        }
+    }
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}
+
+ext.enableSonarQube = (String projectKey, String organization = "refinedmods") -> {
+    apply plugin: org.sonarqube.gradle.SonarQubePlugin
+    // https://docs.sonarqube.org/latest/analysis/github-integration/
+    sonarqube {
+        properties {
+            property "sonar.projectKey", projectKey
+            property "sonar.organization", organization
+            property "sonar.host.url", "https://sonarcloud.io"
+            property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        }
+    }
+}

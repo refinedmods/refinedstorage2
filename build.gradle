@@ -1,4 +1,5 @@
-apply from: "https://raw.githubusercontent.com/refinedmods/refinedarchitect/v${gradle.ext.refinedArchitectVersion}/helper.gradle"
+// apply from: "https://raw.githubusercontent.com/refinedmods/refinedarchitect/v${gradle.ext.refinedArchitectVersion}/helper.gradle"
+apply from: "helper_from_refinedarchitect_now_local.gradle"
 
 subprojects {
     group = 'com.refinedmods.refinedstorage'
@@ -22,5 +23,11 @@ enableSonarQube("refinedmods_refinedstorage2")
 sonarqube {
     properties {
         property "sonar.coverage.exclusions", "refinedstorage-platform-neoforge/**/*,refinedstorage-platform-fabric/**/*,refinedstorage-platform-common/**/*,refinedstorage-platform-api/**/*"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
     }
 }

@@ -26,3 +26,9 @@ test {
 
 enableJavadoc()
 enablePublishing()
+
+jar {
+    manifest {
+        attributes("FMLModType": "LIBRARY")
+    }
+}

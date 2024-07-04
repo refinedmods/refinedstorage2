@@ -26,3 +26,9 @@ test {
 
 enableMutationTesting()
 enablePublishing()
+
+jar {
+    manifest {
+        attributes("FMLModType": "LIBRARY")
+    }
+}
