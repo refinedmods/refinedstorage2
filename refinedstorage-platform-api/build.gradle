@@ -1,13 +1,10 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev'
-}
-
-neoForge {
-    neoFormVersion = rootProject.neoFormVersion
 }
 
 archivesBaseName = 'refinedstorage-platform-api'
+
+commonProject()
 
 dependencies {
     api libs.apiguardian

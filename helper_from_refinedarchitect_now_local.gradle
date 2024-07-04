@@ -25,6 +25,8 @@ buildscript {
         classpath 'fabric-loom:fabric-loom.gradle.plugin:1.7-SNAPSHOT'
         classpath 'net.darkhax.curseforgegradle:CurseForgeGradle:1.1.18'
         classpath 'com.modrinth.minotaur:Minotaur:2.+'
+        // https://projects.neoforged.net/neoforged/ModDevGradle
+        classpath 'net.neoforged:moddev-gradle:0.1.122'
     }
 }
 
@@ -161,7 +163,22 @@ allprojects {
         }
     }
 
+    ext.commonProject = {
+        apply plugin : net.neoforged.moddevgradle.boot.ModDevPlugin
+        neoForge {
+            neoFormVersion = rootProject.neoFormVersion
+        }
+        sourceSets {
+            main.resources.srcDirs += 'src/generated/resources'
+        }
+        dependencies {
+            compileOnly "org.spongepowered:mixin:0.8.5"
+        }
+    }
+    
     ext.forgeProject = { String modId, Project commonProject = null, ArrayList apis = [], ArrayList compileApis = [] ->
+        apply plugin : net.neoforged.moddevgradle.boot.ModDevPlugin
+
         neoForge {
             version = forgeVersion
             // The test source set does not inherit any "local" dependencies of main
