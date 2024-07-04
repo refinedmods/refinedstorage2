@@ -1,12 +1,20 @@
 plugins {
     id 'java-library'
+    id 'net.neoforged.moddev'
 }
 
 archivesBaseName = 'refinedstorage-platform-common'
 
-commonProject()
+sourceSets {
+    main.resources.srcDirs += 'src/generated/resources'
+}
+
+neoForge {
+    neoFormVersion = rootProject.neoFormVersion
+}
 
 dependencies {
+    compileOnly "org.spongepowered:mixin:0.8.5"
     api project(':refinedstorage-platform-api')
     api project(':refinedstorage-core-api')
     api project(':refinedstorage-resource-api')

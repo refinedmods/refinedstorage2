@@ -22,7 +22,6 @@ buildscript {
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.4.1.3373'
         classpath 'org.spongepowered:vanillagradle:0.2.1-SNAPSHOT'
-        classpath 'net.neoforged.gradle:userdev:7.0.152'
         classpath 'fabric-loom:fabric-loom.gradle.plugin:1.7-SNAPSHOT'
         classpath 'net.darkhax.curseforgegradle:CurseForgeGradle:1.1.18'
         classpath 'com.modrinth.minotaur:Minotaur:2.+'
@@ -55,10 +54,6 @@ allprojects {
         it.options.compilerArgs << "-Xmaxerrs" << "999"
     }
 
-    repositories {
-        mavenCentral()
-    }
-
     dependencies {
         implementation "com.google.code.findbugs:jsr305:3.0.2"
     }
@@ -84,6 +79,7 @@ allprojects {
 
     ext {
         minecraftVersion = "1.21"
+        neoFormVersion = "1.21-20240613.152323"
         forgeVersion = "21.0.42-beta"
         fabricLoaderVersion = "0.15.11"
         fabricApiVersion = "0.100.4+1.21"
@@ -164,78 +160,79 @@ allprojects {
         }
     }
 
-    ext.commonProject = {
-        apply plugin: org.spongepowered.gradle.vanilla.VanillaGradle
-        minecraft {
-            version(minecraftVersion)
-        }
-        sourceSets {
-            main.resources.srcDirs += 'src/generated/resources'
-        }
-        dependencies {
-            compileOnly "org.spongepowered:mixin:0.8.5"
-        }
-    }
-
     ext.forgeProject = { String modId, Project commonProject = null, ArrayList apis = [], ArrayList compileApis = [] ->
-        apply plugin: net.neoforged.gradle.userdev.UserDevPlugin
-        if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-            minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
-        }
-        runs {
-            configureEach {
-                modSource project.sourceSets.main
+        neoForge {
+            version = forgeVersion
+            // The test source set does not inherit any "local" dependencies of main
+            // this ensures Minecraft classes are available to it.
+            addModdingDependenciesTo(project.sourceSets.test)
+            mods {
+                "${modId}" {
+                    modSourceSets = [project.sourceSets.main, project.sourceSets.test]
+                    for (var api : apis) {
+                        modSourceSets.add(project(api).sourceSets.main)
+                    }
+                    for (var api : compileApis) {
+                        modSourceSets.add(project(api).sourceSets.main)
+                    }
+                    if (commonProject != null) {
+                        modSourceSets.add(commonProject.sourceSets.main)
+                    }
+                }
             }
-            client {
-                systemProperty 'neoforge.enabledGameTestNamespaces', modId
-            }
-            server {
-                systemProperty 'neoforge.enabledGameTestNamespaces', modId
-                programArgument '--nogui'
-            }
-            gameTestServer {
-                systemProperty 'neoforge.enabledGameTestNamespaces', modId
-                modSource project.sourceSets.test
-            }
-            data {
-                var destinationProject = commonProject != null ? commonProject : project
-                var existingProject = commonProject != null ? commonProject : project
-                programArguments.addAll '--mod', modId, '--all', '--output', destinationProject.file('src/generated/resources/').getAbsolutePath(), '--existing', existingProject.file('src/main/resources/').getAbsolutePath()
+            runs {
+                client {
+                    client()
+                    systemProperty 'neoforge.enabledGameTestNamespaces', modId
+                }
+                server {
+                    server()
+                    systemProperty 'neoforge.enabledGameTestNamespaces', modId
+                    programArgument '--nogui'
+                }
+                gameTestServer {
+                    type = "gameTestServer"
+                    systemProperty 'neoforge.enabledGameTestNamespaces', modId
+                }
+                data {
+                    data()
+                    var destinationProject = commonProject != null ? commonProject : project
+                    var existingProject = commonProject != null ? commonProject : project
+                    programArguments.addAll '--mod', modId, '--all', '--output', destinationProject.file('src/generated/resources/').getAbsolutePath(), '--existing', existingProject.file('src/main/resources/').getAbsolutePath()
+                }
             }
         }
         dependencies {
-            implementation "net.neoforged:neoforge:${forgeVersion}"
             testImplementation "net.neoforged:testframework:${forgeVersion}"
             apis.collect {
-                implementation project(it)
+                compileOnly project(it)
+                testCompileOnly project(it)
             }
             compileApis.collect {
-                implementation project(it)
+                compileOnly project(it)
+                testCompileOnly project(it)
             }
             if (commonProject != null) {
-                implementation commonProject
+                compileOnly commonProject
+                testCompileOnly commonProject
             }
         }
         sourceSets {
             main.resources.srcDirs += 'src/generated/resources'
         }
-        processResources {
-            if (commonProject != null) {
-                from commonProject.sourceSets.main.resources
-            }
-            from project.sourceSets.main.resources
-        }
-        Spec<Task> notNeoTask = { Task t -> !t.name.startsWith("neo") } as Spec<Task>
-        tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
+        tasks.withType(Jar).configureEach {
+            duplicatesStrategy = "exclude"
             apis.collect {
-                source(project(it).sourceSets.main.allSource)
+                from(project(it).sourceSets.main.output)
             }
             compileApis.collect {
-                source(project(it).sourceSets.main.allSource)
+                from(project(it).sourceSets.main.output)
             }
             if (commonProject != null) {
-                source(commonProject.sourceSets.main.allSource)
+                from(commonProject.sourceSets.main.output)
             }
+            // These come in from the common API jars but should not end up in the neoforge jar
+            excludes = ['fabric.mod.json']
         }
     }
 
