@@ -1,0 +1,8 @@
+{
+  "values": [
+    "refinedstorage:64b_fluid_storage_disk",
+    "refinedstorage:256b_fluid_storage_disk",
+    "refinedstorage:1024b_fluid_storage_disk",
+    "refinedstorage:4096b_fluid_storage_disk"
+  ]
+}

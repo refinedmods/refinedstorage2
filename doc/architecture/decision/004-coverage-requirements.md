@@ -20,7 +20,7 @@ Luckily, since our most important (business-logic) code resides in the API modul
 our testing focus there and establish coverage requirements.
 
 However, sometimes it is still advised to write a test for platform code, even if there are no coverage requirements for
-it. For that reason, the `refinedstorage2-platform-test` module exists, to provide helpers to deal with Minecraft code.
+it. For that reason, the `refinedstorage-platform-test` module exists, to provide helpers to deal with Minecraft code.
 
 ## Consequences
 

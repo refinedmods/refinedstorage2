@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage:white_destructor",
+    "refinedstorage:orange_destructor",
+    "refinedstorage:magenta_destructor",
+    "refinedstorage:light_blue_destructor",
+    "refinedstorage:yellow_destructor",
+    "refinedstorage:lime_destructor",
+    "refinedstorage:pink_destructor",
+    "refinedstorage:destructor",
+    "refinedstorage:light_gray_destructor",
+    "refinedstorage:cyan_destructor",
+    "refinedstorage:purple_destructor",
+    "refinedstorage:blue_destructor",
+    "refinedstorage:brown_destructor",
+    "refinedstorage:green_destructor",
+    "refinedstorage:red_destructor",
+    "refinedstorage:black_destructor"
+  ]
+}

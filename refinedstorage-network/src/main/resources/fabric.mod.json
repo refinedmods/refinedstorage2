@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "refinedstorage-network",
+  "version": "${version}",
+  "name": "Refined Storage Network",
+  "authors": [
+    "Refined Mods"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "custom": {
+    "modmenu": {
+      "parent": "refinedstorage",
+      "badges": [
+        "library"
+      ]
+    }
+  }
+}

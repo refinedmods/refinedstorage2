@@ -1,0 +1,18 @@
+{
+  "parent": "refinedstorage:block/emissive_cutout",
+  "textures": {
+    "cutout_down": "refinedstorage:block/relay/cutouts/in/yellow",
+    "cutout_east": "refinedstorage:block/relay/cutouts/in/yellow",
+    "cutout_north": "refinedstorage:block/relay/cutouts/out/yellow",
+    "cutout_south": "refinedstorage:block/relay/cutouts/in/yellow",
+    "cutout_up": "refinedstorage:block/relay/cutouts/in/yellow",
+    "cutout_west": "refinedstorage:block/relay/cutouts/in/yellow",
+    "down": "refinedstorage:block/relay/in",
+    "east": "refinedstorage:block/relay/in",
+    "north": "refinedstorage:block/relay/out",
+    "particle": "refinedstorage:block/relay/in",
+    "south": "refinedstorage:block/relay/in",
+    "up": "refinedstorage:block/relay/in",
+    "west": "refinedstorage:block/relay/in"
+  }
+}

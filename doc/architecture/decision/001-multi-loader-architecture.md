@@ -13,13 +13,13 @@ should support this design goal in a maintainable way.
 
 ## Decision
 
-Refined Storage 2 will have a modular structure with a module per modloader.
+Refined Storage will have a modular structure with a module per modloader.
 
 There will be a common module, and most code should reside in there. The modloader specific (platform) modules should be
 reserved
 for platform specific functionality, like registration, networking, etc.
 
-The module naming follows the standard of `refinedstorage2-platform-{name}`.
+The module naming follows the standard of `refinedstorage-platform-{name}`.
 
 ## Consequences
 

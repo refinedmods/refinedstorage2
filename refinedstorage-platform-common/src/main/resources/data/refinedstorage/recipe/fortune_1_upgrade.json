@@ -1,0 +1,8 @@
+{
+  "type": "refinedstorage:upgrade_with_enchanted_book",
+  "enchantment": "minecraft:fortune",
+  "level": 1,
+  "result": {
+    "id": "refinedstorage:fortune_1_upgrade"
+  }
+}

@@ -1,0 +1,31 @@
+archivesBaseName = 'refinedstorage-platform-fabric'
+
+repositories {
+    maven {
+        name = 'ModMenu'
+        url 'https://maven.terraformersmc.com/'
+    }
+    maven {
+        name = 'Cloth Config'
+        url 'https://maven.shedaniel.me/'
+    }
+}
+
+fabricProject("refinedstorage", project(":refinedstorage-platform-common"), apis, compileApis)
+
+dependencies {
+    modApi(libs.cloth.config) {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
+    include libs.cloth.config
+
+    modApi(libs.teamreborn.energy) {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
+    include libs.teamreborn.energy
+
+    modApi libs.modmenu
+}
+
+enablePublishing()
+

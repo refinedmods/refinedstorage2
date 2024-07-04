@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage:white_external_storage",
+    "refinedstorage:orange_external_storage",
+    "refinedstorage:magenta_external_storage",
+    "refinedstorage:light_blue_external_storage",
+    "refinedstorage:yellow_external_storage",
+    "refinedstorage:lime_external_storage",
+    "refinedstorage:pink_external_storage",
+    "refinedstorage:external_storage",
+    "refinedstorage:light_gray_external_storage",
+    "refinedstorage:cyan_external_storage",
+    "refinedstorage:purple_external_storage",
+    "refinedstorage:blue_external_storage",
+    "refinedstorage:brown_external_storage",
+    "refinedstorage:green_external_storage",
+    "refinedstorage:red_external_storage",
+    "refinedstorage:black_external_storage"
+  ]
+}

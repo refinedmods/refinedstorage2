@@ -16,12 +16,12 @@ Refined Storage 1).
 
 ## Decision
 
-Refined Storage 2 will have a modloader-neutral (just like the common module) platform API module which addon mods can
+Refined Storage will have a modloader-neutral (just like the common module) platform API module which addon mods can
 use to integrate with Refined Storage.
 
-Moreover, Refined Storage 2 itself will use this platform API module.
+Moreover, Refined Storage itself will use this platform API module.
 
-The module is named `refinedstorage2-platform-api`.
+The module is named `refinedstorage-platform-api`.
 
 ## Consequences
 

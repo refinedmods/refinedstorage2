@@ -1,0 +1,21 @@
+plugins {
+    id 'java-library'
+}
+
+archivesBaseName = 'refinedstorage-core-api'
+
+dependencies {
+    api libs.apiguardian
+    testImplementation libs.junit.api
+    testImplementation libs.junit.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.assertj
+}
+
+test {
+    useJUnitPlatform()
+}
+
+enableMutationTesting()
+enableJavadoc()
+enablePublishing()

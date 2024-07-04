@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "refinedstorage:quartz_enriched_copper_block"
+    }
+  ],
+  "result": {
+    "id": "refinedstorage:quartz_enriched_copper",
+    "count": 9
+  }
+}

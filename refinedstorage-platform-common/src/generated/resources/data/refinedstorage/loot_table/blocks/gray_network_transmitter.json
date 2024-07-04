@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "refinedstorage:gray_network_transmitter"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "refinedstorage:blocks/gray_network_transmitter"
+}

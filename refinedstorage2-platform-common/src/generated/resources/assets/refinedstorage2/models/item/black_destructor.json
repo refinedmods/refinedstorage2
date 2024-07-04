@@ -1,6 +1,0 @@
-{
-  "parent": "refinedstorage2:item/destructor/base",
-  "textures": {
-    "cable": "refinedstorage2:block/cable/black"
-  }
-}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PEP",
+    "SRS",
+    "PSP"
+  ],
+  "key": {
+    "P": {
+      "item": "refinedstorage:basic_processor"
+    },
+    "E": {
+      "item": "refinedstorage:quartz_enriched_iron"
+    },
+    "S": {
+      "item": "refinedstorage:64b_fluid_storage_part"
+    },
+    "R": {
+      "tag": "c:buckets/empty"
+    }
+  },
+  "result": {
+    "id": "refinedstorage:256b_fluid_storage_part"
+  }
+}

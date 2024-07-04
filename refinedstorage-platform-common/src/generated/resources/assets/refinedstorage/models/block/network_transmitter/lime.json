@@ -1,0 +1,8 @@
+{
+  "parent": "refinedstorage:block/emissive_all_cutout",
+  "textures": {
+    "all": "refinedstorage:block/network_transmitter/base",
+    "cutout": "refinedstorage:block/network_transmitter/cutouts/lime",
+    "particle": "refinedstorage:block/network_transmitter/base"
+  }
+}

@@ -8,10 +8,10 @@ Accepted
 
 ## Context
 
-Refined Storage 2 has the concept of a storage channel. A storage channel is the highest-level storage of a network. It
+Refined Storage has the concept of a storage channel. A storage channel is the highest-level storage of a network. It
 is used by other network devices to interact with the storage network.
 
-As Refined Storage 2 supports multiple resource types, we must decide how we partition those resource types.
+As Refined Storage supports multiple resource types, we must decide how we partition those resource types.
 
 ## Decision
 

@@ -1,0 +1,79 @@
+package com.refinedmods.refinedstorage.api.network.impl.node.exporter;
+
+import com.refinedmods.refinedstorage.api.network.Network;
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
+import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage.api.network.node.task.Task;
+import com.refinedmods.refinedstorage.api.network.node.task.TaskExecutor;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.storage.Actor;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
+
+public class ExporterNetworkNode extends AbstractNetworkNode {
+    private long energyUsage;
+    private final Actor actor = new NetworkNodeActor(this);
+    private final List<TaskImpl> tasks = new ArrayList<>();
+    @Nullable
+    private ExporterTransferStrategy transferStrategy;
+    @Nullable
+    private TaskExecutor<TaskContext> taskExecutor;
+
+    public ExporterNetworkNode(final long energyUsage) {
+        this.energyUsage = energyUsage;
+    }
+
+    public void setTransferStrategy(@Nullable final ExporterTransferStrategy transferStrategy) {
+        this.transferStrategy = transferStrategy;
+    }
+
+    public void setTaskExecutor(@Nullable final TaskExecutor<TaskContext> taskExecutor) {
+        this.taskExecutor = taskExecutor;
+    }
+
+    @Override
+    public void doWork() {
+        super.doWork();
+        if (network == null || !isActive() || taskExecutor == null) {
+            return;
+        }
+        final TaskContext context = new TaskContext(network, actor);
+        taskExecutor.execute(tasks, context);
+    }
+
+    public void setFilters(final List<ResourceKey> filters) {
+        tasks.clear();
+        tasks.addAll(filters.stream().map(TaskImpl::new).toList());
+    }
+
+    public void setEnergyUsage(final long energyUsage) {
+        this.energyUsage = energyUsage;
+    }
+
+    @Override
+    public long getEnergyUsage() {
+        return energyUsage;
+    }
+
+    public record TaskContext(Network network, Actor actor) {
+    }
+
+    class TaskImpl implements Task<TaskContext> {
+        private final ResourceKey filter;
+
+        TaskImpl(final ResourceKey filter) {
+            this.filter = filter;
+        }
+
+        @Override
+        public boolean run(final TaskContext context) {
+            if (transferStrategy == null) {
+                return false;
+            }
+            return transferStrategy.transfer(filter, context.actor, context.network);
+        }
+    }
+}

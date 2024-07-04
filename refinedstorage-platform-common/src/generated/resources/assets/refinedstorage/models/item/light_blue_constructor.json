@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage:item/constructor/base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/light_blue"
+  }
+}

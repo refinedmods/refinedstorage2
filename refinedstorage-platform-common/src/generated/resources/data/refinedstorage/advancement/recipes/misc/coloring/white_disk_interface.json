@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_disk_interfaces": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:disk_interfaces"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:coloring/white_disk_interface"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_disk_interfaces"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:coloring/white_disk_interface"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "active=false,direction=down": {
+      "model": "refinedstorage:block/relay/inactive",
+      "x": 90
+    },
+    "active=false,direction=east": {
+      "model": "refinedstorage:block/relay/inactive",
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "refinedstorage:block/relay/inactive"
+    },
+    "active=false,direction=south": {
+      "model": "refinedstorage:block/relay/inactive",
+      "y": 180
+    },
+    "active=false,direction=up": {
+      "model": "refinedstorage:block/relay/inactive",
+      "x": -90,
+      "y": 180
+    },
+    "active=false,direction=west": {
+      "model": "refinedstorage:block/relay/inactive",
+      "y": 270
+    },
+    "active=true,direction=down": {
+      "model": "refinedstorage:block/relay/red",
+      "x": 90
+    },
+    "active=true,direction=east": {
+      "model": "refinedstorage:block/relay/red",
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "refinedstorage:block/relay/red"
+    },
+    "active=true,direction=south": {
+      "model": "refinedstorage:block/relay/red",
+      "y": 180
+    },
+    "active=true,direction=up": {
+      "model": "refinedstorage:block/relay/red",
+      "x": -90,
+      "y": 180
+    },
+    "active=true,direction=west": {
+      "model": "refinedstorage:block/relay/red",
+      "y": 270
+    }
+  }
+}

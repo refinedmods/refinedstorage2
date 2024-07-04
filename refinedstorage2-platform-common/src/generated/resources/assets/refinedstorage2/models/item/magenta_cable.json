@@ -1,6 +1,0 @@
-{
-  "parent": "refinedstorage2:item/cable/base",
-  "textures": {
-    "cable": "refinedstorage2:block/cable/magenta"
-  }
-}

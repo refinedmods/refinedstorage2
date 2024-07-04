@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EEE",
+    "EEE",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage:quartz_enriched_copper"
+    }
+  },
+  "result": {
+    "id": "refinedstorage:quartz_enriched_copper_block"
+  }
+}

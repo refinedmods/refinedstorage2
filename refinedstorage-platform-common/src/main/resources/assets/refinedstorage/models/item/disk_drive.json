@@ -1,0 +1,4 @@
+{
+  "__comment": "Forge-only",
+  "loader": "refinedstorage:disk_drive"
+}

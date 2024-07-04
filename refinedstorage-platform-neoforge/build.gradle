@@ -1,0 +1,10 @@
+forgeProject("refinedstorage", project(":refinedstorage-platform-common"), apis, compileApis)
+
+archivesBaseName = 'refinedstorage-platform-neoforge'
+
+enablePublishing()
+
+// This avoids a build failure when running the "test" task, because there is no JUnit engine
+// in this subproject.
+// The test source set in this subproject is used for Minecraft game tests, not for JUnit tests.
+test.onlyIf { false }

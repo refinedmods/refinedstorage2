@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_external_storages": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:external_storages"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:coloring/light_gray_external_storage"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_external_storages"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:coloring/light_gray_external_storage"
+    ]
+  }
+}

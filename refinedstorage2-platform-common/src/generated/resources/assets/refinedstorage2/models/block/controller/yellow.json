@@ -1,8 +1,0 @@
-{
-  "parent": "refinedstorage2:block/emissive_all_cutout",
-  "textures": {
-    "all": "refinedstorage2:block/controller/on",
-    "cutout": "refinedstorage2:block/controller/cutouts/yellow",
-    "particle": "refinedstorage2:block/controller/off"
-  }
-}

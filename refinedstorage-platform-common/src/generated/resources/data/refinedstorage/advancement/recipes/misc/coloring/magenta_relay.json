@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_relays": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:relays"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:coloring/magenta_relay"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_relays"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:coloring/magenta_relay"
+    ]
+  }
+}

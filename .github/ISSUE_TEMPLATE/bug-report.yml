@@ -21,7 +21,7 @@ body:
       label: How can we reproduce this bug or crash?
       description: |
         Provide us with steps on how to reproduce this issue.
-        Try to reproduce the issue with only Refined Storage 2 installed, if possible.
+        Try to reproduce the issue with only Refined Storage installed, if possible.
       placeholder: |
         1.
         2.

@@ -1,0 +1,7 @@
+{
+  "parent": "refinedstorage:block/cable/core/base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/magenta",
+    "particle": "refinedstorage:block/cable/magenta"
+  }
+}

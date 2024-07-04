@@ -13,7 +13,8 @@ These are the most important things to know before contributing (also explained 
   Category must match a
   category [used in our Commitlint config](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional#type-enum).
 - We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build workflow to validate coding style. It is
-  recommended to import the [config/checkstyle/checkstyle.xml](../config/checkstyle/checkstyle.xml) or [config/intellij-code-style.xml](../config/intellij-code-style.xml) file into your
+  recommended to import the [config/checkstyle/checkstyle.xml](../config/checkstyle/checkstyle.xml)
+  or [config/intellij-code-style.xml](../config/intellij-code-style.xml) file into your
   IDE, so that formatting rules are respected.
 - Branches are kept up to date by rebasing, not by merging.
 - For non-technical changes, adding a changelog entry is required.
@@ -98,7 +99,8 @@ from [API Guardian](https://github.com/apiguardian-team/apiguardian).
 
 We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build workflow to validate coding style.
 
-It is recommended to import the [config/checkstyle/checkstyle.xml](../config/checkstyle/checkstyle.xml) or [config/intellij-code-style.xml](../config/intellij-code-style.xml) file into your
+It is recommended to import the [config/checkstyle/checkstyle.xml](../config/checkstyle/checkstyle.xml)
+or [config/intellij-code-style.xml](../config/intellij-code-style.xml) file into your
 IDE, so that formatting rules are respected.
 
 Moreover, the [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) can be used to check
@@ -132,13 +134,13 @@ Tests in the API modules are regular unit tests. Don't see a "unit" here as a co
 
 These tests don't rely on, nor know about, Minecraft.
 
-Additionally, tests in the `refinedstorage2-network` module use the `refinedstorage2-network-test` JUnit plugin to
+Additionally, tests in the `refinedstorage-network` module use the `refinedstorage-network-test` JUnit plugin to
 easily set up networks for testing.
 
 ### Integration testing
 
 To test the entire chain from Minecraft to the API modules, we use integration tests. These tests are located in the
-test source set of the `refinedstorage2-platform-forge` module.
+test source set of the `refinedstorage-platform-neoforge` module.
 
 We write these integration tests as Minecraft gametests.
 
@@ -148,7 +150,7 @@ Our [SonarQube quality gate](https://sonarcloud.io/organizations/refinedmods/qua
 test coverage percentage of 80%. This an aggregated percentage over all
 the API modules, with an exclusion for the platform modules.
 
-> The `refinedstorage2-platform-*` modules are excluded because they contain a lot of Minecraft-specific code and are
+> The `refinedstorage-platform-*` modules are excluded because they contain a lot of Minecraft-specific code and are
 > harder to test.
 
 ### Mutation testing
@@ -258,22 +260,22 @@ The workflow takes care of the following:
 
 ## Modules
 
-Refined Storage 2 is split up into various modules.
+Refined Storage is split up into various modules.
 
 Most modules aren't dependent on Minecraft or a mod loader. Only modules that start
-with `refinedstorage2-platform-*` have dependencies on Minecraft.
+with `refinedstorage-platform-*` have dependencies on Minecraft.
 
-| Name                              | Use in addons | Description                                                                                        |
-|-----------------------------------|---------------|----------------------------------------------------------------------------------------------------|
-| `refinedstorage2-core-api`        | ✔️            | Contains some utility classes and enums.                                                           |
-| `refinedstorage2-grid-api`        | ✔️            | Contains Grid related functionality.                                                               |
-| `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                                    |
-| `refinedstorage2-network`         | ❌             | Contains implementations of `refinedstorage2-network-api`.                                         |
-| `refinedstorage2-network-test`    | ✔️            | JUnit extension which helps with setting up a network and a network node for testing.              |
-| `refinedstorage2-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing.                     |
-| `refinedstorage2-resource-api`    | ✔️            | Contains API for handling resources.                                                               |
-| `refinedstorage2-storage-api`     | ✔️            | Contains storage related functionality.                                                            |
-| `refinedstorage2-platform-api`    | ✔️            | Implements the various Refined Storage API modules for use in Minecraft.                           |
-| `refinedstorage2-platform-fabric` | ❌             | The platform module for Fabric. This module contains Fabric specific code.                         |
-| `refinedstorage2-platform-forge`  | ❌             | The platform module for Forge. This module contains Forge specific code and the integration tests. |
-| `refinedstorage2-platform-common` | ❌             | Common mod code. Most gameplay code is in here.                                                    |
+| Name                             | Use in addons | Description                                                                                        |
+|----------------------------------|---------------|----------------------------------------------------------------------------------------------------|
+| `refinedstorage-core-api`        | ✔️            | Contains some utility classes and enums.                                                           |
+| `refinedstorage-grid-api`        | ✔️            | Contains Grid related functionality.                                                               |
+| `refinedstorage-network-api`     | ✔️            | Contains storage network related functionality.                                                    |
+| `refinedstorage-network`         | ❌             | Contains implementations of `refinedstorage-network-api`.                                          |
+| `refinedstorage-network-test`    | ✔️            | JUnit extension which helps with setting up a network and a network node for testing.              |
+| `refinedstorage-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing.                     |
+| `refinedstorage-resource-api`    | ✔️            | Contains API for handling resources.                                                               |
+| `refinedstorage-storage-api`     | ✔️            | Contains storage related functionality.                                                            |
+| `refinedstorage-platform-api`    | ✔️            | Implements the various Refined Storage API modules for use in Minecraft.                           |
+| `refinedstorage-platform-fabric` | ❌             | The platform module for Fabric. This module contains Fabric specific code.                         |
+| `refinedstorage-platform-forge`  | ❌             | The platform module for Forge. This module contains Forge specific code and the integration tests. |
+| `refinedstorage-platform-common` | ❌             | Common mod code. Most gameplay code is in here.                                                    |

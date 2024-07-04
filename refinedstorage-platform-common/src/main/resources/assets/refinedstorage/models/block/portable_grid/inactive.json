@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage:block/portable_grid/base",
+  "textures": {
+    "texture1": "refinedstorage:block/portable_grid/portable_grid_2_inactive"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage:white_disk_interface",
+    "refinedstorage:orange_disk_interface",
+    "refinedstorage:magenta_disk_interface",
+    "refinedstorage:disk_interface",
+    "refinedstorage:yellow_disk_interface",
+    "refinedstorage:lime_disk_interface",
+    "refinedstorage:pink_disk_interface",
+    "refinedstorage:gray_disk_interface",
+    "refinedstorage:light_gray_disk_interface",
+    "refinedstorage:cyan_disk_interface",
+    "refinedstorage:purple_disk_interface",
+    "refinedstorage:blue_disk_interface",
+    "refinedstorage:brown_disk_interface",
+    "refinedstorage:green_disk_interface",
+    "refinedstorage:red_disk_interface",
+    "refinedstorage:black_disk_interface"
+  ]
+}

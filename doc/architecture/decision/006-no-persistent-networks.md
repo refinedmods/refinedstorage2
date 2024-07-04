@@ -18,9 +18,9 @@ with block entities in non-conventional ways.
 
 ## Decision
 
-Networks cannot be persisted in Refined Storage 2. They need to be loaded in memory.
+Networks cannot be persisted in Refined Storage. They need to be loaded in memory.
 
-Network nodes cannot be persisted in Refined Storage 2. All persistent data should be stored on corresponding the block
+Network nodes cannot be persisted in Refined Storage. All persistent data should be stored on corresponding the block
 entity.
 
 ## Consequences

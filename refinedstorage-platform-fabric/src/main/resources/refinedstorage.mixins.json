@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.refinedmods.refinedstorage.platform.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AbstractModelBakerImplMixin",
+    "EditBoxAccessor",
+    "ItemPropertiesAccessor",
+    "KeyMappingAccessor",
+    "ModelBakeryAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

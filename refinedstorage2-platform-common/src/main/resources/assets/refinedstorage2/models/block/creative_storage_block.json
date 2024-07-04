@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "refinedstorage2:block/storage_block/creative_storage_block"
-  }
-}

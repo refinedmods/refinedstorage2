@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "refinedstorage:block/controller/off",
+      "predicate": {
+        "refinedstorage:stored_in_controller": 0.0
+      }
+    },
+    {
+      "model": "refinedstorage:block/controller/nearly_off",
+      "predicate": {
+        "refinedstorage:stored_in_controller": 0.01
+      }
+    },
+    {
+      "model": "refinedstorage:block/controller/nearly_on",
+      "predicate": {
+        "refinedstorage:stored_in_controller": 0.3
+      }
+    },
+    {
+      "model": "refinedstorage:block/controller/blue",
+      "predicate": {
+        "refinedstorage:stored_in_controller": 0.4
+      }
+    }
+  ]
+}

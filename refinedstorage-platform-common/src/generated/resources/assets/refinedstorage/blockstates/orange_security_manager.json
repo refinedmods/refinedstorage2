@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,direction=east": {
+      "model": "refinedstorage:block/security_manager/inactive",
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "refinedstorage:block/security_manager/inactive"
+    },
+    "active=false,direction=south": {
+      "model": "refinedstorage:block/security_manager/inactive",
+      "y": 180
+    },
+    "active=false,direction=west": {
+      "model": "refinedstorage:block/security_manager/inactive",
+      "y": 270
+    },
+    "active=true,direction=east": {
+      "model": "refinedstorage:block/security_manager/orange",
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "refinedstorage:block/security_manager/orange"
+    },
+    "active=true,direction=south": {
+      "model": "refinedstorage:block/security_manager/orange",
+      "y": 180
+    },
+    "active=true,direction=west": {
+      "model": "refinedstorage:block/security_manager/orange",
+      "y": 270
+    }
+  }
+}

@@ -17,7 +17,7 @@ business logic shouldn't change due to a Minecraft update.
 
 ## Decision
 
-Refined Storage 2 will have multiple API modules that have no dependency on Minecraft whatsoever.
+Refined Storage will have multiple API modules that have no dependency on Minecraft whatsoever.
 These modules can depend on each other, but the dependency chain should be logical.
 
 These API modules can be consumed by platform modules (to bundle them) [[1]](#1) and addon developers.
@@ -25,7 +25,7 @@ These API modules can be consumed by platform modules (to bundle them) [[1]](#1)
 The platform modules [[1]](#1) are responsible for integrating the modules with Minecraft, by implementing interfaces on
 their end that the API modules can use.
 
-The API modules have the name `refinedstorage2-{name}-api`.
+The API modules have the name `refinedstorage-{name}-api`.
 
 ## Consequences
 

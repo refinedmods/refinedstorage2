@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage:item/cable/base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/green"
+  }
+}

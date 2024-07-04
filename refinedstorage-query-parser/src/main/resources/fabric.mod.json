@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "refinedstorage-query-parser",
+  "version": "${version}",
+  "name": "Refined Storage Query Parser",
+  "authors": [
+    "Refined Mods"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "custom": {
+    "modmenu": {
+      "parent": "refinedstorage",
+      "badges": [
+        "library"
+      ]
+    }
+  }
+}

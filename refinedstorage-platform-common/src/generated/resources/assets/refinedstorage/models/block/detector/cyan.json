@@ -1,0 +1,10 @@
+{
+  "parent": "refinedstorage:block/detector/powered",
+  "textures": {
+    "bottom": "refinedstorage:block/detector/bottom",
+    "particle": "refinedstorage:block/detector/side",
+    "side": "refinedstorage:block/detector/side",
+    "top": "refinedstorage:block/detector/top",
+    "torch": "refinedstorage:block/detector/cutouts/cyan"
+  }
+}

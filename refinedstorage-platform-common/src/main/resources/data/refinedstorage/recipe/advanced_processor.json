@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "refinedstorage:raw_advanced_processor"
+  },
+  "result": {
+    "id": "refinedstorage:advanced_processor"
+  },
+  "experience": 0.5
+}

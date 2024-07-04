@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "tag": "c:gems/quartz"
+  },
+  "result": {
+    "id": "refinedstorage:silicon"
+  },
+  "experience": 0.5
+}

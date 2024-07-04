@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "refinedstorage:processor_binding"
+    },
+    {
+      "tag": "c:gems/diamond"
+    },
+    {
+      "item": "refinedstorage:silicon"
+    },
+    {
+      "tag": "c:dusts/redstone"
+    }
+  ],
+  "result": {
+    "id": "refinedstorage:raw_advanced_processor"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "refinedstorage",
+  "version": "${version}",
+  "name": "Refined Storage",
+  "description": "Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.",
+  "authors": [
+    "Refined Mods"
+  ],
+  "contact": {
+    "sources": "https://github.com/refinedmods/refinedstorage2",
+    "issues": "https://github.com/refinedmods/refinedstorage2/issues"
+  },
+  "accessWidener": "refinedstorage.accesswidener",
+  "icon": "assets/refinedstorage/icon.png",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.refinedmods.refinedstorage.platform.fabric.ModInitializerImpl"
+    ],
+    "client": [
+      "com.refinedmods.refinedstorage.platform.fabric.ClientModInitializerImpl"
+    ],
+    "modmenu": [
+      "com.refinedmods.refinedstorage.platform.fabric.modmenu.ModMenuApiImpl"
+    ]
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discordapp.com/invite/VYzsydb"
+      }
+    }
+  },
+  "mixins": [
+    "refinedstorage.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric-api": "*",
+    "minecraft": "1.21",
+    "java": ">=21",
+    "cloth-config2": "*",
+    "team_reborn_energy": "*"
+  },
+  "suggests": {
+    "roughlyenoughitems": "*",
+    "modmenu": "*"
+  }
+}

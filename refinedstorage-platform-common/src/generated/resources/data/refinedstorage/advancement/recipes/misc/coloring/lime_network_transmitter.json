@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_network_transmitters": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:network_transmitters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:coloring/lime_network_transmitter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_network_transmitters"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:coloring/lime_network_transmitter"
+    ]
+  }
+}

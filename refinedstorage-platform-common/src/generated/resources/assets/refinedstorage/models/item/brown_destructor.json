@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage:item/destructor/base",
+  "textures": {
+    "cable": "refinedstorage:block/cable/brown"
+  }
+}

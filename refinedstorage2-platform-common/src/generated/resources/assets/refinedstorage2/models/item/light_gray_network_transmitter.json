@@ -1,6 +1,0 @@
-{
-  "parent": "refinedstorage2:block/network_transmitter/inactive",
-  "textures": {
-    "cutout": "refinedstorage2:block/network_transmitter/cutouts/light_gray"
-  }
-}

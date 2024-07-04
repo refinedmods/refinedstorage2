@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "id": "refinedstorage:disk_interface"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.interfacing_with_disks"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage.interfacing_with_disks.description"
+    }
+  },
+  "parent": "refinedstorage:drives",
+  "criteria": {
+    "disk_interface_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:disk_interfaces"
+          }
+        ]
+      }
+    }
+  }
+}

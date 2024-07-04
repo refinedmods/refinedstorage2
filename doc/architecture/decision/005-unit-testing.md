@@ -11,7 +11,7 @@ Accepted
 The coverage requirements [[1]](#1) for the API modules [[2]](#2) state that we need unit test coverage. Hence, we need
 to clarify what "unit" in unit test means.
 
-The API modules in Refined Storage 2 are already disconnected from reality (Minecraft), so we need unit tests that
+The API modules in Refined Storage are already disconnected from reality (Minecraft), so we need unit tests that
 closely mimick real situations and assert real behavior if we want to get any value out of them.
 
 This eliminates the definition that most
@@ -19,7 +19,7 @@ people have of unit tests, which is to test "a single method" and to mock depend
 
 ## Decision
 
-Refined Storage 2 unit testing will follow a behavior driven approach, where "unit" in unit test means "unit of
+Refined Storage unit testing will follow a behavior driven approach, where "unit" in unit test means "unit of
 behavior" and not "unit of method".
 
 ## Consequences

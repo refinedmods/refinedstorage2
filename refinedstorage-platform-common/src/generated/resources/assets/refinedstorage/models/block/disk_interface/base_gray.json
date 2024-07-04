@@ -1,0 +1,13 @@
+{
+  "parent": "refinedstorage:block/emissive_north_cutout",
+  "textures": {
+    "cutout": "refinedstorage:block/disk_interface/cutouts/gray",
+    "down": "refinedstorage:block/bottom",
+    "east": "refinedstorage:block/disk_interface/right",
+    "north": "refinedstorage:block/disk_interface/front",
+    "particle": "refinedstorage:block/disk_interface/right",
+    "south": "refinedstorage:block/disk_interface/back",
+    "up": "refinedstorage:block/disk_interface/top",
+    "west": "refinedstorage:block/disk_interface/left"
+  }
+}

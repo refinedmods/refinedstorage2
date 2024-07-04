@@ -1,5 +1,0 @@
-@ParametersAreNonnullByDefault
-@FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.api.core;
-
-import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,7 +1,0 @@
-@ParametersAreNonnullByDefault
-@FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.platform.common.storage.diskinterface;
-
-import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,0 +1,3 @@
+{
+  "loader": "refinedstorage:disk_interface"
+}

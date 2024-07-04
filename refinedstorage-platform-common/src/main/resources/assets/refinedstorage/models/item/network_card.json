@@ -1,0 +1,17 @@
+{
+  "parent": "item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "refinedstorage:network_card_active": 0
+      },
+      "model": "refinedstorage:item/network_card/inactive"
+    },
+    {
+      "predicate": {
+        "refinedstorage:network_card_active": 1
+      },
+      "model": "refinedstorage:item/network_card/active"
+    }
+  ]
+}

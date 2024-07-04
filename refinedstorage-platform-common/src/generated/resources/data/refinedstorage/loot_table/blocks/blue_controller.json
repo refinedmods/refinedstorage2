@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "refinedstorage:energy"
+    }
+  ],
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "refinedstorage:blue_controller"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "refinedstorage:blocks/blue_controller"
+}
