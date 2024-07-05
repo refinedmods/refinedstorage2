@@ -1,4 +1,3 @@
-
 forgeProject("refinedstorage", project(":refinedstorage-platform-common"), apis, compileApis)
 
 archivesBaseName = 'refinedstorage-platform-neoforge'

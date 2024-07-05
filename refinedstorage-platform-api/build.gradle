@@ -2,9 +2,9 @@ plugins {
     id 'java-library'
 }
 
-archivesBaseName = 'refinedstorage-platform-api'
-
 commonProject()
+
+archivesBaseName = 'refinedstorage-platform-api'
 
 dependencies {
     api libs.apiguardian

@@ -6,12 +6,7 @@ archivesBaseName = 'refinedstorage-platform-common'
 
 commonProject()
 
-sourceSets {
-    main.resources.srcDirs += 'src/generated/resources'
-}
-
 dependencies {
-    compileOnly "org.spongepowered:mixin:0.8.5"
     api project(':refinedstorage-platform-api')
     api project(':refinedstorage-core-api')
     api project(':refinedstorage-resource-api')
