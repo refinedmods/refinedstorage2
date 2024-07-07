@@ -302,6 +302,7 @@
   "key.refinedstorage.clear_crafting_grid_matrix_to_network": "Singkirkan matriks Kisi Kerajinan ke jaringan",
   "key.refinedstorage.clear_crafting_grid_matrix_to_inventory": "Singkirkan matriks Kisi Kerajinan ke inventaris",
   "key.refinedstorage.open_wireless_grid": "Buka Kisi Nirkabel",
+  "key.refinedstorage.open_portable_grid": "Open Portable Grid",
   "refinedstorage.subtitle.wrench": "Kunci inggris digunakan",
   "permission.refinedstorage.insert": "Insert",
   "permission.refinedstorage.insert.description": "Whether the player can insert resources in a network.",
