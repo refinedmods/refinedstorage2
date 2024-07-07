@@ -1,0 +1,30 @@
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/refinedmods/refinedarchitect")
+            credentials {
+                username = "anything"
+                password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+            }
+        }
+    }
+    versionCatalogs {
+        create("libs") {
+            from("com.refinedmods.refinedarchitect:refinedarchitect-catalog:0.15.2")
+        }
+    }
+}
+
+rootProject.name = "refinedstorage"
+include("refinedstorage-core-api")
+include("refinedstorage-resource-api")
+include("refinedstorage-storage-api")
+include("refinedstorage-query-parser")
+include("refinedstorage-grid-api")
+include("refinedstorage-network-api")
+include("refinedstorage-network")
+include("refinedstorage-platform-api")
+include("refinedstorage-platform-fabric")
+include("refinedstorage-platform-neoforge")
+include("refinedstorage-platform-common")
+include("refinedstorage-network-test")
