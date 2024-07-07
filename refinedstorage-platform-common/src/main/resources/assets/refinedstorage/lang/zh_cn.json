@@ -302,6 +302,7 @@
   "key.refinedstorage.clear_crafting_grid_matrix_to_network": "清除合成终端矩阵到网络",
   "key.refinedstorage.clear_crafting_grid_matrix_to_inventory": "清除合成终端矩阵到库存",
   "key.refinedstorage.open_wireless_grid": "打开无线终端",
+  "key.refinedstorage.open_portable_grid": "Open Portable Grid",
   "refinedstorage.subtitle.wrench": "使用扳手",
   "permission.refinedstorage.insert": "存入",
   "permission.refinedstorage.insert.description": "玩家是否可以向存储网络中存入资源",
