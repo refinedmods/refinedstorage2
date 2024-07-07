@@ -302,6 +302,7 @@
   "key.refinedstorage.clear_crafting_grid_matrix_to_network": "Clear Crafting Grid matrix to network",
   "key.refinedstorage.clear_crafting_grid_matrix_to_inventory": "Clear Crafting Grid matrix to inventory",
   "key.refinedstorage.open_wireless_grid": "Open Wireless Grid",
+  "key.refinedstorage.open_portable_grid": "Open Portable Grid",
   "refinedstorage.subtitle.wrench": "Wrench used",
   "permission.refinedstorage.insert": "Insert",
   "permission.refinedstorage.insert.description": "Whether the player can insert resources in a network.",
