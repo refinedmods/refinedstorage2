@@ -302,6 +302,7 @@
   "key.refinedstorage.clear_crafting_grid_matrix_to_network": "Vider la matrice d'artisanat dans le réseau",
   "key.refinedstorage.clear_crafting_grid_matrix_to_inventory": "Vider la matrice d'artisanat dans l'inventaire",
   "key.refinedstorage.open_wireless_grid": "Ouvrir la grille sans fil",
+  "key.refinedstorage.open_portable_grid": "Open Portable Grid",
   "refinedstorage.subtitle.wrench": "Clé utilisée",
   "permission.refinedstorage.insert": "Insérer",
   "permission.refinedstorage.insert.description": "Si le joueur peut insérer des ressources dans le réseau.",
