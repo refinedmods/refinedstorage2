@@ -302,6 +302,7 @@
   "key.refinedstorage.clear_crafting_grid_matrix_to_network": "Werkbank in der Konsole zum Netzwerk leeren",
   "key.refinedstorage.clear_crafting_grid_matrix_to_inventory": "Werkbank in der Konsole zum Inventar leeren",
   "key.refinedstorage.open_wireless_grid": "Drahtlose Konsole öffnen",
+  "key.refinedstorage.open_portable_grid": "Open Portable Grid",
   "refinedstorage.subtitle.wrench": "Schraubenschlüssel benutzt",
   "permission.refinedstorage.insert": "Einfügen",
   "permission.refinedstorage.insert.description": "Gibt an, ob der Spieler Ressourcen in ein Netzwerk einfügen kann.",
