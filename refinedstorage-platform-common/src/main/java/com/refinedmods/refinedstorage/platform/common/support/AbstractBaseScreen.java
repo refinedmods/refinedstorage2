@@ -275,7 +275,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         if (resourceSlot.supportsItemSlotInteractions()) {
             PlatformApi.INSTANCE.getResourceContainerInsertStrategies()
                 .stream()
-                .flatMap(strategy -> strategy.getConversionInfo(resource).stream())
+                .flatMap(strategy -> strategy.getConversionInfo(resource, getMenu().getCarried()).stream())
                 .map(conversionInfo -> MouseClientTooltipComponent.itemConversion(
                     MouseClientTooltipComponent.Type.LEFT,
                     conversionInfo.from(),

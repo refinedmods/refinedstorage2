@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class FluidGridResource extends AbstractPlatformGridResource {
     private final FluidResource fluidResource;
@@ -51,12 +52,13 @@ public class FluidGridResource extends AbstractPlatformGridResource {
     }
 
     @Override
-    public List<ClientTooltipComponent> getExtractionHints() {
-        return Platform.INSTANCE.getFilledBucket(fluidResource).map(bucket -> MouseClientTooltipComponent.item(
-            MouseClientTooltipComponent.Type.LEFT,
-            bucket,
-            null
-        )).stream().toList();
+    public List<ClientTooltipComponent> getExtractionHints(final ItemStack container) {
+        return Platform.INSTANCE.getFilledFluidContainer(fluidResource, container).map(fluidContainer ->
+            MouseClientTooltipComponent.item(
+                MouseClientTooltipComponent.Type.LEFT,
+                fluidContainer,
+                null
+            )).stream().toList();
     }
 
     @Nullable

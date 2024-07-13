@@ -157,9 +157,14 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<ItemStack> getFilledBucket(final FluidResource fluidResource) {
+    public Optional<ItemStack> getFilledFluidContainer(final FluidResource fluidResource, final ItemStack container) {
+        ItemStack toRenderItem = container.copy();
+        if (container.isEmpty()) {
+            toRenderItem = new ItemStack(Items.BUCKET);
+        }
+
         return Optional.ofNullable(
-            new ItemStack(Items.BUCKET).getCapability(Capabilities.FluidHandler.ITEM)
+            toRenderItem.getCapability(Capabilities.FluidHandler.ITEM)
         ).map(dest -> {
             dest.fill(
                 toFluidStack(fluidResource, FluidType.BUCKET_VOLUME),

@@ -21,13 +21,15 @@ public class FluidResourceContainerInsertStrategy implements ResourceContainerIn
     }
 
     @Override
-    public Optional<ConversionInfo> getConversionInfo(final ResourceKey resource) {
+    public Optional<ConversionInfo> getConversionInfo(final ResourceKey resource, final ItemStack container) {
         if (!(resource instanceof FluidResource fluidResource)) {
             return Optional.empty();
         }
-        return Platform.INSTANCE.getFilledBucket(fluidResource).map(filledBucket -> new ConversionInfo(
-            EMPTY_BUCKET,
-            filledBucket
-        ));
+        final ItemStack fluidContainer = container.isEmpty() ? EMPTY_BUCKET : container;
+        return Platform.INSTANCE.getFilledFluidContainer(fluidResource, fluidContainer).map(filledContainer ->
+            new ConversionInfo(
+                fluidContainer,
+                filledContainer
+            ));
     }
 }

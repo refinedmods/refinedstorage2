@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -  Ability to extract fluids from the Interface using an empty bucket or other empty fluid container.
 
+### Fixed
+
+-   Fixed not being able to extract fluids from the grid while dragging an empty bucket or other empty fluid container.
+
 ## [2.0.0-milestone.4.4] - 2024-07-10
 
 ## [2.0.0-milestone.4.3] - 2024-07-06

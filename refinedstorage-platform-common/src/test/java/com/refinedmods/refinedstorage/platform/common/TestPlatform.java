@@ -108,7 +108,7 @@ public class TestPlatform implements Platform {
     }
 
     @Override
-    public Optional<ItemStack> getFilledBucket(final FluidResource fluidResource) {
+    public Optional<ItemStack> getFilledFluidContainer(final FluidResource fluidResource, final ItemStack container) {
         throw new UnsupportedOperationException();
     }
 
