@@ -12,7 +12,11 @@ public final class SimpleSingleStackStorage extends SingleStackStorage {
     }
 
     public static SimpleSingleStackStorage forEmptyBucket() {
-        return new SimpleSingleStackStorage(new ItemStack(Items.BUCKET));
+        return forStack(new ItemStack(Items.BUCKET));
+    }
+
+    public static SimpleSingleStackStorage forStack(final ItemStack stack) {
+        return new SimpleSingleStackStorage(stack);
     }
 
     @Override

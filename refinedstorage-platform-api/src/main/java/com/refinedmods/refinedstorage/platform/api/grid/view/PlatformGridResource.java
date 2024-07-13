@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
@@ -38,7 +39,7 @@ public interface PlatformGridResource extends GridResource {
 
     int getRegistryId();
 
-    List<ClientTooltipComponent> getExtractionHints();
+    List<ClientTooltipComponent> getExtractionHints(ItemStack container);
 
     @Nullable
     PlatformResourceKey getUnderlyingResource();

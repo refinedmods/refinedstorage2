@@ -113,8 +113,8 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public Optional<ItemStack> getFilledBucket(final FluidResource fluidResource) {
-        return ensureLoaded().getFilledBucket(fluidResource);
+    public Optional<ItemStack> getFilledFluidContainer(final FluidResource fluidResource, final ItemStack container) {
+        return ensureLoaded().getFilledFluidContainer(fluidResource, container);
     }
 
     @Override

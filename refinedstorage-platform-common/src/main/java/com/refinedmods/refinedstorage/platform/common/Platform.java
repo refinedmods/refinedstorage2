@@ -69,7 +69,7 @@ public interface Platform {
 
     Optional<FluidOperationResult> fillContainer(ItemStack container, ResourceAmount resourceAmount);
 
-    Optional<ItemStack> getFilledBucket(FluidResource fluidResource);
+    Optional<ItemStack> getFilledFluidContainer(FluidResource fluidResource, ItemStack container);
 
     TransferManager createTransferManager(AbstractContainerMenu containerMenu);
 

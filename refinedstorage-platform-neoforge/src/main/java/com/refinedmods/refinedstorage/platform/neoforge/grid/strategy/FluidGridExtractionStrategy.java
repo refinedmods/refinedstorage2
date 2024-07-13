@@ -50,9 +50,12 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
                              final GridExtractMode extractMode,
                              final boolean cursor) {
         if (resource instanceof FluidResource fluidResource) {
+            final boolean isCarryingFluidContainer = isCarryingFluidContainer();
             final boolean bucketInInventory = hasBucketInInventory();
             final boolean bucketInStorageChannel = hasBucketInStorage();
-            if (bucketInInventory) {
+            if (isCarryingFluidContainer) {
+                extractCarryingFluidContainer(fluidResource, extractMode);
+            } else if (bucketInInventory) {
                 extract(fluidResource, extractMode, cursor, true);
             } else if (bucketInStorageChannel) {
                 extract(fluidResource, extractMode, cursor, false);
@@ -65,6 +68,26 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     @Nullable
     private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
         return stack.getCapability(Capabilities.FluidHandler.ITEM);
+    }
+
+    private void extractCarryingFluidContainer(final FluidResource fluidResource,
+                                               final GridExtractMode mode) {
+        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
+            }
+            final var cap = getFluidStorage(menu.getCarried());
+            if (cap == null) {
+                return 0;
+            }
+
+            final int inserted = cap.fill(toFluidStack(fluidResource2, amount), toFluidAction(action));
+            if (inserted > 0 && action == Action.EXECUTE) {
+                menu.setCarried(cap.getContainer());
+            }
+
+            return inserted;
+        });
     }
 
     private void extract(final FluidResource fluidResource,
@@ -119,6 +142,10 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             );
             return remainder.isEmpty();
         }
+    }
+
+    private boolean isCarryingFluidContainer() {
+        return getFluidStorage(menu.getCarried()) != null && menu.getCarried().getCount() == 1;
     }
 
     private boolean hasBucketInStorage() {
