@@ -41,6 +41,9 @@ public class FabricStorageInsertableStorage<T> implements InsertableStorage {
             return 0;
         }
         final T platformResource = toPlatformMapper.apply(resource);
+        if (platformResource == null) {
+            return 0;
+        }
         final long correctedAmount = amountOverride.overrideAmount(
             resource,
             amount,

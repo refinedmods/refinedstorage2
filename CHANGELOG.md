@@ -13,7 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
--   Fixed not being able to extract fluids from the grid while dragging an empty bucket or other empty fluid container.
+-  Fixed not being able to extract fluids from the grid while dragging an empty bucket or other empty fluid container.
+-  Fixed crash when trying to export fluids into an Interface on Fabric.
 
 ## [2.0.0-milestone.4.4] - 2024-07-10
 
