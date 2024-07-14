@@ -385,7 +385,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final ItemStack carriedStack = getMenu().getCarried();
         final PlatformGridResource resource = getCurrentGridResource();
 
-        if (resource != null) {
+        if (resource != null && resource.allowExtraction(
+            resource,
+            carriedStack,
+            resource.getGridAllowExtractionStrategy())) {
             mouseClickedInGrid(clickedButton, resource);
             return true;
         }

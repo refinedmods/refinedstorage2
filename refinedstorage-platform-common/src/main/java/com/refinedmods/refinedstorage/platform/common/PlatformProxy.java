@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage.platform.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.platform.common.support.containermenu.MenuOpener;
@@ -87,8 +88,18 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
+    public GridAllowExtractionStrategy getItemGridAllowExtractionStrategy() {
+        return ensureLoaded().getItemGridAllowExtractionStrategy();
+    }
+
+    @Override
     public GridResourceFactory getFluidGridResourceFactory() {
         return ensureLoaded().getFluidGridResourceFactory();
+    }
+
+    @Override
+    public GridAllowExtractionStrategy getFluidGridAllowExtractionStrategy() {
+        return ensureLoaded().getFluidGridAllowExtractionStrategy();
     }
 
     @Override
@@ -110,6 +121,11 @@ public class PlatformProxy implements Platform {
     public Optional<FluidOperationResult> fillContainer(final ItemStack container,
                                                         final ResourceAmount resourceAmount) {
         return ensureLoaded().fillContainer(container, resourceAmount);
+    }
+
+    @Override
+    public Optional<ItemStack> getFilledBucket(final FluidResource fluidResource) {
+        return ensureLoaded().getFilledBucket(fluidResource);
     }
 
     @Override

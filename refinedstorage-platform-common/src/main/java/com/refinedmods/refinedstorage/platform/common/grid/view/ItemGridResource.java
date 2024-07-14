@@ -4,11 +4,14 @@ import com.refinedmods.refinedstorage.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.view.AbstractPlatformGridResource;
+import com.refinedmods.refinedstorage.platform.api.grid.view.PlatformGridResource;
 import com.refinedmods.refinedstorage.platform.api.support.AmountFormatting;
 import com.refinedmods.refinedstorage.platform.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.platform.common.Platform;
 import com.refinedmods.refinedstorage.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.platform.common.support.tooltip.MouseClientTooltipComponent;
 
@@ -82,6 +85,18 @@ public class ItemGridResource extends AbstractPlatformGridResource {
                 halfExtractionAmount == 1 ? null : AmountFormatting.format(halfExtractionAmount)
             )
         );
+    }
+
+    @Override
+    public GridAllowExtractionStrategy getGridAllowExtractionStrategy() {
+        return Platform.INSTANCE.getItemGridAllowExtractionStrategy();
+    }
+
+    @Override
+    public boolean allowExtraction(final PlatformGridResource resource,
+                                   final ItemStack carriedStack,
+                                   final GridAllowExtractionStrategy extractionStrategy) {
+        return extractionStrategy.allowExtraction(resource, carriedStack);
     }
 
     @Override

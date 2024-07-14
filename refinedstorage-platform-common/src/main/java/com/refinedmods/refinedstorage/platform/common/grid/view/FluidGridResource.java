@@ -4,9 +4,11 @@ import com.refinedmods.refinedstorage.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.view.AbstractPlatformGridResource;
+import com.refinedmods.refinedstorage.platform.api.grid.view.PlatformGridResource;
 import com.refinedmods.refinedstorage.platform.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.platform.common.Platform;
 import com.refinedmods.refinedstorage.platform.common.support.resource.FluidResource;
@@ -53,10 +55,10 @@ public class FluidGridResource extends AbstractPlatformGridResource {
 
     @Override
     public List<ClientTooltipComponent> getExtractionHints(final ItemStack container) {
-        return Platform.INSTANCE.getFilledFluidContainer(fluidResource, container).map(fluidContainer ->
+        return Platform.INSTANCE.getFilledFluidContainer(fluidResource, container).map(filled ->
             MouseClientTooltipComponent.item(
                 MouseClientTooltipComponent.Type.LEFT,
-                fluidContainer,
+                filled,
                 null
             )).stream().toList();
     }
@@ -65,6 +67,18 @@ public class FluidGridResource extends AbstractPlatformGridResource {
     @Override
     public PlatformResourceKey getUnderlyingResource() {
         return fluidResource;
+    }
+
+    @Override
+    public GridAllowExtractionStrategy getGridAllowExtractionStrategy() {
+        return Platform.INSTANCE.getFluidGridAllowExtractionStrategy();
+    }
+
+    @Override
+    public boolean allowExtraction(final PlatformGridResource resource,
+                                   final ItemStack carriedStack,
+                                   final GridAllowExtractionStrategy extractionStrategy) {
+        return extractionStrategy.allowExtraction(resource, carriedStack);
     }
 
     @Override
