@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.platform.common.Config;
@@ -11,6 +12,8 @@ import com.refinedmods.refinedstorage.platform.common.support.containermenu.Tran
 import com.refinedmods.refinedstorage.platform.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.platform.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.platform.common.util.CustomBlockPlaceContext;
+import com.refinedmods.refinedstorage.platform.fabric.grid.strategy.FluidGridAllowExtractionStrategy;
+import com.refinedmods.refinedstorage.platform.fabric.grid.strategy.ItemGridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.platform.fabric.grid.view.FabricFluidGridResourceFactory;
 import com.refinedmods.refinedstorage.platform.fabric.grid.view.FabricItemGridResourceFactory;
@@ -123,8 +126,18 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
+    public GridAllowExtractionStrategy getItemGridAllowExtractionStrategy() {
+        return new ItemGridAllowExtractionStrategy();
+    }
+
+    @Override
     public GridResourceFactory getFluidGridResourceFactory() {
         return new FabricFluidGridResourceFactory();
+    }
+
+    @Override
+    public GridAllowExtractionStrategy getFluidGridAllowExtractionStrategy() {
+        return new FluidGridAllowExtractionStrategy();
     }
 
     @Override
@@ -173,10 +186,21 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
+    public Optional<ItemStack> getFilledBucket(final FluidResource fluidResource) {
+        return getFilledItemStack(fluidResource, SimpleSingleStackStorage.forEmptyBucket());
+    }
+
+    @Override
     public Optional<ItemStack> getFilledFluidContainer(final FluidResource fluidResource, final ItemStack container) {
-        final SimpleSingleStackStorage interceptingStorage = container.isEmpty()
-            ? SimpleSingleStackStorage.forEmptyBucket()
-            : SimpleSingleStackStorage.forStack(container);
+        if (!container.isEmpty()) {
+            return getFilledItemStack(fluidResource, SimpleSingleStackStorage.forStack(container));
+        } else {
+            return getFilledBucket(fluidResource);
+        }
+    }
+
+    private Optional<ItemStack> getFilledItemStack(final FluidResource fluidResource,
+                                                   final SimpleSingleStackStorage interceptingStorage) {
         final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
             interceptingStorage.getStack(),
             ContainerItemContext.ofSingleSlot(interceptingStorage)

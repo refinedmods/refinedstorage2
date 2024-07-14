@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.platform.api.grid.view;
 import com.refinedmods.refinedstorage.api.grid.operations.GridExtractMode;
 import com.refinedmods.refinedstorage.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.platform.api.support.resource.PlatformResourceKey;
@@ -20,6 +21,10 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
 public interface PlatformGridResource extends GridResource {
+    boolean allowExtraction(PlatformGridResource resource,
+                            ItemStack carriedStack,
+                            GridAllowExtractionStrategy extractionStrategy);
+
     void onExtract(GridExtractMode extractMode,
                    boolean cursor,
                    GridExtractionStrategy extractionStrategy);
@@ -43,4 +48,6 @@ public interface PlatformGridResource extends GridResource {
 
     @Nullable
     PlatformResourceKey getUnderlyingResource();
+
+    GridAllowExtractionStrategy getGridAllowExtractionStrategy();
 }

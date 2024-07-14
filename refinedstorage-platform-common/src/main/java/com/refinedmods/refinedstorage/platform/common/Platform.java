@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridAllowExtractionStrategy;
 import com.refinedmods.refinedstorage.platform.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage.platform.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.platform.common.support.containermenu.MenuOpener;
@@ -59,7 +60,11 @@ public interface Platform {
 
     GridResourceFactory getItemGridResourceFactory();
 
+    GridAllowExtractionStrategy getItemGridAllowExtractionStrategy();
+
     GridResourceFactory getFluidGridResourceFactory();
+
+    GridAllowExtractionStrategy getFluidGridAllowExtractionStrategy();
 
     GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory();
 
@@ -68,6 +73,8 @@ public interface Platform {
     Optional<FluidOperationResult> drainContainer(ItemStack container);
 
     Optional<FluidOperationResult> fillContainer(ItemStack container, ResourceAmount resourceAmount);
+
+    Optional<ItemStack> getFilledBucket(FluidResource fluidResource);
 
     Optional<ItemStack> getFilledFluidContainer(FluidResource fluidResource, ItemStack container);
 
