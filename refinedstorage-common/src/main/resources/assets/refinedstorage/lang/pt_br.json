@@ -128,7 +128,7 @@
   "gui.refinedstorage.fuzzy_mode.on.generic_help": "Match the filter, ignoring components.",
   "gui.refinedstorage.fuzzy_mode.on.extracting_storage_network_help": "Match the filters when extracting from the storage network, ignoring components.",
   "gui.refinedstorage.fuzzy_mode.on.extracting_source_help": "Match the filters when extracting from the source, ignoring components.",
-  "gui.refinedstorage.fuzzy_mode.off": "Off",
+  "gui.refinedstorage.fuzzy_mode.off": "Desligado",
   "gui.refinedstorage.fuzzy_mode.off.storage_help": "Match the filters for the allowlist or blocklist exactly.",
   "gui.refinedstorage.fuzzy_mode.off.generic_help": "Match the filter exactly.",
   "gui.refinedstorage.fuzzy_mode.off.extracting_storage_network_help": "Match the filters when extracting from the storage network exactly.",
