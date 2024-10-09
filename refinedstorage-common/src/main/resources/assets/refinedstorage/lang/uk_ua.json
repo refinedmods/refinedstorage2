@@ -1,11 +1,11 @@
 {
   "mod.refinedstorage": "Refined Storage",
-  "block.refinedstorage.cable": "Cable",
+  "block.refinedstorage.cable": "Кабель",
   "block.refinedstorage.quartz_enriched_iron_block": "Block of Quartz Enriched Iron",
   "block.refinedstorage.quartz_enriched_copper_block": "Block of Quartz Enriched Copper",
   "block.refinedstorage.disk_drive": "Disk Drive",
   "block.refinedstorage.machine_casing": "Machine Casing",
-  "block.refinedstorage.grid": "Grid",
+  "block.refinedstorage.grid": "Сітка",
   "block.refinedstorage.pattern_grid": "Pattern Grid",
   "block.refinedstorage.crafting_grid": "Crafting Grid",
   "block.refinedstorage.controller": "Controller",
