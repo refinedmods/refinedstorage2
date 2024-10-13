@@ -396,7 +396,7 @@
   "tag.item.refinedstorage.storage_disks": "Lagring diskar",
   "tag.item.refinedstorage.wireless_transmitters": "Trådlösa sändare",
   "tag.item.refinedstorage.disk_interfaces": "Disk-gränssnitt",
-  "tag.item.refinedstorage.crafters": "Crafters",
+  "tag.item.refinedstorage.autocrafters": "Autocrafters",
   "text.autoconfig.refinedstorage.title": "Refined Storage konfiguration",
   "refinedstorage.configuration.title": "Refined Storage konfiguration",
   "refinedstorage.configuration.section.refinedstorage.common.toml": "Refined Storage konfiguration",
