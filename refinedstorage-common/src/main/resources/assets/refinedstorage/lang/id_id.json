@@ -396,7 +396,7 @@
   "tag.item.refinedstorage.storage_disks": "Storage Disks",
   "tag.item.refinedstorage.wireless_transmitters": "Wireless Transmitters",
   "tag.item.refinedstorage.disk_interfaces": "Disk Interfaces",
-  "tag.item.refinedstorage.crafters": "Crafters",
+  "tag.item.refinedstorage.autocrafters": "Autocrafters",
   "text.autoconfig.refinedstorage.title": "Refined Storage Configuration",
   "refinedstorage.configuration.title": "Refined Storage Configuration",
   "refinedstorage.configuration.section.refinedstorage.common.toml": "Refined Storage Configuration",
