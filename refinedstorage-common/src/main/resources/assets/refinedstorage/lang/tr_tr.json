@@ -396,7 +396,7 @@
   "tag.item.refinedstorage.storage_disks": "Depolama Diskileri",
   "tag.item.refinedstorage.wireless_transmitters": "Kablosuz Vericiler",
   "tag.item.refinedstorage.disk_interfaces": "Disk Arayüzleri",
-  "tag.item.refinedstorage.crafters": "Üreticiler",
+  "tag.item.refinedstorage.autocrafters": "Autocrafters",
   "text.autoconfig.refinedstorage.title": "Refined Storage Yapılandırması",
   "refinedstorage.configuration.title": "Refined Storage Yapılandırması",
   "refinedstorage.configuration.section.refinedstorage.common.toml": "Refined Storage Yapılandırması",
