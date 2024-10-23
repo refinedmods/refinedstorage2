@@ -631,15 +631,15 @@
   "advancements.refinedstorage.wireless": "Wireless",
   "advancements.refinedstorage.wireless.description": "Access your resources wirelessly with a Wireless Grid",
   "advancements.refinedstorage.better_than_a_barrel": "Better than a barrel",
-  "advancements.refinedstorage.better_than_a_barrel.description": "Craft a Storage Monitor to view, insert or extract resources in a storage network",
+  "advancements.refinedstorage.better_than_a_barrel.description": "",
   "advancements.refinedstorage.no_cables_required": "No cables required",
   "advancements.refinedstorage.no_cables_required.description": "Add extra components to your storage network without using cables by using a Network Transmitter, Network Receiver and Network Card",
-  "advancements.refinedstorage.portable_storage": "Portable storage",
+  "advancements.refinedstorage.portable_storage": "Портативное хранилище",
   "advancements.refinedstorage.portable_storage.description": "Craft a Portable Grid to access the content of disks without requiring a storage network",
   "advancements.refinedstorage.security": "Security",
   "advancements.refinedstorage.security.description": "Secure your storage network with a Security Manager and a Security Card",
   "advancements.refinedstorage.conditional_connecting": "Conditional connecting",
   "advancements.refinedstorage.conditional_connecting.description": "Turn entire sections of a storage network on or off and create new branches of your network with a Relay",
   "advancements.refinedstorage.autocrafting": "Autocrafting",
-  "advancements.refinedstorage.autocrafting.description": "Automate crafting with an Autocrafter by using patterns created in a Pattern Grid"
+  "advancements.refinedstorage.autocrafting.description": "Автоматизируйте работу со сборщиком, используя шаблоны, созданные в менеджере шаблонов"
 }
