@@ -92,7 +92,7 @@
   "gui.refinedstorage.screen_size.medium": "Середній",
   "gui.refinedstorage.screen_size.large": "Великий",
   "gui.refinedstorage.screen_size.extra_large": "Дуже великий",
-  "gui.refinedstorage.detector.mode": "Mode",
+  "gui.refinedstorage.detector.mode": "Режим",
   "gui.refinedstorage.detector.mode.under": "Emit redstone signal when under the amount",
   "gui.refinedstorage.detector.mode.equal": "Emit redstone signal when on the amount",
   "gui.refinedstorage.detector.mode.above": "Emit redstone signal when above the amount",
