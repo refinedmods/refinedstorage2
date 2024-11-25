@@ -2,12 +2,26 @@ package com.refinedmods.refinedstorage.fabric.support.energy;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage.common.support.energy.ItemBlockEnergyStorage;
+import com.refinedmods.refinedstorage.common.support.energy.ItemEnergyStorage;
 
+import javax.annotation.Nullable;
+
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import net.minecraft.world.item.ItemStack;
 
 public class EnergyStorageAdapter extends SnapshotParticipant<Long> implements team.reborn.energy.api.EnergyStorage {
+    @Nullable
+    private ContainerItemContext ctx;
     private final EnergyStorage energyStorage;
+
+    public EnergyStorageAdapter(final EnergyStorage energyStorage, final ContainerItemContext ctx) {
+        this.energyStorage = energyStorage;
+        this.ctx = ctx;
+    }
 
     public EnergyStorageAdapter(final EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
@@ -17,22 +31,40 @@ public class EnergyStorageAdapter extends SnapshotParticipant<Long> implements t
         return energyStorage;
     }
 
+    public void exchangeStack(final TransactionContext transaction) {
+        if (ctx != null) {
+            ItemStack itemStack = null;
+            if (energyStorage instanceof ItemBlockEnergyStorage itemBlockEnergyStorage) {
+                itemStack = itemBlockEnergyStorage.getStack();
+            } else if (energyStorage instanceof ItemEnergyStorage itemEnergyStorage) {
+                itemStack = itemEnergyStorage.getStack();
+            }
+            if (itemStack != null) {
+                ctx.exchange(ItemVariant.of(itemStack), 1, transaction);
+            }
+        }
+    }
+
     @Override
     public long insert(final long maxAmount, final TransactionContext transaction) {
-        final long insertedSimulated = energyStorage.receive(maxAmount, Action.SIMULATE);
-        if (insertedSimulated > 0) {
+        long inserted = energyStorage.receive(maxAmount, Action.SIMULATE);
+        if (inserted > 0) {
             updateSnapshots(transaction);
         }
-        return energyStorage.receive(maxAmount, Action.EXECUTE);
+        inserted = energyStorage.receive(maxAmount, Action.EXECUTE);
+        exchangeStack(transaction);
+        return inserted;
     }
 
     @Override
     public long extract(final long maxAmount, final TransactionContext transaction) {
-        final long extractedSimulated = energyStorage.extract(maxAmount, Action.SIMULATE);
-        if (extractedSimulated > 0) {
+        long extracted = energyStorage.extract(maxAmount, Action.SIMULATE);
+        if (extracted > 0) {
             updateSnapshots(transaction);
         }
-        return energyStorage.extract(maxAmount, Action.EXECUTE);
+        extracted = energyStorage.extract(maxAmount, Action.EXECUTE);
+        exchangeStack(transaction);
+        return extracted;
     }
 
     @Override

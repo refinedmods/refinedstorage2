@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed fabric energy item update
+
 ## [2.0.0-milestone.4.10] - 2024-11-24
 
 ### Added

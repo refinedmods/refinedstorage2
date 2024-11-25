@@ -19,6 +19,10 @@ public class ItemEnergyStorage extends AbstractListeningEnergyStorage {
         }
     }
 
+    public ItemStack getStack() {
+        return stack;
+    }
+
     @Override
     protected void onStoredChanged(final long stored) {
         stack.set(DataComponents.INSTANCE.getEnergy(), stored);
