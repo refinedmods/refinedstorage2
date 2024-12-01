@@ -29,6 +29,10 @@ public class ItemBlockEnergyStorage extends AbstractListeningEnergyStorage {
         }
     }
 
+    public ItemStack getStack() {
+        return stack;
+    }
+
     @Override
     protected void onStoredChanged(final long stored) {
         final CustomData customData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
