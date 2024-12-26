@@ -29,7 +29,7 @@ class CraftingPattern implements Pattern {
         this.output = output;
         this.inputResources = inputs.stream().flatMap(List::stream).collect(Collectors.toSet());
         this.outputResources = Set.of(output.resource());
-        this.ingredients = inputs.stream().map(i -> new Ingredient(1, i)).toList();
+        this.ingredients = inputs.stream().map(i -> new Ingredient(i.isEmpty() ? 0 : 1, i)).toList();
         this.outputs = Stream.concat(Stream.of(output), byproducts.stream()).toList();
     }
 

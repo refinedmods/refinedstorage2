@@ -97,6 +97,40 @@ class CraftingCalculatorImplTest {
             .build());
     }
 
+    @ParameterizedTest
+    @ValueSource(longs = {1, 2})
+    void shouldCalculateForSingleRootPatternSingleIngredientSpreadOutOverMultipleIngredientsAndThereAreMissingResources(
+        final long requestedAmount
+    ) {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 1)
+                .ingredient(OAK_PLANKS, 1)
+                .ingredient(OAK_PLANKS, 1)
+                .ingredient(OAK_PLANKS, 1)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Preview preview = calculateAndGetPreview(sut, CRAFTING_TABLE, requestedAmount);
+
+        // Assert
+        assertThat(preview).usingRecursiveComparison(PREVIEW_CONFIG).isEqualTo(PreviewBuilder.ofType(MISSING_RESOURCES)
+            .addToCraft(CRAFTING_TABLE, requestedAmount)
+            .addToCraft(OAK_PLANKS, requestedAmount * 4)
+            .addMissing(OAK_LOG, requestedAmount)
+            .build());
+    }
+
+
     @Test
     void shouldNotCalculateForSingleRootPatternSingleIngredientAndAlmostAllResourcesAreAvailable() {
         // Arrange
