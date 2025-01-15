@@ -64,7 +64,7 @@
   "gui.refinedstorage.grid.resource_type.all": "Hepsi",
   "gui.refinedstorage.grid.craft": "Üret",
   "gui.refinedstorage.grid.autocraftable": "Bu malzeme otomatik üretilebilir",
-  "gui.refinedstorage.grid.pattern_in_inventory": "There is a pattern in your inventory for this resource.",
+  "gui.refinedstorage.grid.pattern_in_inventory": "Envanterinizde bu kaynak için bir şablon var.",
   "gui.refinedstorage.grid.click_to_autocraft": "Otomatik üretmek için tıkla",
   "gui.refinedstorage.grid.ctrl_click_to_autocraft": "Otomatik üretmek için CTRL + tıkla",
   "gui.refinedstorage.grid.search_help": "Depodaki kaynaklar üzerinden arama yap.",
