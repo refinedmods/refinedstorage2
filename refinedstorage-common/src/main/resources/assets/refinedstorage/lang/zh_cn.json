@@ -1,5 +1,6 @@
 {
   "mod.refinedstorage": "精致存储",
+  "mod.refinedstorage.colorized": "Refined Storage (colorized)",
   "block.refinedstorage.cable": "线缆",
   "block.refinedstorage.disk_drive": "磁盘驱动器",
   "block.refinedstorage.machine_casing": "机器外壳",
@@ -381,6 +382,7 @@
   "item.refinedstorage.autocrafting_monitor.help": "显示自动合成任务的状态，并能够取消存储网络中的的自动合成任务",
   "item.refinedstorage.wireless_autocrafting_monitor": "无线自动合成监视器",
   "item.refinedstorage.creative_wireless_autocrafting_monitor": "创造无线自动合成监视器",
+  "item.refinedstorage.color_and_item_name": "%s %s",
   "misc.refinedstorage.stored": "存储：%s",
   "misc.refinedstorage.stored_with_capacity": "存储：%s / %s (%d%%)",
   "misc.refinedstorage.total": "总数：%d",
