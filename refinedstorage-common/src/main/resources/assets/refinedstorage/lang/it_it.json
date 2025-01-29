@@ -1,5 +1,6 @@
 {
   "mod.refinedstorage": "Refined Storage",
+  "mod.refinedstorage.colorized": "Refined Storage (colorized)",
   "block.refinedstorage.cable": "Cable",
   "block.refinedstorage.disk_drive": "Disk Drive",
   "block.refinedstorage.machine_casing": "Machine Casing",
@@ -381,6 +382,7 @@
   "item.refinedstorage.autocrafting_monitor.help": "Displays the status of autocrafting tasks and allows you to cancel autocrafting tasks in your storage network.",
   "item.refinedstorage.wireless_autocrafting_monitor": "Wireless Autocrafting Monitor",
   "item.refinedstorage.creative_wireless_autocrafting_monitor": "Creative Wireless Autocrafting Monitor",
+  "item.refinedstorage.color_and_item_name": "%s %s",
   "misc.refinedstorage.stored": "Stored: %s",
   "misc.refinedstorage.stored_with_capacity": "Stored: %s / %s (%d%%)",
   "misc.refinedstorage.total": "%d total",
