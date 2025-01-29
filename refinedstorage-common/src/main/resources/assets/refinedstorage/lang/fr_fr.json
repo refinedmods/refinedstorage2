@@ -1,5 +1,6 @@
 {
   "mod.refinedstorage": "Refined Storage",
+  "mod.refinedstorage.colorized": "Refined Storage (en couleur)",
   "block.refinedstorage.cable": "Câble",
   "block.refinedstorage.disk_drive": "Lecteur de Disque",
   "block.refinedstorage.machine_casing": "Boitier de machine",
@@ -381,6 +382,7 @@
   "item.refinedstorage.autocrafting_monitor.help": "Affiche le status des tâches d'artisanat automatique et permet d'annuler les tâches d'artisanat automatique de votre réseau de stockage.",
   "item.refinedstorage.wireless_autocrafting_monitor": "Moniteur d'artisanat automatique sans fil",
   "item.refinedstorage.creative_wireless_autocrafting_monitor": "Moniteur d'artisanat automatique sans fil créatif",
+  "item.refinedstorage.color_and_item_name": "%s %s",
   "misc.refinedstorage.stored": "Stocké : %s",
   "misc.refinedstorage.stored_with_capacity": "Stocké : %s / %s (%d%%)",
   "misc.refinedstorage.total": "%d total",
