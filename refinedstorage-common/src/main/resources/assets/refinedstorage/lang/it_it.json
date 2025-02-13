@@ -266,6 +266,10 @@
   "gui.refinedstorage.autocrafting_monitor.cancel": "Cancel",
   "gui.refinedstorage.autocrafting_monitor.cancel_all": "Cancel all",
   "gui.refinedstorage.autocrafting_monitor.running_time": "Running for %s",
+  "gui.refinedstorage.exporting_indicator.destination_does_not_accept_resource": "Destination does not accept resource",
+  "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
+  "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
+  "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
   "item.refinedstorage.controller.help": "Provides the storage network with energy. Multiple are allowed in a single storage network.",
   "item.refinedstorage.creative_controller.help": "Provides the storage network with an infinite source of energy.",
   "item.refinedstorage.disk_drive.help": "Accepts storage disks to provide the storage network with storage space.",
@@ -340,6 +344,8 @@
   "item.refinedstorage.range_upgrade.help": "Increases the range of the Wireless Transmitter.",
   "item.refinedstorage.creative_range_upgrade": "Creative Range Upgrade",
   "item.refinedstorage.creative_range_upgrade.help": "Provides infinite range for the Wireless Transmitter. Does not work cross-dimensionally.",
+  "item.refinedstorage.autocrafting_upgrade": "Autocrafting Upgrade",
+  "item.refinedstorage.autocrafting_upgrade.help": "Will start an autocrafting task for missing resources.",
   "item.refinedstorage.wireless_grid": "Wireless Grid",
   "item.refinedstorage.creative_wireless_grid": "Creative Wireless Grid",
   "item.refinedstorage.wireless_transmitter.help": "Provides wireless network access for items like the Wireless Grid. Multiple are allowed in an area for wider coverage.",
@@ -587,6 +593,8 @@
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeEnergyUsage.tooltip": "The additional energy used per Range Upgrade.",
   "text.autoconfig.refinedstorage.option.upgrade.creativeRangeUpgradeEnergyUsage": "Creative Range Upgrade energy usage",
   "text.autoconfig.refinedstorage.option.upgrade.creativeRangeUpgradeEnergyUsage.tooltip": "The additional energy used by the Creative Range Upgrade.",
+  "text.autoconfig.refinedstorage.option.upgrade.autocraftingUpgradeEnergyUsage": "Autocrafting Upgrade energy usage",
+  "text.autoconfig.refinedstorage.option.upgrade.autocraftingUpgradeEnergyUsage.tooltip": "The additional energy used by the Autocrafting Upgrade.",
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeRange": "Range Upgrade range",
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeRange.tooltip": "The additional range provided by the Range Upgrade.",
   "text.autoconfig.refinedstorage.option.iface": "Interface",
@@ -731,5 +739,7 @@
   "advancements.refinedstorage.monitoring": "Monitoring",
   "advancements.refinedstorage.monitoring.description": "Check the status of your autocrafting tasks with a Autocrafting Monitor",
   "advancements.refinedstorage.wireless_monitoring": "Wireless monitoring",
-  "advancements.refinedstorage.wireless_monitoring.description": "Check the status of your autocrafting tasks wirelessly with a Wireless Autocrafting Monitor"
+  "advancements.refinedstorage.wireless_monitoring.description": "Check the status of your autocrafting tasks wirelessly with a Wireless Autocrafting Monitor",
+  "advancements.refinedstorage.autocrafting_on_demand": "Autocrafting on demand",
+  "advancements.refinedstorage.autocrafting_on_demand.description": "Use an Autocrafting Upgrade in an Interface, Exporter or Constructor to autocraft resources on demand"
 }
