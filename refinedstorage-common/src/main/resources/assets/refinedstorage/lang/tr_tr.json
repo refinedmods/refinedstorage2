@@ -266,6 +266,10 @@
   "gui.refinedstorage.autocrafting_monitor.cancel": "İptal Et",
   "gui.refinedstorage.autocrafting_monitor.cancel_all": "Hepsini iptal et",
   "gui.refinedstorage.autocrafting_monitor.running_time": "%s için çalışıyor",
+  "gui.refinedstorage.exporting_indicator.destination_does_not_accept_resource": "Destination does not accept resource",
+  "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
+  "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
+  "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
   "item.refinedstorage.controller.help": "Depolama ağına enerji sağlar. Tek bir depolama ağında birden fazlasına izin verilir.",
   "item.refinedstorage.creative_controller.help": "Depolama ağına sonsuz enerji sağlar.",
   "item.refinedstorage.disk_drive.help": "Depolama ağına, depolama alanı sağlamak için depolama disklerini kabul eder.",
@@ -340,6 +344,8 @@
   "item.refinedstorage.range_upgrade.help": "Kablosuz Vericinin menzilini artırır.",
   "item.refinedstorage.creative_range_upgrade": "Yaratıcı Mod Menzil Yükseltmesi",
   "item.refinedstorage.creative_range_upgrade.help": "Kablosuz Verici için sonsuz menzil sağlar. Boyutlar arasında çalışmaz.",
+  "item.refinedstorage.autocrafting_upgrade": "Autocrafting Upgrade",
+  "item.refinedstorage.autocrafting_upgrade.help": "Will start an autocrafting task for missing resources.",
   "item.refinedstorage.wireless_grid": "Kablosuz Terminal",
   "item.refinedstorage.creative_wireless_grid": "Yaratıcı Mod Kablosuz Terminal",
   "item.refinedstorage.wireless_transmitter.help": "Kablosuz Terminal gibi eşyalar için kablosuz ağ erişimi sağlar. Daha geniş kapsama alanı için bir alanda birden fazlasına izin verilir.",
@@ -587,6 +593,8 @@
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeEnergyUsage.tooltip": "Menzil Yükseltmesi başına kullanılan ek enerji.",
   "text.autoconfig.refinedstorage.option.upgrade.creativeRangeUpgradeEnergyUsage": "Yaratıcı Mod Menzil Yükseltmesi enerji kullanımı",
   "text.autoconfig.refinedstorage.option.upgrade.creativeRangeUpgradeEnergyUsage.tooltip": "Yaratıcı Mod Menzil Yükseltmesi tarafından kullanılan ek enerji.",
+  "text.autoconfig.refinedstorage.option.upgrade.autocraftingUpgradeEnergyUsage": "Autocrafting Upgrade energy usage",
+  "text.autoconfig.refinedstorage.option.upgrade.autocraftingUpgradeEnergyUsage.tooltip": "The additional energy used by the Autocrafting Upgrade.",
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeRange": "Menzil Yükseltmesi menzili",
   "text.autoconfig.refinedstorage.option.upgrade.rangeUpgradeRange.tooltip": "Menzil Yükseltmesi tarafından sağlanan ek menzil.",
   "text.autoconfig.refinedstorage.option.iface": "Arayüz",
@@ -731,5 +739,7 @@
   "advancements.refinedstorage.monitoring": "İzleniyor",
   "advancements.refinedstorage.monitoring.description": "Otomatik Üretim İzleyicisi ile otomatik üretim görevlerinizin durumunu kontrol edin",
   "advancements.refinedstorage.wireless_monitoring": "Kablosuz izleniyor",
-  "advancements.refinedstorage.wireless_monitoring.description": "Kablosuz Otomatik Üretim İzleyicisi ile otomatik üretim görevlerinizin durumunu kablosuz olarak kontrol edin"
+  "advancements.refinedstorage.wireless_monitoring.description": "Kablosuz Otomatik Üretim İzleyicisi ile otomatik üretim görevlerinizin durumunu kablosuz olarak kontrol edin",
+  "advancements.refinedstorage.autocrafting_on_demand": "Autocrafting on demand",
+  "advancements.refinedstorage.autocrafting_on_demand.description": "Use an Autocrafting Upgrade in an Interface, Exporter or Constructor to autocraft resources on demand"
 }
