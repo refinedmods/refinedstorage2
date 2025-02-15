@@ -35,6 +35,8 @@ public class BlockDropProvider extends BlockLootSubProvider {
         Blocks.INSTANCE.getDetector().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getConstructor().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getDestructor().forEach((color, id, block) -> drop(block.get()));
+        Blocks.INSTANCE.getImporter().forEach((color, id, block) -> drop(block.get()));
+        Blocks.INSTANCE.getExporter().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getWirelessTransmitter().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getNetworkReceiver().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getNetworkTransmitter().forEach((color, id, block) -> drop(block.get()));
@@ -68,6 +70,8 @@ public class BlockDropProvider extends BlockLootSubProvider {
         blocks.addAll(Blocks.INSTANCE.getDetector().values());
         blocks.addAll(Blocks.INSTANCE.getConstructor().values());
         blocks.addAll(Blocks.INSTANCE.getDestructor().values());
+        blocks.addAll(Blocks.INSTANCE.getImporter().values());
+        blocks.addAll(Blocks.INSTANCE.getExporter().values());
         blocks.addAll(Blocks.INSTANCE.getWirelessTransmitter().values());
         blocks.addAll(Blocks.INSTANCE.getNetworkReceiver().values());
         blocks.addAll(Blocks.INSTANCE.getNetworkTransmitter().values());

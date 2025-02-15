@@ -15,6 +15,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   The filter slots for the Exporter and Constructor now display whether a resource is missing, the destination does not accept it, the resource cannot be autocrafted due to missing resources, or whether the resource is currently autocrafting.
 
+### Fixed 
+-   Fixed coloured importers and exporters not dropping when broken.
+
 ## [2.0.0-milestone.4.13] - 2025-02-01
 
 ### Added
