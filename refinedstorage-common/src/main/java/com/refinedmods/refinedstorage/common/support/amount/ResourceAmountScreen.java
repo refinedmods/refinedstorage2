@@ -34,7 +34,7 @@ public class ResourceAmountScreen
                 .withIncrementsBottomStartPosition(new Vector3f(7, 72, 0))
                 .withAmountFieldPosition(new Vector3f(9, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
-                .withMinAmount(1D)
+                .withMinAmount(0D)
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),

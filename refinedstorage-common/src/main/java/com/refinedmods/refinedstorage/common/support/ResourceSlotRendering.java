@@ -56,7 +56,7 @@ public final class ResourceSlotRendering {
             y,
             rendering.formatAmount(amount, true),
             0xFFFFFF,
-            true
+            false
         );
     }
 

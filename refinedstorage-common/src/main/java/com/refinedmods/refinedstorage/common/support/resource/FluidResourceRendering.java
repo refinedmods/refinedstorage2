@@ -18,12 +18,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 public class FluidResourceRendering implements ResourceRendering {
-    private static final DecimalFormat LESS_THAN_1_BUCKET_FORMATTER = new DecimalFormat(
-        "0.#",
-        DecimalFormatSymbols.getInstance(Locale.US)
-    );
     private static final DecimalFormat FORMATTER = new DecimalFormat(
-        "#,###.#",
+        "#,###.###",
         DecimalFormatSymbols.getInstance(Locale.US)
     );
 
@@ -79,11 +75,7 @@ public class FluidResourceRendering implements ResourceRendering {
 
     private static String formatWithUnits(final long droplets, final long bucketAmount) {
         final double buckets = convertToBuckets(droplets, bucketAmount);
-        if (buckets >= 1) {
-            return IdentifierUtil.formatWithUnits((long) Math.floor(buckets));
-        } else {
-            return LESS_THAN_1_BUCKET_FORMATTER.format(buckets);
-        }
+        return IdentifierUtil.formatWithUnits(buckets) + "b";
     }
 
     private static String format(final long droplets, final long bucketAmount) {

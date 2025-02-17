@@ -88,29 +88,35 @@ public final class IdentifierUtil {
         return prefix + id.getNamespace() + "." + fixedPath;
     }
 
-    public static String formatWithUnits(final long qty) {
+    public static String formatWithUnits(final double qty) {
         if (qty >= 1_000_000_000) {
-            return formatBillion(qty);
+            return formatBillion((long) qty);
         } else if (qty >= 1_000_000) {
-            return formatMillion(qty);
+            return formatMillion((long) qty);
         } else if (qty >= 1000) {
-            return formatThousand(qty);
+            return formatThousand((long) qty);
+        } else if (qty < 1) {
+            return formatThousandth(qty);
         }
-        return String.valueOf(qty);
+        return String.valueOf((long) qty);
     }
 
-    private static String formatBillion(final long qty) {
+    private static String formatThousandth(final double qty) {
+        return FORMATTER_WITH_UNITS.format(qty * 1_000) + "m";
+    }
+
+    private static String formatBillion(final double qty) {
         return FORMATTER_WITH_UNITS.format(qty / 1_000_000_000D) + "B";
     }
 
-    private static String formatMillion(final long qty) {
+    private static String formatMillion(final double qty) {
         if (qty >= 100_000_000) {
             return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1_000_000D)) + "M";
         }
         return FORMATTER_WITH_UNITS.format(qty / 1_000_000D) + "M";
     }
 
-    private static String formatThousand(final long qty) {
+    private static String formatThousand(final double qty) {
         if (qty >= 100_000) {
             return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1000D)) + "K";
         }

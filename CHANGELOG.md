@@ -14,6 +14,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 -   The filter slots for the Exporter, Constructor and Interface now display whether a resource is missing, the destination does not accept it, the resource cannot be autocrafted due to missing resources, or whether the resource is currently autocrafting.
+-   Fluids display in millibuckets (mb) if less than a bucket, and append 'b' to signify bucket unit.
+-   Item and fluid counts are in small font.
+
+### Fixed 
+-   Fluids display 3 decimal places in tooltip
+-   Fixed autocrafting request and pattern set amount screens allow for less than 1 bucket.
 
 ## [2.0.0-milestone.4.13] - 2025-02-01
 

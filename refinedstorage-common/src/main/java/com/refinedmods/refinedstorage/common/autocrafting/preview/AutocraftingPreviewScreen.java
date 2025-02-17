@@ -136,7 +136,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 .withAmountFieldPosition(new Vector3f(77, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(7, 222, 0))
                 .withHorizontalActionButtons(true)
-                .withMinAmount(1D)
+                .withMinAmount(0D)
                 .withResetAmount(1D)
                 .withConfirmButtonText(START)
                 .build(),

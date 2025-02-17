@@ -91,7 +91,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .withAmountFieldPosition(new Vector3f(47, 51, 0))
                 .withActionButtonsStartPosition(new Vector3f(7, 199, 0))
                 .withHorizontalActionButtons(true)
-                .withMinAmount(1D)
+                .withMinAmount(0D)
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
