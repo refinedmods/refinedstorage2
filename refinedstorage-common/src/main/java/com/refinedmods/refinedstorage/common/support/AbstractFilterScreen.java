@@ -44,11 +44,13 @@ public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> 
         return TEXTURE;
     }
 
-    protected final boolean renderExportingIndicators(final GuiGraphics graphics,
-                                                      final int x,
-                                                      final int y,
-                                                      final int indicators,
-                                                      final IntFunction<ExportingIndicator> indicatorProvider) {
+    public static boolean renderExportingIndicators(final GuiGraphics graphics,
+                                                    final int leftPos,
+                                                    final int topPos,
+                                                    final int mouseX,
+                                                    final int mouseY,
+                                                    final int indicators,
+                                                    final IntFunction<ExportingIndicator> indicatorProvider) {
         for (int i = 0; i < indicators; ++i) {
             final ExportingIndicator indicator = indicatorProvider.apply(i);
             final int xx = leftPos + 7 + (i * 18) + 18 - 10 + 1;
@@ -60,13 +62,14 @@ public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> 
                 graphics.blitSprite(sprite, xx, yy, WARNING_SIZE, WARNING_SIZE);
                 graphics.pose().popPose();
             }
-            if (indicator != ExportingIndicator.NONE
-                && isHovering(xx - leftPos, yy - topPos, WARNING_SIZE, WARNING_SIZE, x, y)) {
+            final boolean hovering =
+                mouseX >= xx && mouseX <= xx + WARNING_SIZE && mouseY >= yy && mouseY <= yy + WARNING_SIZE;
+            if (indicator != ExportingIndicator.NONE && hovering) {
                 Platform.INSTANCE.renderTooltip(
                     graphics,
                     List.of(ClientTooltipComponent.create(indicator.getTooltip().getVisualOrderText())),
-                    x,
-                    y
+                    mouseX,
+                    mouseY
                 );
                 return true;
             }
