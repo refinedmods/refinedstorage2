@@ -50,6 +50,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).isNull();
         assertThat(exportState.getExportedResource(2)).isNull();
+        assertThat(sut.getLastResult(0)).isNull();
+        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.RESOURCE_MISSING);
+        assertThat(sut.getLastResult(2)).isEqualTo(InterfaceTransferResult.RESOURCE_MISSING);
         assertThat(storage.getAll()).isEmpty();
     }
 
@@ -73,7 +76,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isEqualTo(A);
         assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
         assertThat(exportState.getExportedResource(2)).isNull();
-
+        assertThat(sut.getLastResult(0)).isNull();
+        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
+        assertThat(sut.getLastResult(2)).isNull();
         assertThat(storage.getAll()).isEmpty();
     }
 
@@ -95,7 +100,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isEqualTo(A);
         assertThat(exportState.getExportedAmount(1)).isEqualTo(1);
         assertThat(exportState.getExportedResource(2)).isNull();
-
+        assertThat(sut.getLastResult(0)).isNull();
+        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
+        assertThat(sut.getLastResult(2)).isNull();
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount(A, 9));
@@ -122,7 +129,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
         assertThat(exportState.getExportedResource(2)).isEqualTo(B);
         assertThat(exportState.getExportedAmount(2)).isEqualTo(2);
-
+        assertThat(sut.getLastResult(0)).isNull();
+        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
+        assertThat(sut.getLastResult(2)).isEqualTo(InterfaceTransferResult.EXPORTED);
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
@@ -132,7 +141,7 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
     }
 
     @Test
-    void shouldExportResourceFuzzilyToEmptySlot(
+    void shouldExportExpandedResourceToEmptySlot(
         @InjectNetworkStorageComponent final StorageNetworkComponent storage
     ) {
         // Arrange
@@ -150,7 +159,9 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(1)).isEqualTo(A_ALTERNATIVE);
         assertThat(exportState.getExportedAmount(1)).isEqualTo(2);
         assertThat(exportState.getExportedResource(2)).isNull();
-
+        assertThat(sut.getLastResult(0)).isNull();
+        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
+        assertThat(sut.getLastResult(2)).isNull();
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(

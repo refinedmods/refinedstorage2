@@ -31,7 +31,8 @@ public class ConstructorScreen extends AbstractFilterScreen<ConstructorContainer
 
     @Override
     protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (renderExportingIndicators(graphics, x, y, getMenu().getIndicators(), getMenu()::getIndicator)) {
+        if (renderExportingIndicators(graphics, leftPos, topPos, x, y, getMenu().getIndicators(),
+            getMenu()::getIndicator)) {
             return;
         }
         super.renderTooltip(graphics, x, y);

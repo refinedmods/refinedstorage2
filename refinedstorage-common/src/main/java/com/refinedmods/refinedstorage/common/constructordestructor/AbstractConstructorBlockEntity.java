@@ -205,7 +205,8 @@ public abstract class AbstractConstructorBlockEntity
     private ExportingIndicators getExportingIndicators() {
         return new ExportingIndicators(
             filter.getFilterContainer(),
-            i -> toExportingIndicator(mainNetworkNode.getLastResult(i))
+            i -> toExportingIndicator(mainNetworkNode.getLastResult(i)),
+            false
         );
     }
 

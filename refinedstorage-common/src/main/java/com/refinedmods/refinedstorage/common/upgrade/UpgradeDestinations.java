@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.upgrade;
 
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeDestination;
+import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.Items;
 
@@ -21,7 +22,8 @@ public enum UpgradeDestinations implements UpgradeDestination {
     DISK_INTERFACE(ContentNames.DISK_INTERFACE, () -> new ItemStack(
         Items.INSTANCE.getDiskInterfaces().getFirst().get()
     )),
-    AUTOCRAFTER(ContentNames.AUTOCRAFTER, () -> new ItemStack(Items.INSTANCE.getAutocrafters().getFirst().get()));
+    AUTOCRAFTER(ContentNames.AUTOCRAFTER, () -> new ItemStack(Items.INSTANCE.getAutocrafters().getFirst().get())),
+    INTERFACE(ContentNames.INTERFACE, () -> new ItemStack(Blocks.INSTANCE.getInterface()));
 
     private final Component name;
     private final Supplier<ItemStack> stackFactory;

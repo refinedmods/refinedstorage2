@@ -190,15 +190,9 @@ public abstract class AbstractExporterBlockEntity
     private ExportingIndicators getExportingIndicators() {
         return new ExportingIndicators(
             filter.getFilterContainer(),
-            i -> toExportingIndicator(mainNetworkNode.getLastResult(i))
+            i -> toExportingIndicator(mainNetworkNode.getLastResult(i)),
+            false
         );
-    }
-
-    @Override
-    public ExporterData getMenuData() {
-        final ResourceContainer filterContainer = filter.getFilterContainer();
-        final ResourceContainerData resourceContainerData = ResourceContainerData.of(filterContainer);
-        return new ExporterData(resourceContainerData, getExportingIndicators().getAll());
     }
 
     private ExportingIndicator toExportingIndicator(@Nullable final ExporterTransferStrategy.Result result) {
@@ -209,6 +203,13 @@ public abstract class AbstractExporterBlockEntity
             case AUTOCRAFTING_MISSING_RESOURCES -> ExportingIndicator.AUTOCRAFTING_MISSING_RESOURCES;
             case null, default -> ExportingIndicator.NONE;
         };
+    }
+
+    @Override
+    public ExporterData getMenuData() {
+        final ResourceContainer filterContainer = filter.getFilterContainer();
+        final ResourceContainerData resourceContainerData = ResourceContainerData.of(filterContainer);
+        return new ExporterData(resourceContainerData, getExportingIndicators().getAll());
     }
 
     @Override
