@@ -18,9 +18,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed 
 -   Fixed coloured importers and exporters not dropping when broken.
 
-### Fixed 
--   Fixed coloured importers and exporters not dropping when broken.
-
 ## [2.0.0-milestone.4.13] - 2025-02-01
 
 ### Added
