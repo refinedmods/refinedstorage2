@@ -542,9 +542,6 @@ public abstract class AbstractModInitializer {
 
         RefinedStorageApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.AUTOCRAFTER)
             .add(Items.INSTANCE.getSpeedUpgrade(), 4);
-
-        RefinedStorageApi.INSTANCE.getUpgradeRegistry().forDestination(UpgradeDestinations.INTERFACE)
-            .add(Items.INSTANCE.getAutocraftingUpgrade(), 1);
     }
 
     protected final void registerBlockEntities(

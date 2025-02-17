@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.A;
-import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.B;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
@@ -35,15 +34,6 @@ class InterfaceNetworkNodeTest {
     }
 
     @Test
-    void testDefaultState() {
-        // Arrange
-        sut.setExportState(null);
-
-        // Assert
-        assertThat(sut.getLastResult(0)).isNull();
-    }
-
-    @Test
     void shouldExtractEnergy(
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
@@ -52,8 +42,6 @@ class InterfaceNetworkNodeTest {
 
         // Assert
         assertThat(energy.getStored()).isEqualTo(1000 - 5);
-        assertThat(sut.getLastResult(0)).isNull();
-        assertThat(sut.getLastResult(1)).isNull();
     }
 
     @Test
@@ -74,33 +62,8 @@ class InterfaceNetworkNodeTest {
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).isEqualTo(A);
         assertThat(exportState.getExportedAmount(1)).isEqualTo(Long.MAX_VALUE);
-        assertThat(sut.getLastResult(0)).isNull();
-        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
         assertThat(storage.getAll()).isEmpty();
         assertThat(energy.getStored()).isEqualTo(1000 - 5);
-    }
-
-    @Test
-    void shouldExportAllAndIdentifyMissingResources(
-        @InjectNetworkStorageComponent final StorageNetworkComponent storage
-    ) {
-        // Arrange
-        storage.addSource(new StorageImpl());
-        storage.insert(A, Long.MAX_VALUE, Action.EXECUTE, Actor.EMPTY);
-
-        exportState.setRequestedResource(0, B, Long.MAX_VALUE);
-        exportState.setRequestedResource(1, A, Long.MAX_VALUE);
-
-        // Act
-        sut.doWork();
-
-        // Assert
-        assertThat(exportState.getExportedResource(0)).isNull();
-        assertThat(exportState.getExportedResource(1)).isEqualTo(A);
-        assertThat(exportState.getExportedAmount(1)).isEqualTo(Long.MAX_VALUE);
-        assertThat(sut.getLastResult(0)).isEqualTo(InterfaceTransferResult.RESOURCE_MISSING);
-        assertThat(sut.getLastResult(1)).isEqualTo(InterfaceTransferResult.EXPORTED);
-        assertThat(storage.getAll()).isEmpty();
     }
 
     @Test
@@ -123,8 +86,6 @@ class InterfaceNetworkNodeTest {
         // Assert
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).isNull();
-        assertThat(sut.getLastResult(0)).isNull();
-        assertThat(sut.getLastResult(1)).isNull();
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount(A, 10));
@@ -151,8 +112,6 @@ class InterfaceNetworkNodeTest {
         // Assert
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).isNull();
-        assertThat(sut.getLastResult(0)).isNull();
-        assertThat(sut.getLastResult(1)).isNull();
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount(A, 10));
@@ -177,8 +136,6 @@ class InterfaceNetworkNodeTest {
         // Assert
         assertThat(exportState.getExportedResource(0)).isNull();
         assertThat(exportState.getExportedResource(1)).isNull();
-        assertThat(sut.getLastResult(0)).isNull();
-        assertThat(sut.getLastResult(1)).isNull();
         assertThat(storage.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount(A, 10));

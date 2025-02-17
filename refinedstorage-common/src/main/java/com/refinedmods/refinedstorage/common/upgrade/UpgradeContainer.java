@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class UpgradeContainer extends SimpleContainer implements UpgradeState {
     private static final int DEFAULT_WORK_TICK_RATE = 9;
-    private static final int DEFAULT_SIZE = 4;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpgradeContainer.class);
 
@@ -43,31 +42,14 @@ public class UpgradeContainer extends SimpleContainer implements UpgradeState {
         this(destination, null);
     }
 
-    public UpgradeContainer(final UpgradeDestination destination, final int size) {
-        this(size, destination, null, DEFAULT_WORK_TICK_RATE);
-    }
-
     public UpgradeContainer(final UpgradeDestination destination, @Nullable final UpgradeContainerListener listener) {
         this(destination, listener, DEFAULT_WORK_TICK_RATE);
-    }
-
-    public UpgradeContainer(final int size,
-                            final UpgradeDestination destination,
-                            @Nullable final UpgradeContainerListener listener) {
-        this(DEFAULT_SIZE, destination, listener, DEFAULT_WORK_TICK_RATE);
     }
 
     public UpgradeContainer(final UpgradeDestination destination,
                             @Nullable final UpgradeContainerListener listener,
                             final int defaultWorkTickRate) {
-        this(DEFAULT_SIZE, destination, listener, defaultWorkTickRate);
-    }
-
-    public UpgradeContainer(final int size,
-                            final UpgradeDestination destination,
-                            @Nullable final UpgradeContainerListener listener,
-                            final int defaultWorkTickRate) {
-        super(size);
+        super(4);
         this.destination = destination;
         this.registry = RefinedStorageApi.INSTANCE.getUpgradeRegistry();
         this.addListener(container -> updateIndex());

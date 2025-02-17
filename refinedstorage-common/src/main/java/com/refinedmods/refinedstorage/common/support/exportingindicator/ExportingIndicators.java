@@ -17,24 +17,20 @@ public class ExportingIndicators {
     private final ResourceContainer filterContainer;
     private final List<ExportingIndicator> indicators;
     private final IntFunction<ExportingIndicator> indicatorProvider;
-    private final boolean includeEmptySlots;
 
     public ExportingIndicators(final List<ExportingIndicator> indicators) {
         this.filterContainer = null;
         this.indicators = indicators;
         this.indicatorProvider = i -> ExportingIndicator.NONE;
-        this.includeEmptySlots = false;
     }
 
     public ExportingIndicators(final ResourceContainer filterContainer,
-                               final IntFunction<ExportingIndicator> indicatorProvider,
-                               final boolean includeEmptySlots) {
+                               final IntFunction<ExportingIndicator> indicatorProvider) {
         this.filterContainer = filterContainer;
         this.indicators = new ArrayList<>();
-        this.includeEmptySlots = includeEmptySlots;
         int j = 0;
         for (int i = 0; i < filterContainer.size(); ++i) {
-            if (filterContainer.isEmpty(i) && !includeEmptySlots) {
+            if (filterContainer.isEmpty(i)) {
                 indicators.add(ExportingIndicator.NONE);
                 continue;
             }
@@ -51,7 +47,7 @@ public class ExportingIndicators {
         int j = 0;
         List<ExportingIndicatorUpdatePacket.UpdatedIndicator> updatedIndicators = null;
         for (int i = 0; i < filterContainer.size(); ++i) {
-            if (filterContainer.isEmpty(i) && !includeEmptySlots) {
+            if (filterContainer.isEmpty(i)) {
                 updatedIndicators = tryUpdateIndicator(i, ExportingIndicator.NONE, updatedIndicators);
                 continue;
             }
