@@ -732,7 +732,7 @@
   "advancements.refinedstorage.security.description": "セキュリティーマネージャーとセキュリティーカードでストレージネットワークを保護する",
   "advancements.refinedstorage.conditional_connecting": "条件付き接続",
   "advancements.refinedstorage.conditional_connecting.description": "リレーを用いてストレージネットワークのセクション全体をオンまたはオフにしネットワークの新しい枝を作成する",
-  "advancements.refinedstorage.autocrafting": "自動クラフト中",
+  "advancements.refinedstorage.autocrafting": "自動作成",
   "advancements.refinedstorage.autocrafting.description": "パターングリッドで作成されたパターンを使用して、作成を自動化する",
   "advancements.refinedstorage.managing_patterns": "パターンの管理",
   "advancements.refinedstorage.managing_patterns.description": "オートクラフター管理機を作成して、集中型UIでパターンを管理する",
