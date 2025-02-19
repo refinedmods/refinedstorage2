@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   You can now configure Refined Storage to not require energy. Controllers are not necessary in this case. Creative variants of items will be hidden and items will function without energy.
+-   Support for entering math expressions when requesting a craft, creating a pattern, and configuring a detector.
 
 ### Fixed
 

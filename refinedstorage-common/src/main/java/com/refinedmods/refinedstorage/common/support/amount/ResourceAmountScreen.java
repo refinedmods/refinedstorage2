@@ -40,9 +40,7 @@ public class ResourceAmountScreen
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE,
-            180, 99
-        );
+            ExpressionAmountOperations.INSTANCE, 180, 99);
         this.slot = slot;
     }
 

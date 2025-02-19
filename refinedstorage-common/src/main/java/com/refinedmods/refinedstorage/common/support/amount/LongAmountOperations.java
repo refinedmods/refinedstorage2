@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
-import java.util.Optional;
-
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
@@ -17,21 +15,12 @@ public class LongAmountOperations implements AmountOperations<Long> {
     }
 
     @Override
-    public Optional<Long> parse(final String value) {
+    public ParsedValue<Long> parse(final String value) {
         try {
-            return Optional.of(Long.parseLong(value));
+            return new ParsedValue<>(Long.parseLong(value), true);
         } catch (final NumberFormatException e) {
-            return Optional.empty();
+            return ParsedValue.invalid();
         }
-    }
-
-    @Override
-    public Optional<Long> validate(final Long amount,
-                                   @Nullable final Long minAmount,
-                                   @Nullable final Long maxAmount) {
-        final boolean minBoundOk = minAmount == null || amount >= minAmount;
-        final boolean maxBoundOk = maxAmount == null || amount <= maxAmount;
-        return minBoundOk && maxBoundOk ? Optional.of(amount) : Optional.empty();
     }
 
     @Override

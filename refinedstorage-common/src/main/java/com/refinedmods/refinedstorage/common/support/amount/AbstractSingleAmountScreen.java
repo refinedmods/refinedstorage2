@@ -33,7 +33,8 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                 .withActionButtonsEnabled(false)
                 .withMinAmount(minAmount)
                 .withResetAmount(minAmount.get())
-                .build(), DoubleAmountOperations.INSTANCE, 176, 188);
+                .build(),
+            ExpressionAmountOperations.INSTANCE, 176, 188);
         this.inventoryLabelY = 94;
     }
 

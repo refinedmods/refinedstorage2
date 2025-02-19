@@ -2,13 +2,15 @@ package com.refinedmods.refinedstorage.common.support.amount;
 
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.AlternativesScreen;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
-
 import java.util.Optional;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -168,7 +170,6 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         amountField.setFocused(true);
         amountField.setResponder(value -> onAmountFieldChanged());
         setFocused(amountField);
-
         addRenderableWidget(amountField);
     }
 
@@ -183,7 +184,8 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         if (amountField == null) {
             return;
         }
-        final boolean valid = getAndValidateAmount().isPresent();
+        final AmountOperations.ParsedValue<N> data = checkValue();
+        final boolean valid = data.isValid();
         if (confirmButton != null) {
             confirmButton.active = valid;
             confirmButton.setIcon(valid ? getConfirmButtonIcon() : ActionIcon.ERROR);
@@ -191,6 +193,19 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             tryConfirm();
         }
         amountField.setTextColor(valid ? 0xFFFFFFFF : 0xFFFF5555);
+        data.getValue().ifPresent(value -> setToolTip(formatCalculationTooltip(value), amountField));
+    }
+
+    protected String formatCalculationTooltip(final N value) {
+        return "=" + amountOperations.format(value);
+    }
+
+    protected void setToolTip(final String text, @Nullable final AbstractWidget element) {
+        final Component tooltip;
+        if (element != null) {
+            tooltip = Component.nullToEmpty(text);
+            element.setTooltip(Tooltip.create(tooltip));
+        }
     }
 
     private void addIncrementButtons() {
@@ -230,21 +245,24 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         if (amountField == null) {
             return;
         }
-        getAndValidateAmount().ifPresentOrElse(oldAmount -> {
-            final int correctedDelta = correctDelta(oldAmount, delta);
+        final AmountOperations.ParsedValue<N> value = checkValue();
+        value.ifValidOrElse(amount -> {
+            final int correctedDelta = correctDelta(amount, delta);
             final N newAmount = amountOperations.changeAmount(
-                oldAmount,
-                correctedDelta,
-                configuration.getMinAmount(),
-                configuration.getMaxAmount()
+                    amount,
+                    correctedDelta,
+                    configuration.getMinAmount(),
+                    configuration.getMaxAmount()
             );
             updateAmount(newAmount);
-        }, () -> updateAmount(amountOperations.changeAmount(
-            null,
-            delta,
-            configuration.getMinAmount(),
-            configuration.getMaxAmount()
-        )));
+        }, () -> {
+            final N newAmount = amountOperations.changeAmount(
+                    null,
+                    delta,
+                    configuration.getMinAmount(),
+                    configuration.getMaxAmount());
+            updateAmount(newAmount);
+        });
     }
 
     private int correctDelta(final N oldAmount, final int delta) {
@@ -311,12 +329,13 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     private void tryConfirm() {
-        getAndValidateAmount().ifPresent(this::confirm);
+        checkValue().ifValid(this::confirm);
     }
 
     private void tryConfirmAndCloseToParent() {
-        getAndValidateAmount().ifPresent(value -> {
-            if (confirm(value)) {
+        final AmountOperations.ParsedValue<N> value = checkValue();
+        value.ifValid(amount -> {
+            if (confirm(amount)) {
                 tryCloseToParent();
             }
         });
@@ -343,15 +362,27 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         return true;
     }
 
-    protected final Optional<N> getAndValidateAmount() {
+    protected AmountOperations.ParsedValue<N> checkValue() {
         if (amountField == null) {
-            return Optional.empty();
+            return AmountOperations.ParsedValue.invalid();
         }
-        return amountOperations.parse(amountField.getValue()).flatMap(amount -> amountOperations.validate(
-            amount,
-            configuration.getMinAmount(),
-            configuration.getMaxAmount()
-        ));
+
+        final String value = amountField.getValue();
+
+        final AmountOperations.ParsedValue<N> result = amountOperations.parse(value);
+
+        if (result.isValid()) {
+            final N amount = result.getValue().get();
+
+            if (configuration.getMaxAmount() != null
+                    && amount.doubleValue() > configuration.getMaxAmount().doubleValue()
+                    || configuration.getMinAmount() != null
+                    && amount.doubleValue() < configuration.getMinAmount().doubleValue()) {
+                return new AmountOperations.ParsedValue<>(amount, false);
+            }
+        }
+
+        return result;
     }
 
     protected static class DefaultDummyContainerMenu extends AbstractContainerMenu {
