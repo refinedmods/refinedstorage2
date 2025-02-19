@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage.common.support.amount;
 
 import com.refinedmods.refinedstorage.common.util.MathUtil;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNullElse;
@@ -14,40 +13,24 @@ public class LongAmountOperations implements AmountOperations<Long> {
     }
 
     @Override
-    public String format(final Long value) {
-        return String.valueOf(value);
+    public String format(@Nullable final Long value) {
+        return (value == null) ? "" : String.valueOf(value);
     }
 
     @Override
-    public Optional<Long> parse(final String value) {
+    public ReturnValue<Long> parse(final String value) {
         try {
-            return Optional.of(Long.parseLong(value));
+            return new ReturnValue<>(Long.parseLong(value), "");
         } catch (final NumberFormatException e) {
-            return Optional.empty();
+            return new ReturnValue<>("resource_amount_input.non_int");
         }
     }
 
     @Override
-    public Optional<Long> validate(final Long amount,
-                                   @Nullable final Long minAmount,
-                                   @Nullable final Long maxAmount) {
-        final boolean minBoundOk = minAmount == null || amount >= minAmount;
-        final boolean maxBoundOk = maxAmount == null || amount <= maxAmount;
-        return minBoundOk && maxBoundOk ? Optional.of(amount) : Optional.empty();
-    }
-
-    @Override
-    public Long changeAmount(@Nullable final Long current,
+    public Long changeAmount(final Long current,
                              final int delta,
                              @Nullable final Long minAmount,
                              @Nullable final Long maxAmount) {
-        if (current == null) {
-            return MathUtil.clamp(
-                delta,
-                requireNonNullElse(minAmount, Long.MIN_VALUE),
-                requireNonNullElse(maxAmount, Long.MAX_VALUE)
-            );
-        }
         return MathUtil.clamp(
             current + delta,
             requireNonNullElse(minAmount, Long.MIN_VALUE),

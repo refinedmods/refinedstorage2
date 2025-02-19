@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Support for entering math expressions when requesting a craft, creating a pattern, and configuring a detector.
+
 ## [2.0.0-beta.8] - 2025-08-08
 
 ### Fixed
@@ -1009,9 +1013,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.8...HEAD
-
-[2.0.0-beta.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...v2.0.0-beta.8
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...HEAD
 
 [2.0.0-beta.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...v2.0.0-beta.7
 

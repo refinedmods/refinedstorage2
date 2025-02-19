@@ -40,7 +40,7 @@ public class ResourceAmountScreen
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            ExpressionAmountOperations.INSTANCE
         );
         this.slot = slot;
         this.imageWidth = 180;
@@ -48,8 +48,8 @@ public class ResourceAmountScreen
     }
 
     @Override
-    protected boolean confirm(final Double amount) {
-        slot.changeAmountOnClient(amount);
+    protected boolean confirm(final Double value) {
+        slot.changeAmountOnClient(value);
         return true;
     }
 

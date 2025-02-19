@@ -3,13 +3,14 @@ package com.refinedmods.refinedstorage.common.support.amount;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.AlternativesScreen;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,6 +41,8 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     protected ActionButton cancelButton;
     @Nullable
     protected EditBox amountField;
+    @Nullable
+    protected N amount;
 
     @Nullable
     private final Screen parent;
@@ -56,6 +59,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         this.parent = parent;
         this.configuration = configuration;
         this.amountOperations = amountOperations;
+        this.amount = configuration.getInitialAmount();
     }
 
     @Override
@@ -140,7 +144,6 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
 
     private void addAmountField() {
         final Vector3f pos = configuration.getAmountFieldPosition();
-        final String originalValue = amountField != null ? amountField.getValue() : null;
         amountField = new EditBox(
             font,
             leftPos + (int) pos.x(),
@@ -151,12 +154,8 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         );
         amountField.setBordered(false);
         amountField.setTextColor(0xFFFFFF);
-        if (originalValue != null) {
-            amountField.setValue(originalValue);
-            onAmountFieldChanged();
-        } else if (configuration.getInitialAmount() != null) {
-            updateAmount(configuration.getInitialAmount());
-        }
+        updateAmount(this.amount);
+        onAmountFieldChanged();
         amountField.setVisible(true);
         amountField.setCanLoseFocus(this instanceof AlternativesScreen);
         amountField.setFocused(true);
@@ -166,25 +165,50 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         addRenderableWidget(amountField);
     }
 
-    protected final void updateAmount(final N amount) {
+    protected final void updateAmount(@Nullable final N value) {
         if (amountField == null) {
             return;
         }
-        amountField.setValue(amountOperations.format(amount));
+        amountField.setValue(amountOperations.format(value));
+        this.amount = value;
     }
 
     protected void onAmountFieldChanged() {
         if (amountField == null) {
             return;
         }
-        final boolean valid = getAndValidateAmount().isPresent();
+        final AmountOperations.ReturnValue<N> data = checkValue();
+        final boolean valid = data.getValue().isPresent();
         if (confirmButton != null) {
             confirmButton.active = valid;
             confirmButton.setIcon(valid ? getConfirmButtonIcon() : ActionIcon.ERROR);
         } else {
             tryConfirm();
         }
+        this.amount = (data.getValue().isEmpty()) ? null : data.getValue().get();
         amountField.setTextColor(valid ? 0xFFFFFF : 0xFF5555);
+        setToolTip(data.getTooltip(), amountField);
+    }
+
+    protected void setToolTip(final String text, @Nullable final AbstractWidget element) {
+        final Component tooltip;
+        if (element != null) {
+            //tooltips have to be separate to show min and max values
+            if (text.startsWith("resource_amount_input.too_big")) {
+                tooltip = createTranslation("gui",
+                    "resource_amount_input.too_big",
+                    amountOperations.format(configuration.getMaxAmount()));
+            } else if (text.startsWith("resource_amount_input.too_small")) {
+                tooltip = createTranslation("gui",
+                    "resource_amount_input.too_small",
+                    amountOperations.format(configuration.getMinAmount()));
+            } else if (text.startsWith("resource_amount_input")) {
+                tooltip = createTranslation("gui", text);
+            } else {
+                tooltip = Component.nullToEmpty(text);
+            }
+            element.setTooltip(Tooltip.create(tooltip));
+        }
     }
 
     private void addIncrementButtons() {
@@ -210,7 +234,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         }
     }
 
-    protected abstract boolean confirm(N amount);
+    protected abstract boolean confirm(N value);
 
     private Button createIncrementButton(final int x, final int y, final int increment) {
         final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
@@ -224,26 +248,22 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         if (amountField == null) {
             return;
         }
-        getAndValidateAmount().ifPresentOrElse(oldAmount -> {
-            final int correctedDelta = correctDelta(oldAmount, delta);
-            final N newAmount = amountOperations.changeAmount(
-                oldAmount,
-                correctedDelta,
-                configuration.getMinAmount(),
-                configuration.getMaxAmount()
-            );
-            updateAmount(newAmount);
-        }, () -> updateAmount(amountOperations.changeAmount(
-            null,
-            delta,
+        final int correctedDelta = correctDelta(amount, delta);
+        final N newAmount = amountOperations.changeAmount(
+            amount,
+            correctedDelta,
             configuration.getMinAmount(),
             configuration.getMaxAmount()
-        )));
+        );
+        updateAmount(newAmount);
     }
 
-    private int correctDelta(final N oldAmount, final int delta) {
+    private int correctDelta(@Nullable final N oldAmount, final int delta) {
         // if we do +10, and the current value is 1, we want to end up with 10, not 11
         // if we do +1, and the current value is 1, we want to end up with 2
+        if (oldAmount == null) {
+            return delta;
+        }
         if (oldAmount.intValue() == 1 && delta > 1) {
             return delta - 1;
         }
@@ -305,11 +325,11 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     private void tryConfirm() {
-        getAndValidateAmount().ifPresent(this::confirm);
+        checkValue().getValue().ifPresent(this::confirm);
     }
 
     private void tryConfirmAndCloseToParent() {
-        getAndValidateAmount().ifPresent(value -> {
+        checkValue().getValue().ifPresent(value -> {
             if (confirm(value)) {
                 tryCloseToParent();
             }
@@ -337,15 +357,20 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         return true;
     }
 
-    protected final Optional<N> getAndValidateAmount() {
+    protected AmountOperations.ReturnValue<N> checkValue() {
         if (amountField == null) {
-            return Optional.empty();
+            return new AmountOperations.ReturnValue<>("resource_amount_input.no_input");
         }
-        return amountOperations.parse(amountField.getValue()).flatMap(amount -> amountOperations.validate(
-            amount,
+
+        @Nullable final String value = amountField.getValue();
+
+        if (value.isEmpty()) {
+            return new AmountOperations.ReturnValue<>("resource_amount_input.no_input");
+        }
+        return amountOperations.validate(value,
             configuration.getMinAmount(),
             configuration.getMaxAmount()
-        ));
+        );
     }
 
     protected static class DefaultDummyContainerMenu extends AbstractContainerMenu {

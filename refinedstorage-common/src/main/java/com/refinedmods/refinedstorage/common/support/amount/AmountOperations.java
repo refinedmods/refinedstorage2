@@ -4,11 +4,50 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public interface AmountOperations<N extends Number> {
-    String format(N value);
+    String format(@Nullable N value);
 
-    Optional<N> parse(String value);
+    ReturnValue<N> parse(String value);
 
-    Optional<N> validate(N amount, @Nullable N minAmount, @Nullable N maxAmount);
+    default ReturnValue<N> validate(final String amount,
+                                 @Nullable final N minAmount,
+                                 @Nullable final N maxAmount) {
+        final ReturnValue<N> evaluation = parse(amount);
+        if (evaluation.value == null) {
+            return new ReturnValue<>(evaluation.tooltip);
+        }
 
-    N changeAmount(@Nullable N current, int delta, @Nullable N minAmount, @Nullable N maxAmount);
+        //convert everything to double for comparison
+        if (minAmount != null && evaluation.value.doubleValue() < minAmount.doubleValue()) {
+            return new ReturnValue<>("resource_amount_input.too_small");
+        }
+        if (maxAmount != null && evaluation.value.doubleValue() > maxAmount.doubleValue()) {
+            return new ReturnValue<>("resource_amount_input.too_big");
+        }
+        return evaluation;
+    }
+
+    N changeAmount(N current, int delta, @Nullable N minAmount, @Nullable N maxAmount);
+
+    class ReturnValue<N extends Number> {
+        private final @Nullable N value;
+        private final String tooltip;
+
+        public ReturnValue(final String error) {
+            value = null;
+            tooltip = error;
+        }
+
+        public ReturnValue(@Nullable final N value, final String tooltip) {
+            this.value = value;
+            this.tooltip = tooltip;
+        }
+
+        public Optional<N> getValue() {
+            return Optional.ofNullable(value);
+        }
+
+        public String getTooltip() {
+            return tooltip;
+        }
+    }
 }

@@ -1,11 +1,9 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
-import java.util.Optional;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.Mth;
-
-import static java.util.Objects.requireNonNullElse;
 
 public class IntegerAmountOperations implements AmountOperations<Integer> {
     public static final AmountOperations<Integer> INSTANCE = new IntegerAmountOperations();
@@ -14,44 +12,28 @@ public class IntegerAmountOperations implements AmountOperations<Integer> {
     }
 
     @Override
-    public String format(final Integer value) {
-        return String.valueOf(value);
+    public String format(@Nullable final Integer value) {
+        return (value == null) ? "" : String.valueOf(value);
     }
 
     @Override
-    public Optional<Integer> parse(final String value) {
+    public ReturnValue<Integer> parse(final String value) {
         try {
-            return Optional.of(Integer.parseInt(value, 10));
+            return new ReturnValue<>(Integer.parseInt(value, 10), "");
         } catch (final NumberFormatException e) {
-            return Optional.empty();
+            return new ReturnValue<>("resource_amount_input.non_int");
         }
     }
 
     @Override
-    public Optional<Integer> validate(final Integer amount,
-                                      @Nullable final Integer minAmount,
-                                      @Nullable final Integer maxAmount) {
-        final boolean minBoundOk = minAmount == null || amount >= minAmount;
-        final boolean maxBoundOk = maxAmount == null || amount <= maxAmount;
-        return minBoundOk && maxBoundOk ? Optional.of(amount) : Optional.empty();
-    }
-
-    @Override
-    public Integer changeAmount(@Nullable final Integer current,
+    public Integer changeAmount(final Integer current,
                                 final int delta,
                                 @Nullable final Integer minAmount,
                                 @Nullable final Integer maxAmount) {
-        if (current == null) {
-            return Mth.clamp(
-                delta,
-                requireNonNullElse(minAmount, Integer.MIN_VALUE),
-                requireNonNullElse(maxAmount, Integer.MAX_VALUE)
-            );
-        }
         return Mth.clamp(
             current + delta,
-            requireNonNullElse(minAmount, Integer.MIN_VALUE),
-            requireNonNullElse(maxAmount, Integer.MAX_VALUE)
+            Objects.requireNonNullElse(minAmount, Integer.MIN_VALUE),
+            Objects.requireNonNullElse(maxAmount, Integer.MAX_VALUE)
         );
     }
 }

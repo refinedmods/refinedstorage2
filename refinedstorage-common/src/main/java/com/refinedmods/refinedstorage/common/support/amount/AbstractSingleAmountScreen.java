@@ -21,7 +21,11 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                                          final Component title,
                                          final Double initialAmount,
                                          final Supplier<Double> minAmount) {
-        super(containerMenu, null, playerInventory, title,
+        super(
+                containerMenu,
+                null,
+                playerInventory,
+                title,
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(initialAmount)
                 .withIncrementsTop(1, 10, 64)
@@ -33,15 +37,16 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                 .withActionButtonsEnabled(false)
                 .withMinAmount(minAmount)
                 .withResetAmount(minAmount.get())
-                .build(), DoubleAmountOperations.INSTANCE);
+                .build(),
+            ExpressionAmountOperations.INSTANCE);
         this.inventoryLabelY = 94;
         this.imageWidth = 176;
         this.imageHeight = 188;
     }
 
     @Override
-    protected boolean confirm(final Double amount) {
-        getMenu().changeAmountOnClient(amount);
+    protected boolean confirm(final Double value) {
+        getMenu().changeAmountOnClient(value);
         return true;
     }
 

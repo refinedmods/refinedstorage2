@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.Sprites;
 import com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen;
 import com.refinedmods.refinedstorage.common.support.amount.AmountScreenConfiguration;
-import com.refinedmods.refinedstorage.common.support.amount.DoubleAmountOperations;
+import com.refinedmods.refinedstorage.common.support.amount.ExpressionAmountOperations;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
@@ -97,7 +97,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            ExpressionAmountOperations.INSTANCE
         );
         this.slot = slot;
         this.imageWidth = 193;
@@ -504,8 +504,8 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    protected boolean confirm(final Double amount) {
-        slot.changeAmountOnClient(amount);
+    protected boolean confirm(final Double value) {
+        slot.changeAmountOnClient(value);
         final Set<Alternative> allowedAlternatives = new HashSet<>();
         for (int i = 0; i < alternativeCheckboxes.size(); ++i) {
             if (alternativeCheckboxes.get(i).isSelected()) {

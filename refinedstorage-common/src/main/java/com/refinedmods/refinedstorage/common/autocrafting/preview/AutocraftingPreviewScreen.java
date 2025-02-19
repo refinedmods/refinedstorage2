@@ -10,8 +10,9 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen;
 import com.refinedmods.refinedstorage.common.support.amount.ActionIcon;
+import com.refinedmods.refinedstorage.common.support.amount.AmountOperations;
 import com.refinedmods.refinedstorage.common.support.amount.AmountScreenConfiguration;
-import com.refinedmods.refinedstorage.common.support.amount.DoubleAmountOperations;
+import com.refinedmods.refinedstorage.common.support.amount.ExpressionAmountOperations;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
@@ -186,7 +187,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 .withResetAmount(1D)
                 .withConfirmButtonText(START)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            ExpressionAmountOperations.INSTANCE
         );
         this.imageWidth = 254;
         this.imageHeight = 249;
@@ -280,7 +281,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     private void toggleStyle(final ImageButton btn) {
-        getAndValidateAmount().ifPresent(amount -> {
+        final AmountOperations.ReturnValue<Double> data = checkValue();
+        data.getValue().ifPresent(amount -> {
             final AutocraftingPreviewStyle newStyle = getMenu().toggleStyle(amount);
             updateStyle(btn, newStyle);
         });
@@ -867,7 +869,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             return;
         }
         disableStartButton();
-        getAndValidateAmount().ifPresentOrElse(amount -> {
+        final AmountOperations.ReturnValue<Double> data = checkValue();
+        data.getValue().ifPresentOrElse(amount -> {
             confirmButton.setMessage(PENDING);
             changedAmount = amount;
             amountField.setTextColor(0xFFFFFF);
@@ -875,6 +878,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             confirmButton.setMessage(START);
             amountField.setTextColor(0xFF5555);
         });
+
+        this.amount = (data.getValue().isEmpty()) ? null : data.getValue().get();
+        setToolTip(data.getTooltip(), amountField);
     }
 
     private void disableStartButton() {
@@ -929,12 +935,12 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
-    protected boolean confirm(final Double amount) {
+    protected boolean confirm(final Double value) {
         disableStartButton();
         if (confirmButton != null) {
             confirmButton.setMessage(PENDING);
         }
-        getMenu().sendRequest(amount, notifyCheckbox == null ? menu.isNotify() : notifyCheckbox.isSelected());
+        getMenu().sendRequest(value, notifyCheckbox == null ? menu.isNotify() : notifyCheckbox.isSelected());
         return false;
     }
 
