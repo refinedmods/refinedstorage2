@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Create pattern",
   "gui.refinedstorage.pattern_grid.clear": "Kosongkan",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Mode acak",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Sesuaikan masukan pola, abaikan komponen.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Sesuaikan persis masukan pola.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Masukan",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Keluaran",
