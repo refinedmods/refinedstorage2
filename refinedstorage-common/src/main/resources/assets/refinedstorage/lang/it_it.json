@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Create pattern",
   "gui.refinedstorage.pattern_grid.clear": "Clear",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Fuzzy mode",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs, ignoring components.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Match the pattern inputs exactly.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Inputs",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Outputs",
