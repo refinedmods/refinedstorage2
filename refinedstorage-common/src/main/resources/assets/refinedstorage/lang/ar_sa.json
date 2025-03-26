@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "إنشاء النمط",
   "gui.refinedstorage.pattern_grid.clear": "مسح",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "الوضع الغامض",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "طابق مدخلات النمط، تجاهل المكونات.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "طابق مدخلات النمط بالضبط.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "المدخلات",
   "gui.refinedstorage.pattern_grid.processing.outputs": "المخرجات",
