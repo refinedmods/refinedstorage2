@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Skapa design",
   "gui.refinedstorage.pattern_grid.clear": "Radera",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Luddigt läge",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Matcha designen, strunta i komponenterna.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Matcha mallens innehåll exakt.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Inmatning",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Utmatning",
