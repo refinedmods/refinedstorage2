@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "パターンを作成",
   "gui.refinedstorage.pattern_grid.clear": "スロット上のリソースを消去する",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "あいまいモード",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "状態などを無視して、パターンの入力と一致するものを探します。",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "正確に、パターンの入力と一致するものを探します。",
   "gui.refinedstorage.pattern_grid.processing.inputs": "入力",
   "gui.refinedstorage.pattern_grid.processing.outputs": "出力",
