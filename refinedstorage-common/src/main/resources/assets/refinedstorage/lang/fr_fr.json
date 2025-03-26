@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Créer un Patron",
   "gui.refinedstorage.pattern_grid.clear": "Effacer",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Mode flou",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Correspondre aux entrées du Patron, ignorer les composants.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Faire correspondre les entrées du patron et autoriser les alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Correspondre exactement aux entrées du Patron.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Entrées",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Sorties",
