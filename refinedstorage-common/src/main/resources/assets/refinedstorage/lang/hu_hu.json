@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Sablon készítése",
   "gui.refinedstorage.pattern_grid.clear": "Törlés",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Fuzzy mód",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Sablon bemenetek megfeleltetése a komponensek figyelmen kívül hagyásával.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Sablon bemenetek pontos megfeleltetése.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Bemenetek",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Kimenetek",
