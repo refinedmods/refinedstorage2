@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Создать шаблон",
   "gui.refinedstorage.pattern_grid.clear": "Сбросить",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "\"Нечёткий\" режим",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Соответствовать входам шаблона, игнорируя компоненты.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Соответствовать входам шаблона и использовать альтернативы.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Точно соответствовать входу шаблона.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Входы",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Выходы",
