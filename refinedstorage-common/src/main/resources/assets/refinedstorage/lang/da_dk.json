@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Skab mønster",
   "gui.refinedstorage.pattern_grid.clear": "Ryd",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Fuzzy tilstand",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match mønsterinput, ignorer komponenter",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Match mønsterindgangene nøjagtigt",
   "gui.refinedstorage.pattern_grid.processing.inputs": "input",
   "gui.refinedstorage.pattern_grid.processing.outputs": "udgange",
