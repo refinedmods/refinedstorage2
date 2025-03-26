@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Criar modelo",
   "gui.refinedstorage.pattern_grid.clear": "Limpar",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Modo difuso",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Corresponder as entradas do modelo, ignorando componentes.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Combine as entradas do Modelo e use alternativas.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Corresponder exatamente as entradas do modelo.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Entradas",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Saídas",
