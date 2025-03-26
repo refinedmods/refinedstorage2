@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Vorlage herstellen",
   "gui.refinedstorage.pattern_grid.clear": "Leeren",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Ungenauer Modus",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Vorlageeingaben stimmen überein, Komponenten werden ignoriert.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Vorlageeingaben stimmen exakt überein.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Eingabe",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Ausgabe",
