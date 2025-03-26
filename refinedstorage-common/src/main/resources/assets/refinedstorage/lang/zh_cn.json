@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "创建样板",
   "gui.refinedstorage.pattern_grid.clear": "清空",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "模糊匹配模式",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "匹配模式输入，忽略元件",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "精确匹配模式输入",
   "gui.refinedstorage.pattern_grid.processing.inputs": "输入",
   "gui.refinedstorage.pattern_grid.processing.outputs": "输出",
