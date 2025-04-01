@@ -78,7 +78,7 @@
   "gui.refinedstorage.pattern_grid.create_pattern": "Şablon oluştur",
   "gui.refinedstorage.pattern_grid.clear": "Temizle",
   "gui.refinedstorage.pattern_grid.fuzzy_mode": "Belirsiz Mod",
-  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Match the pattern inputs and use alternatives.",
+  "gui.refinedstorage.pattern_grid.fuzzy_mode.on.help": "Şablon girdilerini eşleştirin ve alternatifleri kullanın.",
   "gui.refinedstorage.pattern_grid.fuzzy_mode.off.help": "Şablon girdilerini tam olarak eşleştir.",
   "gui.refinedstorage.pattern_grid.processing.inputs": "Girdiler",
   "gui.refinedstorage.pattern_grid.processing.outputs": "Çıktılar",
