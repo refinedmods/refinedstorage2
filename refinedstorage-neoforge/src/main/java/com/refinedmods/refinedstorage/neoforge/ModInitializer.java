@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.common.security.SecurityCardItem;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.diskinterface.AbstractDiskInterfaceBlockEntity;
+import com.refinedmods.refinedstorage.common.storage.externalstorage.InterfaceExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridBlockItem;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseBlock;
@@ -302,7 +303,12 @@ public class ModInitializer extends AbstractModInitializer {
         RefinedStorageApi.INSTANCE.addExternalStorageProviderFactory(
             new ItemHandlerPlatformExternalStorageProviderFactory());
         RefinedStorageApi.INSTANCE.addExternalStorageProviderFactory(
-            new FluidHandlerExternalStorageProviderFactory()
+            new FluidHandlerExternalStorageProviderFactory());
+    }
+
+    private void registerCustomExternalStorageProviderFactories() {
+        RefinedStorageApi.INSTANCE.addExternalStorageProviderBlockFactory(
+            new InterfaceExternalStorageProviderFactory(), Blocks.INSTANCE.getInterface().getLootTable().location()
         );
     }
 
@@ -602,6 +608,7 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onCommonSetup(final FMLCommonSetupEvent e) {
+        registerCustomExternalStorageProviderFactories();
         registerUpgradeMappings();
     }
 

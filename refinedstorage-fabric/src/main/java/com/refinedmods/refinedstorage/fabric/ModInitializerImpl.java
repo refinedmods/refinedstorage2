@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage.common.storage.diskinterface.AbstractDiskInterfaceBlockEntity;
+import com.refinedmods.refinedstorage.common.storage.externalstorage.InterfaceExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridBlockItem;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridType;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseBlock;
@@ -208,6 +209,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerExternalStorageProviderFactories();
         registerExternalPatternSinkStrategyFactories();
         registerContent();
+        registerCustomExternalStorageProviderFactories();
         registerPackets();
         registerPacketHandlers();
         registerSounds(new DirectRegistryCallback<>(BuiltInRegistries.SOUND_EVENT));
@@ -311,6 +313,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 resource -> resource instanceof FluidResource fluidResource
                     ? toFluidVariant(fluidResource) : null
             )
+        );
+    }
+
+    private void registerCustomExternalStorageProviderFactories() {
+        RefinedStorageApi.INSTANCE.addExternalStorageProviderBlockFactory(
+            new InterfaceExternalStorageProviderFactory(), Blocks.INSTANCE.getInterface().getLootTable().location()
         );
     }
 

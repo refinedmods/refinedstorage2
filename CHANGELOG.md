@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   You can now register custom ExternalStorageProviders for specific blocks by calling addExternalStorageProviderBlockFactory inside registerCustomExternalStorageProviderFactories in the ModInitializer class
+
 ## [2.0.0-beta.2] - 2025-04-06
 
 ### Changed

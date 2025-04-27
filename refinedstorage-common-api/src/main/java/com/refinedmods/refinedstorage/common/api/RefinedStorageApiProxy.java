@@ -129,6 +129,17 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
+    public void addExternalStorageProviderBlockFactory(final ExternalStorageProviderFactory factory,
+                                                       final ResourceLocation blockId) {
+        ensureLoaded().addExternalStorageProviderBlockFactory(factory, blockId);
+    }
+
+    @Override
+    public PlatformRegistry<ExternalStorageProviderFactory> getExternalStorageProviderBlocks() {
+        return ensureLoaded().getExternalStorageProviderBlocks();
+    }
+
+    @Override
     public Collection<DestructorStrategyFactory> getDestructorStrategyFactories() {
         return ensureLoaded().getDestructorStrategyFactories();
     }
