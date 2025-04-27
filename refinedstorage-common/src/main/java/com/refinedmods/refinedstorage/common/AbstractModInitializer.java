@@ -113,6 +113,7 @@ import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage.common.storage.diskinterface.DiskInterfaceContainerMenu;
 import com.refinedmods.refinedstorage.common.storage.externalstorage.ExternalStorageContainerMenu;
+import com.refinedmods.refinedstorage.common.storage.externalstorage.InterfaceExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridBlockContainerMenu;
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridItemContainerMenu;
@@ -174,6 +175,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 
+import static com.refinedmods.refinedstorage.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractModInitializer {
@@ -188,6 +190,7 @@ public abstract class AbstractModInitializer {
         registerResourceContainerInsertStrategies();
         registerDestructorStrategyFactories();
         registerConstructorStrategyFactories();
+        registerCustomExternalStorageProviderFactories();
         registerStorageMonitorInsertionStrategies();
         registerStorageMonitorExtractionStrategies();
         registerNetworkComponents();
@@ -250,6 +253,12 @@ public abstract class AbstractModInitializer {
     private void registerStorageMonitorExtractionStrategies() {
         RefinedStorageApi.INSTANCE.addStorageMonitorExtractionStrategy(new ItemStorageMonitorExtractionStrategy());
         RefinedStorageApi.INSTANCE.addStorageMonitorExtractionStrategy(new FluidStorageMonitorExtractionStrategy());
+    }
+
+    private void registerCustomExternalStorageProviderFactories() {
+        RefinedStorageApi.INSTANCE.addExternalStorageProviderBlockFactory(
+            new InterfaceExternalStorageProviderFactory(), INTERFACE
+        );
     }
 
     private void registerNetworkComponents() {

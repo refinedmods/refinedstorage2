@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
 import com.refinedmods.refinedstorage.common.content.Blocks;
-import com.refinedmods.refinedstorage.common.iface.InterfaceBlock;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalCableBlock;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
@@ -85,9 +84,8 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         if (level instanceof ServerLevel serverLevel
             && level.getBlockEntity(pos) instanceof AbstractExternalStorageBlockEntity blockEntity) {
-            final boolean didBreakInterfaceBlock = block instanceof InterfaceBlock;
-            final boolean didPlacePotentialInterfaceBlock = block instanceof AirBlock;
-            if (didBreakInterfaceBlock || didPlacePotentialInterfaceBlock) {
+            final boolean placedSomething = block instanceof AirBlock;
+            if (placedSomething) {
                 blockEntity.loadStorage(serverLevel);
             } else {
                 blockEntity.neighborChanged();
