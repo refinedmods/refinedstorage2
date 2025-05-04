@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -81,12 +82,17 @@ class ItemHandlerExternalPatternProviderSink implements PlatformPatternProviderE
     }
 
     private static ArrayDeque<ItemStack> getStacks(final Collection<ResourceAmount> resources) {
-        return new ArrayDeque<>(resources.stream()
-            .filter(resourceAmount -> resourceAmount.resource() instanceof ItemResource)
-            .map(resourceAmount -> {
+        // Create a new ArrayList to preserve the original order from the pattern
+        List<ItemStack> orderedStacks = new ArrayList<>();
+        
+        for (ResourceAmount resourceAmount : resources) {
+            if (resourceAmount.resource() instanceof ItemResource) {
                 final ItemResource itemResource = (ItemResource) resourceAmount.resource();
-                return itemResource.toItemStack(resourceAmount.amount());
-            }).toList());
+                orderedStacks.add(itemResource.toItemStack(resourceAmount.amount()));
+            }
+        }
+        
+        return new ArrayDeque<>(orderedStacks);
     }
 
     @Override

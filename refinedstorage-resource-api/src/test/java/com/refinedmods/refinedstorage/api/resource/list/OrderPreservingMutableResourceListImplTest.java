@@ -22,22 +22,22 @@ class OrderPreservingMutableResourceListImplTest extends AbstractMutableResource
     @Test
     void shouldPreserveOrderWhenRetrievingKeys() {
         // Arrange
-        sut.add(A, 1);
         sut.add(B, 1);
+        sut.add(A, 2);
         sut.add(C, 1);
 
         // Act
         final Set<ResourceKey> resources = sut.getAll();
 
         // Assert
-        assertThat(resources).containsExactly(A, B, C);
+        assertThat(resources).containsExactly(B, A, C);
     }
 
     @Test
     void shouldPreserveOrderWhenCopyingState() {
         // Arrange
-        sut.add(A, 1);
         sut.add(B, 1);
+        sut.add(A, 2);
         sut.add(C, 1);
 
         // Act
@@ -45,8 +45,8 @@ class OrderPreservingMutableResourceListImplTest extends AbstractMutableResource
 
         // Assert
         assertThat(resources).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount(A, 1),
             new ResourceAmount(B, 1),
+            new ResourceAmount(A, 2),
             new ResourceAmount(C, 1)
         );
     }
