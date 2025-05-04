@@ -30,6 +30,7 @@ class OrderPreservingMutableResourceListImplTest extends AbstractMutableResource
         final Set<ResourceKey> resources = sut.getAll();
 
         // Assert
+        // The expected order of keys is B, A, C, as the list preserves the order of addition.
         assertThat(resources).containsExactly(B, A, C);
     }
 

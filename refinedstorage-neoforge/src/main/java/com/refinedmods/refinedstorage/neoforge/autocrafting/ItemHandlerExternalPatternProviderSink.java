@@ -82,7 +82,9 @@ class ItemHandlerExternalPatternProviderSink implements PlatformPatternProviderE
     }
 
     private static ArrayDeque<ItemStack> getStacks(final Collection<ResourceAmount> resources) {
-        // Create a new ArrayList to preserve the original order from the pattern
+        // Create a new ArrayList to preserve the original order from the pattern.
+        // A for-loop is used here instead of stream processing to ensure clarity and 
+        // explicitly preserve the order of resources as they are processed.
         List<ItemStack> orderedStacks = new ArrayList<>();
         
         for (ResourceAmount resourceAmount : resources) {
