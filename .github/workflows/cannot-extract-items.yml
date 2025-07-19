@@ -1,0 +1,21 @@
+name: Issue about not being able to extract items
+on:
+  issues:
+    types: [ labeled, unlabeled, reopened ]
+jobs:
+  labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dessant/support-requests@v4
+        with:
+          github-token: ${{ github.token }}
+          support-label: 'cannot-extract-items'
+          issue-comment: >
+            :wave: @{issue-author}, this issue is caused by a bug in the mod providing the item.
+            
+            Report it to the mod author and include a link to this article for technical details:
+            https://refinedmods.com/refined-storage/items-cannot-be-extracted-from-refined-storage.html#_for_mod_developers
+            
+            We are closing this issue here as it is not caused by Refined Storage.
+          close-issue: true
+          lock-issue: false
