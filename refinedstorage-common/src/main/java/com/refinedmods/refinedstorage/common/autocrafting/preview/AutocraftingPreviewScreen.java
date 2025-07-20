@@ -165,7 +165,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
 
         if (confirmButton != null) {
-            setStartDisabled();
+            disableStartButton();
         }
 
         if (!wasAlreadyInitialized) {
@@ -274,7 +274,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (preview == null) {
             previewItemsScrollbar.setEnabled(false);
             previewItemsScrollbar.setMaxOffset(0);
-            setStartDisabled();
+            disableStartButton();
             return;
         }
         final int items = preview.items().size();
@@ -604,34 +604,24 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (amountField == null || confirmButton == null) {
             return;
         }
+        disableStartButton();
         getAndValidateAmount().ifPresentOrElse(amount -> {
-            setPending();
+            confirmButton.setMessage(PENDING);
             changedAmount = amount;
             amountField.setTextColor(0xFFFFFF);
         }, () -> {
-            setStartDisabled();
+            confirmButton.setMessage(START);
             amountField.setTextColor(0xFF5555);
         });
     }
 
-    private void setPending() {
+    private void disableStartButton() {
         if (confirmButton == null) {
             return;
         }
         confirmButton.active = false;
         confirmButton.setIcon(null);
         confirmButton.setTooltip(null);
-        confirmButton.setMessage(PENDING);
-    }
-
-    private void setStartDisabled() {
-        if (confirmButton == null) {
-            return;
-        }
-        confirmButton.active = false;
-        confirmButton.setIcon(null);
-        confirmButton.setTooltip(null);
-        confirmButton.setMessage(START);
     }
 
     @Override
@@ -654,7 +644,10 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
 
     @Override
     protected boolean confirm(final Double amount) {
-        setPending();
+        disableStartButton();
+        if (confirmButton != null) {
+            confirmButton.setMessage(PENDING);
+        }
         getMenu().sendRequest(amount, notifyCheckbox == null ? menu.isNotify() : notifyCheckbox.isSelected());
         return false;
     }
