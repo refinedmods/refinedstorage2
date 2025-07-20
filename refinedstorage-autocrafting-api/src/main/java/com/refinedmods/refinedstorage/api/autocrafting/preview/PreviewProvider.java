@@ -11,11 +11,13 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.9")
 public interface PreviewProvider {
-    CompletableFuture<Optional<Preview>> getPreview(ResourceKey resource, long amount);
+    CompletableFuture<Optional<Preview>> getPreview(ResourceKey resource, long amount,
+                                                    CancellationToken cancellationToken);
 
-    CompletableFuture<Long> getMaxAmount(ResourceKey resource);
+    CompletableFuture<Long> getMaxAmount(ResourceKey resource, CancellationToken cancellationToken);
 
-    CompletableFuture<Optional<TaskId>> startTask(ResourceKey resource, long amount, Actor actor, boolean notify);
+    CompletableFuture<Optional<TaskId>> startTask(ResourceKey resource, long amount, Actor actor, boolean notify,
+                                                  CancellationToken cancellationToken);
 
     void cancel();
 }

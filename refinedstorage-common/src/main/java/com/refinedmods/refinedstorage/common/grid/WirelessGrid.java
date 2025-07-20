@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -120,22 +121,24 @@ class WirelessGrid implements Grid {
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         return getAutocrafting()
             .map(component -> {
-                final CompletableFuture<Optional<Preview>> previewRequest = component.getPreview(resource, amount);
-                pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+                final CompletableFuture<Optional<Preview>> previewRequest = component.getPreview(resource, amount,
+                    cancellationToken);
+                pendingAutocraftingRequests.add(cancellationToken);
                 return previewRequest;
             })
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         return getAutocrafting()
             .map(component -> {
-                final CompletableFuture<Long> maxAmountRequest = component.getMaxAmount(resource);
-                pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+                final CompletableFuture<Long> maxAmountRequest = component.getMaxAmount(resource, cancellationToken);
+                pendingAutocraftingRequests.add(cancellationToken);
                 return maxAmountRequest;
             })
             .orElseGet(() -> CompletableFuture.completedFuture(0L));
@@ -145,12 +148,13 @@ class WirelessGrid implements Grid {
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
         return getAutocrafting()
             .map(autocrafting -> {
-                final CompletableFuture<Optional<TaskId>> taskRequest =
-                    autocrafting.startTask(resource, amount, actor, notify);
-                pendingAutocraftingRequests.addTaskRequest(taskRequest);
+                final CompletableFuture<Optional<TaskId>> taskRequest = autocrafting.startTask(resource, amount,
+                    actor, notify, cancellationToken);
+                pendingAutocraftingRequests.add(cancellationToken);
                 return taskRequest;
             })
             .orElse(CompletableFuture.completedFuture(Optional.empty()));

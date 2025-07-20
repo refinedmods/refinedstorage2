@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -436,7 +437,7 @@ public final class GameTestUtil {
                                                  final ResourceAmount resource) {
         return networkIsAvailable(helper, pos, network -> {
             network.getComponent(AutocraftingNetworkComponent.class).startTask(
-                resource.resource(), resource.amount(), Actor.EMPTY, false);
+                resource.resource(), resource.amount(), Actor.EMPTY, false, CancellationToken.NONE);
         });
     }
 

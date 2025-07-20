@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.core.Action;
@@ -133,12 +134,13 @@ class PortableGrid implements Grid {
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         return CompletableFuture.completedFuture(Optional.empty());
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         return CompletableFuture.completedFuture(0L);
     }
 
@@ -146,7 +148,8 @@ class PortableGrid implements Grid {
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
         return CompletableFuture.completedFuture(Optional.empty());
     }
 

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.task;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationHandler;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusBuilder;
@@ -1171,7 +1172,7 @@ class TaskImplTest {
                                 final PatternRepository patterns,
                                 final ResourceKey resource,
                                 final long amount) {
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
         final Task task = calculatePlan(sut, resource, amount).map(plan -> new TaskImpl(
             plan,
             MutableResourceListImpl.orderPreserving(),

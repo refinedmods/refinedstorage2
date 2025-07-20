@@ -48,6 +48,11 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
     }
 
     @Override
+    public void childCalculationCancelled(final CraftingCalculatorListener<PreviewBuilder> childListener) {
+        builder.clear();
+    }
+
+    @Override
     public void ingredientsExhausted(final ResourceKey resource, final long amount) {
         builder.addMissing(resource, amount);
     }

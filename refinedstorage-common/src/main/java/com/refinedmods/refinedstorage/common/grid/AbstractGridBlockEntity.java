@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.Network;
@@ -103,18 +104,19 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         return Optional.ofNullable(mainNetworkNode.getNetwork())
             .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
-            .map(component -> component.getPreview(resource, amount))
+            .map(component -> component.getPreview(resource, amount, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         return Optional.ofNullable(mainNetworkNode.getNetwork())
             .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
-            .map(component -> component.getMaxAmount(resource))
+            .map(component -> component.getMaxAmount(resource, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(0L));
     }
 
@@ -122,12 +124,14 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
         final Network network = mainNetworkNode.getNetwork();
         if (network == null) {
             return CompletableFuture.completedFuture(Optional.empty());
         }
-        return network.getComponent(AutocraftingNetworkComponent.class).startTask(resource, amount, actor, notify);
+        return network.getComponent(AutocraftingNetworkComponent.class).startTask(resource, amount, actor, notify,
+            cancellationToken);
     }
 
     @Override

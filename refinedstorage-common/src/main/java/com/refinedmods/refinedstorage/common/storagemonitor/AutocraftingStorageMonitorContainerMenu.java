@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.storagemonitor;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -44,17 +45,19 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         final CompletableFuture<Optional<Preview>> previewRequest =
-            requireNonNull(storageMonitor).getPreview(resource, amount);
-        pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+            requireNonNull(storageMonitor).getPreview(resource, amount, cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return previewRequest;
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
-        final CompletableFuture<Long> maxAmountRequest = requireNonNull(storageMonitor).getMaxAmount(resource);
-        pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
+        final CompletableFuture<Long> maxAmountRequest = requireNonNull(storageMonitor).getMaxAmount(resource,
+            cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return maxAmountRequest;
     }
 
@@ -62,10 +65,11 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
-        final CompletableFuture<Optional<TaskId>> taskRequest =
-            requireNonNull(storageMonitor).startTask(resource, amount, actor, notify);
-        pendingAutocraftingRequests.addTaskRequest(taskRequest);
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<TaskId>> taskRequest = requireNonNull(storageMonitor).startTask(resource,
+            amount, actor, notify, cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return taskRequest;
     }
 

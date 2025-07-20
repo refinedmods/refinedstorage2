@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.support.packet.c2s;
 
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
@@ -26,7 +27,7 @@ public record AutocraftingPreviewMaxAmountRequestPacket(PlatformResourceKey reso
     public static void handle(final AutocraftingPreviewMaxAmountRequestPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof PreviewProvider provider) {
             final ServerPlayer player = (ServerPlayer) ctx.getPlayer();
-            provider.getMaxAmount(packet.resource).thenAccept(maxAmount ->
+            provider.getMaxAmount(packet.resource, new CancellationToken()).thenAccept(maxAmount ->
                 S2CPackets.sendAutocraftingPreviewMaxAmountResponse(player, maxAmount));
         }
     }

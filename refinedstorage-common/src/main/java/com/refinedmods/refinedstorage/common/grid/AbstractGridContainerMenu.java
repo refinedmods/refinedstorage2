@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.grid;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -493,16 +494,18 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
-        final CompletableFuture<Optional<Preview>> previewRequest = requireNonNull(grid).getPreview(resource, amount);
-        pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<Preview>> previewRequest = requireNonNull(grid).getPreview(resource, amount,
+            cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return previewRequest;
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
-        final CompletableFuture<Long> maxAmountRequest = requireNonNull(grid).getMaxAmount(resource);
-        pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
+        final CompletableFuture<Long> maxAmountRequest = requireNonNull(grid).getMaxAmount(resource, cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return maxAmountRequest;
     }
 
@@ -510,10 +513,11 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
-        final CompletableFuture<Optional<TaskId>> taskRequest =
-            requireNonNull(grid).startTask(resource, amount, actor, notify);
-        pendingAutocraftingRequests.addTaskRequest(taskRequest);
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<TaskId>> taskRequest = requireNonNull(grid).startTask(resource, amount, actor,
+            notify, cancellationToken);
+        pendingAutocraftingRequests.add(cancellationToken);
         return taskRequest;
     }
 

@@ -32,6 +32,11 @@ class MissingResourcesCraftingCalculatorListener implements CraftingCalculatorLi
     }
 
     @Override
+    public void childCalculationCancelled(final CraftingCalculatorListener<Boolean> childListener) {
+        missingResources = true;
+    }
+
+    @Override
     public void ingredientsExhausted(final ResourceKey resource, final long amount) {
         missingResources = true;
     }

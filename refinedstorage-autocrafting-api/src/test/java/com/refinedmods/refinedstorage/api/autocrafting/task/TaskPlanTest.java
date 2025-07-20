@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.task;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationHandler;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -34,7 +35,7 @@ class TaskPlanTest {
         // Arrange
         final RootStorage storage = storage();
         final PatternRepository patterns = patterns(OAK_PLANKS_PATTERN);
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Optional<TaskPlan> optionalPlan = calculatePlan(sut, OAK_PLANKS, 1);
@@ -48,7 +49,7 @@ class TaskPlanTest {
         // Arrange
         final RootStorage storage = storage(new ResourceAmount(OAK_LOG, 1));
         final PatternRepository patterns = patterns(OAK_PLANKS_PATTERN);
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Optional<TaskPlan> optionalPlan = calculatePlan(sut, OAK_PLANKS, 1);
@@ -70,7 +71,7 @@ class TaskPlanTest {
             new ResourceAmount(OAK_PLANKS, 4)
         );
         final PatternRepository patterns = patterns(OAK_PLANKS_PATTERN, SPRUCE_PLANKS_PATTERN, CRAFTING_TABLE_PATTERN);
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Optional<TaskPlan> optionalPlan = calculatePlan(sut, CRAFTING_TABLE, 3);
@@ -117,7 +118,7 @@ class TaskPlanTest {
             new ResourceAmount(OAK_PLANKS, 4)
         );
         final PatternRepository patterns = patterns(OAK_PLANKS_PATTERN, SPRUCE_PLANKS_PATTERN, CRAFTING_TABLE_PATTERN);
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Optional<TaskPlan> optionalPlan = calculatePlan(sut, CRAFTING_TABLE, 3);

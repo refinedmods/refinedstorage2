@@ -18,10 +18,14 @@ public class CraftingCalculatorImpl implements CraftingCalculator {
 
     private final PatternRepository patternRepository;
     private final RootStorage rootStorage;
+    private final CancellationHandler cancellationHandler;
 
-    public CraftingCalculatorImpl(final PatternRepository patternRepository, final RootStorage rootStorage) {
+    public CraftingCalculatorImpl(final PatternRepository patternRepository,
+                                  final RootStorage rootStorage,
+                                  final CancellationHandler cancellationHandler) {
         this.patternRepository = patternRepository;
         this.rootStorage = rootStorage;
+        this.cancellationHandler = cancellationHandler;
     }
 
     @Override
@@ -42,10 +46,13 @@ public class CraftingCalculatorImpl implements CraftingCalculator {
                 patternAmount
             );
             final CraftingTree<T> tree = root(pattern, rootStorage, patternAmount, patternRepository, childListener);
-            final CraftingTree.CalculationResult calculationResult = tree.calculate();
+            final CraftingTree.CalculationResult calculationResult = tree.calculate(cancellationHandler);
             if (calculationResult == CraftingTree.CalculationResult.MISSING_RESOURCES) {
                 lastChildListener = childListener;
                 continue;
+            } else if (calculationResult == CraftingTree.CalculationResult.CANCELLED) {
+                listener.childCalculationCancelled(childListener);
+                return;
             }
             listener.childCalculationCompleted(childListener);
             return;

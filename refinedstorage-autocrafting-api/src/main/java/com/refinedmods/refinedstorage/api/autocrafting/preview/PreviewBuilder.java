@@ -75,6 +75,12 @@ public class PreviewBuilder {
         return missing ? PreviewType.MISSING_RESOURCES : PreviewType.SUCCESS;
     }
 
+    public void clear() {
+        items.clear();
+        outputsOfPatternWithCycle = Collections.emptyList();
+        missing = false;
+    }
+
     private static class MutablePreviewItem {
         private long available;
         private long missing;

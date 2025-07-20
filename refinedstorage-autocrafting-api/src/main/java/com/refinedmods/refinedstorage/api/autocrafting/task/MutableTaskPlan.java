@@ -94,4 +94,10 @@ public class MutableTaskPlan {
     void setMissing() {
         this.missing = true;
     }
+
+    void clear() {
+        patterns.clear();
+        initialRequirements.clear();
+        missing = true;
+    }
 }

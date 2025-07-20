@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.preview;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationHandler;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -39,7 +40,7 @@ class PreviewTest {
         // Arrange
         final RootStorage storage = storage();
         final PatternRepository patterns = patterns();
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, 1);
@@ -55,7 +56,7 @@ class PreviewTest {
         // Arrange
         final RootStorage storage = storage();
         final PatternRepository patterns = patterns();
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
@@ -78,7 +79,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
@@ -110,7 +111,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
@@ -133,7 +134,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
@@ -167,7 +168,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1);
@@ -193,7 +194,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 11);
@@ -219,7 +220,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 16);
@@ -253,7 +254,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1);
@@ -282,7 +283,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2);
@@ -310,7 +311,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 2)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
@@ -342,7 +343,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
@@ -378,7 +379,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
@@ -409,7 +410,7 @@ class PreviewTest {
             STICKS_PATTERN,
             SIGN_PATTERN
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, SIGN, 1);
@@ -442,7 +443,7 @@ class PreviewTest {
             STICKS_PATTERN,
             SIGN_PATTERN
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, SIGN, 1);
@@ -507,7 +508,7 @@ class PreviewTest {
             STICKS_PATTERN,
             SIGN_PATTERN
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, SIGN, requestedAmount);
@@ -544,7 +545,7 @@ class PreviewTest {
                 .output(STICKS, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, OAK_PLANKS, requestedAmount);
@@ -571,7 +572,7 @@ class PreviewTest {
                 .output(OAK_LOG, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, OAK_PLANKS, 1);
@@ -592,7 +593,7 @@ class PreviewTest {
                 .output(OAK_PLANKS, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, OAK_PLANKS, 2);
@@ -617,7 +618,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, OAK_PLANKS, Long.MAX_VALUE);
@@ -643,7 +644,7 @@ class PreviewTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2);

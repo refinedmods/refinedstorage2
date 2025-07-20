@@ -61,7 +61,10 @@ class CraftingTree<T> {
         return new CraftingTree<>(pattern, childState, amount, patternRepository, childListener, activePatterns);
     }
 
-    CalculationResult calculate() {
+    CalculationResult calculate(final CancellationHandler cancellationHandler) {
+        if (cancellationHandler.isCancelled()) {
+            return CalculationResult.CANCELLED;
+        }
         if (!activePatterns.add(pattern)) {
             throw new PatternCycleDetectedException(pattern);
         }
@@ -70,9 +73,12 @@ class CraftingTree<T> {
         for (int ingredientIndex = 0; ingredientIndex < ingredients.size(); ++ingredientIndex) {
             final Ingredient ingredient = ingredients.get(ingredientIndex);
             final IngredientState ingredientState = new IngredientState(ingredient, craftingState);
-            final CalculationResult ingredientResult = calculateIngredient(ingredientIndex, ingredientState);
+            final CalculationResult ingredientResult = calculateIngredient(ingredientIndex, ingredientState,
+                cancellationHandler);
             if (ingredientResult == CalculationResult.MISSING_RESOURCES) {
                 result = CalculationResult.MISSING_RESOURCES;
+            } else if (ingredientResult == CalculationResult.CANCELLED) {
+                return CalculationResult.CANCELLED;
             }
         }
         craftingState.addOutputsToInternalStorage(pattern, amount);
@@ -80,7 +86,8 @@ class CraftingTree<T> {
         return result;
     }
 
-    private CalculationResult calculateIngredient(final int ingredientIndex, final IngredientState ingredientState) {
+    private CalculationResult calculateIngredient(final int ingredientIndex, final IngredientState ingredientState,
+                                                  final CancellationHandler cancellationHandler) {
         CraftingState.ResourceState resourceState = craftingState.getResource(ingredientState.get());
         long remaining = ingredientState.amount() * amount.iterations();
         if (remaining < 0) {
@@ -101,61 +108,65 @@ class CraftingTree<T> {
                 remaining -= toTake;
             }
             if (remaining > 0) {
-                final CraftingState.ResourceState newState = tryCalculateChild(
+                final ChildCalculationYield calculationYield = tryCalculateChild(
                     ingredientState,
                     resourceState,
-                    remaining
+                    remaining,
+                    cancellationHandler
                 );
-                if (newState == null) {
+                if (calculationYield.cancelled) {
+                    return CalculationResult.CANCELLED;
+                } else if (calculationYield.resourceYield == null) {
                     craftingState.extractFromInternalStorage(resourceState.resource(), remaining);
                     return CalculationResult.MISSING_RESOURCES;
                 } else {
-                    resourceState = newState;
+                    resourceState = calculationYield.resourceYield;
                 }
             }
         }
         return CalculationResult.SUCCESS;
     }
 
-    @Nullable
-    private CraftingState.ResourceState tryCalculateChild(final IngredientState ingredientState,
-                                                          final CraftingState.ResourceState resourceState,
-                                                          final long remaining) {
+    private ChildCalculationYield tryCalculateChild(final IngredientState ingredientState,
+                                                    final CraftingState.ResourceState resourceState,
+                                                    final long remaining,
+                                                    final CancellationHandler cancellationHandler) {
         final Collection<Pattern> childPatterns = patternRepository.getByOutput(resourceState.resource());
         if (!childPatterns.isEmpty()) {
-            return calculateChild(
-                ingredientState,
-                remaining,
-                childPatterns,
-                resourceState
-            );
+            return calculateChild(ingredientState, remaining, childPatterns, resourceState, cancellationHandler);
         }
-        return ingredientState.cycle().map(craftingState::getResource).orElseGet(() -> {
-            listener.ingredientsExhausted(resourceState.resource(), remaining);
-            return null;
-        });
+        return ingredientState.cycle()
+            .map(craftingState::getResource)
+            .map(ChildCalculationYield::yieldOf)
+            .orElseGet(() -> {
+                listener.ingredientsExhausted(resourceState.resource(), remaining);
+                return ChildCalculationYield.EXHAUSTED;
+            });
     }
 
-    @Nullable
-    private CraftingState.ResourceState calculateChild(final IngredientState ingredientState,
-                                                       final long remaining,
-                                                       final Collection<Pattern> childPatterns,
-                                                       final CraftingState.ResourceState resourceState) {
-        final ChildCalculationResult<T> result = calculateChild(remaining, childPatterns, resourceState);
-        if (result.success) {
+    private ChildCalculationYield calculateChild(final IngredientState ingredientState,
+                                                 final long remaining,
+                                                 final Collection<Pattern> childPatterns,
+                                                 final CraftingState.ResourceState resourceState,
+                                                 final CancellationHandler cancellationHandler) {
+        final ChildCalculationResult<T> result = calculateChild(remaining, childPatterns, resourceState,
+            cancellationHandler);
+        if (result.type == ChildCalculationResultType.SUCCESS) {
             this.craftingState = result.childTree.craftingState;
             final CraftingState.ResourceState updatedResourceState = craftingState.getResource(
-                resourceState.resource()
-            );
+                resourceState.resource());
             listener.childCalculationCompleted(result.childTree.listener);
-            return updatedResourceState;
+            return ChildCalculationYield.yieldOf(updatedResourceState);
+        } else if (result.type == ChildCalculationResultType.CANCELLED) {
+            return ChildCalculationYield.CANCELLED;
         }
-        return cycleToNextIngredientOrFail(ingredientState, resourceState, result);
+        return ChildCalculationYield.yieldOf(cycleToNextIngredientOrFail(ingredientState, result));
     }
 
     private ChildCalculationResult<T> calculateChild(final long remaining,
                                                      final Collection<Pattern> childPatterns,
-                                                     final CraftingState.ResourceState resourceState) {
+                                                     final CraftingState.ResourceState resourceState,
+                                                     final CancellationHandler cancellationHandler) {
         CraftingTree<T> lastChildTree = null;
         for (final Pattern childPattern : childPatterns) {
             final Amount childAmount = Amount.of(childPattern, resourceState.resource(), remaining);
@@ -168,19 +179,20 @@ class CraftingTree<T> {
                 listener,
                 activePatterns
             );
-            final CalculationResult childResult = childTree.calculate();
+            final CalculationResult childResult = childTree.calculate(cancellationHandler);
             if (childResult == CalculationResult.MISSING_RESOURCES) {
                 lastChildTree = childTree;
                 continue;
+            } else if (childResult == CalculationResult.CANCELLED) {
+                return new ChildCalculationResult<>(ChildCalculationResultType.CANCELLED, childTree);
             }
-            return new ChildCalculationResult<>(true, childTree);
+            return new ChildCalculationResult<>(ChildCalculationResultType.SUCCESS, childTree);
         }
-        return new ChildCalculationResult<>(false, requireNonNull(lastChildTree));
+        return new ChildCalculationResult<>(ChildCalculationResultType.FAILURE, requireNonNull(lastChildTree));
     }
 
     @Nullable
     private CraftingState.ResourceState cycleToNextIngredientOrFail(final IngredientState ingredientState,
-                                                                    final CraftingState.ResourceState resourceState,
                                                                     final ChildCalculationResult<T> childResult) {
         return ingredientState.cycle().map(craftingState::getResource).orElseGet(() -> {
             this.craftingState = childResult.childTree.craftingState;
@@ -189,11 +201,27 @@ class CraftingTree<T> {
         });
     }
 
-    private record ChildCalculationResult<T>(boolean success, CraftingTree<T> childTree) {
+    private record ChildCalculationResult<T>(ChildCalculationResultType type, CraftingTree<T> childTree) {
+    }
+
+    enum ChildCalculationResultType {
+        SUCCESS,
+        FAILURE,
+        CANCELLED
+    }
+
+    private record ChildCalculationYield(@Nullable CraftingState.ResourceState resourceYield, boolean cancelled) {
+        private static final ChildCalculationYield CANCELLED = new ChildCalculationYield(null, true);
+        private static final ChildCalculationYield EXHAUSTED = new ChildCalculationYield(null, false);
+
+        private static ChildCalculationYield yieldOf(@Nullable final CraftingState.ResourceState resourceYield) {
+            return new ChildCalculationYield(resourceYield, false);
+        }
     }
 
     enum CalculationResult {
         SUCCESS,
-        MISSING_RESOURCES
+        MISSING_RESOURCES,
+        CANCELLED
     }
 }

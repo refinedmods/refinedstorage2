@@ -33,7 +33,7 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
@@ -59,7 +59,7 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
@@ -84,7 +84,7 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
 
         // Act
         final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);

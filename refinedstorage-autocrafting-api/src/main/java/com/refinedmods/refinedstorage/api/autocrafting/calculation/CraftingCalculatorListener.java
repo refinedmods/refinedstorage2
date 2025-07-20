@@ -11,6 +11,8 @@ public interface CraftingCalculatorListener<T> {
 
     void childCalculationCompleted(CraftingCalculatorListener<T> childListener);
 
+    void childCalculationCancelled(CraftingCalculatorListener<T> childListener);
+
     void ingredientsExhausted(ResourceKey resource, long amount);
 
     void ingredientUsed(Pattern ingredientPattern, int ingredientIndex, ResourceKey resource, long amount);
