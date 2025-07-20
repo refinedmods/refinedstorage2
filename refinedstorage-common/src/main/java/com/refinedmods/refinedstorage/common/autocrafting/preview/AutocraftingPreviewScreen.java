@@ -46,6 +46,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     private static final MutableComponent TITLE = createTranslation("gui", "autocrafting_preview.title");
     private static final MutableComponent START = createTranslation("gui", "autocrafting_preview.start");
     private static final MutableComponent PENDING = createTranslation("gui", "autocrafting_preview.pending");
+    private static final MutableComponent CANCELLING = createTranslation("gui", "autocrafting_preview.cancelling");
+    private static final MutableComponent CANCELLING_FORCE_CLOSE = createTranslation("gui",
+        "autocrafting_preview.cancelling.force_close");
     private static final MutableComponent MAX = createTranslation("gui", "autocrafting_preview.max");
     private static final MutableComponent MAX_HELP = createTranslation("gui", "autocrafting_preview.max.help");
     private static final MutableComponent NOTIFY = createTranslation("gui", "autocrafting_preview.notify");
@@ -108,6 +111,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     @Nullable
     private Double changedAmount;
     private boolean mayEnableMaxAmountRequestButtonAgain;
+    private boolean requestedCancellation;
 
     public AutocraftingPreviewScreen(final Screen parent,
                                      final Inventory playerInventory,
@@ -635,6 +639,30 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             maxButton.active = true;
             mayEnableMaxAmountRequestButtonAgain = false;
         }
+    }
+
+    @Override
+    protected boolean beforeClose() {
+        if (requestedCancellation) {
+            return true;
+        }
+        requestedCancellation = true;
+        if (cancelButton != null) {
+            cancelButton.active = false;
+            cancelButton.setMessage(CANCELLING);
+            cancelButton.setTooltip(Tooltip.create(CANCELLING_FORCE_CLOSE));
+        }
+        getMenu().sendCancelRequest();
+        return false;
+    }
+
+    public void cancelResponseReceived() {
+        // If we get the cancellation response late, and have force closed the screen,
+        // and meanwhile have a new screen open already, we do not want to close right now.
+        if (!requestedCancellation) {
+            return;
+        }
+        close();
     }
 
     @Override

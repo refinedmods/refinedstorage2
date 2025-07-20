@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMoni
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskRemovedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskStatusChangedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewCancelResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewMaxAmountResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingResponsePacket;
@@ -322,6 +323,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(
             AutocraftingPreviewResponsePacket.PACKET_TYPE,
             wrapHandler((packet, ctx) -> AutocraftingPreviewResponsePacket.handle(packet))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+            AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,
+            wrapHandler((packet, ctx) -> AutocraftingPreviewCancelResponsePacket.handle())
         );
         ClientPlayNetworking.registerGlobalReceiver(
             AutocraftingPreviewMaxAmountResponsePacket.PACKET_TYPE,

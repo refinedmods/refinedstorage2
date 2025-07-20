@@ -22,6 +22,7 @@ import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
+import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ import net.minecraft.server.level.ServerPlayer;
 class WirelessGrid implements Grid {
     private final NetworkItemContext context;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
+    private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
 
     WirelessGrid(final NetworkItemContext context) {
         this.context = context;
@@ -120,14 +122,22 @@ class WirelessGrid implements Grid {
     @Override
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
         return getAutocrafting()
-            .map(component -> component.getPreview(resource, amount))
+            .map(component -> {
+                final CompletableFuture<Optional<Preview>> previewRequest = component.getPreview(resource, amount);
+                pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+                return previewRequest;
+            })
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 
     @Override
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
         return getAutocrafting()
-            .map(component -> component.getMaxAmount(resource))
+            .map(component -> {
+                final CompletableFuture<Long> maxAmountRequest = component.getMaxAmount(resource);
+                pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+                return maxAmountRequest;
+            })
             .orElseGet(() -> CompletableFuture.completedFuture(0L));
     }
 
@@ -137,7 +147,21 @@ class WirelessGrid implements Grid {
                                                          final Actor actor,
                                                          final boolean notify) {
         return getAutocrafting()
-            .map(autocrafting -> autocrafting.startTask(resource, amount, actor, notify))
+            .map(autocrafting -> {
+                final CompletableFuture<Optional<TaskId>> taskRequest =
+                    autocrafting.startTask(resource, amount, actor, notify);
+                pendingAutocraftingRequests.addTaskRequest(taskRequest);
+                return taskRequest;
+            })
             .orElse(CompletableFuture.completedFuture(Optional.empty()));
+    }
+
+    @Override
+    public void cancel() {
+        pendingAutocraftingRequests.cancelAll();
+        context.resolveNetwork().ifPresent(network -> {
+            final AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+            autocrafting.cancel();
+        });
     }
 }

@@ -123,4 +123,9 @@ class ClientCraftingGrid implements CraftingGrid {
                                                          final boolean notify) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void cancel() {
+        throw new UnsupportedOperationException();
+    }
 }

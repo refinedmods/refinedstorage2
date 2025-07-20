@@ -31,6 +31,7 @@ import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
+import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridExtractionStrategy;
@@ -88,6 +89,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     @Nullable
     private ResourceType resourceTypeFilter;
     private boolean active;
+    private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
 
     protected AbstractGridContainerMenu(
         final MenuType<? extends AbstractGridContainerMenu> menuType,
@@ -492,12 +494,16 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     @Override
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
-        return requireNonNull(grid).getPreview(resource, amount);
+        final CompletableFuture<Optional<Preview>> previewRequest = requireNonNull(grid).getPreview(resource, amount);
+        pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+        return previewRequest;
     }
 
     @Override
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
-        return requireNonNull(grid).getMaxAmount(resource);
+        final CompletableFuture<Long> maxAmountRequest = requireNonNull(grid).getMaxAmount(resource);
+        pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+        return maxAmountRequest;
     }
 
     @Override
@@ -505,7 +511,18 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
                                                          final long amount,
                                                          final Actor actor,
                                                          final boolean notify) {
-        return requireNonNull(grid).startTask(resource, amount, actor, notify);
+        final CompletableFuture<Optional<TaskId>> taskRequest =
+            requireNonNull(grid).startTask(resource, amount, actor, notify);
+        pendingAutocraftingRequests.addTaskRequest(taskRequest);
+        return taskRequest;
+    }
+
+    @Override
+    public void cancel() {
+        pendingAutocraftingRequests.cancelAll();
+        if (grid != null) {
+            grid.cancel();
+        }
     }
 
     public boolean isLargeSlot(final Slot slot) {

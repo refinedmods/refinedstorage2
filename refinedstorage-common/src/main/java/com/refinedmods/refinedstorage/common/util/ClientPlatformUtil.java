@@ -48,6 +48,12 @@ public final class ClientPlatformUtil {
         }
     }
 
+    public static void autocraftingPreviewCancelResponseReceived() {
+        if (Minecraft.getInstance().screen instanceof AutocraftingPreviewScreen screen) {
+            screen.cancelResponseReceived();
+        }
+    }
+
     public static void autocraftingResponseReceived(final UUID id, final boolean success) {
         if (Minecraft.getInstance().screen instanceof AutocraftingPreviewScreen screen) {
             screen.getMenu().responseReceived(id, success);

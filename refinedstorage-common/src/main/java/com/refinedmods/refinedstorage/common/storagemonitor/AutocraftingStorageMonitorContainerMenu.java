@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewContainerMenu;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingRequest;
 import com.refinedmods.refinedstorage.common.content.Menus;
@@ -22,6 +23,7 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
     implements PreviewProvider {
     @Nullable
     private final StorageMonitorBlockEntity storageMonitor;
+    private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
 
     public AutocraftingStorageMonitorContainerMenu(final int syncId, final PlatformResourceKey resource) {
         super(Menus.INSTANCE.getAutocraftingStorageMonitor(), syncId, getRequests(resource));
@@ -43,12 +45,17 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
 
     @Override
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
-        return requireNonNull(storageMonitor).getPreview(resource, amount);
+        final CompletableFuture<Optional<Preview>> previewRequest =
+            requireNonNull(storageMonitor).getPreview(resource, amount);
+        pendingAutocraftingRequests.addPreviewRequest(previewRequest);
+        return previewRequest;
     }
 
     @Override
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
-        return requireNonNull(storageMonitor).getMaxAmount(resource);
+        final CompletableFuture<Long> maxAmountRequest = requireNonNull(storageMonitor).getMaxAmount(resource);
+        pendingAutocraftingRequests.addMaxAmountRequest(maxAmountRequest);
+        return maxAmountRequest;
     }
 
     @Override
@@ -56,6 +63,17 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
                                                          final long amount,
                                                          final Actor actor,
                                                          final boolean notify) {
-        return requireNonNull(storageMonitor).startTask(resource, amount, actor, notify);
+        final CompletableFuture<Optional<TaskId>> taskRequest =
+            requireNonNull(storageMonitor).startTask(resource, amount, actor, notify);
+        pendingAutocraftingRequests.addTaskRequest(taskRequest);
+        return taskRequest;
+    }
+
+    @Override
+    public void cancel() {
+        pendingAutocraftingRequests.cancelAll();
+        if (storageMonitor != null) {
+            storageMonitor.cancel();
+        }
     }
 }

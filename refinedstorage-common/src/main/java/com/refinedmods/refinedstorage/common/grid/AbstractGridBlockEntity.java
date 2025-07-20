@@ -131,6 +131,14 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
     }
 
     @Override
+    public void cancel() {
+        final Network network = mainNetworkNode.getNetwork();
+        if (network != null) {
+            network.getComponent(AutocraftingNetworkComponent.class).cancel();
+        }
+    }
+
+    @Override
     protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
                                                                    final BlockState newBlockState) {
         return AbstractDirectionalBlock.didDirectionChange(oldBlockState, newBlockState);
