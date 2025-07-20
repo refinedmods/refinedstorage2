@@ -9,19 +9,11 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.PatternCycleD
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.Collections;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PreviewCraftingCalculatorListener implements CraftingCalculatorListener<PreviewBuilder> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PreviewCraftingCalculatorListener.class);
-
-    private final UUID listenerId = UUID.randomUUID();
     private PreviewBuilder builder;
 
     private PreviewCraftingCalculatorListener(final PreviewBuilder builder) {
-        LOGGER.debug("{} - Started calculation", listenerId);
         this.builder = builder;
     }
 
@@ -45,7 +37,6 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
     public CraftingCalculatorListener<PreviewBuilder> childCalculationStarted(final Pattern childPattern,
                                                                               final ResourceKey resource,
                                                                               final Amount amount) {
-        LOGGER.debug("{} - Child calculation starting for {}x {}", listenerId, amount, resource);
         final PreviewBuilder copy = builder.copy();
         copy.addToCraft(resource, amount.getTotal());
         return new PreviewCraftingCalculatorListener(copy);
@@ -53,13 +44,11 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
 
     @Override
     public void childCalculationCompleted(final CraftingCalculatorListener<PreviewBuilder> childListener) {
-        LOGGER.debug("{} - Child calculation completed", listenerId);
         this.builder = childListener.getData();
     }
 
     @Override
     public void ingredientsExhausted(final ResourceKey resource, final long amount) {
-        LOGGER.debug("{} - Ingredients exhausted for {}x {}", listenerId, amount, resource);
         builder.addMissing(resource, amount);
     }
 
@@ -73,7 +62,6 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
 
     @Override
     public void ingredientExtractedFromStorage(final ResourceKey resource, final long amount) {
-        LOGGER.debug("{} - Extracted from storage: {} - {}", listenerId, resource, amount);
         builder.addAvailable(resource, amount);
     }
 
