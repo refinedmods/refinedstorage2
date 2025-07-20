@@ -154,11 +154,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         return task.getId();
     }
 
-    @Override
-    public void cancel() {
-        // no op
-    }
-
     private Optional<TaskId> startTaskSync(final ResourceKey resource,
                                            final long amount,
                                            final Actor actor,
@@ -234,6 +229,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             return;
         }
         provider.cancelTask(taskId);
+    }
+
+    @Override
+    public void cancel() {
+        // no op
     }
 
     @Override

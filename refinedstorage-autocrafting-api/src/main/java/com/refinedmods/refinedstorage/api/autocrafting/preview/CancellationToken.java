@@ -20,10 +20,16 @@ public class CancellationToken implements CancellationHandler {
         }
     };
 
+    private static final long TIMEOUT_MS = 10_000;
+
+    private final long createdAt = System.currentTimeMillis();
     private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
     @Override
     public boolean isCancelled() {
+        if (System.currentTimeMillis() - createdAt >= TIMEOUT_MS) {
+            cancelled.set(true);
+        }
         return cancelled.get();
     }
 
