@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage.common.storagemonitor;
 
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
-import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
+import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewContainerMenu;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import static java.util.Objects.requireNonNull;
 
 public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreviewContainerMenu
-    implements PreviewProvider {
+    implements CancelablePreviewProvider {
     @Nullable
     private final StorageMonitorBlockEntity storageMonitor;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
@@ -76,8 +76,5 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
     @Override
     public void cancel() {
         pendingAutocraftingRequests.cancelAll();
-        if (storageMonitor != null) {
-            storageMonitor.cancel();
-        }
     }
 }

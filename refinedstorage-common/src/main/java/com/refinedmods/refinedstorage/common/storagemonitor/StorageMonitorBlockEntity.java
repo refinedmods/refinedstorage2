@@ -400,12 +400,4 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
         return network.getComponent(AutocraftingNetworkComponent.class).startTask(resource, amount, actor, notify,
             cancellationToken);
     }
-
-    @Override
-    public void cancel() {
-        final Network network = mainNetworkNode.getNetwork();
-        if (network != null) {
-            network.getComponent(AutocraftingNetworkComponent.class).cancel();
-        }
-    }
 }

@@ -234,11 +234,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     @Override
-    public void cancel() {
-        // no op
-    }
-
-    @Override
     public void cancelAll() {
         for (final Map.Entry<TaskId, PatternProvider> entry : providerByTaskId.entrySet()) {
             final PatternProvider provider = entry.getValue();

@@ -126,9 +126,4 @@ class ClientCraftingGrid implements CraftingGrid {
                                                          final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public void cancel() {
-        throw new UnsupportedOperationException();
-    }
 }

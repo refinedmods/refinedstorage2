@@ -19,6 +19,4 @@ public interface PreviewProvider {
 
     CompletableFuture<Optional<TaskId>> startTask(ResourceKey resource, long amount, Actor actor, boolean notify,
                                                   CancellationToken cancellationToken);
-
-    void cancel();
 }

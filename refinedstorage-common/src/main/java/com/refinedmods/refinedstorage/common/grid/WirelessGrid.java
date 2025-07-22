@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage.api.storage.NoopStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 
 import net.minecraft.server.level.ServerPlayer;
 
-class WirelessGrid implements Grid {
+class WirelessGrid implements Grid, CancelablePreviewProvider {
     private final NetworkItemContext context;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
@@ -163,9 +164,5 @@ class WirelessGrid implements Grid {
     @Override
     public void cancel() {
         pendingAutocraftingRequests.cancelAll();
-        context.resolveNetwork().ifPresent(network -> {
-            final AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
-            autocrafting.cancel();
-        });
     }
 }

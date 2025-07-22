@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
-import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
@@ -21,6 +20,7 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.GridSynchronizer;
@@ -64,7 +64,7 @@ import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractGridContainerMenu extends AbstractResourceContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy, ScreenSizeListener,
-    PreviewProvider, GridSortingTypes.TrackedResourceProvider {
+    CancelablePreviewProvider, GridSortingTypes.TrackedResourceProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
     private static final GridQueryParser QUERY_PARSER = new GridQueryParser(
         LexerTokenMappings.DEFAULT_MAPPINGS,
@@ -524,9 +524,6 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     @Override
     public void cancel() {
         pendingAutocraftingRequests.cancelAll();
-        if (grid != null) {
-            grid.cancel();
-        }
     }
 
     public boolean isLargeSlot(final Slot slot) {

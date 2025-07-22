@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.support.packet.c2s;
 
-import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
+import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 
@@ -21,7 +21,7 @@ public record AutocraftingPreviewCancelRequestPacket() implements CustomPacketPa
 
     public static void handle(final PacketContext ctx) {
         final AbstractContainerMenu containerMenu = ctx.getPlayer().containerMenu;
-        if (containerMenu instanceof PreviewProvider provider) {
+        if (containerMenu instanceof CancelablePreviewProvider provider) {
             final ServerPlayer player = (ServerPlayer) ctx.getPlayer();
             provider.cancel();
             S2CPackets.sendAutocraftingPreviewCancelResponse(player);

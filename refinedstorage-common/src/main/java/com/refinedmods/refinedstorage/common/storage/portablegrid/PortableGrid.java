@@ -153,9 +153,4 @@ class PortableGrid implements Grid {
                                                          final CancellationToken cancellationToken) {
         return CompletableFuture.completedFuture(Optional.empty());
     }
-
-    @Override
-    public void cancel() {
-        // no op
-    }
 }
