@@ -1,6 +1,6 @@
 = Keeping resources in stock
 
 1. Place an xref:../input-and-output/interface.adoc[] with a xref:../upgrades/autocrafting-upgrade.adoc[].
-2. Configure the resource in the xref:../input-and-output/interface.adoc[] to keep in stock — autocrafting will trigger when needed.
+2. Configure the resource in the xref:../input-and-output/interface.adoc[] to keep in stock - autocrafting will trigger when needed.
 3. To make the stocked resource accessible to the storage network, attach an xref:../storage/external-storage.adoc[] to the xref:../input-and-output/interface.adoc[].
 4. Set the xref:../storage/external-storage.adoc[] to **"extract-only"** mode. This prevents the network from inserting resources into the Interface, ensuring it only _extracts_ from the stocked supply.

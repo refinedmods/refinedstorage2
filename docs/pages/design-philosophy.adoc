@@ -28,7 +28,7 @@ Refined Storage follows an addon model for additional functionality and integrat
 - Addons allow for independent evolution without bloating base Refined Storage.
 
 == Quality of life and balance
-Quality of Life improvements should be carefully considered.
+Quality of life improvements should be carefully considered.
 
 - Over-optimization of actions can reduce the sense of mastery.
 - Balance between ease of use and gameplay depth is critical.

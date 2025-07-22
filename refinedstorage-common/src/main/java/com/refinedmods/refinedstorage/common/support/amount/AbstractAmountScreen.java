@@ -22,6 +22,7 @@ import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N extends Number>
     extends AbstractBaseScreen<T> {
@@ -35,6 +36,8 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
 
     @Nullable
     protected IconButton confirmButton;
+    @Nullable
+    protected IconButton cancelButton;
     @Nullable
     protected EditBox amountField;
 
@@ -69,8 +72,9 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         final Vector3f pos = configuration.getActionButtonsStartPosition();
         if (configuration.isHorizontalActionButtons()) {
             final int spacing = 3;
-            final Button cancelButton = addCancelButton((int) pos.x, (int) pos.y);
-            final Button resetButton = addResetButton((int) pos.x + cancelButton.getWidth() + spacing, (int) pos.y);
+            addCancelButton((int) pos.x, (int) pos.y);
+            final Button resetButton = addResetButton((int) pos.x + requireNonNull(cancelButton).getWidth() + spacing,
+                (int) pos.y);
             addConfirmButton((int) pos.x + cancelButton.getWidth() + spacing + resetButton.getWidth() + spacing,
                 (int) pos.y);
         } else {
@@ -118,7 +122,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         return IconButton.Icon.SET;
     }
 
-    private Button addCancelButton(final int x, final int y) {
+    private void addCancelButton(final int x, final int y) {
         final int width = configuration.isHorizontalActionButtons()
             ? font.width(CANCEL_TEXT) + ACTION_BUTTON_SPACING + ICON_SIZE
             : ACTION_BUTTON_WIDTH;
@@ -131,7 +135,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             btn -> close()
         );
         button.setIcon(IconButton.Icon.CANCEL);
-        return addRenderableWidget(button);
+        cancelButton = addRenderableWidget(button);
     }
 
     private void addAmountField() {
@@ -320,10 +324,17 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         return false;
     }
 
-    protected final void close() {
+    public final void close() {
+        if (!beforeClose()) {
+            return;
+        }
         if (!tryCloseToParent()) {
             onClose();
         }
+    }
+
+    protected boolean beforeClose() {
+        return true;
     }
 
     protected final Optional<N> getAndValidateAmount() {

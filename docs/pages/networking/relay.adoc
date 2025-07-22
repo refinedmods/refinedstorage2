@@ -31,13 +31,13 @@ When enabled, the {doctitle} exposes autocrafting patterns from the input sides 
 
 The top row defines which patterns are exposed.
 
-- Default mode: _blocklist_ — patterns in the filter are hidden.
+- Default mode: _blocklist_ - patterns in the filter are hidden.
 - Empty blocklist: all patterns are exposed.
 - _Allowlist_ mode: only listed patterns are exposed. If empty, none are exposed.
 
 ==== Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
 == Pass storage
 
@@ -58,13 +58,13 @@ Insert and extract priorities can be set separately.
 
 The top row defines which resources are exposed.
 
-- Default mode: _blocklist_ — resources in the filter are hidden.
+- Default mode: _blocklist_ - resources in the filter are hidden.
 - Empty blocklist: all resources are exposed.
 - _Allowlist_ mode: only listed resources are exposed. If empty, none are exposed.
 
 ==== Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
 include::../../partials/redstone-mode.adoc[]
 

@@ -1,10 +1,15 @@
 package com.refinedmods.refinedstorage.api.autocrafting.preview;
 
+import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.Collections;
@@ -42,7 +47,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, 1);
+        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
         final IllegalStateException e = assertThrows(IllegalStateException.class, action);
@@ -58,7 +63,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
+        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
         final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, action);
@@ -81,7 +86,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -113,7 +118,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -136,7 +141,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison()
@@ -170,7 +175,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -196,7 +201,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 11);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 11, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -222,7 +227,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 16);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 16, CancellationToken.NONE);
 
         // Assert
         assertThat(preview)
@@ -256,7 +261,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -285,7 +290,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -313,7 +318,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
         assertThat(preview)
@@ -345,7 +350,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
         assertThat(preview)
@@ -381,7 +386,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -412,7 +417,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, 1);
+        final Preview preview = calculatePreview(sut, SIGN, 1, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -445,7 +450,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, 1);
+        final Preview preview = calculatePreview(sut, SIGN, 1, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -510,7 +515,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, requestedAmount);
+        final Preview preview = calculatePreview(sut, SIGN, requestedAmount, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(expectedPreview);
@@ -547,7 +552,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, requestedAmount);
+        final Preview preview = calculatePreview(sut, OAK_PLANKS, requestedAmount, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -574,7 +579,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, 1);
+        final Preview preview = calculatePreview(sut, OAK_PLANKS, 1, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
@@ -595,7 +600,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, 2);
+        final Preview preview = calculatePreview(sut, OAK_PLANKS, 2, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
@@ -620,7 +625,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, Long.MAX_VALUE);
+        final Preview preview = calculatePreview(sut, OAK_PLANKS, Long.MAX_VALUE, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
@@ -646,11 +651,79 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2);
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
             PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList()
+        ));
+    }
+
+    @Test
+    void shouldPropagateCancelOnStart() {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, new CancelledCancellationToken());
+
+        // Assert
+        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
+            PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
+        ));
+    }
+
+    @Test
+    void shouldPropagateCancelWhenCancelledDuringChildCalculation() {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CancellationToken cancellationToken = new CancellationTokenImpl();
+        final PreviewCraftingCalculatorListener listener = new PreviewCraftingCalculatorListener(
+            PreviewBuilder.create()
+        ) {
+            @Override
+            public CraftingCalculatorListener<PreviewBuilder> childCalculationStarted(final Pattern childPattern,
+                                                                                      final ResourceKey resource,
+                                                                                      final Amount amount) {
+                return new PreviewCraftingCalculatorListener(this.getData()) {
+                    @Override
+                    public CraftingCalculatorListener<PreviewBuilder> childCalculationStarted(
+                        final Pattern childPattern, final ResourceKey resource, final Amount amount) {
+                        cancellationToken.cancel();
+                        return super.childCalculationStarted(childPattern, resource, amount);
+                    }
+                };
+            }
+        };
+
+        // Act
+        sut.calculate(CRAFTING_TABLE, 2, listener, cancellationToken);
+
+        // Assert
+        assertThat(listener.getData().build()).usingRecursiveComparison().isEqualTo(new Preview(
+            PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
         ));
     }
 }

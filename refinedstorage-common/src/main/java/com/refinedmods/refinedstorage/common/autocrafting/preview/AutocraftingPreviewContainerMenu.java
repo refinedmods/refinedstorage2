@@ -137,4 +137,8 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
         }
         return 1D;
     }
+
+    void sendCancelRequest() {
+        C2SPackets.sendAutocraftingPreviewCancelRequest();
+    }
 }

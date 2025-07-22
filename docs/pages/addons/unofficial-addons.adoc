@@ -61,9 +61,19 @@ ExtraStorage is an addon for Refined Storage that enhances your automation and s
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[CurseForge], link:https://modrinth.com/mod/extrastorage[Modrinth]
 |===
 
-== EnderIO
+== Cable Tiers
 
-EnderIO has Refined Storage cables.
+Cable Tiers is an addon for Refined Storage that adds new cable tiers, each with increased item transfer rates and more filter slots.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[CurseForge], link:https://modrinth.com/mod/cable-tiers[Modrinth]
+|===
+
+== Ender IO
+
+Ender IO adds Refined Storage conduits.
 
 [cols="1,3"]
 |===

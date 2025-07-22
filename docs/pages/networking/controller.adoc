@@ -13,7 +13,7 @@ The {doctitle} does not generate energy on its own. It must be powered by an ext
 == Energy usage
 
 - Energy is consumed per tick.
-- Consumption depends on the number and type of connected devices—more devices require more energy.
+- Consumption depends on the number and type of connected devices - more devices require more energy.
 
 If the {doctitle} runs out of energy, the network will attempt to draw power from another {doctitle}. If no backup is available, the network will shut down.
 

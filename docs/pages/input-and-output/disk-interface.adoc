@@ -15,14 +15,14 @@ The {doctitle} transfers resources between xref:../storage/index.adoc#_storage_d
 
 The top row configures which resources can or cannot be transferred.
 
-- Default mode: _blocklist_ — resources in the filter are blocked.
+- Default mode: _blocklist_ - resources in the filter are blocked.
 - An empty blocklist allows all resources.
 - _Allowlist_ mode allows only listed resources.
 If empty, nothing will be transferred.
 
 === Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
 == Applicable upgrades
 

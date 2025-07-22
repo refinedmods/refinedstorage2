@@ -17,46 +17,39 @@ public class TaskStatusBuilder {
         this.info = new TaskStatus.TaskInfo(id, resource, amount, startTime);
     }
 
-    public TaskStatusBuilder stored(final ResourceKey resource, final long stored) {
+    public void stored(final ResourceKey resource, final long stored) {
         CoreValidations.validateLargerThanZero(stored, "Stored");
         get(resource).stored += stored;
-        return this;
     }
 
-    public TaskStatusBuilder processing(final ResourceKey resource,
+    public void processing(final ResourceKey resource,
                                         final long processing,
                                         @Nullable final ExternalPatternSinkKey sinkKey) {
         CoreValidations.validateLargerThanZero(processing, "Processing");
         get(resource).processing += processing;
         get(resource).sinkKey = sinkKey;
-        return this;
     }
 
-    public TaskStatusBuilder scheduled(final ResourceKey resource, final long scheduled) {
+    public void scheduled(final ResourceKey resource, final long scheduled) {
         CoreValidations.validateLargerThanZero(scheduled, "Crafting");
         get(resource).scheduled += scheduled;
-        return this;
     }
 
-    public TaskStatusBuilder crafting(final ResourceKey resource, final long crafting) {
+    public void crafting(final ResourceKey resource, final long crafting) {
         CoreValidations.validateLargerThanZero(crafting, "Crafting");
         get(resource).crafting += crafting;
-        return this;
     }
 
-    public TaskStatusBuilder rejected(final ResourceKey resource) {
+    public void rejected(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.REJECTED;
-        return this;
     }
 
-    public TaskStatusBuilder noneFound(final ResourceKey resource) {
+    public void noneFound(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.NONE_FOUND;
-        return this;
     }
 
-    public TaskStatusBuilder locked(final ResourceKey resource) {
+    public void locked(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.LOCKED;
-        return this;
     }
 
     private MutableItem get(final ResourceKey resource) {

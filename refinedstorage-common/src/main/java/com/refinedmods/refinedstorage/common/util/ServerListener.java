@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage.common.util;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
@@ -19,6 +20,9 @@ public final class ServerListener {
     @Nullable
     private static ExecutorService autocraftingPool;
 
+    private static final int AUTOCRAFTING_POOL_SIZE = 4;
+    // This is the maximum number of autocrafting requests that can be queued **when all the threads are busy**.
+    private static final int AUTOCRAFTING_MAX_QUEUED_REQUESTS = 2;
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerListener.class);
     private static final Deque<Consumer<MinecraftServer>> ACTIONS = new ArrayDeque<>();
 
@@ -41,9 +45,15 @@ public final class ServerListener {
     }
 
     private static ExecutorService createAutocraftingPool() {
-        return Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
-            .namingPattern("refinedstorage-autocrafting-%d")
-            .build());
+        return new ThreadPoolExecutor(
+            AUTOCRAFTING_POOL_SIZE,
+            AUTOCRAFTING_POOL_SIZE,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(AUTOCRAFTING_MAX_QUEUED_REQUESTS),
+            new BasicThreadFactory.Builder().namingPattern("refinedstorage-autocrafting-%d").build(),
+            new ThreadPoolExecutor.AbortPolicy()
+        );
     }
 
     public static ExecutorService getAutocraftingPool() {

@@ -1,6 +1,10 @@
-package com.refinedmods.refinedstorage.api.autocrafting.calculation;
+package com.refinedmods.refinedstorage.api.autocrafting.craftability;
 
+import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
@@ -14,9 +18,10 @@ import static com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder.pat
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.CRAFTING_TABLE;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.OAK_LOG;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.OAK_PLANKS;
+import static com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener.binarySearchMaxAmount;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CraftingCalculatorImplTest {
+class CraftabilityTest {
     @Test
     void shouldNotFindMaxAmountIfThereAreAlwaysMissingResources() {
         // Arrange
@@ -36,7 +41,7 @@ class CraftingCalculatorImplTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, CancellationToken.NONE);
 
         // Assert
         assertThat(maxAmount).isZero();
@@ -62,7 +67,7 @@ class CraftingCalculatorImplTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, CancellationToken.NONE);
 
         // Assert
         assertThat(maxAmount).isEqualTo(amountPossible);
@@ -87,7 +92,32 @@ class CraftingCalculatorImplTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, CancellationToken.NONE);
+
+        // Assert
+        assertThat(maxAmount).isZero();
+    }
+
+    @Test
+    void shouldNotFindMaxAmountIfCancelled() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(OAK_LOG, 1)
+        );
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, new CancelledCancellationToken());
 
         // Assert
         assertThat(maxAmount).isZero();

@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage.common.grid;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
-import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.GridSynchronizer;
@@ -31,6 +32,7 @@ import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
+import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridExtractionStrategy;
@@ -62,7 +64,7 @@ import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractGridContainerMenu extends AbstractResourceContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy, ScreenSizeListener,
-    PreviewProvider, GridSortingTypes.TrackedResourceProvider {
+    CancelablePreviewProvider, GridSortingTypes.TrackedResourceProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
     private static final GridQueryParser QUERY_PARSER = new GridQueryParser(
         LexerTokenMappings.DEFAULT_MAPPINGS,
@@ -88,6 +90,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     @Nullable
     private ResourceType resourceTypeFilter;
     private boolean active;
+    private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
 
     protected AbstractGridContainerMenu(
         final MenuType<? extends AbstractGridContainerMenu> menuType,
@@ -491,21 +494,36 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
-        return requireNonNull(grid).getPreview(resource, amount);
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<Preview>> previewRequest = requireNonNull(grid).getPreview(resource, amount,
+            cancellationToken);
+        pendingAutocraftingRequests.add(previewRequest, cancellationToken);
+        return previewRequest;
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
-        return requireNonNull(grid).getMaxAmount(resource);
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
+        final CompletableFuture<Long> maxAmountRequest = requireNonNull(grid).getMaxAmount(resource, cancellationToken);
+        pendingAutocraftingRequests.add(maxAmountRequest, cancellationToken);
+        return maxAmountRequest;
     }
 
     @Override
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
-        return requireNonNull(grid).startTask(resource, amount, actor, notify);
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<TaskId>> taskRequest = requireNonNull(grid).startTask(resource, amount, actor,
+            notify, cancellationToken);
+        pendingAutocraftingRequests.add(taskRequest, cancellationToken);
+        return taskRequest;
+    }
+
+    @Override
+    public void cancel() {
+        pendingAutocraftingRequests.cancelAll();
     }
 
     public boolean isLargeSlot(final Slot slot) {

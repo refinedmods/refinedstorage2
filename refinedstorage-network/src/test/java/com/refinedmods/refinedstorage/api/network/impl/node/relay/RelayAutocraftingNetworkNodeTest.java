@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
@@ -371,8 +372,10 @@ class RelayAutocraftingNetworkNodeTest {
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
         // Act
-        final var taskIdFromOutput = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
-        final var taskIdFromInput = inputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
+        final var taskIdFromOutput =
+            outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final var taskIdFromInput =
+            inputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
 
         // Assert
         assertThat(taskIdFromOutput).isPresent();
@@ -401,7 +404,8 @@ class RelayAutocraftingNetworkNodeTest {
 
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
-        final var optionalTaskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
+        final var optionalTaskId =
+            outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
         assertThat(optionalTaskId).isPresent();
 
         // Act
@@ -433,7 +437,8 @@ class RelayAutocraftingNetworkNodeTest {
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
         // Act & assert
-        final var optionalTaskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
+        final var optionalTaskId =
+            outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
         assertThat(optionalTaskId).isPresent();
         final var taskId = optionalTaskId.get();
         assertThat(output.getTasks())
@@ -473,7 +478,7 @@ class RelayAutocraftingNetworkNodeTest {
 
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
-        assertThat(outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join()).isPresent();
+        assertThat(outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
 
         // Act & assert
         output.doWork();
@@ -509,7 +514,7 @@ class RelayAutocraftingNetworkNodeTest {
 
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
-        assertThat(outputAutocrafting.startTask(B, 10, Actor.EMPTY, false).join()).isPresent();
+        assertThat(outputAutocrafting.startTask(B, 10, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
 
         // Act & assert
         output.doWork();
@@ -563,7 +568,7 @@ class RelayAutocraftingNetworkNodeTest {
 
         input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
-        assertThat(outputAutocrafting.startTask(B, 2, Actor.EMPTY, false).join()).isPresent();
+        assertThat(outputAutocrafting.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
 
         // Act & assert
         output.doWork();
@@ -640,7 +645,8 @@ class RelayAutocraftingNetworkNodeTest {
 
             input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
-            assertThat(outputAutocrafting.startTask(B, 2, Actor.EMPTY, false).join()).isPresent();
+            assertThat(
+                outputAutocrafting.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
 
             // Act & assert
             output.doWork();
@@ -707,7 +713,7 @@ class RelayAutocraftingNetworkNodeTest {
             input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
             // Act & assert
-            final var taskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
+            final var taskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
             assertThat(taskId).isPresent();
             final ArgumentCaptor<TaskStatus> statusCaptor = ArgumentCaptor.forClass(TaskStatus.class);
             verify(listener, times(1)).taskAdded(statusCaptor.capture());
@@ -762,7 +768,7 @@ class RelayAutocraftingNetworkNodeTest {
             input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING));
 
             // Act & assert
-            final var taskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false).join();
+            final var taskId = outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
             assertThat(taskId).isPresent();
             assertThat(output.getTasks()).hasSize(1).allMatch(t -> t.getState() == TaskState.READY);
 

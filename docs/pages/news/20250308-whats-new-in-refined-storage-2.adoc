@@ -3,17 +3,17 @@
 :description: The first beta of Refined Storage 2 has been released. What's new?
 :date: 2025-03-28
 
-Since 2020, I've been working on Refined Storage 2—an evolution of the original mod, rebuilt from the ground up with a focus on code quality, modern architecture, and Fabric support. After years of development and public GitHub milestones, the first beta is now available on CurseForge and Modrinth for Minecraft 1.21.1.
+Since 2020, I've been working on Refined Storage 2 - an evolution of the original mod, rebuilt from the ground up with a focus on code quality, modern architecture, and Fabric support. After years of development and public GitHub milestones, the first beta is now available on CurseForge and Modrinth for Minecraft 1.21.1.
 
 == Background
 
-Refined Storage is nearly ten years old, and its codebase was starting to show its age. While none of the original 2015 code likely remained—thanks to years of refactors—it still felt like the right time for a clean slate.
+Refined Storage is nearly ten years old, and its codebase was starting to show its age. While none of the original 2015 code likely remained - thanks to years of refactors - it still felt like the right time for a clean slate.
 
 The biggest issue with the old version was that, while functional, its internal structure had become a burden. It lacked tests, and the architecture made it difficult to maintain, evolve, or prevent regressions.
 
 I started Refined Storage back in high school. Today, I'm a professional software engineer. I wanted the codebase to reflect that growth and be something I could keep enjoying and supporting.
 
-Rewriting a mod of this size was a big risk. It could’ve failed. But I believed it was necessary to secure the long-term future of the project.
+Rewriting a mod of this size was a big risk. It could've failed. But I believed it was necessary to secure the long-term future of the project.
 
 == Goal
 
@@ -78,7 +78,8 @@ Refined Storage 2 xref:../addons/unofficial-addons.adoc[already has a few unoffi
 - link:https://www.curseforge.com/minecraft/mc-mods/universal-grid[Universal Grid]
 - link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[Advanced Peripherals]
 - link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[ExtraStorage]
-- link:https://www.curseforge.com/minecraft/mc-mods/ender-io[EnderIO]
+- link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[Cable Tiers]
+- Refined Storage conduit support in link:https://www.curseforge.com/minecraft/mc-mods/ender-io[Ender IO]
 
 === Viewing resources
 
@@ -129,7 +130,7 @@ Refined Storage 2 xref:../addons/unofficial-addons.adoc[already has a few unoffi
 * A revamped search that targets pattern inputs, outputs, names, or all.
 - You can initiate autocrafting from the xref:../viewing-resources/storage-monitor.adoc[*Storage Monitor*] if the resource count is zero.
 - When multiple patterns share an output, the one with the highest priority is used first.
-- Tasks can’t be cancelled if there’s not enough storage space to return intermediates.
+- Tasks can't be cancelled if there's not enough storage space to return intermediates.
 - The **crafting preview** now:
 * Merges preview and amount selection into one screen with live updates.
 * Lets you fill out the maximum amount that is craftable.
@@ -243,11 +244,11 @@ Refined Storage 2 xref:../addons/unofficial-addons.adoc[already has a few unoffi
 
 === Infrastructure improvements
 
-Refined Storage 2 wasn’t built in isolation. As part of its development, the broader Refined Mods ecosystem saw major upgrades:
+Refined Storage 2 wasn't built in isolation. As part of its development, the broader Refined Mods ecosystem saw major upgrades:
 
 - The website was overhauled with a brand-new wiki system that supports multiple versions at a time.
 - The wiki was completely rewritten from scratch.
-- On the more technical side, link:https://github.com/refinedmods/refinedarchitect[Refined Architect] was created—a shared project used across all Refined Mods. It includes GitHub workflows, version management, and a Gradle convention plugin to simplify (cross-platform) mod development.
+- On the more technical side, link:https://github.com/refinedmods/refinedarchitect[Refined Architect] was created - a shared project used across all Refined Mods. It includes GitHub workflows, version management, and a Gradle convention plugin to simplify (cross-platform) mod development.
 
 == What's next?
 

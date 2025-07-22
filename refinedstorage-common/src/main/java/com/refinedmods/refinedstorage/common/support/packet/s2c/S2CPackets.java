@@ -104,6 +104,10 @@ public final class S2CPackets {
         Platform.INSTANCE.sendPacketToClient(player, new AutocraftingPreviewResponsePacket(id, preview));
     }
 
+    public static void sendAutocraftingPreviewCancelResponse(final ServerPlayer player) {
+        Platform.INSTANCE.sendPacketToClient(player, AutocraftingPreviewCancelResponsePacket.INSTANCE);
+    }
+
     public static void sendAutocraftingPreviewMaxAmountResponse(final ServerPlayer player, final long maxAmount) {
         Platform.INSTANCE.sendPacketToClient(player, new AutocraftingPreviewMaxAmountResponsePacket(maxAmount));
     }

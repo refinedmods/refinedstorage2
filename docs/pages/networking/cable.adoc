@@ -4,6 +4,6 @@
 
 The {doctitle} connects storage network devices.
 
-However, cables are not always required—devices that are directly touching will automatically form a connection.
+However, cables are not always required - devices that are directly touching will automatically form a connection.
 
 If the {doctitle} is colored, it will only connect to blocks and cables of the same color or the default color.
