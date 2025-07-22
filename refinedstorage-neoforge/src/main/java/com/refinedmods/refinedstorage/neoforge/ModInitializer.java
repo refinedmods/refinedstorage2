@@ -33,6 +33,7 @@ import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocrafterNameChangePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingMonitorCancelAllPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingMonitorCancelPacket;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingPreviewCancelRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingPreviewMaxAmountRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingPreviewRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingRequestPacket;
@@ -66,6 +67,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMoni
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskRemovedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingMonitorTaskStatusChangedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewCancelResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewMaxAmountResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingResponsePacket;
@@ -743,6 +745,11 @@ public class ModInitializer extends AbstractModInitializer {
             wrapHandler((packet, ctx) -> AutocraftingPreviewResponsePacket.handle(packet))
         );
         registrar.playToClient(
+            AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,
+            AutocraftingPreviewCancelResponsePacket.STREAM_CODEC,
+            wrapHandler((packet, ctx) -> AutocraftingPreviewCancelResponsePacket.handle())
+        );
+        registrar.playToClient(
             AutocraftingPreviewMaxAmountResponsePacket.PACKET_TYPE,
             AutocraftingPreviewMaxAmountResponsePacket.STREAM_CODEC,
             wrapHandler((packet, ctx) -> AutocraftingPreviewMaxAmountResponsePacket.handle(packet))
@@ -909,6 +916,11 @@ public class ModInitializer extends AbstractModInitializer {
             AutocraftingPreviewRequestPacket.PACKET_TYPE,
             AutocraftingPreviewRequestPacket.STREAM_CODEC,
             wrapHandler(AutocraftingPreviewRequestPacket::handle)
+        );
+        registrar.playToServer(
+            AutocraftingPreviewCancelRequestPacket.PACKET_TYPE,
+            AutocraftingPreviewCancelRequestPacket.STREAM_CODEC,
+            wrapHandler((packet, ctx) -> AutocraftingPreviewCancelRequestPacket.handle(ctx))
         );
         registrar.playToServer(
             AutocraftingPreviewMaxAmountRequestPacket.PACKET_TYPE,

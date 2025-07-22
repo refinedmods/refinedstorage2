@@ -46,6 +46,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     private static final MutableComponent TITLE = createTranslation("gui", "autocrafting_preview.title");
     private static final MutableComponent START = createTranslation("gui", "autocrafting_preview.start");
     private static final MutableComponent PENDING = createTranslation("gui", "autocrafting_preview.pending");
+    private static final MutableComponent CANCELLING = createTranslation("gui", "autocrafting_preview.cancelling");
+    private static final MutableComponent CANCELLING_FORCE_CLOSE = createTranslation("gui",
+        "autocrafting_preview.cancelling.force_close");
     private static final MutableComponent MAX = createTranslation("gui", "autocrafting_preview.max");
     private static final MutableComponent MAX_HELP = createTranslation("gui", "autocrafting_preview.max.help");
     private static final MutableComponent NOTIFY = createTranslation("gui", "autocrafting_preview.notify");
@@ -73,6 +76,18 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     private static final MutableComponent TRY_SMALLER_AMOUNT = createTranslation(
         "gui",
         "autocrafting_preview.request_too_large_to_handle.try_smaller_amount"
+    );
+    private static final MutableComponent REQUEST_CANCELLED = createTranslation(
+        "gui",
+        "autocrafting_preview.request_cancelled"
+    ).withStyle(Style.EMPTY.withBold(true));
+    private static final MutableComponent TRY_SMALLER_CRAFTS = createTranslation(
+        "gui",
+        "autocrafting_preview.request_cancelled.try_smaller_crafts"
+    );
+    private static final MutableComponent NOT_AVAILABLE = createTranslation(
+        "gui",
+        "autocrafting_preview.not_available"
     );
     private static final ResourceLocation ROW = createIdentifier("autocrafting_preview/row");
     private static final ResourceLocation CRAFTING_REQUESTS = createIdentifier("autocrafting_preview/requests");
@@ -108,6 +123,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     @Nullable
     private Double changedAmount;
     private boolean mayEnableMaxAmountRequestButtonAgain;
+    private boolean requestedCancellation;
 
     public AutocraftingPreviewScreen(final Screen parent,
                                      final Inventory playerInventory,
@@ -165,7 +181,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
 
         if (confirmButton != null) {
-            setStartDisabled();
+            disableStartButton();
         }
 
         if (!wasAlreadyInitialized) {
@@ -274,7 +290,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (preview == null) {
             previewItemsScrollbar.setEnabled(false);
             previewItemsScrollbar.setMaxOffset(0);
-            setStartDisabled();
+            disableStartButton();
             return;
         }
         final int items = preview.items().size();
@@ -335,6 +351,10 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             renderCycleDetected(graphics, y, x, preview);
         } else if (preview.type() == PreviewType.OVERFLOW) {
             renderRequestTooLargeToHandle(graphics, x, y);
+        } else if (preview.type() == PreviewType.CANCELLED) {
+            renderCancelled(graphics, x, y);
+        } else if (preview.type() == PreviewType.NOT_AVAILABLE) {
+            renderNotAvailable(graphics, x, y);
         } else {
             renderPreviewRows(graphics, mouseX, mouseY, preview, y, x);
         }
@@ -414,6 +434,42 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             x + 4,
             y + 4 + 10,
             0x404040,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+    }
+
+    private void renderCancelled(final GuiGraphics graphics, final int x, final int y) {
+        SmallText.render(
+            graphics,
+            font,
+            REQUEST_CANCELLED.getVisualOrderText(),
+            x + 4,
+            y + 4,
+            0xFF5555,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+        SmallText.render(
+            graphics,
+            font,
+            TRY_SMALLER_CRAFTS.getVisualOrderText(),
+            x + 4,
+            y + 4 + 10,
+            0x404040,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+    }
+
+    private void renderNotAvailable(final GuiGraphics graphics, final int x, final int y) {
+        SmallText.render(
+            graphics,
+            font,
+            NOT_AVAILABLE.getVisualOrderText(),
+            x + 4,
+            y + 4,
+            0xFF5555,
             false,
             SmallText.DEFAULT_SCALE
         );
@@ -604,34 +660,24 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (amountField == null || confirmButton == null) {
             return;
         }
+        disableStartButton();
         getAndValidateAmount().ifPresentOrElse(amount -> {
-            setPending();
+            confirmButton.setMessage(PENDING);
             changedAmount = amount;
             amountField.setTextColor(0xFFFFFF);
         }, () -> {
-            setStartDisabled();
+            confirmButton.setMessage(START);
             amountField.setTextColor(0xFF5555);
         });
     }
 
-    private void setPending() {
+    private void disableStartButton() {
         if (confirmButton == null) {
             return;
         }
         confirmButton.active = false;
         confirmButton.setIcon(null);
         confirmButton.setTooltip(null);
-        confirmButton.setMessage(PENDING);
-    }
-
-    private void setStartDisabled() {
-        if (confirmButton == null) {
-            return;
-        }
-        confirmButton.active = false;
-        confirmButton.setIcon(null);
-        confirmButton.setTooltip(null);
-        confirmButton.setMessage(START);
     }
 
     @Override
@@ -648,13 +694,40 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
+    protected boolean beforeClose() {
+        if (requestedCancellation) {
+            return true;
+        }
+        requestedCancellation = true;
+        if (cancelButton != null) {
+            cancelButton.active = false;
+            cancelButton.setMessage(CANCELLING);
+            cancelButton.setTooltip(Tooltip.create(CANCELLING_FORCE_CLOSE));
+        }
+        getMenu().sendCancelRequest();
+        return false;
+    }
+
+    public void cancelResponseReceived() {
+        // If we get the cancellation response late, and have force closed the screen,
+        // and meanwhile have a new screen open already, we do not want to close right now.
+        if (!requestedCancellation) {
+            return;
+        }
+        close();
+    }
+
+    @Override
     protected void reset() {
         updateAmount(getMenu().getCurrentRequest().getAmount());
     }
 
     @Override
     protected boolean confirm(final Double amount) {
-        setPending();
+        disableStartButton();
+        if (confirmButton != null) {
+            confirmButton.setMessage(PENDING);
+        }
         getMenu().sendRequest(amount, notifyCheckbox == null ? menu.isNotify() : notifyCheckbox.isSelected());
         return false;
     }

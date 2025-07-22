@@ -3,10 +3,13 @@ package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
@@ -36,6 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -102,35 +106,47 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
-        return CompletableFuture.supplyAsync(() -> {
-            final RootStorage rootStorage = rootStorageProvider.get();
-            final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-            final Preview preview = PreviewCraftingCalculatorListener.calculatePreview(calculator, resource, amount);
-            return Optional.of(preview);
-        }, executorService);
+        try {
+            return CompletableFuture.supplyAsync(() -> {
+                final RootStorage rootStorage = rootStorageProvider.get();
+                final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+                final Preview preview = PreviewCraftingCalculatorListener.calculatePreview(calculator, resource, amount,
+                    cancellationToken);
+                return Optional.of(preview);
+            }, executorService);
+        } catch (final RejectedExecutionException e) {
+            return CompletableFuture.completedFuture(Optional.of(new Preview(
+                PreviewType.NOT_AVAILABLE, Collections.emptyList(), Collections.emptyList())));
+        }
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource,
+                                                final CancellationToken cancellationToken) {
         CoreValidations.validateNotNull(resource, "Resource cannot be null");
-        return CompletableFuture.supplyAsync(() -> getMaxAmountSync(resource), executorService);
+        return CompletableFuture.supplyAsync(() -> getMaxAmountSync(resource, cancellationToken), executorService);
     }
 
-    private long getMaxAmountSync(final ResourceKey resource) {
-        final RootStorage rootStorage = rootStorageProvider.get();
-        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculator.getMaxAmount(resource);
+    private long getMaxAmountSync(final ResourceKey resource, final CancellationToken cancellationToken) {
+        return IsCraftableCraftingCalculatorListener.binarySearchMaxAmount(
+            new CraftingCalculatorImpl(patternRepository, rootStorageProvider.get()),
+            resource,
+            cancellationToken
+        );
     }
 
     @Override
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
-        return CompletableFuture.supplyAsync(() -> startTaskSync(resource, amount, actor, notify), executorService);
+        return CompletableFuture.supplyAsync(() -> startTaskSync(resource, amount, actor, notify, cancellationToken),
+            executorService);
     }
 
     private TaskId startTask(final ResourceKey resource,
@@ -151,10 +167,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     private Optional<TaskId> startTaskSync(final ResourceKey resource,
                                            final long amount,
                                            final Actor actor,
-                                           final boolean notify) {
+                                           final boolean notify,
+                                           final CancellationToken cancellationToken) {
         final RootStorage rootStorage = rootStorageProvider.get();
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculatePlan(calculator, resource, amount)
+        return calculatePlan(calculator, resource, amount, cancellationToken)
             .map(plan -> startTask(resource, amount, actor, plan, notify));
     }
 
@@ -167,11 +184,14 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (currentlyCrafting >= amount) {
             return EnsureResult.TASK_ALREADY_RUNNING;
         }
-        final long correctedAmount = Math.min(getMaxAmountSync(resource), amount - currentlyCrafting);
+        final long correctedAmount = Math.min(
+            getMaxAmountSync(resource, CancellationToken.NONE),
+            amount - currentlyCrafting
+        );
         if (correctedAmount <= 0) {
             return EnsureResult.MISSING_RESOURCES;
         }
-        return startTaskSync(resource, correctedAmount, actor, false)
+        return startTaskSync(resource, correctedAmount, actor, false, CancellationToken.NONE)
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);
     }

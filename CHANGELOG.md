@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   Closing the Crafting Preview window (via cancel or escape) will now properly cancel pending calculations.
+-   Autocrafting requests that take too long will be automatically stopped after 5 seconds.
+-   It is no longer possible to queue an unlimited amount of autocrafting requests when the autocrafting system is busy. 
+
 ## [2.0.0-beta.2] - 2025-04-06
 
 ### Changed

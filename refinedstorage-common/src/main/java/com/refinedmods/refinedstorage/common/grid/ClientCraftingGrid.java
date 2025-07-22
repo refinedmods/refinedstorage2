@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
@@ -107,12 +108,13 @@ class ClientCraftingGrid implements CraftingGrid {
     }
 
     @Override
-    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount) {
+    public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
+                                                           final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource) {
+    public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         return CompletableFuture.completedFuture(0L);
     }
 
@@ -120,7 +122,8 @@ class ClientCraftingGrid implements CraftingGrid {
     public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
-                                                         final boolean notify) {
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();
     }
 }

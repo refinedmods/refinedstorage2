@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.support.packet.c2s;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
@@ -39,9 +40,9 @@ public record AutocraftingRequestPacket(UUID id,
         final Player player = ctx.getPlayer();
         if (player.containerMenu instanceof PreviewProvider provider) {
             final PlayerActor playerActor = new PlayerActor(player);
-            provider.startTask(packet.resource, packet.amount, playerActor, packet.notifyPlayer)
-                .thenAccept(taskId ->
-                    S2CPackets.sendAutocraftingResponse((ServerPlayer) player, packet.id, taskId.isPresent()));
+            provider.startTask(packet.resource, packet.amount, playerActor, packet.notifyPlayer,
+                new TimeoutableCancellationToken()).thenAccept(taskId ->
+                S2CPackets.sendAutocraftingResponse((ServerPlayer) player, packet.id, taskId.isPresent()));
         }
     }
 
