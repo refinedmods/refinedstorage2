@@ -1,55 +1,62 @@
-package com.refinedmods.refinedstorage.api.autocrafting.status;
+package com.refinedmods.refinedstorage.api.autocrafting.task;
 
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
-import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
-import com.refinedmods.refinedstorage.api.core.CoreValidations;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusBuilder;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-public class TaskStatusBuilder {
+/**
+ * Exactly the same as {@link TaskStatusBuilder}, but for use in tests.
+ * This allows the mutation test to fail on production code, otherwise the mutants
+ * would also be applied to the test assertions and there would be no test failure.
+ */
+public class TestTaskStatusBuilder {
     private final TaskStatus.TaskInfo info;
     private final Map<ResourceKey, MutableItem> items = new LinkedHashMap<>();
 
-    public TaskStatusBuilder(final TaskId id, final ResourceKey resource, final long amount, final long startTime) {
+    public TestTaskStatusBuilder(final TaskId id, final ResourceKey resource, final long amount, final long startTime) {
         this.info = new TaskStatus.TaskInfo(id, resource, amount, startTime);
     }
 
-    public void stored(final ResourceKey resource, final long stored) {
-        CoreValidations.validateLargerThanZero(stored, "Stored");
+    public TestTaskStatusBuilder stored(final ResourceKey resource, final long stored) {
         get(resource).stored += stored;
+        return this;
     }
 
-    public void processing(final ResourceKey resource,
-                                        final long processing,
-                                        @Nullable final ExternalPatternSinkKey sinkKey) {
-        CoreValidations.validateLargerThanZero(processing, "Processing");
+    public TestTaskStatusBuilder processing(final ResourceKey resource,
+                                            final long processing,
+                                            @Nullable final ExternalPatternSinkKey sinkKey) {
         get(resource).processing += processing;
         get(resource).sinkKey = sinkKey;
+        return this;
     }
 
-    public void scheduled(final ResourceKey resource, final long scheduled) {
-        CoreValidations.validateLargerThanZero(scheduled, "Crafting");
+    public TestTaskStatusBuilder scheduled(final ResourceKey resource, final long scheduled) {
         get(resource).scheduled += scheduled;
+        return this;
     }
 
-    public void crafting(final ResourceKey resource, final long crafting) {
-        CoreValidations.validateLargerThanZero(crafting, "Crafting");
+    public TestTaskStatusBuilder crafting(final ResourceKey resource, final long crafting) {
         get(resource).crafting += crafting;
+        return this;
     }
 
-    public void rejected(final ResourceKey resource) {
+    public TestTaskStatusBuilder rejected(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.REJECTED;
+        return this;
     }
 
-    public void noneFound(final ResourceKey resource) {
+    public TestTaskStatusBuilder noneFound(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.NONE_FOUND;
+        return this;
     }
 
-    public void locked(final ResourceKey resource) {
+    public TestTaskStatusBuilder locked(final ResourceKey resource) {
         get(resource).type = TaskStatus.ItemType.LOCKED;
+        return this;
     }
 
     private MutableItem get(final ResourceKey resource) {

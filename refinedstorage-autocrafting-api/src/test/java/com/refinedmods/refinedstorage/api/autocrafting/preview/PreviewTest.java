@@ -3,10 +3,13 @@ package com.refinedmods.refinedstorage.api.autocrafting.preview;
 import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.Collections;
@@ -657,7 +660,7 @@ class PreviewTest {
     }
 
     @Test
-    void shouldPropagateCancelCorrectly() {
+    void shouldPropagateCancelOnStart() {
         // Arrange
         final RootStorage storage = storage();
         final PatternRepository patterns = patterns(
@@ -677,6 +680,49 @@ class PreviewTest {
 
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
+            PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
+        ));
+    }
+
+    @Test
+    void shouldPropagateCancelWhenCancelledDuringChildCalculation() {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+        final CancellationToken cancellationToken = new CancellationTokenImpl();
+        final PreviewCraftingCalculatorListener listener = new PreviewCraftingCalculatorListener(
+            PreviewBuilder.create()
+        ) {
+            @Override
+            public CraftingCalculatorListener<PreviewBuilder> childCalculationStarted(final Pattern childPattern,
+                                                                                      final ResourceKey resource,
+                                                                                      final Amount amount) {
+                return new PreviewCraftingCalculatorListener(this.getData()) {
+                    @Override
+                    public CraftingCalculatorListener<PreviewBuilder> childCalculationStarted(
+                        final Pattern childPattern, final ResourceKey resource, final Amount amount) {
+                        cancellationToken.cancel();
+                        return super.childCalculationStarted(childPattern, resource, amount);
+                    }
+                };
+            }
+        };
+
+        // Act
+        sut.calculate(CRAFTING_TABLE, 2, listener, cancellationToken);
+
+        // Assert
+        assertThat(listener.getData().build()).usingRecursiveComparison().isEqualTo(new Preview(
             PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
         ));
     }

@@ -14,7 +14,7 @@ import java.util.Collections;
 public class PreviewCraftingCalculatorListener implements CraftingCalculatorListener<PreviewBuilder> {
     private PreviewBuilder builder;
 
-    private PreviewCraftingCalculatorListener(final PreviewBuilder builder) {
+    public PreviewCraftingCalculatorListener(final PreviewBuilder builder) {
         this.builder = builder;
     }
 

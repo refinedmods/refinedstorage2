@@ -38,11 +38,13 @@ public class CraftingCalculatorImpl implements CraftingCalculator {
                 patternAmount
             );
             final CraftingTree<T> tree = root(pattern, rootStorage, patternAmount, patternRepository, childListener);
-            final CraftingTree.CalculationResult calculationResult = tree.calculate(cancellationToken);
-            if (calculationResult == CraftingTree.CalculationResult.MISSING_RESOURCES) {
-                lastChildListener = childListener;
-                continue;
-            } else if (calculationResult == CraftingTree.CalculationResult.CANCELLED) {
+            try {
+                final CraftingTree.CalculationResult calculationResult = tree.calculate(cancellationToken);
+                if (calculationResult == CraftingTree.CalculationResult.MISSING_RESOURCES) {
+                    lastChildListener = childListener;
+                    continue;
+                }
+            } catch (final CancellationException e) {
                 listener.childCalculationCancelled(childListener);
                 return;
             }

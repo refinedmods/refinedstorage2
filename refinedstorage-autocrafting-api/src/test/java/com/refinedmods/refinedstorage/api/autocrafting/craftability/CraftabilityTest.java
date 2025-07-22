@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.autocrafting.craftability;
 
+import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
@@ -92,6 +93,31 @@ class CraftabilityTest {
 
         // Act
         final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, CancellationToken.NONE);
+
+        // Assert
+        assertThat(maxAmount).isZero();
+    }
+
+    @Test
+    void shouldNotFindMaxAmountIfCancelled() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(OAK_LOG, 1)
+        );
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final long maxAmount = binarySearchMaxAmount(sut, CRAFTING_TABLE, new CancelledCancellationToken());
 
         // Assert
         assertThat(maxAmount).isZero();
