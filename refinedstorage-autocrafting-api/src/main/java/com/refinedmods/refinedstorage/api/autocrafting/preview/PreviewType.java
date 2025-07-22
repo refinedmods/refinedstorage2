@@ -7,5 +7,6 @@ public enum PreviewType {
     SUCCESS,
     MISSING_RESOURCES,
     CYCLE_DETECTED,
-    OVERFLOW
+    OVERFLOW,
+    CANCELLED // TODO: UI
 }

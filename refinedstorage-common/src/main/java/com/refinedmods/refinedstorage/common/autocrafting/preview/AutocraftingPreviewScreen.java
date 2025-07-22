@@ -77,6 +77,14 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         "gui",
         "autocrafting_preview.request_too_large_to_handle.try_smaller_amount"
     );
+    private static final MutableComponent REQUEST_CANCELLED = createTranslation(
+        "gui",
+        "autocrafting_preview.request_cancelled"
+    ).withStyle(Style.EMPTY.withBold(true));
+    private static final MutableComponent TRY_SMALLER_CRAFTS = createTranslation(
+        "gui",
+        "autocrafting_preview.request_cancelled.try_smaller_crafts"
+    );
     private static final ResourceLocation ROW = createIdentifier("autocrafting_preview/row");
     private static final ResourceLocation CRAFTING_REQUESTS = createIdentifier("autocrafting_preview/requests");
 
@@ -339,6 +347,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             renderCycleDetected(graphics, y, x, preview);
         } else if (preview.type() == PreviewType.OVERFLOW) {
             renderRequestTooLargeToHandle(graphics, x, y);
+        } else if (preview.type() == PreviewType.CANCELLED) {
+            renderCancelled(graphics, x, y);
         } else {
             renderPreviewRows(graphics, mouseX, mouseY, preview, y, x);
         }
@@ -415,6 +425,29 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             graphics,
             font,
             TRY_SMALLER_AMOUNT.getVisualOrderText(),
+            x + 4,
+            y + 4 + 10,
+            0x404040,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+    }
+
+    private void renderCancelled(final GuiGraphics graphics, final int x, final int y) {
+        SmallText.render(
+            graphics,
+            font,
+            REQUEST_CANCELLED.getVisualOrderText(),
+            x + 4,
+            y + 4,
+            0xFF5555,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+        SmallText.render(
+            graphics,
+            font,
+            TRY_SMALLER_CRAFTS.getVisualOrderText(),
             x + 4,
             y + 4 + 10,
             0x404040,

@@ -239,6 +239,8 @@
   "gui.refinedstorage.autocrafting_preview.cycle_detected.break_the_cycle_and_try_again": "Break the cycle and try again.",
   "gui.refinedstorage.autocrafting_preview.request_too_large_to_handle": "The request is too large to handle!",
   "gui.refinedstorage.autocrafting_preview.request_too_large_to_handle.try_smaller_amount": "Try a smaller amount.",
+  "gui.refinedstorage.autocrafting_preview.request_cancelled": "This request took too long to calculate, and was cancelled.",
+  "gui.refinedstorage.autocrafting_preview.request_cancelled.try_smaller_crafts": "Try crafting a smaller amount in multiple steps.",
   "gui.refinedstorage.autocrafting_preview.notify": "Notify",
   "gui.refinedstorage.autocrafting_preview.notify.help": "Send a notification when the autocrafting task is finished.",
   "gui.refinedstorage.autocrafter_manager.search_mode": "Search mode",

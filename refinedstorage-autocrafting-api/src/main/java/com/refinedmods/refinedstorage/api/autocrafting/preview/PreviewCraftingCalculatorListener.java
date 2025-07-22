@@ -49,7 +49,7 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
 
     @Override
     public void childCalculationCancelled(final CraftingCalculatorListener<PreviewBuilder> childListener) {
-        builder.clear();
+        builder.cancelled();
     }
 
     @Override

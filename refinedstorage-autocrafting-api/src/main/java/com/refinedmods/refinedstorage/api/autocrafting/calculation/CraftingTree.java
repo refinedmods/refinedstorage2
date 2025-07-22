@@ -158,6 +158,7 @@ class CraftingTree<T> {
             listener.childCalculationCompleted(result.childTree.listener);
             return ChildCalculationYield.yieldOf(updatedResourceState);
         } else if (result.type == ChildCalculationResultType.CANCELLED) {
+            listener.childCalculationCancelled(result.childTree.listener);
             return ChildCalculationYield.CANCELLED;
         }
         return ChildCalculationYield.yieldOf(cycleToNextIngredientOrFail(ingredientState, result));
