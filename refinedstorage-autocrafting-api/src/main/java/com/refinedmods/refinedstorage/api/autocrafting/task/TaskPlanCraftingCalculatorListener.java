@@ -45,7 +45,7 @@ public class TaskPlanCraftingCalculatorListener implements CraftingCalculatorLis
 
     @Override
     public void childCalculationCancelled(final CraftingCalculatorListener<MutableTaskPlan> childListener) {
-        task.clear();
+        task.setCancelled();
     }
 
     @Override

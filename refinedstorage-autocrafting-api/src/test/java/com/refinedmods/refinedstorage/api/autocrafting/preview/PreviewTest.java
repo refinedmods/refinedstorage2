@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.autocrafting.preview;
 
+import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
@@ -652,6 +653,31 @@ class PreviewTest {
         // Assert
         assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
             PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList()
+        ));
+    }
+
+    @Test
+    void shouldPropagateCancelCorrectly() {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, 1)
+                .output(OAK_PLANKS, 4)
+                .build(),
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(CRAFTING_TABLE, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, new CancelledCancellationToken());
+
+        // Assert
+        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
+            PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
         ));
     }
 }

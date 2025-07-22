@@ -23,9 +23,10 @@ public class MutableTaskPlan {
     private final Map<Pattern, MutablePatternPlan> patterns;
     private final MutableResourceList initialRequirements;
     private boolean missing;
+    private boolean cancelled;
 
     MutableTaskPlan() {
-        this(null, null, 0, new LinkedHashMap<>(), MutableResourceListImpl.create(), false);
+        this(null, null, 0, new LinkedHashMap<>(), MutableResourceListImpl.create(), false, false);
     }
 
     private MutableTaskPlan(@Nullable final Pattern rootPattern,
@@ -33,13 +34,15 @@ public class MutableTaskPlan {
                             final long amount,
                             final Map<Pattern, MutablePatternPlan> patterns,
                             final MutableResourceList initialRequirements,
-                            final boolean missing) {
+                            final boolean missing,
+                            final boolean cancelled) {
         this.rootPattern = rootPattern;
         this.resource = resource;
         this.amount = amount;
         this.patterns = patterns;
         this.initialRequirements = initialRequirements;
         this.missing = missing;
+        this.cancelled = cancelled;
     }
 
     void addOrUpdatePattern(final Pattern usedPattern, final long iterations) {
@@ -72,12 +75,13 @@ public class MutableTaskPlan {
             resource == null ? totalAmount : amount,
             patternsCopy,
             initialRequirements.copy(),
-            missing
+            missing,
+            cancelled
         );
     }
 
     Optional<TaskPlan> getPlan() {
-        if (missing || rootPattern == null || resource == null) {
+        if (missing || cancelled || rootPattern == null || resource == null) {
             return Optional.empty();
         }
         final Map<Pattern, TaskPlan.PatternPlan> finalPatterns = Collections.unmodifiableMap(patterns.entrySet()
@@ -95,9 +99,7 @@ public class MutableTaskPlan {
         this.missing = true;
     }
 
-    void clear() {
-        patterns.clear();
-        initialRequirements.clear();
-        missing = true;
+    void setCancelled() {
+        this.cancelled = true;
     }
 }

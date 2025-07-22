@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.autocrafting.task;
 
+import com.refinedmods.refinedstorage.api.autocrafting.CancelledCancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
@@ -140,5 +141,19 @@ class TaskPlanTest {
         final Map<ResourceKey, Long> firstIngredient = craftingTableIngredients.get(0);
         assertThatThrownBy(() -> firstIngredient.put(OAK_LOG, 1L))
             .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void shouldPropagateCancelCorrectly() {
+        // Arrange
+        final RootStorage storage = storage(new ResourceAmount(OAK_LOG, 1));
+        final PatternRepository patterns = patterns(OAK_PLANKS_PATTERN);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Optional<TaskPlan> optionalPlan = calculatePlan(sut, OAK_PLANKS, 1, new CancelledCancellationToken());
+
+        // Assert
+        assertThat(optionalPlan).isEmpty();
     }
 }
