@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder;
-import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewItem;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
@@ -148,7 +148,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<Preview> preview = sut.getPreview(B, 2, new CancellationToken()).join();
+        final Optional<Preview> preview = sut.getPreview(B, 2, CancellationToken.NONE).join();
 
         // Assert
         assertThat(preview).get().usingRecursiveComparison().isEqualTo(new Preview(PreviewType.SUCCESS, List.of(
@@ -161,7 +161,7 @@ class AutocraftingNetworkComponentImplTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotGetPreviewForInvalidResource() {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> sut.getPreview(null, 1, new CancellationToken());
+        final ThrowableAssert.ThrowingCallable action = () -> sut.getPreview(null, 1, CancellationToken.NONE);
 
         // Act & assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -171,7 +171,7 @@ class AutocraftingNetworkComponentImplTest {
     @ValueSource(longs = {0, -1})
     void shouldNotGetPreviewForInvalidAmount(final long amount) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> sut.getPreview(B, amount, new CancellationToken());
+        final ThrowableAssert.ThrowingCallable action = () -> sut.getPreview(B, amount, CancellationToken.NONE);
 
         // Act & assert
         assertThatThrownBy(action).isInstanceOf(IllegalArgumentException.class);

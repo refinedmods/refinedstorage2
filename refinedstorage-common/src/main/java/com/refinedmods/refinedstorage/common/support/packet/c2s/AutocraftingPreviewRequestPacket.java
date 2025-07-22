@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage.common.support.packet.c2s;
 
-import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
@@ -37,7 +37,7 @@ public record AutocraftingPreviewRequestPacket(UUID id,
     public static void handle(final AutocraftingPreviewRequestPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof PreviewProvider provider) {
             final ServerPlayer player = (ServerPlayer) ctx.getPlayer();
-            provider.getPreview(packet.resource(), packet.amount(), new CancellationToken())
+            provider.getPreview(packet.resource(), packet.amount(), new TimeoutableCancellationToken())
                 .thenAccept(optionalPreview -> optionalPreview.ifPresent(preview ->
                     S2CPackets.sendAutocraftingPreviewResponse(player, packet.id, preview)));
         }

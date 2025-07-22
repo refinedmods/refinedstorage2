@@ -33,10 +33,10 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE, CancellationToken.NONE);
 
         // Assert
         assertThat(maxAmount).isZero();
@@ -59,10 +59,10 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE, CancellationToken.NONE);
 
         // Assert
         assertThat(maxAmount).isEqualTo(amountPossible);
@@ -84,10 +84,10 @@ class CraftingCalculatorImplTest {
                 .output(CRAFTING_TABLE, 1)
                 .build()
         );
-        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage, CancellationHandler.NONE);
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE);
+        final long maxAmount = sut.getMaxAmount(CRAFTING_TABLE, CancellationToken.NONE);
 
         // Assert
         assertThat(maxAmount).isZero();

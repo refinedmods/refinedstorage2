@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common;
 
-import com.refinedmods.refinedstorage.api.autocrafting.preview.CancellationToken;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -364,8 +364,8 @@ public final class GameTestUtil {
     }
 
     public static void prepareChest(final GameTestHelper helper,
-                             final BlockPos pos,
-                             final ItemStack... stacks) {
+                                    final BlockPos pos,
+                                    final ItemStack... stacks) {
         helper.setBlock(pos, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState());
         final var chestBlockEntity = requireBlockEntity(helper, pos, BaseContainerBlockEntity.class);
         for (int i = 0; i < stacks.length; i++) {
