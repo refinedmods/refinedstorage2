@@ -6,7 +6,7 @@ The {doctitle} is used to configure player permissions in a storage network.
 
 == Setting permissions
 
-To set permissions, use the {doctitle} in your hand. If it isn’t bound to a player yet, it will automatically bind to you.
+To set permissions, use the {doctitle} in your hand. If it isn't bound to a player yet, it will automatically bind to you.
 
 > To bind it to another online player, click the player button at the top of the screen.
 

@@ -20,7 +20,7 @@ The bottom row contains the intermediate storage slots where exported resources 
 
 === Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
 == Importing
 

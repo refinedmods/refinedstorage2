@@ -10,4 +10,4 @@ You can switch to _allowlist_ mode, where only listed resources will be allowed.
 
 === Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.

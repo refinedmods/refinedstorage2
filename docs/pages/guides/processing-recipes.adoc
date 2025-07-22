@@ -2,7 +2,7 @@
 
 In xref:getting-started-with-autocrafting.adoc[], you learned how to automate regular crafting recipes.
 
-But what if you want to automate tasks that don’t use a crafting grid—like smelting iron ore into ingots?
+But what if you want to automate tasks that don't use a crafting grid - like smelting iron ore into ingots?
 For this, you use xref:../autocrafting/pattern.adoc#_processing_patterns[processing patterns].
 
 == Creating processing patterns
@@ -23,7 +23,7 @@ link:https://minecraft.gamepedia.com/Iron_Ore[Iron Ore] → link:https://minecra
 
 === Alternatives
 
-For each input, you can define allowed alternatives using link:https://minecraft.gamepedia.com/Tag[Minecraft’s tag system].
+For each input, you can define allowed alternatives using link:https://minecraft.gamepedia.com/Tag[Minecraft's tag system].
 
 == Using the pattern
 
@@ -31,7 +31,7 @@ For each input, you can define allowed alternatives using link:https://minecraft
 2. Insert the xref:../autocrafting/pattern.adoc#_processing_patterns[processing pattern] into the autocrafter.
 3. When requested, the autocrafter will insert the inputs into the machine.
 
-You must ensure the output is returned to the storage network—this is how the storage network knows that the task can be completed.
+You must ensure the output is returned to the storage network - this is how the storage network knows that the task can be completed.
 
 Use a device like:
 

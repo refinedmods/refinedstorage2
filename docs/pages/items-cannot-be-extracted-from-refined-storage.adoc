@@ -1,10 +1,10 @@
 = Troubleshooting: Items cannot be extracted from Refined Storage
 
-Are you running into a bug where you can put an item into Refined Storage, but then you can’t get it back out? It looks like it’s there in the xref:viewing-resources/grid.adoc[], but clicking or shift-clicking doesn’t work.
+Are you running into a bug where you can put an item into Refined Storage, but then you can't get it back out? It looks like it's there in the xref:viewing-resources/grid.adoc[], but clicking or shift-clicking doesn't work.
 
 This is a known issue that can happen with some modded items, especially tools, weapons, or fluids from other mods.
 
-Refined Storage depends on very precise internal data to identify items. If another mod adds an item that doesn’t handle this data properly, the system can’t recognize the item when you try to take it out — even though it looks the same.
+Refined Storage depends on very precise internal data to identify items. If another mod adds an item that doesn't handle this data properly, the system can't recognize the item when you try to take it out - even though it looks the same.
 
 == What should you do?
 
@@ -23,11 +23,11 @@ You can say something like:
 [#_for_mod_developers]
 == For mod developers
 
-If you're seeing this page because a player reported an issue with your items in Refined Storage, here's what’s going on:
+If you're seeing this page because a player reported an issue with your items in Refined Storage, here's what's going on:
 
 When Refined Storage tries to extract an item, it reconstructs the item based on its item ID and data component map, and tries to match it to an existing stack in storage.
 
-If your mod adds data components to a stack and doesn't implement proper equality checks for that data, the reconstructed stack won’t match the stored stack — causing extraction to silently fail.
+If your mod adds data components to a stack and doesn't implement proper equality checks for that data, the reconstructed stack won't match the stored stack - causing extraction to silently fail.
 
 This can happen with tools, weapons, or anything that stores internal data like modifiers, parts, traits, fluids, etc.
 

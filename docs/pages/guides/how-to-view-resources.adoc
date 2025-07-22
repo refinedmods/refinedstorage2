@@ -12,7 +12,7 @@ You can access your storage network remotely using wireless tools.
 1. Craft a xref:../wireless-networking/wireless-grid.adoc[] and bind it by right-clicking a xref:../networking/controller.adoc[].
 2. Add a xref:../wireless-networking/wireless-transmitter.adoc[] to your network.
 
-You can now access storage wirelessly within the transmitter’s range.
+You can now access storage wirelessly within the transmitter's range.
 
 To increase range, place additional xref:../wireless-networking/wireless-transmitter.adoc[wireless transmitters] throughout the world. Avoid placing them directly next to each other for best coverage.
 
@@ -20,10 +20,10 @@ To increase range, place additional xref:../wireless-networking/wireless-transmi
 
 To access a specific xref:../storage/index.adoc#_storage_disks[storage disk] independently, use a xref:../viewing-resources/portable-grid.adoc[].
 
-Charge it, insert a disk, and use it anywhere—no storage network required.
+Charge it, insert a disk, and use it anywhere - no storage network required.
 
 == Storage Monitor
 
-To monitor a specific resource’s amount in the network, use a xref:../viewing-resources/storage-monitor.adoc[].
+To monitor a specific resource's amount in the network, use a xref:../viewing-resources/storage-monitor.adoc[].
 
 Configure it with the resource you want to track. You can view the count and insert or extract directly from the monitor.

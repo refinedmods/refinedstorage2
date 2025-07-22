@@ -10,7 +10,7 @@ SHIFT + Right-click the {doctitle} to set the displayed resource.
 
 === Fuzzy mode
 
-Fuzzy mode, off by default, determines whether additional attributes, such as a pickaxe’s damage value, are considered.
+Fuzzy mode, off by default, determines whether additional attributes, such as a pickaxe's damage value, are considered.
 
 == Inserting and extracting items
 

@@ -20,7 +20,7 @@ Insert a {doctitle} into the output slot of the {doctitle} to modify it.
 [#_recipe_transferring]
 == Recipe transferring
 
-You don’t need the actual resources in your network to create a xref:pattern.adoc[].
+You don't need the actual resources in your network to create a xref:pattern.adoc[].
 
 The {doctitle} integrates with recipe viewer mods for recipe transferring:
 - xref:../addons/just-enough-items.adoc#_recipe_transferring_in_the_pattern_grid[Just Enough Items]

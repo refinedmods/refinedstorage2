@@ -20,7 +20,7 @@ The last known state for each filtered resource is displayed:
 
 === Fuzzy mode
 
-Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe’s damage value.
+Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
 == Scheduling mode
 

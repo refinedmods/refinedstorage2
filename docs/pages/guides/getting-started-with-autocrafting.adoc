@@ -12,14 +12,14 @@ Each pattern defines how a specific resource is crafted.
 
 You must create a pattern for every intermediate item.
 If an item needed for crafting isn't in storage, the system will use its pattern to craft it.
-If no pattern exists for that sub-item, it will be marked as missing and the task won’t start.
+If no pattern exists for that sub-item, it will be marked as missing and the task won't start.
 
 === Example
 
 To autocraft a link:https://minecraft.gamepedia.com/Chest[chest]:
 
 - Create a pattern for the chest.
-- If planks are available, they’ll be used.
+- If planks are available, they'll be used.
 - If planks run out, create a pattern for crafting planks too.
 
 === Fuzzy mode
@@ -48,10 +48,10 @@ Autocrafting tasks cannot start unless all required resources are present or aut
 When an autocrafting task starts:
 
 - The required resources are pulled into an internal task inventory.
-- All crafting is done inside this internal inventory—no changes are visible to the network while the task runs.
+- All crafting is done inside this internal inventory - no changes are visible to the network while the task runs.
 - This prevents other operations from interfering with the task.
 
-If resources are added to the network mid-task, they’ll be intercepted by the task if needed.
+If resources are added to the network mid-task, they'll be intercepted by the task if needed.
 
 == Monitoring autocrafting tasks
 

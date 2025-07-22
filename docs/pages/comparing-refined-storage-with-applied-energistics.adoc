@@ -4,11 +4,11 @@ Refined Storage and Applied Energistics 2 are often compared - sometimes fairly,
 
 == The problem with constant comparison
 
-Whenever Refined Storage is discussed, it’s almost always in relation to AE2:
+Whenever Refined Storage is discussed, it's almost always in relation to AE2:
 
-* “Does Refined Storage support this AE feature?”
-* “Refined Storage is basically a simplified AE.”
-* “Refined Storage isn't even close to AE.”
+* "Does Refined Storage support this AE feature?"
+* "Refined Storage is basically a simplified AE."
+* "Refined Storage isn't even close to AE."
 
 This mindset is limiting. Why does its worth have to be measured by how closely it resembles or deviates from AE?
 
@@ -18,15 +18,15 @@ It frames Refined Storage not as a standalone mod with its own goals and vision,
 
 Refined Storage was never designed to copy AE2.
 
-While it originally started as a spiritual successor to AE1—drawing inspiration from its core concepts—the mod quickly evolved during development and found its own identity. Over time, it moved away from imitation and toward a clear, distinct philosophy: simplicity, accessibility, and intuitive design.
+While it originally started as a spiritual successor to AE1 - drawing inspiration from its core concepts - the mod quickly evolved during development and found its own identity. Over time, it moved away from imitation and toward a clear, distinct philosophy: simplicity, accessibility, and intuitive design.
 
 Refined Storage is not trying to compete with AE2. It's not a fork. It's not a lesser version. It's a different answer to the same problem.
 
 == Why becoming too similar is a problem
 
-If Refined Storage continues to evolve by adopting AE2’s systems just to meet expectations, the line between both mods will blur. And when the differences disappear, so does the reason for both to coexist.
+If Refined Storage continues to evolve by adopting AE2's systems just to meet expectations, the line between both mods will blur. And when the differences disappear, so does the reason for both to coexist.
 
-What makes the modding scene rich is *variety*. If Refined Storage becomes just a more "user-friendly AE2", we’re not innovating—we’re duplicating. And duplication leads to redundancy, not choice.
+What makes the modding scene rich is *variety*. If Refined Storage becomes just a more "user-friendly AE2", we're not innovating - we're duplicating. And duplication leads to redundancy, not choice.
 
 == But what are the actual differences?
 
@@ -36,22 +36,14 @@ The differences in design philosophy, usability, and complexity quickly become o
 
 == Mutual respect between developers
 
-It's important to recognize that the developers behind AE2 and Refined Storage have a mutual respect for each other's work. These mods weren’t created out of rivalry - they exist because different approaches can coexist and thrive in the same ecosystem. The modding community benefits from this diversity, and the devs understand that.
+It's important to recognize that the developers behind AE2 and Refined Storage have a mutual respect for each other's work. These mods weren't created out of rivalry - they exist because different approaches can coexist and thrive in the same ecosystem. The modding community benefits from this diversity, and the devs understand that.
 
-Refined Storage isn't trying to replace AE2, and AE2 isn’t trying to outdo Refined Storage. Both are valuable because they offer *choice*.
+Refined Storage isn't trying to replace AE2, and AE2 isn't trying to outdo Refined Storage. Both are valuable because they offer *choice*.
 
 == Conclusion
 
-Refined Storage should be allowed to grow on its own terms. It doesn’t need to "catch up" to AE2, and it certainly doesn’t need to become it. Constantly framing Refined Storage in AE's shadow not only dismisses the huge effort behind it, but also ignores the people who genuinely prefer Refined Storage for what it is.
+Refined Storage should be allowed to grow on its own terms. It doesn't need to "catch up" to AE2, and it certainly doesn't need to become it. Constantly framing Refined Storage in AE's shadow not only dismisses the huge effort behind it, but also ignores the people who genuinely prefer Refined Storage for what it is.
 
 Let it stand on its own. Let it breathe. Let it be appreciated, not as "the AE alternative", but as Refined Storage. Not everything needs to be compared.
 
 Sometimes, it just needs to *be*.
-
-== Why publish this article?
-
-There's a certain educational aspect to publishing this article. It’s something I've held off on writing for a long time - not out of hesitation, but out of hope that it wouldn’t be necessary.
-
-This article isn't about stirring debate—it’s about clarifying intent and finally addressing what should’ve been clear all along.
-
-Part of this comes down to how discussions naturally evolve in the community. It's common to frame things in black-and-white terms: better vs worse, simpler vs more advanced. But not everything works that way. Sometimes, two things can solve the same problem in different ways—and both approaches can be valid. This article aims to highlight that perspective, clearly and respectfully.
