@@ -49,7 +49,7 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
                                                            final CancellationToken cancellationToken) {
         final CompletableFuture<Optional<Preview>> previewRequest =
             requireNonNull(storageMonitor).getPreview(resource, amount, cancellationToken);
-        pendingAutocraftingRequests.add(cancellationToken);
+        pendingAutocraftingRequests.add(previewRequest, cancellationToken);
         return previewRequest;
     }
 
@@ -57,7 +57,7 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         final CompletableFuture<Long> maxAmountRequest = requireNonNull(storageMonitor).getMaxAmount(resource,
             cancellationToken);
-        pendingAutocraftingRequests.add(cancellationToken);
+        pendingAutocraftingRequests.add(maxAmountRequest, cancellationToken);
         return maxAmountRequest;
     }
 
@@ -69,7 +69,7 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
                                                          final CancellationToken cancellationToken) {
         final CompletableFuture<Optional<TaskId>> taskRequest = requireNonNull(storageMonitor).startTask(resource,
             amount, actor, notify, cancellationToken);
-        pendingAutocraftingRequests.add(cancellationToken);
+        pendingAutocraftingRequests.add(taskRequest, cancellationToken);
         return taskRequest;
     }
 

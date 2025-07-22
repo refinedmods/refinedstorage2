@@ -128,7 +128,7 @@ class WirelessGrid implements Grid, CancelablePreviewProvider {
             .map(component -> {
                 final CompletableFuture<Optional<Preview>> previewRequest = component.getPreview(resource, amount,
                     cancellationToken);
-                pendingAutocraftingRequests.add(cancellationToken);
+                pendingAutocraftingRequests.add(previewRequest, cancellationToken);
                 return previewRequest;
             })
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
@@ -139,7 +139,7 @@ class WirelessGrid implements Grid, CancelablePreviewProvider {
         return getAutocrafting()
             .map(component -> {
                 final CompletableFuture<Long> maxAmountRequest = component.getMaxAmount(resource, cancellationToken);
-                pendingAutocraftingRequests.add(cancellationToken);
+                pendingAutocraftingRequests.add(maxAmountRequest, cancellationToken);
                 return maxAmountRequest;
             })
             .orElseGet(() -> CompletableFuture.completedFuture(0L));
@@ -155,7 +155,7 @@ class WirelessGrid implements Grid, CancelablePreviewProvider {
             .map(autocrafting -> {
                 final CompletableFuture<Optional<TaskId>> taskRequest = autocrafting.startTask(resource, amount,
                     actor, notify, cancellationToken);
-                pendingAutocraftingRequests.add(cancellationToken);
+                pendingAutocraftingRequests.add(taskRequest, cancellationToken);
                 return taskRequest;
             })
             .orElse(CompletableFuture.completedFuture(Optional.empty()));

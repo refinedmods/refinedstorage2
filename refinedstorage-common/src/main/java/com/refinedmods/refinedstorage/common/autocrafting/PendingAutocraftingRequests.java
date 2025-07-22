@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationT
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,9 @@ public class PendingAutocraftingRequests {
 
     private final Set<CancellationToken> cancellationTokens = new HashSet<>();
 
-    public void add(final CancellationToken cancellationToken) {
+    public <T> void add(final CompletableFuture<T> future, final CancellationToken cancellationToken) {
         cancellationTokens.add(cancellationToken);
+        future.whenComplete((value, e) -> cancellationTokens.remove(cancellationToken));
     }
 
     public void cancelAll() {
