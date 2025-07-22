@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
@@ -123,9 +124,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     private long getMaxAmountSync(final ResourceKey resource, final CancellationToken cancellationToken) {
-        final RootStorage rootStorage = rootStorageProvider.get();
-        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculator.getMaxAmount(resource, cancellationToken);
+        return IsCraftableCraftingCalculatorListener.binarySearchMaxAmount(
+            new CraftingCalculatorImpl(patternRepository, rootStorageProvider.get()),
+            resource,
+            cancellationToken
+        );
     }
 
     @Override
