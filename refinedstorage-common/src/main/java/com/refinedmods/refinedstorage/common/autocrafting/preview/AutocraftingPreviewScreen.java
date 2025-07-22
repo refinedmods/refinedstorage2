@@ -85,6 +85,10 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         "gui",
         "autocrafting_preview.request_cancelled.try_smaller_crafts"
     );
+    private static final MutableComponent NOT_AVAILABLE = createTranslation(
+        "gui",
+        "autocrafting_preview.not_available"
+    );
     private static final ResourceLocation ROW = createIdentifier("autocrafting_preview/row");
     private static final ResourceLocation CRAFTING_REQUESTS = createIdentifier("autocrafting_preview/requests");
 
@@ -349,6 +353,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             renderRequestTooLargeToHandle(graphics, x, y);
         } else if (preview.type() == PreviewType.CANCELLED) {
             renderCancelled(graphics, x, y);
+        } else if (preview.type() == PreviewType.NOT_AVAILABLE) {
+            renderNotAvailable(graphics, x, y);
         } else {
             renderPreviewRows(graphics, mouseX, mouseY, preview, y, x);
         }
@@ -451,6 +457,19 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             x + 4,
             y + 4 + 10,
             0x404040,
+            false,
+            SmallText.DEFAULT_SCALE
+        );
+    }
+
+    private void renderNotAvailable(final GuiGraphics graphics, final int x, final int y) {
+        SmallText.render(
+            graphics,
+            font,
+            NOT_AVAILABLE.getVisualOrderText(),
+            x + 4,
+            y + 4,
+            0xFF5555,
             false,
             SmallText.DEFAULT_SCALE
         );

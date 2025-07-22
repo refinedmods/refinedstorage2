@@ -62,11 +62,6 @@ class CraftingTree<T> {
     }
 
     CalculationResult calculate(final CancellationToken cancellationToken) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         if (cancellationToken.isCancelled()) {
             return CalculationResult.CANCELLED;
         }

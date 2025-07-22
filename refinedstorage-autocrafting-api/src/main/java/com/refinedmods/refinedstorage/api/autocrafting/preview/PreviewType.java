@@ -8,5 +8,6 @@ public enum PreviewType {
     MISSING_RESOURCES,
     CYCLE_DETECTED,
     OVERFLOW,
-    CANCELLED
+    CANCELLED,
+    NOT_AVAILABLE
 }

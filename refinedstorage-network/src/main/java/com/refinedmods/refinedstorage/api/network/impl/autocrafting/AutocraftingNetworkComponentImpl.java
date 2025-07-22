@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalcu
 import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
@@ -38,6 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -107,13 +109,18 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
                                                            final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
-        return CompletableFuture.supplyAsync(() -> {
-            final RootStorage rootStorage = rootStorageProvider.get();
-            final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-            final Preview preview = PreviewCraftingCalculatorListener.calculatePreview(calculator, resource, amount,
-                cancellationToken);
-            return Optional.of(preview);
-        }, executorService);
+        try {
+            return CompletableFuture.supplyAsync(() -> {
+                final RootStorage rootStorage = rootStorageProvider.get();
+                final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+                final Preview preview = PreviewCraftingCalculatorListener.calculatePreview(calculator, resource, amount,
+                    cancellationToken);
+                return Optional.of(preview);
+            }, executorService);
+        } catch (final RejectedExecutionException e) {
+            return CompletableFuture.completedFuture(Optional.of(new Preview(
+                PreviewType.NOT_AVAILABLE, Collections.emptyList(), Collections.emptyList())));
+        }
     }
 
     @Override
