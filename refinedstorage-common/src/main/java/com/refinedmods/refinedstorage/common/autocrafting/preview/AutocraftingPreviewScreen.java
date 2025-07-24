@@ -81,9 +81,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         "gui",
         "autocrafting_preview.request_cancelled"
     ).withStyle(Style.EMPTY.withBold(true));
-    private static final MutableComponent TRY_SMALLER_CRAFTS = createTranslation(
+    private static final MutableComponent CRAFT_SUBCOMPONENTS = createTranslation(
         "gui",
-        "autocrafting_preview.request_cancelled.try_smaller_crafts"
+        "autocrafting_preview.request_cancelled.craft_subcomponents"
     );
     private static final MutableComponent NOT_AVAILABLE = createTranslation(
         "gui",
@@ -453,7 +453,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         SmallText.render(
             graphics,
             font,
-            TRY_SMALLER_CRAFTS.getVisualOrderText(),
+            CRAFT_SUBCOMPONENTS.getVisualOrderText(),
             x + 4,
             y + 4 + 10,
             0x404040,
