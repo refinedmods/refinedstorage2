@@ -52,11 +52,17 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public int fill(final FluidStack resource, final FluidAction action) {
+        if (resource.isEmpty()) {
+            return 0;
+        }
         return (int) container.insert(ofFluidStack(resource), resource.getAmount(), toAction(action));
     }
 
     @Override
     public FluidStack drain(final FluidStack fluidStack, final FluidAction action) {
+        if (fluidStack.isEmpty()) {
+            return FluidStack.EMPTY;
+        }
         final FluidResource resource = ofFluidStack(fluidStack);
         final long extracted = container.extract(resource, fluidStack.getAmount(), toAction(action));
         if (extracted == 0) {
@@ -67,6 +73,9 @@ public class ResourceContainerFluidHandlerAdapter implements IFluidHandler {
 
     @Override
     public FluidStack drain(final int maxDrain, final FluidAction action) {
+        if (maxDrain <= 0) {
+            return FluidStack.EMPTY;
+        }
         final FluidResource resource = findExtractableFluidResource();
         if (resource == null) {
             return FluidStack.EMPTY;

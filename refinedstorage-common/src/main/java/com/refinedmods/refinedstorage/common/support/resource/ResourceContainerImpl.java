@@ -293,6 +293,8 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action) {
+        CoreValidations.validateNotNull(resource, "Resource to insert must not be null.");
+        CoreValidations.validateLargerThanZero(amount, "Amount to insert must be larger than zero.");
         if (!(resource instanceof PlatformResourceKey platformResource)) {
             return 0L;
         }
@@ -343,6 +345,8 @@ public class ResourceContainerImpl implements ResourceContainer {
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action) {
+        CoreValidations.validateNotNull(resource, "Resource to extract must not be null.");
+        CoreValidations.validateLargerThanZero(amount, "Amount to extract must be larger than zero.");
         long extracted = 0;
         for (int i = 0; i < size(); ++i) {
             final ResourceAmount slotContents = get(i);
