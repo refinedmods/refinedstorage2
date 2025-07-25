@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.task;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationException;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
@@ -25,7 +26,11 @@ public class TaskPlanCraftingCalculatorListener implements CraftingCalculatorLis
                                                    final long amount,
                                                    final CancellationToken cancellationToken) {
         final TaskPlanCraftingCalculatorListener listener = new TaskPlanCraftingCalculatorListener();
-        calculator.calculate(resource, amount, listener, cancellationToken);
+        try {
+            calculator.calculate(resource, amount, listener, cancellationToken);
+        } catch (final CancellationException e) {
+            return Optional.empty();
+        }
         return listener.task.getPlan();
     }
 
@@ -41,11 +46,6 @@ public class TaskPlanCraftingCalculatorListener implements CraftingCalculatorLis
     @Override
     public void childCalculationCompleted(final CraftingCalculatorListener<MutableTaskPlan> childListener) {
         this.task = childListener.getData();
-    }
-
-    @Override
-    public void childCalculationCancelled(final CraftingCalculatorListener<MutableTaskPlan> childListener) {
-        task.setCancelled();
     }
 
     @Override

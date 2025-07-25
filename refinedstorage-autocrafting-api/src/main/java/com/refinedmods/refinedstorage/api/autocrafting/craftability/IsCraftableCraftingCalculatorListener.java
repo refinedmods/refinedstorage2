@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.craftability;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CalculationException;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationException;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
@@ -30,7 +31,11 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
                                        final long amount,
                                        final CancellationToken cancellationToken) {
         final IsCraftableCraftingCalculatorListener listener = new IsCraftableCraftingCalculatorListener();
-        calculator.calculate(resource, amount, listener, cancellationToken);
+        try {
+            calculator.calculate(resource, amount, listener, cancellationToken);
+        } catch (final CancellationException e) {
+            return false;
+        }
         return !listener.missingResources;
     }
 
@@ -82,11 +87,6 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
     @Override
     public void childCalculationCompleted(final CraftingCalculatorListener<Boolean> childListener) {
         missingResources = requireNonNull(childListener.getData());
-    }
-
-    @Override
-    public void childCalculationCancelled(final CraftingCalculatorListener<Boolean> childListener) {
-        missingResources = true;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class CraftingCalculatorImpl implements CraftingCalculator {
     public <T> void calculate(final ResourceKey resource,
                               final long amount,
                               final CraftingCalculatorListener<T> listener,
-                              final CancellationToken cancellationToken) {
+                              final CancellationToken cancellationToken) throws CancellationException {
         CoreValidations.validateLargerThanZero(amount, "Requested amount must be greater than 0");
         final Collection<Pattern> patterns = patternRepository.getByOutput(resource);
         CraftingCalculatorListener<T> lastChildListener = null;
@@ -38,15 +38,11 @@ public class CraftingCalculatorImpl implements CraftingCalculator {
                 patternAmount
             );
             final CraftingTree<T> tree = root(pattern, rootStorage, patternAmount, patternRepository, childListener);
-            try {
-                final CraftingTree.CalculationResult calculationResult = tree.calculate(cancellationToken);
-                if (calculationResult == CraftingTree.CalculationResult.MISSING_RESOURCES) {
-                    lastChildListener = childListener;
-                    continue;
-                }
-            } catch (final CancellationException e) {
-                listener.childCalculationCancelled(childListener);
-                return;
+            childListener.rootCalculationStarted(resource, patternAmount.getTotal());
+            final CraftingTree.CalculationResult calculationResult = tree.calculate(cancellationToken);
+            if (calculationResult == CraftingTree.CalculationResult.MISSING_RESOURCES) {
+                lastChildListener = childListener;
+                continue;
             }
             listener.childCalculationCompleted(childListener);
             return;

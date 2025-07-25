@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.preview;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationException;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
@@ -14,7 +15,7 @@ import java.util.Collections;
 public class PreviewCraftingCalculatorListener implements CraftingCalculatorListener<PreviewBuilder> {
     private PreviewBuilder builder;
 
-    public PreviewCraftingCalculatorListener(final PreviewBuilder builder) {
+    private PreviewCraftingCalculatorListener(final PreviewBuilder builder) {
         this.builder = builder;
     }
 
@@ -31,6 +32,8 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
             return new Preview(PreviewType.CYCLE_DETECTED, Collections.emptyList(), e.getPattern().layout().outputs());
         } catch (final NumberOverflowDuringCalculationException e) {
             return new Preview(PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList());
+        } catch (final CancellationException e) {
+            return new Preview(PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList());
         }
         return listener.buildPreview();
     }
@@ -50,21 +53,8 @@ public class PreviewCraftingCalculatorListener implements CraftingCalculatorList
     }
 
     @Override
-    public void childCalculationCancelled(final CraftingCalculatorListener<PreviewBuilder> childListener) {
-        builder.cancelled();
-    }
-
-    @Override
     public void ingredientsExhausted(final ResourceKey resource, final long amount) {
         builder.addMissing(resource, amount);
-    }
-
-    @Override
-    public void ingredientUsed(final Pattern ingredientPattern,
-                               final int ingredientIndex,
-                               final ResourceKey resource,
-                               final long amount) {
-        // no op
     }
 
     @Override

@@ -31,11 +31,12 @@ import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.S
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.SPRUCE_LOG;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.SPRUCE_PLANKS;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.STICKS;
-import static com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener.calculatePreview;
+import static com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewBuilder.tree;
+import static com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewCraftingCalculatorListener.calculateTree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PreviewTest {
+class TreePreviewTest {
     @Test
     void shouldNotCalculateForPatternThatIsNotFound() {
         // Arrange
@@ -44,7 +45,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
+        final Executable action = () -> calculateTree(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
         final IllegalStateException e = assertThrows(IllegalStateException.class, action);
@@ -60,7 +61,7 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Executable action = () -> calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
+        final Executable action = () -> calculateTree(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
         final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, action);
@@ -83,12 +84,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, requestedAmount)
-            .addAvailable(OAK_PLANKS, requestedAmount * 4)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, requestedAmount)
+            .node(OAK_PLANKS, 4 * requestedAmount).available(4 * requestedAmount).end()
             .build());
     }
 
@@ -115,14 +115,15 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, requestedAmount, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, requestedAmount)
-            .addToCraft(OAK_PLANKS, requestedAmount * 4)
-            .addMissing(OAK_LOG, requestedAmount)
-            .build());
+        assertThat(tree).usingRecursiveComparison()
+            .isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, requestedAmount)
+                .node(OAK_PLANKS, 4 * requestedAmount)
+                .node(OAK_LOG, requestedAmount).missing(requestedAmount)
+                .end()
+                .end().build());
     }
 
     @Test
@@ -138,15 +139,12 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison()
-            .isEqualTo(PreviewBuilder.create()
-                .addToCraft(CRAFTING_TABLE, 3)
-                .addAvailable(OAK_PLANKS, 8)
-                .addMissing(OAK_PLANKS, 4)
-                .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 3)
+            .node(OAK_PLANKS, 3 * 4).available(8).missing(4).end()
+            .build());
     }
 
     @Test
@@ -172,13 +170,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, 1)
-            .addToCraft(SPRUCE_PLANKS, 4)
-            .addAvailable(SPRUCE_LOG, 1)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 1)
+            .node(SPRUCE_PLANKS, 4).node(SPRUCE_LOG, 1).available(1).end().end()
             .build());
     }
 
@@ -198,13 +194,12 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 11, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 11, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, 11)
-            .addAvailable(OAK_PLANKS, 4 * 10)
-            .addAvailable(SPRUCE_PLANKS, 4)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 11)
+            .node(OAK_PLANKS, 4 * 10).available(4 * 10).end()
+            .node(SPRUCE_PLANKS, 4).available(4).end()
             .build());
     }
 
@@ -224,17 +219,13 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 16, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 16, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview)
-            .usingRecursiveComparison()
-            .isEqualTo(PreviewBuilder.create()
-                .addToCraft(CRAFTING_TABLE, 16)
-                .addAvailable(OAK_PLANKS, 4 * 10)
-                .addAvailable(SPRUCE_PLANKS, 4 * 5)
-                .addMissing(SPRUCE_PLANKS, 4)
-                .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 16)
+            .node(OAK_PLANKS, 4 * 10).available(4 * 10).end()
+            .node(SPRUCE_PLANKS, (4 * 5) + 4).available(4 * 5).missing(4).end()
+            .build());
     }
 
     @Test
@@ -258,13 +249,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 1, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, 1)
-            .addToCraft(SPRUCE_PLANKS, 4)
-            .addMissing(SPRUCE_LOG, 1)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 1)
+            .node(SPRUCE_PLANKS, 4).node(SPRUCE_LOG, 1).missing(1).end().end()
             .build());
     }
 
@@ -287,12 +276,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, 2)
-            .addAvailable(SPRUCE_PLANKS, 8)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 2)
+            .node(SPRUCE_PLANKS, 4 * 2).available(8).end()
             .build());
     }
 
@@ -315,16 +303,12 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview)
-            .usingRecursiveComparison()
-            .isEqualTo(PreviewBuilder.create()
-                .addToCraft(CRAFTING_TABLE, 4)
-                .addAvailable(SPRUCE_PLANKS, 8)
-                .addMissing(SPRUCE_PLANKS, 8)
-                .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 4)
+            .node(SPRUCE_PLANKS, 16).available(8).missing(8).end()
+            .build());
     }
 
     @Test
@@ -347,17 +331,14 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview)
-            .usingRecursiveComparison()
-            .isEqualTo(PreviewBuilder.create()
-                .addToCraft(CRAFTING_TABLE, 3)
-                .addAvailable(OAK_PLANKS, 3)
-                .addToCraft(OAK_PLANKS, 12)
-                .addAvailable(OAK_LOG, 3)
-                .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 3)
+            .node(OAK_PLANKS, 12).available(3)
+            .node(OAK_LOG, 3).available(3).end()
+            .end()
+            .build());
     }
 
     @Test
@@ -383,13 +364,13 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 3, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(CRAFTING_TABLE, 3)
-            .addToCraft(OAK_PLANKS, 12)
-            .addMissing(SPRUCE_LOG, 3)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 3)
+            .node(OAK_PLANKS, 12)
+            .node(SPRUCE_LOG, 3).missing(3)
+            .end().end()
             .build());
     }
 
@@ -414,15 +395,13 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, 1, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, SIGN, 1, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(SIGN, 3)
-            .addToCraft(OAK_PLANKS, 8)
-            .addAvailable(OAK_LOG, 4)
-            .addToCraft(STICKS, 4)
-            .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, SIGN, 3)
+            .node(OAK_PLANKS, 6).node(OAK_LOG, 3).available(3).end().end()
+            .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).available(1).end().end()
+            .end().build());
     }
 
     @Test
@@ -447,51 +426,36 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, 1, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, SIGN, 1, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(SIGN, 3)
-            .addAvailable(OAK_PLANKS, 6)
-            .addToCraft(STICKS, 4)
-            .addToCraft(OAK_PLANKS, 2)
-            .addAvailable(OAK_LOG, 1)
-            .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, SIGN, 3)
+            .node(OAK_PLANKS, 6).available(6).end()
+            .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).available(1).end().end()
+            .end().build());
     }
 
     private static Stream<Arguments> provideMissingResourcesPreview() {
         return Stream.of(
-            Arguments.of(1, PreviewBuilder.create()
-                .addToCraft(SIGN, 3)
-                .addToCraft(OAK_PLANKS, 8)
-                .addAvailable(OAK_LOG, 3) // 6
-                .addMissing(OAK_LOG, 1) // 2
-                .addToCraft(STICKS, 4)
-                .build()),
-            Arguments.of(4, PreviewBuilder.create()
-                .addToCraft(SIGN, 6)
-                .addToCraft(OAK_PLANKS, 14)
-                .addAvailable(OAK_LOG, 3) // 6
-                .addMissing(OAK_LOG, 4) // 4*2=8
-                .addToCraft(STICKS, 4)
-                .build()),
-            Arguments.of(20, PreviewBuilder.create()
-                .addToCraft(SIGN, 21) // these are 7 iterations (3 yield per, 7*3=21)
-                .addToCraft(OAK_PLANKS, 46) // 4 planks are used for the sticks (4*2=8).
-                // that remains 46-4=42
-                // 42/7 iterations=6 so checks out
-                .addAvailable(OAK_LOG, 3)
-                .addMissing(OAK_LOG, 20) // we need 46 planks. we already have 3*2=6 planks!
-                // 46-6=40 planks left to craft
-                // 40 planks/2 planks per log=20 logs
-                .addToCraft(STICKS, 8) // 8*3=21
-                .build()
-            ));
+            Arguments.of(1, tree(PreviewType.MISSING_RESOURCES, SIGN, 3)
+                .node(OAK_PLANKS, 6).node(OAK_LOG, 3).available(3).end().end()
+                .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).missing(1).end().end()
+                .end().build()),
+            Arguments.of(4, tree(PreviewType.MISSING_RESOURCES, SIGN, 6)
+                .node(OAK_PLANKS, 12).node(OAK_LOG, 6).available(3).missing(3).end().end()
+                .node(STICKS, 2).node(OAK_PLANKS, 2).node(OAK_LOG, 1).missing(1).end().end()
+                .end().build()),
+            Arguments.of(20, tree(PreviewType.MISSING_RESOURCES, SIGN, 21)
+                .node(OAK_PLANKS, 6 * 7).node(OAK_LOG, 21).available(3).missing(21 - 3).end().end()
+                .node(STICKS, 7).node(OAK_PLANKS, 4).node(OAK_LOG, 2).missing(2).end().end()
+                .end().build())
+        );
     }
 
     @ParameterizedTest
     @MethodSource("provideMissingResourcesPreview")
-    void shouldKeepCalculatingEvenIfResourcesAreMissing(final long requestedAmount, final Preview expectedPreview) {
+    void shouldKeepCalculatingEvenIfResourcesAreMissing(final long requestedAmount,
+                                                        final TreePreview expectedTree) {
         // Arrange
         final RootStorage storage = storage(new ResourceAmount(OAK_LOG, 3));
         final PatternRepository patterns = patterns(
@@ -509,10 +473,10 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, SIGN, requestedAmount, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, SIGN, requestedAmount, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(expectedPreview);
+        assertThat(tree).usingRecursiveComparison().isEqualTo(expectedTree);
     }
 
     private static Stream<Arguments> provideAmounts() {
@@ -546,12 +510,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, requestedAmount, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, OAK_PLANKS, requestedAmount, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .addToCraft(OAK_PLANKS, planksCrafted)
-            .addAvailable(OAK_LOG, logsUsed)
+        assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, OAK_PLANKS, planksCrafted)
+            .node(OAK_LOG, logsUsed).available(logsUsed).end()
             .build());
     }
 
@@ -573,12 +536,14 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, 1, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, OAK_PLANKS, 1, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(PreviewBuilder.create()
-            .withPatternWithCycle(cycledPattern)
-            .build());
+        assertThat(tree).usingRecursiveComparison().isEqualTo(new TreePreview(
+            PreviewType.CYCLE_DETECTED,
+            null,
+            cycledPattern.layout().outputs()
+        ));
     }
 
     @Test
@@ -594,11 +559,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, 2, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, OAK_PLANKS, 2, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
-            PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList()
+        assertThat(tree).usingRecursiveComparison().isEqualTo(new TreePreview(
+            PreviewType.OVERFLOW, null, Collections.emptyList()
         ));
     }
 
@@ -619,11 +584,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, OAK_PLANKS, Long.MAX_VALUE, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, OAK_PLANKS, Long.MAX_VALUE, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
-            PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList()
+        assertThat(tree).usingRecursiveComparison().isEqualTo(new TreePreview(
+            PreviewType.OVERFLOW, null, Collections.emptyList()
         ));
     }
 
@@ -645,11 +610,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 2, CancellationToken.NONE);
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
-            PreviewType.OVERFLOW, Collections.emptyList(), Collections.emptyList()
+        assertThat(tree).usingRecursiveComparison().isEqualTo(new TreePreview(
+            PreviewType.OVERFLOW, null, Collections.emptyList()
         ));
     }
 
@@ -670,11 +635,11 @@ class PreviewTest {
         final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
 
         // Act
-        final Preview preview = calculatePreview(sut, CRAFTING_TABLE, 2, new CancelledCancellationToken());
+        final TreePreview tree = calculateTree(sut, CRAFTING_TABLE, 2, new CancelledCancellationToken());
 
         // Assert
-        assertThat(preview).usingRecursiveComparison().isEqualTo(new Preview(
-            PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()
+        assertThat(tree).usingRecursiveComparison().isEqualTo(new TreePreview(
+            PreviewType.CANCELLED, null, Collections.emptyList()
         ));
     }
 }
