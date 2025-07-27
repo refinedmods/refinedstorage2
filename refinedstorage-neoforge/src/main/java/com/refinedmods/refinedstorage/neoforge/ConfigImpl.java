@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerSearchMode;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerViewType;
+import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
 import com.refinedmods.refinedstorage.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
@@ -30,6 +31,7 @@ public class ConfigImpl implements Config {
     private final ModConfigSpec.IntValue maxRowsStretch;
     private final ModConfigSpec.BooleanValue searchBoxAutoSelected;
     private final ModConfigSpec.BooleanValue autocraftingNotification;
+    private final ModConfigSpec.EnumValue<AutocraftingPreviewStyle> autocraftingPreviewStyle;
     private final SimpleEnergyUsageEntry cable;
     private final ControllerEntry controller;
     private final DiskDriveEntry diskDrive;
@@ -78,6 +80,9 @@ public class ConfigImpl implements Config {
         autocraftingNotification = builder
             .translation(translationKey("autocraftingNotification"))
             .define("autocraftingNotification", true);
+        autocraftingPreviewStyle = builder
+            .translation(translationKey("autocraftingPreviewStyle"))
+            .defineEnum("autocraftingPreviewStyle", AutocraftingPreviewStyle.LIST);
         cable = new SimpleEnergyUsageEntryImpl("cable", DefaultEnergyUsage.CABLE);
         controller = new ControllerEntryImpl();
         diskDrive = new DiskDriveEntryImpl();
@@ -149,6 +154,19 @@ public class ConfigImpl implements Config {
     public void setAutocraftingNotification(final boolean autocraftingNotification) {
         if (autocraftingNotification != Boolean.TRUE.equals(this.autocraftingNotification.get())) {
             this.autocraftingNotification.set(autocraftingNotification);
+            ConfigImpl.this.spec.save();
+        }
+    }
+
+    @Override
+    public AutocraftingPreviewStyle getAutocraftingPreviewStyle() {
+        return autocraftingPreviewStyle.get();
+    }
+
+    @Override
+    public void setAutocraftingPreviewStyle(final AutocraftingPreviewStyle autocraftingPreviewStyle) {
+        if (autocraftingPreviewStyle != this.autocraftingPreviewStyle.get()) {
+            this.autocraftingPreviewStyle.set(autocraftingPreviewStyle);
             ConfigImpl.this.spec.save();
         }
     }

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting.preview;
 
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
@@ -25,6 +26,7 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
     private AutocraftingRequest currentRequest;
     @Nullable
     private AutocraftingPreviewListener listener;
+    private AutocraftingPreviewStyle style;
 
     AutocraftingPreviewContainerMenu(final List<AutocraftingRequest> requests) {
         this(null, 0, requests);
@@ -36,6 +38,7 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
         super(type, syncId);
         this.requests = new ArrayList<>(requests);
         this.currentRequest = requests.getFirst();
+        this.style = Platform.INSTANCE.getConfig().getAutocraftingPreviewStyle();
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
         resourceContainer.set(0, new ResourceAmount(requests.getFirst().getResource(), 1));
         addSlot(new DisabledResourceSlot(
@@ -50,6 +53,19 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
 
     void setListener(final AutocraftingPreviewListener listener) {
         this.listener = listener;
+    }
+
+    AutocraftingPreviewStyle getStyle() {
+        return style;
+    }
+
+    AutocraftingPreviewStyle toggleStyle(final double amount) {
+        style = style.next();
+        Platform.INSTANCE.getConfig().setAutocraftingPreviewStyle(style);
+        if (currentRequest.sendPreviewRequest(amount, style) && listener != null) {
+            listener.previewChanged(null, null);
+        }
+        return style;
     }
 
     List<AutocraftingRequest> getRequests() {
@@ -68,8 +84,8 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
     }
 
     void amountChanged(final double amount) {
-        if (currentRequest.sendPreviewRequest(amount) && listener != null) {
-            listener.previewChanged(null);
+        if (currentRequest.sendPreviewRequest(amount, style) && listener != null) {
+            listener.previewChanged(null, null);
         }
     }
 
@@ -79,7 +95,17 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
         }
         currentRequest.previewResponseReceived(preview);
         if (listener != null) {
-            listener.previewChanged(preview);
+            listener.previewChanged(preview, null);
+        }
+    }
+
+    public void previewResponseReceived(final UUID id, final TreePreview preview) {
+        if (!currentRequest.getId().equals(id)) {
+            return;
+        }
+        currentRequest.previewResponseReceived(preview);
+        if (listener != null) {
+            listener.previewChanged(null, preview);
         }
     }
 

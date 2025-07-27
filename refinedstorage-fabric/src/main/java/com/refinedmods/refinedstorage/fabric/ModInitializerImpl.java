@@ -72,6 +72,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPrev
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTaskCompletedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTreePreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicatorUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
@@ -542,6 +543,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PayloadTypeRegistry.playS2C().register(
             AutocraftingPreviewResponsePacket.PACKET_TYPE,
             AutocraftingPreviewResponsePacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.playS2C().register(
+            AutocraftingTreePreviewResponsePacket.PACKET_TYPE,
+            AutocraftingTreePreviewResponsePacket.STREAM_CODEC
         );
         PayloadTypeRegistry.playS2C().register(
             AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,

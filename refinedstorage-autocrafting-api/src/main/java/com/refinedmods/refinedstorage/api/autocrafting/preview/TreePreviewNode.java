@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.preview;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,6 +21,20 @@ public class TreePreviewNode {
     public TreePreviewNode(final ResourceKey resource, final long amount) {
         this.resource = resource;
         this.amount = amount;
+    }
+
+    public TreePreviewNode(final ResourceKey resource,
+                           final long amount,
+                           final long available,
+                           final long missing,
+                           final Collection<TreePreviewNode> children) {
+        this.resource = resource;
+        this.amount = amount;
+        this.available = available;
+        this.missing = missing;
+        for (final TreePreviewNode child : children) {
+            this.children.put(child.getResource(), child);
+        }
     }
 
     public void available(final long amt) {
@@ -69,6 +84,26 @@ public class TreePreviewNode {
 
     public TreePreview asRootInPreview() {
         return new TreePreview(getType(), this, Collections.emptyList());
+    }
+
+    public ResourceKey getResource() {
+        return resource;
+    }
+
+    public Collection<TreePreviewNode> getChildren() {
+        return children.values();
+    }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public long getAvailable() {
+        return available;
+    }
+
+    public long getMissing() {
+        return missing;
     }
 
     @Override
