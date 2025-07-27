@@ -62,6 +62,7 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
     AutocraftingPreviewStyle toggleStyle(final double amount) {
         style = style.next();
         Platform.INSTANCE.getConfig().setAutocraftingPreviewStyle(style);
+        currentRequest.clearPreview();
         if (currentRequest.sendPreviewRequest(amount, style) && listener != null) {
             listener.previewChanged(null, null);
         }

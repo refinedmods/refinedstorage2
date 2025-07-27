@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 import net.minecraft.core.UUIDUtil;
@@ -35,10 +36,14 @@ public record AutocraftingTreePreviewResponsePacket(UUID id, TreePreview preview
     private static final StreamCodec<RegistryFriendlyByteBuf, TreePreview> PREVIEW_STREAM_CODEC =
         StreamCodec.composite(
             enumStreamCodec(PreviewType.values()), TreePreview::type,
-            PREVIEW_NODE_STREAM_CODEC, TreePreview::rootNode,
+            ByteBufCodecs.optional(PREVIEW_NODE_STREAM_CODEC), p -> Optional.ofNullable(p.rootNode()),
             ByteBufCodecs.collection(ArrayList::new, ResourceCodecs.AMOUNT_STREAM_CODEC),
             TreePreview::outputsOfPatternWithCycle,
-            TreePreview::new
+            (type, rootNode, outputsOfPatternWithCycle) -> new TreePreview(
+                type,
+                rootNode.orElse(null),
+                outputsOfPatternWithCycle
+            )
         );
     public static final StreamCodec<RegistryFriendlyByteBuf, AutocraftingTreePreviewResponsePacket> STREAM_CODEC =
         StreamCodec.composite(
