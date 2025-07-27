@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.grid;
 
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
@@ -110,6 +111,12 @@ class ClientCraftingGrid implements CraftingGrid {
     @Override
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
                                                            final CancellationToken cancellationToken) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();
     }
 

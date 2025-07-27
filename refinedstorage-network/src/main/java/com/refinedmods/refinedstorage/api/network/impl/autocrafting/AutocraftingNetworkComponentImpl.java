@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableC
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
@@ -46,6 +47,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewCraftingCalculatorListener.calculateTree;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlanCraftingCalculatorListener.calculatePlan;
 
 public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComponent, ParentContainer {
@@ -120,6 +122,23 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         } catch (final RejectedExecutionException e) {
             return CompletableFuture.completedFuture(Optional.of(new Preview(
                 PreviewType.NOT_AVAILABLE, Collections.emptyList(), Collections.emptyList())));
+        }
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        ResourceAmount.validate(resource, amount);
+        try {
+            return CompletableFuture.supplyAsync(() -> {
+                final RootStorage rootStorage = rootStorageProvider.get();
+                final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+                final TreePreview tree = calculateTree(calculator, resource, amount, cancellationToken);
+                return Optional.of(tree);
+            }, executorService);
+        } catch (final RejectedExecutionException e) {
+            return CompletableFuture.completedFuture(Optional.of(new TreePreview(
+                PreviewType.NOT_AVAILABLE, null, Collections.emptyList())));
         }
     }
 
