@@ -283,7 +283,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             return;
         }
         previewItemsScrollbar.visible = newStyle == AutocraftingPreviewStyle.LIST;
-        fullscreenTreeButton.visible = newStyle == AutocraftingPreviewStyle.TREE;
+        fullscreenTreeButton.visible = false;
     }
 
     @Nullable
@@ -373,6 +373,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             previewItemsScrollbar.setEnabled(false);
         }
         treePreviewWidget.setPreview(treePreview);
+        if (fullscreenTreeButton != null) {
+            fullscreenTreeButton.visible = treePreviewWidget.visible;
+        }
         updateConfirmButton(preview, treePreview);
     }
 
@@ -440,7 +443,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             contentsY + PREVIEW_AREA_CONTENTS_HEIGHT);
         renderPreviewContents(graphics, mouseX, mouseY, style, type, contentsY, contentsX, preview, treePreview);
         graphics.disableScissor();
-        if (treePreview != null && treePreview.rootNode() != null) {
+        if (style == AutocraftingPreviewStyle.TREE && treePreview != null && treePreview.rootNode() != null) {
             renderTreePreviewVignette(graphics, contentsX, contentsY);
         }
     }

@@ -120,7 +120,7 @@ class TreePreviewTest {
         // Assert
         assertThat(tree).usingRecursiveComparison()
             .isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, requestedAmount)
-                .node(OAK_PLANKS, 4 * requestedAmount)
+                .node(OAK_PLANKS, 4 * requestedAmount).toCraft(4 * requestedAmount)
                 .node(OAK_LOG, requestedAmount).missing(requestedAmount)
                 .end()
                 .end().build());
@@ -174,7 +174,7 @@ class TreePreviewTest {
 
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 1)
-            .node(SPRUCE_PLANKS, 4).node(SPRUCE_LOG, 1).available(1).end().end()
+            .node(SPRUCE_PLANKS, 4).toCraft(4).node(SPRUCE_LOG, 1).available(1).end().end()
             .build());
     }
 
@@ -253,7 +253,7 @@ class TreePreviewTest {
 
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 1)
-            .node(SPRUCE_PLANKS, 4).node(SPRUCE_LOG, 1).missing(1).end().end()
+            .node(SPRUCE_PLANKS, 4).toCraft(4).node(SPRUCE_LOG, 1).missing(1).end().end()
             .build());
     }
 
@@ -335,7 +335,7 @@ class TreePreviewTest {
 
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, CRAFTING_TABLE, 3)
-            .node(OAK_PLANKS, 12).available(3)
+            .node(OAK_PLANKS, 12).toCraft(12).available(3)
             .node(OAK_LOG, 3).available(3).end()
             .end()
             .build());
@@ -368,7 +368,7 @@ class TreePreviewTest {
 
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.MISSING_RESOURCES, CRAFTING_TABLE, 3)
-            .node(OAK_PLANKS, 12)
+            .node(OAK_PLANKS, 12).toCraft(12)
             .node(SPRUCE_LOG, 3).missing(3)
             .end().end()
             .build());
@@ -399,8 +399,9 @@ class TreePreviewTest {
 
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, SIGN, 3)
-            .node(OAK_PLANKS, 6).node(OAK_LOG, 3).available(3).end().end()
-            .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).available(1).end().end()
+            .node(OAK_PLANKS, 6).toCraft(6).node(OAK_LOG, 3).available(3).end().end()
+            .node(STICKS, 1).toCraft(4).node(OAK_PLANKS, 2).toCraft(2)
+            .node(OAK_LOG, 1).available(1).end().end()
             .end().build());
     }
 
@@ -431,23 +432,23 @@ class TreePreviewTest {
         // Assert
         assertThat(tree).usingRecursiveComparison().isEqualTo(tree(PreviewType.SUCCESS, SIGN, 3)
             .node(OAK_PLANKS, 6).available(6).end()
-            .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).available(1).end().end()
+            .node(STICKS, 1).toCraft(4).node(OAK_PLANKS, 2).toCraft(2).node(OAK_LOG, 1).available(1).end().end()
             .end().build());
     }
 
     private static Stream<Arguments> provideMissingResourcesPreview() {
         return Stream.of(
             Arguments.of(1, tree(PreviewType.MISSING_RESOURCES, SIGN, 3)
-                .node(OAK_PLANKS, 6).node(OAK_LOG, 3).available(3).end().end()
-                .node(STICKS, 1).node(OAK_PLANKS, 2).node(OAK_LOG, 1).missing(1).end().end()
+                .node(OAK_PLANKS, 6).toCraft(6).node(OAK_LOG, 3).available(3).end().end()
+                .node(STICKS, 1).toCraft(4).node(OAK_PLANKS, 2).toCraft(2).node(OAK_LOG, 1).missing(1).end().end()
                 .end().build()),
             Arguments.of(4, tree(PreviewType.MISSING_RESOURCES, SIGN, 6)
-                .node(OAK_PLANKS, 12).node(OAK_LOG, 6).available(3).missing(3).end().end()
-                .node(STICKS, 2).node(OAK_PLANKS, 2).node(OAK_LOG, 1).missing(1).end().end()
+                .node(OAK_PLANKS, 12).toCraft(12).node(OAK_LOG, 6).available(3).missing(3).end().end()
+                .node(STICKS, 2).toCraft(4).node(OAK_PLANKS, 2).toCraft(2).node(OAK_LOG, 1).missing(1).end().end()
                 .end().build()),
             Arguments.of(20, tree(PreviewType.MISSING_RESOURCES, SIGN, 21)
-                .node(OAK_PLANKS, 6 * 7).node(OAK_LOG, 21).available(3).missing(21 - 3).end().end()
-                .node(STICKS, 7).node(OAK_PLANKS, 4).node(OAK_LOG, 2).missing(2).end().end()
+                .node(OAK_PLANKS, 6 * 7).toCraft(6 * 7).node(OAK_LOG, 21).available(3).missing(21 - 3).end().end()
+                .node(STICKS, 7).toCraft(8).node(OAK_PLANKS, 4).toCraft(4).node(OAK_LOG, 2).missing(2).end().end()
                 .end().build())
         );
     }

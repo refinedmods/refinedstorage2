@@ -28,6 +28,7 @@ public record AutocraftingTreePreviewResponsePacket(UUID id, TreePreview preview
         StreamCodec.recursive(codec -> StreamCodec.composite(
             ResourceCodecs.STREAM_CODEC, node -> (PlatformResourceKey) node.getResource(),
             ByteBufCodecs.VAR_LONG, TreePreviewNode::getAmount,
+            ByteBufCodecs.VAR_LONG, TreePreviewNode::getToCraft,
             ByteBufCodecs.VAR_LONG, TreePreviewNode::getAvailable,
             ByteBufCodecs.VAR_LONG, TreePreviewNode::getMissing,
             ByteBufCodecs.collection(ArrayList::new, codec), TreePreviewNode::getChildren,

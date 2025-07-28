@@ -11,25 +11,23 @@ public class TreePreviewNode {
     private final ResourceKey resource;
     private final Map<ResourceKey, TreePreviewNode> children = new LinkedHashMap<>();
     private long amount;
+    private long toCraft;
     private long available;
     private long missing;
 
     public TreePreviewNode(final ResourceKey resource) {
-        this(resource, 0);
-    }
-
-    public TreePreviewNode(final ResourceKey resource, final long amount) {
         this.resource = resource;
-        this.amount = amount;
     }
 
     public TreePreviewNode(final ResourceKey resource,
                            final long amount,
+                           final long toCraft,
                            final long available,
                            final long missing,
                            final Collection<TreePreviewNode> children) {
         this.resource = resource;
         this.amount = amount;
+        this.toCraft = toCraft;
         this.available = available;
         this.missing = missing;
         for (final TreePreviewNode child : children) {
@@ -39,6 +37,10 @@ public class TreePreviewNode {
 
     public void available(final long amt) {
         this.available += amt;
+    }
+
+    public void toCraft(final long amt) {
+        this.toCraft += amt;
     }
 
     public void missing(final long amt) {
@@ -59,7 +61,8 @@ public class TreePreviewNode {
             existing.add(childAmount);
             return existing;
         }
-        final TreePreviewNode child = new TreePreviewNode(childResource, childAmount);
+        final TreePreviewNode child = new TreePreviewNode(childResource);
+        child.add(childAmount);
         children.put(childResource, child);
         return child;
     }
@@ -67,6 +70,7 @@ public class TreePreviewNode {
     public void merge(final TreePreviewNode node) {
         final TreePreviewNode merged = add(node.resource, node.amount);
         merged.available(node.available);
+        merged.toCraft(node.toCraft);
         merged.missing(node.missing);
         node.children.values().forEach(merged::merge);
     }
@@ -98,6 +102,10 @@ public class TreePreviewNode {
         return amount;
     }
 
+    public long getToCraft() {
+        return toCraft;
+    }
+
     public long getAvailable() {
         return available;
     }
@@ -111,6 +119,7 @@ public class TreePreviewNode {
         return "TreePreviewNode{"
             + "resource=" + resource
             + ", amount=" + amount
+            + ", toCraft=" + toCraft
             + ", available=" + available
             + ", missing=" + missing
             + ", children=" + children.values()

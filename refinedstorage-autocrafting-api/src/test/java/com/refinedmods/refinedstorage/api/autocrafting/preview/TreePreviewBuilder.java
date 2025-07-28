@@ -19,15 +19,25 @@ class TreePreviewBuilder {
     }
 
     static TreePreviewBuilder tree(final PreviewType type, final ResourceKey resource, final long amount) {
-        return new TreePreviewBuilder(type, new TreePreviewNode(resource, amount), null);
+        final TreePreviewNode rootNode = new TreePreviewNode(resource);
+        rootNode.add(amount);
+        rootNode.toCraft(amount);
+        return new TreePreviewBuilder(type, rootNode, null);
     }
 
     public TreePreviewBuilder node(final ResourceKey resource, final long amount) {
-        return new TreePreviewBuilder(type, new TreePreviewNode(resource, amount), this);
+        final TreePreviewNode childNode = new TreePreviewNode(resource);
+        childNode.add(amount);
+        return new TreePreviewBuilder(type, childNode, this);
     }
 
     public TreePreviewBuilder available(final long amount) {
         current.available(amount);
+        return this;
+    }
+
+    public TreePreviewBuilder toCraft(final long amount) {
+        current.toCraft(amount);
         return this;
     }
 

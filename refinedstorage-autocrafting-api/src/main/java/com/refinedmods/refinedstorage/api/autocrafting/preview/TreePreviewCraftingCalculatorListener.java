@@ -42,14 +42,18 @@ public class TreePreviewCraftingCalculatorListener implements CraftingCalculator
 
     @Override
     public void rootCalculationStarted(final ResourceKey resource, final long amount) {
-        currentNode = new TreePreviewNode(resource, amount);
+        currentNode = new TreePreviewNode(resource);
+        currentNode.add(amount);
+        currentNode.toCraft(amount);
     }
 
     @Override
     public CraftingCalculatorListener<TreePreviewNode> childCalculationStarted(final Pattern childPattern,
                                                                                final ResourceKey resource,
                                                                                final Amount amount) {
-        return new TreePreviewCraftingCalculatorListener(new TreePreviewNode(resource));
+        final TreePreviewNode childNode = new TreePreviewNode(resource);
+        childNode.toCraft(amount.getTotal());
+        return new TreePreviewCraftingCalculatorListener(childNode);
     }
 
     @Override
