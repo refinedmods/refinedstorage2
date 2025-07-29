@@ -95,19 +95,6 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
     }
 
     @Override
-    public void ingredientUsed(final Pattern ingredientPattern,
-                               final int ingredientIndex,
-                               final ResourceKey resource,
-                               final long amount) {
-        // no op
-    }
-
-    @Override
-    public void ingredientExtractedFromStorage(final ResourceKey resource, final long amount) {
-        // no op
-    }
-
-    @Override
     public Boolean getData() {
         return missingResources;
     }

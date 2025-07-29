@@ -3,10 +3,13 @@ package com.refinedmods.refinedstorage.api.autocrafting.preview;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 class TreePreviewBuilder {
-    private final TreePreviewNode current;
+    private TreePreviewNode current;
     @Nullable
     private final TreePreviewBuilder parent;
     private final PreviewType type;
@@ -19,30 +22,30 @@ class TreePreviewBuilder {
     }
 
     static TreePreviewBuilder tree(final PreviewType type, final ResourceKey resource, final long amount) {
-        final TreePreviewNode rootNode = new TreePreviewNode(resource);
-        rootNode.add(amount);
-        rootNode.toCraft(amount);
+        final TreePreviewNode rootNode = new TreePreviewNode(resource, amount, amount, 0, 0, Collections.emptyList());
         return new TreePreviewBuilder(type, rootNode, null);
     }
 
     public TreePreviewBuilder node(final ResourceKey resource, final long amount) {
-        final TreePreviewNode childNode = new TreePreviewNode(resource);
-        childNode.add(amount);
+        final TreePreviewNode childNode = new TreePreviewNode(resource, amount, 0, 0, 0, Collections.emptyList());
         return new TreePreviewBuilder(type, childNode, this);
     }
 
     public TreePreviewBuilder available(final long amount) {
-        current.available(amount);
+        current = new TreePreviewNode(current.resource(), current.amount(), current.toCraft(),
+            current.available() + amount, current.missing(), current.children());
         return this;
     }
 
     public TreePreviewBuilder toCraft(final long amount) {
-        current.toCraft(amount);
+        current = new TreePreviewNode(current.resource(), current.amount(),
+            current.toCraft() + amount, current.available(), current.missing(), current.children());
         return this;
     }
 
     public TreePreviewBuilder missing(final long amount) {
-        current.missing(amount);
+        current = new TreePreviewNode(current.resource(), current.amount(), current.toCraft(),
+            current.available(), current.missing() + amount, current.children());
         return this;
     }
 
@@ -50,7 +53,25 @@ class TreePreviewBuilder {
         if (parent == null) {
             throw new IllegalStateException("Cannot end tree while not in a node.");
         }
-        parent.current.merge(current);
+        final Map<ResourceKey, TreePreviewNode> parentChildren = parent.current.children()
+            .stream()
+            .collect(Collectors.toMap(TreePreviewNode::resource, node -> node, (a, b) -> a, LinkedHashMap::new));
+        parentChildren.put(current.resource(), new TreePreviewNode(
+            current.resource(),
+            current.amount(),
+            current.toCraft(),
+            current.available(),
+            current.missing(),
+            current.children()
+        ));
+        parent.current = new TreePreviewNode(
+            parent.current.resource(),
+            parent.current.amount(),
+            parent.current.toCraft(),
+            parent.current.available(),
+            parent.current.missing(),
+            parentChildren.values().stream().toList()
+        );
         return parent;
     }
 

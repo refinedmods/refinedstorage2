@@ -15,11 +15,11 @@ import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
-public class TreePreviewCraftingCalculatorListener implements CraftingCalculatorListener<TreePreviewNode> {
+public class TreePreviewCraftingCalculatorListener implements CraftingCalculatorListener<MutableTreePreviewNode> {
     @Nullable
-    private TreePreviewNode currentNode;
+    private MutableTreePreviewNode currentNode;
 
-    private TreePreviewCraftingCalculatorListener(@Nullable final TreePreviewNode currentNode) {
+    private TreePreviewCraftingCalculatorListener(@Nullable final MutableTreePreviewNode currentNode) {
         this.currentNode = currentNode;
     }
 
@@ -42,22 +42,22 @@ public class TreePreviewCraftingCalculatorListener implements CraftingCalculator
 
     @Override
     public void rootCalculationStarted(final ResourceKey resource, final long amount) {
-        currentNode = new TreePreviewNode(resource);
+        currentNode = new MutableTreePreviewNode(resource);
         currentNode.add(amount);
         currentNode.toCraft(amount);
     }
 
     @Override
-    public CraftingCalculatorListener<TreePreviewNode> childCalculationStarted(final Pattern childPattern,
-                                                                               final ResourceKey resource,
-                                                                               final Amount amount) {
-        final TreePreviewNode childNode = new TreePreviewNode(resource);
+    public CraftingCalculatorListener<MutableTreePreviewNode> childCalculationStarted(final Pattern childPattern,
+                                                                                      final ResourceKey resource,
+                                                                                      final Amount amount) {
+        final MutableTreePreviewNode childNode = new MutableTreePreviewNode(resource);
         childNode.toCraft(amount.getTotal());
         return new TreePreviewCraftingCalculatorListener(childNode);
     }
 
     @Override
-    public void childCalculationCompleted(final CraftingCalculatorListener<TreePreviewNode> childListener) {
+    public void childCalculationCompleted(final CraftingCalculatorListener<MutableTreePreviewNode> childListener) {
         if (currentNode == null) {
             currentNode = requireNonNull(childListener.getData());
             return;
@@ -82,7 +82,7 @@ public class TreePreviewCraftingCalculatorListener implements CraftingCalculator
     }
 
     @Override
-    public TreePreviewNode getData() {
+    public MutableTreePreviewNode getData() {
         return requireNonNull(currentNode);
     }
 

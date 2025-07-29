@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage.common.support.widget.ImageButton;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -140,7 +141,6 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     private CheckboxWidget notifyCheckbox;
     @Nullable
     private Button zoomButton;
-
     @Nullable
     private TreePreviewWidget tree;
 
@@ -291,7 +291,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             ? AutocraftingPreviewStyle.LIST.getName()
             : AutocraftingPreviewStyle.TREE.getName()));
         btn.setSprite(newStyle == AutocraftingPreviewStyle.TREE ? LIST_ICON : TREE_ICON);
-        if (scrollbar == null || zoomButton == null || tree == null) {
+        if (scrollbar == null || zoomButton == null) {
             return;
         }
         scrollbar.visible = newStyle == AutocraftingPreviewStyle.LIST;
@@ -455,15 +455,34 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                                 final AutocraftingPreviewStyle style, final int x, final int y) {
         final Preview preview = getMenu().getCurrentRequest().getPreview();
         final TreePreview treePreview = getMenu().getCurrentRequest().getTreePreview();
-        final PreviewType type = preview != null ? preview.type() : (treePreview != null ? treePreview.type() : null);
+        final PreviewType type = getType(preview, treePreview);
         if (type != null && type != PreviewType.SUCCESS && type != PreviewType.MISSING_RESOURCES) {
-            renderError(graphics, type, y, x,
-                preview != null ? preview.outputsOfPatternWithCycle() : treePreview.outputsOfPatternWithCycle());
+            renderError(graphics, type, y, x, getOutputsOfPatternWithCycle(preview, treePreview));
         } else if (style == AutocraftingPreviewStyle.LIST) {
             renderListPreview(graphics, mouseX, mouseY, preview, x, y);
         } else if (style == AutocraftingPreviewStyle.TREE) {
             renderTreePreview(graphics, mouseX, mouseY, x, y);
         }
+    }
+
+    @Nullable
+    private PreviewType getType(@Nullable final Preview preview, @Nullable final TreePreview treePreview) {
+        if (preview != null) {
+            return preview.type();
+        } else if (treePreview != null) {
+            return treePreview.type();
+        }
+        return null;
+    }
+
+    private List<ResourceAmount> getOutputsOfPatternWithCycle(@Nullable final Preview preview,
+                                                              @Nullable final TreePreview treePreview) {
+        if (preview != null) {
+            return preview.outputsOfPatternWithCycle();
+        } else if (treePreview != null) {
+            return treePreview.outputsOfPatternWithCycle();
+        }
+        return Collections.emptyList();
     }
 
     private void renderError(final GuiGraphics graphics, final PreviewType type, final int y, final int x,

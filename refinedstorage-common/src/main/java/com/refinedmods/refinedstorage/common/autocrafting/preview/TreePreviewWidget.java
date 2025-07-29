@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRender
 import com.refinedmods.refinedstorage.common.repackage.org.abego.treelayout.TreeLayout;
 import com.refinedmods.refinedstorage.common.repackage.org.abego.treelayout.util.DefaultConfiguration;
 import com.refinedmods.refinedstorage.common.repackage.org.abego.treelayout.util.DefaultTreeForTreeLayout;
+import com.refinedmods.refinedstorage.common.repackage.org.abego.treelayout.util.FixedNodeExtentProvider;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 
 import java.awt.geom.Rectangle2D;
@@ -50,6 +51,7 @@ class TreePreviewWidget extends AbstractWidget {
     private static final double DRAG_SMOOTH_FACTOR = 0.15;
     private static final int LINE_COLOR = 0xFF818181;
     private static final int INACTIVE_LINE_COLOR = 0x80818181;
+    private static final int NODE_SIZE = 26;
 
     private final Screen screen;
     private final Set<TreePreviewNode> activeNodes = new HashSet<>();
@@ -82,7 +84,7 @@ class TreePreviewWidget extends AbstractWidget {
         addChildren(treeContents, preview.rootNode());
         this.tree = new TreeLayout<>(
             treeContents,
-            new TreePreviewNodeExtentProvider(),
+            new FixedNodeExtentProvider<>(NODE_SIZE, NODE_SIZE),
             new DefaultConfiguration<>(15, 10)
         );
         ensureThatTheTreeIsCentered();
@@ -117,7 +119,7 @@ class TreePreviewWidget extends AbstractWidget {
 
     private static void addChildren(final DefaultTreeForTreeLayout<TreePreviewNode> treeContents,
                                     final TreePreviewNode parent) {
-        for (final TreePreviewNode child : parent.getChildren()) {
+        for (final TreePreviewNode child : parent.children()) {
             treeContents.addChild(parent, child);
             addChildren(treeContents, child);
         }
@@ -157,14 +159,14 @@ class TreePreviewWidget extends AbstractWidget {
             return false;
         }
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(
-            node.getResource().getClass()
+            node.resource().getClass()
         );
         final var bounds = tree.getNodeBounds().get(node);
         boolean anyHovering = false;
         if (isInView((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height)) {
             anyHovering = renderNode(graphics, node, bounds, rendering, mouseX, mouseY);
         }
-        for (final TreePreviewNode child : node.getChildren()) {
+        for (final TreePreviewNode child : node.children()) {
             if (renderNode(graphics, child, mouseX, mouseY)) {
                 anyHovering = true;
             }
@@ -190,14 +192,14 @@ class TreePreviewWidget extends AbstractWidget {
         }
         final ResourceLocation background = getNodeBackground(node, hovering);
         graphics.blitSprite(background, (int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height);
-        rendering.render(node.getResource(), graphics, (int) bounds.x + 5, (int) bounds.y + 5);
+        rendering.render(node.resource(), graphics, (int) bounds.x + 5, (int) bounds.y + 5);
         final boolean large = Minecraft.getInstance().isEnforceUnicode()
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
         ResourceSlotRendering.renderAmount(
             graphics,
             (int) bounds.x + 5,
             (int) bounds.y + 5,
-            rendering.formatAmount(node.getAmount(), true),
+            rendering.formatAmount(node.amount(), true),
             0xFFFFFF,
             large
         );
@@ -211,14 +213,14 @@ class TreePreviewWidget extends AbstractWidget {
 
     private void calculateActiveNodes(final TreePreviewNode node) {
         activeNodes.add(node);
-        node.getChildren().forEach(this::calculateActiveNodes);
+        node.children().forEach(this::calculateActiveNodes);
     }
 
     private static ResourceLocation getNodeBackground(final TreePreviewNode node, final boolean hovering) {
-        if (node.getMissing() > 0) {
+        if (node.missing() > 0) {
             return hovering ? MISSING_NODE_BACKGROUND_HOVER : MISSING_NODE_BACKGROUND;
         }
-        if (node.getToCraft() > 0) {
+        if (node.toCraft() > 0) {
             return hovering ? CRAFTING_NODE_BACKGROUND_HOVER : CRAFTING_NODE_BACKGROUND;
         }
         return hovering ? NODE_BACKGROUND_HOVER : NODE_BACKGROUND;
@@ -227,18 +229,18 @@ class TreePreviewWidget extends AbstractWidget {
     private List<FormattedCharSequence> getTooltip(final TreePreviewNode node,
                                                    final ResourceRendering resourceRendering) {
         final List<FormattedCharSequence> tooltip = new ArrayList<>(
-            resourceRendering.getTooltip(node.getResource()).stream().map(Component::getVisualOrderText).toList());
-        if (node.getAvailable() > 0) {
+            resourceRendering.getTooltip(node.resource()).stream().map(Component::getVisualOrderText).toList());
+        if (node.available() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.available",
-                resourceRendering.formatAmount(node.getAvailable())).getVisualOrderText());
+                resourceRendering.formatAmount(node.available())).getVisualOrderText());
         }
-        if (node.getToCraft() > 0) {
+        if (node.toCraft() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.to_craft",
-                resourceRendering.formatAmount(node.getToCraft())).getVisualOrderText());
+                resourceRendering.formatAmount(node.toCraft())).getVisualOrderText());
         }
-        if (node.getMissing() > 0) {
+        if (node.missing() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.missing",
-                resourceRendering.formatAmount(node.getMissing())).getVisualOrderText());
+                resourceRendering.formatAmount(node.missing())).getVisualOrderText());
         }
         return tooltip;
     }
@@ -250,7 +252,7 @@ class TreePreviewWidget extends AbstractWidget {
         final var bounds1 = tree.getNodeBounds().get(node);
         final int x1 = (int) bounds1.getCenterX();
         final int y1 = (int) bounds1.getCenterY();
-        for (final TreePreviewNode child : node.getChildren()) {
+        for (final TreePreviewNode child : node.children()) {
             if (tree == null) {
                 return;
             }

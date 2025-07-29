@@ -4,9 +4,8 @@ import org.apiguardian.api.API;
 
 /**
  * A token that can be used to cancel an ongoing crafting calculation.
- * When {@link #isCancelled()} returns true, the calculation will stop as soon as possible.
- * Listeners will be notified via
- * {@link CraftingCalculatorListener#childCalculationCancelled(CraftingCalculatorListener)}.
+ * When {@link #isCancelled()} returns true, the calculation will stop as soon as possible by throwing a
+ * {@link CancellationException}.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-beta.3")
 public interface CancellationToken {

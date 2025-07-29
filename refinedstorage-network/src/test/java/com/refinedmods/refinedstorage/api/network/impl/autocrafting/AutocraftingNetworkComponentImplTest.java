@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationT
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewItem;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewNode;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -172,6 +174,47 @@ class AutocraftingNetworkComponentImplTest {
     void shouldNotGetPreviewForInvalidAmount(final long amount) {
         // Act
         final ThrowableAssert.ThrowingCallable action = () -> sut.getPreview(B, amount, CancellationToken.NONE);
+
+        // Act & assert
+        assertThatThrownBy(action).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void shouldGetTreePreview() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        final NetworkNodeContainer container = () -> provider;
+        sut.onContainerAdded(container);
+
+        // Act
+        final Optional<TreePreview> preview = sut.getTreePreview(B, 2, CancellationToken.NONE).join();
+
+        // Assert
+        assertThat(preview).get().usingRecursiveComparison().isEqualTo(new TreePreview(PreviewType.SUCCESS,
+            new TreePreviewNode(B, 2, 2, 0, 0, List.of(
+                new TreePreviewNode(A, 6, 0, 6, 0, Collections.emptyList())
+            )), Collections.emptyList()));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotGetTreePreviewForInvalidResource() {
+        // Act
+        final ThrowableAssert.ThrowingCallable action = () -> sut.getTreePreview(null, 1, CancellationToken.NONE);
+
+        // Act & assert
+        assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0, -1})
+    void shouldNotGetTreePreviewForInvalidAmount(final long amount) {
+        // Act
+        final ThrowableAssert.ThrowingCallable action = () -> sut.getTreePreview(B, amount, CancellationToken.NONE);
 
         // Act & assert
         assertThatThrownBy(action).isInstanceOf(IllegalArgumentException.class);

@@ -117,6 +117,7 @@ public class DefaultTreeForTreeLayout<TreeNode> extends
 		parents.put(node, parentNode);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addChildren(TreeNode parentNode, TreeNode... nodes) {
 		for (TreeNode node : nodes) {
 			addChild(parentNode, node);
