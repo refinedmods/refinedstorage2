@@ -8,17 +8,17 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class HoveredImageButton extends Button {
+public class CustomButton extends Button {
     protected WidgetSprites sprites;
 
-    public HoveredImageButton(final int x,
-                              final int y,
-                              final int width,
-                              final int height,
-                              final WidgetSprites sprites,
-                              final Consumer<HoveredImageButton> onPress,
-                              final Component component) {
-        super(x, y, width, height, component, button -> onPress.accept((HoveredImageButton) button), DEFAULT_NARRATION);
+    public CustomButton(final int x,
+                        final int y,
+                        final int width,
+                        final int height,
+                        final WidgetSprites sprites,
+                        final Consumer<CustomButton> onPress,
+                        final Component component) {
+        super(x, y, width, height, component, button -> onPress.accept((CustomButton) button), DEFAULT_NARRATION);
         this.sprites = sprites;
     }
 

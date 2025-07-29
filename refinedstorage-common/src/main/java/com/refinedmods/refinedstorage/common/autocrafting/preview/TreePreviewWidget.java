@@ -55,9 +55,9 @@ class TreePreviewWidget extends AbstractWidget {
     private final Set<TreePreviewNode> activeNodes = new HashSet<>();
 
     @Nullable
-    private TreeLayout<TreePreviewNode> treeLayout;
+    private TreeLayout<TreePreviewNode> tree;
     @Nullable
-    private TreePreview treePreview;
+    private TreePreview preview;
     @Nullable
     private TreePreviewNode hoveredNode;
 
@@ -75,29 +75,31 @@ class TreePreviewWidget extends AbstractWidget {
     }
 
     void setPreview(@Nullable final TreePreview preview) {
-        this.treePreview = preview;
+        this.preview = preview;
         if (preview == null || preview.rootNode() == null) {
-            this.treeLayout = null;
-            this.visible = false;
+            this.tree = null;
             return;
         }
         final DefaultTreeForTreeLayout<TreePreviewNode> treeContents =
             new DefaultTreeForTreeLayout<>(preview.rootNode());
         addChildren(treeContents, preview.rootNode());
-        this.treeLayout = new TreeLayout<>(
+        this.tree = new TreeLayout<>(
             treeContents,
             new TreePreviewNodeExtentProvider(),
             new DefaultConfiguration<>(15, 10)
         );
-        this.visible = true;
         ensureThatTheTreeIsCentered();
     }
 
+    boolean hasContents() {
+        return tree != null;
+    }
+
     private void ensureThatTheTreeIsCentered() {
-        if (treeLayout == null) {
+        if (tree == null) {
             return;
         }
-        final Rectangle2D bounds = this.treeLayout.getBounds();
+        final Rectangle2D bounds = this.tree.getBounds();
         final double scaleX = this.width / bounds.getWidth();
         final double scaleY = this.height / bounds.getHeight();
         final double scale = Math.min(scaleX, scaleY);
@@ -127,18 +129,18 @@ class TreePreviewWidget extends AbstractWidget {
     @Override
     protected void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY,
                                 final float partialTicks) {
-        if (!visible || treePreview == null || treePreview.rootNode() == null) {
+        if (!visible || preview == null || preview.rootNode() == null) {
             return;
         }
+        renderBackground(graphics);
         zoom += (targetZoom - zoom) * SMOOTH_FACTOR;
         translateX += (targetTranslateX - translateX) * DRAG_SMOOTH_FACTOR;
         translateY += (targetTranslateY - translateY) * DRAG_SMOOTH_FACTOR;
-        renderBackground(graphics);
         graphics.pose().pushPose();
         graphics.pose().translate(translateX, translateY, 0);
         graphics.pose().scale((float) zoom, (float) zoom, 1.0f);
-        renderEdges(graphics, treePreview.rootNode());
-        if (!renderNode(graphics, treePreview.rootNode(), mouseX, mouseY)) {
+        renderEdges(graphics, preview.rootNode());
+        if (!renderNode(graphics, preview.rootNode(), mouseX, mouseY)) {
             hoveredNode = null;
             activeNodes.clear();
         }
@@ -151,13 +153,13 @@ class TreePreviewWidget extends AbstractWidget {
 
     private boolean renderNode(final GuiGraphics graphics, final TreePreviewNode node,
                                final int mouseX, final int mouseY) {
-        if (treeLayout == null) {
+        if (tree == null) {
             return false;
         }
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(
             node.getResource().getClass()
         );
-        final var bounds = treeLayout.getNodeBounds().get(node);
+        final var bounds = tree.getNodeBounds().get(node);
         boolean anyHovering = false;
         if (isInView((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height)) {
             anyHovering = renderNode(graphics, node, bounds, rendering, mouseX, mouseY);
@@ -242,17 +244,17 @@ class TreePreviewWidget extends AbstractWidget {
     }
 
     private void renderEdges(final GuiGraphics graphics, final TreePreviewNode node) {
-        if (treeLayout == null || treeLayout.getTree().isLeaf(node)) {
+        if (tree == null || tree.getTree().isLeaf(node)) {
             return;
         }
-        final var bounds1 = treeLayout.getNodeBounds().get(node);
+        final var bounds1 = tree.getNodeBounds().get(node);
         final int x1 = (int) bounds1.getCenterX();
         final int y1 = (int) bounds1.getCenterY();
         for (final TreePreviewNode child : node.getChildren()) {
-            if (treeLayout == null) {
+            if (tree == null) {
                 return;
             }
-            final var bounds2 = treeLayout.getNodeBounds().get(child);
+            final var bounds2 = tree.getNodeBounds().get(child);
             final int x2 = (int) bounds2.getCenterX();
             final int y2 = (int) bounds2.getCenterY();
             if (isInView(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1))) {

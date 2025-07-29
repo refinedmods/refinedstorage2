@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.common.content.KeyMappings;
 import com.refinedmods.refinedstorage.common.grid.AbstractCraftingGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
-import com.refinedmods.refinedstorage.common.support.widget.HoveredImageButton;
+import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 
 import java.util.List;
 import javax.annotation.Nullable;
@@ -47,7 +47,7 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
     );
 
     @Nullable
-    private HoveredImageButton clearToNetworkButton;
+    private CustomButton clearToNetworkButton;
 
     private boolean filteringBasedOnCraftingMatrixItems;
 
@@ -131,7 +131,7 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
         clearToNetworkButton.active = active;
     }
 
-    private HoveredImageButton createClearButton(final int x, final int y, final boolean toPlayerInventory) {
+    private CustomButton createClearButton(final int x, final int y, final boolean toPlayerInventory) {
         final MutableComponent text = createTranslation(
             "gui",
             "crafting_grid.move." + (toPlayerInventory ? "inventory" : "network")
@@ -143,7 +143,7 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
         final WidgetSprites widgetSprites = toPlayerInventory
             ? CLEAR_BUTTON_TO_PLAYER_INVENTORY_SPRITES
             : CLEAR_BUTTON_TO_NETWORK_SPRITES;
-        final HoveredImageButton button = new HoveredImageButton(
+        final CustomButton button = new CustomButton(
             x,
             y,
             CLEAR_BUTTON_SIZE,

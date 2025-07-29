@@ -246,7 +246,7 @@
   "gui.refinedstorage.autocrafting_preview.notify.help": "Send a notification when the autocrafting task is finished.",
   "gui.refinedstorage.autocrafting_preview.style.list": "List",
   "gui.refinedstorage.autocrafting_preview.style.tree": "Tree",
-  "gui.refinedstorage.autocrafting_preview.fullscreen_tree": "Full",
+  "gui.refinedstorage.autocrafting_preview.zoom": "Zoom",
   "gui.refinedstorage.autocrafter_manager.search_mode": "Search mode",
   "gui.refinedstorage.autocrafter_manager.search_mode.all": "All",
   "gui.refinedstorage.autocrafter_manager.search_mode.all.help": "Search in pattern inputs, pattern outputs and autocrafter names.",

@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
-import com.refinedmods.refinedstorage.common.support.widget.HoveredImageButton;
+import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -102,8 +102,8 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
         }
     }
 
-    private HoveredImageButton createCreatePatternButton(final int x, final int y) {
-        final HoveredImageButton button = new HoveredImageButton(
+    private CustomButton createCreatePatternButton(final int x, final int y) {
+        final CustomButton button = new CustomButton(
             x,
             y,
             CREATE_PATTERN_BUTTON_SIZE,
@@ -133,8 +133,8 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
         }
     }
 
-    private HoveredImageButton createClearButton() {
-        final HoveredImageButton button = new HoveredImageButton(
+    private CustomButton createClearButton() {
+        final CustomButton button = new CustomButton(
             requireNonNull(renderer).getClearButtonX(),
             requireNonNull(renderer).getClearButtonY(),
             CLEAR_BUTTON_SIZE,
