@@ -27,7 +27,7 @@ class FullscreenTreePreviewScreen extends Screen {
     protected void init() {
         super.init();
         this.treePreviewWidget = new TreePreviewWidget(this, 0, 0, width, height);
-        this.treePreviewWidget.setPreview(treePreview);
+        this.treePreviewWidget.update(treePreview);
     }
 
     @Override

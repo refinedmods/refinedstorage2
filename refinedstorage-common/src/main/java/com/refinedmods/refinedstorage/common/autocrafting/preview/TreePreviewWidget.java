@@ -57,8 +57,6 @@ class TreePreviewWidget extends AbstractWidget {
     @Nullable
     private TreeLayout<TreePreviewNode> tree;
     @Nullable
-    private TreePreview preview;
-    @Nullable
     private TreePreviewNode hoveredNode;
 
     private double zoom = 1.0;
@@ -74,8 +72,7 @@ class TreePreviewWidget extends AbstractWidget {
         this.screen = screen;
     }
 
-    void setPreview(@Nullable final TreePreview preview) {
-        this.preview = preview;
+    void update(@Nullable final TreePreview preview) {
         if (preview == null || preview.rootNode() == null) {
             this.tree = null;
             return;
@@ -129,18 +126,21 @@ class TreePreviewWidget extends AbstractWidget {
     @Override
     protected void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY,
                                 final float partialTicks) {
-        if (!visible || preview == null || preview.rootNode() == null) {
+        if (!visible) {
             return;
         }
         renderBackground(graphics);
+        if (tree == null) {
+            return;
+        }
         zoom += (targetZoom - zoom) * SMOOTH_FACTOR;
         translateX += (targetTranslateX - translateX) * DRAG_SMOOTH_FACTOR;
         translateY += (targetTranslateY - translateY) * DRAG_SMOOTH_FACTOR;
         graphics.pose().pushPose();
         graphics.pose().translate(translateX, translateY, 0);
         graphics.pose().scale((float) zoom, (float) zoom, 1.0f);
-        renderEdges(graphics, preview.rootNode());
-        if (!renderNode(graphics, preview.rootNode(), mouseX, mouseY)) {
+        renderEdges(graphics, tree.getTree().getRoot());
+        if (!renderNode(graphics, tree.getTree().getRoot(), mouseX, mouseY)) {
             hoveredNode = null;
             activeNodes.clear();
         }
