@@ -14,7 +14,6 @@ public class PreviewBuilder {
     private final Map<ResourceKey, MutablePreviewItem> items = new LinkedHashMap<>();
     private List<ResourceAmount> outputsOfPatternWithCycle = Collections.emptyList();
     private boolean missing;
-    private boolean cancelled;
 
     private PreviewBuilder() {
     }
@@ -29,14 +28,6 @@ public class PreviewBuilder {
 
     public PreviewBuilder withPatternWithCycle(final Pattern pattern) {
         this.outputsOfPatternWithCycle = pattern.layout().outputs();
-        return this;
-    }
-
-    public PreviewBuilder cancelled() {
-        this.cancelled = true;
-        this.outputsOfPatternWithCycle = Collections.emptyList();
-        this.items.clear();
-        this.missing = false;
         return this;
     }
 
@@ -67,7 +58,6 @@ public class PreviewBuilder {
         }
         copy.outputsOfPatternWithCycle = outputsOfPatternWithCycle;
         copy.missing = missing;
-        copy.cancelled = cancelled;
         return copy;
     }
 
@@ -79,9 +69,6 @@ public class PreviewBuilder {
     }
 
     private PreviewType getType() {
-        if (cancelled) {
-            return PreviewType.CANCELLED;
-        }
         if (!outputsOfPatternWithCycle.isEmpty()) {
             return PreviewType.CYCLE_DETECTED;
         }

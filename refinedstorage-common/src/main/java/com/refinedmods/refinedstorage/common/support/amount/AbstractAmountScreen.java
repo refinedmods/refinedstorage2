@@ -35,9 +35,9 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     private static final int ACTION_BUTTON_SPACING = 20;
 
     @Nullable
-    protected IconButton confirmButton;
+    protected ActionButton confirmButton;
     @Nullable
-    protected IconButton cancelButton;
+    protected ActionButton cancelButton;
     @Nullable
     protected EditBox amountField;
 
@@ -89,7 +89,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         final int width = configuration.isHorizontalActionButtons()
             ? font.width(RESET_TEXT) + ACTION_BUTTON_SPACING + ICON_SIZE
             : ACTION_BUTTON_WIDTH;
-        final IconButton button = new IconButton(
+        final ActionButton button = new ActionButton(
             leftPos + x,
             topPos + y,
             width,
@@ -97,7 +97,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             RESET_TEXT,
             btn -> reset()
         );
-        button.setIcon(IconButton.Icon.RESET);
+        button.setIcon(ActionIcon.RESET);
         return addRenderableWidget(button);
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         final int width = configuration.isHorizontalActionButtons()
             ? font.width(configuration.getConfirmButtonText()) + ACTION_BUTTON_SPACING + ICON_SIZE
             : ACTION_BUTTON_WIDTH;
-        final IconButton button = new IconButton(
+        final ActionButton button = new ActionButton(
             leftPos + x,
             topPos + y,
             width,
@@ -118,15 +118,15 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     @Nullable
-    protected IconButton.Icon getConfirmButtonIcon() {
-        return IconButton.Icon.SET;
+    protected ActionIcon getConfirmButtonIcon() {
+        return ActionIcon.SET;
     }
 
     private void addCancelButton(final int x, final int y) {
         final int width = configuration.isHorizontalActionButtons()
             ? font.width(CANCEL_TEXT) + ACTION_BUTTON_SPACING + ICON_SIZE
             : ACTION_BUTTON_WIDTH;
-        final IconButton button = new IconButton(
+        final ActionButton button = new ActionButton(
             leftPos + x,
             topPos + y,
             width,
@@ -134,7 +134,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             CANCEL_TEXT,
             btn -> close()
         );
-        button.setIcon(IconButton.Icon.CANCEL);
+        button.setIcon(ActionIcon.CANCEL);
         cancelButton = addRenderableWidget(button);
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         final boolean valid = getAndValidateAmount().isPresent();
         if (confirmButton != null) {
             confirmButton.active = valid;
-            confirmButton.setIcon(valid ? getConfirmButtonIcon() : IconButton.Icon.ERROR);
+            confirmButton.setIcon(valid ? getConfirmButtonIcon() : ActionIcon.ERROR);
         } else {
             tryConfirm();
         }

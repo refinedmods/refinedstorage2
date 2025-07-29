@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.grid;
 
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
@@ -17,14 +18,12 @@ import com.refinedmods.refinedstorage.api.storage.NoopStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.api.autocrafting.CancelablePreviewProvider;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
-import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,10 +34,9 @@ import java.util.stream.Collectors;
 
 import net.minecraft.server.level.ServerPlayer;
 
-class WirelessGrid implements Grid, CancelablePreviewProvider {
+class WirelessGrid implements Grid {
     private final NetworkItemContext context;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
-    private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
 
     WirelessGrid(final NetworkItemContext context) {
         this.context = context;
@@ -125,23 +123,22 @@ class WirelessGrid implements Grid, CancelablePreviewProvider {
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
                                                            final CancellationToken cancellationToken) {
         return getAutocrafting()
-            .map(component -> {
-                final CompletableFuture<Optional<Preview>> previewRequest = component.getPreview(resource, amount,
-                    cancellationToken);
-                pendingAutocraftingRequests.add(previewRequest, cancellationToken);
-                return previewRequest;
-            })
+            .map(autocrafting -> autocrafting.getPreview(resource, amount, cancellationToken))
+            .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        return getAutocrafting()
+            .map(autocrafting -> autocrafting.getTreePreview(resource, amount, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 
     @Override
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource, final CancellationToken cancellationToken) {
         return getAutocrafting()
-            .map(component -> {
-                final CompletableFuture<Long> maxAmountRequest = component.getMaxAmount(resource, cancellationToken);
-                pendingAutocraftingRequests.add(maxAmountRequest, cancellationToken);
-                return maxAmountRequest;
-            })
+            .map(autocrafting -> autocrafting.getMaxAmount(resource, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(0L));
     }
 
@@ -152,17 +149,7 @@ class WirelessGrid implements Grid, CancelablePreviewProvider {
                                                          final boolean notify,
                                                          final CancellationToken cancellationToken) {
         return getAutocrafting()
-            .map(autocrafting -> {
-                final CompletableFuture<Optional<TaskId>> taskRequest = autocrafting.startTask(resource, amount,
-                    actor, notify, cancellationToken);
-                pendingAutocraftingRequests.add(taskRequest, cancellationToken);
-                return taskRequest;
-            })
+            .map(autocrafting -> autocrafting.startTask(resource, amount, actor, notify, cancellationToken))
             .orElse(CompletableFuture.completedFuture(Optional.empty()));
-    }
-
-    @Override
-    public void cancel() {
-        pendingAutocraftingRequests.cancelAll();
     }
 }

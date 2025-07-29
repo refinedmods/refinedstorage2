@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.4] - 2025-07-29
+
+### Added
+
+-   The crafting preview can now show a crafting tree.
+
+### Fixed
+
+-   The Interface's resource container is protected against empty fluid stacks now, avoiding crashes with certain mods.
+
 ## [2.0.0-beta.3] - 2025-07-22
 
 ### Changed
@@ -949,7 +959,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...HEAD
+
+[2.0.0-beta.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.3...v2.0.0-beta.4
 
 [2.0.0-beta.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.2...v2.0.0-beta.3
 

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.packet.s2c;
 
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -102,6 +103,12 @@ public final class S2CPackets {
                                                        final UUID id,
                                                        final Preview preview) {
         Platform.INSTANCE.sendPacketToClient(player, new AutocraftingPreviewResponsePacket(id, preview));
+    }
+
+    public static void sendAutocraftingTreePreviewResponse(final ServerPlayer player,
+                                                           final UUID id,
+                                                           final TreePreview preview) {
+        Platform.INSTANCE.sendPacketToClient(player, new AutocraftingTreePreviewResponsePacket(id, preview));
     }
 
     public static void sendAutocraftingPreviewCancelResponse(final ServerPlayer player) {

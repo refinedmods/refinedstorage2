@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
@@ -135,8 +136,9 @@ public final class C2SPackets {
 
     public static void sendAutocraftingPreviewRequest(final UUID id,
                                                       final PlatformResourceKey resource,
-                                                      final long amount) {
-        Platform.INSTANCE.sendPacketToServer(new AutocraftingPreviewRequestPacket(id, resource, amount));
+                                                      final long amount,
+                                                      final AutocraftingPreviewStyle style) {
+        Platform.INSTANCE.sendPacketToServer(new AutocraftingPreviewRequestPacket(id, resource, amount, style));
     }
 
     public static void sendAutocraftingRequest(final UUID id,
