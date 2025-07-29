@@ -26,6 +26,7 @@ import static com.refinedmods.refinedstorage.common.support.Sprites.ERROR;
 import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static com.refinedmods.refinedstorage.common.util.MathUtil.darkenARGB;
 
 public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocraftingMonitorContainerMenu>
     implements AutocraftingMonitorListener {
@@ -241,19 +242,6 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
             return CRAFTING_COLOR;
         }
         return ITEM_COLOR;
-    }
-
-    private static int darkenARGB(final int argb, final double percentage) {
-        final int alpha = (argb >> 24) & 0xFF;
-        int red = (argb >> 16) & 0xFF;
-        int green = (argb >> 8) & 0xFF;
-        int blue = argb & 0xFF;
-
-        red = (int) Math.max(0, red * (1 - percentage));
-        green = (int) Math.max(0, green * (1 - percentage));
-        blue = (int) Math.max(0, blue * (1 - percentage));
-
-        return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
     private void renderItem(final GuiGraphics graphics,

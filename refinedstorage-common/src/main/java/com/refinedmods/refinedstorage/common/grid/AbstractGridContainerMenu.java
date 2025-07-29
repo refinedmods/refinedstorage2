@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepository;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
@@ -500,6 +501,15 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
             cancellationToken);
         pendingAutocraftingRequests.add(previewRequest, cancellationToken);
         return previewRequest;
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<TreePreview>> treePreviewRequest = requireNonNull(grid)
+            .getTreePreview(resource, amount, cancellationToken);
+        pendingAutocraftingRequests.add(treePreviewRequest, cancellationToken);
+        return treePreviewRequest;
     }
 
     @Override

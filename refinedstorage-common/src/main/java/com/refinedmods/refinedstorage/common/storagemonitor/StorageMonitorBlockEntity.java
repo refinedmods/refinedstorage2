@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.storagemonitor;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -376,6 +377,15 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
         return Optional.ofNullable(mainNetworkNode.getNetwork())
             .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
             .map(component -> component.getPreview(resource, amount, cancellationToken))
+            .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        return Optional.ofNullable(mainNetworkNode.getNetwork())
+            .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
+            .map(component -> component.getTreePreview(resource, amount, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 

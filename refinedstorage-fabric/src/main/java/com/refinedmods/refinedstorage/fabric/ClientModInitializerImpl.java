@@ -31,6 +31,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPrev
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTaskCompletedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTreePreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicatorUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
@@ -323,6 +324,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(
             AutocraftingPreviewResponsePacket.PACKET_TYPE,
             wrapHandler((packet, ctx) -> AutocraftingPreviewResponsePacket.handle(packet))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+            AutocraftingTreePreviewResponsePacket.PACKET_TYPE,
+            wrapHandler((packet, ctx) -> AutocraftingTreePreviewResponsePacket.handle(packet))
         );
         ClientPlayNetworking.registerGlobalReceiver(
             AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,

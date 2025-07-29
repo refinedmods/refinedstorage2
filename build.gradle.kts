@@ -19,5 +19,9 @@ project.extensions.getByType<SonarExtension>().apply {
             "sonar.coverage.exclusions",
             "refinedstorage-neoforge-api/**/*,refinedstorage-neoforge/**/*,refinedstorage-fabric-api/**/*,refinedstorage-fabric/**/*,refinedstorage-common/**/*,refinedstorage-common-api/**/*"
         )
+        property(
+            "sonar.exclusions",
+            "refinedstorage-common/src/main/java/com/refinedmods/refinedstorage/common/repackage/**"
+        )
     }
 }

@@ -8,5 +8,5 @@ import org.apiguardian.api.API;
 @FunctionalInterface
 public interface CraftingCalculator {
     <T> void calculate(ResourceKey resource, long amount, CraftingCalculatorListener<T> listener,
-                       CancellationToken cancellationToken);
+                       CancellationToken cancellationToken) throws CancellationException;
 }

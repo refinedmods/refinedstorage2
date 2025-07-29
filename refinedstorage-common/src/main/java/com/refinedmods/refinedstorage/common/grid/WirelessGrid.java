@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.grid;
 
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
@@ -123,6 +124,14 @@ class WirelessGrid implements Grid {
                                                            final CancellationToken cancellationToken) {
         return getAutocrafting()
             .map(autocrafting -> autocrafting.getPreview(resource, amount, cancellationToken))
+            .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        return getAutocrafting()
+            .map(autocrafting -> autocrafting.getTreePreview(resource, amount, cancellationToken))
             .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
     }
 

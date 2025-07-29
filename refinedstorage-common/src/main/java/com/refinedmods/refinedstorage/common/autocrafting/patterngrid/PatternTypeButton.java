@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
-import com.refinedmods.refinedstorage.common.support.widget.HoveredImageButton;
+import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-class PatternTypeButton extends HoveredImageButton {
+class PatternTypeButton extends CustomButton {
     private static final WidgetSprites GENERIC_SMALL_BUTTON_SPRITES = new WidgetSprites(
         createIdentifier("widget/generic_small_button"),
         createIdentifier("widget/generic_small_button_disabled"),
@@ -24,7 +24,7 @@ class PatternTypeButton extends HoveredImageButton {
 
     PatternTypeButton(final int x,
                       final int y,
-                      final Consumer<HoveredImageButton> onPress,
+                      final Consumer<CustomButton> onPress,
                       final PatternType patternType,
                       final boolean selected) {
         super(x, y, 16, 16, GENERIC_SMALL_BUTTON_SPRITES, onPress, patternType.getTranslatedName());

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.storagemonitor;
 
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
+import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -51,6 +52,15 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
             requireNonNull(storageMonitor).getPreview(resource, amount, cancellationToken);
         pendingAutocraftingRequests.add(previewRequest, cancellationToken);
         return previewRequest;
+    }
+
+    @Override
+    public CompletableFuture<Optional<TreePreview>> getTreePreview(final ResourceKey resource, final long amount,
+                                                                   final CancellationToken cancellationToken) {
+        final CompletableFuture<Optional<TreePreview>> treePreviewRequest = requireNonNull(storageMonitor)
+            .getTreePreview(resource, amount, cancellationToken);
+        pendingAutocraftingRequests.add(treePreviewRequest, cancellationToken);
+        return treePreviewRequest;
     }
 
     @Override

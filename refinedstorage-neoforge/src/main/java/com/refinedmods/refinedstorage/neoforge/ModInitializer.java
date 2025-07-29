@@ -72,6 +72,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPrev
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingPreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTaskCompletedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTreePreviewResponsePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicatorUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
@@ -743,6 +744,11 @@ public class ModInitializer extends AbstractModInitializer {
             AutocraftingPreviewResponsePacket.PACKET_TYPE,
             AutocraftingPreviewResponsePacket.STREAM_CODEC,
             wrapHandler((packet, ctx) -> AutocraftingPreviewResponsePacket.handle(packet))
+        );
+        registrar.playToClient(
+            AutocraftingTreePreviewResponsePacket.PACKET_TYPE,
+            AutocraftingTreePreviewResponsePacket.STREAM_CODEC,
+            wrapHandler((packet, ctx) -> AutocraftingTreePreviewResponsePacket.handle(packet))
         );
         registrar.playToClient(
             AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,

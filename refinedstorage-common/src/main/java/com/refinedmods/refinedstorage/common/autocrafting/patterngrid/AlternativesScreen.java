@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage.common.support.amount.AmountScreenConfigur
 import com.refinedmods.refinedstorage.common.support.amount.DoubleAmountOperations;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
-import com.refinedmods.refinedstorage.common.support.widget.HoveredImageButton;
+import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
 
@@ -181,7 +181,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             alternativeCheckbox.setTooltip(Tooltip.create(id));
         }
         alternativeCheckboxes.add(addWidget(alternativeCheckbox));
-        final HoveredImageButton expandButton = new HoveredImageButton(
+        final CustomButton expandButton = new CustomButton(
             x + INSET_WIDTH - 16 - 1,
             y + 1,
             16,

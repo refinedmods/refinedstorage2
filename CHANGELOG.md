@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   The crafting preview can now show a crafting tree.
+
 ### Fixed
 
 -   The Interface's resource container is protected against empty fluid stacks now, avoiding crashes with certain mods.

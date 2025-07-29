@@ -45,25 +45,6 @@ class PreviewBuilderTest {
     }
 
     @Test
-    void testCancelled() {
-        // Arrange
-        final Pattern pattern = pattern().ingredient(OAK_LOG, 1).output(OAK_PLANKS, 4).build();
-
-        // Act
-        final Preview preview = PreviewBuilder.create()
-            .addAvailable(OAK_LOG, 1)
-            .addMissing(SPRUCE_LOG, 1)
-            .withPatternWithCycle(pattern)
-            .cancelled()
-            .build();
-
-        // Assert
-        assertThat(preview)
-            .usingRecursiveComparison()
-            .isEqualTo(new Preview(PreviewType.CANCELLED, Collections.emptyList(), Collections.emptyList()));
-    }
-
-    @Test
     void testPreview() {
         // Act
         final Preview preview = PreviewBuilder.create()

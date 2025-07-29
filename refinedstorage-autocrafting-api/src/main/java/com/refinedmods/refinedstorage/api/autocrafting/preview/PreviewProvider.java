@@ -15,6 +15,9 @@ public interface PreviewProvider {
     CompletableFuture<Optional<Preview>> getPreview(ResourceKey resource, long amount,
                                                     CancellationToken cancellationToken);
 
+    CompletableFuture<Optional<TreePreview>> getTreePreview(ResourceKey resource, long amount,
+                                                            CancellationToken cancellationToken);
+
     CompletableFuture<Long> getMaxAmount(ResourceKey resource, CancellationToken cancellationToken);
 
     CompletableFuture<Optional<TaskId>> startTask(ResourceKey resource, long amount, Actor actor, boolean notify,

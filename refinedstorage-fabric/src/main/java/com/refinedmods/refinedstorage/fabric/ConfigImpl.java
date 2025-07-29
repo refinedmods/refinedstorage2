@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.fabric;
 import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerSearchMode;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerViewType;
+import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
 import com.refinedmods.refinedstorage.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
@@ -26,6 +27,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     private boolean smoothScrolling = true;
 
     private boolean autocraftingNotification = true;
+
+    private AutocraftingPreviewStyle autocraftingPreviewStyle = AutocraftingPreviewStyle.LIST;
 
     private boolean searchBoxAutoSelected = false;
 
@@ -184,6 +187,17 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     @Override
     public void setAutocraftingNotification(final boolean autocraftingNotification) {
         this.autocraftingNotification = autocraftingNotification;
+        AutoConfig.getConfigHolder(ConfigImpl.class).save();
+    }
+
+    @Override
+    public AutocraftingPreviewStyle getAutocraftingPreviewStyle() {
+        return autocraftingPreviewStyle;
+    }
+
+    @Override
+    public void setAutocraftingPreviewStyle(final AutocraftingPreviewStyle autocraftingPreviewStyle) {
+        this.autocraftingPreviewStyle = autocraftingPreviewStyle;
         AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 

@@ -115,6 +115,7 @@ class CraftingTree<T> {
                 );
                 if (newState == null) {
                     craftingState.extractFromInternalStorage(resourceState.resource(), remaining);
+                    listener.ingredientUsed(pattern, ingredientIndex, resourceState.resource(), remaining);
                     return CalculationResult.MISSING_RESOURCES;
                 } else {
                     resourceState = newState;
