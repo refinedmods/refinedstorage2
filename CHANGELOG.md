@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Fixed item quantities being able to overlap when using mB.
+-   Fixed crash with Exporter when the connected inventory incorrectly reported a higher remainder than the originally inserted amount.
 
 ## [2.0.0-beta.4] - 2025-07-29
 

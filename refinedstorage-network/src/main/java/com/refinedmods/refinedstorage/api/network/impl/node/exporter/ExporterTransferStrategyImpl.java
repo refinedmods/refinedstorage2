@@ -47,7 +47,7 @@ public class ExporterTransferStrategyImpl implements ExporterTransferStrategy {
             }
             final long insertedSimulated = destination
                 .insert(expandedResource, extractedSimulated, Action.SIMULATE, actor);
-            if (insertedSimulated == 0) {
+            if (insertedSimulated <= 0) {
                 return Result.DESTINATION_DOES_NOT_ACCEPT;
             }
             final long extracted = rootStorage.extract(expandedResource, insertedSimulated, Action.EXECUTE, actor);
