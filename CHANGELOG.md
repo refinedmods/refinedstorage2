@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed item quantities being able to overlap when using mB.
+
 ## [2.0.0-beta.4] - 2025-07-29
 
 ### Added
