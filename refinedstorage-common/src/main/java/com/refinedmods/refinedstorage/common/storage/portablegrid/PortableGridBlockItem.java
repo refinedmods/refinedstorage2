@@ -29,12 +29,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -115,6 +117,23 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
     }
 
     @Override
+    public InteractionResult useOn(final UseOnContext context) {
+        final Player player = context.getPlayer();
+        if (player == null) {
+            return InteractionResult.FAIL;
+        }
+        if (player.isCrouching()) {
+            return super.useOn(context);
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            final SlotReference slotReference = RefinedStorageApi.INSTANCE.createInventorySlotReference(player,
+                context.getHand());
+            slotReference.resolve(player).ifPresent(s -> use(serverPlayer, s, slotReference));
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer && level.getServer() != null) {
@@ -131,12 +150,8 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
         final DiskInventoryListenerImpl listener = new DiskInventoryListenerImpl(stack, level.registryAccess());
         final DiskInventory diskInventory = createDiskInventory(stack, listener, level.registryAccess());
         diskInventory.setStorageRepository(RefinedStorageApi.INSTANCE.getStorageRepository(level));
-        final PortableGrid portableGrid = new PortableGrid(
-            energyStorage,
-            diskInventory,
-            () -> {
-            }
-        );
+        final PortableGrid portableGrid = new PortableGrid(energyStorage, diskInventory, () -> {
+        });
         listener.portableGrid = portableGrid;
         energyStorage.portableGrid = portableGrid;
         portableGrid.updateStorage();

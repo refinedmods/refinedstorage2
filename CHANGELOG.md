@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   You need to crouch now to place the Portable Grid in the world.
+
 ### Fixed
 
 -   Fixed item quantities being able to overlap when using mB.
