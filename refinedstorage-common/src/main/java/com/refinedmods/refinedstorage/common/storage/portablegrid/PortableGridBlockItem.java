@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.storage.Disk;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage.common.support.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage.common.support.energy.ItemBlockEnergyStorage;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -96,6 +97,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
                                  final HolderLookup.Provider provider) {
         final CompoundTag tag = new CompoundTag();
         AbstractPortableGridBlockEntity.writeDiskInventory(tag, diskInventory, provider);
+        ItemBlockEnergyStorage.writeToTag(tag, createEnergyStorage(stack).getStored());
         setBlockEntityData(
             stack,
             isCreative(stack)

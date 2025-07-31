@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed item quantities being able to overlap when using mB.
 -   Fixed crash with Exporter when the connected inventory incorrectly reported a higher remainder than the originally inserted amount.
 -   Fixed being able to move the Portable Grid to another inventory slot when using a hotkey.
+-   Fixed Portable Grid losing energy when switching disks.
 
 ## [2.0.0-beta.4] - 2025-07-29
 
