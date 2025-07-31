@@ -29,7 +29,10 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -60,7 +63,25 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
         super(BlockConstants.PROPERTIES);
         this.color = color;
         this.name = name;
-        registerDefaultState(this.getStateDefinition().any().setValue(POWERED, false));
+    }
+
+    @Override
+    protected BlockState getDefaultState() {
+        return super.getDefaultState()
+            .setValue(BlockStateProperties.WATERLOGGED, false)
+            .setValue(POWERED, false);
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+        return !state.getValue(BlockStateProperties.WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockState state) {
+        return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED))
+            ? Fluids.WATER.getSource(false)
+            : super.getFluidState(state);
     }
 
     @Override
@@ -72,6 +93,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(POWERED);
+        builder.add(BlockStateProperties.WATERLOGGED);
     }
 
     @Override

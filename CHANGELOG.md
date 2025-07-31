@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.5] - 2025-07-31
+
+### Changed
+
+-   You need to crouch now to place the Portable Grid in the world.
+
+### Fixed
+
+-   Fixed item quantities being able to overlap when using mB.
+-   Fixed crash with Exporter when the connected inventory incorrectly reported a higher remainder than the originally inserted amount.
+-   Fixed being able to move the Portable Grid to another inventory slot when using a hotkey.
+-   Fixed Portable Grid losing energy when switching disks.
+-   Fixed crash when submerging Detector in water.
+-   Fixed Interface not dropping upgrades.
+
 ## [2.0.0-beta.4] - 2025-07-29
 
 ### Added
@@ -959,7 +974,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...HEAD
+
+[2.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...v2.0.0-beta.5
 
 [2.0.0-beta.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.3...v2.0.0-beta.4
 

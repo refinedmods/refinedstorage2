@@ -78,7 +78,15 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         int id = 9;
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlot(new PlayerInventorySlot(inventory, id++, inventoryX + x * 18, inventoryY + y * 18, listener));
+                final int slotX = inventoryX + x * 18;
+                final int slotY = inventoryY + y * 18;
+                final boolean disabled = disabledSlot != null
+                    && disabledSlot.isDisabledSlot(id);
+                final Slot slot = disabled
+                    ? new DisabledSlot(inventory, id, slotX, slotY)
+                    : new PlayerInventorySlot(inventory, id, slotX, slotY, listener);
+                addSlot(slot);
+                id++;
             }
         }
 

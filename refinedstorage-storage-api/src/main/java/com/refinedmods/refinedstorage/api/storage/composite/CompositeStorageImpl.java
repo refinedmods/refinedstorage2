@@ -90,6 +90,7 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
 
     @Override
     public long extract(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
+        ResourceAmount.validate(resource, amount);
         long remaining = amount;
         long toRemoveFromList = 0;
         for (final Storage source : extractSources) {
@@ -115,6 +116,7 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
+        ResourceAmount.validate(resource, amount);
         long inserted = 0;
         long toInsertIntoList = 0;
         for (final Storage source : insertSources) {

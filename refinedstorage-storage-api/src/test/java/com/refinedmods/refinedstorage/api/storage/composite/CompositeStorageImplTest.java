@@ -16,11 +16,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.refinedmods.refinedstorage.api.storage.TestResource.A;
 import static com.refinedmods.refinedstorage.api.storage.TestResource.B;
 import static com.refinedmods.refinedstorage.api.storage.TestResource.C;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CompositeStorageImplTest {
     private CompositeStorageImpl sut;
@@ -318,5 +321,61 @@ class CompositeStorageImplTest {
         assertThat(oneTwo).isEmpty();
         assertThat(twoOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 2L));
         assertThat(twoTwo).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source2", 3L));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0L, -1L})
+    void shouldNotExtractInvalidAmount(final long amount) {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        sut.addSource(storage);
+
+        // Act & Assert
+        assertThatThrownBy(() -> sut.extract(A, amount, Action.EXECUTE, Actor.EMPTY))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Amount must be larger than 0");
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotExtractInvalidResource() {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        sut.addSource(storage);
+
+        // Act & Assert
+        assertThatThrownBy(() -> sut.extract(null, 1, Action.EXECUTE, Actor.EMPTY))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("Resource must not be null");
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0L, -1L})
+    void shouldNotInsertInvalidAmount(final long amount) {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        sut.addSource(storage);
+
+        // Act & Assert
+        assertThatThrownBy(() -> sut.insert(A, amount, Action.EXECUTE, Actor.EMPTY))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Amount must be larger than 0");
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotInsertInvalidResource() {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        sut.addSource(storage);
+
+        // Act & Assert
+        assertThatThrownBy(() -> sut.insert(null, 1, Action.EXECUTE, Actor.EMPTY))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("Resource must not be null");
     }
 }

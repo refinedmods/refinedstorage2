@@ -4,7 +4,9 @@
 
 The {doctitle} provides xref:../viewing-resources/grid.adoc[grid-like] access to a xref:../storage/index.adoc#_storage_disks[storage disk] without requiring a storage network.
 
-> It can be used as an inventory item or placed in the world as a block.
+== Usage
+
+It can be used as an inventory item or placed in the world as a block when crouching.
 
 == Energy consumption
 

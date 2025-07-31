@@ -50,13 +50,15 @@ public final class ResourceSlotRendering {
                                     final int y,
                                     final long amount,
                                     final ResourceRendering rendering) {
+        final String formattedAmount = rendering.formatAmount(amount, true);
+        final boolean large = Minecraft.getInstance().font.width(formattedAmount) <= 16;
         renderAmount(
             graphics,
             x,
             y,
-            rendering.formatAmount(amount, true),
+            formattedAmount,
             0xFFFFFF,
-            true
+            large
         );
     }
 
