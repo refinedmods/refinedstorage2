@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.5] - 2025-07-31
+
 ### Changed
 
 -   You need to crouch now to place the Portable Grid in the world.
@@ -972,7 +974,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...HEAD
+
+[2.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...v2.0.0-beta.5
 
 [2.0.0-beta.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.3...v2.0.0-beta.4
 
