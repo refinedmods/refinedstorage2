@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed being able to move the Portable Grid to another inventory slot when using a hotkey.
 -   Fixed Portable Grid losing energy when switching disks.
 -   Fixed crash when submerging Detector in water.
+-   Fixed Interface not dropping upgrades.
 
 ## [2.0.0-beta.4] - 2025-07-29
 

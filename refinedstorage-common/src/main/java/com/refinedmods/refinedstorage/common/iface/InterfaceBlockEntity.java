@@ -247,6 +247,7 @@ public class InterfaceBlockEntity
         for (int i = 0; i < exportedResourcesAsContainer.getContainerSize(); ++i) {
             drops.add(exportedResourcesAsContainer.getItem(i));
         }
+        drops.addAll(upgradeContainer.getDrops());
         return drops;
     }
 
