@@ -109,6 +109,11 @@ class ClientCraftingGrid implements CraftingGrid {
     }
 
     @Override
+    public boolean canMenuStayOpen(final Player player) {
+        return true;
+    }
+
+    @Override
     public CompletableFuture<Optional<Preview>> getPreview(final ResourceKey resource, final long amount,
                                                            final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();

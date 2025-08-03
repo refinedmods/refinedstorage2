@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   Opened Grids will automatically close now if you go out of reach or destroy the Grid.
+
 ### Fixed
 
 -   Fixed Pattern output not rendering sometimes.

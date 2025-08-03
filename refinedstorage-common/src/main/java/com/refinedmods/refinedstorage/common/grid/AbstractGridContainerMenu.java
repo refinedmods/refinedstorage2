@@ -532,6 +532,14 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Override
+    public boolean stillValid(final Player player) {
+        if (grid == null) {
+            return false;
+        }
+        return grid.canMenuStayOpen(player);
+    }
+
+    @Override
     public void cancel() {
         pendingAutocraftingRequests.cancelAll();
     }
