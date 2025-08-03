@@ -27,10 +27,17 @@ public class LongAmountOperations implements AmountOperations<Long> {
     }
 
     @Override
-    public Long changeAmount(final Long current,
+    public Long changeAmount(@Nullable final Long current,
                              final int delta,
                              @Nullable final Long minAmount,
                              @Nullable final Long maxAmount) {
+        if (current == null) {
+            return MathUtil.clamp(
+                delta,
+                requireNonNullElse(minAmount, Long.MIN_VALUE),
+                requireNonNullElse(maxAmount, Long.MAX_VALUE)
+            );
+        }
         return MathUtil.clamp(
             current + delta,
             requireNonNullElse(minAmount, Long.MIN_VALUE),

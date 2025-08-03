@@ -21,11 +21,7 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                                          final Component title,
                                          final Double initialAmount,
                                          final Supplier<Double> minAmount) {
-        super(
-                containerMenu,
-                null,
-                playerInventory,
-                title,
+        super(containerMenu, null, playerInventory, title,
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(initialAmount)
                 .withIncrementsTop(1, 10, 64)
