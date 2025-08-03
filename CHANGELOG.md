@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.6] - 2025-08-03
+
 ### Changed
 
 -   Opened GUIs will now automatically close if you go out of reach or the block is destroyed.
@@ -986,7 +988,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...HEAD
+
+[2.0.0-beta.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...v2.0.0-beta.6
 
 [2.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...v2.0.0-beta.5
 
