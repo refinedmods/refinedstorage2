@@ -30,7 +30,7 @@ class CraftingGridResultSlot extends ResultSlot {
         int crafted = 0;
         try (ExtractTransaction transaction = craftingGrid.startExtractTransaction(player, false)) {
             while (ItemStack.isSameItemSameComponents(singleResultStack, getItem()) && crafted < maxCrafted) {
-                doTake(player, transaction);
+                doTake(player, transaction, singleResultStack);
                 crafted += singleResultStack.getCount();
             }
         }
@@ -44,12 +44,12 @@ class CraftingGridResultSlot extends ResultSlot {
             return;
         }
         try (ExtractTransaction transaction = craftingGrid.startExtractTransaction(player, true)) {
-            doTake(player, transaction);
+            doTake(player, transaction, stack);
         }
     }
 
-    private void doTake(final Player player, final ExtractTransaction transaction) {
-        fireCraftingEvents(player, getItem().copy());
+    private void doTake(final Player player, final ExtractTransaction transaction, final ItemStack stack) {
+        fireCraftingEvents(player, stack.copy());
         final CraftingInput.Positioned positioned = craftingGrid.getCraftingMatrix().asPositionedCraftInput();
         final CraftingInput input = positioned.input();
         final int left = positioned.left();

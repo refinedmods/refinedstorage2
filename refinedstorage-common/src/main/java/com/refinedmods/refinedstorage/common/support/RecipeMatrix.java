@@ -33,7 +33,7 @@ public class RecipeMatrix<T extends Recipe<I>, I extends RecipeInput> {
     private final RecipeType<T> recipeType;
 
     @Nullable
-    private T currentRecipe;
+    private RecipeHolder<T> currentRecipe;
 
     public RecipeMatrix(final Runnable listener,
                         final Supplier<@NullableType Level> levelSupplier,
@@ -95,13 +95,13 @@ public class RecipeMatrix<T extends Recipe<I>, I extends RecipeInput> {
             return;
         }
         final I input = inputProvider.apply(matrix);
-        if (currentRecipe == null || !currentRecipe.matches(input, level)) {
+        if (currentRecipe == null || !currentRecipe.value().matches(input, level)) {
             currentRecipe = loadRecipe(level);
         }
         if (currentRecipe == null) {
-            setResult(ItemStack.EMPTY);
+            setResult(null, ItemStack.EMPTY);
         } else {
-            setResult(currentRecipe.assemble(input, level.registryAccess()));
+            setResult(currentRecipe, currentRecipe.value().assemble(input, level.registryAccess()));
         }
     }
 
@@ -117,23 +117,25 @@ public class RecipeMatrix<T extends Recipe<I>, I extends RecipeInput> {
         return !craftingResult.getItem(0).isEmpty();
     }
 
-    private void setResult(final ItemStack result) {
+    private void setResult(@Nullable final RecipeHolder<?> recipe, final ItemStack result) {
+        craftingResult.setRecipeUsed(recipe);
         craftingResult.setItem(0, result);
     }
 
     @Nullable
-    private T loadRecipe(final Level level) {
+    private RecipeHolder<T> loadRecipe(final Level level) {
         return level
             .getRecipeManager()
             .getRecipeFor(recipeType, inputProvider.apply(matrix), level)
-            .map(RecipeHolder::value)
             .orElse(null);
     }
 
     public NonNullList<ItemStack> getRemainingItems(@Nullable final Level level,
                                                     final Player player,
                                                     final CraftingInput input) {
-        if (level == null || !(currentRecipe instanceof CraftingRecipe craftingRecipe)) {
+        if (level == null
+            || currentRecipe == null
+            || !(currentRecipe.value() instanceof CraftingRecipe craftingRecipe)) {
             return NonNullList.create();
         }
         return Platform.INSTANCE.getRemainingCraftingItems(player, craftingRecipe, input);
