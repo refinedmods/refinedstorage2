@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Fixed Pattern output not rendering sometimes.
+-   Fixed patterns being displaced after scrolling and clicking in the search bar of the Autocrafter Manager.
 
 ## [2.0.0-beta.5] - 2025-07-31
 
