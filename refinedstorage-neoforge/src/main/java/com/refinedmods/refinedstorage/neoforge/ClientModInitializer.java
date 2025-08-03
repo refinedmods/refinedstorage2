@@ -3,9 +3,7 @@ package com.refinedmods.refinedstorage.neoforge;
 import com.refinedmods.refinedstorage.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
-import com.refinedmods.refinedstorage.common.autocrafting.PatternBlockEntityWithoutLevelRenderer;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
-import com.refinedmods.refinedstorage.common.autocrafting.PatternItemColor;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternTooltipCache;
 import com.refinedmods.refinedstorage.common.configurationcard.ConfigurationCardItemPropertyFunction;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
@@ -36,7 +34,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -45,13 +42,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
@@ -203,21 +196,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     }
 
     @SubscribeEvent
-    public static void onRegisterItemColors(final RegisterColorHandlersEvent.Item e) {
-        e.register(new PatternItemColor(), Items.INSTANCE.getPattern());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterClientExtensions(final RegisterClientExtensionsEvent e) {
-        e.registerItem(new IClientItemExtensions() {
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return PatternBlockEntityWithoutLevelRenderer.getInstance();
-            }
-        }, Items.INSTANCE.getPattern());
-    }
-
-    @SubscribeEvent
     public static void onRegisterTooltipFactories(final RegisterClientTooltipComponentFactoriesEvent e) {
         e.register(
             AbstractUpgradeItem.UpgradeDestinationTooltipComponent.class,
@@ -242,11 +220,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         e.register(PatternItem.ProcessingPatternTooltipComponent.class, PatternTooltipCache::getComponent);
         e.register(PatternItem.StonecutterPatternTooltipComponent.class, PatternTooltipCache::getComponent);
         e.register(PatternItem.SmithingTablePatternTooltipComponent.class, PatternTooltipCache::getComponent);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterClientReloadListeners(final RegisterClientReloadListenersEvent e) {
-        e.registerReloadListener(PatternBlockEntityWithoutLevelRenderer.getInstance());
     }
 
     private static void registerItemProperties() {

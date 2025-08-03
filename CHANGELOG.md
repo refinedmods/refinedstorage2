@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Pattern output not rendering sometimes.
+
 ## [2.0.0-beta.5] - 2025-07-31
 
 ### Changed

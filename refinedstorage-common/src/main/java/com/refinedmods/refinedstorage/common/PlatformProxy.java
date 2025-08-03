@@ -241,11 +241,6 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public int getItemColor(final ItemStack stack, final int tintIndex) {
-        return ensureLoaded().getItemColor(stack, tintIndex);
-    }
-
-    @Override
     public void setSlotY(final Slot slot, final int y) {
         ensureLoaded().setSlotY(slot, y);
     }

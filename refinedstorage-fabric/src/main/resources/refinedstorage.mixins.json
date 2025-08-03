@@ -9,7 +9,7 @@
     "ItemPropertiesAccessor",
     "KeyMappingAccessor",
     "ModelBakeryAccessor",
-    "AbstractBlockEntityWithoutLevelRendererMixin"
+    "AbstractGuiGraphicsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

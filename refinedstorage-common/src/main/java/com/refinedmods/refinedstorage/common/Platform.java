@@ -127,8 +127,6 @@ public interface Platform {
     @Nullable
     NetworkNodeContainerProvider getContainerProviderSafely(Level level, BlockPos pos, @Nullable Direction direction);
 
-    int getItemColor(ItemStack stack, int tintIndex);
-
     void setSlotY(Slot slot, int y);
 
     void requestModelDataUpdateOnClient(LevelAccessor level, BlockPos pos, boolean updateChunk);

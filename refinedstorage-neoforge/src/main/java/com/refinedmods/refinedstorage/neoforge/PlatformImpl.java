@@ -376,11 +376,6 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public int getItemColor(final ItemStack stack, final int tintIndex) {
-        return Minecraft.getInstance().getItemColors().getColor(stack, tintIndex);
-    }
-
-    @Override
     public void setSlotY(final Slot slot, final int y) {
         slot.y = y;
     }
