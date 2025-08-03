@@ -18,8 +18,7 @@ class IngredientState {
             final ResourceKey resource = ingredient.inputs().get(i);
             possibilities[i] = resource;
         }
-        Arrays.sort(possibilities, state.storageSorter());
-        Arrays.sort(possibilities, state.internalStorageSorter());
+        Arrays.sort(possibilities, state.getSorter());
     }
 
     ResourceKey get() {

@@ -12,11 +12,12 @@ import java.util.Comparator;
 class CraftingState {
     private final MutableResourceList storage;
     private final MutableResourceList internalStorage;
+    private final Comparator<ResourceKey> sorter;
 
-    private CraftingState(final MutableResourceList storage,
-                          final MutableResourceList internalStorage) {
+    private CraftingState(final MutableResourceList storage, final MutableResourceList internalStorage) {
         this.storage = storage;
         this.internalStorage = internalStorage;
+        this.sorter = createSorter(storage).thenComparing(createSorter(internalStorage));
     }
 
     void extractFromInternalStorage(final ResourceKey resource, final long amount) {
@@ -49,15 +50,11 @@ class CraftingState {
         return new CraftingState(storage, MutableResourceListImpl.create());
     }
 
-    Comparator<ResourceKey> storageSorter() {
-        return sorter(storage);
+    Comparator<ResourceKey> getSorter() {
+        return sorter;
     }
 
-    Comparator<ResourceKey> internalStorageSorter() {
-        return sorter(internalStorage);
-    }
-
-    private Comparator<ResourceKey> sorter(final MutableResourceList list) {
+    private static Comparator<ResourceKey> createSorter(final MutableResourceList list) {
         return (a, b) -> {
             final long ar = list.get(a);
             final long br = list.get(b);
