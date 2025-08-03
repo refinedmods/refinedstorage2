@@ -124,11 +124,11 @@ public class AutocrafterContainerMenu extends AbstractBaseContainerMenu {
     }
 
     @Override
-    public boolean stillValid(final Player player) {
+    public boolean stillValid(final Player p) {
         if (autocrafter == null) {
             return true;
         }
-        return Container.stillValidBlockEntity(autocrafter, player);
+        return Container.stillValidBlockEntity(autocrafter, p);
     }
 
     private void detectNameChange() {

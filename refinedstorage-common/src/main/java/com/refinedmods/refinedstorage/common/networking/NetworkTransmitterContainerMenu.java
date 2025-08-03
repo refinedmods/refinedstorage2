@@ -67,11 +67,11 @@ public class NetworkTransmitterContainerMenu extends AbstractBaseContainerMenu {
     }
 
     @Override
-    public boolean stillValid(final Player player) {
+    public boolean stillValid(final Player p) {
         if (blockEntity == null) {
             return true;
         }
-        return Container.stillValidBlockEntity(blockEntity, player);
+        return Container.stillValidBlockEntity(blockEntity, p);
     }
 
     private void updateStatus(final ServerPlayer serverPlayer, final NetworkTransmitterData newStatus) {

@@ -83,11 +83,11 @@ public class WirelessTransmitterContainerMenu extends AbstractBaseContainerMenu 
     }
 
     @Override
-    public boolean stillValid(final Player player) {
+    public boolean stillValid(final Player p) {
         if (wirelessTransmitter == null) {
             return true;
         }
-        return Container.stillValidBlockEntity(wirelessTransmitter, player);
+        return Container.stillValidBlockEntity(wirelessTransmitter, p);
     }
 
     int getRange() {
