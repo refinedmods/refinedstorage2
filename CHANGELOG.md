@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Fixed Pattern output not rendering sometimes.
 -   Fixed patterns being displaced after scrolling and clicking in the search bar of the Autocrafter Manager.
+-   Fixed crash when exploding TNT next to an opened Grid.
 
 ## [2.0.0-beta.5] - 2025-07-31
 
