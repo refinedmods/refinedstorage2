@@ -19,6 +19,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+
 import static java.util.Objects.requireNonNull;
 
 public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreviewContainerMenu
@@ -81,6 +84,14 @@ public class AutocraftingStorageMonitorContainerMenu extends AutocraftingPreview
             amount, actor, notify, cancellationToken);
         pendingAutocraftingRequests.add(taskRequest, cancellationToken);
         return taskRequest;
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        if (storageMonitor == null) {
+            return true;
+        }
+        return Container.stillValidBlockEntity(storageMonitor, player);
     }
 
     @Override

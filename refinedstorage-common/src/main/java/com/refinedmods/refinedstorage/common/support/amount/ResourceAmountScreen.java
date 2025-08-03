@@ -68,5 +68,10 @@ public class ResourceAmountScreen
         public ItemStack quickMoveStack(final Player player, final int slot) {
             return ItemStack.EMPTY;
         }
+
+        @Override
+        public boolean stillValid(final Player player) {
+            return true;
+        }
     }
 }

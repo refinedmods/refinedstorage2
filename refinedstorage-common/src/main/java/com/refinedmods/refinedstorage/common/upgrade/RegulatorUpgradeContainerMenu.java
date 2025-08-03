@@ -50,4 +50,9 @@ public class RegulatorUpgradeContainerMenu extends AbstractSingleAmountContainer
         }
         amountAcceptor.accept(newAmount);
     }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return true;
+    }
 }

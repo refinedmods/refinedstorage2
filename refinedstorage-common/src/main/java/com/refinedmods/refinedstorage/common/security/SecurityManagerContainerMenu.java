@@ -9,12 +9,17 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.containermenu.ServerProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.ValidatedSlot;
 
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
 public class SecurityManagerContainerMenu extends AbstractBaseContainerMenu {
+    private final Predicate<Player> stillValid;
+
     @Nullable
     private Slot fallbackSecurityCardSlot;
 
@@ -27,6 +32,7 @@ public class SecurityManagerContainerMenu extends AbstractBaseContainerMenu {
             new FilteredContainer(1, SecurityManagerBlockEntity::isValidFallbackSecurityCard)
         );
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
+        this.stillValid = player -> true;
     }
 
     SecurityManagerContainerMenu(final int syncId,
@@ -39,6 +45,7 @@ public class SecurityManagerContainerMenu extends AbstractBaseContainerMenu {
             securityManager::getRedstoneMode,
             securityManager::setRedstoneMode
         ));
+        this.stillValid = player -> Container.stillValidBlockEntity(securityManager, player);
     }
 
     private void addSlots(final Inventory playerInventory,
@@ -67,5 +74,10 @@ public class SecurityManagerContainerMenu extends AbstractBaseContainerMenu {
     @Nullable
     Slot getFallbackSecurityCardSlot() {
         return fallbackSecurityCardSlot;
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

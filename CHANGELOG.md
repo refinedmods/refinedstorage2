@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
--   Opened Grids will automatically close now if you go out of reach or destroy the Grid.
+-   Opened GUIs will now automatically close if you go out of reach or the block is destroyed.
 
 ### Fixed
 

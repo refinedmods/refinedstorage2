@@ -66,6 +66,14 @@ public class NetworkTransmitterContainerMenu extends AbstractBaseContainerMenu {
         updateStatus(serverPlayer, newStatus);
     }
 
+    @Override
+    public boolean stillValid(final Player player) {
+        if (blockEntity == null) {
+            return true;
+        }
+        return Container.stillValidBlockEntity(blockEntity, player);
+    }
+
     private void updateStatus(final ServerPlayer serverPlayer, final NetworkTransmitterData newStatus) {
         this.status = newStatus;
         S2CPackets.sendNetworkTransmitterStatus(serverPlayer, newStatus);

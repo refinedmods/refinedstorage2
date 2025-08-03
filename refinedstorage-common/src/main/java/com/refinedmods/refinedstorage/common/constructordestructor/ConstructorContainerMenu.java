@@ -14,8 +14,11 @@ import com.refinedmods.refinedstorage.common.support.exportingindicator.Exportin
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -26,6 +29,7 @@ public class ConstructorContainerMenu extends AbstractSimpleFilterContainerMenu<
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "constructor.filter_help");
 
     private final ExportingIndicators indicators;
+    private final Predicate<Player> stillValid;
 
     public ConstructorContainerMenu(final int syncId,
                                     final Inventory playerInventory,
@@ -39,6 +43,7 @@ public class ConstructorContainerMenu extends AbstractSimpleFilterContainerMenu<
             FILTER_HELP
         );
         this.indicators = new ExportingIndicators(data.exportingIndicators());
+        this.stillValid = p -> true;
     }
 
     ConstructorContainerMenu(final int syncId,
@@ -57,6 +62,7 @@ public class ConstructorContainerMenu extends AbstractSimpleFilterContainerMenu<
             FILTER_HELP
         );
         this.indicators = indicators;
+        this.stillValid = p -> Container.stillValidBlockEntity(constructor, p);
     }
 
     ExportingIndicator getIndicator(final int idx) {
@@ -73,6 +79,11 @@ public class ConstructorContainerMenu extends AbstractSimpleFilterContainerMenu<
         if (player instanceof ServerPlayer serverPlayer) {
             indicators.detectChanges(serverPlayer);
         }
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 
     @Override

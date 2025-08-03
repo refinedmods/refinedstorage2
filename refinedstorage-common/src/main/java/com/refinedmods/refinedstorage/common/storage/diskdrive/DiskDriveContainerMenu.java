@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import net.minecraft.world.entity.player.Inventory;
@@ -35,8 +36,8 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     private static final int FILTER_SLOT_Y = 20;
 
     private final StorageDiskInfoAccessor storageInfoAccessor;
-
     private final List<Slot> diskSlots = new ArrayList<>();
+    private final Predicate<Player> stillValid;
 
     public DiskDriveContainerMenu(final int syncId,
                                   final Inventory playerInventory,
@@ -53,6 +54,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
             ),
             ResourceContainerImpl.createForFilter(resourceContainerData)
         );
+        this.stillValid = p -> true;
     }
 
     DiskDriveContainerMenu(final int syncId,
@@ -60,10 +62,12 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
                            final FilteredContainer diskInventory,
                            final ResourceContainer filterContainer,
                            final StorageConfigurationContainer configContainer,
-                           final StorageDiskInfoAccessor storageInfoAccessor) {
+                           final StorageDiskInfoAccessor storageInfoAccessor,
+                           final Predicate<Player> stillValid) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, player, configContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, filterContainer);
+        this.stillValid = stillValid;
     }
 
     private void addSlots(final Player player,
@@ -133,5 +137,10 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         return getDiskStacks()
             .map(storageInfoAccessor::getInfo)
             .flatMap(Optional::stream);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

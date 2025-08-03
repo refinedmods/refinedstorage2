@@ -9,11 +9,15 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.energy.EnergyContainerMenu;
 import com.refinedmods.refinedstorage.common.support.energy.EnergyInfo;
 
+import java.util.function.Predicate;
+
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
 public class ControllerContainerMenu extends AbstractBaseContainerMenu implements EnergyContainerMenu {
     private final EnergyInfo energyInfo;
+    private final Predicate<Player> stillValid;
 
     public ControllerContainerMenu(final int syncId,
                                    final Inventory playerInventory,
@@ -26,6 +30,7 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
             controllerData.capacity()
         );
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
+        this.stillValid = p -> true;
     }
 
     ControllerContainerMenu(final int syncId,
@@ -44,12 +49,18 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
             controller::getRedstoneMode,
             controller::setRedstoneMode
         ));
+        this.stillValid = p -> Container.stillValidBlockEntity(controller, p);
     }
 
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
         energyInfo.detectChanges();
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 
     @Override

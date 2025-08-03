@@ -9,9 +9,11 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.containermenu.ServerProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
 
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -19,6 +21,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
     private static final Component FILTER_HELP = createTranslation("gui", "detector.filter_help");
+
+    private final Predicate<Player> stillValid;
 
     @Nullable
     private DetectorBlockEntity detector;
@@ -29,6 +33,7 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
         super(Menus.INSTANCE.getDetector(), syncId, playerInventory, singleAmountData, FILTER_HELP);
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(DetectorPropertyTypes.MODE, DetectorMode.EQUAL));
+        this.stillValid = p -> true;
     }
 
     DetectorContainerMenu(final int syncId,
@@ -47,6 +52,7 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
             detector::getMode,
             detector::setMode
         ));
+        this.stillValid = p -> Container.stillValidBlockEntity(detector, p);
     }
 
     @Override
@@ -55,5 +61,10 @@ public class DetectorContainerMenu extends AbstractSingleAmountContainerMenu {
             return;
         }
         detector.setAmount(newAmount);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

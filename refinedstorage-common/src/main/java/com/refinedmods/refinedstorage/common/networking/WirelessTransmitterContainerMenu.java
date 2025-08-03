@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -79,6 +80,14 @@ public class WirelessTransmitterContainerMenu extends AbstractBaseContainerMenu 
             this.active = newActive;
             S2CPackets.sendWirelessTransmitterData((ServerPlayer) player, range, active);
         }
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        if (wirelessTransmitter == null) {
+            return true;
+        }
+        return Container.stillValidBlockEntity(wirelessTransmitter, player);
     }
 
     int getRange() {

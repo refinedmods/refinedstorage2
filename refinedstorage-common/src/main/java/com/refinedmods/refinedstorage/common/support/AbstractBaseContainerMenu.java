@@ -105,11 +105,6 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(final Player player) {
-        return true;
-    }
-
-    @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
         transferManager.transfer(index);
         return ItemStack.EMPTY;

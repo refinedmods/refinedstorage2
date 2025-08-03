@@ -21,6 +21,9 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
+import java.util.function.Predicate;
+
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -34,6 +37,8 @@ public class DiskInterfaceContainerMenu extends AbstractResourceContainerMenu {
 
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
+
+    private final Predicate<Player> stillValid;
 
     DiskInterfaceContainerMenu(final int syncId,
                                final Player player,
@@ -63,6 +68,7 @@ public class DiskInterfaceContainerMenu extends AbstractResourceContainerMenu {
             blockEntity::getTransferMode,
             blockEntity::setTransferMode
         ));
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     public DiskInterfaceContainerMenu(final int syncId,
@@ -85,6 +91,7 @@ public class DiskInterfaceContainerMenu extends AbstractResourceContainerMenu {
             DiskInterfacePropertyTypes.TRANSFER_MODE,
             StorageTransferMode.INSERT_INTO_NETWORK
         ));
+        this.stillValid = p -> true;
     }
 
     private void addSlots(final Player player,
@@ -123,5 +130,10 @@ public class DiskInterfaceContainerMenu extends AbstractResourceContainerMenu {
         final int x = i < 3 ? DISK_SLOT_X1 : DISK_SLOT_X2;
         final int y = DISK_SLOT_Y + ((i % 3) * 18);
         return ValidatedSlot.forStorageContainer(diskInventory, i, x, y);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }
