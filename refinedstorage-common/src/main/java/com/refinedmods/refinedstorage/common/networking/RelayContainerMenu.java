@@ -12,9 +12,11 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.containermenu.ServerProperty;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -22,6 +24,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class RelayContainerMenu extends AbstractSimpleFilterContainerMenu<RelayBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "relay.filter_help");
+
+    private final Predicate<Player> stillValid;
 
     @Nullable
     private PassThroughListener passThroughListener;
@@ -37,6 +41,7 @@ public class RelayContainerMenu extends AbstractSimpleFilterContainerMenu<RelayB
             null,
             FILTER_HELP
         );
+        this.stillValid = p -> true;
     }
 
     RelayContainerMenu(final int syncId,
@@ -52,6 +57,7 @@ public class RelayContainerMenu extends AbstractSimpleFilterContainerMenu<RelayB
             relay,
             FILTER_HELP
         );
+        this.stillValid = p -> Container.stillValidBlockEntity(relay, p);
     }
 
     @Override
@@ -178,6 +184,11 @@ public class RelayContainerMenu extends AbstractSimpleFilterContainerMenu<RelayB
 
     void setPassThroughListener(final PassThroughListener passThroughListener) {
         this.passThroughListener = passThroughListener;
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 
     interface PassThroughListener {

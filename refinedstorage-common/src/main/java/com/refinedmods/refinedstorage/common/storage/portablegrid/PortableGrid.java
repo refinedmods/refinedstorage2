@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 class PortableGrid implements Grid {
     private final EnergyStorage energyStorage;
@@ -132,6 +133,11 @@ class PortableGrid implements Grid {
         final RootStorage rootStorage = this.storage.getRootStorage();
         final GridOperations operations = resourceType.createGridOperations(rootStorage, new PlayerActor(player));
         return new PortableGridOperations(operations, energyStorage);
+    }
+
+    @Override
+    public boolean canMenuStayOpen(final Player player) {
+        return true;
     }
 
     @Override

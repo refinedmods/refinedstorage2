@@ -12,7 +12,10 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,6 +24,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 public class StorageMonitorContainerMenu extends AbstractResourceContainerMenu {
     private static final Component FILTER_HELP = createTranslation("gui", "storage_monitor.filter_help");
 
+    private final Predicate<Player> stillValid;
+
     public StorageMonitorContainerMenu(final int syncId,
                                        final Inventory playerInventory,
                                        final ResourceContainerData resourceContainerData) {
@@ -28,6 +33,7 @@ public class StorageMonitorContainerMenu extends AbstractResourceContainerMenu {
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         addSlots(playerInventory, ResourceContainerImpl.createForFilter(resourceContainerData));
+        this.stillValid = p -> true;
     }
 
     StorageMonitorContainerMenu(final int syncId,
@@ -46,11 +52,17 @@ public class StorageMonitorContainerMenu extends AbstractResourceContainerMenu {
             storageMonitor::setRedstoneMode
         ));
         addSlots(player.getInventory(), resourceContainer);
+        this.stillValid = p -> Container.stillValidBlockEntity(storageMonitor, p);
     }
 
     private void addSlots(final Inventory playerInventory, final ResourceContainer resourceContainer) {
         addSlot(new ResourceSlot(resourceContainer, 0, FILTER_HELP, 80, 20, ResourceSlotType.FILTER));
         addPlayerInventory(playerInventory, 8, 55);
         transferManager.addFilterTransfer(playerInventory);
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

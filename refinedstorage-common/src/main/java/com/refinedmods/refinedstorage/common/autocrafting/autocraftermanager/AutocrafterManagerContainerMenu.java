@@ -80,6 +80,14 @@ public class AutocrafterManagerContainerMenu extends AbstractBaseContainerMenu i
         }
     }
 
+    @Override
+    public boolean stillValid(final Player player) {
+        if (autocrafterManager == null) {
+            return true;
+        }
+        return Container.stillValidBlockEntity(autocrafterManager, player);
+    }
+
     void setListener(final AutocrafterManagerListener listener) {
         this.listener = listener;
     }

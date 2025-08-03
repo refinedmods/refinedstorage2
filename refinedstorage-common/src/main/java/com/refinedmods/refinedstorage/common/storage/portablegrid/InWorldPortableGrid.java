@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 class InWorldPortableGrid extends PortableGrid {
@@ -16,6 +18,11 @@ class InWorldPortableGrid extends PortableGrid {
                         final AbstractPortableGridBlockEntity blockEntity) {
         super(energyStorage, diskInventory, diskListener);
         this.blockEntity = blockEntity;
+    }
+
+    @Override
+    public boolean canMenuStayOpen(final Player player) {
+        return Container.stillValidBlockEntity(blockEntity, player);
     }
 
     @Override

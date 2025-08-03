@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
 public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerMenu {
@@ -167,5 +168,10 @@ public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerM
 
     void sendCancelRequest() {
         C2SPackets.sendAutocraftingPreviewCancelRequest();
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return true;
     }
 }

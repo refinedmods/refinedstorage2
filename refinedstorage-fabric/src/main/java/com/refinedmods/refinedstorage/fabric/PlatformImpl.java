@@ -37,7 +37,6 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -53,7 +52,6 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -446,15 +444,6 @@ public final class PlatformImpl extends AbstractPlatform {
             safeBlockEntity,
             direction
         );
-    }
-
-    @Override
-    public int getItemColor(final ItemStack stack, final int tintIndex) {
-        final ItemColor itemColor = ColorProviderRegistry.ITEM.get(stack.getItem());
-        if (itemColor == null) {
-            return -1;
-        }
-        return itemColor.getColor(stack, tintIndex);
     }
 
     @Override

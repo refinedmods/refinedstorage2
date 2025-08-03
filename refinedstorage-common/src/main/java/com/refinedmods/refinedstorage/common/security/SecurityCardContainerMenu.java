@@ -12,6 +12,7 @@ import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class SecurityCardContainerMenu extends AbstractSecurityCardContainerMenu implements ScreenSizeListener {
@@ -65,5 +66,10 @@ public class SecurityCardContainerMenu extends AbstractSecurityCardContainerMenu
     void changeBoundPlayer(final PlayerBoundSecurityCardData.Player player) {
         C2SPackets.sendSecurityCardBoundPlayer(player.id());
         this.boundTo = player;
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return true;
     }
 }

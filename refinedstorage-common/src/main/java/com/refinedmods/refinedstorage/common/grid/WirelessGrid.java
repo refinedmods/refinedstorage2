@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 class WirelessGrid implements Grid {
     private final NetworkItemContext context;
@@ -66,10 +67,10 @@ class WirelessGrid implements Grid {
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        context.resolveNetwork().ifPresent(network -> watchers.removeWatcher(
-            watcher,
-            network.getComponent(StorageNetworkComponent.class)
-        ));
+        final StorageNetworkComponent storage = context.resolveNetwork()
+            .map(network -> network.getComponent(StorageNetworkComponent.class))
+            .orElse(null);
+        watchers.removeWatcher(watcher, storage);
     }
 
     @Override
@@ -108,6 +109,11 @@ class WirelessGrid implements Grid {
                 .map(security -> createGridOperations(resourceType, player, rootStorage, security)))
             .map(operations -> (GridOperations) new WirelessGridOperations(operations, context, watchers))
             .orElse(EmptyGridOperations.INSTANCE);
+    }
+
+    @Override
+    public boolean canMenuStayOpen(final Player player) {
+        return true;
     }
 
     private GridOperations createGridOperations(final ResourceType resourceType,

@@ -17,6 +17,8 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -32,6 +34,7 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu implem
     private static final int EXPORT_OUTPUT_SLOT_Y = 66;
 
     private final ExportingIndicators indicators;
+    private final Predicate<Player> stillValid;
 
     InterfaceContainerMenu(final int syncId,
                            final Player player,
@@ -54,6 +57,7 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu implem
             blockEntity::setRedstoneMode
         ));
         this.indicators = indicators;
+        this.stillValid = p -> Container.stillValidBlockEntity(blockEntity, p);
     }
 
     public InterfaceContainerMenu(final int syncId,
@@ -70,6 +74,7 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu implem
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         this.indicators = new ExportingIndicators(interfaceData.exportingIndicators());
+        this.stillValid = p -> true;
     }
 
     private void addSlots(final Player player,
@@ -135,6 +140,11 @@ public class InterfaceContainerMenu extends AbstractResourceContainerMenu implem
         if (player instanceof ServerPlayer serverPlayer) {
             indicators.detectChanges(serverPlayer);
         }
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 
     @Override

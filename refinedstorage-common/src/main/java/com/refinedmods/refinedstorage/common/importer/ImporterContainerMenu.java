@@ -12,6 +12,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerD
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +22,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<AbstractImporterBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "importer.filter_help");
+
+    private final Predicate<Player> stillValid;
 
     public ImporterContainerMenu(final int syncId,
                                  final Inventory playerInventory,
@@ -32,13 +36,15 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Abs
             UpgradeDestinations.IMPORTER,
             FILTER_HELP
         );
+        this.stillValid = p -> true;
     }
 
     ImporterContainerMenu(final int syncId,
                           final Player player,
                           final AbstractImporterBlockEntity importer,
                           final ResourceContainer resourceContainer,
-                          final UpgradeContainer upgradeContainer) {
+                          final UpgradeContainer upgradeContainer,
+                          final Predicate<Player> stillValid) {
         super(
             Menus.INSTANCE.getImporter(),
             syncId,
@@ -48,6 +54,7 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Abs
             importer,
             FILTER_HELP
         );
+        this.stillValid = stillValid;
     }
 
     @Override
@@ -74,5 +81,10 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Abs
             blockEntity::getRedstoneMode,
             blockEntity::setRedstoneMode
         ));
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

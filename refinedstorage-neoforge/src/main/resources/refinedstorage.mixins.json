@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.refinedmods.refinedstorage.neoforge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AbstractGuiGraphicsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

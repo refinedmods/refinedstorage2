@@ -28,7 +28,7 @@ public class GridNetworkNode extends AbstractNetworkNode {
     }
 
     public void removeWatcher(final GridWatcher watcher) {
-        watchers.removeWatcher(watcher, requireNonNull(network).getComponent(StorageNetworkComponent.class));
+        watchers.removeWatcher(watcher, network != null ? network.getComponent(StorageNetworkComponent.class) : null);
     }
 
     @Override

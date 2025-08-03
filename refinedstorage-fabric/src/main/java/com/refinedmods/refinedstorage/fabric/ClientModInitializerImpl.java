@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage.common.AbstractClientModInitializer;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
-import com.refinedmods.refinedstorage.common.autocrafting.PatternItemColor;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternTooltipCache;
 import com.refinedmods.refinedstorage.common.configurationcard.ConfigurationCardItemPropertyFunction;
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
@@ -48,7 +47,6 @@ import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipCo
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage.fabric.autocrafting.PatternResourceReloadListener;
 import com.refinedmods.refinedstorage.fabric.autocrafting.PatternUnbakedModel;
 import com.refinedmods.refinedstorage.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage.fabric.networking.CableUnbakedModel;
@@ -70,9 +68,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
@@ -83,7 +79,6 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
@@ -119,8 +114,6 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerResourceRendering();
         registerAlternativeGridHints();
         registerItemProperties();
-        registerItemColors();
-        registerReloadListeners();
     }
 
     private void setRenderLayers() {
@@ -604,15 +597,5 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             NetworkItemPropertyFunction.NAME,
             new NetworkItemPropertyFunction()
         );
-    }
-
-    private void registerItemColors() {
-        ColorProviderRegistry.ITEM.register(new PatternItemColor(), Items.INSTANCE.getPattern());
-    }
-
-    private void registerReloadListeners() {
-        ResourceManagerHelper
-            .get(PackType.CLIENT_RESOURCES)
-            .registerReloadListener(new PatternResourceReloadListener());
     }
 }

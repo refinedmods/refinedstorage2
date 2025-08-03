@@ -12,7 +12,10 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerD
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
+import java.util.function.Predicate;
+
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
@@ -20,6 +23,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<AbstractDestructorBlockEntity> {
     private static final MutableComponent FILTER_HELP = createTranslation("gui", "destructor.filter_help");
+
+    private final Predicate<Player> stillValid;
 
     public DestructorContainerMenu(final int syncId,
                                    final Inventory playerInventory,
@@ -32,6 +37,7 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<A
             UpgradeDestinations.DESTRUCTOR,
             FILTER_HELP
         );
+        this.stillValid = p -> true;
     }
 
     DestructorContainerMenu(final int syncId,
@@ -48,6 +54,7 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<A
             destructor,
             FILTER_HELP
         );
+        this.stillValid = p -> Container.stillValidBlockEntity(destructor, p);
     }
 
     @Override
@@ -74,5 +81,10 @@ public class DestructorContainerMenu extends AbstractSimpleFilterContainerMenu<A
             blockEntity::isPickupItems,
             blockEntity::setPickupItems
         ));
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

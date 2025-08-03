@@ -53,15 +53,17 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
         this.inventoryLabelY = 75;
         this.imageWidth = 193;
         this.imageHeight = 176;
-        getMenu().setListener(() -> {
-            resize();
-            updateScrollbar();
-        });
     }
 
     @Override
     protected void init(final int rows) {
         super.init(rows);
+
+        getMenu().setListener(() -> {
+            resize();
+            updateScrollbar();
+            scrollbarChanged(rows);
+        });
 
         if (searchField == null) {
             searchField = new SearchFieldWidget(

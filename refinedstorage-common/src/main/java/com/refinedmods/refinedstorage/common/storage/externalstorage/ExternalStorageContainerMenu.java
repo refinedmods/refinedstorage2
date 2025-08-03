@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlotT
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
+import java.util.function.Predicate;
+
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -19,19 +21,24 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
+    private final Predicate<Player> stillValid;
+
     public ExternalStorageContainerMenu(final int syncId,
                                         final Inventory playerInventory,
                                         final ResourceContainerData resourceContainerData) {
         super(Menus.INSTANCE.getExternalStorage(), syncId);
         addSlots(playerInventory.player, ResourceContainerImpl.createForFilter(resourceContainerData));
+        this.stillValid = p -> true;
     }
 
     ExternalStorageContainerMenu(final int syncId,
                                  final Player player,
                                  final ResourceContainer resourceContainer,
-                                 final StorageConfigurationContainer configContainer) {
+                                 final StorageConfigurationContainer configContainer,
+                                 final Predicate<Player> stillValid) {
         super(Menus.INSTANCE.getExternalStorage(), syncId, player, configContainer);
         addSlots(player, resourceContainer);
+        this.stillValid = stillValid;
     }
 
     private void addSlots(final Player player,
@@ -53,5 +60,10 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
             FILTER_SLOT_Y,
             ResourceSlotType.FILTER
         );
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

@@ -239,10 +239,7 @@ public class ModInitializer extends AbstractModInitializer {
             eventBus.addListener(ClientModInitializer::onRegisterCustomModels);
             eventBus.addListener(ClientModInitializer::onRegisterMenuScreens);
             eventBus.addListener(ClientModInitializer::onRegisterKeyMappings);
-            eventBus.addListener(ClientModInitializer::onRegisterItemColors);
-            eventBus.addListener(ClientModInitializer::onRegisterClientExtensions);
             eventBus.addListener(ClientModInitializer::onRegisterTooltipFactories);
-            eventBus.addListener(ClientModInitializer::onRegisterClientReloadListeners);
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
 

@@ -91,6 +91,11 @@ class AlternativeContainerMenu extends AbstractResourceContainerMenu {
         return ItemStack.EMPTY;
     }
 
+    @Override
+    public boolean stillValid(final Player player) {
+        return true;
+    }
+
     void sendAllowedAlternatives(final Set<Alternative> allowedAlternatives) {
         C2SPackets.sendPatternGridAllowedAlternativesChange(
             amountSlot.getContainerSlot(),

@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlotType;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
+import java.util.function.Predicate;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -20,6 +22,7 @@ public class StorageBlockContainerMenu extends AbstractStorageContainerMenu impl
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
+    private final Predicate<Player> stillValid;
     private long stored;
     private long capacity;
 
@@ -35,15 +38,18 @@ public class StorageBlockContainerMenu extends AbstractStorageContainerMenu impl
             player,
             ResourceContainerImpl.createForFilter(resourceFactory, storageBlockData.resources())
         );
+        this.stillValid = p -> true;
     }
 
     public StorageBlockContainerMenu(final MenuType<?> type,
                                      final int syncId,
                                      final Player player,
                                      final ResourceContainer resourceContainer,
-                                     final StorageConfigurationContainer configContainer) {
+                                     final StorageConfigurationContainer configContainer,
+                                     final Predicate<Player> stillValid) {
         super(type, syncId, player, configContainer);
         addSlots(player, resourceContainer);
+        this.stillValid = stillValid;
     }
 
     private void addSlots(final Player player, final ResourceContainer resourceContainer) {
@@ -88,5 +94,10 @@ public class StorageBlockContainerMenu extends AbstractStorageContainerMenu impl
     @Override
     public long getStored() {
         return stored;
+    }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        return stillValid.test(player);
     }
 }

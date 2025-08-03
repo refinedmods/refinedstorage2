@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.0")
@@ -30,4 +31,6 @@ public interface Grid extends PreviewProvider {
     Set<PlatformResourceKey> getAutocraftableResources();
 
     GridOperations createOperations(ResourceType resourceType, ServerPlayer player);
+
+    boolean canMenuStayOpen(Player player);
 }

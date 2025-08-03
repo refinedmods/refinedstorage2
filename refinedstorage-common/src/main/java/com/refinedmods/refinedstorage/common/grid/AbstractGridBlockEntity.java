@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -148,5 +150,10 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
     protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
                                                                    final BlockState newBlockState) {
         return AbstractDirectionalBlock.didDirectionChange(oldBlockState, newBlockState);
+    }
+
+    @Override
+    public boolean canMenuStayOpen(final Player player) {
+        return Container.stillValidBlockEntity(this, player);
     }
 }

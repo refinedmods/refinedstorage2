@@ -8,3 +8,4 @@ accessible method net/minecraft/client/resources/model/ModelBakery$BakedCacheKey
 accessible method net/minecraft/client/gui/GuiGraphics renderTooltipInternal (Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;)V
 accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
 mutable field net/minecraft/world/inventory/Slot y I
+accessible method net/minecraft/client/gui/GuiGraphics renderItem (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V

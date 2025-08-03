@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.6] - 2025-08-03
+
+### Changed
+
+-   Opened GUIs will now automatically close if you go out of reach or the block is destroyed.
+-   Quartz Enriched Iron and Copper are now part of the `c:ingots` item tag.
+
+### Fixed
+
+-   Fixed Pattern output not rendering sometimes.
+-   Fixed patterns being displaced after scrolling and clicking in the search bar of the Autocrafter Manager.
+-   Fixed crash when exploding TNT next to an opened Grid.
+-   Fixed crafting events not being triggered from the Crafting Grid.
+
 ## [2.0.0-beta.5] - 2025-07-31
 
 ### Changed
@@ -974,7 +988,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...HEAD
+
+[2.0.0-beta.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...v2.0.0-beta.6
 
 [2.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.4...v2.0.0-beta.5
 
