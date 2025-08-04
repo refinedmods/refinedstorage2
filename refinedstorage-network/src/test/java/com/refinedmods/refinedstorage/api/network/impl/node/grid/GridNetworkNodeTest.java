@@ -28,6 +28,7 @@ import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtu
 import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.D;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -134,6 +135,56 @@ class GridNetworkNodeTest {
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> sut.addWatcher(watcher, actorType1));
         assertThrows(IllegalArgumentException.class, () -> sut.addWatcher(watcher, actorType2));
+    }
+
+    @Test
+    void shouldBeAbleToAddWatcherWithoutNetworkAndRemoveItIfTheNetworkBecameAvailableAfter() {
+        // Arrange
+        final Network originalNetwork = sut.getNetwork();
+        final GridWatcher watcher = mock(GridWatcher.class);
+
+        // Act
+        sut.setNetwork(null);
+        sut.addWatcher(watcher, Actor.EMPTY.getClass());
+        sut.onActiveChanged(true);
+
+        sut.setNetwork(originalNetwork);
+        sut.removeWatcher(watcher);
+
+        sut.onActiveChanged(false);
+
+        // Assert
+        verify(watcher).onActiveChanged(true);
+        verify(watcher).invalidate();
+        verify(watcher).onChanged(
+            eq(A),
+            eq(100L),
+            any()
+        );
+        verify(watcher).onChanged(
+            eq(B),
+            eq(200L),
+            any()
+        );
+        verifyNoMoreInteractions(watcher);
+    }
+
+    @Test
+    void shouldBeAbleToAddAndRemoveWatcherWithoutNetwork() {
+        // Arrange
+        sut.setNetwork(null);
+
+        final GridWatcher watcher = mock(GridWatcher.class);
+
+        // Act
+        sut.addWatcher(watcher, Actor.EMPTY.getClass());
+        sut.onActiveChanged(true);
+        sut.removeWatcher(watcher);
+        sut.onActiveChanged(false);
+
+        // Assert
+        verify(watcher).onActiveChanged(true);
+        verifyNoMoreInteractions(watcher);
     }
 
     @Test

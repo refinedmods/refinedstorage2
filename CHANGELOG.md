@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-  Fixed crash when closing a Wireless Grid that became available after opening the GUI.
+
 ## [2.0.0-beta.6] - 2025-08-03
 
 ### Changed
