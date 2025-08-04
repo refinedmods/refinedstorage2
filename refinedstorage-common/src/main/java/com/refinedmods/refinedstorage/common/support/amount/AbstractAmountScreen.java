@@ -367,7 +367,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         if (value.isEmpty()) {
             return new AmountOperations.ReturnValue<>("resource_amount_input.no_input");
         }
-        return amountOperations.validate(value,
+        return amountOperations.calculate(value,
             configuration.getMinAmount(),
             configuration.getMaxAmount()
         );

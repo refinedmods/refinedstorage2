@@ -8,9 +8,9 @@ public interface AmountOperations<N extends Number> {
 
     ReturnValue<N> parse(String value);
 
-    default ReturnValue<N> validate(final String amount,
-                                 @Nullable final N minAmount,
-                                 @Nullable final N maxAmount) {
+    default ReturnValue<N> calculate(final String amount,
+                                     @Nullable final N minAmount,
+                                     @Nullable final N maxAmount) {
         final ReturnValue<N> evaluation = parse(amount);
         if (evaluation.value == null) {
             return new ReturnValue<>(evaluation.tooltip);
