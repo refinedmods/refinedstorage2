@@ -60,7 +60,7 @@ public abstract class AbstractCableLikeBlockEntity<T extends AbstractNetworkNode
 
     @Override
     public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
-        return connections.writeToTag(new CompoundTag());
+        return connections.writeToTag(super.getUpdateTag(provider));
     }
 
     public CableConnections getConnections() {

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.neoforge;
 
 import com.refinedmods.refinedstorage.common.AbstractClientModInitializer;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
@@ -20,6 +21,7 @@ import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipCo
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinationClientTooltipComponent;
 import com.refinedmods.refinedstorage.neoforge.autocrafting.PatternGeometryLoader;
+import com.refinedmods.refinedstorage.neoforge.debug.NetworkDebugRenderer;
 import com.refinedmods.refinedstorage.neoforge.networking.CableGeometryLoader;
 import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveGeometryLoader;
@@ -65,6 +67,9 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     public static void onClientSetup(final FMLClientSetupEvent e) {
         NeoForge.EVENT_BUS.addListener(ClientModInitializer::onKeyInput);
         NeoForge.EVENT_BUS.addListener(ClientModInitializer::onMouseInput);
+        if (Platform.INSTANCE.getConfig().isDebug()) {
+            NeoForge.EVENT_BUS.addListener(NetworkDebugRenderer::renderDebugOverlay);
+        }
         e.enqueueWork(ClientModInitializer::registerModelPredicates);
         e.enqueueWork(ClientModInitializer::registerItemProperties);
         registerBlockEntityRenderer();

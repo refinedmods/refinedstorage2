@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkIte
 import com.refinedmods.refinedstorage.common.support.PlayerAwareBlockEntity;
 import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.RedstoneModeSettings;
+import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -25,6 +26,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
@@ -45,6 +49,7 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     private static final String TAG_CUSTOM_NAME = "CustomName";
     private static final String TAG_PLACED_BY_PLAYER_ID = "pbpid";
     private static final String TAG_REDSTONE_MODE = "rm";
+    private static final String TAG_DEBUG_NETWORK_ID = "dnid";
     private static final int ACTIVENESS_CHANGE_TICK_RATE = 20;
 
     protected NetworkNodeTicker ticker = NetworkNodeTicker.IMMEDIATE;
@@ -56,6 +61,7 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     @Nullable
     private UUID placedByPlayerId;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
+    private int debugNetworkId = -1;
 
     protected AbstractBaseNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
                                                           final BlockPos pos,
@@ -187,7 +193,17 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
         if (tag.hasUUID(TAG_PLACED_BY_PLAYER_ID)) {
             setPlacedBy(tag.getUUID(TAG_PLACED_BY_PLAYER_ID));
         }
+        if (tag.contains(TAG_DEBUG_NETWORK_ID)) {
+            debugNetworkId = tag.getInt(TAG_DEBUG_NETWORK_ID);
+            if (level != null) {
+                Platform.INSTANCE.requestModelDataUpdateOnClient(level, getBlockPos(), true);
+            }
+        }
         readConfiguration(tag, provider);
+    }
+
+    public int getDebugNetworkId() {
+        return debugNetworkId;
     }
 
     @Override
@@ -274,5 +290,32 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
 
     protected final boolean isPlacedBy(final UUID playerId) {
         return Objects.equals(placedByPlayerId, playerId);
+    }
+
+    @Override
+    @Nullable
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        if (!Platform.INSTANCE.getConfig().isDebug()) {
+            return super.getUpdatePacket();
+        }
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
+        if (!Platform.INSTANCE.getConfig().isDebug()) {
+            return super.getUpdateTag(provider);
+        }
+        final CompoundTag tag = super.getUpdateTag(provider);
+        tag.putInt(TAG_DEBUG_NETWORK_ID, debugNetworkId);
+        return tag;
+    }
+
+    public void updateDebugNetworkId() {
+        final int newNetworkId = mainNetworkNode.getNetwork() == null ? -1 : mainNetworkNode.getNetwork().hashCode();
+        if (debugNetworkId != newNetworkId) {
+            debugNetworkId = newNetworkId;
+            PlatformUtil.sendBlockUpdateToClient(level, getBlockPos());
+        }
     }
 }

@@ -116,6 +116,8 @@ public final class Items {
     private Supplier<WirelessAutocraftingMonitorItem> wirelessAutocraftingMonitor;
     @Nullable
     private Supplier<WirelessAutocraftingMonitorItem> creativeWirelessAutocraftingMonitor;
+    @Nullable
+    private Supplier<Item> debugStick;
 
     private Items() {
     }
@@ -542,5 +544,13 @@ public final class Items {
 
     public void setCreativeWirelessAutocraftingMonitor(final Supplier<WirelessAutocraftingMonitorItem> supplier) {
         this.creativeWirelessAutocraftingMonitor = supplier;
+    }
+
+    public Item getDebugStick() {
+        return requireNonNull(debugStick).get();
+    }
+
+    public void setDebugStick(final Supplier<Item> supplier) {
+        this.debugStick = supplier;
     }
 }

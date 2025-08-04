@@ -28,6 +28,7 @@ public class ConfigImpl implements Config {
 
     private final ModConfigSpec.EnumValue<ScreenSize> screenSize;
     private final ModConfigSpec.BooleanValue smoothScrolling;
+    private final ModConfigSpec.BooleanValue debug;
     private final ModConfigSpec.IntValue maxRowsStretch;
     private final ModConfigSpec.BooleanValue searchBoxAutoSelected;
     private final ModConfigSpec.BooleanValue autocraftingNotification;
@@ -71,6 +72,9 @@ public class ConfigImpl implements Config {
         smoothScrolling = builder
             .translation(translationKey("smoothScrolling"))
             .define("smoothScrolling", true);
+        debug = builder
+            .translation(translationKey("debug"))
+            .define("debug", false);
         maxRowsStretch = builder
             .translation(translationKey("maxRowsStretch"))
             .defineInRange("maxRowsStretch", 256, 3, 256);
@@ -177,6 +181,11 @@ public class ConfigImpl implements Config {
             this.screenSize.set(screenSize);
             this.spec.save();
         }
+    }
+
+    @Override
+    public boolean isDebug() {
+        return debug.getAsBoolean();
     }
 
     @Override

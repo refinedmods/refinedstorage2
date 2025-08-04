@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.network;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
 
 import java.util.function.Supplier;
@@ -32,6 +33,9 @@ public class NetworkNodeBlockEntityTicker<
 
     @Override
     public void tick(final Level level, final BlockPos pos, final BlockState state, final T blockEntity) {
+        if (Platform.INSTANCE.getConfig().isDebug()) {
+            blockEntity.updateDebugNetworkId();
+        }
         blockEntity.updateActiveness(state, activenessProperty);
         blockEntity.doWork();
     }

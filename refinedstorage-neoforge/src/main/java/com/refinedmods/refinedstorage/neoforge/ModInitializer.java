@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProviders;
 import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Blocks;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage.common.content.DirectRegistryCallback;
@@ -95,6 +96,7 @@ import com.refinedmods.refinedstorage.neoforge.autocrafting.FluidHandlerExternal
 import com.refinedmods.refinedstorage.neoforge.autocrafting.ItemHandlerExternalPatternProviderSinkFactory;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeConstructorBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeDestructorBlockEntity;
+import com.refinedmods.refinedstorage.neoforge.debug.DebugStickItem;
 import com.refinedmods.refinedstorage.neoforge.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.exporter.ForgeExporterBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.exporter.ItemHandlerExporterTransferStrategyFactory;
@@ -331,6 +333,7 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerItems(final IEventBus eventBus) {
         final RegistryCallback<Item> callback = new ForgeRegistryCallback<>(itemRegistry);
         registerItems(callback);
+        Items.INSTANCE.setDebugStick(callback.register(ContentIds.DEBUG_STICK, DebugStickItem::new));
         registerCustomItems(callback);
         itemRegistry.register(eventBus);
     }
@@ -616,7 +619,12 @@ public class ModInitializer extends AbstractModInitializer {
             CreativeModeTab.builder()
                 .title(ContentNames.MOD)
                 .icon(() -> new ItemStack(Blocks.INSTANCE.getCreativeController().getDefault()))
-                .displayItems((params, output) -> CreativeModeTabItems.append(output::accept))
+                .displayItems((params, output) -> {
+                    CreativeModeTabItems.append(output::accept);
+                    if (Platform.INSTANCE.getConfig().isDebug()) {
+                        output.accept(Items.INSTANCE.getDebugStick());
+                    }
+                })
                 .build()
         ));
         e.register(Registries.CREATIVE_MODE_TAB, helper -> helper.register(
