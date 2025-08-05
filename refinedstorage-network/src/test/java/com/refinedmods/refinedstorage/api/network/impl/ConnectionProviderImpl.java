@@ -42,6 +42,14 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         return this;
     }
 
+    public ConnectionProviderImpl connectOneway(final NetworkNodeContainer from, final NetworkNodeContainer to) {
+        if (!allowed.contains(from) || !allowed.contains(to)) {
+            throw new IllegalArgumentException();
+        }
+        doConnect(from, to);
+        return this;
+    }
+
     private void doConnect(final NetworkNodeContainer from, final NetworkNodeContainer to) {
         connections.computeIfAbsent(from, k -> new ArrayList<>()).add(to);
     }

@@ -40,11 +40,6 @@ public class RelayBlock extends AbstractActiveColoredDirectionalBlock<Direction,
         super(BlockConstants.PROPERTIES, color, name);
     }
 
-    @SuppressWarnings("deprecation") // deprecated on NeoForge
-    protected BlockState getRotatedBlockState(final BlockState state, final Level level, final BlockPos pos) {
-        return state;
-    }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(final BlockPos blockPos, final BlockState blockState) {

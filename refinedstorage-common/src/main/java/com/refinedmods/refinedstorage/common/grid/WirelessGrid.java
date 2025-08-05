@@ -58,11 +58,10 @@ class WirelessGrid implements Grid {
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         context.drainEnergy(Platform.INSTANCE.getConfig().getWirelessGrid().getOpenEnergyUsage());
-        context.resolveNetwork().ifPresent(network -> watchers.addWatcher(
-            watcher,
-            actorType,
-            network.getComponent(StorageNetworkComponent.class)
-        ));
+        final StorageNetworkComponent storage = context.resolveNetwork()
+            .map(network -> network.getComponent(StorageNetworkComponent.class))
+            .orElse(null);
+        watchers.addWatcher(watcher, actorType, storage);
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 
 import javax.annotation.Nullable;
 
-import static java.util.Objects.requireNonNull;
-
 public class GridNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
@@ -24,7 +22,8 @@ public class GridNetworkNode extends AbstractNetworkNode {
     }
 
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
-        watchers.addWatcher(watcher, actorType, requireNonNull(network).getComponent(StorageNetworkComponent.class));
+        watchers.addWatcher(watcher, actorType,
+            network != null ? network.getComponent(StorageNetworkComponent.class) : null);
     }
 
     public void removeWatcher(final GridWatcher watcher) {

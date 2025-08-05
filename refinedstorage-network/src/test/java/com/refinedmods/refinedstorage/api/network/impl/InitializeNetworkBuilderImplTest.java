@@ -212,4 +212,39 @@ class InitializeNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
             unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(unrelatedContainer);
     }
+
+    @Test
+    void shouldRemoveFromOldNetworkWhenMerging() {
+        // Arrange
+        final ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl();
+
+        final NetworkNodeContainer left = createContainerWithNetwork();
+        final NetworkNodeContainer right =
+            createContainerWithNetwork(container -> left.getNode().getNetwork());
+
+        final NetworkNodeContainer otherCausingOverrideOfRightNetwork = createContainerWithNetwork();
+
+        final NetworkNodeContainer connecting = createContainer();
+
+        connectionProvider
+            .with(otherCausingOverrideOfRightNetwork, left, right, connecting)
+            .connectOneway(left, right)
+            .connect(right, connecting)
+            .connect(connecting, otherCausingOverrideOfRightNetwork);
+
+        // Act
+        sut.initialize(connecting, connectionProvider);
+
+        // Assert
+        assertThat(right.getNode().getNetwork())
+            .isSameAs(otherCausingOverrideOfRightNetwork.getNode().getNetwork())
+            .isSameAs(connecting.getNode().getNetwork())
+            .isNotSameAs(left.getNode().getNetwork());
+
+        assertThat(right.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+            .containsExactlyInAnyOrder(right, otherCausingOverrideOfRightNetwork, connecting);
+
+        assertThat(left.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
+            .containsExactly(left);
+    }
 }

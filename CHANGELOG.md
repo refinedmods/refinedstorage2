@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.7] - 2025-08-05
+
+### Added
+
+-   Added Debug Stick and network debug overlay, enabled with a config option (NeoForge-only).
+
+### Fixed
+
+-   Fixed crash when closing a Wireless Grid that became available after opening the GUI.
+-   Fixed networks breaking when modifying the receiving end when using Network Transmitters and Network Receivers.
+-   Rotating Relays was disabled since v2.0.0-milestone.4.14 because of a crash. This crash has now been fixed and Relays can once again be rotated.
+
 ## [2.0.0-beta.6] - 2025-08-03
 
 ### Changed
@@ -988,7 +1000,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...HEAD
+
+[2.0.0-beta.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...v2.0.0-beta.7
 
 [2.0.0-beta.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.5...v2.0.0-beta.6
 

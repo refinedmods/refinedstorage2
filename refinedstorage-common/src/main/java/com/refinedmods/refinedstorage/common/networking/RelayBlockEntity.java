@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkN
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.storage.AccessModeSettings;
+import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.RedstoneMode;
@@ -298,5 +299,11 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
             types.add(RelayComponentType.AUTOCRAFTING);
         }
         return types;
+    }
+
+    @Override
+    protected boolean doesBlockStateChangeWarrantNetworkNodeUpdate(final BlockState oldBlockState,
+                                                                   final BlockState newBlockState) {
+        return AbstractDirectionalBlock.didDirectionChange(oldBlockState, newBlockState);
     }
 }
