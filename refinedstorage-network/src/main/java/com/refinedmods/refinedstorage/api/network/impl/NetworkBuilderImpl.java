@@ -75,6 +75,9 @@ public class NetworkBuilderImpl implements NetworkBuilder {
                                        final NetworkNode entryNode) {
         final Network oldNetwork = entryNode.getNetwork();
         entryNode.setNetwork(newNetwork);
+        if (oldNetwork != null) {
+            oldNetwork.removeContainer(entry);
+        }
         newNetwork.addContainer(entry);
         return oldNetwork;
     }

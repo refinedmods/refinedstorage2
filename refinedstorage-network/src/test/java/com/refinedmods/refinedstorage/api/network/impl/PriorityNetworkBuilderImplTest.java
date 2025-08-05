@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import static com.refinedmods.refinedstorage.api.network.impl.PriorityNetworkBuilderImplTest.MasterSlave.MASTER;
 import static com.refinedmods.refinedstorage.api.network.impl.PriorityNetworkBuilderImplTest.MasterSlave.SLAVE;
@@ -93,18 +94,24 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
         assertThat(slave.nodeA.getNetwork()).isSameAs(master.nodeA.getNetwork());
         assertThat(slave.nodeB.getNetwork()).isSameAs(master.nodeA.getNetwork());
 
-        verify(slave.watcher, times(1)).invalidate();
-        verify(slave.watcher).onChanged(
+        final InOrder inOrder = Mockito.inOrder(slave.watcher);
+        inOrder.verify(slave.watcher).onChanged(
             SLAVE,
-            10L,
+            -10L,
             null
         );
-        verify(slave.watcher).onChanged(
+        inOrder.verify(slave.watcher, times(1)).invalidate();
+        inOrder.verify(slave.watcher).onChanged(
             MASTER,
             10L,
             null
         );
-        verifyNoMoreInteractions(slave.watcher);
+        inOrder.verify(slave.watcher).onChanged(
+            SLAVE,
+            10L,
+            null
+        );
+        inOrder.verifyNoMoreInteractions();
 
         verify(master.watcher, times(1)).onChanged(
             SLAVE,

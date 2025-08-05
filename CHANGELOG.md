@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -  Fixed crash when closing a Wireless Grid that became available after opening the GUI.
+-  Fixed networks breaking when modifying the receiving end when using Network Transmitters and Network Receivers.
 
 ## [2.0.0-beta.6] - 2025-08-03
 
