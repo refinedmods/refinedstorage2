@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -  Fixed crash when closing a Wireless Grid that became available after opening the GUI.
 -  Fixed networks breaking when modifying the receiving end when using Network Transmitters and Network Receivers.
+-  Rotating Relays was disabled since v2.0.0-milestone.4.14 because of a crash. This crash has now been fixed and Relays can once again be rotated.
 
 ## [2.0.0-beta.6] - 2025-08-03
 
