@@ -200,7 +200,7 @@ public final class NetworkDebugRenderer {
 
     private static int getColorFromId(final int id) {
         if (id == -1) {
-            return 0x00000000;
+            return 0xFF000000;
         }
         final byte[] hash = getIdHash(id);
         final int r = Byte.toUnsignedInt(hash[0]);
