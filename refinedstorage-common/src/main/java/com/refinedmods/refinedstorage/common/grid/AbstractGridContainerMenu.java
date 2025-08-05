@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryBuilder;
@@ -106,10 +107,13 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         this.active = gridData.active();
 
         final ResourceRepositoryBuilder<GridResource> repositoryBuilder = createRepositoryBuilder(this);
-        gridData.resources().forEach(resource -> repositoryBuilder.addResource(
-            resource.resourceAmount().resource(),
-            resource.resourceAmount().amount()
-        ));
+        gridData.resources().forEach(gridResource -> {
+            final ResourceAmount resourceAmount = gridResource.resourceAmount();
+            final ResourceKey resource = resourceAmount.resource();
+            repositoryBuilder.addResource(resource, resourceAmount.amount());
+            gridResource.trackedResource()
+                .ifPresent(trackedResource -> trackedResources.put(resource, trackedResource));
+        });
         gridData.autocraftableResources().forEach(repositoryBuilder::addStickyResource);
 
         this.repository = repositoryBuilder.build();

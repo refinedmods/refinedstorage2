@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Grid not showing last modified date after reopening GUI.
+
 ## [2.0.0-beta.7] - 2025-08-05
 
 ### Added
