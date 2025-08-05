@@ -159,6 +159,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     @Override
+    public boolean isDebug() {
+        return false;
+    }
+
+    @Override
     public boolean isSmoothScrolling() {
         return smoothScrolling;
     }

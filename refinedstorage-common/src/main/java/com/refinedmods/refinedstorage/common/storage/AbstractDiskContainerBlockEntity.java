@@ -196,7 +196,7 @@ public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorage
 
     @Override
     public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
-        final CompoundTag tag = new CompoundTag();
+        final CompoundTag tag = super.getUpdateTag(provider);
         // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
         if (mainNetworkNode.getNetwork() == null) {
             return tag;

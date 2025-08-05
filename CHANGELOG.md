@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-  Added Debug Stick and network debug overlay, enabled with a config option (NeoForge-only).
+
 ### Fixed
 
 -  Fixed crash when closing a Wireless Grid that became available after opening the GUI.
