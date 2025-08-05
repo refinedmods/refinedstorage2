@@ -13,8 +13,8 @@ public class LongAmountOperations implements AmountOperations<Long> {
     }
 
     @Override
-    public String format(@Nullable final Long value) {
-        return (value == null) ? "" : String.valueOf(value);
+    public String format(final Long value) {
+        return String.valueOf(value);
     }
 
     @Override

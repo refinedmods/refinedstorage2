@@ -878,8 +878,6 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             confirmButton.setMessage(START);
             amountField.setTextColor(0xFF5555);
         });
-
-        this.amount = (data.getValue().isEmpty()) ? null : data.getValue().get();
         setToolTip(data.getTooltip(), amountField);
     }
 

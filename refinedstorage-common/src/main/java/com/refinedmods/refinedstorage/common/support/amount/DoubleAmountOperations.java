@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage.common.support.amount;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.util.Objects;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.Mth;
@@ -26,8 +25,8 @@ public class DoubleAmountOperations implements AmountOperations<Double> {
     }
 
     @Override
-    public String format(@Nullable final Double value) {
-        return (value == null) ? "" : DECIMAL_FORMAT.format(value);
+    public String format(final Double value) {
+        return DECIMAL_FORMAT.format(value);
     }
 
     @Override

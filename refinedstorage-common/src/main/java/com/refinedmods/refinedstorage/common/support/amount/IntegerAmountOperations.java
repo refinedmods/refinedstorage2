@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
-import java.util.Objects;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.Mth;
@@ -14,8 +13,8 @@ public class IntegerAmountOperations implements AmountOperations<Integer> {
     }
 
     @Override
-    public String format(@Nullable final Integer value) {
-        return (value == null) ? "" : String.valueOf(value);
+    public String format(final Integer value) {
+        return String.valueOf(value);
     }
 
     @Override

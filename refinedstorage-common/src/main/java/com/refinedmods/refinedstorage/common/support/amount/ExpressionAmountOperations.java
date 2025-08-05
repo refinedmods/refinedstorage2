@@ -19,8 +19,8 @@ public class ExpressionAmountOperations implements AmountOperations<Double> {
     private static final String SOURCE = "Amount screen input";
 
     @Override
-    public String format(@Nullable final Double value) {
-        return (value == null) ? "" : DECIMAL_FORMATTER.format(value);
+    public String format(final Double value) {
+        return DECIMAL_FORMATTER.format(value);
     }
 
     @Override

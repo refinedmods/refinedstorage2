@@ -4,24 +4,14 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public interface AmountOperations<N extends Number> {
-    String format(@Nullable N value);
+    String format(N value);
 
     ReturnValue<N> parse(String value);
 
-    default ReturnValue<N> calculate(final String amount,
-                                     @Nullable final N minAmount,
-                                     @Nullable final N maxAmount) {
+    default ReturnValue<N> calculate(final String amount) {
         final ReturnValue<N> evaluation = parse(amount);
         if (evaluation.value == null) {
             return new ReturnValue<>(evaluation.tooltip);
-        }
-
-        //convert everything to double for comparison
-        if (minAmount != null && evaluation.value.doubleValue() < minAmount.doubleValue()) {
-            return new ReturnValue<>("resource_amount_input.too_small");
-        }
-        if (maxAmount != null && evaluation.value.doubleValue() > maxAmount.doubleValue()) {
-            return new ReturnValue<>("resource_amount_input.too_big");
         }
         return evaluation;
     }
