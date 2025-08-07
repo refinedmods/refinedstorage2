@@ -119,6 +119,6 @@ public class Evaluator {
             default -> {
             }
         }
-        throw new EvaluatorException("Parser screwed up");
+        throw new EvaluatorException(String.format("Unhandled node %s", operand));
     }
 }
