@@ -11,7 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Fixed Grid not showing last modified date after reopening GUI.
 -   Fixed not being able to extract fluids from External Storage in the Grid on Fabric.
--   Fixed autocrafting patterns in fuzzy mode that can be mirrored causing a crash.
+-   Fixed mirrored autocrafting patterns in fuzzy mode causing a crash.
+-   Fixed Network Transmitter reconnecting with any type of Refined Storage block.
 
 ## [2.0.0-beta.7] - 2025-08-05
 

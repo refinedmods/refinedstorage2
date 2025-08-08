@@ -85,7 +85,7 @@ public class NetworkTransmitterBlockEntity
                 public void addOutgoingConnections(final ConnectionSink sink) {
                     super.addOutgoingConnections(sink);
                     if (receiverKey != null && NetworkTransmitterBlockEntity.this.mainNetworkNode.isActive()) {
-                        sink.tryConnect(receiverKey.pos());
+                        sink.tryConnect(receiverKey.pos(), NetworkReceiverBlock.class);
                     }
                 }
             })
