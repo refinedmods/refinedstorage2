@@ -24,8 +24,8 @@ class ConnectionSinkImpl implements ConnectionSink {
     }
 
     @Override
-    public void tryConnect(final GlobalPos pos) {
-        connections.add(new Connection(pos, null, null));
+    public void tryConnect(final GlobalPos pos, @Nullable final Class<? extends Block> allowedBlockType) {
+        connections.add(new Connection(pos, null, allowedBlockType));
     }
 
     @Override

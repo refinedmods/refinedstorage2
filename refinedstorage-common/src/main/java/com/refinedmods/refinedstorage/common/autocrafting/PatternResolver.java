@@ -80,16 +80,51 @@ public class PatternResolver {
             final ItemStack input = state.input().input().getItem(i);
             if (input.isEmpty()) {
                 inputs.add(Collections.emptyList());
-            } else if (state.fuzzyMode() && i < recipe.getIngredients().size()) {
-                final ItemStack[] ingredients = recipe.getIngredients().get(i).getItems();
-                inputs.add(Arrays.stream(ingredients)
-                    .map(item -> (ResourceKey) ItemResource.ofItemStack(item))
-                    .toList());
+            } else if (state.fuzzyMode()) {
+                inputs.add(getFuzzyInput(recipe, state, i, input));
             } else {
                 inputs.add(List.of(ItemResource.ofItemStack(input)));
             }
         }
         return inputs;
+    }
+
+    private List<ResourceKey> getFuzzyInput(final CraftingRecipe recipe, final CraftingPatternState state,
+                                            final int index, final ItemStack input) {
+        final int width = state.input().input().width();
+        final boolean mirror = isMirror(recipe.getIngredients(), state.input().input(), width);
+        final int col = index % width;
+        final int row = index / width;
+        final int ingredientIndex = mirror
+            ? (width - 1 - col) + row * width
+            : index;
+        if (ingredientIndex >= 0 && ingredientIndex < recipe.getIngredients().size()) {
+            final ItemStack[] ingredients = recipe.getIngredients().get(ingredientIndex).getItems();
+            return Arrays.stream(ingredients)
+                .map(item -> (ResourceKey) ItemResource.ofItemStack(item))
+                .toList();
+        }
+        return List.of(ItemResource.ofItemStack(input));
+    }
+
+    private boolean isMirror(final List<net.minecraft.world.item.crafting.Ingredient> ingredients,
+                             final CraftingInput craftingInput,
+                             final int width) {
+        for (int i = 0; i < craftingInput.size(); i++) {
+            final ItemStack input = craftingInput.getItem(i);
+            if (input.isEmpty()) {
+                continue;
+            }
+            final int row = i / width;
+            final int col = i % width;
+            if (ingredients.get(row * width + col).test(input)) {
+                return false;
+            }
+            if (ingredients.get(row * width + (width - 1 - col)).test(input)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ResourceAmount getOutput(final Level level,

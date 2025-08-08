@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.8] - 2025-08-08
+
+### Fixed
+
+-   Fixed Grid not showing last modified date after reopening GUI.
+-   Fixed not being able to extract fluids from External Storage in the Grid on Fabric.
+-   Fixed mirrored autocrafting patterns in fuzzy mode causing a crash.
+-   Fixed Network Transmitter reconnecting with any type of Refined Storage block.
+
 ## [2.0.0-beta.7] - 2025-08-05
 
 ### Added
@@ -1000,7 +1009,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.8...HEAD
+
+[2.0.0-beta.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...v2.0.0-beta.8
 
 [2.0.0-beta.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.6...v2.0.0-beta.7
 

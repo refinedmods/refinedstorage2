@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -56,8 +57,10 @@ public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
         return extract(resource, amount, action, storage);
     }
 
+    @SuppressWarnings("deprecation")
     private long extract(final ResourceKey resource, final long amount, final Action action, final Storage<P> storage) {
-        try (Transaction tx = Transaction.openOuter()) {
+        final TransactionContext potentialOpenTransactionFromEarlierInTheStack = Transaction.getCurrentUnsafe();
+        try (Transaction tx = Transaction.openNested(potentialOpenTransactionFromEarlierInTheStack)) {
             final long extract = storage.extract(toPlatformMapper.apply(resource), amount, tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
