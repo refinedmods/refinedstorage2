@@ -52,6 +52,12 @@ body:
         Ensure that you are using the latest version.
     validations:
       required: true
+  - type: input
+    id: modpack
+    attributes:
+      label: What modpack and modpack version, if any, are you using?
+      description: |
+        If possible enter a CurseForge or Modrinth link
   - type: textarea
     id: logs
     attributes:
