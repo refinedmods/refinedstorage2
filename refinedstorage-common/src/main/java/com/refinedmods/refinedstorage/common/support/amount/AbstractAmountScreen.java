@@ -220,7 +220,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         }
     }
 
-    protected abstract boolean confirm(N value);
+    protected abstract boolean confirm(N amount);
 
     private Button createIncrementButton(final int x, final int y, final int increment) {
         final Component text = Component.literal((increment > 0 ? "+" : "") + increment);

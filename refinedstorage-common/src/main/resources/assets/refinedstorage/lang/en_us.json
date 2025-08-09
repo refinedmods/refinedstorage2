@@ -283,8 +283,6 @@
   "gui.refinedstorage.resource_amount_input.invalid_unit": "Unrecognized multiplier unit",
   "gui.refinedstorage.resource_amount_input.syntax_error": "Syntax error",
   "gui.refinedstorage.resource_amount_input.unrecognized_char": "Unrecognized character",
-  "gui.refinedstorage.resource_amount_input.too_big": "Too big\nMaximum is %s",
-  "gui.refinedstorage.resource_amount_input.too_small": "Too small\nMinimum is %s",
   "gui.refinedstorage.resource_amount_input.no_input": "Enter amount",
   "gui.refinedstorage.resource_amount_input.non_int": "Enter integer",
   "item.refinedstorage.controller.help": "Provides the storage network with energy. Multiple are allowed in a single storage network.",
