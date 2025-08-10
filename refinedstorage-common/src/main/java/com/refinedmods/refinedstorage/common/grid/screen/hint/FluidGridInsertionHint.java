@@ -19,11 +19,12 @@ public class FluidGridInsertionHint implements GridInsertionHint {
     }
 
     private ClientTooltipComponent createComponent(final FluidOperationResult result) {
+        final long amount = Math.min(result.amount(), Platform.INSTANCE.getBucketAmount());
         return MouseClientTooltipComponent.fluid(
             MouseClientTooltipComponent.Type.RIGHT,
             (FluidResource) result.fluid(),
-            result.amount() == Platform.INSTANCE.getBucketAmount() ? null : RefinedStorageClientApi.INSTANCE
-                .getResourceRendering(FluidResource.class).formatAmount(result.amount())
+            amount == Platform.INSTANCE.getBucketAmount() ? null : RefinedStorageClientApi.INSTANCE
+                .getResourceRendering(FluidResource.class).formatAmount(amount)
         );
     }
 }
