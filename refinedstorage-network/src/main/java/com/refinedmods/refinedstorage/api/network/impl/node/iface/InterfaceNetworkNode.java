@@ -85,11 +85,13 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
     private void updateSlot(final InterfaceExportState state, final int index, final RootStorage storage) {
         final ResourceKey want = state.getRequestedResource(index);
         final ResourceKey got = state.getExportedResource(index);
-        if (want == null && got != null) {
+        if (want == null && got == null) {
+            updateResult(index, null);
+        } else if (want == null) {
             clearSlot(state, index, got, storage);
-        } else if (want != null && got == null) {
+        } else if (got == null) {
             updateEmptySlot(state, index, want, storage);
-        } else if (want != null) {
+        } else {
             final boolean valid = state.isExportedResourceValid(want, got);
             if (!valid) {
                 clearSlot(state, index, got, storage);
@@ -129,7 +131,9 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
             return;
         }
         state.shrinkExportedAmount(slot, inserted);
-        updateResult(slot, InterfaceTransferResult.EXPORTED);
+        final boolean empty = state.getExportedAmount(slot) == 0;
+        final boolean stillWantSomething = state.getRequestedResource(slot) != null;
+        updateResult(slot, empty && !stillWantSomething ? null : InterfaceTransferResult.EXPORTED);
     }
 
     private void updateEmptySlot(final InterfaceExportState state,
@@ -190,7 +194,7 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
         updateResult(slot, InterfaceTransferResult.EXPORTED);
     }
 
-    private void updateResult(final int slot, final InterfaceTransferResult result) {
+    private void updateResult(final int slot, @Nullable final InterfaceTransferResult result) {
         if (lastResults == null) {
             return;
         }
