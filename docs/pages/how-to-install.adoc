@@ -59,4 +59,4 @@ Storage networks require energy. Install a mod that generates energy or customiz
 - xref:addons/curios.adoc[]
 - xref:addons/trinkets.adoc[]
 - xref:addons/fabric-ecosystem.adoc[]
-- xref:addons/unofficial-addons.adoc[]
+- xref:addons/community-addons.adoc[]

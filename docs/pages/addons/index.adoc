@@ -17,4 +17,4 @@
 
 == Unofficial addons
 
-- xref:unofficial-addons.adoc[]
+- xref:community-addons.adoc[]

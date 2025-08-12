@@ -44,7 +44,8 @@ Adds powerful extensions to CC:Tweaked (Computercraft), with Refined Storage int
 [cols="1,3"]
 |===
 | *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
-| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[CurseForge]
+| *Compatible Addons* | xref:mekanism.adoc[]
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[CurseForge], link:https://modrinth.com/mod/advancedperipherals[Modrinth]
 |===
 
 == ExtraStorage
