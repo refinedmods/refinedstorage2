@@ -1,4 +1,4 @@
-name: Bug report
+name: 🐛 Bug report for Refined Storage v2.x
 description: Found a bug or encountered a crash? Please report it here.
 labels: [ bug ]
 body:
