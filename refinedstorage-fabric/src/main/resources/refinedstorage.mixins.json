@@ -8,7 +8,6 @@
     "EditBoxAccessor",
     "ItemPropertiesAccessor",
     "KeyMappingAccessor",
-    "ModelBakeryAccessor",
     "AbstractGuiGraphicsMixin"
   ],
   "injectors": {
