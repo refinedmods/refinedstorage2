@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager;
 
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.support.Sprites;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.stretching.AbstractStretchingScreen;
@@ -23,11 +24,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
-public class AutocrafterManagerScreen extends AbstractStretchingScreen<AutocrafterManagerContainerMenu> {
+public class AutocrafterManagerScreen extends AbstractStretchingScreen<AutocrafterManagerContainerMenu>
+    implements PatternOutputRenderingScreen {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/autocrafter_manager.png");
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
     private static final ResourceLocation AUTOCRAFTER_NAME = createIdentifier("autocrafter_manager/autocrafter_name");
@@ -273,5 +276,10 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     @Override
     protected ResourceLocation getTexture() {
         return TEXTURE;
+    }
+
+    @Override
+    public boolean canDisplayOutput(final ItemStack stack) {
+        return getMenu().containsPattern(stack);
     }
 }

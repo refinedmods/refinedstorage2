@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
@@ -23,13 +24,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static java.util.Objects.requireNonNull;
 
 public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMenu>
-    implements PatternGridContainerMenu.PatternGridListener {
+    implements PatternGridContainerMenu.PatternGridListener, PatternOutputRenderingScreen {
     static final int INSET_PADDING = 4;
     static final int INSET_WIDTH = 138;
     static final int INSET_HEIGHT = 71;
@@ -297,5 +299,10 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
 
     private int getInsetY() {
         return topPos + imageHeight - bottomHeight + 5;
+    }
+
+    @Override
+    public boolean canDisplayOutput(final ItemStack stack) {
+        return getMenu().isPatternInOutput(stack);
     }
 }

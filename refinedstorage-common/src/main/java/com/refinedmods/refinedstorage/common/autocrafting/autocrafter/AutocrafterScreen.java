@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting.autocrafter;
 
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternSlot;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.AbstractFilterScreen;
@@ -20,6 +21,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -28,7 +30,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 import static java.util.Objects.requireNonNull;
 
 public class AutocrafterScreen extends AbstractBaseScreen<AutocrafterContainerMenu>
-    implements AutocrafterContainerMenu.Listener {
+    implements AutocrafterContainerMenu.Listener, PatternOutputRenderingScreen {
     private static final Component EMPTY_PATTERN_SLOT = createTranslationAsHeading(
         "gui", "autocrafter.empty_pattern_slot"
     );
@@ -264,5 +266,10 @@ public class AutocrafterScreen extends AbstractBaseScreen<AutocrafterContainerMe
             return;
         }
         lockModeSideButtonWidget.setWarning(null);
+    }
+
+    @Override
+    public boolean canDisplayOutput(final ItemStack stack) {
+        return getMenu().containsPattern(stack);
     }
 }
