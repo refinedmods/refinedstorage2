@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Crafting Grid failing to pull additional items for crafts with External Storage inventories that have more than the maximum stack size in 1 slot.
+
 ## [2.0.0-beta.8] - 2025-08-08
 
 ### Fixed
