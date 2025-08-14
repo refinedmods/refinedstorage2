@@ -78,8 +78,8 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicat
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkTransmitterStatusPacket;
-import com.refinedmods.refinedstorage.common.support.packet.s2c.NoPermissionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.PatternGridAllowedAlternativesUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ResourceSlotUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.StorageInfoResponsePacket;
@@ -517,8 +517,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             NetworkTransmitterStatusPacket.STREAM_CODEC
         );
         PayloadTypeRegistry.playS2C().register(
-            NoPermissionPacket.PACKET_TYPE,
-            NoPermissionPacket.STREAM_CODEC
+            MessagePacket.PACKET_TYPE,
+            MessagePacket.STREAM_CODEC
         );
         PayloadTypeRegistry.playS2C().register(
             ResourceSlotUpdatePacket.PACKET_TYPE,

@@ -399,6 +399,11 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
+    public void sendMessage(final ServerPlayer player, final Component title, final Component message) {
+        ensureLoaded().sendMessage(player, title, message);
+    }
+
+    @Override
     public boolean canPlaceNetworkNode(final ServerPlayer player,
                                        final Level level,
                                        final BlockPos pos,

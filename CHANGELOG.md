@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed Crafting Grid failing to pull additional items for crafts with External Storage inventories that have more than the maximum stack size in 1 slot.
 -   Fixed Interface missing resource tooltip not disappearing after clearing slot configuration.
 -   Fixed storage disk info not updating properly in tooltip and Disk Drive.
+-   Implemented a fallback mechanism for resources that cannot be extracted from the Grid due to an incorrect data component implementation in the other mod.
 
 ## [2.0.0-beta.8] - 2025-08-08
 
