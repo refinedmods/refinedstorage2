@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.9] - 2025-08-15
+
 ### Fixed
 
 -   Fixed Crafting Grid failing to pull additional items for crafts with External Storage inventories that have more than the maximum stack size in 1 slot.
@@ -1016,7 +1018,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.9...HEAD
+
+[2.0.0-beta.9]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.8...v2.0.0-beta.9
 
 [2.0.0-beta.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.7...v2.0.0-beta.8
 
