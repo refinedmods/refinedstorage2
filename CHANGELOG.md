@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Duplication bug with Inventory Essentials.
+
 ## [2.0.0-beta.9] - 2025-08-15
 
 ### Fixed
