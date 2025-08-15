@@ -111,6 +111,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -130,9 +131,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static java.util.Objects.requireNonNull;
 
 public class RefinedStorageApiImpl implements RefinedStorageApi {
+    private static final MutableComponent NO_PERMISSION = IdentifierUtil.createTranslation("misc", "no_permission");
+
     private final StorageRepository clientStorageRepository = new ClientStorageRepository(
         C2SPackets::sendStorageInfoRequest
     );
@@ -555,12 +559,17 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
 
     @Override
     public void sendNoPermissionToOpenMessage(final ServerPlayer player, final Component target) {
-        sendNoPermissionMessage(player, IdentifierUtil.createTranslation("misc", "no_permission.open", target));
+        sendMessage(player, NO_PERMISSION, createTranslation("misc", "no_permission.open", target));
     }
 
     @Override
     public void sendNoPermissionMessage(final ServerPlayer player, final Component message) {
-        S2CPackets.sendNoPermission(player, message);
+        sendMessage(player, NO_PERMISSION, message);
+    }
+
+    @Override
+    public void sendMessage(final ServerPlayer player, final Component title, final Component message) {
+        S2CPackets.sendMessage(player, title, message);
     }
 
     @Override

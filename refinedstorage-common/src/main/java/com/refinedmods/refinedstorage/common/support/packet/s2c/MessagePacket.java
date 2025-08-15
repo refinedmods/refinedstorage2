@@ -10,15 +10,16 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-public record NoPermissionPacket(Component component) implements CustomPacketPayload {
-    public static final Type<NoPermissionPacket> PACKET_TYPE = new Type<>(createIdentifier("no_permission"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, NoPermissionPacket> STREAM_CODEC = StreamCodec.composite(
-        ComponentSerialization.STREAM_CODEC, NoPermissionPacket::component,
-        NoPermissionPacket::new
+public record MessagePacket(Component title, Component component) implements CustomPacketPayload {
+    public static final Type<MessagePacket> PACKET_TYPE = new Type<>(createIdentifier("message"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, MessagePacket> STREAM_CODEC = StreamCodec.composite(
+        ComponentSerialization.STREAM_CODEC, MessagePacket::title,
+        ComponentSerialization.STREAM_CODEC, MessagePacket::component,
+        MessagePacket::new
     );
 
-    public static void handle(final NoPermissionPacket packet) {
-        ClientPlatformUtil.addNoPermissionToast(packet.component);
+    public static void handle(final MessagePacket packet) {
+        ClientPlatformUtil.addMessageToast(packet.title, packet.component);
     }
 
     @Override

@@ -1,6 +1,8 @@
 = Inaccurate extraction
 
-If you try to extract some modded items, especially tools or weapons, from the xref:../viewing-resources/grid.adoc[], and you get a warning about an inaccurate extraction, here's what happening:
+If you try to extract some modded items, especially tools or weapons, from the xref:../viewing-resources/grid.adoc[], you may get a warning about an inaccurate extraction.
+
+== Here's what happening
 
 - The storage network depends on very precise internal data to identify items. If another mod adds an item that doesn't handle this data properly, the system can't recognize the item when you try to take it out - even though it looks the same.
 - If the system can't recognize the item when you try to take it out - the extraction will be retried with fuzzy matching as a fallback.
@@ -8,6 +10,8 @@ If you try to extract some modded items, especially tools or weapons, from the x
 - The original item will remain, only visually, as a ghost, in the xref:../viewing-resources/grid.adoc[].
 
 This is **not** a bug in Refined Storage.
+
+== What should you do
 
 You should:
 

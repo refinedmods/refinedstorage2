@@ -210,6 +210,8 @@ public interface RefinedStorageApi {
 
     void sendNoPermissionMessage(ServerPlayer player, Component message);
 
+    void sendMessage(ServerPlayer player, Component title, Component message);
+
     boolean canPlaceNetworkNode(ServerPlayer player, Level level, BlockPos pos, BlockState state);
 
     Optional<Pattern> getPattern(ItemStack stack, Level level);

@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage.common.api.storage.root.FuzzyRootStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
@@ -83,7 +84,11 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
         final RootStorage rootStorage = network.getComponent(StorageNetworkComponent.class);
         final PlatformSecurityNetworkComponent security = network.getComponent(PlatformSecurityNetworkComponent.class);
         final GridOperations operations = resourceType.createGridOperations(rootStorage, new PlayerActor(player));
-        return new SecuredGridOperations(player, security, operations);
+        final SecuredGridOperations secured = new SecuredGridOperations(player, security, operations);
+        if (rootStorage instanceof FuzzyRootStorage fuzzyRootStorage) {
+            return new FuzzyGridOperations(player, fuzzyRootStorage, secured);
+        }
+        return secured;
     }
 
     @Override
