@@ -41,19 +41,47 @@ public class ItemHandlerExtractableStorage implements ExtractableStorage {
                          final ItemStack stack) {
         long extracted = 0;
         for (int slot = 0; slot < itemHandler.getSlots(); ++slot) {
-            final boolean relevant = ItemStack.isSameItemSameComponents(
-                itemHandler.getStackInSlot(slot),
-                stack
-            );
+            final ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
+            final boolean relevant = ItemStack.isSameItemSameComponents(stackInSlot, stack);
             if (!relevant) {
                 continue;
             }
             final long toExtract = amount - extracted;
-            extracted += itemHandler.extractItem(slot, (int) toExtract, action == Action.SIMULATE).getCount();
+            extracted += extractSlot(action, itemHandler, stackInSlot, slot, (int) toExtract);
             if (extracted >= amount) {
                 break;
             }
         }
         return extracted;
+    }
+
+    private int extractSlot(final Action action, final IItemHandler itemHandler, final ItemStack stackInSlot,
+                            final int slot, final int amount) {
+        return switch (action) {
+            case SIMULATE -> {
+                final int amountInSlot = stackInSlot.getCount();
+                final int maxStackSize = stackInSlot.getMaxStackSize();
+                final int extracted = itemHandler.extractItem(slot, amount, true).getCount();
+                // If we want to extract more than the maximum stack size, and we were able to extract
+                // the maximum stack size, and the slot has more than the maximum stack size,
+                // we will assume that we can extract more.
+                if (amount > maxStackSize && extracted == maxStackSize && amountInSlot > maxStackSize) {
+                    yield Math.min(amount, amountInSlot);
+                }
+                yield extracted;
+            }
+            case EXECUTE -> {
+                int totalExtracted = 0;
+                while (totalExtracted < amount) {
+                    final int toExtract = amount - totalExtracted;
+                    final int extracted = itemHandler.extractItem(slot, toExtract, false).getCount();
+                    if (extracted <= 0) {
+                        break;
+                    }
+                    totalExtracted += extracted;
+                }
+                yield totalExtracted;
+            }
+        };
     }
 }

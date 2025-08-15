@@ -71,7 +71,7 @@ To reduce core complexity, integrations have been moved to their own addon mods.
 
 ==== Unofficial addons
 
-Refined Storage 2 xref:../addons/unofficial-addons.adoc[already has a few unofficial addons]:
+Refined Storage 2 xref:../addons/community-addons.adoc[already has a few community addons]:
 
 - link:https://www.curseforge.com/minecraft/mc-mods/extra-disks[Extra Disks]
 - link:https://www.curseforge.com/minecraft/mc-mods/interdimensional-wireless-transmitter[Interdimensional Wireless Transmitter]

@@ -1,9 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting;
 
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderItem;
-import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterScreen;
-import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerScreen;
-import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.Optional;
@@ -24,18 +22,11 @@ public final class PatternRendering {
         if (Screen.hasShiftDown()) {
             return true;
         }
-        return canDisplayOutputInScreen(stack);
-    }
-
-    private static boolean canDisplayOutputInScreen(final ItemStack stack) {
         final Screen screen = Minecraft.getInstance().screen;
-        return switch (screen) {
-            case PatternGridScreen patternGridScreen -> patternGridScreen.getMenu().isPatternInOutput(stack);
-            case AutocrafterScreen autocrafterScreen -> autocrafterScreen.getMenu().containsPattern(stack);
-            case AutocrafterManagerScreen autocrafterManagerScreen ->
-                autocrafterManagerScreen.getMenu().containsPattern(stack);
-            case null, default -> false;
-        };
+        if (!(screen instanceof PatternOutputRenderingScreen patternOutputRenderingScreen)) {
+            return false;
+        }
+        return patternOutputRenderingScreen.canDisplayOutput(stack);
     }
 
     public static Optional<ItemStack> getOutput(final ItemStack stack) {

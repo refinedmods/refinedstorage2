@@ -28,7 +28,7 @@ public record StorageInfoResponsePacket(UUID storageId, long stored, long capaci
     public static void handle(final StorageInfoResponsePacket packet) {
         final ClientStorageRepository storageRepository =
             (ClientStorageRepository) RefinedStorageApi.INSTANCE.getClientStorageRepository();
-        storageRepository.setInfo(packet.storageId, packet.stored, packet.capacity);
+        storageRepository.updateInfo(packet.storageId, packet.stored, packet.capacity);
     }
 
     @Override

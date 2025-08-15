@@ -17,10 +17,12 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.NoopStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
+import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage.common.api.storage.root.FuzzyRootStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
@@ -117,11 +119,15 @@ class WirelessGrid implements Grid {
 
     private GridOperations createGridOperations(final ResourceType resourceType,
                                                 final ServerPlayer player,
-                                                final StorageNetworkComponent rootStorage,
+                                                final RootStorage rootStorage,
                                                 final PlatformSecurityNetworkComponent securityNetworkComponent) {
         final PlayerActor playerActor = new PlayerActor(player);
         final GridOperations operations = resourceType.createGridOperations(rootStorage, playerActor);
-        return new SecuredGridOperations(player, securityNetworkComponent, operations);
+        final SecuredGridOperations secured = new SecuredGridOperations(player, securityNetworkComponent, operations);
+        if (rootStorage instanceof FuzzyRootStorage fuzzyRootStorage) {
+            return new FuzzyGridOperations(player, fuzzyRootStorage, secured);
+        }
+        return secured;
     }
 
     @Override

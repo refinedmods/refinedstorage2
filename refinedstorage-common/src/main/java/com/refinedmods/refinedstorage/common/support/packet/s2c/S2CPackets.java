@@ -81,8 +81,8 @@ public final class S2CPackets {
         );
     }
 
-    public static void sendNoPermission(final ServerPlayer player, final Component message) {
-        Platform.INSTANCE.sendPacketToClient(player, new NoPermissionPacket(message));
+    public static void sendMessage(final ServerPlayer player, final Component title, final Component message) {
+        Platform.INSTANCE.sendPacketToClient(player, new MessagePacket(title, message));
     }
 
     public static void sendPatternGridAllowedAlternativesUpdate(final ServerPlayer player,
