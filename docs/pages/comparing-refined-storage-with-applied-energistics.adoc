@@ -22,6 +22,8 @@ While it originally started as a spiritual successor to AE1 - drawing inspiratio
 
 Refined Storage is not trying to compete with AE2. It's not a fork. It's not a lesser version. It's a different answer to the same problem.
 
+Also, you can install both mods if you want to. Whilst not *directly* compatible, this may help reduce arguments between friends on your personal modpack server.
+
 == Why becoming too similar is a problem
 
 If Refined Storage continues to evolve by adopting AE2's systems just to meet expectations, the line between both mods will blur. And when the differences disappear, so does the reason for both to coexist.
