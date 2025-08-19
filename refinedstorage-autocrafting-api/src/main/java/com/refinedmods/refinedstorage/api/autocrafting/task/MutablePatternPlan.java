@@ -43,8 +43,8 @@ class MutablePatternPlan {
     }
 
     TaskPlan.PatternPlan getPlan() {
-        return new TaskPlan.PatternPlan(root, iterations, ingredients.entrySet().stream()
-            .collect(Collectors.toUnmodifiableMap(
+        final Map<Integer, Map<ResourceKey, Long>> orderPreservingIngredients =
+            Collections.unmodifiableMap(ingredients.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 e -> Collections.unmodifiableMap(e.getValue()
                     .entrySet()
@@ -54,7 +54,10 @@ class MutablePatternPlan {
                         Map.Entry::getValue,
                         (a, b) -> a,
                         LinkedHashMap::new
-                    )))
+                    ))),
+                (a, b) -> a,
+                LinkedHashMap::new
             )));
+        return new TaskPlan.PatternPlan(root, iterations, orderPreservingIngredients);
     }
 }
