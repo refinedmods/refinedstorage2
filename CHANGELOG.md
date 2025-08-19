@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Duplication bug with Inventory Essentials.
+-   Incorrect extractable amount shown when hovering over a fluid tank in the Grid.
 
 ## [2.0.0-beta.9] - 2025-08-15
 
