@@ -62,6 +62,16 @@ ExtraStorage is an addon for Refined Storage that enhances your automation and s
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[CurseForge], link:https://modrinth.com/mod/extrastorage[Modrinth]
 |===
 
+== Refined Types
+
+Adds support for Forge Energy, Source (from Ars Nouveau) and Souls (from Industrial Foregoing Souls) in various Refined Storage components, allowing storage, transfer, viewing, and autocrafting with them.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-types[CurseForge]
+|===
+
 == Cable Tiers
 
 Cable Tiers is an addon for Refined Storage that adds new cable tiers, each with increased item transfer rates and more filter slots.
