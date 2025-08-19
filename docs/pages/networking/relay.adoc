@@ -66,6 +66,19 @@ The top row defines which resources are exposed.
 
 Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
 
+== Cycles
+
+When pass-through mode is off, it is not allowed to expose the same component type back to the input network from the output network.
+
+If you created a cycle by accident, the connection will stop working.
+
+== Troubleshooting pass-through issues
+
+You can use following strategies to troubleshoot pass-through issues:
+
+- Place a xref:../viewing-resources/grid.adoc[] on the output network side to see the storage state.
+- In the case of cycles, disable pass-through components one-by-one to identify the problematic one.
+
 include::../../partials/redstone-mode.adoc[]
 
 include::../../partials/recoloring.adoc[]

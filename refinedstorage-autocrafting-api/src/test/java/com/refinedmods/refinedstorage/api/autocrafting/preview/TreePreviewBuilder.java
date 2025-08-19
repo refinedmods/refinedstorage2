@@ -32,20 +32,20 @@ class TreePreviewBuilder {
     }
 
     public TreePreviewBuilder available(final long amount) {
-        current = new TreePreviewNode(current.resource(), current.amount(), current.toCraft(),
-            current.available() + amount, current.missing(), current.children());
+        current = new TreePreviewNode(current.getResource(), current.getAmount(), current.getToCraft(),
+            current.getAvailable() + amount, current.getMissing(), current.getChildren());
         return this;
     }
 
     public TreePreviewBuilder toCraft(final long amount) {
-        current = new TreePreviewNode(current.resource(), current.amount(),
-            current.toCraft() + amount, current.available(), current.missing(), current.children());
+        current = new TreePreviewNode(current.getResource(), current.getAmount(),
+            current.getToCraft() + amount, current.getAvailable(), current.getMissing(), current.getChildren());
         return this;
     }
 
     public TreePreviewBuilder missing(final long amount) {
-        current = new TreePreviewNode(current.resource(), current.amount(), current.toCraft(),
-            current.available(), current.missing() + amount, current.children());
+        current = new TreePreviewNode(current.getResource(), current.getAmount(), current.getToCraft(),
+            current.getAvailable(), current.getMissing() + amount, current.getChildren());
         return this;
     }
 
@@ -53,23 +53,23 @@ class TreePreviewBuilder {
         if (parent == null) {
             throw new IllegalStateException("Cannot end tree while not in a node.");
         }
-        final Map<ResourceKey, TreePreviewNode> parentChildren = parent.current.children()
+        final Map<ResourceKey, TreePreviewNode> parentChildren = parent.current.getChildren()
             .stream()
-            .collect(Collectors.toMap(TreePreviewNode::resource, node -> node, (a, b) -> a, LinkedHashMap::new));
-        parentChildren.put(current.resource(), new TreePreviewNode(
-            current.resource(),
-            current.amount(),
-            current.toCraft(),
-            current.available(),
-            current.missing(),
-            current.children()
+            .collect(Collectors.toMap(TreePreviewNode::getResource, node -> node, (a, b) -> a, LinkedHashMap::new));
+        parentChildren.put(current.getResource(), new TreePreviewNode(
+            current.getResource(),
+            current.getAmount(),
+            current.getToCraft(),
+            current.getAvailable(),
+            current.getMissing(),
+            current.getChildren()
         ));
         parent.current = new TreePreviewNode(
-            parent.current.resource(),
-            parent.current.amount(),
-            parent.current.toCraft(),
-            parent.current.available(),
-            parent.current.missing(),
+            parent.current.getResource(),
+            parent.current.getAmount(),
+            parent.current.getToCraft(),
+            parent.current.getAvailable(),
+            parent.current.getMissing(),
             parentChildren.values().stream().toList()
         );
         return parent;

@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ abstract class AbstractTaskPattern {
 
     protected final boolean root;
     protected final Pattern pattern;
-    protected final Map<Integer, Map<ResourceKey, Long>> ingredients = new HashMap<>();
+    protected final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
 
     protected AbstractTaskPattern(final Pattern pattern, final TaskPlan.PatternPlan plan) {
         this.pattern = pattern;
@@ -63,7 +62,7 @@ abstract class AbstractTaskPattern {
     }
 
     protected final ResourceList calculateIterationInputs(final Action action) {
-        final MutableResourceList iterationInputs = MutableResourceListImpl.create();
+        final MutableResourceList iterationInputs = MutableResourceListImpl.orderPreserving();
         for (final Map.Entry<Integer, Map<ResourceKey, Long>> ingredient : ingredients.entrySet()) {
             final int ingredientIndex = ingredient.getKey();
             if (!calculateIterationInputs(ingredient, ingredientIndex, iterationInputs, action)) {
