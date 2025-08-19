@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Duplication bug with Inventory Essentials.
 -   Incorrect extractable amount shown when hovering over a fluid tank in the Grid.
+-   Crash when crafting tree preview is requested and the same resource amount is being used over multiple branches.
 
 ## [2.0.0-beta.9] - 2025-08-15
 

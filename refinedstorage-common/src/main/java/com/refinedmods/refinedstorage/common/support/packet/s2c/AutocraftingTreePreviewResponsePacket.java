@@ -26,12 +26,12 @@ public record AutocraftingTreePreviewResponsePacket(UUID id, TreePreview preview
     );
     private static final StreamCodec<RegistryFriendlyByteBuf, TreePreviewNode> PREVIEW_NODE_STREAM_CODEC =
         StreamCodec.recursive(codec -> StreamCodec.composite(
-            ResourceCodecs.STREAM_CODEC, node -> (PlatformResourceKey) node.resource(),
-            ByteBufCodecs.VAR_LONG, TreePreviewNode::amount,
-            ByteBufCodecs.VAR_LONG, TreePreviewNode::toCraft,
-            ByteBufCodecs.VAR_LONG, TreePreviewNode::available,
-            ByteBufCodecs.VAR_LONG, TreePreviewNode::missing,
-            ByteBufCodecs.collection(ArrayList::new, codec), TreePreviewNode::children,
+            ResourceCodecs.STREAM_CODEC, node -> (PlatformResourceKey) node.getResource(),
+            ByteBufCodecs.VAR_LONG, TreePreviewNode::getAmount,
+            ByteBufCodecs.VAR_LONG, TreePreviewNode::getToCraft,
+            ByteBufCodecs.VAR_LONG, TreePreviewNode::getAvailable,
+            ByteBufCodecs.VAR_LONG, TreePreviewNode::getMissing,
+            ByteBufCodecs.collection(ArrayList::new, codec), TreePreviewNode::getChildren,
             TreePreviewNode::new
         ));
     private static final StreamCodec<RegistryFriendlyByteBuf, TreePreview> PREVIEW_STREAM_CODEC =

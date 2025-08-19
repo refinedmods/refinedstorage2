@@ -119,7 +119,7 @@ class TreePreviewWidget extends AbstractWidget {
 
     private static void addChildren(final DefaultTreeForTreeLayout<TreePreviewNode> treeContents,
                                     final TreePreviewNode parent) {
-        for (final TreePreviewNode child : parent.children()) {
+        for (final TreePreviewNode child : parent.getChildren()) {
             treeContents.addChild(parent, child);
             addChildren(treeContents, child);
         }
@@ -159,14 +159,14 @@ class TreePreviewWidget extends AbstractWidget {
             return false;
         }
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(
-            node.resource().getClass()
+            node.getResource().getClass()
         );
         final var bounds = tree.getNodeBounds().get(node);
         boolean anyHovering = false;
         if (isInView((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height)) {
             anyHovering = renderNode(graphics, node, bounds, rendering, mouseX, mouseY);
         }
-        for (final TreePreviewNode child : node.children()) {
+        for (final TreePreviewNode child : node.getChildren()) {
             if (renderNode(graphics, child, mouseX, mouseY)) {
                 anyHovering = true;
             }
@@ -192,14 +192,14 @@ class TreePreviewWidget extends AbstractWidget {
         }
         final ResourceLocation background = getNodeBackground(node, hovering);
         graphics.blitSprite(background, (int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height);
-        rendering.render(node.resource(), graphics, (int) bounds.x + 5, (int) bounds.y + 5);
+        rendering.render(node.getResource(), graphics, (int) bounds.x + 5, (int) bounds.y + 5);
         final boolean large = Minecraft.getInstance().isEnforceUnicode()
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
         ResourceSlotRendering.renderAmount(
             graphics,
             (int) bounds.x + 5,
             (int) bounds.y + 5,
-            rendering.formatAmount(node.amount(), true),
+            rendering.formatAmount(node.getAmount(), true),
             0xFFFFFF,
             large
         );
@@ -213,14 +213,14 @@ class TreePreviewWidget extends AbstractWidget {
 
     private void calculateActiveNodes(final TreePreviewNode node) {
         activeNodes.add(node);
-        node.children().forEach(this::calculateActiveNodes);
+        node.getChildren().forEach(this::calculateActiveNodes);
     }
 
     private static ResourceLocation getNodeBackground(final TreePreviewNode node, final boolean hovering) {
-        if (node.missing() > 0) {
+        if (node.getMissing() > 0) {
             return hovering ? MISSING_NODE_BACKGROUND_HOVER : MISSING_NODE_BACKGROUND;
         }
-        if (node.toCraft() > 0) {
+        if (node.getToCraft() > 0) {
             return hovering ? CRAFTING_NODE_BACKGROUND_HOVER : CRAFTING_NODE_BACKGROUND;
         }
         return hovering ? NODE_BACKGROUND_HOVER : NODE_BACKGROUND;
@@ -229,18 +229,18 @@ class TreePreviewWidget extends AbstractWidget {
     private List<FormattedCharSequence> getTooltip(final TreePreviewNode node,
                                                    final ResourceRendering resourceRendering) {
         final List<FormattedCharSequence> tooltip = new ArrayList<>(
-            resourceRendering.getTooltip(node.resource()).stream().map(Component::getVisualOrderText).toList());
-        if (node.available() > 0) {
+            resourceRendering.getTooltip(node.getResource()).stream().map(Component::getVisualOrderText).toList());
+        if (node.getAvailable() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.available",
-                resourceRendering.formatAmount(node.available())).getVisualOrderText());
+                resourceRendering.formatAmount(node.getAvailable())).getVisualOrderText());
         }
-        if (node.toCraft() > 0) {
+        if (node.getToCraft() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.to_craft",
-                resourceRendering.formatAmount(node.toCraft())).getVisualOrderText());
+                resourceRendering.formatAmount(node.getToCraft())).getVisualOrderText());
         }
-        if (node.missing() > 0) {
+        if (node.getMissing() > 0) {
             tooltip.add(createTranslation("gui", "autocrafting_preview.missing",
-                resourceRendering.formatAmount(node.missing())).getVisualOrderText());
+                resourceRendering.formatAmount(node.getMissing())).getVisualOrderText());
         }
         return tooltip;
     }
@@ -252,7 +252,7 @@ class TreePreviewWidget extends AbstractWidget {
         final var bounds1 = tree.getNodeBounds().get(node);
         final int x1 = (int) bounds1.getCenterX();
         final int y1 = (int) bounds1.getCenterY();
-        for (final TreePreviewNode child : node.children()) {
+        for (final TreePreviewNode child : node.getChildren()) {
             if (tree == null) {
                 return;
             }
