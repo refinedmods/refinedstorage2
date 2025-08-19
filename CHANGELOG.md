@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.10] - 2025-08-19
+
 ### Fixed
 
 -   Duplication bug with Inventory Essentials.
@@ -1025,7 +1027,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.9...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.10...HEAD
+
+[2.0.0-beta.10]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.9...v2.0.0-beta.10
 
 [2.0.0-beta.9]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.8...v2.0.0-beta.9
 
