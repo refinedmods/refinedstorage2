@@ -40,6 +40,7 @@ Click the resource (or CTRL + click if it's already available) to open the autoc
 - View a live simulation
 - Click **Max** to craft as much as possible
 - Enable **Notify** to get a notification when the task is complete
+- Toggle between a list view and a tree view.
 
 Autocrafting tasks cannot start unless all required resources are present or autocraftable.
 

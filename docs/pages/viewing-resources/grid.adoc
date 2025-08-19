@@ -51,6 +51,7 @@ In the preview, you can:
 - View a live simulation of the crafting steps.
 - Click **Max** to craft the maximum possible amount.
 - Enable **Notify** to receive a notification when the task is complete.
+- Toggle between a list view and a tree view.
 
 == Searching
 

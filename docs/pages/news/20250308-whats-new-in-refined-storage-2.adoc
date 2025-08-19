@@ -37,7 +37,7 @@ Refined Storage 2 has been rebuilt from the ground up with the following goals i
 - The *Grid* marks autocraftable resources with an orange backdrop, also considering uninserted patterns in your inventory.
 - The xref:../autocrafting/autocrafter.adoc[*Autocrafter*] now supports more locking options for easier blocking mode.
 - *Autocrafting* now takes into account multiple patterns with the same output, respecting priority defined in the xref:../autocrafting/autocrafter.adoc[].
-- The *crafting preview* and amount selection screens have been merged into one screen with live updates, ability to receive autocrafting notifications and a "Max" button to fill out max craftable.
+- The *crafting preview* and amount selection screens have been merged into one screen with live updates, ability to receive autocrafting notifications, a "Max" button to fill out max craftable and can show a tree preview.
 - The xref:../autocrafting/pattern-grid.adoc[*Pattern Grid*] now supports encoding stonecutter and smithing table recipes.
 - *Storage disks and blocks* can now be upgraded by combining with a higher-tier Storage Part. The original part is returned.
 - You can now configure separate *insert and extract priorities* on storages.
@@ -69,7 +69,7 @@ To reduce core complexity, integrations have been moved to their own addon mods.
 * xref:../addons/trinkets.adoc[]
 - The xref:../wireless-networking/wireless-crafting-grid.adoc[] has moved from Refined Storage Addons to xref:../addons/quartz-arsenal.adoc[*Quartz Arsenal*].
 
-==== Unofficial addons
+==== Community addons
 
 Refined Storage 2 xref:../addons/community-addons.adoc[already has a few community addons]:
 
@@ -78,6 +78,7 @@ Refined Storage 2 xref:../addons/community-addons.adoc[already has a few communi
 - link:https://www.curseforge.com/minecraft/mc-mods/universal-grid[Universal Grid]
 - link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[Advanced Peripherals]
 - link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[ExtraStorage]
+- link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types]
 - link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[Cable Tiers]
 - Refined Storage conduit support in link:https://www.curseforge.com/minecraft/mc-mods/ender-io[Ender IO]
 
@@ -138,6 +139,9 @@ Refined Storage 2 xref:../addons/community-addons.adoc[already has a few communi
 * Allows enabling notifications when a task is completed.
 * image:../../assets/news/whats-new-in-refined-storage-2/autocrafting-notifications.png[Autocrafting notification]
 * Shows all parallel requests triggered by recipe mods.
+* Supports showing a tree preview of the recipe.
+* image:../../assets/news/whats-new-in-refined-storage-2/autocrafting-tree-preview.png[Autocrafting tree preview]
+* image:../../assets/news/whats-new-in-refined-storage-2/autocrafting-tree-preview-fullscreen.png[Fullscreen autocrafting tree preview]
 - The xref:../autocrafting/autocrafting-monitor.adoc[**Autocrafting Monitor**] now:
 * Uses compacted units.
 * Displays which machine is processing each step.
