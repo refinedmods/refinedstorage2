@@ -63,6 +63,7 @@
   "gui.refinedstorage.grid.synchronization_mode.off.help": "Don't sync the search box text.",
   "gui.refinedstorage.grid.resource_type": "Resource type",
   "gui.refinedstorage.grid.resource_type.all": "All",
+  "gui.refinedstorage.grid.resource_type.empty_warning": "There are no resources for this resource type to display!",
   "gui.refinedstorage.grid.craft": "Craft",
   "gui.refinedstorage.grid.autocraftable": "This resource is autocraftable",
   "gui.refinedstorage.grid.pattern_in_inventory": "There is a pattern in your inventory for this resource.",

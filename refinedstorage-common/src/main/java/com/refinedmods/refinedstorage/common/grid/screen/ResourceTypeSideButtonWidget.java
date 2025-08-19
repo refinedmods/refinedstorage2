@@ -15,6 +15,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.resource_type");
+    private static final MutableComponent EMPTY_WARNING = createTranslation("gui", "grid.resource_type.empty_warning");
     private static final List<MutableComponent> SUBTEXT_ALL =
         List.of(createTranslation("gui", "grid.resource_type.all").withStyle(ChatFormatting.GRAY));
     private static final ResourceLocation ALL = createIdentifier("widget/side_button/resource_type/all");
@@ -51,5 +52,13 @@ class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
             return SUBTEXT_ALL;
         }
         return List.of(resourceType.getTitle().withStyle(ChatFormatting.GRAY));
+    }
+
+    public void setWarningVisible(final boolean visible) {
+        if (visible) {
+            setWarning(EMPTY_WARNING);
+        } else {
+            setWarning(null);
+        }
     }
 }

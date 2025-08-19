@@ -78,6 +78,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Nullable
     GridSearchBoxWidget searchField;
 
+    @Nullable
+    private ResourceTypeSideButtonWidget resourceTypeSideButtonWidget;
+
     private int totalRows;
     private int currentGridSlotIndex;
 
@@ -117,7 +120,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
         }
         addSideButton(new ViewTypeSideButtonWidget(getMenu()));
-        addSideButton(new ResourceTypeSideButtonWidget(getMenu()));
+        resourceTypeSideButtonWidget = new ResourceTypeSideButtonWidget(getMenu());
+        addSideButton(resourceTypeSideButtonWidget);
         addSideButton(new SortingDirectionSideButtonWidget(getMenu()));
         addSideButton(new SortingTypeSideButtonWidget(getMenu()));
         addSideButton(new AutoSelectedSideButtonWidget(searchField));
@@ -147,6 +151,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     protected void containerTick() {
         super.containerTick();
         trySynchronizeToGrid();
+        if (resourceTypeSideButtonWidget != null) {
+            resourceTypeSideButtonWidget.setWarningVisible(getMenu().isResourceTypeWarningVisible());
+        }
     }
 
     private void trySynchronizeToGrid() {
