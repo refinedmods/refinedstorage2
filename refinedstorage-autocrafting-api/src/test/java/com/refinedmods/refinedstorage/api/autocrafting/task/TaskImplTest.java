@@ -811,6 +811,49 @@ class TaskImplTest {
     }
 
     @Test
+    void shouldRespectPatternInputOrderForExternalPattern() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(COBBLESTONE, 64),
+            new ResourceAmount(IRON_INGOT, 64),
+            new ResourceAmount(STICKS, 64)
+        );
+        final Pattern pattern = pattern(PatternType.EXTERNAL)
+            .ingredient(COBBLESTONE, 2)
+            .ingredient(IRON_INGOT, 3)
+            .ingredient(STICKS, 1)
+            .output(STONE, 1)
+            .build();
+        final PatternRepository patterns = patterns(pattern);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        final ExternalPatternSinkProviderImpl.ExternalPatternSinkImpl sink = sinkProvider.put(pattern);
+        final Task task = getRunningTask(storage, patterns, sinkProvider, STONE, 1);
+
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(COBBLESTONE, 62),
+            new ResourceAmount(IRON_INGOT, 61),
+            new ResourceAmount(STICKS, 63)
+        );
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(COBBLESTONE, 2),
+                new ResourceAmount(IRON_INGOT, 3),
+                new ResourceAmount(STICKS, 1)
+            );
+
+        // Act & assert
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(copyInternalStorage(task)).isEmpty();
+        assertThat(sink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(COBBLESTONE, 2),
+            new ResourceAmount(IRON_INGOT, 3),
+            new ResourceAmount(STICKS, 1)
+        );
+    }
+
+    @Test
     void shouldStepAccordingToCustomStepBehavior() {
         // Arrange
         final RootStorage storage = storage(

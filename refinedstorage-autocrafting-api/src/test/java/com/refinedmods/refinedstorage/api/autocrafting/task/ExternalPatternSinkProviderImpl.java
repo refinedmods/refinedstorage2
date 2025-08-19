@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
@@ -18,11 +19,13 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
     private final Map<PatternLayout, ExternalPatternSink> sinks = new HashMap<>();
 
     ExternalPatternSinkImpl put(final Pattern pattern) {
-        return put(pattern, new ExternalPatternSinkImpl(new StorageImpl(), pattern, null));
+        return put(pattern, new ExternalPatternSinkImpl(new StorageImpl(MutableResourceListImpl.orderPreserving()),
+            pattern, null));
     }
 
     void put(final Pattern pattern, final ExternalPatternSink.Result fixedResult) {
-        put(pattern, new ExternalPatternSinkImpl(new StorageImpl(), pattern, fixedResult));
+        put(pattern, new ExternalPatternSinkImpl(new StorageImpl(MutableResourceListImpl.orderPreserving()), pattern,
+            fixedResult));
     }
 
     <T extends ExternalPatternSink> T put(final Pattern pattern, final T sink) {
