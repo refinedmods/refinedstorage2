@@ -19,9 +19,9 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.common.support.tooltip.MouseClientTooltipComponent;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,7 +40,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     public FluidGridResource(final FluidResource resource,
                              final String name,
-                             final Map<GridResourceAttributeKey, Set<String>> attributes) {
+                             final Function<GridResourceAttributeKey, Set<String>> attributes) {
         super(resource, name, attributes);
         this.id = BuiltInRegistries.FLUID.getId(resource.fluid());
         this.rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(FluidResource.class);

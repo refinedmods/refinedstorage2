@@ -17,11 +17,20 @@ import org.apiguardian.api.API;
 public abstract class AbstractGridResource<T extends PlatformResourceKey> implements GridResource {
     protected final T resource;
     private final String name;
-    private final Map<GridResourceAttributeKey, Set<String>> attributes;
+    private final Function<GridResourceAttributeKey, Set<String>> attributes;
 
+    // TODO: merge constructors for >=1.22
     protected AbstractGridResource(final T resource,
                                    final String name,
                                    final Map<GridResourceAttributeKey, Set<String>> attributes) {
+        this.resource = resource;
+        this.name = name;
+        this.attributes = key -> attributes.getOrDefault(key, Collections.emptySet());
+    }
+
+    protected AbstractGridResource(final T resource,
+                                   final String name,
+                                   final Function<GridResourceAttributeKey, Set<String>> attributes) {
         this.resource = resource;
         this.name = name;
         this.attributes = attributes;
@@ -45,7 +54,7 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
 
     @Override
     public Set<String> getAttribute(final GridResourceAttributeKey key) {
-        return attributes.getOrDefault(key, Collections.emptySet());
+        return attributes.apply(key);
     }
 
     @Override
