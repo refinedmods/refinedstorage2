@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
@@ -19,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
 public abstract class AbstractAutocraftingMonitorContainerMenu extends AbstractBaseContainerMenu
-    implements TaskStatusListener, AutocraftingMonitorWatcher {
+    implements TaskStatusListener, AutocraftingMonitorWatcher, AutocraftingTaskButton.StateProvider {
     private final Map<TaskId, TaskStatus> statusByTaskId;
     private final List<TaskStatus.TaskInfo> tasks;
     private final List<TaskStatus.TaskInfo> tasksView;
@@ -90,9 +91,17 @@ public abstract class AbstractAutocraftingMonitorContainerMenu extends AbstractB
         return tasksView;
     }
 
-    double getPercentageCompleted(final TaskId taskId) {
+    @Override
+    public double getPercentageCompleted(final TaskId taskId) {
         final TaskStatus status = statusByTaskId.get(taskId);
         return status == null ? 0 : status.percentageCompleted();
+    }
+
+    @Override
+    @Nullable
+    public TaskState getState(final TaskId taskId) {
+        final TaskStatus status = statusByTaskId.get(taskId);
+        return status == null ? null : status.state();
     }
 
     void setCurrentTaskId(@Nullable final TaskId taskId) {

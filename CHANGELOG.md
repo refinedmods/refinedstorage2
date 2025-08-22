@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -   Warning to the resource type side button when the Grid is filtering by resource type and there are no resources for that type to display.
+-   The Autocrafting Monitor now shows the state of the crafting task (ready, extracting initial resources, running, returning internal storage and completed). If a task is not able to run or complete, this should give more insight as to why.
 
 ### Fixed
 

@@ -144,7 +144,7 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
                 buttonY,
                 taskId,
                 menu::setCurrentTaskId,
-                menu::getPercentageCompleted
+                menu
             );
             button.visible = isTaskButtonVisible(buttonY);
             taskButtons.add(addWidget(button));
@@ -454,7 +454,7 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
             buttonY,
             taskStatus.info(),
             menu::setCurrentTaskId,
-            menu::getPercentageCompleted
+            menu
         );
         button.visible = isTaskButtonVisible(buttonY);
         taskButtons.add(addWidget(button));

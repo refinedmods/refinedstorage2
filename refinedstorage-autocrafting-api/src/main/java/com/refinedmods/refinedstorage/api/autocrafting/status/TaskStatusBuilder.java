@@ -2,19 +2,24 @@ package com.refinedmods.refinedstorage.api.autocrafting.status;
 
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.core.CoreValidations;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
 public class TaskStatusBuilder {
     private final TaskStatus.TaskInfo info;
+    private final TaskState state;
     private final Map<ResourceKey, MutableItem> items = new LinkedHashMap<>();
 
-    public TaskStatusBuilder(final TaskId id, final ResourceKey resource, final long amount, final long startTime) {
+    public TaskStatusBuilder(final TaskId id, final TaskState state, final ResourceKey resource, final long amount,
+                             final long startTime) {
         this.info = new TaskStatus.TaskInfo(id, resource, amount, startTime);
+        this.state = state;
     }
 
     public void stored(final ResourceKey resource, final long stored) {
@@ -23,8 +28,8 @@ public class TaskStatusBuilder {
     }
 
     public void processing(final ResourceKey resource,
-                                        final long processing,
-                                        @Nullable final ExternalPatternSinkKey sinkKey) {
+                           final long processing,
+                           @Nullable final ExternalPatternSinkKey sinkKey) {
         CoreValidations.validateLargerThanZero(processing, "Processing");
         get(resource).processing += processing;
         get(resource).sinkKey = sinkKey;
@@ -57,7 +62,7 @@ public class TaskStatusBuilder {
     }
 
     public TaskStatus build(final double percentageCompleted) {
-        return new TaskStatus(info, percentageCompleted, items.entrySet().stream().map(entry -> new TaskStatus.Item(
+        final List<TaskStatus.Item> mappedItems = items.entrySet().stream().map(entry -> new TaskStatus.Item(
             entry.getKey(),
             entry.getValue().type,
             entry.getValue().sinkKey,
@@ -65,7 +70,8 @@ public class TaskStatusBuilder {
             entry.getValue().processing,
             entry.getValue().scheduled,
             entry.getValue().crafting
-        )).toList());
+        )).toList();
+        return new TaskStatus(info, state, percentageCompleted, mappedItems);
     }
 
     private static class MutableItem {
