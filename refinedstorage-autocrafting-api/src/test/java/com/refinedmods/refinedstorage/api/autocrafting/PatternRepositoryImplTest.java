@@ -8,16 +8,25 @@ import static com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder.pat
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.A;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.B;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.C;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.X;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PatternRepositoryImplTest {
-    private static final Pattern PATTERN_A = pattern().ingredient(C, 1).output(A, 1).build();
-    private static final Pattern PATTERN_AB = pattern().ingredient(C, 1)
+    private static final Pattern PATTERN_A = pattern()
+        .ingredient(C, 1)
+        .output(A, 1)
+        .byproduct(X, 1)
+        .build();
+    private static final Pattern PATTERN_AB = pattern()
+        .ingredient(C, 1)
         .output(A, 1)
         .output(B, 1)
         .build();
-    private static final Pattern PATTERN_B = pattern().ingredient(C, 1).output(B, 1).build();
+    private static final Pattern PATTERN_B = pattern()
+        .ingredient(C, 1)
+        .output(B, 1)
+        .build();
 
     private PatternRepositoryImpl sut;
 
@@ -46,6 +55,7 @@ class PatternRepositoryImplTest {
         assertThat(sut.getByOutput(A)).usingRecursiveFieldByFieldElementComparator().containsExactly(
             PATTERN_A
         );
+        assertThat(sut.getByOutput(X)).isEmpty();
     }
 
     @Test

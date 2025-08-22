@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage.common.autocrafting;
 import com.refinedmods.refinedstorage.api.autocrafting.Ingredient;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
-import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
@@ -16,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -217,13 +215,13 @@ public class PatternResolver {
                                 final List<List<ResourceKey>> inputs,
                                 final ResourceAmount output,
                                 final List<ResourceAmount> byproducts) {
-            this(inputs, output, new Pattern(id, new PatternLayout(
+            this(inputs, output, new Pattern(id, PatternLayout.internal(
                 inputs.stream()
                     .filter(i -> !i.isEmpty())
                     .map(i -> new Ingredient(1, i))
                     .toList(),
-                Stream.concat(Stream.of(output), byproducts.stream()).toList(),
-                PatternType.INTERNAL
+                List.of(output),
+                byproducts
             )));
         }
     }
@@ -232,7 +230,7 @@ public class PatternResolver {
         ResolvedProcessingPattern(final UUID id,
                                   final List<Ingredient> ingredients,
                                   final List<ResourceAmount> outputs) {
-            this(new Pattern(id, new PatternLayout(ingredients, outputs, PatternType.EXTERNAL)));
+            this(new Pattern(id, PatternLayout.external(ingredients, outputs)));
         }
     }
 
@@ -240,10 +238,10 @@ public class PatternResolver {
                                              ItemResource output,
                                              Pattern pattern) {
         ResolvedStonecutterPattern(final UUID id, final ItemResource input, final ItemResource output) {
-            this(input, output, new Pattern(id, new PatternLayout(
+            this(input, output, new Pattern(id, PatternLayout.internal(
                 List.of(new Ingredient(1, List.of(input))),
                 List.of(new ResourceAmount(output, 1)),
-                PatternType.INTERNAL
+                List.of()
             )));
         }
     }
@@ -258,10 +256,10 @@ public class PatternResolver {
                                      final ItemResource base,
                                      final ItemResource addition,
                                      final ItemResource output) {
-            this(template, base, addition, output, new Pattern(id, new PatternLayout(
+            this(template, base, addition, output, new Pattern(id, PatternLayout.internal(
                 List.of(single(template), single(base), single(addition)),
                 List.of(new ResourceAmount(output, 1)),
-                PatternType.INTERNAL
+                List.of()
             )));
         }
 
