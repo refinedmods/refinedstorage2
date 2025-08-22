@@ -145,6 +145,9 @@ public class TaskImpl implements Task {
     @Override
     public TaskStatus getStatus() {
         final TaskStatusBuilder builder = new TaskStatusBuilder(id, state, resource, amount, startTime);
+        initialRequirements.getAll().forEach(
+            requiredResource -> builder.extracting(requiredResource, initialRequirements.get(requiredResource))
+        );
         double totalWeightedCompleted = 0;
         double totalWeight = 0;
         for (final AbstractTaskPattern pattern : patterns.values()) {

@@ -30,6 +30,12 @@ public class TestTaskStatusBuilder {
         return this;
     }
 
+    public TestTaskStatusBuilder extracting(final ResourceKey resource, final long extracting) {
+        get(resource).extracting += extracting;
+        return this;
+    }
+
+
     public TestTaskStatusBuilder processing(final ResourceKey resource,
                                             final long processing,
                                             @Nullable final ExternalPatternSinkKey sinkKey) {
@@ -73,6 +79,7 @@ public class TestTaskStatusBuilder {
             entry.getValue().type,
             entry.getValue().sinkKey,
             entry.getValue().stored,
+            entry.getValue().extracting,
             entry.getValue().processing,
             entry.getValue().scheduled,
             entry.getValue().crafting
@@ -83,6 +90,7 @@ public class TestTaskStatusBuilder {
     private static class MutableItem {
         private TaskStatus.ItemType type;
         private long stored;
+        private long extracting;
         private long processing;
         @Nullable
         private ExternalPatternSinkKey sinkKey;

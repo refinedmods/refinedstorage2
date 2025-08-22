@@ -27,6 +27,11 @@ public class TaskStatusBuilder {
         get(resource).stored += stored;
     }
 
+    public void extracting(final ResourceKey resource, final long extracting) {
+        CoreValidations.validateLargerThanZero(extracting, "Extracting");
+        get(resource).extracting += extracting;
+    }
+
     public void processing(final ResourceKey resource,
                            final long processing,
                            @Nullable final ExternalPatternSinkKey sinkKey) {
@@ -67,6 +72,7 @@ public class TaskStatusBuilder {
             entry.getValue().type,
             entry.getValue().sinkKey,
             entry.getValue().stored,
+            entry.getValue().extracting,
             entry.getValue().processing,
             entry.getValue().scheduled,
             entry.getValue().crafting
@@ -77,6 +83,7 @@ public class TaskStatusBuilder {
     private static class MutableItem {
         private TaskStatus.ItemType type;
         private long stored;
+        private long extracting;
         private long processing;
         @Nullable
         private ExternalPatternSinkKey sinkKey;

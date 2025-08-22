@@ -269,6 +269,7 @@
   "gui.refinedstorage.autocrafter_manager.view_type.not_full.help": "Show all autocrafters that are not full yet.",
   "gui.refinedstorage.autocrafter_manager.view_type.all": "All",
   "gui.refinedstorage.autocrafter_manager.view_type.all.help": "Show all autocrafters.",
+  "gui.refinedstorage.autocrafting_monitor.extracting": "Extracting: %s",
   "gui.refinedstorage.autocrafting_monitor.stored": "Stored: %s",
   "gui.refinedstorage.autocrafting_monitor.missing": "Missing: %s",
   "gui.refinedstorage.autocrafting_monitor.processing": "Processing: %s",

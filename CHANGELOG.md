@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Warning to the resource type side button when the Grid is filtering by resource type and there are no resources for that type to display.
 -   The Autocrafting Monitor now shows the state of the crafting task (ready, extracting initial resources, running, returning internal storage and completed). If a task is not able to run or complete, this should give more insight as to why.
+-   The Autocrafting Monitor now shows which initial resources still have to be extracted from the storage before the task can start. Most of the time this is instant and won't be visible to the user, but can help with understanding stuck tasks when combining autocrafting with external storages that report fake items like Functional Storage's Compacting Storage.
 
 ### Fixed
 

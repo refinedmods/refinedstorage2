@@ -20,6 +20,7 @@ public record TaskStatus(TaskInfo info, TaskState state, double percentageComple
         ItemType type,
         @Nullable ExternalPatternSinkKey sinkKey,
         long stored,
+        long extracting,
         long processing,
         long scheduled,
         long crafting

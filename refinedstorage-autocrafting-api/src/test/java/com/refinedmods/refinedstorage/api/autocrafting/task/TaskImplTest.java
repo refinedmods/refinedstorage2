@@ -1027,9 +1027,39 @@ class TaskImplTest {
             OAK_PLANKS_PATTERN,
             CRAFTING_TABLE_PATTERN
         );
-        final Task task = getRunningTask(storage, patterns, EMPTY_SINK_PROVIDER, CRAFTING_TABLE, 2);
+        final Task task = getTask(storage, patterns, CRAFTING_TABLE, 2);
 
         // Act & assert
+        assertThat(task.getState()).isEqualTo(TaskState.READY);
+        storage.extract(OAK_LOG, 10, Action.EXECUTE, Actor.EMPTY);
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 2)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).isEmpty();
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 1)
+                .stored(OAK_LOG, 1)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(OAK_LOG, 1)
+        );
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+
         task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
