@@ -1027,13 +1027,43 @@ class TaskImplTest {
             OAK_PLANKS_PATTERN,
             CRAFTING_TABLE_PATTERN
         );
-        final Task task = getRunningTask(storage, patterns, EMPTY_SINK_PROVIDER, CRAFTING_TABLE, 2);
+        final Task task = getTask(storage, patterns, CRAFTING_TABLE, 2);
 
         // Act & assert
+        assertThat(task.getState()).isEqualTo(TaskState.READY);
+        storage.extract(OAK_LOG, 10, Action.EXECUTE, Actor.EMPTY);
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 2)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).isEmpty();
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 1)
+                .stored(OAK_LOG, 1)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(OAK_LOG, 1)
+        );
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+
         task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), CRAFTING_TABLE, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, CRAFTING_TABLE, 2, 0)
                 .crafting(CRAFTING_TABLE, 2)
                 .crafting(OAK_PLANKS, 4)
                 .stored(OAK_PLANKS, 4)
@@ -1069,7 +1099,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 2)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1090,7 +1120,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 1)
                 .processing(IRON_ORE, 2, sinkKey(IRON_INGOT_PATTERN))
@@ -1112,7 +1142,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .processing(IRON_ORE, 3, sinkKey(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
@@ -1131,7 +1161,7 @@ class TaskImplTest {
         storage.insert(IRON_INGOT, 2, Action.EXECUTE, Actor.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
@@ -1152,7 +1182,7 @@ class TaskImplTest {
         storage.insert(IRON_INGOT, 1, Action.EXECUTE, Actor.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 4)
@@ -1176,7 +1206,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RETURNING_INTERNAL_STORAGE);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RETURNING_INTERNAL_STORAGE, IRON_PICKAXE, 1, 0)
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 2)
                 .build(1.0));
@@ -1198,7 +1228,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0).build(1.0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.COMPLETED, IRON_PICKAXE, 1, 0).build(1.0)
         );
         assertThat(copyInternalStorage(task)).isEmpty();
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -1225,7 +1255,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1234,7 +1264,7 @@ class TaskImplTest {
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.REJECTED);
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1254,7 +1284,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1263,7 +1293,7 @@ class TaskImplTest {
         sinkProvider.remove(IRON_INGOT_PATTERN);
         task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1283,7 +1313,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1292,7 +1322,7 @@ class TaskImplTest {
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.LOCKED);
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))

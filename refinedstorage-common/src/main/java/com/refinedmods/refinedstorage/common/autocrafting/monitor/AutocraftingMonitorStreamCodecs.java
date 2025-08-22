@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.InWorldExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
@@ -36,6 +37,7 @@ public final class AutocraftingMonitorStreamCodecs {
     public static final StreamCodec<RegistryFriendlyByteBuf, TaskStatus> STATUS_STREAM_CODEC =
         StreamCodec.composite(
             INFO_STREAM_CODEC, TaskStatus::info,
+            PlatformUtil.enumStreamCodec(TaskState.values()), TaskStatus::state,
             ByteBufCodecs.DOUBLE, TaskStatus::percentageCompleted,
             ByteBufCodecs.collection(ArrayList::new, STATUS_ITEM_STREAM_CODEC), TaskStatus::items,
             TaskStatus::new
@@ -58,6 +60,7 @@ public final class AutocraftingMonitorStreamCodecs {
                 buf.readLong(),
                 buf.readLong(),
                 buf.readLong(),
+                buf.readLong(),
                 buf.readLong()
             );
         }
@@ -76,6 +79,7 @@ public final class AutocraftingMonitorStreamCodecs {
             TYPE_STREAM_CODEC.encode(buf, item.type());
             encodeSinkKey(buf, item.sinkKey());
             buf.writeLong(item.stored());
+            buf.writeLong(item.extracting());
             buf.writeLong(item.processing());
             buf.writeLong(item.scheduled());
             buf.writeLong(item.crafting());
