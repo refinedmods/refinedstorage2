@@ -17,7 +17,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
 
-@EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MOD_ID)
 public class DataGenerators {
     private DataGenerators() {
     }
