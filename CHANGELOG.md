@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Reduce lag spikes when opening a Grid with many item types. 
+
 ### Added
 
 -   Warning to the resource type side button when the Grid is filtering by resource type and there are no resources for that type to display.

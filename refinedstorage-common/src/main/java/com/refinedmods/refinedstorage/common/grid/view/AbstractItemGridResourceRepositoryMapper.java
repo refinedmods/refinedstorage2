@@ -4,13 +4,17 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -31,18 +35,17 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         final String name = item.getName(itemStack).getString();
         final String modId = getModId(itemStack);
         final String modName = getModName(modId).orElse("");
-        final Set<String> tags = getTags(item);
-        final String tooltip = getTooltip(itemStack);
+        final Map<GridResourceAttributeKey, Supplier<Set<String>>> attributes = Map.of(
+            GridResourceAttributeKeys.MOD_ID, Suppliers.ofInstance(Set.of(modId)),
+            GridResourceAttributeKeys.MOD_NAME, Suppliers.ofInstance(Set.of(modName)),
+            GridResourceAttributeKeys.TAGS, Suppliers.memoize(() -> getTags(item)),
+            GridResourceAttributeKeys.TOOLTIP, Suppliers.memoize(() -> Set.of(getTooltip(itemStack)))
+        );
         return new ItemGridResource(
             itemResource,
             itemStack,
             name,
-            Map.of(
-                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
-                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags,
-                GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
-            )
+            k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
     }
 
