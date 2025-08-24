@@ -17,7 +17,7 @@ public class LongAmountOperations implements AmountOperations<Long> {
     @Override
     public ParsedValue<Long> parse(final String value) {
         try {
-            return new ParsedValue<>(Long.parseLong(value), true);
+            return new ParsedValue<>(Long.parseLong(value));
         } catch (final NumberFormatException e) {
             return ParsedValue.invalid();
         }

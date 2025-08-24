@@ -27,7 +27,7 @@ public class ExpressionAmountOperations implements AmountOperations<Double> {
     public ParsedValue<Double> parse(final String value) {
         try {
             final Evaluator calculator = new Evaluator(new Source(SOURCE, value));
-            return new ParsedValue<>(calculator.evaluate(), true);
+            return new ParsedValue<>(calculator.evaluate());
         } catch (final EvaluatorException e) {
             return ParsedValue.invalid();
         }

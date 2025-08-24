@@ -14,20 +14,11 @@ public interface AmountOperations<N extends Number> {
 
     class ParsedValue<N extends Number> {
         private final @Nullable N value;
-        private final boolean valid;
+        private boolean outOfBounds;
 
-        public ParsedValue(@Nullable final N value, final boolean valid) {
+        public ParsedValue(@Nullable final N value) {
             this.value = value;
-            if (value == null) {
-                this.valid = false;
-            } else {
-                this.valid = valid;
-            }
-        }
-
-        public ParsedValue(final boolean valid) {
-            this.value = null;
-            this.valid = valid;
+            this.outOfBounds = false;
         }
 
         public Optional<N> getValue() {
@@ -35,25 +26,29 @@ public interface AmountOperations<N extends Number> {
         }
 
         public boolean isValid() {
-            return valid;
+            return !outOfBounds && value != null;
         }
 
         public void ifValid(final Consumer<N> action) {
-            if (valid) {
+            if (isValid()) {
                 action.accept(value);
             }
         }
 
         public void ifValidOrElse(final Consumer<N> action, final Runnable emptyAction) {
-            if (valid) {
+            if (isValid()) {
                 action.accept(value);
             } else {
                 emptyAction.run();
             }
         }
 
+        public void setOutOfBounds() {
+            outOfBounds = true;
+        }
+
         public static <N extends Number> ParsedValue<N> invalid() {
-            return new ParsedValue<>(false);
+            return new ParsedValue<>(null);
         }
     }
 }

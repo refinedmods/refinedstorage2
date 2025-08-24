@@ -378,7 +378,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
                     && amount.doubleValue() > configuration.getMaxAmount().doubleValue()
                     || configuration.getMinAmount() != null
                     && amount.doubleValue() < configuration.getMinAmount().doubleValue()) {
-                return new AmountOperations.ParsedValue<>(amount, false);
+                result.setOutOfBounds();
             }
         }
 

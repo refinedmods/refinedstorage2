@@ -31,7 +31,7 @@ public class DoubleAmountOperations implements AmountOperations<Double> {
     @Override
     public ParsedValue<Double> parse(final String value) {
         try {
-            return new ParsedValue<>(Double.parseDouble(value), true);
+            return new ParsedValue<>(Double.parseDouble(value));
         } catch (final NumberFormatException e) {
             return ParsedValue.invalid();
         }

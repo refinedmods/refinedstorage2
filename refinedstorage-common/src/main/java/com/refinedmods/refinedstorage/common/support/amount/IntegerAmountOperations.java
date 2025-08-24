@@ -17,7 +17,7 @@ public class IntegerAmountOperations implements AmountOperations<Integer> {
     @Override
     public ParsedValue<Integer> parse(final String value) {
         try {
-            return new ParsedValue<>(Integer.parseInt(value, 10), true);
+            return new ParsedValue<>(Integer.parseInt(value, 10));
         } catch (final NumberFormatException e) {
             return ParsedValue.invalid();
         }
