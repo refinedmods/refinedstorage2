@@ -8,20 +8,20 @@ import java.util.Optional;
 
 class IngredientState {
     private final long amount;
-    private final ResourceKey[] possibilities;
+    private final CraftingState.ResourceState[] possibilities;
     private int pos;
 
     IngredientState(final Ingredient ingredient, final CraftingState state) {
         this.amount = ingredient.amount();
-        this.possibilities = new ResourceKey[ingredient.inputs().size()];
+        this.possibilities = new CraftingState.ResourceState[ingredient.inputs().size()];
         for (int i = 0; i < ingredient.inputs().size(); i++) {
             final ResourceKey resource = ingredient.inputs().get(i);
-            possibilities[i] = resource;
+            possibilities[i] = state.getResource(resource);
         }
-        Arrays.sort(possibilities, state.getSorter());
+        Arrays.sort(possibilities);
     }
 
-    ResourceKey get() {
+    CraftingState.ResourceState get() {
         return possibilities[pos];
     }
 
@@ -29,11 +29,11 @@ class IngredientState {
         return amount;
     }
 
-    Optional<ResourceKey> cycle() {
+    Optional<CraftingState.ResourceState> cycle() {
         if (pos + 1 >= possibilities.length) {
             return Optional.empty();
         }
         pos++;
-        return Optional.of(get());
+        return Optional.of(possibilities[pos]);
     }
 }
