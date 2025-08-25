@@ -7,19 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
-
--   Reduce lag spikes when opening a Grid with many item types. 
-
 ### Added
 
--   Warning to the resource type side button when the Grid is filtering by resource type and there are no resources for that type to display.
+-   The resource type side button now shows a warning when the Grid is filtering by resource type and there are no resources for that type to display.
 -   The Autocrafting Monitor now shows the state of the crafting task (ready, extracting initial resources, running, returning internal storage and completed). If a task is not able to run or complete, this should give more insight as to why.
 -   The Autocrafting Monitor now shows which initial resources still have to be extracted from the storage before the task can start. Most of the time this is instant and won't be visible to the user, but can help with understanding stuck tasks when combining autocrafting with external storages that report fake items like Functional Storage's Compacting Storage.
 
 ### Fixed
 
 -   Autocrafting not properly differentiating between outputs and byproducts and calculating the wrong task when requesting a byproduct of another pattern.
+-   Reduce lag spikes when opening a Grid with many item types.
 
 ## [2.0.0-beta.10] - 2025-08-19
 
