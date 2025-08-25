@@ -35,6 +35,8 @@ import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.SP
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.STICKS_PATTERN;
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.STONE_PATTERN;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.A;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.B;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.C;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.COBBLESTONE;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.CRAFTING_TABLE;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.IRON_INGOT;
@@ -49,6 +51,8 @@ import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.S
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.STICKS;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.STONE;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.STONE_BRICKS;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.X;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.Y;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkProviderImpl.sinkKey;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlanCraftingCalculatorListener.calculatePlan;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -286,6 +290,92 @@ class TaskImplTest {
             new ResourceAmount(SIGN, 10),
             new ResourceAmount(CRAFTING_TABLE, 3)
         );
+    }
+
+    @Test
+    void shouldCompleteTaskWithByproductsInInternalPattern() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(A, 100)
+        );
+        final Pattern patternThatMakesB = pattern()
+            .ingredient(A, 1)
+            .output(B, 1)
+            .byproduct(X, 1)
+            .build();
+        final Pattern patternThatMakesC = pattern()
+            .ingredient(B, 1)
+            .output(C, 1)
+            .byproduct(Y, 1)
+            .build();
+        final PatternRepository patterns = patterns(patternThatMakesB, patternThatMakesC);
+        final Task task = getRunningTask(storage, patterns, EMPTY_SINK_PROVIDER, C, 3);
+
+        // Act & assert
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 97)
+        );
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(A, 2),
+                new ResourceAmount(B, 1),
+                new ResourceAmount(X, 1)
+            );
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 97),
+            new ResourceAmount(C, 1),
+            new ResourceAmount(Y, 1)
+        );
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(A, 1),
+                new ResourceAmount(B, 1),
+                new ResourceAmount(X, 2)
+            );
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 97),
+            new ResourceAmount(C, 2),
+            new ResourceAmount(Y, 2)
+        );
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(B, 1),
+                new ResourceAmount(X, 3)
+            );
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.RETURNING_INTERNAL_STORAGE);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 97),
+            new ResourceAmount(C, 3),
+            new ResourceAmount(Y, 3)
+        );
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(X, 3)
+            );
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 97),
+            new ResourceAmount(C, 3),
+            new ResourceAmount(Y, 3),
+            new ResourceAmount(X, 3)
+        );
+        assertThat(copyInternalStorage(task)).isEmpty();
     }
 
     @Test
@@ -937,13 +1027,43 @@ class TaskImplTest {
             OAK_PLANKS_PATTERN,
             CRAFTING_TABLE_PATTERN
         );
-        final Task task = getRunningTask(storage, patterns, EMPTY_SINK_PROVIDER, CRAFTING_TABLE, 2);
+        final Task task = getTask(storage, patterns, CRAFTING_TABLE, 2);
 
         // Act & assert
+        assertThat(task.getState()).isEqualTo(TaskState.READY);
+        storage.extract(OAK_LOG, 10, Action.EXECUTE, Actor.EMPTY);
+
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 2)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).isEmpty();
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.EXTRACTING_INITIAL_RESOURCES);
+        assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
+            new TestTaskStatusBuilder(task.getId(), TaskState.EXTRACTING_INITIAL_RESOURCES, CRAFTING_TABLE, 2, 0)
+                .extracting(OAK_LOG, 1)
+                .stored(OAK_LOG, 1)
+                .crafting(CRAFTING_TABLE, 2)
+                .crafting(OAK_PLANKS, 8)
+                .build(0));
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(OAK_LOG, 1)
+        );
+
+        storage.insert(OAK_LOG, 1, Action.EXECUTE, Actor.EMPTY);
+        task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
+
         task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), CRAFTING_TABLE, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, CRAFTING_TABLE, 2, 0)
                 .crafting(CRAFTING_TABLE, 2)
                 .crafting(OAK_PLANKS, 4)
                 .stored(OAK_PLANKS, 4)
@@ -979,7 +1099,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 2)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1000,7 +1120,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 1)
                 .processing(IRON_ORE, 2, sinkKey(IRON_INGOT_PATTERN))
@@ -1022,7 +1142,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .processing(IRON_ORE, 3, sinkKey(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
@@ -1041,7 +1161,7 @@ class TaskImplTest {
         storage.insert(IRON_INGOT, 2, Action.EXECUTE, Actor.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
@@ -1062,7 +1182,7 @@ class TaskImplTest {
         storage.insert(IRON_INGOT, 1, Action.EXECUTE, Actor.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 4)
@@ -1086,7 +1206,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.RETURNING_INTERNAL_STORAGE);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RETURNING_INTERNAL_STORAGE, IRON_PICKAXE, 1, 0)
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 2)
                 .build(1.0));
@@ -1108,7 +1228,7 @@ class TaskImplTest {
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_PICKAXE, 1, 0).build(1.0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.COMPLETED, IRON_PICKAXE, 1, 0).build(1.0)
         );
         assertThat(copyInternalStorage(task)).isEmpty();
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -1135,7 +1255,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1144,7 +1264,7 @@ class TaskImplTest {
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.REJECTED);
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1164,7 +1284,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1173,7 +1293,7 @@ class TaskImplTest {
         sinkProvider.remove(IRON_INGOT_PATTERN);
         task.step(storage, EMPTY_SINK_PROVIDER, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1193,7 +1313,7 @@ class TaskImplTest {
         // Act & assert
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
@@ -1202,7 +1322,7 @@ class TaskImplTest {
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.LOCKED);
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
-            new TestTaskStatusBuilder(task.getId(), IRON_INGOT, 2, 0)
+            new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
                 .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))

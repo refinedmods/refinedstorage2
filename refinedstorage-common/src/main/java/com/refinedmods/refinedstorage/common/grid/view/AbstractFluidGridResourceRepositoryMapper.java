@@ -4,12 +4,16 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
@@ -21,17 +25,16 @@ public abstract class AbstractFluidGridResourceRepositoryMapper implements Resou
         final String name = getName(fluidResource);
         final String modId = getModId(fluidResource);
         final String modName = getModName(modId);
-        final Set<String> tags = getTags(fluidResource.fluid());
-        final String tooltip = getTooltip(fluidResource);
+        final Map<GridResourceAttributeKey, Supplier<Set<String>>> attributes = Map.of(
+            GridResourceAttributeKeys.MOD_ID, Suppliers.ofInstance(Set.of(modId)),
+            GridResourceAttributeKeys.MOD_NAME, Suppliers.ofInstance(Set.of(modName)),
+            GridResourceAttributeKeys.TAGS, Suppliers.ofInstance(getTags(fluidResource.fluid())),
+            GridResourceAttributeKeys.TOOLTIP, Suppliers.ofInstance(Set.of(getTooltip(fluidResource)))
+        );
         return new FluidGridResource(
             fluidResource,
             name,
-            Map.of(
-                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
-                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags,
-                GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
-            )
+            k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
     }
 

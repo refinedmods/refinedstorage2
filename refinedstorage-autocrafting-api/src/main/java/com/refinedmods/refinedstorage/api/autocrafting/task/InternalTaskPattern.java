@@ -49,6 +49,7 @@ class InternalTaskPattern extends AbstractTaskPattern {
         final ResourceList iterationInputs = calculateIterationInputs(Action.EXECUTE);
         extractAll(iterationInputs, internalStorage, Action.EXECUTE);
         pattern.layout().outputs().forEach(output -> returnOutput(internalStorage, rootStorage, output));
+        pattern.layout().byproducts().forEach(byproduct -> returnOutput(internalStorage, rootStorage, byproduct));
         return useIteration();
     }
 

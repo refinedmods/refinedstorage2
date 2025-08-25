@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
@@ -9,14 +10,18 @@ import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
 
+import java.util.Locale;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.monitor.AutocraftingMonitorScreen.TASK_BUTTON_HEIGHT;
 import static com.refinedmods.refinedstorage.common.autocrafting.monitor.AutocraftingMonitorScreen.TASK_BUTTON_WIDTH;
@@ -26,13 +31,13 @@ class AutocraftingTaskButton extends AbstractButton {
     private final TaskStatus.TaskInfo task;
     private final TextMarquee text;
     private final Consumer<TaskId> onPress;
-    private final PercentageCompletedProvider percentageCompletedProvider;
+    private final StateProvider stateProvider;
 
     AutocraftingTaskButton(final int x,
                            final int y,
                            final TaskStatus.TaskInfo task,
                            final Consumer<TaskId> onPress,
-                           final PercentageCompletedProvider percentageCompletedProvider) {
+                           final StateProvider stateProvider) {
         super(x, y, TASK_BUTTON_WIDTH, TASK_BUTTON_HEIGHT, Component.empty());
         this.task = task;
         final ResourceKey resource = task.resource();
@@ -45,7 +50,7 @@ class AutocraftingTaskButton extends AbstractButton {
             true
         );
         this.onPress = onPress;
-        this.percentageCompletedProvider = percentageCompletedProvider;
+        this.stateProvider = stateProvider;
     }
 
     TaskId getTaskId() {
@@ -65,7 +70,7 @@ class AutocraftingTaskButton extends AbstractButton {
         text.render(graphics, textX, textY, Minecraft.getInstance().font, isHovered);
         final int ySpacing = SmallText.isSmall() ? 7 : 8;
         final long percentageCompleted = Math.round(
-            percentageCompletedProvider.getPercentageCompleted(task.id()) * 100
+            stateProvider.getPercentageCompleted(task.id()) * 100
         );
         SmallText.render(graphics, Minecraft.getInstance().font, percentageCompleted + "%", textX, textY + ySpacing,
             0xFFFFFF, true, SmallText.DEFAULT_SCALE);
@@ -84,9 +89,16 @@ class AutocraftingTaskButton extends AbstractButton {
     private void updateTooltip() {
         if (isHovered) {
             final String runningTime = getRunningTimeText();
-            setTooltip(Tooltip.create(
-                createTranslation("gui", "autocrafting_monitor.running_time", runningTime)
-            ));
+            final MutableComponent runningTimeText =
+                createTranslation("gui", "autocrafting_monitor.running_time", runningTime);
+            final TaskState state = stateProvider.getState(task.id());
+            if (state == null) {
+                setTooltip(Tooltip.create(runningTimeText));
+                return;
+            }
+            final MutableComponent stateText = createTranslation("gui", "autocrafting_monitor.state."
+                + state.toString().toLowerCase(Locale.ROOT));
+            setTooltip(Tooltip.create(stateText.append("\n").append(runningTimeText.withStyle(ChatFormatting.GRAY))));
         } else {
             setTooltip(null);
         }
@@ -116,7 +128,10 @@ class AutocraftingTaskButton extends AbstractButton {
         // no op
     }
 
-    interface PercentageCompletedProvider {
+    interface StateProvider {
         double getPercentageCompleted(TaskId taskId);
+
+        @Nullable
+        TaskState getState(TaskId taskId);
     }
 }

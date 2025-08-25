@@ -14,6 +14,7 @@ public class PatternBuilder {
     private final PatternType type;
     private final List<Ingredient> ingredients = new ArrayList<>();
     private final List<ResourceAmount> outputs = new ArrayList<>();
+    private final List<ResourceAmount> byproducts = new ArrayList<>();
 
     private PatternBuilder(final PatternType type) {
         this.type = type;
@@ -41,8 +42,13 @@ public class PatternBuilder {
         return this;
     }
 
+    public PatternBuilder byproduct(final ResourceKey byproduct, final long amount) {
+        byproducts.add(new ResourceAmount(byproduct, amount));
+        return this;
+    }
+
     public PatternLayout buildLayout() {
-        return new PatternLayout(ingredients, outputs, type);
+        return new PatternLayout(ingredients, outputs, byproducts, type);
     }
 
     public Pattern build() {

@@ -93,6 +93,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private ResourceType resourceTypeFilter;
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
+    private boolean resourceTypeWarningVisible;
 
     protected AbstractGridContainerMenu(
         final MenuType<? extends AbstractGridContainerMenu> menuType,
@@ -128,6 +129,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         this.insertionStrategy = new ClientGridInsertionStrategy();
         this.extractionStrategy = new ClientGridExtractionStrategy();
         this.scrollingStrategy = new ClientGridScrollingStrategy();
+        updateResourceTypeWarning();
     }
 
     protected AbstractGridContainerMenu(
@@ -164,6 +166,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LOGGER.debug("{} got updated with {}", resource, amount);
         repository.update(resource, amount);
         updateOrRemoveTrackedResource(resource, trackedResource);
+        updateResourceTypeWarning();
     }
 
     @Override
@@ -408,6 +411,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         }
         this.resourceTypeFilter = newResourceType;
         this.repository.sort();
+        updateResourceTypeWarning();
     }
 
     @Override
@@ -550,5 +554,22 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     public boolean isLargeSlot(final Slot slot) {
         return false;
+    }
+
+    public boolean isResourceTypeWarningVisible() {
+        return resourceTypeWarningVisible;
+    }
+
+    private void updateResourceTypeWarning() {
+        final ResourceType resourceType = getResourceType();
+        if (resourceType == null) {
+            resourceTypeWarningVisible = false;
+            return;
+        }
+        resourceTypeWarningVisible = repository.copyBackingList()
+            .getAll()
+            .stream()
+            .noneMatch(resource -> resource instanceof PlatformResourceKey platformResource
+                && platformResource.getResourceType().equals(resourceType));
     }
 }
