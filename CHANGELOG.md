@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.11] - 2025-08-25
+
 ### Added
 
 -   The resource type side button now shows a warning when the Grid is filtering by resource type and there are no resources for that type to display.
@@ -1038,7 +1040,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.10...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.11...HEAD
+
+[2.0.0-beta.11]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.10...v2.0.0-beta.11
 
 [2.0.0-beta.10]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.9...v2.0.0-beta.10
 
