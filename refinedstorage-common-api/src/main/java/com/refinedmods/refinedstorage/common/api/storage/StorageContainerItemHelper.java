@@ -49,4 +49,6 @@ public interface StorageContainerItemHelper {
     void transferFromBlockEntity(ItemStack stack, StorageBlockEntity blockEntity);
 
     void markAsToTransfer(ItemStack from, ItemStack to);
+
+    boolean clear(ItemStack stack);
 }

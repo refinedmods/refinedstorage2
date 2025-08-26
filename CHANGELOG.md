@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Duplicating storage disks with middle click in creative mode will now give a new storage disk instead of referencing the copied one.
+
 ## [2.0.0-beta.11] - 2025-08-25
 
 ### Added

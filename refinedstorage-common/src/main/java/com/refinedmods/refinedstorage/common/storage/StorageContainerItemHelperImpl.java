@@ -199,6 +199,16 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
         return Optional.ofNullable(stack.get(DataComponents.INSTANCE.getStorageReference()));
     }
 
+    @Override
+    public boolean clear(final ItemStack stack) {
+        if (getId(stack).isEmpty()) {
+            return false;
+        }
+
+        stack.remove(DataComponents.INSTANCE.getStorageReference());
+        return true;
+    }
+
     private Optional<UUID> getIdToBeTransferred(final ItemStack stack) {
         return Optional.ofNullable(stack.get(DataComponents.INSTANCE.getStorageReferenceToBeTransferred()));
     }
