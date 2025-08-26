@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.calculation;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.resource.list.LazyCopyMutableResourceList;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
@@ -47,7 +48,7 @@ class CraftingState {
     static CraftingState of(final RootStorage rootStorage) {
         final MutableResourceListImpl storage = MutableResourceListImpl.create();
         rootStorage.getAll().forEach(storage::add);
-        return new CraftingState(storage, MutableResourceListImpl.create());
+        return new CraftingState(LazyCopyMutableResourceList.create(storage), MutableResourceListImpl.create());
     }
 
     Comparator<ResourceKey> getSorter() {

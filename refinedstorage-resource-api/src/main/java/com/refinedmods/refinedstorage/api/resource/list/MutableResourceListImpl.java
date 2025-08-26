@@ -28,6 +28,12 @@ public class MutableResourceListImpl implements MutableResourceList {
         return new MutableResourceListImpl(new HashMap<>());
     }
 
+    private static MutableResourceListImpl createCopy(final Map<ResourceKey, Entry> entries) {
+        final Map<ResourceKey, Entry> newEntries = HashMap.newHashMap(entries.size());
+        entries.forEach((key, entry) -> newEntries.put(key, new Entry(key, entry.amount)));
+        return new MutableResourceListImpl(newEntries);
+    }
+
     public static MutableResourceListImpl orderPreserving() {
         return new MutableResourceListImpl(new LinkedHashMap<>());
     }
@@ -117,9 +123,7 @@ public class MutableResourceListImpl implements MutableResourceList {
 
     @Override
     public MutableResourceList copy() {
-        final MutableResourceList copy = MutableResourceListImpl.create();
-        entries.forEach((key, entry) -> copy.add(key, entry.amount));
-        return copy;
+        return MutableResourceListImpl.createCopy(entries);
     }
 
     @Override

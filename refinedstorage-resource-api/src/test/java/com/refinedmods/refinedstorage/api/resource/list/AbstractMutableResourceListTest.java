@@ -6,32 +6,27 @@ import com.refinedmods.refinedstorage.api.resource.TestResource;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(InitialStateExtension.class)
 abstract class AbstractMutableResourceListTest {
-    protected MutableResourceList sut;
 
-    @BeforeEach
-    void setUp() {
-        sut = createList();
-    }
-
-    protected abstract MutableResourceList createList();
+    protected abstract MutableResourceList createList(TestResource[] resources, long amount);
 
     @Test
-    void testInitialState() {
+    void testInitialState(final MutableResourceList sut) {
         // Assert
         assertThat(sut.copyState()).isEmpty();
         assertThat(sut.isEmpty()).isTrue();
     }
 
     @Test
-    void shouldAddNewResource() {
+    void shouldAddNewResource(final MutableResourceList sut) {
         // Act
         final MutableResourceList.OperationResult result = sut.add(TestResource.A, 10);
 
@@ -51,7 +46,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldAddNewResourceWithResourceAmountDirectly() {
+    void shouldAddNewResourceWithResourceAmountDirectly(final MutableResourceList sut) {
         // Act
         final MutableResourceList.OperationResult result = sut.add(new ResourceAmount(TestResource.A, 10));
 
@@ -71,7 +66,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldAddMultipleOfSameResource() {
+    void shouldAddMultipleOfSameResource(final MutableResourceList sut) {
         // Act
         final MutableResourceList.OperationResult result1 = sut.add(TestResource.A, 10);
         final MutableResourceList.OperationResult result2 = sut.add(TestResource.A, 5);
@@ -97,7 +92,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldAddMultipleOfDifferentResources() {
+    void shouldAddMultipleOfDifferentResources(final MutableResourceList sut) {
         // Act
         final MutableResourceList.OperationResult result1 = sut.add(TestResource.A, 10);
         final MutableResourceList.OperationResult result2 = sut.add(TestResource.A, 5);
@@ -133,7 +128,7 @@ abstract class AbstractMutableResourceListTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void shouldNotAddInvalidResourceOrAmount() {
+    void shouldNotAddInvalidResourceOrAmount(final MutableResourceList sut) {
         // Act
         final Executable action1 = () -> sut.add(TestResource.A, 0);
         final Executable action2 = () -> sut.add(TestResource.A, -1);
@@ -146,7 +141,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldNotRemoveResourceWhenItIsNotAvailable() {
+    void shouldNotRemoveResourceWhenItIsNotAvailable(final MutableResourceList sut) {
         // Act
         final MutableResourceList.OperationResult result = sut.remove(TestResource.A, 10);
 
@@ -155,7 +150,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldRemoveResourcePartly() {
+    void shouldRemoveResourcePartly(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 20);
         sut.add(TestResource.B, 6);
@@ -184,7 +179,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldRemoveResourcePartlyWithResourceAmount() {
+    void shouldRemoveResourcePartlyWithResourceAmount(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 20);
         sut.add(TestResource.B, 6);
@@ -216,7 +211,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldRemoveResourceCompletely() {
+    void shouldRemoveResourceCompletely(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 20);
         sut.add(TestResource.B, 6);
@@ -244,7 +239,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldRemoveResourceCompletelyWithResourceAmount() {
+    void shouldRemoveResourceCompletelyWithResourceAmount(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 20);
         sut.add(TestResource.B, 6);
@@ -275,7 +270,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldRemoveLastResourceOfResourceList() {
+    void shouldRemoveLastResourceOfResourceList(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 1);
 
@@ -297,7 +292,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldNotRemoveResourceWithMoreThanIsAvailable() {
+    void shouldNotRemoveResourceWithMoreThanIsAvailable(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 20);
         sut.add(TestResource.B, 6);
@@ -326,7 +321,7 @@ abstract class AbstractMutableResourceListTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void shouldNotRemoveInvalidResourceOrAmount() {
+    void shouldNotRemoveInvalidResourceOrAmount(final MutableResourceList sut) {
         // Act
         final Executable action1 = () -> sut.remove(TestResource.A, 0);
         final Executable action2 = () -> sut.remove(TestResource.A, -1);
@@ -339,7 +334,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldClearList() {
+    void shouldClearList(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 10);
         sut.add(TestResource.B, 5);
@@ -362,7 +357,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void shouldCopyList() {
+    void shouldCopyList(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 10);
         sut.add(TestResource.B, 5);
@@ -392,7 +387,7 @@ abstract class AbstractMutableResourceListTest {
     }
 
     @Test
-    void testToString() {
+    void testToString(final MutableResourceList sut) {
         // Arrange
         sut.add(TestResource.A, 10);
         sut.add(TestResource.B, 5);
