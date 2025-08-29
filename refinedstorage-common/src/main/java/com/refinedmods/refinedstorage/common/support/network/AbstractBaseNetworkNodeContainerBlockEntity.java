@@ -81,6 +81,7 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
         final long energyUsage = mainNetworkNode.getEnergyUsage();
         final boolean hasLevel = level != null && level.isLoaded(worldPosition);
         final boolean redstoneModeActive = !hasRedstoneMode()
+            || this.redstoneMode == RedstoneMode.IGNORE
             || redstoneMode.isActive(hasLevel && level.hasNeighborSignal(worldPosition));
         return hasLevel
             && redstoneModeActive
