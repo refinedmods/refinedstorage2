@@ -20,4 +20,9 @@ public abstract class AbstractCableBlockEntity extends AbstractCableLikeBlockEnt
     public Component getName() {
         return overrideName(ContentNames.CABLE);
     }
+
+    @Override
+    protected boolean hasRedstoneMode() {
+        return false;
+    }
 }
