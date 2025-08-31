@@ -159,11 +159,11 @@ class PortableGrid implements Grid {
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
-        return CompletableFuture.completedFuture(Optional.empty());
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
+        return Optional.empty();
     }
 }

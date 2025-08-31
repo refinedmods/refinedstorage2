@@ -260,7 +260,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isPresent();
@@ -300,7 +300,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
         final var result = sut.ensureTask(B, 10, Actor.EMPTY);
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
         final var result2 = sut.ensureTask(B, 10, Actor.EMPTY);
@@ -394,7 +394,7 @@ class AutocraftingNetworkComponentImplTest {
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
-        sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Act
         final var result = sut.ensureTask(B, 1, Actor.EMPTY);
@@ -421,8 +421,8 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -474,8 +474,8 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -520,7 +520,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId = sut.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isEmpty();
@@ -545,10 +545,10 @@ class AutocraftingNetworkComponentImplTest {
         provider3.setPattern(1, pattern().ingredient(A, 3).output(D, 1).build());
         sut.onContainerAdded(() -> provider3);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
-        sut.startTask(D, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        sut.startTask(D, 1, Actor.EMPTY, false, CancellationToken.NONE);
         sut.onContainerRemoved(() -> provider3);
 
         // Act

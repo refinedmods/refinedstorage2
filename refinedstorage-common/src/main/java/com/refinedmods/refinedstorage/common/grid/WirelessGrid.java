@@ -154,13 +154,12 @@ class WirelessGrid implements Grid {
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
-        return getAutocrafting()
-            .map(autocrafting -> autocrafting.startTask(resource, amount, actor, notify, cancellationToken))
-            .orElse(CompletableFuture.completedFuture(Optional.empty()));
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
+        return getAutocrafting().flatMap(
+            autocrafting -> autocrafting.startTask(resource, amount, actor, notify, cancellationToken));
     }
 }

@@ -14,9 +14,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.3")
 public interface GridWatcherManager {
-    void addWatcher(GridWatcher watcher,
-                    Class<? extends Actor> actorType,
-                    @Nullable RootStorage rootStorage);
+    void addWatcher(GridWatcher watcher, Class<? extends Actor> actorType, @Nullable RootStorage rootStorage);
 
     void attachAll(@Nullable RootStorage rootStorage);
 

@@ -131,11 +131,11 @@ class ClientCraftingGrid implements CraftingGrid {
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
         throw new UnsupportedOperationException();
     }
 }

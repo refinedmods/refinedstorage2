@@ -158,40 +158,16 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
-        return CompletableFuture.supplyAsync(() -> startTaskSync(resource, amount, actor, notify, cancellationToken),
-            executorService);
-    }
-
-    private TaskId startTask(final ResourceKey resource,
-                             final long amount,
-                             final Actor actor,
-                             final TaskPlan plan,
-                             final boolean notify) {
-        final Task task = new TaskImpl(plan, actor, notify);
-        LOGGER.debug("Created task {} for {}x {} for {}", task.getId(), amount, resource, actor);
-        final PatternProvider provider = CoreValidations.validateNotNull(
-            providerByPattern.get(plan.rootPattern()),
-            "No provider for pattern " + plan.rootPattern()
-        );
-        provider.addTask(task);
-        return task.getId();
-    }
-
-    private Optional<TaskId> startTaskSync(final ResourceKey resource,
-                                           final long amount,
-                                           final Actor actor,
-                                           final boolean notify,
-                                           final CancellationToken cancellationToken) {
         final RootStorage rootStorage = rootStorageProvider.get();
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
         return calculatePlan(calculator, resource, amount, cancellationToken)
-            .map(plan -> startTask(resource, amount, actor, plan, notify));
+            .map(plan -> addTask(resource, amount, actor, plan, notify));
     }
 
     @Override
@@ -210,9 +186,27 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (correctedAmount <= 0) {
             return EnsureResult.MISSING_RESOURCES;
         }
-        return startTaskSync(resource, correctedAmount, actor, false, CancellationToken.NONE)
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return calculatePlan(calculator, resource, correctedAmount, CancellationToken.NONE)
+            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);
+    }
+
+    private TaskId addTask(final ResourceKey resource,
+                           final long amount,
+                           final Actor actor,
+                           final TaskPlan plan,
+                           final boolean notify) {
+        final Task task = new TaskImpl(plan, actor, notify);
+        LOGGER.debug("Created task {} for {}x {} for {}", task.getId(), amount, resource, actor);
+        final PatternProvider provider = CoreValidations.validateNotNull(
+            providerByPattern.get(plan.rootPattern()),
+            "No provider for pattern " + plan.rootPattern()
+        );
+        provider.addTask(task);
+        return task.getId();
     }
 
     @Override
