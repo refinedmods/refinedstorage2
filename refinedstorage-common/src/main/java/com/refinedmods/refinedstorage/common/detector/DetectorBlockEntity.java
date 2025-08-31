@@ -181,4 +181,10 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
                                                                    final BlockState newBlockState) {
         return AbstractDirectionalBlock.didDirectionChange(oldBlockState, newBlockState);
     }
+
+    @Override
+    protected boolean hasRedstoneMode() {
+        return false;
+    }
+
 }
