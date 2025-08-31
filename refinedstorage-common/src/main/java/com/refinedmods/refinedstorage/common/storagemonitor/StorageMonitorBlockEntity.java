@@ -398,14 +398,14 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
         final Network network = mainNetworkNode.getNetwork();
         if (network == null) {
-            return CompletableFuture.completedFuture(Optional.empty());
+            return Optional.empty();
         }
         return network.getComponent(AutocraftingNetworkComponent.class).startTask(resource, amount, actor, notify,
             cancellationToken);

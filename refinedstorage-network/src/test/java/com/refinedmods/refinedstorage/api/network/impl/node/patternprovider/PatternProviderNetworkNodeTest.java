@@ -145,7 +145,7 @@ class PatternProviderNetworkNodeTest {
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act
         sut.setNetwork(null);
@@ -168,7 +168,7 @@ class PatternProviderNetworkNodeTest {
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act
         sut.setActive(false);
@@ -191,7 +191,7 @@ class PatternProviderNetworkNodeTest {
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
         assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -230,7 +230,7 @@ class PatternProviderNetworkNodeTest {
         });
 
         sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
-        assertThat(autocrafting.startTask(B, 20, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 20, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
         assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -268,7 +268,7 @@ class PatternProviderNetworkNodeTest {
 
         sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
         sut.setSink(sink);
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
         assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -310,7 +310,7 @@ class PatternProviderNetworkNodeTest {
 
         sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
         sut.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
         assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -348,7 +348,7 @@ class PatternProviderNetworkNodeTest {
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
-        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
         assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -393,7 +393,7 @@ class PatternProviderNetworkNodeTest {
         sut.setListener(listener);
 
         // Act & assert
-        assertThat(autocrafting.startTask(B, 10, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 10, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         sut.doWork();
         assertThat(sut.getTasks()).hasSize(1);
@@ -493,7 +493,7 @@ class PatternProviderNetworkNodeTest {
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
         // Act & assert
-        assertThat(autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         sut.doWork();
         assertThat(sut.getTasks()).hasSize(1);
@@ -533,7 +533,7 @@ class PatternProviderNetworkNodeTest {
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
         // Act & assert
-        assertThat(autocrafting.startTask(C, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(C, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         sut.doWork();
         assertThat(sut.getTasks()).hasSize(1);
@@ -628,7 +628,7 @@ class PatternProviderNetworkNodeTest {
         sut.setPattern(1, PATTERN_A);
 
         // Act
-        final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isPresent();
@@ -649,7 +649,7 @@ class PatternProviderNetworkNodeTest {
         sut.setPattern(1, PATTERN_A);
 
         // Act
-        final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isEmpty();
@@ -672,8 +672,7 @@ class PatternProviderNetworkNodeTest {
         sut.setPattern(1, PATTERN_A);
 
         // Act & assert
-        final Optional<TaskId> createdId =
-            autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> createdId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
         assertThat(createdId).isPresent();
         assertThat(sut.getTasks()).isNotEmpty();
 
@@ -704,7 +703,7 @@ class PatternProviderNetworkNodeTest {
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
         // Act & assert
-        assertThat(autocrafting.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+        assertThat(autocrafting.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         sut.doWork();
         taskShouldBeMarkedAsChangedOnce(listener);
@@ -828,7 +827,7 @@ class PatternProviderNetworkNodeTest {
             final PatternProviderExternalPatternSinkImpl sink2 = new PatternProviderExternalPatternSinkImpl();
             sut2.setSink(sink2);
 
-            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(sut2.getTasks()).isEmpty();
 
@@ -908,7 +907,7 @@ class PatternProviderNetworkNodeTest {
             final PatternProviderExternalPatternSinkImpl sink3 = new PatternProviderExternalPatternSinkImpl();
             sut3.setSink(sink3);
 
-            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(sut2.getTasks()).isEmpty();
             assertThat(sut3.getTasks()).isEmpty();
@@ -984,7 +983,7 @@ class PatternProviderNetworkNodeTest {
             sut2.setPattern(1, patternBuilder.build());
             sut2.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
-            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(sut2.getTasks()).isEmpty();
 
@@ -1026,7 +1025,7 @@ class PatternProviderNetworkNodeTest {
             sut2.setPattern(1, patternBuilder.build());
             sut2.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
-            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(sut2.getTasks()).isEmpty();
 
@@ -1093,7 +1092,7 @@ class PatternProviderNetworkNodeTest {
             final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
             sut.setSink(sink);
 
-            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
 
             // Act & assert
@@ -1162,7 +1161,7 @@ class PatternProviderNetworkNodeTest {
             sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
             // Act & assert
-            assertThat(autocrafting.startTask(A, 3, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(A, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
             sut.doWork();
             assertThat(sut.getTasks()).hasSize(1);
@@ -1285,7 +1284,7 @@ class PatternProviderNetworkNodeTest {
             sut.setPattern(1, PATTERN_A);
 
             // Act & assert
-            final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+            final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
             assertThat(taskId).isPresent();
             final ArgumentCaptor<TaskStatus> statusCaptor = ArgumentCaptor.forClass(TaskStatus.class);
             verify(listener, times(1)).taskAdded(statusCaptor.capture());
@@ -1325,7 +1324,7 @@ class PatternProviderNetworkNodeTest {
             sut.setPattern(1, PATTERN_A);
 
             // Act & assert
-            final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+            final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
             assertThat(taskId).isPresent();
             assertThat(sut.getTasks()).hasSize(1).allMatch(t -> t.getState() == TaskState.READY);
 
@@ -1367,7 +1366,7 @@ class PatternProviderNetworkNodeTest {
             other.setPattern(0, patternForB);
 
             // Act & assert
-            assertThat(autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
+            assertThat(autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst())).isEmpty();
             assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
