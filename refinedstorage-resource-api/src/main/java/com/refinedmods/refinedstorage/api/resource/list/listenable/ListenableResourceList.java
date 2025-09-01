@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A resource list that can have listeners to track changes.
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ListenableResourceList extends AbstractProxyMutableResourceList {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListenableResourceList.class);
     private final Set<ResourceListListener> listeners = new HashSet<>();
 
     public ListenableResourceList(final MutableResourceList delegate) {
@@ -45,17 +42,14 @@ public class ListenableResourceList extends AbstractProxyMutableResourceList {
     }
 
     private void notifyListeners(final OperationResult result) {
-        LOGGER.info("Notifying {} listeners of change: {}", listeners.size(), result);
         listeners.forEach(listener -> listener.changed(result));
     }
 
     public void addListener(final ResourceListListener listener) {
-        LOGGER.info("Adding listener: {}", listener);
         listeners.add(listener);
     }
 
     public void removeListener(final ResourceListListener listener) {
-        LOGGER.info("Removing listener: {}", listener);
         listeners.remove(listener);
     }
 }
