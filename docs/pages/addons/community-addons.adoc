@@ -1,4 +1,4 @@
-= Unofficial addons
+= Community addons
 
 These are community-maintained addons that extend Refined Storage.
 
