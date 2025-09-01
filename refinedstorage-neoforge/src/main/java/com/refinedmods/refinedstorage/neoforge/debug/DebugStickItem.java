@@ -64,7 +64,8 @@ public class DebugStickItem extends Item {
                         for (int i = 0; i < stack.getMaxDamage(); ++i) {
                             final ItemStack damaged = stack.copy();
                             damaged.setDamageValue(i);
-                            storage.insert(ItemResource.ofItemStack(damaged), Integer.MAX_VALUE, Action.EXECUTE, Actor.EMPTY);
+                            storage.insert(ItemResource.ofItemStack(damaged), Integer.MAX_VALUE, Action.EXECUTE,
+                                Actor.EMPTY);
                             size++;
                         }
                     } else {
