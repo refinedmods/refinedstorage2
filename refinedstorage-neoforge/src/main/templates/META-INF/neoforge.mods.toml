@@ -17,6 +17,6 @@ config="refinedstorage.mixins.json"
 [[dependencies.refinedstorage]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.0.153,)"
+versionRange = "[21.1.181,)"
 ordering = "NONE"
 side = "BOTH"
