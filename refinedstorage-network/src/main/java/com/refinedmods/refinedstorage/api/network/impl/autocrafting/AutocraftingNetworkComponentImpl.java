@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
-import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
@@ -47,6 +46,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener.binarySearchMaxAmount;
 import static com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewCraftingCalculatorListener.calculateTree;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlanCraftingCalculatorListener.calculatePlan;
 
@@ -146,14 +146,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource,
                                                 final CancellationToken cancellationToken) {
         CoreValidations.validateNotNull(resource, "Resource cannot be null");
-        return CompletableFuture.supplyAsync(() -> getMaxAmountSync(resource, cancellationToken), executorService);
-    }
-
-    private long getMaxAmountSync(final ResourceKey resource, final CancellationToken cancellationToken) {
-        return IsCraftableCraftingCalculatorListener.binarySearchMaxAmount(
-            new CraftingCalculatorImpl(patternRepository, rootStorageProvider.get()),
-            resource,
-            cancellationToken
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return CompletableFuture.supplyAsync(
+            () -> binarySearchMaxAmount(calculator, resource, cancellationToken),
+            executorService
         );
     }
 
@@ -179,15 +176,24 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (currentlyCrafting >= amount) {
             return EnsureResult.TASK_ALREADY_RUNNING;
         }
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final long correctedAmount = amount - currentlyCrafting;
+        final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return calculatePlan(calculator, resource, correctedAmount, CancellationToken.NONE)
+            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+            .map(taskId -> EnsureResult.TASK_CREATED)
+            .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator));
+    }
+
+    private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,
+                                                      final long amount, final CraftingCalculator calculator) {
         final long correctedAmount = Math.min(
-            getMaxAmountSync(resource, CancellationToken.NONE),
-            amount - currentlyCrafting
+            binarySearchMaxAmount(calculator, resource, CancellationToken.NONE),
+            amount
         );
         if (correctedAmount <= 0) {
             return EnsureResult.MISSING_RESOURCES;
         }
-        final RootStorage rootStorage = rootStorageProvider.get();
-        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
         return calculatePlan(calculator, resource, correctedAmount, CancellationToken.NONE)
             .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
