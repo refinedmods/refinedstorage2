@@ -11,11 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 public class PreviewBuilder {
-    private final Map<ResourceKey, MutablePreviewItem> items = new LinkedHashMap<>();
+    private final Map<ResourceKey, MutablePreviewItem> items;
     private List<ResourceAmount> outputsOfPatternWithCycle = Collections.emptyList();
     private boolean missing;
 
     private PreviewBuilder() {
+        items = new LinkedHashMap<>();
+    }
+
+    private PreviewBuilder(final int size) {
+        items = LinkedHashMap.newLinkedHashMap(size);
     }
 
     public static PreviewBuilder create() {
@@ -51,7 +56,7 @@ public class PreviewBuilder {
     }
 
     public PreviewBuilder copy() {
-        final PreviewBuilder copy = new PreviewBuilder();
+        final PreviewBuilder copy = new PreviewBuilder(items.size());
         for (final Map.Entry<ResourceKey, MutablePreviewItem> entry : items.entrySet()) {
             final MutablePreviewItem item = entry.getValue();
             copy.items.put(entry.getKey(), item.copy());

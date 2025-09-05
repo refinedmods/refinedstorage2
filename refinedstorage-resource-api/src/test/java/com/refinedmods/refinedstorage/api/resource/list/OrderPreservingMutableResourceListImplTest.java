@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.resource.list;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.resource.TestResource;
 
 import java.util.Collection;
 import java.util.Set;
@@ -15,12 +16,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderPreservingMutableResourceListImplTest extends AbstractMutableResourceListTest {
     @Override
-    protected MutableResourceList createList() {
-        return MutableResourceListImpl.orderPreserving();
+    protected MutableResourceList createList(final TestResource[] resources, final long amount) {
+        final MutableResourceListImpl mutableResourceList = MutableResourceListImpl.orderPreserving();
+        for (final TestResource resource : resources) {
+            mutableResourceList.add(resource, amount);
+        }
+        return mutableResourceList;
     }
 
     @Test
-    void shouldPreserveOrderWhenRetrievingKeys() {
+    void shouldPreserveOrderWhenRetrievingKeys(final MutableResourceList sut) {
         // Arrange
         sut.add(A, 1);
         sut.add(B, 1);
@@ -34,7 +39,7 @@ class OrderPreservingMutableResourceListImplTest extends AbstractMutableResource
     }
 
     @Test
-    void shouldPreserveOrderWhenCopyingState() {
+    void shouldPreserveOrderWhenCopyingState(final MutableResourceList sut) {
         // Arrange
         sut.add(A, 1);
         sut.add(B, 1);
