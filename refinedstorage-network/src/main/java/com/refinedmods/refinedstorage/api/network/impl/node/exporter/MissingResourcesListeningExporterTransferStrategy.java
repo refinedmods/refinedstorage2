@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.exporter;
 
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
@@ -41,7 +42,8 @@ public class MissingResourcesListeningExporterTransferStrategy implements Export
                     if (amount <= 0) {
                         return Result.DESTINATION_DOES_NOT_ACCEPT;
                     }
-                    final var ensureResult = autocrafting.ensureTask(resource, amount, actor);
+                    final var ensureResult = autocrafting.ensureTask(resource, amount, actor,
+                        new TimeoutableCancellationToken());
                     final boolean success = ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_CREATED
                         || ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING;
                     return success ? Result.AUTOCRAFTING_STARTED : Result.AUTOCRAFTING_MISSING_RESOURCES;

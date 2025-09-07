@@ -168,7 +168,8 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     @Override
-    public EnsureResult ensureTask(final ResourceKey resource, final long amount, final Actor actor) {
+    public EnsureResult ensureTask(final ResourceKey resource, final long amount, final Actor actor,
+                                   final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
         final long currentlyCrafting = providers.stream()
             .mapToLong(provider -> provider.getAmount(resource))
@@ -179,14 +180,16 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final RootStorage rootStorage = rootStorageProvider.get();
         final long correctedAmount = amount - currentlyCrafting;
         final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculatePlan(calculator, resource, correctedAmount, CancellationToken.NONE)
+        return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
             .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
-            .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator));
+            .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
+                cancellationToken));
     }
 
     private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,
-                                                      final long amount, final CraftingCalculator calculator) {
+                                                      final long amount, final CraftingCalculator calculator,
+                                                      final CancellationToken cancellationToken) {
         final long correctedAmount = Math.min(
             binarySearchMaxAmount(calculator, resource, CancellationToken.NONE),
             amount
@@ -194,7 +197,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (correctedAmount <= 0) {
             return EnsureResult.MISSING_RESOURCES;
         }
-        return calculatePlan(calculator, resource, correctedAmount, CancellationToken.NONE)
+        return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
             .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);

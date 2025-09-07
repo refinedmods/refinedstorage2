@@ -13,9 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
--   Performance issues with the Autocrafting Upgrade in an Exporter or Interface.
 -   Rare crash when starting an autocrafting task.
--   Optimize autocrafting calculation performance.
+-   Various autocrafting performance problems.
 
 ## [2.0.0-beta.11] - 2025-08-25
 
