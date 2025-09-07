@@ -77,6 +77,9 @@ class CraftingTree<T> {
                 cancellationToken);
             if (ingredientResult == CalculationResult.MISSING_RESOURCES) {
                 result = CalculationResult.MISSING_RESOURCES;
+                if (!listener.requiresFullMissingResourcesCalculation()) {
+                    break; // exit early, this subtree does not succeed
+                }
             }
         }
         craftingState.addOutputsToInternalStorage(pattern, amount);

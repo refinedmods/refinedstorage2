@@ -25,4 +25,11 @@ public interface CraftingCalculatorListener<T> {
     }
 
     T getData();
+
+    /**
+     * {@return true if missing resource calculation must be complete}
+     */
+    default boolean requiresFullMissingResourcesCalculation() {
+        return true;
+    }
 }
