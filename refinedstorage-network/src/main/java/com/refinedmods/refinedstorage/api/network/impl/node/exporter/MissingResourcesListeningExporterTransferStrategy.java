@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.exporter;
 
-import com.refinedmods.refinedstorage.api.autocrafting.calculation.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;

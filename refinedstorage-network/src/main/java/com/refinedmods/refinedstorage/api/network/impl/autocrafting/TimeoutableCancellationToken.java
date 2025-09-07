@@ -1,4 +1,6 @@
-package com.refinedmods.refinedstorage.api.autocrafting.calculation;
+package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
+
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.iface;
 
-import com.refinedmods.refinedstorage.api.autocrafting.calculation.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExposedExternalStorage;
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProvider;
