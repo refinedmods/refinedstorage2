@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+
+import static com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec.ERROR_MESSAGE_STORAGE;
 
 public final class StorageCodecs {
     private static final StreamCodec<RegistryFriendlyByteBuf, TrackedResource> TRACKED_RESOURCE_STREAM_CODEC =
@@ -49,7 +52,8 @@ public final class StorageCodecs {
 
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.optionalField("capacity", Codec.LONG, false).forGetter(StorageData::capacity),
-            new ErrorHandlingListCodec<>(storageResourceCodec).fieldOf("resources").forGetter(StorageData::resources)
+            new ErrorHandlingListCodec<>(storageResourceCodec, ERROR_MESSAGE_STORAGE)
+                .fieldOf("resources").forGetter(StorageData::resources)
         ).apply(instance, StorageData::new));
     }
 

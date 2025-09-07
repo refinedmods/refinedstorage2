@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage.common.storage;
+package com.refinedmods.refinedstorage.common.support;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import com.mojang.serialization.ListBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ErrorHandlingListCodec<E> implements Codec<List<E>> {
-    private static final String ERROR_MESSAGE = """
+public class ErrorHandlingListCodec<E> implements Codec<List<E>> {
+    public static final String ERROR_MESSAGE_STORAGE = """
         Refined Storage could not load a resource in storage.
         This could be because the resource no longer exists after a mod update, or if the data format of the
         resource has changed. In any case, this is NOT caused by Refined Storage.
@@ -21,13 +21,29 @@ class ErrorHandlingListCodec<E> implements Codec<List<E>> {
         The problematic resource might end up being removed from storage, or may no longer have any additional data
         associated with it.
         Error message:""";
+    public static final String ERROR_MESSAGE_INVENTORY = """
+        Refined Storage could not load a resource in an inventory.
+        This could be because the resource no longer exists after a mod update, or if the data format of the
+        resource has changed. In any case, this is NOT caused by Refined Storage.
+        Refined Storage will try to gracefully handle this problem and continue to load the inventory data.
+        The problematic resource might end up being removed from the inventory,
+        or may no longer have any additional data associated with it.
+        Error message:""";
+    public static final String ERROR_MESSAGE_PATTERN = """
+        Refined Storage could not load a pattern.
+        This could be because the ingredient/output no longer exists after a mod update, or if the data format of the
+        ingredient/output has changed. In any case, this is NOT caused by Refined Storage.
+        Refined Storage will try to gracefully handle this problem and remove the pattern or its data.
+        Error message:""";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorHandlingListCodec.class);
 
     private final Codec<E> elementCodec;
+    private final String errorMessage;
 
-    ErrorHandlingListCodec(final Codec<E> elementCodec) {
+    public ErrorHandlingListCodec(final Codec<E> elementCodec, final String errorMessage) {
         this.elementCodec = elementCodec;
+        this.errorMessage = errorMessage;
     }
 
     @Override
@@ -64,7 +80,7 @@ class ErrorHandlingListCodec<E> implements Codec<List<E>> {
         private void accept(final T value) {
             final DataResult<Pair<E, T>> elementResult = elementCodec.decode(ops, value);
             elementResult.error().ifPresent(
-                error -> LOGGER.warn("{} {}", ERROR_MESSAGE, error.message())
+                error -> LOGGER.warn("{} {}", errorMessage, error.message())
             );
             elementResult.resultOrPartial().ifPresent(pair -> elements.add(pair.getFirst()));
         }

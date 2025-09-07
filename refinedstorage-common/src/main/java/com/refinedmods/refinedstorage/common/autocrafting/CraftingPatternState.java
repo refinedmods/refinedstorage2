@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting;
 
+import com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec;
+
 import java.util.ArrayList;
 
 import com.mojang.serialization.Codec;
@@ -10,11 +12,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 
+import static com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec.ERROR_MESSAGE_PATTERN;
+
 public record CraftingPatternState(boolean fuzzyMode, CraftingInput.Positioned input) {
     private static final Codec<CraftingInput> INPUT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.INT.fieldOf("width").forGetter(CraftingInput::width),
         Codec.INT.fieldOf("height").forGetter(CraftingInput::height),
-        Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("items").forGetter(CraftingInput::items)
+        new ErrorHandlingListCodec<>(ItemStack.OPTIONAL_CODEC, ERROR_MESSAGE_PATTERN)
+            .fieldOf("items").forGetter(CraftingInput::items)
     ).apply(instance, CraftingInput::of));
 
     private static final Codec<CraftingInput.Positioned> POSITIONED_INPUT_CODEC =

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.ArrayList;
@@ -20,14 +21,16 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+import static com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec.ERROR_MESSAGE_PATTERN;
+
 public record ProcessingPatternState(
     List<Optional<ProcessingIngredient>> ingredients,
     List<Optional<ResourceAmount>> outputs
 ) {
     public static final Codec<ProcessingPatternState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.list(ProcessingIngredient.OPTIONAL_CODEC).fieldOf("ingredients")
+        new ErrorHandlingListCodec<>(ProcessingIngredient.OPTIONAL_CODEC, ERROR_MESSAGE_PATTERN).fieldOf("ingredients")
             .forGetter(ProcessingPatternState::ingredients),
-        Codec.list(ResourceCodecs.AMOUNT_OPTIONAL_CODEC).fieldOf("outputs")
+        new ErrorHandlingListCodec<>(ResourceCodecs.AMOUNT_OPTIONAL_CODEC, ERROR_MESSAGE_PATTERN).fieldOf("outputs")
             .forGetter(ProcessingPatternState::outputs)
     ).apply(instance, ProcessingPatternState::new));
 

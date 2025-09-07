@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
+import com.refinedmods.refinedstorage.common.support.ErrorHandlingCodec;
 import com.refinedmods.refinedstorage.common.util.MathUtil;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+
+import static com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec.ERROR_MESSAGE_INVENTORY;
 
 public class ResourceContainerImpl implements ResourceContainer {
     private final ResourceAmount[] slots;
@@ -258,11 +261,18 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     private void fromTag(final int index, final CompoundTag tag, final HolderLookup.Provider provider) {
-        final ResourceAmount resourceAmount = ResourceCodecs.AMOUNT_CODEC.decode(
-            provider.createSerializationContext(NbtOps.INSTANCE),
-            tag
-        ).getOrThrow().getFirst();
-        setSilently(index, resourceAmount);
+        final ResourceAmount resourceAmount = new ErrorHandlingCodec<>(ResourceCodecs.AMOUNT_CODEC,
+            () -> null, ERROR_MESSAGE_INVENTORY)
+            .decode(
+                provider.createSerializationContext(NbtOps.INSTANCE),
+                tag
+            ).getOrThrow().getFirst();
+        if (resourceAmount != null) {
+            setSilently(index, resourceAmount);
+        } else {
+            slots[index] = null;
+            stackRepresentations[index] = null;
+        }
     }
 
     @Override

@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Rare crash when starting an autocrafting task.
 -   Various autocrafting performance problems.
+-   The Autocrafter inventory not loading anymore if an item used in a Pattern from another mod is removed from the modpack.
 
 ## [2.0.0-beta.11] - 2025-08-25
 

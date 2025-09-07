@@ -1,11 +1,21 @@
 package com.refinedmods.refinedstorage.common.util;
 
+import com.refinedmods.refinedstorage.common.support.ErrorHandlingCodec;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.refinedmods.refinedstorage.common.support.ErrorHandlingListCodec.ERROR_MESSAGE_PATTERN;
 
 public final class ContainerUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerUtil.class);
+
     private ContainerUtil() {
     }
 
@@ -57,6 +67,17 @@ public final class ContainerUtil {
         final int i,
         final HolderLookup.Provider provider
     ) {
-        return ItemStack.parseOptional(provider, tag.getCompound(getSlotKey(i)));
+        return parseOptional(provider, tag.getCompound(getSlotKey(i)));
+    }
+
+    public static ItemStack parseOptional(final HolderLookup.Provider lookupProvider, final CompoundTag tag) {
+        return tag.isEmpty() ? ItemStack.EMPTY : parse(lookupProvider, tag);
+    }
+
+    public static ItemStack parse(final HolderLookup.Provider lookupProvider, final Tag tag) {
+        return new ErrorHandlingCodec<>(ItemStack.CODEC, () -> ItemStack.EMPTY, ERROR_MESSAGE_PATTERN)
+            .parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag)
+            .resultOrPartial((error) -> LOGGER.error("Tried to load invalid item: '{}'", error))
+            .orElse(ItemStack.EMPTY);
     }
 }
