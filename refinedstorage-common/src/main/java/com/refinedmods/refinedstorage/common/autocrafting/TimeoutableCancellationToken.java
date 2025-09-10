@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationT
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Deprecated // use the one in autocrafting-api
+@Deprecated // use the one in network-api
 public class TimeoutableCancellationToken implements CancellationToken {
     private static final long TIMEOUT_MS = 5000;
 

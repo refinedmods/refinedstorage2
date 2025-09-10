@@ -43,12 +43,17 @@ public class PatternBuilder {
     }
 
     public PatternBuilder byproduct(final ResourceKey byproduct, final long amount) {
+        if (type == PatternType.EXTERNAL) {
+            throw new IllegalStateException("External patterns cannot have byproducts");
+        }
         byproducts.add(new ResourceAmount(byproduct, amount));
         return this;
     }
 
     public PatternLayout buildLayout() {
-        return new PatternLayout(ingredients, outputs, byproducts, type);
+        return type == PatternType.INTERNAL
+            ? PatternLayout.internal(ingredients, outputs, byproducts)
+            : PatternLayout.external(ingredients, outputs);
     }
 
     public Pattern build() {

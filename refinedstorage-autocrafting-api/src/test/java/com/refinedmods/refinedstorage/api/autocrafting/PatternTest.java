@@ -89,15 +89,14 @@ class PatternTest {
     @EnumSource(PatternType.class)
     void shouldNotCreatePatternWithoutIngredients(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            List.of(),
-            List.of(
-                new ResourceAmount(OAK_LOG, 3),
-                new ResourceAmount(OAK_PLANKS, 4)
-            ),
-            List.of(),
-            type
-        ));
+        final List<ResourceAmount> outputs = List.of(
+            new ResourceAmount(OAK_LOG, 3),
+            new ResourceAmount(OAK_PLANKS, 4)
+        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(List.of(), outputs, List.of())
+                : PatternLayout.external(List.of(), outputs));
 
         // Assert
         assertThatThrownBy(action)
@@ -109,15 +108,15 @@ class PatternTest {
     @EnumSource(PatternType.class)
     void shouldNotCreatePatternWithoutOutputs(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            List.of(
-                new Ingredient(1, List.of(A, B)),
-                new Ingredient(2, List.of(C))
-            ),
-            List.of(),
-            List.of(),
-            type
-        ));
+        final List<Ingredient> ingredients = List.of(
+            new Ingredient(1, List.of(A, B)),
+            new Ingredient(2, List.of(C))
+        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(ingredients, List.of(), List.of())
+                : PatternLayout.external(ingredients, List.of())
+        );
 
         // Assert
         assertThatThrownBy(action)
@@ -174,65 +173,19 @@ class PatternTest {
         assertThatThrownBy(action3).isInstanceOf(UnsupportedOperationException.class);
     }
 
-    @Test
-    void shouldNotCreateExternalPatternWithByproducts() {
-        // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            List.of(
-                new Ingredient(1, List.of(A, B)),
-                new Ingredient(2, List.of(C))
-            ),
-            List.of(
-                new ResourceAmount(OAK_LOG, 3),
-                new ResourceAmount(OAK_PLANKS, 4)
-            ),
-            List.of(
-                new ResourceAmount(COBBLESTONE, 1)
-            ),
-            PatternType.EXTERNAL
-        ));
-
-        // Assert
-        assertThatThrownBy(action)
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("External patterns cannot have byproducts");
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void shouldNotCreatePatternWithNullType() {
-        // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            List.of(
-                new Ingredient(1, List.of(A, B)),
-                new Ingredient(2, List.of(C))
-            ),
-            List.of(
-                new ResourceAmount(OAK_LOG, 3),
-                new ResourceAmount(OAK_PLANKS, 4)
-            ),
-            List.of(),
-            null
-        ));
-
-        // Assert
-        assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
-    }
-
     @ParameterizedTest
     @EnumSource(PatternType.class)
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreatePatternWithNullIngredients(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            null,
-            List.of(
-                new ResourceAmount(OAK_LOG, 3),
-                new ResourceAmount(OAK_PLANKS, 4)
-            ),
-            List.of(),
-            type
-        ));
+        final List<ResourceAmount> outputs = List.of(
+            new ResourceAmount(OAK_LOG, 3),
+            new ResourceAmount(OAK_PLANKS, 4)
+        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(null, outputs, List.of())
+                : PatternLayout.external(null, outputs));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -243,15 +196,14 @@ class PatternTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreatePatternWithNullOutputs(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), new PatternLayout(
-            List.of(
-                new Ingredient(1, List.of(A, B)),
-                new Ingredient(2, List.of(C))
-            ),
-            null,
-            List.of(),
-            type
-        ));
+        final List<Ingredient> ingredients = List.of(
+            new Ingredient(1, List.of(A, B)),
+            new Ingredient(2, List.of(C))
+        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(ingredients, null, List.of())
+                : PatternLayout.external(ingredients, null));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
