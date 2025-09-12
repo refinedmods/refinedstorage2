@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Rare crash when starting an autocrafting task.
+-   Resource containers not dealing with registry entries from removed mods properly.
 -   Various autocrafting performance problems.
 
 ## [2.0.0-beta.11] - 2025-08-25
