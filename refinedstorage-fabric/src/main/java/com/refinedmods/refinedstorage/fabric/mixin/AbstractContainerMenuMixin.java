@@ -55,7 +55,7 @@ public abstract class AbstractContainerMenuMixin {
 
         final ItemStack copy = stack.copy();
         if (helper.clear(copy)) {
-            LOGGER.debug("Cleared storage UUID of item {}", copy);
+            LOGGER.info("Cleared storage reference of storage container {}", copy);
             this.setCarried(copy.copyWithCount(stack.getMaxStackSize()));
             ci.cancel();
         }
