@@ -20,6 +20,6 @@ public interface PreviewProvider {
 
     CompletableFuture<Long> getMaxAmount(ResourceKey resource, CancellationToken cancellationToken);
 
-    CompletableFuture<Optional<TaskId>> startTask(ResourceKey resource, long amount, Actor actor, boolean notify,
-                                                  CancellationToken cancellationToken);
+    Optional<TaskId> startTask(ResourceKey resource, long amount, Actor actor, boolean notify,
+                               CancellationToken cancellationToken);
 }

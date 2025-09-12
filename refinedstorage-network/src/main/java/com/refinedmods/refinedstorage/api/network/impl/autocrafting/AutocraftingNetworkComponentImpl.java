@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
-import com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
@@ -47,6 +46,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.refinedmods.refinedstorage.api.autocrafting.craftability.IsCraftableCraftingCalculatorListener.binarySearchMaxAmount;
 import static com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewCraftingCalculatorListener.calculateTree;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlanCraftingCalculatorListener.calculatePlan;
 
@@ -146,33 +146,68 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     public CompletableFuture<Long> getMaxAmount(final ResourceKey resource,
                                                 final CancellationToken cancellationToken) {
         CoreValidations.validateNotNull(resource, "Resource cannot be null");
-        return CompletableFuture.supplyAsync(() -> getMaxAmountSync(resource, cancellationToken), executorService);
-    }
-
-    private long getMaxAmountSync(final ResourceKey resource, final CancellationToken cancellationToken) {
-        return IsCraftableCraftingCalculatorListener.binarySearchMaxAmount(
-            new CraftingCalculatorImpl(patternRepository, rootStorageProvider.get()),
-            resource,
-            cancellationToken
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return CompletableFuture.supplyAsync(
+            () -> binarySearchMaxAmount(calculator, resource, cancellationToken),
+            executorService
         );
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
-        return CompletableFuture.supplyAsync(() -> startTaskSync(resource, amount, actor, notify, cancellationToken),
-            executorService);
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return calculatePlan(calculator, resource, amount, cancellationToken)
+            .map(plan -> addTask(resource, amount, actor, plan, notify));
     }
 
-    private TaskId startTask(final ResourceKey resource,
-                             final long amount,
-                             final Actor actor,
-                             final TaskPlan plan,
-                             final boolean notify) {
+    @Override
+    public EnsureResult ensureTask(final ResourceKey resource, final long amount, final Actor actor,
+                                   final CancellationToken cancellationToken) {
+        ResourceAmount.validate(resource, amount);
+        final long currentlyCrafting = providers.stream()
+            .mapToLong(provider -> provider.getAmount(resource))
+            .sum();
+        if (currentlyCrafting >= amount) {
+            return EnsureResult.TASK_ALREADY_RUNNING;
+        }
+        final RootStorage rootStorage = rootStorageProvider.get();
+        final long correctedAmount = amount - currentlyCrafting;
+        final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+        return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
+            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+            .map(taskId -> EnsureResult.TASK_CREATED)
+            .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
+                cancellationToken));
+    }
+
+    private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,
+                                                      final long amount, final CraftingCalculator calculator,
+                                                      final CancellationToken cancellationToken) {
+        final long correctedAmount = Math.min(
+            binarySearchMaxAmount(calculator, resource, CancellationToken.NONE),
+            amount
+        );
+        if (correctedAmount <= 0) {
+            return EnsureResult.MISSING_RESOURCES;
+        }
+        return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
+            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+            .map(taskId -> EnsureResult.TASK_CREATED)
+            .orElse(EnsureResult.MISSING_RESOURCES);
+    }
+
+    private TaskId addTask(final ResourceKey resource,
+                           final long amount,
+                           final Actor actor,
+                           final TaskPlan plan,
+                           final boolean notify) {
         final Task task = new TaskImpl(plan, actor, notify);
         LOGGER.debug("Created task {} for {}x {} for {}", task.getId(), amount, resource, actor);
         final PatternProvider provider = CoreValidations.validateNotNull(
@@ -181,38 +216,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         );
         provider.addTask(task);
         return task.getId();
-    }
-
-    private Optional<TaskId> startTaskSync(final ResourceKey resource,
-                                           final long amount,
-                                           final Actor actor,
-                                           final boolean notify,
-                                           final CancellationToken cancellationToken) {
-        final RootStorage rootStorage = rootStorageProvider.get();
-        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculatePlan(calculator, resource, amount, cancellationToken)
-            .map(plan -> startTask(resource, amount, actor, plan, notify));
-    }
-
-    @Override
-    public EnsureResult ensureTask(final ResourceKey resource, final long amount, final Actor actor) {
-        ResourceAmount.validate(resource, amount);
-        final long currentlyCrafting = providers.stream()
-            .mapToLong(provider -> provider.getAmount(resource))
-            .sum();
-        if (currentlyCrafting >= amount) {
-            return EnsureResult.TASK_ALREADY_RUNNING;
-        }
-        final long correctedAmount = Math.min(
-            getMaxAmountSync(resource, CancellationToken.NONE),
-            amount - currentlyCrafting
-        );
-        if (correctedAmount <= 0) {
-            return EnsureResult.MISSING_RESOURCES;
-        }
-        return startTaskSync(resource, correctedAmount, actor, false, CancellationToken.NONE)
-            .map(taskId -> EnsureResult.TASK_CREATED)
-            .orElse(EnsureResult.MISSING_RESOURCES);
     }
 
     @Override

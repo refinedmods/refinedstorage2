@@ -300,7 +300,9 @@ final class TaskSnapshotPersistence {
             byproducts.add(ResourceCodecs.AMOUNT_CODEC.parse(NbtOps.INSTANCE, byproductTag).result().orElseThrow());
         }
         final PatternType type = PatternType.valueOf(tag.getString(PATTERN_TYPE));
-        return new Pattern(id, new PatternLayout(ingredients, outputs, byproducts, type));
+        return new Pattern(id, type == PatternType.INTERNAL
+            ? PatternLayout.internal(ingredients, outputs, byproducts)
+            : PatternLayout.external(ingredients, outputs));
     }
 
     private static Ingredient decodeIngredient(final CompoundTag tag) {

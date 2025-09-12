@@ -98,4 +98,9 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
     public Boolean getData() {
         return missingResources;
     }
+
+    @Override
+    public boolean requiresFullMissingResourcesCalculation() {
+        return false;
+    }
 }

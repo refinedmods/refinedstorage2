@@ -24,23 +24,19 @@ class PatternTest {
     @Test
     void shouldCreateInternalPattern() {
         // Act
-        final Pattern sut = new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(
-                    new ResourceAmount(COBBLESTONE, 1)
-                ),
-                PatternType.INTERNAL
+        final Pattern sut = new Pattern(UUID.randomUUID(), PatternLayout.internal(
+            List.of(
+                new Ingredient(1, List.of(A, B)),
+                new Ingredient(2, List.of(C))
+            ),
+            List.of(
+                new ResourceAmount(OAK_LOG, 3),
+                new ResourceAmount(OAK_PLANKS, 4)
+            ),
+            List.of(
+                new ResourceAmount(COBBLESTONE, 1)
             )
-        );
+        ));
 
         // Assert
         assertThat(sut.layout().ingredients()).hasSize(2);
@@ -59,22 +55,48 @@ class PatternTest {
         assertThat(sut.layout().type()).isEqualTo(PatternType.INTERNAL);
     }
 
+    @Test
+    void shouldCreateExternalPattern() {
+        // Act
+        final Pattern sut = new Pattern(UUID.randomUUID(), PatternLayout.external(
+            List.of(
+                new Ingredient(1, List.of(A, B)),
+                new Ingredient(2, List.of(C))
+            ),
+            List.of(
+                new ResourceAmount(OAK_LOG, 3),
+                new ResourceAmount(OAK_PLANKS, 4)
+            )
+        ));
+
+        // Assert
+        assertThat(sut.layout().ingredients()).hasSize(2);
+        final Ingredient firstIngredient = sut.layout().ingredients().getFirst();
+        assertThat(firstIngredient.amount()).isEqualTo(1);
+        assertThat(firstIngredient.inputs()).containsExactly(A, B);
+        final Ingredient secondIngredient = sut.layout().ingredients().get(1);
+        assertThat(secondIngredient.amount()).isEqualTo(2);
+        assertThat(secondIngredient.inputs()).containsExactly(C);
+        assertThat(sut.layout().outputs()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(OAK_LOG, 3),
+            new ResourceAmount(OAK_PLANKS, 4)
+        );
+        assertThat(sut.layout().byproducts()).isEmpty();
+        assertThat(sut.layout().type()).isEqualTo(PatternType.EXTERNAL);
+    }
+
     @ParameterizedTest
     @EnumSource(PatternType.class)
     void shouldNotCreatePatternWithoutIngredients(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(),
-                type
-            )
+        final List<ResourceAmount> outputs = List.of(
+            new ResourceAmount(OAK_LOG, 3),
+            new ResourceAmount(OAK_PLANKS, 4)
         );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(List.of(), outputs, List.of())
+                : PatternLayout.external(List.of(), outputs));
 
         // Assert
         assertThatThrownBy(action)
@@ -86,17 +108,14 @@ class PatternTest {
     @EnumSource(PatternType.class)
     void shouldNotCreatePatternWithoutOutputs(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(),
-                List.of(),
-                type
-            )
+        final List<Ingredient> ingredients = List.of(
+            new Ingredient(1, List.of(A, B)),
+            new Ingredient(2, List.of(C))
+        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(ingredients, List.of(), List.of())
+                : PatternLayout.external(ingredients, List.of())
         );
 
         // Assert
@@ -114,10 +133,7 @@ class PatternTest {
         outputs.add(new ResourceAmount(OAK_LOG, 3));
         final List<ResourceAmount> byproducts = new ArrayList<>();
         byproducts.add(new ResourceAmount(COBBLESTONE, 1));
-        final Pattern sut = new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(ingredients, outputs, byproducts, PatternType.INTERNAL)
-        );
+        final Pattern sut = new Pattern(UUID.randomUUID(), PatternLayout.internal(ingredients, outputs, byproducts));
 
         // Act
         ingredients.add(new Ingredient(2, List.of(C)));
@@ -133,15 +149,11 @@ class PatternTest {
     @Test
     void shouldNotBeAbleToModifyIngredientsAndOutputsAndByproducts() {
         // Arrange
-        final Pattern sut = new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(new Ingredient(1, List.of(A))),
-                List.of(new ResourceAmount(OAK_LOG, 3)),
-                List.of(new ResourceAmount(OAK_PLANKS, 4)),
-                PatternType.INTERNAL
-            )
-        );
+        final Pattern sut = new Pattern(UUID.randomUUID(), PatternLayout.internal(
+            List.of(new Ingredient(1, List.of(A))),
+            List.of(new ResourceAmount(OAK_LOG, 3)),
+            List.of(new ResourceAmount(OAK_PLANKS, 4))
+        ));
         final List<Ingredient> ingredients = sut.layout().ingredients();
         final List<ResourceAmount> outputs = sut.layout().outputs();
         final List<ResourceAmount> byproducts = sut.layout().byproducts();
@@ -161,74 +173,19 @@ class PatternTest {
         assertThatThrownBy(action3).isInstanceOf(UnsupportedOperationException.class);
     }
 
-    @Test
-    void shouldNotCreateExternalPatternWithByproducts() {
-        // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(
-                    new ResourceAmount(COBBLESTONE, 1)
-                ),
-                PatternType.EXTERNAL
-            )
-        );
-
-        // Assert
-        assertThatThrownBy(action)
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("External patterns cannot have byproducts");
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void shouldNotCreatePatternWithNullType() {
-        // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(),
-                null
-            )
-        );
-
-        // Assert
-        assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
-    }
-
     @ParameterizedTest
     @EnumSource(PatternType.class)
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreatePatternWithNullIngredients(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                null,
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(),
-                type
-            )
+        final List<ResourceAmount> outputs = List.of(
+            new ResourceAmount(OAK_LOG, 3),
+            new ResourceAmount(OAK_PLANKS, 4)
         );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(null, outputs, List.of())
+                : PatternLayout.external(null, outputs));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -239,18 +196,14 @@ class PatternTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreatePatternWithNullOutputs(final PatternType type) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                null,
-                List.of(),
-                type
-            )
+        final List<Ingredient> ingredients = List.of(
+            new Ingredient(1, List.of(A, B)),
+            new Ingredient(2, List.of(C))
         );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(),
+            type == PatternType.INTERNAL
+                ? PatternLayout.internal(ingredients, null, List.of())
+                : PatternLayout.external(ingredients, null));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -260,21 +213,17 @@ class PatternTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreatePatternWithNullByproducts() {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            UUID.randomUUID(),
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                null,
-                PatternType.INTERNAL
-            )
-        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(UUID.randomUUID(), PatternLayout.internal(
+            List.of(
+                new Ingredient(1, List.of(A, B)),
+                new Ingredient(2, List.of(C))
+            ),
+            List.of(
+                new ResourceAmount(OAK_LOG, 3),
+                new ResourceAmount(OAK_PLANKS, 4)
+            ),
+            null
+        ));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -284,21 +233,17 @@ class PatternTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotCreateWithNullId() {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(
-            null,
-            new PatternLayout(
-                List.of(
-                    new Ingredient(1, List.of(A, B)),
-                    new Ingredient(2, List.of(C))
-                ),
-                List.of(
-                    new ResourceAmount(OAK_LOG, 3),
-                    new ResourceAmount(OAK_PLANKS, 4)
-                ),
-                List.of(),
-                PatternType.INTERNAL
-            )
-        );
+        final ThrowableAssert.ThrowingCallable action = () -> new Pattern(null, PatternLayout.internal(
+            List.of(
+                new Ingredient(1, List.of(A, B)),
+                new Ingredient(2, List.of(C))
+            ),
+            List.of(
+                new ResourceAmount(OAK_LOG, 3),
+                new ResourceAmount(OAK_PLANKS, 4)
+            ),
+            List.of()
+        ));
 
         // Assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);

@@ -70,4 +70,9 @@ public class TaskPlanCraftingCalculatorListener implements CraftingCalculatorLis
     public MutableTaskPlan getData() {
         return task;
     }
+
+    @Override
+    public boolean requiresFullMissingResourcesCalculation() {
+        return false;
+    }
 }

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.iface;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExposedExternalStorage;
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProvider;
@@ -230,7 +231,8 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
                                                           final Network network) {
             final AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
             if (!autocrafting.getPatternsByOutput(resource).isEmpty()) {
-                final var ensureResult = autocrafting.ensureTask(resource, amount, actor);
+                final var ensureResult = autocrafting.ensureTask(resource, amount, actor,
+                    new TimeoutableCancellationToken());
                 final boolean success = ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_CREATED
                     || ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING;
                 return success

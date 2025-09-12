@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.autocrafting;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,7 +16,14 @@ public record CraftingPatternState(boolean fuzzyMode, CraftingInput.Positioned i
         Codec.INT.fieldOf("width").forGetter(CraftingInput::width),
         Codec.INT.fieldOf("height").forGetter(CraftingInput::height),
         Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("items").forGetter(CraftingInput::items)
-    ).apply(instance, CraftingInput::of));
+    ).apply(instance, (width, height, items) -> {
+        final List<ItemStack> itemList = new ArrayList<>(items);
+        // Ensure the list has the correct size if items end up missing
+        while (itemList.size() < width * height) {
+            itemList.add(ItemStack.EMPTY);
+        }
+        return CraftingInput.of(width, height, itemList);
+    }));
 
     private static final Codec<CraftingInput.Positioned> POSITIONED_INPUT_CODEC =
         RecordCodecBuilder.create(instance -> instance.group(

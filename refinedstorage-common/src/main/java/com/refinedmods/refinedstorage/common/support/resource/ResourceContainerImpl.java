@@ -25,8 +25,12 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceContainerImpl implements ResourceContainer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceContainerImpl.class);
+
     private final ResourceAmount[] slots;
     private final ItemStack[] stackRepresentations;
     private final ToLongFunction<ResourceKey> maxAmountProvider;
@@ -258,11 +262,10 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     private void fromTag(final int index, final CompoundTag tag, final HolderLookup.Provider provider) {
-        final ResourceAmount resourceAmount = ResourceCodecs.AMOUNT_CODEC.decode(
-            provider.createSerializationContext(NbtOps.INSTANCE),
-            tag
-        ).getOrThrow().getFirst();
-        setSilently(index, resourceAmount);
+        ResourceCodecs.AMOUNT_CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag)
+            .resultOrPartial(error ->
+                LOGGER.error("Failed to load resource container slot {} {}: {}", index, tag, error))
+            .ifPresent(resourceAmount -> setSilently(index, resourceAmount));
     }
 
     @Override

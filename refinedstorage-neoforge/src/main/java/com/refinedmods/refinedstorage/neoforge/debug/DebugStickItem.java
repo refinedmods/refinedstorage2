@@ -1,18 +1,29 @@
 package com.refinedmods.refinedstorage.neoforge.debug;
 
+import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
+import com.refinedmods.refinedstorage.api.storage.Actor;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.storage.StorageContainerItem;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.content.Items;
+import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,6 +45,39 @@ public class DebugStickItem extends Item {
             dump(level, blockEntity, player);
         }
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(final Level level, final Player player,
+                                                  final InteractionHand usedHand) {
+        if (!level.isClientSide()) {
+            final ItemStack storageDisk = new ItemStack(Items.INSTANCE.getItemStorageDisk(ItemStorageVariant.CREATIVE));
+            storageDisk.inventoryTick(level, player, 0, false);
+            ((StorageContainerItem) storageDisk.getItem()).resolve(
+                RefinedStorageApi.INSTANCE.getStorageRepository(level),
+                storageDisk
+            ).ifPresent(storage -> {
+                int size = 0;
+                for (final Item item : BuiltInRegistries.ITEM) {
+                    final ItemStack stack = item.getDefaultInstance();
+                    if (stack.isDamageableItem() && player.isCrouching()) {
+                        for (int i = 0; i < stack.getMaxDamage(); ++i) {
+                            final ItemStack damaged = stack.copy();
+                            damaged.setDamageValue(i);
+                            storage.insert(ItemResource.ofItemStack(damaged), Integer.MAX_VALUE, Action.EXECUTE,
+                                Actor.EMPTY);
+                            size++;
+                        }
+                    } else {
+                        storage.insert(ItemResource.ofItemStack(stack), Integer.MAX_VALUE, Action.EXECUTE, Actor.EMPTY);
+                        size++;
+                    }
+                }
+                player.getInventory().add(storageDisk);
+                player.sendSystemMessage(Component.literal("Gave a storage disk with " + size + " item types"));
+            });
+        }
+        return super.use(level, player, usedHand);
     }
 
     private static void dump(final Level level, final BlockEntity blockEntity, final Player player) {

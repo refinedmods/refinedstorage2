@@ -528,15 +528,12 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Override
-    public CompletableFuture<Optional<TaskId>> startTask(final ResourceKey resource,
-                                                         final long amount,
-                                                         final Actor actor,
-                                                         final boolean notify,
-                                                         final CancellationToken cancellationToken) {
-        final CompletableFuture<Optional<TaskId>> taskRequest = requireNonNull(grid).startTask(resource, amount, actor,
-            notify, cancellationToken);
-        pendingAutocraftingRequests.add(taskRequest, cancellationToken);
-        return taskRequest;
+    public Optional<TaskId> startTask(final ResourceKey resource,
+                                      final long amount,
+                                      final Actor actor,
+                                      final boolean notify,
+                                      final CancellationToken cancellationToken) {
+        return requireNonNull(grid).startTask(resource, amount, actor, notify, cancellationToken);
     }
 
     @Override

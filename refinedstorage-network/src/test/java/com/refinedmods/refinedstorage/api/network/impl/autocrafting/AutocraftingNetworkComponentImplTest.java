@@ -160,6 +160,26 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
+    void shouldNotGetPreviewIfCancelled() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        final NetworkNodeContainer container = () -> provider;
+        sut.onContainerAdded(container);
+
+        // Act
+        final Optional<Preview> preview = sut.getPreview(B, 2, new CancelledCancellationToken()).join();
+
+        // Assert
+        assertThat(preview).isPresent();
+        assertThat(preview.get().type()).isEqualTo(PreviewType.CANCELLED);
+    }
+
+
+    @Test
     @SuppressWarnings("ConstantConditions")
     void shouldNotGetPreviewForInvalidResource() {
         // Act
@@ -201,6 +221,25 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
+    void shouldNotGetTreePreviewIfCancelled() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        final NetworkNodeContainer container = () -> provider;
+        sut.onContainerAdded(container);
+
+        // Act
+        final Optional<TreePreview> preview = sut.getTreePreview(B, 2, new CancelledCancellationToken()).join();
+
+        // Assert
+        assertThat(preview).isPresent();
+        assertThat(preview.get().type()).isEqualTo(PreviewType.CANCELLED);
+    }
+
+    @Test
     @SuppressWarnings("ConstantConditions")
     void shouldNotGetTreePreviewForInvalidResource() {
         // Act
@@ -239,6 +278,24 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
+    void shouldNotGetMaxAmountIfCancelled() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 64, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 4).output(B, 1).build());
+        final NetworkNodeContainer container = () -> provider;
+        sut.onContainerAdded(container);
+
+        // Act
+        final long maxAmount = sut.getMaxAmount(B, new CancelledCancellationToken()).join();
+
+        // Assert
+        assertThat(maxAmount).isZero();
+    }
+
+    @Test
     @SuppressWarnings("ConstantConditions")
     void shouldNotGetMaxAmountForInvalidResource() {
         // Act
@@ -260,11 +317,30 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isPresent();
         assertThat(provider.getTasks()).hasSize(1);
+    }
+
+    @Test
+    void shouldNotStartTaskIfCancelled() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        final NetworkNodeContainer container = () -> provider;
+        sut.onContainerAdded(container);
+
+        // Act
+        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, new CancelledCancellationToken());
+
+        // Assert
+        assertThat(taskId).isEmpty();
+        assertThat(provider.getTasks()).isEmpty();
     }
 
     @Test
@@ -300,12 +376,12 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join()).isPresent();
-        final var result = sut.ensureTask(B, 10, Actor.EMPTY);
+        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
+        final var result = sut.ensureTask(B, 10, Actor.EMPTY, CancellationToken.NONE);
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
-        final var result2 = sut.ensureTask(B, 10, Actor.EMPTY);
+        final var result2 = sut.ensureTask(B, 10, Actor.EMPTY, CancellationToken.NONE);
         assertThat(result2).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
-        final var result3 = sut.ensureTask(B, 9, Actor.EMPTY);
+        final var result3 = sut.ensureTask(B, 9, Actor.EMPTY, CancellationToken.NONE);
         assertThat(result3).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
         assertThat(provider.getTasks()).hasSize(2)
             .anyMatch(t -> t.getAmount() == 9)
@@ -313,10 +389,25 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
+    void shouldNotEnsureTaskIfCancelled() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, new CancelledCancellationToken())).isEmpty();
+    }
+
+    @Test
     @SuppressWarnings("ConstantConditions")
     void shouldNotEnsureTaskForInvalidResource() {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> sut.ensureTask(null, 1, Actor.EMPTY);
+        final ThrowableAssert.ThrowingCallable action = () -> sut.ensureTask(null, 1, Actor.EMPTY,
+            CancellationToken.NONE);
 
         // Act & assert
         assertThatThrownBy(action).isInstanceOf(NullPointerException.class);
@@ -326,7 +417,8 @@ class AutocraftingNetworkComponentImplTest {
     @ValueSource(longs = {0, -1})
     void shouldNotEnsureTaskForInvalidAmount(final long amount) {
         // Act
-        final ThrowableAssert.ThrowingCallable action = () -> sut.ensureTask(B, amount, Actor.EMPTY);
+        final ThrowableAssert.ThrowingCallable action = () -> sut.ensureTask(B, amount, Actor.EMPTY,
+            CancellationToken.NONE);
 
         // Act & assert
         assertThatThrownBy(action).isInstanceOf(IllegalArgumentException.class);
@@ -340,7 +432,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 1, Actor.EMPTY);
+        final var result = sut.ensureTask(B, 1, Actor.EMPTY, CancellationToken.NONE);
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
@@ -358,7 +450,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 11, Actor.EMPTY);
+        final var result = sut.ensureTask(B, 11, Actor.EMPTY, CancellationToken.NONE);
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
@@ -376,7 +468,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 11, Actor.EMPTY);
+        final var result = sut.ensureTask(B, 11, Actor.EMPTY, CancellationToken.NONE);
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
@@ -394,10 +486,10 @@ class AutocraftingNetworkComponentImplTest {
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
-        sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Act
-        final var result = sut.ensureTask(B, 1, Actor.EMPTY);
+        final var result = sut.ensureTask(B, 1, Actor.EMPTY, CancellationToken.NONE);
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
@@ -421,8 +513,8 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -474,8 +566,8 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -520,7 +612,7 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId = sut.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE);
 
         // Assert
         assertThat(taskId).isEmpty();
@@ -545,10 +637,10 @@ class AutocraftingNetworkComponentImplTest {
         provider3.setPattern(1, pattern().ingredient(A, 3).output(D, 1).build());
         sut.onContainerAdded(() -> provider3);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
 
-        sut.startTask(D, 1, Actor.EMPTY, false, CancellationToken.NONE).join();
+        sut.startTask(D, 1, Actor.EMPTY, false, CancellationToken.NONE);
         sut.onContainerRemoved(() -> provider3);
 
         // Act
@@ -563,5 +655,17 @@ class AutocraftingNetworkComponentImplTest {
             .hasSize(2)
             .anyMatch(ts -> ts.info().id().equals(taskId1.get()))
             .anyMatch(ts -> ts.info().id().equals(taskId2.get()));
+    }
+
+    private static class CancelledCancellationToken implements CancellationToken {
+        @Override
+        public boolean isCancelled() {
+            return true;
+        }
+
+        @Override
+        public void cancel() {
+            // no op
+        }
     }
 }

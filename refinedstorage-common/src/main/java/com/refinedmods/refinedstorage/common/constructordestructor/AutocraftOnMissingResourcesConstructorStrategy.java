@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.constructordestructor;
 
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.ConstructorStrategy;
@@ -27,7 +28,8 @@ class AutocraftOnMissingResourcesConstructorStrategy implements ConstructorStrat
                 final long amount = resource instanceof PlatformResourceKey platformResource
                     ? platformResource.getResourceType().normalizeAmount(1.0D)
                     : 1L;
-                final var ensureResult = autocrafting.ensureTask(resource, amount, actor);
+                final var ensureResult = autocrafting.ensureTask(resource, amount, actor,
+                    new TimeoutableCancellationToken());
                 final boolean success = ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_CREATED
                     || ensureResult == AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING;
                 return success
