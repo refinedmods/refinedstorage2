@@ -115,10 +115,12 @@ public class PatternResolver {
             }
             final int row = i / width;
             final int col = i % width;
-            if (ingredients.get(row * width + col).test(input)) {
+            final int idx = row * width + col;
+            if (idx < ingredients.size() && ingredients.get(idx).test(input)) {
                 return false;
             }
-            if (ingredients.get(row * width + (width - 1 - col)).test(input)) {
+            final int mirroredIdx = row * width + (width - 1 - col);
+            if (mirroredIdx < ingredients.size() && ingredients.get(mirroredIdx).test(input)) {
                 return true;
             }
         }

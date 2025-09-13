@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.13] - 2025-09-13
+
+### Fixed
+
+-   Fixed pattern crash for recipes with no ingredients specified.
+
 ## [2.0.0-beta.12] - 2025-09-12
 
 ### Added
@@ -1053,7 +1059,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.12...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.13...HEAD
+
+[2.0.0-beta.13]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.12...v2.0.0-beta.13
 
 [2.0.0-beta.12]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.11...v2.0.0-beta.12
 
