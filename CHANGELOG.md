@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed pattern crash for recipes with no ingredients specified.
+
 ## [2.0.0-beta.12] - 2025-09-12
 
 ### Added
