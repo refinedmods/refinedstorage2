@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -  The storage network losing track of resources that can be autocrafted.
 -   Reduced lag spikes when Network Receivers are missing.
 -   The mod not starting up on Fabric due to an invalid TeamReborn Energy version.
+-   Centered mouse interaction with the scrollbar to feel more natural.
 
 ## [2.0.0-beta.13] - 2025-09-13
 
