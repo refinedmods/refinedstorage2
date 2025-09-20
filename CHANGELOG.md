@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.14] - 2025-09-20
+
 ### Fixed
 
 -   The storage network losing track of resources that can be autocrafted.
@@ -1067,7 +1069,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.13...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.14...HEAD
+
+[2.0.0-beta.14]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.13...v2.0.0-beta.14
 
 [2.0.0-beta.13]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.12...v2.0.0-beta.13
 
