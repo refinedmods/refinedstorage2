@@ -85,12 +85,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
     }
 
-    // a network merge does not call onContainerRemoved, so call it here to avoid leaking listeners from old networks
-    @Override
-    public void onNetworkMergedWith(final Network newMainNetwork) {
-        providers.forEach(provider -> provider.onRemovedFromContainer(this));
-    }
-
     @Override
     public Set<ResourceKey> getOutputs() {
         return patternRepository.getOutputs();
