@@ -182,7 +182,6 @@ import static com.refinedmods.refinedstorage.common.content.ContentIds.REGULATOR
 import static com.refinedmods.refinedstorage.common.content.ContentIds.SECURITY_CARD;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_AUTOCRAFTING_MONITOR;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_GRID;
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -215,8 +214,11 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, IdentifierUtil.MOD_ID);
     private final DeferredRegister<DataComponentType<?>> dataComponentTypeRegistry =
         DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, IdentifierUtil.MOD_ID);
+    private final String modVersion;
 
     public ModInitializer(final IEventBus eventBus, final ModContainer modContainer) {
+        this.modVersion = modContainer.getModInfo().getVersion().toString();
+
         PlatformProxy.loadPlatform(new PlatformImpl(modContainer));
         initializePlatformApi();
         ((RefinedStorageNeoForgeApiProxy) RefinedStorageNeoForgeApi.INSTANCE).setDelegate(
@@ -674,7 +676,7 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void registerPackets(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar(MOD_ID);
+        final PayloadRegistrar registrar = event.registrar(modVersion);
         registerServerToClientPackets(registrar);
         registerClientToServerPackets(registrar);
     }

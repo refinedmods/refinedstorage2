@@ -184,7 +184,7 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     private void updateOffset(final double mouseY) {
-        setOffset(Math.floor((mouseY - getY()) / (height - SCROLLER_HEIGHT) * maxOffset));
+        setOffset(Math.floor((mouseY - SCROLLER_HEIGHT / 2.0 - getY()) / (height - SCROLLER_HEIGHT) * maxOffset));
     }
 
     @Override

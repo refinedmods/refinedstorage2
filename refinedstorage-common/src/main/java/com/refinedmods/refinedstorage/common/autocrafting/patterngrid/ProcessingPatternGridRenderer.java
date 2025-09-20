@@ -211,13 +211,13 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
     private void renderMatrix(final GuiGraphics graphics, final boolean input) {
         final int xx = x + INSET_PADDING + (!input ? INDIVIDUAL_PROCESSING_MATRIX_SIZE + 2 : 0);
         final int startY = y + PROCESSING_INSET_Y_PADDING - INDIVIDUAL_PROCESSING_MATRIX_SIZE;
-        final int endY = y + PROCESSING_INSET_Y_PADDING + INDIVIDUAL_PROCESSING_MATRIX_SIZE;
+        final int endY = y + PROCESSING_INSET_Y_PADDING + 4 + INDIVIDUAL_PROCESSING_MATRIX_SIZE;
         final int scrollbarOffset = scrollbar != null ? (int) scrollbar.getOffset() : 0;
         final int scrollbarOffsetCorrected = scrollbar != null && scrollbar.isSmoothScrolling()
             ? scrollbarOffset
             : scrollbarOffset * PROCESSING_MATRIX_SLOT_SIZE;
         for (int i = 0; i < 9; ++i) {
-            final int yy = (y + 13)
+            final int yy = (y + PROCESSING_INSET_Y_PADDING + 4)
                 + (i * INDIVIDUAL_PROCESSING_MATRIX_SIZE)
                 - scrollbarOffsetCorrected;
             if (yy < startY || yy > endY) {
