@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -  The storage network losing track of resources that can be autocrafted.
+-   Reduced lag spikes when Network Receivers are missing.
 
 ## [2.0.0-beta.13] - 2025-09-13
 
