@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.15] - 2025-09-24
+
 ### Fixed
 
 -   Crash when a pattern cycle occurs with an Autocrafting Upgrade.
@@ -1073,7 +1075,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.14...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.15...HEAD
+
+[2.0.0-beta.15]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.14...v2.0.0-beta.15
 
 [2.0.0-beta.14]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.13...v2.0.0-beta.14
 
