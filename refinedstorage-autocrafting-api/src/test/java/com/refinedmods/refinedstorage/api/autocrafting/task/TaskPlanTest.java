@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage.api.autocrafting.AutocraftingUtil.patterns;
 import static com.refinedmods.refinedstorage.api.autocrafting.AutocraftingUtil.storage;
+import static com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder.pattern;
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.CRAFTING_TABLE_PATTERN;
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.OAK_PLANKS_PATTERN;
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternFixtures.SPRUCE_PLANKS_PATTERN;
@@ -61,6 +62,49 @@ class TaskPlanTest {
         assertThat(plan.rootPattern()).isEqualTo(OAK_PLANKS_PATTERN);
         assertThat(plan.resource()).isEqualTo(OAK_PLANKS);
         assertThat(plan.amount()).isEqualTo(4);
+    }
+
+    @Test
+    void shouldDetectNumberOverflowInIngredient() {
+        // Arrange
+        final RootStorage storage = storage();
+        final PatternRepository patterns = patterns(
+            pattern()
+                .ingredient(OAK_LOG, Long.MAX_VALUE)
+                .output(OAK_PLANKS, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Optional<TaskPlan> optionalPlan = calculatePlan(sut, OAK_PLANKS, 2, CancellationToken.NONE);
+
+        // Assert
+        assertThat(optionalPlan).isEmpty();
+    }
+
+    @Test
+    void shouldDetectPatternCycles() {
+        // Arrange
+        final RootStorage storage = storage();
+        final Pattern cycledPattern = pattern()
+            .ingredient(OAK_LOG, 1)
+            .output(OAK_PLANKS, 4)
+            .build();
+        final PatternRepository patterns = patterns(
+            cycledPattern,
+            pattern()
+                .ingredient(OAK_PLANKS, 4)
+                .output(OAK_LOG, 1)
+                .build()
+        );
+        final CraftingCalculator sut = new CraftingCalculatorImpl(patterns, storage);
+
+        // Act
+        final Optional<TaskPlan> plan = calculatePlan(sut, OAK_PLANKS, 1, CancellationToken.NONE);
+
+        // Assert
+        assertThat(plan).isEmpty();
     }
 
     @Test

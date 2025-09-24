@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.task;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.Amount;
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CalculationException;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationException;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
@@ -28,7 +29,7 @@ public class TaskPlanCraftingCalculatorListener implements CraftingCalculatorLis
         final TaskPlanCraftingCalculatorListener listener = new TaskPlanCraftingCalculatorListener();
         try {
             calculator.calculate(resource, amount, listener, cancellationToken);
-        } catch (final CancellationException e) {
+        } catch (final CalculationException | CancellationException e) {
             return Optional.empty();
         }
         return listener.task.getPlan();
