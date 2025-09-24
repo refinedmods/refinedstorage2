@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Crash when a pattern cycle occurs with an Autocrafting Upgrade.
+
 ## [2.0.0-beta.14] - 2025-09-20
 
 ### Fixed
