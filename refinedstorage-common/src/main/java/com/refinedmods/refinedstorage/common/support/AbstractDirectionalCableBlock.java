@@ -85,9 +85,9 @@ public abstract class AbstractDirectionalCableBlock extends AbstractDirectionalB
             if (level instanceof ServerLevel serverLevel) {
                 PlatformUtil.sendBlockUpdateToClient(serverLevel, pos);
             }
-        }
-        if (level.isClientSide()) {
-            Platform.INSTANCE.requestModelDataUpdateOnClient(level, pos, false);
+            if (level.isClientSide()) {
+                Platform.INSTANCE.requestModelDataUpdateOnClient(blockEntity, false);
+            }
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }

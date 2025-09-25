@@ -196,9 +196,7 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
         }
         if (tag.contains(TAG_DEBUG_NETWORK_ID)) {
             debugNetworkId = tag.getInt(TAG_DEBUG_NETWORK_ID);
-            if (level != null) {
-                Platform.INSTANCE.requestModelDataUpdateOnClient(level, getBlockPos(), true);
-            }
+            Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
         }
         readConfiguration(tag, provider);
     }

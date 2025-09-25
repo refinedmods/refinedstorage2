@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Cables being disconnected visually when loading a world.
+
 ## [2.0.0-beta.15] - 2025-09-24
 
 ### Fixed

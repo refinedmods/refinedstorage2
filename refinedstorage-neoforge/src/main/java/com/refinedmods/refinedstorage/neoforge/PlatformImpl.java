@@ -401,4 +401,24 @@ public final class PlatformImpl extends AbstractPlatform {
             );
         }
     }
+
+    @Override
+    public void requestModelDataUpdateOnClient(final BlockEntity blockEntity, final boolean updateChunk) {
+        final Level level = blockEntity.getLevel();
+        if (level == null) {
+            return;
+        }
+        if (!level.isClientSide()) {
+            throw new IllegalArgumentException("Cannot request model data update on server");
+        }
+        blockEntity.requestModelDataUpdate();
+        if (updateChunk) {
+            level.sendBlockUpdated(
+                blockEntity.getBlockPos(),
+                blockEntity.getBlockState(),
+                blockEntity.getBlockState(),
+                Block.UPDATE_ALL
+            );
+        }
+    }
 }

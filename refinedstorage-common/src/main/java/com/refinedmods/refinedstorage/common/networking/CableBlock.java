@@ -102,9 +102,9 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
             if (level instanceof ServerLevel serverLevel) {
                 PlatformUtil.sendBlockUpdateToClient(serverLevel, pos);
             }
-        }
-        if (level.isClientSide()) {
-            Platform.INSTANCE.requestModelDataUpdateOnClient(level, pos, false);
+            if (level.isClientSide()) {
+                Platform.INSTANCE.requestModelDataUpdateOnClient(blockEntity, false);
+            }
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
