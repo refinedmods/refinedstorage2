@@ -10,8 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Cables being disconnected visually when loading a world.
--   Fixed processing patterns inserting ingredient types in the wrong order into machines.
--   Fixed multiple Regulator Upgrades for different resources not exporting anything with "Default" scheduling mode.
+-   Processing patterns inserting ingredient types in the wrong order into machines.
+-   Multiple Regulator Upgrades for different resources not exporting anything with "Default" scheduling mode.
+-   Cancelling an in-progress processing crafting task not giving back resources from intermediate crafting storage, if more of that resource was still expected at the time of cancellation.
 
 ## [2.0.0-beta.15] - 2025-09-24
 
