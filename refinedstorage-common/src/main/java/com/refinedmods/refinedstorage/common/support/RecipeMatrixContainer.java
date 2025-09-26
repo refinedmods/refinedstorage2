@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 public class RecipeMatrixContainer extends TransientCraftingContainer {
     @Nullable
     private final Runnable listener;
+    private boolean muted;
 
     public RecipeMatrixContainer(@Nullable final Runnable listener, final int width, final int height) {
         super(new CraftingMatrixContainerMenu(listener), width, height);
@@ -125,5 +126,19 @@ public class RecipeMatrixContainer extends TransientCraftingContainer {
             }
         }
         return false;
+    }
+
+    public void updateMatrixAndNotifyListenerLater(final Runnable callback) {
+        muted = true;
+        try {
+            callback.run();
+        } finally {
+            muted = false;
+            changed();
+        }
+    }
+
+    public boolean isMuted() {
+        return muted;
     }
 }

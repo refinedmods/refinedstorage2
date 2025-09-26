@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Processing patterns inserting ingredient types in the wrong order into machines.
 -   Multiple Regulator Upgrades for different resources not exporting anything with "Default" scheduling mode.
 -   Cancelling an in-progress processing crafting task not giving back resources from intermediate crafting storage, if more of that resource was still expected at the time of cancellation.
+-   Performance issue when bulk crafting with remainder items in the Crafting Grid.
 
 ## [2.0.0-beta.15] - 2025-09-24
 
