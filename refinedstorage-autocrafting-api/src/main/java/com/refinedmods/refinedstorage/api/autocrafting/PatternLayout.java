@@ -20,7 +20,6 @@ public record PatternLayout(List<Ingredient> ingredients,
                             List<ResourceAmount> outputs,
                             List<ResourceAmount> byproducts,
                             PatternType type) {
-    @Deprecated // use static factory methods
     public PatternLayout(final List<Ingredient> ingredients,
                          final List<ResourceAmount> outputs,
                          final List<ResourceAmount> byproducts,
