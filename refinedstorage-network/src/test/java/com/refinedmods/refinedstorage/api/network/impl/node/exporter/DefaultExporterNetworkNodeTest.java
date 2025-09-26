@@ -96,7 +96,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     }
 
     @Test
-    void shouldTransferFirstAvailableResourceIfSkipped(
+    void shouldTransferFirstNeededResourceIfTransferQuotaCausesSkip(
         @InjectNetworkStorageComponent final StorageNetworkComponent storage
     ) {
         // Arrange
@@ -117,10 +117,10 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         // Assert
         assertThat(sut.getLastResult(0)).isEqualTo(ExporterTransferStrategy.Result.SKIPPED);
         assertThat(sut.getLastResult(1)).isEqualTo(ExporterTransferStrategy.Result.EXPORTED);
-        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(A, 10)
         );
-        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(B, 10)
         );
     }
