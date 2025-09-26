@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.fabric.api;
 
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.Collection;
 
@@ -13,4 +14,14 @@ public interface FabricStorageExternalPatternSinkStrategy {
     ExternalPatternSink.Result accept(Transaction tx, Collection<ResourceAmount> resources);
 
     boolean isEmpty();
+
+    /**
+     * Used to determine the ordering of sinks when inserting multiple resource types.
+     *
+     * @param resource the resource
+     * @return true if this sink can accept the given resource type
+     */
+    default boolean applies(ResourceKey resource) {
+        return true;
+    }
 }
