@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Final beta before the official release. This release contains breaking changes meant for addon developers. Do not update to this version!
+
 ## [2.0.0-beta.16] - 2025-09-26
 
 ### Fixed
