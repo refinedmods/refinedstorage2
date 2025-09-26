@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Cables being disconnected visually when loading a world.
 -   Fixed processing patterns inserting ingredient types in the wrong order into machines.
+-   Fixed multiple Regulator Upgrades for different resources not exporting anything with "Default" scheduling mode.
 
 ## [2.0.0-beta.15] - 2025-09-24
 

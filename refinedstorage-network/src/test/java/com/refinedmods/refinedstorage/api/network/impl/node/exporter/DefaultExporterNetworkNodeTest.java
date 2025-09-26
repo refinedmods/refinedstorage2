@@ -92,7 +92,37 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         sut.doWork();
 
         // Assert
-        assertThat(sut.getLastResult(0)).isEqualTo(ExporterTransferStrategy.Result.EXPORTED);
+        assertThat(sut.getLastResult(0)).isEqualTo(ExporterTransferStrategy.Result.SKIPPED);
+    }
+
+    @Test
+    void shouldTransferFirstAvailableResourceIfSkipped(
+        @InjectNetworkStorageComponent final StorageNetworkComponent storage
+    ) {
+        // Arrange
+        storage.addSource(new StorageImpl());
+        storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        storage.insert(B, 10, Action.EXECUTE, Actor.EMPTY);
+
+        final Storage destination = new StorageImpl();
+        final ExporterTransferStrategy strategy = new ExporterTransferStrategyImpl(destination, resource ->
+            resource == A ? 0 : 10);
+
+        sut.setTransferStrategy(strategy);
+        sut.setFilters(List.of(A, B));
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(sut.getLastResult(0)).isEqualTo(ExporterTransferStrategy.Result.SKIPPED);
+        assertThat(sut.getLastResult(1)).isEqualTo(ExporterTransferStrategy.Result.EXPORTED);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 10)
+        );
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(B, 10)
+        );
     }
 
     @Test
