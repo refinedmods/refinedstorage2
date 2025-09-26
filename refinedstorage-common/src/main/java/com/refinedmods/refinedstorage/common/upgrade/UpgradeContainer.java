@@ -54,7 +54,7 @@ public class UpgradeContainer extends SimpleContainer implements UpgradeState {
     public UpgradeContainer(final int size,
                             final UpgradeDestination destination,
                             @Nullable final UpgradeContainerListener listener) {
-        this(DEFAULT_SIZE, destination, listener, DEFAULT_WORK_TICK_RATE);
+        this(size, destination, listener, DEFAULT_WORK_TICK_RATE);
     }
 
     public UpgradeContainer(final UpgradeDestination destination,
