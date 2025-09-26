@@ -183,10 +183,7 @@ public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorage
     }
 
     protected void onClientDriveStateUpdated() {
-        if (level == null) {
-            return;
-        }
-        Platform.INSTANCE.requestModelDataUpdateOnClient(level, worldPosition, true);
+        Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
     }
 
     @Override

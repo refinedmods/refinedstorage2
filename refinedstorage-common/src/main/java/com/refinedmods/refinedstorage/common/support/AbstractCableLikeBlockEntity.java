@@ -44,7 +44,7 @@ public abstract class AbstractCableLikeBlockEntity<T extends AbstractNetworkNode
         super.loadAdditional(tag, provider);
         connections = CableConnections.fromTag(tag);
         if (level != null && level.isClientSide()) {
-            Platform.INSTANCE.requestModelDataUpdateOnClient(level, getBlockPos(), true);
+            Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
         }
     }
 

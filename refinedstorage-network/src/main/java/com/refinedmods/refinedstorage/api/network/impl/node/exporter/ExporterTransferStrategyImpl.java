@@ -38,7 +38,7 @@ public class ExporterTransferStrategyImpl implements ExporterTransferStrategy {
         final RootStorage rootStorage = network.getComponent(StorageNetworkComponent.class);
         final long amount = transferQuotaProvider.applyAsLong(resource);
         if (amount <= 0) {
-            return Result.EXPORTED;
+            return Result.SKIPPED;
         }
         for (final ResourceKey expandedResource : expander.apply(rootStorage, resource)) {
             final long extractedSimulated = rootStorage.extract(expandedResource, amount, Action.SIMULATE, actor);

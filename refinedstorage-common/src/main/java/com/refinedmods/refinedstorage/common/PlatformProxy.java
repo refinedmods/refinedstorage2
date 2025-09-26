@@ -46,6 +46,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
@@ -246,10 +247,16 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void requestModelDataUpdateOnClient(final LevelAccessor level,
                                                final BlockPos pos,
                                                final boolean updateChunk) {
         ensureLoaded().requestModelDataUpdateOnClient(level, pos, updateChunk);
+    }
+
+    @Override
+    public void requestModelDataUpdateOnClient(final BlockEntity blockEntity, final boolean updateChunk) {
+        ensureLoaded().requestModelDataUpdateOnClient(blockEntity, updateChunk);
     }
 
     private Platform ensureLoaded() {

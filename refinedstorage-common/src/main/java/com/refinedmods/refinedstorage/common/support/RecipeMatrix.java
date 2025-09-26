@@ -91,7 +91,7 @@ public class RecipeMatrix<T extends Recipe<I>, I extends RecipeInput> {
     }
 
     public void updateResult(final Level level) {
-        if (level.isClientSide()) {
+        if (level.isClientSide() || matrix.isMuted()) {
             return;
         }
         final I input = inputProvider.apply(matrix);

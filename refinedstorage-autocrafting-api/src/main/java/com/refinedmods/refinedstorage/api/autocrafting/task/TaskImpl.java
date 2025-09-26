@@ -299,6 +299,9 @@ public class TaskImpl implements Task {
 
     @Override
     public long beforeInsert(final ResourceKey insertedResource, final long insertedAmount) {
+        if (cancelled) {
+            return 0;
+        }
         long intercepted = 0;
         for (final AbstractTaskPattern pattern : patterns.values()) {
             final long available = insertedAmount - intercepted;

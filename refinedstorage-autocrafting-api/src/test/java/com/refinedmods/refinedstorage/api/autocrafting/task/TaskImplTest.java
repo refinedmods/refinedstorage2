@@ -93,7 +93,7 @@ class TaskImplTest {
     }
 
     @Test
-    void shouldCancelTask() {
+    void shouldCancelTaskAndReturnInternalStorage() {
         // Arrange
         final RootStorage storage = storage(
             new ResourceAmount(OAK_LOG, 1),
@@ -139,6 +139,104 @@ class TaskImplTest {
             new ResourceAmount(OAK_LOG, 1),
             new ResourceAmount(OAK_PLANKS, 4)
         );
+    }
+
+    @Test
+    void shouldCancelTaskAndReturnInternalStorageEvenIfInternalStorageContainsStillExpectedProcessingOutputs() {
+        // Arrange
+        final RootStorage storage = storage(new ResourceAmount(IRON_ORE, 3), new ResourceAmount(STICKS, 2));
+        final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        final var ironOreSink = sinkProvider.put(IRON_INGOT_PATTERN);
+        final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 1);
+
+        // Act & assert
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(IRON_ORE, 3),
+                new ResourceAmount(STICKS, 2)
+            );
+        assertThat(storage.getAll()).isEmpty();
+
+        for (int i = 0; i < 3; ++i) {
+            task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        }
+
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator()
+            .containsExactly(new ResourceAmount(STICKS, 2));
+        assertThat(storage.getAll()).isEmpty();
+        assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(IRON_ORE, 3)
+        );
+
+        final long inserted = storage.insert(IRON_INGOT, 2, Action.EXECUTE, Actor.EMPTY);
+        assertThat(inserted).isEqualTo(2);
+        assertThat(storage.getAll()).isEmpty();
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(STICKS, 2),
+            new ResourceAmount(IRON_INGOT, 2)
+        );
+
+        task.cancel();
+        task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(STICKS, 2),
+            new ResourceAmount(IRON_INGOT, 2)
+        );
+        assertThat(copyInternalStorage(task)).isEmpty();
+    }
+
+    @Test
+    void shouldCancelTaskAndReturnInternalStorageEvenIfInternalStorageContainsUsedToExpectedProcessingOutputs() {
+        // Arrange
+        final RootStorage storage = storage(new ResourceAmount(IRON_ORE, 3), new ResourceAmount(STICKS, 2));
+        final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        final var ironOreSink = sinkProvider.put(IRON_INGOT_PATTERN);
+        final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 1);
+
+        // Act & assert
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(copyInternalStorage(task))
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(IRON_ORE, 3),
+                new ResourceAmount(STICKS, 2)
+            );
+        assertThat(storage.getAll()).isEmpty();
+
+        for (int i = 0; i < 3; ++i) {
+            task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        }
+
+        assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator()
+            .containsExactly(new ResourceAmount(STICKS, 2));
+        assertThat(storage.getAll()).isEmpty();
+        assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(IRON_ORE, 3)
+        );
+
+        final long inserted = storage.insert(IRON_INGOT, 3, Action.EXECUTE, Actor.EMPTY);
+        assertThat(inserted).isEqualTo(3);
+        assertThat(storage.getAll()).isEmpty();
+        assertThat(copyInternalStorage(task)).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(STICKS, 2),
+            new ResourceAmount(IRON_INGOT, 3)
+        );
+
+        task.cancel();
+        task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(STICKS, 2),
+            new ResourceAmount(IRON_INGOT, 3)
+        );
+        assertThat(copyInternalStorage(task)).isEmpty();
     }
 
     @Test

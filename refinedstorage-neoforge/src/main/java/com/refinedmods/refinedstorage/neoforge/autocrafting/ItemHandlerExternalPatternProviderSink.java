@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.neoforge.autocrafting;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.neoforge.storage.CapabilityCache;
@@ -99,5 +100,10 @@ class ItemHandlerExternalPatternProviderSink implements PlatformPatternProviderE
             }
             return true;
         }).orElse(true);
+    }
+
+    @Override
+    public boolean applies(final ResourceKey resource) {
+        return resource instanceof ItemResource;
     }
 }

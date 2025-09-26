@@ -192,10 +192,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     }
 
     protected void onClientDriveStateUpdated() {
-        if (level == null) {
-            return;
-        }
-        Platform.INSTANCE.requestModelDataUpdateOnClient(level, worldPosition, true);
+        Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
     }
 
     @Override

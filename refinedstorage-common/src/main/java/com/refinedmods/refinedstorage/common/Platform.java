@@ -46,6 +46,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
@@ -129,5 +130,8 @@ public interface Platform {
 
     void setSlotY(Slot slot, int y);
 
+    @Deprecated
     void requestModelDataUpdateOnClient(LevelAccessor level, BlockPos pos, boolean updateChunk);
+
+    void requestModelDataUpdateOnClient(BlockEntity blockEntity, boolean updateChunk);
 }

@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.16] - 2025-09-26
+
+### Fixed
+
+-   Cables being disconnected visually when loading a world.
+-   Processing patterns inserting ingredient types in the wrong order into machines.
+-   Multiple Regulator Upgrades for different resources not exporting anything with "Default" scheduling mode.
+-   Cancelling an in-progress processing crafting task not giving back resources from intermediate crafting storage, if more of that resource was still expected at the time of cancellation.
+-   Performance issue when bulk crafting with remainder items in the Crafting Grid.
+
 ## [2.0.0-beta.15] - 2025-09-24
 
 ### Fixed
@@ -1075,7 +1085,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.15...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.16...HEAD
+
+[2.0.0-beta.16]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.15...v2.0.0-beta.16
 
 [2.0.0-beta.15]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.14...v2.0.0-beta.15
 

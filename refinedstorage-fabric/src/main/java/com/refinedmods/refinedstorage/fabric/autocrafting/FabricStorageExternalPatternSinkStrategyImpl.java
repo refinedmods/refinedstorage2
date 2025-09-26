@@ -58,6 +58,11 @@ class FabricStorageExternalPatternSinkStrategyImpl<T> implements FabricStorageEx
     }
 
     @Override
+    public boolean applies(final ResourceKey resource) {
+        return toPlatformMapper.apply(resource) != null;
+    }
+
+    @Override
     public boolean isEmpty() {
         final Storage<T> storage = cache.find(direction);
         if (storage == null) {

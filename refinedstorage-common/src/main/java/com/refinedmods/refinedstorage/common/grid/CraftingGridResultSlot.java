@@ -74,15 +74,17 @@ class CraftingGridResultSlot extends ResultSlot {
     private void useIngredientWithRemainingItem(final Player player,
                                                 final int index,
                                                 final ItemStack remainingItem) {
-        final ItemStack matrixStack = decrementMatrixSlot(index);
-        if (matrixStack.isEmpty()) {
-            craftingGrid.getCraftingMatrix().setItem(index, remainingItem);
-        } else if (ItemStack.isSameItemSameComponents(matrixStack, remainingItem)) {
-            remainingItem.grow(matrixStack.getCount());
-            craftingGrid.getCraftingMatrix().setItem(index, remainingItem);
-        } else if (!player.getInventory().add(remainingItem)) {
-            player.drop(remainingItem, false);
-        }
+        craftingGrid.getCraftingMatrix().updateMatrixAndNotifyListenerLater(() -> {
+            final ItemStack matrixStack = decrementMatrixSlot(index);
+            if (matrixStack.isEmpty()) {
+                craftingGrid.getCraftingMatrix().setItem(index, remainingItem);
+            } else if (ItemStack.isSameItemSameComponents(matrixStack, remainingItem)) {
+                remainingItem.grow(matrixStack.getCount());
+                craftingGrid.getCraftingMatrix().setItem(index, remainingItem);
+            } else if (!player.getInventory().add(remainingItem)) {
+                player.drop(remainingItem, false);
+            }
+        });
     }
 
     private void useIngredient(final Player player,
