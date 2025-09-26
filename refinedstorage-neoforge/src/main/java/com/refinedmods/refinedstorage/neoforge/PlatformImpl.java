@@ -55,7 +55,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -378,28 +377,6 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public void setSlotY(final Slot slot, final int y) {
         slot.y = y;
-    }
-
-    @Override
-    public void requestModelDataUpdateOnClient(final LevelAccessor level,
-                                               final BlockPos pos,
-                                               final boolean updateChunk) {
-        if (!level.isClientSide()) {
-            throw new IllegalArgumentException("Cannot request model data update on server");
-        }
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return;
-        }
-        blockEntity.requestModelDataUpdate();
-        if (updateChunk && level instanceof Level updatable) {
-            updatable.sendBlockUpdated(
-                blockEntity.getBlockPos(),
-                blockEntity.getBlockState(),
-                blockEntity.getBlockState(),
-                Block.UPDATE_ALL
-            );
-        }
     }
 
     @Override

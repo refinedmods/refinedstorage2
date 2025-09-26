@@ -14,7 +14,6 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -78,14 +77,15 @@ final class AutocrafterTestPlots {
                                              final List<ResourceAmount> outputs) {
         final List<Optional<ProcessingPatternState.ProcessingIngredient>> optionalIngredients = ingredients.stream()
             .map(Optional::ofNullable)
-            .collect(Collectors.toList());
+            .toList();
         final List<Optional<ResourceAmount>> optionalOutputs = outputs.stream()
             .map(Optional::ofNullable)
-            .collect(Collectors.toList());
-
+            .toList();
         final ItemStack pattern = PatternGridBlockEntity.createPatternStack(PatternType.PROCESSING);
-        pattern.set(DataComponents.INSTANCE.getProcessingPatternState(),
-            new ProcessingPatternState(optionalIngredients, optionalOutputs));
+        pattern.set(
+            DataComponents.INSTANCE.getProcessingPatternState(),
+            new ProcessingPatternState(optionalIngredients, optionalOutputs)
+        );
         return pattern;
     }
 

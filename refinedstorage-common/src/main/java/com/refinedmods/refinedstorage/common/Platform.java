@@ -42,7 +42,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -129,9 +128,6 @@ public interface Platform {
     NetworkNodeContainerProvider getContainerProviderSafely(Level level, BlockPos pos, @Nullable Direction direction);
 
     void setSlotY(Slot slot, int y);
-
-    @Deprecated
-    void requestModelDataUpdateOnClient(LevelAccessor level, BlockPos pos, boolean updateChunk);
 
     void requestModelDataUpdateOnClient(BlockEntity blockEntity, boolean updateChunk);
 }

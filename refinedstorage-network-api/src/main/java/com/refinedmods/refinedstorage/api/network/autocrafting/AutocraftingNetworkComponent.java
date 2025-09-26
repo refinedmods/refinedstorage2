@@ -35,11 +35,6 @@ public interface AutocraftingNetworkComponent
 
     EnsureResult ensureTask(ResourceKey resource, long amount, Actor actor, CancellationToken cancellationToken);
 
-    @Deprecated // use the other overload with CancellationToken
-    default EnsureResult ensureTask(ResourceKey resource, long amount, Actor actor) {
-        return ensureTask(resource, amount, actor, CancellationToken.NONE);
-    }
-
     enum EnsureResult {
         MISSING_RESOURCES,
         TASK_ALREADY_RUNNING,
