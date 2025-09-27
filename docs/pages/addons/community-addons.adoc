@@ -82,6 +82,17 @@ Cable Tiers is an addon for Refined Storage that adds new cable tiers, each with
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[CurseForge], link:https://modrinth.com/mod/cable-tiers[Modrinth]
 |===
 
+== Omni Grid
+
+An enhanced and versatile variant of the Portable Grid with crafting capabilities, automation compatibility, and can connect to networks.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/omni-grid[CurseForge]
+|===
+
+
 == Ender IO
 
 Ender IO adds Refined Storage conduits.
