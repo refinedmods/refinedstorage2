@@ -10,7 +10,7 @@ This marks a complete rewrite of the mod, establishing a stronger foundation for
 
 The beta lasted 6 months and was an intensive phase of testing and refinement.
 
-During this time, 77 bugs were resolved. We not only tracked issues on our own bug tracker, but also monitored GitHub issue pages of popular modpacks and Discord, responding to, reviewing, and fixing all reported problems.
+During this time, 77 bugs were resolved. We not only tracked issues on our own bug tracker, but also monitored GitHub issues and Discord of popular modpacks, responding to, reviewing, and fixing all reported problems.
 
 The final betas saw only minor, hard-to-reproduce bugs being addressed, **and today the issue tracker stands at zero open issues**.
 
