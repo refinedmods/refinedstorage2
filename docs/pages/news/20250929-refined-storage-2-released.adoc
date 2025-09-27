@@ -28,7 +28,7 @@ Refined Storage 2 has been rebuilt from the ground up with the following goals i
 == What has changed?
 
 The full list of new features and changes is too extensive to summarize here.
-Read the dedicated article: xref:20250308-whats-new-in-refined-storage-2.adoc[].
+Read the dedicated article link:https://refinedmods.com/refined-storage/news/20250308-whats-new-in-refined-storage-2.html[here].
 
 == Next steps
 
