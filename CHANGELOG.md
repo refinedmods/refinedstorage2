@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Improved autocrafting toast texture.
+
 ## [2.0.0-beta.17] - 2025-09-27
 
 ### Fixed
