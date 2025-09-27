@@ -32,8 +32,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -44,7 +42,6 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
         new ConcurrentHashMap<>();
     private static final AbstractBlockEntityTicker<AbstractExternalStorageBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExternalStorage);
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalStorageBlock.class);
 
     private final DyeColor color;
     private final MutableComponent name;

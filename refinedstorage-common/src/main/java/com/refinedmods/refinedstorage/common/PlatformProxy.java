@@ -42,7 +42,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -244,14 +243,6 @@ public class PlatformProxy implements Platform {
     @Override
     public void setSlotY(final Slot slot, final int y) {
         ensureLoaded().setSlotY(slot, y);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void requestModelDataUpdateOnClient(final LevelAccessor level,
-                                               final BlockPos pos,
-                                               final boolean updateChunk) {
-        ensureLoaded().requestModelDataUpdateOnClient(level, pos, updateChunk);
     }
 
     @Override

@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-beta.17] - 2025-09-27
+
+### Fixed
+
+-   Final beta before the official release. This release contains breaking changes meant for addon developers. Do not update to this version!
+
 ## [2.0.0-beta.16] - 2025-09-26
 
 ### Fixed
@@ -1085,7 +1091,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.16...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.17...HEAD
+
+[2.0.0-beta.17]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.16...v2.0.0-beta.17
 
 [2.0.0-beta.16]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.15...v2.0.0-beta.16
 

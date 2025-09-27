@@ -47,11 +47,11 @@ class LazyCopyMutableResourceListTest extends AbstractMutableResourceListTest {
         final MutableResourceList.OperationResult removeC = sut.remove(TestResource.C, 4);
         // Assert
         assertThat(removeA).isNotNull();
-        assertThat(removeA.amount()).isEqualTo(0);
+        assertThat(removeA.amount()).isZero();
         assertThat(removeA.resource()).isEqualTo(TestResource.A);
         assertThat(removeA.change()).isEqualTo(-4);
         assertThat(removeA.available()).isFalse();
-        assertThat(sut.get(TestResource.A)).isEqualTo(0);
+        assertThat(sut.get(TestResource.A)).isZero();
 
         assertThat(removeB).isNotNull();
         assertThat(removeB.amount()).isEqualTo(1);
@@ -60,7 +60,7 @@ class LazyCopyMutableResourceListTest extends AbstractMutableResourceListTest {
         assertThat(removeB.available()).isTrue();
 
         assertThat(removeC).isNotNull();
-        assertThat(removeC.amount()).isEqualTo(0);
+        assertThat(removeC.amount()).isZero();
         assertThat(removeC.change()).isEqualTo(-4);
         assertThat(removeC.resource()).isEqualTo(TestResource.C);
         assertThat(removeC.available()).isFalse();
@@ -77,7 +77,7 @@ class LazyCopyMutableResourceListTest extends AbstractMutableResourceListTest {
         assertThat(add.available()).isTrue();
         assertThat(remove).isNotNull();
         assertThat(remove.change()).isEqualTo(-2);
-        assertThat(remove.amount()).isEqualTo(0);
+        assertThat(remove.amount()).isZero();
         assertThat(remove.available()).isFalse();
     }
 
@@ -89,7 +89,7 @@ class LazyCopyMutableResourceListTest extends AbstractMutableResourceListTest {
         // Assert
         assertThat(remove).isNotNull();
         assertThat(remove.change()).isEqualTo(-1);
-        assertThat(remove.amount()).isEqualTo(0);
+        assertThat(remove.amount()).isZero();
         assertThat(remove.available()).isFalse();
         assertThat(add.change()).isEqualTo(3);
         assertThat(add.amount()).isEqualTo(3);

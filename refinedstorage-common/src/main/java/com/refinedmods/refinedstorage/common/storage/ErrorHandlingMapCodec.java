@@ -37,9 +37,7 @@ record ErrorHandlingMapCodec<K, V>(
             final DataResult<V> value = elementCodec().parse(ops, entry.getSecond());
             final DataResult<Pair<K, V>> entryResult = key.apply2stable(Pair::of, value);
             entryResult.resultOrPartial().ifPresent(pair -> read.putIfAbsent(pair.getFirst(), pair.getSecond()));
-            entryResult.error().ifPresent(e -> {
-                LOGGER.warn("{} {}", ERROR_MESSAGE, e.message());
-            });
+            entryResult.error().ifPresent(e -> LOGGER.warn("{} {}", ERROR_MESSAGE, e.message()));
         });
         final Map<K, V> elements = ImmutableMap.copyOf(read);
         return DataResult.success(elements);

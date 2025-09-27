@@ -78,7 +78,7 @@ Refined Storage 2 xref:../addons/community-addons.adoc[already has a few communi
 - link:https://www.curseforge.com/minecraft/mc-mods/universal-grid[Universal Grid]
 - link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[Advanced Peripherals]
 - link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[ExtraStorage]
-- link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types]
+- Support for FE, Source (Ars Nouveau) and Souls (Industrial Foregoing Souls) storages with link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types]
 - link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[Cable Tiers]
 - Refined Storage conduit support in link:https://www.curseforge.com/minecraft/mc-mods/ender-io[Ender IO]
 
