@@ -6,10 +6,18 @@ The {doctitle} displays the status of all active autocrafting tasks.
 
 == Tasks
 
+The tasks are displayed in the sidebar. For each task, the state is displayed:
+
+- **Ready** - Ready to start.
+- **Extracting initial resources** - Extracting the resources needed to start the task.
+- **Running** - The task is running.
+- **Returning internal storage** - The task was either completed or cancelled, and the task's internal inventory is returned to the storage network.
+
 Each task is shown as a grid of cells, where each cell represents how a resource is used in the task.
 
 Terminology used in cells:
 
+- **Extracting** - The resource is being extracted from the storage network for use in crafting.
 - **Stored** – The resource is held in the task's internal inventory, to be used later.
 - **Processing** – The resource is currently inserted into an external machine.
 - **Scheduled** – The resource is queued for crafting and will be processed later.

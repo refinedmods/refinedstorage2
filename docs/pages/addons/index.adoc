@@ -15,6 +15,6 @@
 - xref:trinkets.adoc[]
 - xref:fabric-ecosystem.adoc[]
 
-== Unofficial addons
+== Community addons
 
 - xref:community-addons.adoc[]

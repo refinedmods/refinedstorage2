@@ -1,20 +1,20 @@
 = Refined Storage 2 released
 :type: article
-:description: A major milestone in the evolution of Refined Storage
-:date: 2025-09-29
+:description: A major milestone in the evolution of Refined Storage.
+:date: 2025-09-27
 
-Five years after the very first commit for Refined Storage 2, it has left beta and is officially released.
-This marks a complete rewrite of the mod, laying a stronger foundation for the future.
+Five years after the very first commit for Refined Storage 2, it has left beta and is now officially released for Minecraft 1.21.1.
+This marks a complete rewrite of the mod, establishing a stronger foundation for the future.
 
 == Beta period
 
 The beta lasted 6 months and was an intensive phase of testing and refinement.
 
-Across this period, 77 bugs were resolved. The final betas saw only minor, hard-to-reproduce bugs being fixed, and today the issue tracker stands at **zero** open bugs.
+During this time, 77 bugs were resolved. We not only tracked issues on our own bug tracker, but also monitored GitHub issues and Discord of popular modpacks, responding to, reviewing, and fixing all reported problems.
 
-This stability gave us the confidence to move forward with a full release.
+The final betas saw only minor, hard-to-reproduce bugs being addressed, **and today the issue tracker stands at zero open issues**.
 
-Special thanks to all the testers and people reporting issues on GitHub and Discord.
+This level of stability gave us the confidence to move forward with a full release.
 
 == Goal
 
@@ -27,9 +27,27 @@ Refined Storage 2 has been rebuilt from the ground up with the following goals i
 
 == What has changed?
 
-The full list of new features and changes is too extensive to summarize here.
+The complete list of new features and changes is too extensive to summarize here.
 Read the dedicated article: xref:20250308-whats-new-in-refined-storage-2.adoc[].
+
+== Addons
+
+At release, Refined Storage 2 already has an xref:../addons/index.adoc[impressive ecosystem of addons]:
+
+- 7 official addons, including the xref:../addons/mekanism.adoc[Mekanism chemical integration].
+- xref:../addons/community-addons.adoc[8 community addons], such as:
+* link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types], which introduces support for Forge Energy, Source (Ars Nouveau), and Souls (Industrial Foregoing) across Refined Storage components — enabling storage, transfer, viewing, and autocrafting with these resource types.
 
 == Next steps
 
-Planning for Refined Storage v2.1 is already underway. A roadmap will be published soon, outlining the planned features and improvements for the next iteration.
+Planning for Refined Storage v2.1 is already underway. A roadmap will be published soon, outlining the features and improvements planned for the next iteration.
+
+Please try the new version out. Give feedback on Discord or GitHub, and report any issues you encounter.
+
+== Special thanks
+
+- To all testers who helped identify and resolve issues during the beta.
+- To the addon developers who are building on the Refined Storage platform.
+- To our awesome contributors who helped make this release possible.
+- To the translators who are localizing Refined Storage into multiple languages.
+- To the community for their continued support and enthusiasm.
