@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Hoppers can insert upgrades, patterns, and security cards into devices which support them.
+
 ## [2.0.0] - 2025-09-27
 
 ### Fixed
