@@ -554,14 +554,14 @@ public class ModInitializer extends AbstractModInitializer {
         );
         event.registerBlockEntity(
             Capabilities.ItemHandler.BLOCK,
-            BlockEntities.INSTANCE.getSecurityManager(),
-            (be, side) -> new CombinedInvWrapper(new InvWrapper(be.getSecurityCards()),
-                new InvWrapper(be.getFallbackSecurityCard()))
+            BlockEntities.INSTANCE.getNetworkTransmitter(),
+            (be, side) -> new InvWrapper(be.getNetworkCardInventory())
         );
         event.registerBlockEntity(
             Capabilities.ItemHandler.BLOCK,
-            BlockEntities.INSTANCE.getNetworkTransmitter(),
-            (be, side) -> new InvWrapper(be.getNetworkCardInventory())
+            BlockEntities.INSTANCE.getSecurityManager(),
+            (be, side) -> new CombinedInvWrapper(new InvWrapper(be.getSecurityCards()),
+                new InvWrapper(be.getFallbackSecurityCard()))
         );
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,

@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.autocrafting.monitor.WirelessAutocraftingMonitorItem;
 import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
+import com.refinedmods.refinedstorage.common.constructordestructor.AbstractConstructorBlockEntity;
+import com.refinedmods.refinedstorage.common.constructordestructor.AbstractDestructorBlockEntity;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProviders;
@@ -18,8 +20,12 @@ import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
+import com.refinedmods.refinedstorage.common.exporter.AbstractExporterBlockEntity;
 import com.refinedmods.refinedstorage.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage.common.importer.AbstractImporterBlockEntity;
+import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlockEntity;
+import com.refinedmods.refinedstorage.common.networking.WirelessTransmitterBlockEntity;
 import com.refinedmods.refinedstorage.common.security.FallbackSecurityCardItem;
 import com.refinedmods.refinedstorage.common.security.SecurityCardItem;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
@@ -873,6 +879,42 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             PatternGridBlockEntity::getPatternInput,
             BlockEntities.INSTANCE.getPatternGrid()
         );
+        registerItemStorage(
+            AbstractImporterBlockEntity.class::isInstance,
+            AbstractImporterBlockEntity.class::cast,
+            AbstractImporterBlockEntity::getUpgradeContainer,
+            BlockEntities.INSTANCE.getImporter()
+        );
+        registerItemStorage(
+            AbstractExporterBlockEntity.class::isInstance,
+            AbstractExporterBlockEntity.class::cast,
+            AbstractExporterBlockEntity::getUpgradeContainer,
+            BlockEntities.INSTANCE.getExporter()
+        );
+        registerItemStorage(
+            AbstractConstructorBlockEntity.class::isInstance,
+            AbstractConstructorBlockEntity.class::cast,
+            AbstractConstructorBlockEntity::getUpgradeContainer,
+            BlockEntities.INSTANCE.getConstructor()
+        );
+        registerItemStorage(
+            AbstractDestructorBlockEntity.class::isInstance,
+            AbstractDestructorBlockEntity.class::cast,
+            AbstractDestructorBlockEntity::getUpgradeContainer,
+            BlockEntities.INSTANCE.getDestructor()
+        );
+        registerItemStorage(
+            WirelessTransmitterBlockEntity.class::isInstance,
+            WirelessTransmitterBlockEntity.class::cast,
+            WirelessTransmitterBlockEntity::getUpgradeContainer,
+            BlockEntities.INSTANCE.getWirelessTransmitter()
+        );
+        registerItemStorage(
+            NetworkTransmitterBlockEntity.class::isInstance,
+            NetworkTransmitterBlockEntity.class::cast,
+            NetworkTransmitterBlockEntity::getNetworkCardInventory,
+            BlockEntities.INSTANCE.getNetworkTransmitter()
+        );
         ItemStorage.SIDED.registerForBlockEntity((blockEntity, context) -> {
             final InventoryStorage storage = InventoryStorage.of(blockEntity.getDiskInventory(), context);
             final List<Storage<ItemVariant>> parts = new ArrayList<>();
@@ -882,6 +924,29 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             }
             return new CombinedStorage<>(parts);
         }, BlockEntities.INSTANCE.getDiskInterface());
+        ItemStorage.SIDED.registerForBlockEntity((autocrafter, context) -> {
+            final InventoryStorage patternStorage = InventoryStorage.of(autocrafter.getPatternContainer(), context);
+            final InventoryStorage upgradeStorage = InventoryStorage.of(autocrafter.getUpgradeContainer(), context);
+            final List<Storage<ItemVariant>> parts = new ArrayList<>();
+
+            parts.add(patternStorage);
+            parts.add(upgradeStorage);
+
+            return new CombinedStorage<>(parts);
+        }, BlockEntities.INSTANCE.getAutocrafter());
+        ItemStorage.SIDED.registerForBlockEntity((securityManager, context) -> {
+            final InventoryStorage securityCards = InventoryStorage.of(securityManager.getSecurityCards(), context);
+            final InventoryStorage fallbackCard =
+                InventoryStorage.of(securityManager.getFallbackSecurityCard(), context);
+            final List<Storage<ItemVariant>> parts = new ArrayList<>();
+
+            parts.add(securityCards);
+            parts.add(fallbackCard);
+
+            return new CombinedStorage<>(parts);
+        }, BlockEntities.INSTANCE.getSecurityManager());
+
+
         FluidStorage.SIDED.registerForBlockEntity(
             (blockEntity, context) -> new ResourceContainerFluidStorageAdapter(blockEntity.getExportedResources()),
             BlockEntities.INSTANCE.getInterface()
