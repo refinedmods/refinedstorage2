@@ -32,6 +32,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -71,6 +72,10 @@ public abstract class AbstractDestructorBlockEntity
             }
         }, ConstructorDestructorConstants.DEFAULT_WORK_TICK_RATE);
         this.ticker = upgradeContainer.getTicker();
+    }
+
+    public Container getUpgradeContainer() {
+        return upgradeContainer;
     }
 
     @Override

@@ -143,11 +143,11 @@ public class SecurityManagerBlockEntity
         return drops;
     }
 
-    FilteredContainer getSecurityCards() {
+    public FilteredContainer getSecurityCards() {
         return securityCards;
     }
 
-    FilteredContainer getFallbackSecurityCard() {
+    public FilteredContainer getFallbackSecurityCard() {
         return fallbackSecurityCard;
     }
 

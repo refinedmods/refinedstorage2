@@ -78,6 +78,10 @@ public abstract class AbstractImporterBlockEntity
         this.ticker = upgradeContainer.getTicker();
     }
 
+    public Container getUpgradeContainer() {
+        return upgradeContainer;
+    }
+
     @Override
     public List<ItemStack> getUpgrades() {
         return upgradeContainer.getUpgrades();

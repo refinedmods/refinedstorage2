@@ -165,6 +165,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -519,6 +520,48 @@ public class ModInitializer extends AbstractModInitializer {
             Capabilities.ItemHandler.BLOCK,
             BlockEntities.INSTANCE.getPatternGrid(),
             (be, side) -> new InvWrapper(be.getPatternInput())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getAutocrafter(),
+            (be, side) -> new CombinedInvWrapper(new InvWrapper(be.getPatternContainer()),
+                new InvWrapper(be.getUpgradeContainer()))
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getImporter(),
+            (be, side) -> new InvWrapper(be.getUpgradeContainer())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getExporter(),
+            (be, side) -> new InvWrapper(be.getUpgradeContainer())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getConstructor(),
+            (be, side) -> new InvWrapper(be.getUpgradeContainer())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getDestructor(),
+            (be, side) -> new InvWrapper(be.getUpgradeContainer())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getWirelessTransmitter(),
+            (be, side) -> new InvWrapper(be.getUpgradeContainer())
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getSecurityManager(),
+            (be, side) -> new CombinedInvWrapper(new InvWrapper(be.getSecurityCards()),
+                new InvWrapper(be.getFallbackSecurityCard()))
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            BlockEntities.INSTANCE.getNetworkTransmitter(),
+            (be, side) -> new InvWrapper(be.getNetworkCardInventory())
         );
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,

@@ -39,6 +39,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -84,6 +85,10 @@ public abstract class AbstractExporterBlockEntity
     private void schedulingModeChanged(final SchedulingMode schedulingMode) {
         mainNetworkNode.setSchedulingMode(schedulingMode);
         setChanged();
+    }
+
+    public Container getUpgradeContainer() {
+        return upgradeContainer;
     }
 
     @Override

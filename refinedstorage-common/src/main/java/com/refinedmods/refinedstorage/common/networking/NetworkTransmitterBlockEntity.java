@@ -187,7 +187,7 @@ public class NetworkTransmitterBlockEntity
         return network.getComponent(GraphNetworkComponent.class).getContainer(key) != null;
     }
 
-    Container getNetworkCardInventory() {
+    public Container getNetworkCardInventory() {
         return networkCardInventory;
     }
 
