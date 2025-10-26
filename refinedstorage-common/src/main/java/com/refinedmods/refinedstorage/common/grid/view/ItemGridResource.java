@@ -159,4 +159,12 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     public Optional<TooltipComponent> getTooltipImage() {
         return itemStack.getTooltipImage();
     }
+
+    @Override
+    public boolean is(final GridResource other) {
+        if (other instanceof ItemGridResource otherItem) {
+            return this.itemResource.equals(otherItem.itemResource);
+        }
+        return false;
+    }
 }

@@ -65,6 +65,10 @@ public interface GridResource {
     List<ClientTooltipComponent> getExtractionHints(ItemStack carriedStack,
                                                     ResourceRepository<GridResource> repository);
 
+    default boolean is(final GridResource other) {
+        return false;
+    }
+
     @Nullable
     ResourceAmount getAutocraftingRequest();
 

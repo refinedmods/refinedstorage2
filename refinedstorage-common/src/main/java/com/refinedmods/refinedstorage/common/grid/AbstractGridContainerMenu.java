@@ -48,6 +48,7 @@ import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -80,6 +81,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private final ResourceRepository<GridResource> repository;
     private final PatternRepository playerInventoryPatterns = new PatternRepositoryImpl();
     private final Map<ResourceKey, TrackedResource> trackedResources = new HashMap<>();
+    private final PinnedResources pinnedResources = new PinnedResources();
     @Nullable
     private Grid grid;
     @Nullable
@@ -304,6 +306,22 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     public ResourceRepository<GridResource> getRepository() {
         return repository;
+    }
+
+    public List<GridResource> getPinnedResources() {
+        return pinnedResources.getAll();
+    }
+
+    public void addPinnedResource(final int index, final GridResource gridResource) {
+        pinnedResources.add(index, gridResource);
+    }
+
+    public boolean containsPinnedResource(final GridResource gridResource) {
+        return pinnedResources.contains(gridResource);
+    }
+
+    public GridResource removePinnedResource(final int index) {
+        return pinnedResources.remove(index);
     }
 
     @Override
