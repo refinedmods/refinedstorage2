@@ -1,5 +1,5 @@
 plugins {
-    id("refinedarchitect.neoforge")
+    id("com.refinedmods.refinedarchitect.neoforge")
 }
 
 refinedarchitect {

@@ -1,5 +1,5 @@
 plugins {
-    id("refinedarchitect.fabric")
+    id("com.refinedmods.refinedarchitect.fabric")
 }
 
 refinedarchitect {

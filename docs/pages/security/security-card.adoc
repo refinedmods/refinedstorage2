@@ -1,5 +1,5 @@
 = Security Card
-:from: v1.4.0-beta
+:from: v1.4.1-beta
 :icon: security-card.png
 
 The {doctitle} is used to configure player permissions in a storage network.

@@ -1,10 +1,10 @@
 dependencyResolutionManagement {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/refinedmods/refinedarchitect")
-            credentials {
-                username = "anything"
-                password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+            name = "Refined Architect"
+            url = uri("https://maven.creeperhost.net")
+            content {
+                includeGroupAndSubgroups("com.refinedmods.refinedarchitect")
             }
         }
     }
@@ -21,10 +21,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url = uri("https://maven.pkg.github.com/refinedmods/refinedarchitect")
-            credentials {
-                username = "anything"
-                password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+            name = "Refined Architect"
+            url = uri("https://maven.creeperhost.net")
+            content {
+                includeGroupAndSubgroups("com.refinedmods.refinedarchitect")
             }
         }
         maven {
@@ -34,11 +34,11 @@ pluginManagement {
     }
     val refinedarchitectVersion: String by settings
     plugins {
-        id("refinedarchitect.root").version(refinedarchitectVersion)
-        id("refinedarchitect.base").version(refinedarchitectVersion)
-        id("refinedarchitect.common").version(refinedarchitectVersion)
-        id("refinedarchitect.neoforge").version(refinedarchitectVersion)
-        id("refinedarchitect.fabric").version(refinedarchitectVersion)
+        id("com.refinedmods.refinedarchitect.root").version(refinedarchitectVersion)
+        id("com.refinedmods.refinedarchitect.base").version(refinedarchitectVersion)
+        id("com.refinedmods.refinedarchitect.common").version(refinedarchitectVersion)
+        id("com.refinedmods.refinedarchitect.neoforge").version(refinedarchitectVersion)
+        id("com.refinedmods.refinedarchitect.fabric").version(refinedarchitectVersion)
     }
 }
 
