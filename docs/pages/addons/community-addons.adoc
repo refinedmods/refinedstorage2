@@ -102,3 +102,13 @@ Ender IO adds Refined Storage conduits.
 | *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/ender-io[CurseForge], link:https://modrinth.com/mod/enderio[Modrinth]
 |===
+
+== Pipe Connector
+
+A tool that places pipes (including Refined Storage cables) automatically along a selected route.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/pipe-connector[CurseForge]
+|===
