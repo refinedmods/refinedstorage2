@@ -5,22 +5,29 @@ import com.refinedmods.refinedstorage.api.core.CoreValidations;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
+import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 public class PreviewBuilder {
     private final Map<ResourceKey, MutablePreviewItem> items;
     private List<ResourceAmount> outputsOfPatternWithCycle = Collections.emptyList();
     private boolean missing;
+    private final @Nullable PreviewBuilder parent;
 
     private PreviewBuilder() {
         items = new LinkedHashMap<>();
+        parent = null;
     }
 
-    private PreviewBuilder(final int size) {
-        items = LinkedHashMap.newLinkedHashMap(size);
+    private PreviewBuilder(final PreviewBuilder parent) {
+        items = new LinkedHashMap<>();
+        this.parent = parent;
+        missing = parent.missing;
+        outputsOfPatternWithCycle = parent.outputsOfPatternWithCycle;
     }
 
     public static PreviewBuilder create() {
@@ -56,18 +63,25 @@ public class PreviewBuilder {
     }
 
     public PreviewBuilder copy() {
-        final PreviewBuilder copy = new PreviewBuilder(items.size());
-        for (final Map.Entry<ResourceKey, MutablePreviewItem> entry : items.entrySet()) {
-            final MutablePreviewItem item = entry.getValue();
-            copy.items.put(entry.getKey(), item.copy());
-        }
-        copy.outputsOfPatternWithCycle = outputsOfPatternWithCycle;
-        copy.missing = missing;
-        return copy;
+        return new PreviewBuilder(this);
     }
 
     public Preview build() {
-        return new Preview(getType(), items.entrySet()
+        PreviewBuilder builder = this;
+        // collect a trace until the root (excluded)
+        final ArrayDeque<PreviewBuilder> path = new ArrayDeque<>();
+        while (builder.parent != null) {
+            path.addFirst(builder);
+            builder = builder.parent;
+        }
+        // walk from the root downwards to ensure proper ordering of the items
+        final PreviewBuilder root = builder;
+        for (final PreviewBuilder previewBuilder : path) {
+            for (final Map.Entry<ResourceKey, MutablePreviewItem> entry : previewBuilder.items.entrySet()) {
+                root.items.merge(entry.getKey(), entry.getValue().copy(), MutablePreviewItem::merge);
+            }
+        }
+        return new Preview(getType(), root.items.entrySet()
             .stream()
             .map(entry -> entry.getValue().toPreviewItem(entry.getKey()))
             .toList(), outputsOfPatternWithCycle);
@@ -95,6 +109,13 @@ public class PreviewBuilder {
             copy.missing = missing;
             copy.toCraft = toCraft;
             return copy;
+        }
+
+        private MutablePreviewItem merge(final MutablePreviewItem mutablePreviewItem) {
+            available += mutablePreviewItem.available;
+            missing += mutablePreviewItem.missing;
+            toCraft += mutablePreviewItem.toCraft;
+            return this;
         }
     }
 }
