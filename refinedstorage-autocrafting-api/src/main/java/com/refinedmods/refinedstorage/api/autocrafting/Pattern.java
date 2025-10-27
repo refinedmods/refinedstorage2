@@ -18,4 +18,16 @@ public record Pattern(UUID id, PatternLayout layout) {
         CoreValidations.validateNotNull(id, "ID cannot be null");
         CoreValidations.validateNotNull(layout, "Layout cannot be null");
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof Pattern(UUID uuid, PatternLayout patternLayout)
+                && uuid.equals(id)
+                && patternLayout.equals(layout);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
