@@ -103,6 +103,16 @@ Ender IO adds Refined Storage conduits.
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/ender-io[CurseForge], link:https://modrinth.com/mod/enderio[Modrinth]
 |===
 
+== Refined Storage: Requestify
+
+Refined Storage: Requestify adds the Requester, a block that allows you to maintain a specified stock level of resources in your Refined Storage system.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-requestify[CurseForge]
+|===
+
 == Pipe Connector
 
 A tool that places pipes (including Refined Storage cables) automatically along a selected route.
