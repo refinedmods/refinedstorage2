@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Improved performance in various scenarios like autocrafting and opening a Grid. 
+
 ## [2.0.0] - 2025-09-27
 
 ### Fixed
