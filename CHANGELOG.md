@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Improved performance in various scenarios like autocrafting and opening a Grid. 
 -   Fixed autocrafter name field history not working
 -   Added support for underscores and forward slashes in search names.
+-   The descriptions of '#' and '$' prefix searches being swapped.
 
 ## [2.0.0] - 2025-09-27
 
