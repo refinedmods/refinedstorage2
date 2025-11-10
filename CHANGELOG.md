@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed autocrafter name field history not working
 -   Added support for underscores and forward slashes in search names.
 -   The descriptions of '#' and '$' prefix searches being swapped.
+-   Allow searching for block tags on block items.
 
 ## [2.0.0] - 2025-09-27
 
