@@ -12,12 +12,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -63,12 +65,23 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
     }
 
     private Set<String> getTags(final Item item) {
-        return BuiltInRegistries.ITEM.getResourceKey(item)
+        final Stream<String> itemTags = BuiltInRegistries.ITEM.getResourceKey(item)
             .flatMap(BuiltInRegistries.ITEM::getHolder)
             .stream()
             .flatMap(Holder::tags)
-            .map(tagKey -> tagKey.location().getPath())
-            .collect(Collectors.toSet());
+            .map(tagKey -> tagKey.location().getPath());
+
+        if (item instanceof BlockItem blockItem) {
+            final Stream<String> blockTags = BuiltInRegistries.BLOCK.getResourceKey(blockItem.getBlock())
+                .flatMap(BuiltInRegistries.BLOCK::getHolder)
+                .stream()
+                .flatMap(Holder::tags)
+                .map(tagKey -> tagKey.location().getPath());
+
+            return Stream.concat(itemTags, blockTags).collect(Collectors.toSet());
+        } else {
+            return itemTags.collect(Collectors.toSet());
+        }
     }
 
     public abstract String getModId(ItemStack itemStack);
