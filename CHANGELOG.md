@@ -9,7 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Improved performance in various scenarios like autocrafting and opening a Grid. 
+-   Improved performance in various scenarios like autocrafting and opening a Grid. 
+-   Fixed autocrafter name field history not working
 
 ## [2.0.0] - 2025-09-27
 
