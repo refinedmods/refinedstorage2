@@ -299,7 +299,7 @@
   "item.refinedstorage.pattern_grid.help": "Allows for the creation of Patterns for use in autocrafting.",
   "item.refinedstorage.importer.help": "Imports resources from an external source to the storage network.",
   "item.refinedstorage.exporter.help": "Exports resources from the storage network to an external destination.",
-  "item.refinedstorage.interface.help": "Acts as the combination of an Importer and Exporter.",
+  "item.refinedstorage.interface.help": "Combines importing and exporting via intermediate slots; external inventories must insert and extract manually.",
   "item.refinedstorage.external_storage.help": "Provides the storage network with storage from an external source.",
   "item.refinedstorage.detector.help": "Emits a redstone signal if the storage network contains a resource equal, above or under a given amount.",
   "item.refinedstorage.constructor.help": "Places blocks from the storage network in the world.",
