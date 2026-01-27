@@ -132,3 +132,23 @@ This mod adds a Step Crafter and Step Requester which allows recursive crafting 
 | *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/step-crafter[CurseForge], link:https://modrinth.com/mod/step-crafter[Modrinth]
 |===
+
+== Replication RS2 Bridge
+
+This mod allows you to autocraft using replication matter inside Refined Storage.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/replication-rs2-bridge[CurseForge]
+|===
+
+== Refined Equivalence
+
+This mod allows you to autocraft using EMC inside Refined Storage.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-equivalence[CurseForge]
+|===
