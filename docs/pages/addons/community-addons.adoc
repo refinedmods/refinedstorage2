@@ -122,3 +122,13 @@ A tool that places pipes (including Refined Storage cables) automatically along 
 | *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/pipe-connector[CurseForge]
 |===
+
+== Step Crafter
+
+This mod adds a Step Crafter and Step Requester which allows recursive crafting and keeping items in-stock.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/step-crafter[CurseForge], link:https://modrinth.com/mod/step-crafter[Modrinth]
+|===
