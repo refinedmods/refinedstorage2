@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.support;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.mixin.ContainerMenuAccessor;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.DisabledSlot;
 import com.refinedmods.refinedstorage.common.support.containermenu.FilterSlot;
@@ -63,6 +64,8 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
 
     protected void resetSlots() {
         slots.clear();
+        ((ContainerMenuAccessor) this).getRemoteSlots().clear();
+        ((ContainerMenuAccessor) this).getLastSlots().clear();
     }
 
     protected final void addPlayerInventory(final Inventory inventory,

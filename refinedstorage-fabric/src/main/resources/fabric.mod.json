@@ -34,7 +34,8 @@
     }
   },
   "mixins": [
-    "refinedstorage.mixins.json"
+    "refinedstorage.mixins.json",
+    "refinedstorage.common.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.6",
