@@ -57,6 +57,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.ResourceSlotChan
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardBoundPlayerPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardPermissionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardResetPermissionPacket;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.UseSlotReferencedItemPacket;
@@ -695,6 +696,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC
         );
+        PayloadTypeRegistry.playC2S().register(
+            SetTenthAnniversaryCapePacket.PACKET_TYPE,
+            SetTenthAnniversaryCapePacket.STREAM_CODEC
+        );
     }
 
     private void registerPacketHandlers() {
@@ -817,6 +822,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
+        );
+        ServerPlayNetworking.registerGlobalReceiver(
+            SetTenthAnniversaryCapePacket.PACKET_TYPE,
+            wrapHandler(SetTenthAnniversaryCapePacket::handle)
         );
     }
 

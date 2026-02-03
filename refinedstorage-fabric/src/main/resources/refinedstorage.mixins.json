@@ -11,7 +11,8 @@
     "EditBoxAccessor",
     "ItemPropertiesAccessor",
     "KeyMappingAccessor",
-    "AbstractGuiGraphicsMixin"
+    "AbstractGuiGraphicsMixin",
+    "AbstractCapeLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
