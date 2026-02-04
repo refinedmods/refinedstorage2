@@ -193,6 +193,14 @@ public class ConfigImpl implements Config {
     }
 
     @Override
+    public void setTenthAnniversaryCape(final boolean enabled) {
+        if (enabled != Boolean.TRUE.equals(this.tenthAnniversaryCape.get())) {
+            this.tenthAnniversaryCape.set(enabled);
+            ConfigImpl.this.spec.save();
+        }
+    }
+
+    @Override
     public boolean isDebug() {
         return debug.getAsBoolean();
     }

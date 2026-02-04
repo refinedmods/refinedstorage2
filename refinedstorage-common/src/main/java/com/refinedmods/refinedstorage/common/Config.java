@@ -20,6 +20,8 @@ public interface Config {
 
     boolean isTenthAnniversaryCape();
 
+    void setTenthAnniversaryCape(boolean enabled);
+
     boolean isDebug();
 
     boolean isSmoothScrolling();
