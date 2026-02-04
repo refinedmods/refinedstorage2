@@ -26,6 +26,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
 
     private boolean smoothScrolling = true;
 
+    private boolean tenthAnniversaryCape = false;
+
     private boolean autocraftingNotification = true;
 
     private AutocraftingPreviewStyle autocraftingPreviewStyle = AutocraftingPreviewStyle.LIST;
@@ -156,6 +158,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     public void setScreenSize(final ScreenSize screenSize) {
         this.screenSize = screenSize;
         AutoConfig.getConfigHolder(ConfigImpl.class).save();
+    }
+
+    @Override
+    public boolean isTenthAnniversaryCape() {
+        return tenthAnniversaryCape;
     }
 
     @Override

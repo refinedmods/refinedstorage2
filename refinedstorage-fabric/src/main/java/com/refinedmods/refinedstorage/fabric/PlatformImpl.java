@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
+import com.refinedmods.refinedstorage.fabric.cape.TenthAnniversaryCape;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage.fabric.mixin.KeyMappingAccessor;
@@ -468,6 +469,11 @@ public final class PlatformImpl extends AbstractPlatform {
                 Block.UPDATE_ALL
             );
         }
+    }
+
+    @Override
+    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
+        player.setAttached(TenthAnniversaryCape.ATTACHMENT, enabled);
     }
 
     private void doSave(final CompoundTag compoundTag, final Path tempFile, final Path targetPath) throws IOException {

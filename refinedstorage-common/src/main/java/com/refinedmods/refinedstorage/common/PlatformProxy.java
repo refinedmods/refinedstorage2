@@ -250,6 +250,11 @@ public class PlatformProxy implements Platform {
         ensureLoaded().requestModelDataUpdateOnClient(blockEntity, updateChunk);
     }
 
+    @Override
+    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
+        ensureLoaded().setTenthAnniversaryCape(player, enabled);
+    }
+
     private Platform ensureLoaded() {
         if (platform == null) {
             throw new IllegalStateException("Platform not loaded yet");

@@ -11,6 +11,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 public final class ContentIds {
     public static final ResourceLocation CREATIVE_MODE_TAB = createIdentifier("general");
     public static final ResourceLocation COLORED_CREATIVE_MODE_TAB = createIdentifier("colored");
+    public static final ResourceLocation TENTH_ANNIVERSARY_CAPE = createIdentifier("tenth_anniversary_cape");
 
     public static final ResourceLocation DISK_DRIVE = createIdentifier("disk_drive");
     public static final ResourceLocation MACHINE_CASING = createIdentifier("machine_casing");

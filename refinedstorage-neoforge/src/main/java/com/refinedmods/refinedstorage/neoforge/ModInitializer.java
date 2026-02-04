@@ -58,6 +58,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.ResourceSlotChan
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardBoundPlayerPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardPermissionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardResetPermissionPacket;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.UseSlotReferencedItemPacket;
@@ -94,6 +95,7 @@ import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApiProxy;
 import com.refinedmods.refinedstorage.neoforge.autocrafting.FluidHandlerExternalPatternProviderSinkFactory;
 import com.refinedmods.refinedstorage.neoforge.autocrafting.ItemHandlerExternalPatternProviderSinkFactory;
+import com.refinedmods.refinedstorage.neoforge.cape.TenthAnniversaryCape;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeConstructorBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeDestructorBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.debug.DebugStickItem;
@@ -124,10 +126,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Supplier;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -154,6 +158,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -171,6 +176,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import static com.refinedmods.refinedstorage.common.content.ContentIds.CREATIVE_PORTABLE_GRID;
@@ -180,6 +186,7 @@ import static com.refinedmods.refinedstorage.common.content.ContentIds.FALLBACK_
 import static com.refinedmods.refinedstorage.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.REGULATOR_UPGRADE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.SECURITY_CARD;
+import static com.refinedmods.refinedstorage.common.content.ContentIds.TENTH_ANNIVERSARY_CAPE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_AUTOCRAFTING_MONITOR;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_GRID;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -214,6 +221,8 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, IdentifierUtil.MOD_ID);
     private final DeferredRegister<DataComponentType<?>> dataComponentTypeRegistry =
         DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<AttachmentType<?>> attachmentTypeDeferredRegister =
+        DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, IdentifierUtil.MOD_ID);
     private final String modVersion;
 
     public ModInitializer(final IEventBus eventBus, final ModContainer modContainer) {
@@ -244,6 +253,8 @@ public class ModInitializer extends AbstractModInitializer {
             eventBus.addListener(ClientModInitializer::onRegisterMenuScreens);
             eventBus.addListener(ClientModInitializer::onRegisterKeyMappings);
             eventBus.addListener(ClientModInitializer::onRegisterTooltipFactories);
+            eventBus.addListener(ClientModInitializer::onConfigReloading);
+            NeoForge.EVENT_BUS.addListener(ClientModInitializer::onLoggingIn);
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
 
@@ -325,6 +336,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerBlockEntities(eventBus);
         registerMenus(eventBus);
         registerDataComponents(eventBus);
+        registerAttachmentTypes(eventBus);
     }
 
     private void registerBlocks(final IEventBus eventBus) {
@@ -474,6 +486,12 @@ public class ModInitializer extends AbstractModInitializer {
         final RegistryCallback<DataComponentType<?>> callback = new ForgeRegistryCallback<>(dataComponentTypeRegistry);
         registerDataComponents(callback);
         dataComponentTypeRegistry.register(eventBus);
+    }
+
+    private void registerAttachmentTypes(final IEventBus eventBus) {
+        TenthAnniversaryCape.setAttachment(attachmentTypeDeferredRegister.register(TENTH_ANNIVERSARY_CAPE.getPath(),
+            () -> AttachmentType.builder(() -> false).sync(ByteBufCodecs.BOOL).serialize(Codec.BOOL).build()));
+        attachmentTypeDeferredRegister.register(eventBus);
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
@@ -954,6 +972,11 @@ public class ModInitializer extends AbstractModInitializer {
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
+        );
+        registrar.playToServer(
+            SetTenthAnniversaryCapePacket.PACKET_TYPE,
+            SetTenthAnniversaryCapePacket.STREAM_CODEC,
+            wrapHandler(SetTenthAnniversaryCapePacket::handle)
         );
     }
 
