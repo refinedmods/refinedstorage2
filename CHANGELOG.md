@@ -7,13 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Support for underscores and forward slashes in the Grid search.
+-   Support for searching for block tags on block items in the Grid search.
+
 ### Fixed
 
--   Improved performance in various scenarios like autocrafting and opening a Grid. 
--   Fixed autocrafter name field history not working
--   Added support for underscores and forward slashes in search names.
--   The descriptions of '#' and '$' prefix searches being swapped.
--   Allow searching for block tags on block items.
+-   Improved performance in various scenarios like autocrafting and opening a Grid.
+-   Autocrafter name field history not working.
+-   The help descriptions of '#' and '$' prefix searches being swapped.
 
 ## [2.0.0] - 2025-09-27
 
