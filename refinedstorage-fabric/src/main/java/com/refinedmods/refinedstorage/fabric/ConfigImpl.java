@@ -166,6 +166,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     @Override
+    public void setTenthAnniversaryCape(final boolean enabled) {
+        this.tenthAnniversaryCape = enabled;
+        AutoConfig.getConfigHolder(ConfigImpl.class).save();
+    }
+
+    @Override
     public boolean isDebug() {
         return false;
     }
