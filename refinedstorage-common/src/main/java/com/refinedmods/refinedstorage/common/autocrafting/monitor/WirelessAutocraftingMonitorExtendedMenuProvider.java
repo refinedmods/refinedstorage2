@@ -2,14 +2,13 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 class WirelessAutocraftingMonitorExtendedMenuProvider implements ExtendedMenuProvider<AutocraftingMonitorData> {
     private final Component name;

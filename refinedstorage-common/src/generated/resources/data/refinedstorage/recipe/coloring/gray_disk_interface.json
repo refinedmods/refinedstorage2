@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/gray"
-    }
+    "#refinedstorage:disk_interfaces",
+    "#c:dyes/gray"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:gray_disk_interface"
   }
 }

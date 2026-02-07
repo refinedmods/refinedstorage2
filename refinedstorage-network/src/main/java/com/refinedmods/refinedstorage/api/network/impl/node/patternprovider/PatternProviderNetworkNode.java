@@ -23,9 +23,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PatternProviderNetworkNode extends SimpleNetworkNode implements PatternProvider, TaskListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatternProviderNetworkNode.class);
+
+    @Nullable
     private final Pattern[] patterns;
     private final Set<ParentContainer> parents = new HashSet<>();
     private final TaskContainer tasks = new TaskContainer(this);
@@ -47,8 +53,15 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
         this.sink = sink;
     }
 
-    public void setPattern(final int index, @Nullable final Pattern pattern) {
+    public void tryUpdatePattern(final int index, @Nullable final Pattern pattern) {
         final Pattern oldPattern = patterns[index];
+        if (oldPattern != null && oldPattern.equals(pattern)) {
+            return;
+        }
+        if (oldPattern == null && pattern == null) {
+            return;
+        }
+        LOGGER.debug("Detected pattern change at index {}: {} -> {}", index, oldPattern, pattern);
         if (oldPattern != null) {
             parents.forEach(parent -> parent.remove(this, oldPattern));
         }

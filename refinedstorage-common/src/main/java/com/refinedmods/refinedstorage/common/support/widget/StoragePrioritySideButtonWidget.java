@@ -13,13 +13,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static net.minecraft.client.gui.screens.Screen.hasAltDown;
-import static net.minecraft.client.gui.screens.Screen.hasControlDown;
 
 public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");
@@ -27,7 +25,7 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent INSERT_TITLE = createTranslation("gui", "insert_priority");
     private static final MutableComponent EXTRACT_TITLE = createTranslation("gui", "extract_priority");
     private static final Component HELP = createTranslation("gui", "priority.storage_help");
-    private static final ResourceLocation SPRITE = createIdentifier("widget/side_button/priority");
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/priority");
 
     private final ClientProperty<Integer> insertProperty;
     private final ClientProperty<Integer> extractProperty;
@@ -70,7 +68,7 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return SPRITE;
     }
 
@@ -99,11 +97,11 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static boolean isModifyingInsert() {
-        return hasControlDown();
+        return Minecraft.getInstance().hasControlDown();
     }
 
     private static boolean isModifyingExtract() {
-        return hasAltDown();
+        return Minecraft.getInstance().hasAltDown();
     }
 
     @Override

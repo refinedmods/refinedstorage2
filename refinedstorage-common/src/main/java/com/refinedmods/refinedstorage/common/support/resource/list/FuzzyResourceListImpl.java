@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class FuzzyResourceListImpl extends AbstractProxyMutableResourceList implements FuzzyResourceList {
     private final Map<ResourceKey, Set<ResourceKey>> normalizedFuzzyMap = new HashMap<>();

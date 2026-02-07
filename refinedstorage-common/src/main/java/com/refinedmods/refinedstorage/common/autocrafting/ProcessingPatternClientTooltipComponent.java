@@ -9,7 +9,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 
@@ -17,6 +17,7 @@ import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW;
 import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW_HEIGHT;
 import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW_WIDTH;
 import static com.refinedmods.refinedstorage.common.support.Sprites.SLOT;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent {
     private static final long CYCLE_MS = 1000;
@@ -81,8 +82,8 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
     }
 
     @Override
-    public int getHeight() {
-        return (outputTexts.size() * 9) + 2 + (rows * 18) + 3;
+    public int getHeight(final Font font) {
+        return (outputTexts.size() * font.lineHeight) + 2 + (rows * 18) + 3;
     }
 
     @Override
@@ -94,7 +95,8 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
         final long now = System.currentTimeMillis();
         if (cycleStart == 0) {
             cycleStart = now;
@@ -107,6 +109,7 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
         final int matrixSlotsY = y + (outputTexts.size() * 9) + 2;
         renderMatrixSlots(x, matrixSlotsY, true, graphics);
         graphics.blitSprite(
+            GUI_TEXTURED,
             LIGHT_ARROW,
             x + (18 * 3) + ARROW_SPACING,
             y + (outputTexts.size() * 9) + 2 + ((rows * 18) / 2) - (LIGHT_ARROW_HEIGHT / 2),
@@ -119,7 +122,7 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
     private void renderMatrixSlots(final int x,
                                    final int y,
                                    final boolean input,
-                                   final GuiGraphics graphics) {
+                                   final GuiGraphicsExtractor graphics) {
         final int maxSize = input ? inputs.size() : outputs.size();
         for (int row = 0; row < rows; ++row) {
             for (int column = 0; column < 3; ++column) {
@@ -140,12 +143,12 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
     }
 
     private void renderMatrixSlot(
-        final GuiGraphics graphics,
+        final GuiGraphicsExtractor graphics,
         final int slotX,
         final int slotY,
         final List<ResourceAmount> possibilities
     ) {
-        graphics.blitSprite(SLOT, slotX, slotY, 18, 18);
+        graphics.blitSprite(GUI_TEXTURED, SLOT, slotX, slotY, 18, 18);
         if (possibilities.isEmpty()) {
             return;
         }
@@ -157,14 +160,14 @@ class ProcessingPatternClientTooltipComponent implements ClientTooltipComponent 
         ResourceSlotRendering.renderAmount(graphics, slotX + 1, slotY + 1, resourceAmount.amount(), rendering);
     }
 
-    private void renderOutputText(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    private void renderOutputText(final Font font, final int x, final int y, final GuiGraphicsExtractor graphics) {
         for (int i = 0; i < outputTexts.size(); ++i) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 outputTexts.get(i),
                 x,
                 y + (i * 9),
-                0xAAAAAA
+                0xFFAAAAAA
             );
         }
     }

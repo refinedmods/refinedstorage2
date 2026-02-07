@@ -9,40 +9,36 @@ import com.refinedmods.refinedstorage.common.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.network.ColoredConnectionStrategy;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
-
-import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
-public class NetworkTransmitterBlockEntity
-    extends AbstractBaseNetworkNodeContainerBlockEntity<SimpleNetworkNode>
-    implements NetworkNodeExtendedMenuProvider<NetworkTransmitterData>, BlockEntityWithDrops {
+public class NetworkTransmitterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<SimpleNetworkNode>
+    implements NetworkNodeExtendedMenuProvider<NetworkTransmitterData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkTransmitterBlockEntity.class);
 
     private static final NetworkTransmitterData INACTIVE = NetworkTransmitterData.message(
@@ -58,7 +54,18 @@ public class NetworkTransmitterBlockEntity
 
     private static final String TAG_NETWORK_CARD_INVENTORY = "nc";
 
-    private final NetworkCardInventory networkCardInventory = new NetworkCardInventory();
+    private final NetworkCardInventory networkCards = new NetworkCardInventory() {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            updateReceiverLocation();
+            if (level != null && !level.isClientSide()) {
+                LOGGER.debug("Network card was changed at {}, sending network update", worldPosition);
+                NetworkTransmitterBlockEntity.this.setChanged();
+                containers.update(level);
+            }
+        }
+    };
     private final RateLimiter stateChangeRateLimiter = RateLimiter.create(1);
     private final RateLimiter networkRebuildRetryRateLimiter = RateLimiter.create(1 / 5D);
 
@@ -69,14 +76,6 @@ public class NetworkTransmitterBlockEntity
         super(BlockEntities.INSTANCE.getNetworkTransmitter(), pos, state, new SimpleNetworkNode(
             Platform.INSTANCE.getConfig().getNetworkTransmitter().getEnergyUsage()
         ));
-        networkCardInventory.addListener(container -> {
-            updateReceiverLocation();
-            if (level != null) {
-                LOGGER.debug("Network card was changed at {}, sending network update", worldPosition);
-                setChanged();
-                containers.update(level);
-            }
-        });
     }
 
     @Override
@@ -147,10 +146,11 @@ public class NetworkTransmitterBlockEntity
     @Override
     public void doWork() {
         super.doWork();
-        if (!mainNetworkNode.isActive() || mainNetworkNode.getNetwork() == null || receiverKey == null) {
+        final Network network = mainNetworkNode.getNetwork();
+        if (!mainNetworkNode.isActive() || network == null || receiverKey == null) {
             return;
         }
-        final boolean receiverFound = isReceiverFoundInNetwork(mainNetworkNode.getNetwork(), receiverKey);
+        final boolean receiverFound = isReceiverFoundInNetwork(network, receiverKey);
         if (!receiverFound && networkRebuildRetryRateLimiter.tryAcquire()) {
             tryReconnectingWithReceiver();
         }
@@ -187,27 +187,43 @@ public class NetworkTransmitterBlockEntity
         return network.getComponent(GraphNetworkComponent.class).getContainer(key) != null;
     }
 
-    Container getNetworkCardInventory() {
-        return networkCardInventory;
+    Container getNetworkCards() {
+        return networkCards;
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_NETWORK_CARD_INVENTORY, ContainerUtil.write(networkCardInventory, provider));
-    }
-
-    @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        if (tag.contains(TAG_NETWORK_CARD_INVENTORY)) {
-            ContainerUtil.read(tag.getCompound(TAG_NETWORK_CARD_INVENTORY), networkCardInventory, provider);
+    public void setLevel(final Level level) {
+        super.setLevel(level);
+        if (!level.isClientSide()) {
+            containers.update(level);
         }
-        updateReceiverLocation();
     }
 
-    private void updateReceiverLocation() {
-        receiverKey = networkCardInventory.getReceiverLocation().map(NetworkReceiverKey::new).orElse(null);
+    @Override
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_NETWORK_CARD_INVENTORY, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(networkCards.getItems()));
+        updateReceiverLocation();
+        final boolean wasPlacedDismantled = level != null && !level.isClientSide();
+        if (wasPlacedDismantled) {
+            containers.update(level);
+        }
+        super.loadAdditional(input);
+    }
+
+    @Override
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_NETWORK_CARD_INVENTORY, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(networkCards.getItems()));
+    }
+
+    @Override
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            Containers.dropContents(level, pos, networkCards.getItems());
+        }
     }
 
     @Nullable
@@ -231,8 +247,7 @@ public class NetworkTransmitterBlockEntity
         return overrideName(ContentNames.NETWORK_TRANSMITTER);
     }
 
-    @Override
-    public final NonNullList<ItemStack> getDrops() {
-        return NonNullList.of(ItemStack.EMPTY, networkCardInventory.getNetworkCard());
+    private void updateReceiverLocation() {
+        receiverKey = networkCards.getReceiverLocation().map(NetworkReceiverKey::new).orElse(null);
     }
 }

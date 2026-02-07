@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStra
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -22,6 +20,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil.ofFluidVariant;
 import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil.toFluidVariant;
@@ -79,9 +78,6 @@ public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     @Override
     public boolean onTransfer(final int slotIndex) {
         final SingleSlotStorage<ItemVariant> itemSlotStorage = playerInventoryStorage.getSlot(slotIndex);
-        if (itemSlotStorage == null) {
-            return false;
-        }
         final Storage<FluidVariant> fluidSlotStorage = FluidStorage.ITEM.find(
             itemSlotStorage.getResource().toStack(),
             ContainerItemContext.ofPlayerSlot(player, itemSlotStorage)

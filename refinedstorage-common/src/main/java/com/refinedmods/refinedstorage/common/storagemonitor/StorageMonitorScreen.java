@@ -6,21 +6,19 @@ import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonW
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
 public class StorageMonitorScreen extends AbstractBaseScreen<StorageMonitorContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage_monitor.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/storage_monitor.png");
 
     public StorageMonitorScreen(final StorageMonitorContainerMenu menu,
                                 final Inventory playerInventory,
                                 final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 211, 137);
         this.inventoryLabelY = 43;
-        this.imageWidth = 211;
-        this.imageHeight = 137;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class StorageMonitorScreen extends AbstractBaseScreen<StorageMonitorConta
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

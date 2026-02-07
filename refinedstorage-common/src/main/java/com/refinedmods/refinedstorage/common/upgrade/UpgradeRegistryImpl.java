@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 public class UpgradeRegistryImpl implements UpgradeRegistry {
     private final Map<UpgradeDestination, Set<UpgradeMapping>> byDestination = new ConcurrentHashMap<>();
@@ -32,26 +31,9 @@ public class UpgradeRegistryImpl implements UpgradeRegistry {
         };
     }
 
-    private static UpgradeMapping createMapping(final UpgradeDestination destination,
-                                                final Item upgradeItem,
+    private static UpgradeMapping createMapping(final UpgradeDestination destination, final Item upgradeItem,
                                                 final int maxAmount) {
-        final ItemStack displayItemStack = new ItemStack(upgradeItem);
-        return new UpgradeMapping(
-            destination,
-            upgradeItem,
-            maxAmount,
-            upgradeItem.getName(displayItemStack).copy()
-                .append(" ")
-                .append("(")
-                .append(String.valueOf(maxAmount))
-                .append(")"),
-            destination.getName().copy()
-                .append(" ")
-                .append("(")
-                .append(String.valueOf(maxAmount))
-                .append(")"),
-            displayItemStack
-        );
+        return new UpgradeMapping(destination, upgradeItem, maxAmount);
     }
 
     @Override

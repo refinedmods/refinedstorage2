@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "refinedstorage:quartz_enriched_iron",
+    "S": "minecraft:sugar",
+    "U": "refinedstorage:upgrade"
+  },
+  "pattern": [
+    "ESE",
+    "SUS",
+    "EEE"
+  ],
+  "result": {
+    "id": "refinedstorage:speed_upgrade"
+  }
+}

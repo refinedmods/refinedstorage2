@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStra
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -61,7 +61,7 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     @Override
     public boolean onTransfer(final int slotIndex) {
         final Slot slot = containerMenu.getSlot(slotIndex);
-        final InventoryStorage inventoryStorage = InventoryStorage.of(slot.container, null);
+        final ContainerStorage inventoryStorage = ContainerStorage.of(slot.container, null);
         final SingleSlotStorage<ItemVariant> storage = inventoryStorage.getSlot(slot.getContainerSlot());
         final ItemVariant itemVariantInSlot = StorageUtil.findExtractableResource(storage, null);
         if (itemVariantInSlot == null) {

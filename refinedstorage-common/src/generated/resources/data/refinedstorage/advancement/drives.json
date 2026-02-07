@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "disk_drive_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:disk_drive"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.drives.description"
+    },
+    "icon": {
+      "id": "refinedstorage:disk_drive"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.drives"
+    }
+  },
+  "requirements": [
+    [
+      "disk_drive_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

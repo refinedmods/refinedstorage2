@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.fabric.storage.externalstorage;
 
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage.common.api.storage.externalstorage.ExternalStorageProviderFactory;
@@ -12,16 +11,17 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 public class FabricStorageExternalStorageProviderFactory<T>
     implements ExternalStorageProviderFactory {
     private final BlockApiLookup<Storage<T>, Direction> lookup;
     private final Function<T, ResourceKey> fromPlatformMapper;
-    private final Function<ResourceKey, @NullableType T> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
 
     public FabricStorageExternalStorageProviderFactory(final BlockApiLookup<Storage<T>, Direction> lookup,
                                                        final Function<T, ResourceKey> fromPlatformMapper,
-                                                       @NullableType final Function<ResourceKey, T> toPlatformMapper) {
+                                                       final Function<ResourceKey, @Nullable T> toPlatformMapper) {
         this.lookup = lookup;
         this.fromPlatformMapper = fromPlatformMapper;
         this.toPlatformMapper = toPlatformMapper;

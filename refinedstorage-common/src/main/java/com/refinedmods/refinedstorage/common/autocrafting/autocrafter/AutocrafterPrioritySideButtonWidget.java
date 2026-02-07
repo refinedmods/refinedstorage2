@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -20,7 +20,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 class AutocrafterPrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");
     private static final Component HELP = createTranslation("gui", "priority.autocrafter_help");
-    private static final ResourceLocation SPRITE = createIdentifier("widget/side_button/priority");
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/priority");
 
     private final ClientProperty<Integer> property;
 
@@ -40,7 +40,7 @@ class AutocrafterPrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return SPRITE;
     }
 

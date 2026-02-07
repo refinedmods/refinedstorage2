@@ -9,40 +9,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 public class PlatformRegistryImpl<T> implements PlatformRegistry<T> {
     private static final String VALUE_NOT_PRESENT_ERROR = "Value must be present";
     private static final String ID_NOT_PRESENT_ERROR = "ID must be present";
 
-    private final Map<ResourceLocation, T> idToValueMap = new HashMap<>();
-    private final Map<T, ResourceLocation> valueToIdMap = new HashMap<>();
+    private final Map<Identifier, T> idToValueMap = new HashMap<>();
+    private final Map<T, Identifier> valueToIdMap = new HashMap<>();
     private final List<T> order = new ArrayList<>();
     private final List<T> viewList = Collections.unmodifiableList(order);
-    private final Codec<T> codec = ResourceLocation.CODEC.comapFlatMap(
+    private final Codec<T> codec = Identifier.CODEC.comapFlatMap(
         id -> get(id).map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Unknown ID: " + id)),
         value -> getId(value).orElseThrow()
     );
     private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec = new StreamCodec<>() {
         @Override
         public T decode(final RegistryFriendlyByteBuf buf) {
-            return get(buf.readResourceLocation()).orElseThrow();
+            return get(buf.readIdentifier()).orElseThrow();
         }
 
         @Override
         public void encode(final RegistryFriendlyByteBuf buf, final T value) {
-            buf.writeResourceLocation(getId(value).orElseThrow());
+            buf.writeIdentifier(getId(value).orElseThrow());
         }
     };
 
     @Override
-    public void register(final ResourceLocation id, final T value) {
+    public void register(final Identifier id, final T value) {
         CoreValidations.validateNotNull(id, ID_NOT_PRESENT_ERROR);
         CoreValidations.validateNotNull(value, VALUE_NOT_PRESENT_ERROR);
         if (idToValueMap.containsKey(id) || order.contains(value)) {
@@ -54,13 +54,13 @@ public class PlatformRegistryImpl<T> implements PlatformRegistry<T> {
     }
 
     @Override
-    public Optional<ResourceLocation> getId(final T value) {
+    public Optional<Identifier> getId(final T value) {
         CoreValidations.validateNotNull(value, VALUE_NOT_PRESENT_ERROR);
         return Optional.ofNullable(valueToIdMap.get(value));
     }
 
     @Override
-    public Optional<T> get(final ResourceLocation id) {
+    public Optional<T> get(final Identifier id) {
         CoreValidations.validateNotNull(id, ID_NOT_PRESENT_ERROR);
         return Optional.ofNullable(idToValueMap.get(id));
     }

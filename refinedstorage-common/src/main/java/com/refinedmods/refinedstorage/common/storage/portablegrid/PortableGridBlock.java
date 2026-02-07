@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirectionType;
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirection;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirectionType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -21,8 +22,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
-public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
+public class PortableGridBlock extends AbstractDirectionalBlock<OrientedDirection> implements EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     private static final VoxelShape SHAPE_HORIZONTAL = box(0, 0, 0, 16, 13.2, 16);
@@ -36,7 +38,9 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
 
     public PortableGridBlock(final PortableGridType type,
                              final BlockEntityProvider<AbstractPortableGridBlockEntity> blockEntityProvider) {
-        super(BlockConstants.PROPERTIES);
+        super(BlockProperties.stone(type == PortableGridType.NORMAL
+            ? ContentIds.PORTABLE_GRID
+            : ContentIds.CREATIVE_PORTABLE_GRID));
         this.ticker = new PortableGridBlockEntityTicker(() -> type == PortableGridType.NORMAL
             ? BlockEntities.INSTANCE.getPortableGrid()
             : BlockEntities.INSTANCE.getCreativePortableGrid());
@@ -55,8 +59,8 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
     }
 
     @Override
-    protected DirectionType<BiDirection> getDirectionType() {
-        return BiDirectionType.INSTANCE;
+    protected DirectionType<OrientedDirection> getDirectionType() {
+        return OrientedDirectionType.INSTANCE;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
                                final BlockGetter level,
                                final BlockPos pos,
                                final CollisionContext ctx) {
-        final BiDirection direction = getDirection(state);
+        final OrientedDirection direction = getDirection(state);
         if (direction == null) {
             return SHAPE_HORIZONTAL;
         }
@@ -83,9 +87,9 @@ public class PortableGridBlock extends AbstractDirectionalBlock<BiDirection> imp
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
-                                                                  final BlockState state,
-                                                                  final BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(final Level level,
+                                                                            final BlockState state,
+                                                                            final BlockEntityType<T> type) {
         return ticker.get(level, type);
     }
 }

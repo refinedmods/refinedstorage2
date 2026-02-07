@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.detector;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class DetectorNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;

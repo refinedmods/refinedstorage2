@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -128,11 +129,10 @@ class CraftingTree<T> {
         return CalculationResult.SUCCESS;
     }
 
-    @Nullable
-    private CraftingState.ResourceState tryCalculateChild(final IngredientState ingredientState,
-                                                          final CraftingState.ResourceState resourceState,
-                                                          final long remaining,
-                                                          final CancellationToken cancellationToken)
+    private CraftingState.@Nullable ResourceState tryCalculateChild(final IngredientState ingredientState,
+                                                                    final CraftingState.ResourceState resourceState,
+                                                                    final long remaining,
+                                                                    final CancellationToken cancellationToken)
         throws CancellationException {
         final Collection<Pattern> childPatterns = patternRepository.getByOutput(resourceState.resource());
         if (!childPatterns.isEmpty()) {
@@ -145,12 +145,11 @@ class CraftingTree<T> {
             });
     }
 
-    @Nullable
-    private CraftingState.ResourceState calculateChild(final IngredientState ingredientState,
-                                                       final long remaining,
-                                                       final Collection<Pattern> childPatterns,
-                                                       final CraftingState.ResourceState resourceState,
-                                                       final CancellationToken cancellationToken)
+    private CraftingState.@Nullable ResourceState calculateChild(final IngredientState ingredientState,
+                                                                 final long remaining,
+                                                                 final Collection<Pattern> childPatterns,
+                                                                 final CraftingState.ResourceState resourceState,
+                                                                 final CancellationToken cancellationToken)
         throws CancellationException {
         final ChildCalculationResult<T> result = calculateChild(remaining, childPatterns, resourceState,
             cancellationToken);
@@ -191,9 +190,10 @@ class CraftingTree<T> {
         return new ChildCalculationResult<>(false, requireNonNull(lastChildTree));
     }
 
-    @Nullable
-    private CraftingState.ResourceState cycleToNextIngredientOrFail(final IngredientState ingredientState,
-                                                                    final ChildCalculationResult<T> childResult) {
+    private CraftingState.@Nullable ResourceState cycleToNextIngredientOrFail(
+        final IngredientState ingredientState,
+        final ChildCalculationResult<T> childResult
+    ) {
         return ingredientState.cycle().orElseGet(() -> {
             this.craftingState = childResult.childTree.craftingState;
             listener.childCalculationCompleted(childResult.childTree.listener);

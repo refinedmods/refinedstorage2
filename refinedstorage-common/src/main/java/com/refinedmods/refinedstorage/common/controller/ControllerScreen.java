@@ -5,17 +5,16 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/controller.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/controller.png");
 
     @Nullable
     private ProgressWidget progressWidget;
@@ -23,10 +22,8 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     public ControllerScreen(final ControllerContainerMenu menu,
                             final Inventory playerInventory,
                             final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 176, 189);
         this.inventoryLabelY = 94;
-        this.imageWidth = 176;
-        this.imageHeight = 189;
     }
 
     @Override
@@ -53,7 +50,7 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

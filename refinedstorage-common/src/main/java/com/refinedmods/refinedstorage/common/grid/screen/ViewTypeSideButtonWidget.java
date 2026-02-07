@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -24,10 +24,10 @@ class ViewTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_NON_AUTOCRAFTABLE = List.of(
         createTranslation("gui", "grid.view_type.non_autocraftable").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation ALL = createIdentifier("widget/side_button/grid/view_type/all");
-    private static final ResourceLocation CRAFTABLE =
+    private static final Identifier ALL = createIdentifier("widget/side_button/grid/view_type/all");
+    private static final Identifier CRAFTABLE =
         createIdentifier("widget/side_button/grid/view_type/autocraftable");
-    private static final ResourceLocation NON_CRAFTABLE =
+    private static final Identifier NON_CRAFTABLE =
         createIdentifier("widget/side_button/grid/view_type/non_autocraftable");
 
     private final AbstractGridContainerMenu menu;
@@ -50,7 +50,7 @@ class ViewTypeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (menu.getViewType()) {
             case ALL -> ALL;
             case AUTOCRAFTABLE -> CRAFTABLE;

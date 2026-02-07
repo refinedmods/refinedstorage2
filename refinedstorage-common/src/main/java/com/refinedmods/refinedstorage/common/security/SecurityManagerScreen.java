@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.common.security;
 
-import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
@@ -8,25 +7,24 @@ import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButt
 
 import java.util.List;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public class SecurityManagerScreen extends AbstractBaseScreen<SecurityManagerContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/security_manager.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/security_manager.png");
 
     public SecurityManagerScreen(final SecurityManagerContainerMenu menu,
                                  final Inventory playerInventory,
                                  final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 197, 154);
         this.inventoryLabelY = 59;
-        this.imageWidth = 197;
-        this.imageHeight = 154;
     }
 
     @Override
@@ -39,23 +37,23 @@ public class SecurityManagerScreen extends AbstractBaseScreen<SecurityManagerCon
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         if (hoveredSlot != null && hoveredSlot == menu.getFallbackSecurityCardSlot() && !hoveredSlot.hasItem()) {
-            Platform.INSTANCE.renderTooltip(graphics, List.of(
+            graphics.tooltip(font, List.of(
                 ClientTooltipComponent.create(
                     createTranslation("gui", "security_manager.fallback_security_card_slot_hint").getVisualOrderText()
                 ),
                 HelpClientTooltipComponent.create(
                     createTranslation("gui", "security_manager.no_fallback_security_card_consequence")
                 )
-            ), x, y);
+            ), x, y, DefaultTooltipPositioner.INSTANCE, null);
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

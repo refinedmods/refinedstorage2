@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.Nullable;
 
 public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
@@ -103,8 +103,8 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int x, final int y) {
-        Platform.INSTANCE.getFluidRenderer().render(graphics.pose(), x, y, resource);
+    public void render(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        Platform.INSTANCE.getFluidRenderer().render(graphics, x, y, resource);
     }
 
     @Override

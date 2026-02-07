@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "C": "refinedstorage:construction_core",
+    "D": "refinedstorage:destruction_core",
+    "E": "#c:ender_pearls",
+    "M": "refinedstorage:machine_casing",
+    "N": "#c:ingots/netherite"
+  },
+  "pattern": [
+    "ANA",
+    "CMD",
+    "EEE"
+  ],
+  "result": {
+    "id": "refinedstorage:network_receiver"
+  }
+}

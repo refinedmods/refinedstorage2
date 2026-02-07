@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import org.jspecify.annotations.Nullable;
 
 public record RegulatorUpgradeState(double amount, Optional<PlatformResourceKey> resource) {
     public static final Codec<RegulatorUpgradeState> CODEC = RecordCodecBuilder.create(instance -> instance.group(

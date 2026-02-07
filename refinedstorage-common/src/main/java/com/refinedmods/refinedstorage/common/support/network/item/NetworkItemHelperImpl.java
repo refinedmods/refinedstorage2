@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkIte
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.GlobalPos;
@@ -34,14 +34,14 @@ public class NetworkItemHelperImpl implements NetworkItemHelper {
     }
 
     @Override
-    public void addTooltip(final ItemStack stack, final List<Component> lines) {
-        getNetworkLocation(stack).ifPresentOrElse(network -> lines.add(createTranslation(
+    public void addTooltip(final ItemStack stack, final Consumer<Component> builder) {
+        getNetworkLocation(stack).ifPresentOrElse(network -> builder.accept(createTranslation(
             "item",
             "network_item.bound_to",
             network.pos().getX(),
             network.pos().getY(),
             network.pos().getZ()
-        ).withStyle(ChatFormatting.GRAY)), () -> lines.add(UNBOUND));
+        ).withStyle(ChatFormatting.GRAY)), () -> builder.accept(UNBOUND));
     }
 
     @Override

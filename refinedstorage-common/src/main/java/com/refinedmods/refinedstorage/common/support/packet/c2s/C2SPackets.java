@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
 
@@ -104,7 +104,7 @@ public final class C2SPackets {
     }
 
     public static void sendPatternGridAllowedAlternativesChange(final int slotIndex,
-                                                                final Set<ResourceLocation> ids) {
+                                                                final Set<Identifier> ids) {
         Platform.INSTANCE.sendPacketToServer(new PatternGridAllowedAlternativesChangePacket(slotIndex, ids));
     }
 

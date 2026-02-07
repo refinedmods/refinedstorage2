@@ -4,36 +4,45 @@ package com.refinedmods.refinedstorage.common.upgrade;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeMapping;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 public class UpgradeItemClientTooltipComponent implements ClientTooltipComponent {
-    private final UpgradeMapping mapping;
+    private final ItemStack displayItemStack;
+    private final Component displayName;
 
     public UpgradeItemClientTooltipComponent(final UpgradeMapping mapping) {
-        this.mapping = mapping;
+        this.displayItemStack = mapping.upgradeItem().getDefaultInstance();
+        this.displayName = mapping.upgradeItem().getName(displayItemStack).copy()
+            .append(" ")
+            .append("(")
+            .append(String.valueOf(mapping.maxAmount()))
+            .append(")");
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return 18;
     }
 
     @Override
     public int getWidth(final Font font) {
-        return 16 + 4 + font.width(mapping.upgradeDisplayName());
+        return 16 + 4 + font.width(displayName);
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
-        graphics.renderItem(mapping.displayItemStack(), x, y);
-        graphics.renderItemDecorations(font, mapping.displayItemStack(), x, y);
-        graphics.drawString(
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
+        graphics.item(displayItemStack, x, y);
+        graphics.itemDecorations(font, displayItemStack, x, y);
+        graphics.text(
             font,
-            mapping.upgradeDisplayName(),
+            displayName,
             x + 16 + 4,
             y + 4,
-            0xFFFFFF
+            0xFFFFFFFF
         );
     }
 }

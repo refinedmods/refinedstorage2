@@ -15,7 +15,7 @@ public interface RootStorageListener extends ResourceListListener {
      * @param amount   the amount
      * @return the amount intercepted that will not be passed to other before insert listeners and the storage
      */
-    default long beforeInsert(ResourceKey resource, long amount) {
+    default long beforeInsert(final ResourceKey resource, final long amount) {
         return 0;
     }
 
@@ -27,7 +27,7 @@ public interface RootStorageListener extends ResourceListListener {
      * @param amount   the amount
      * @return the amount reserved that will not be passed to other after insert listeners
      */
-    default long afterInsert(ResourceKey resource, long amount) {
+    default long afterInsert(final ResourceKey resource, final long amount) {
         return 0;
     }
 }

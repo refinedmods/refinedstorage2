@@ -20,7 +20,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class BlockBreakDestructorStrategyFactory implements DestructorStrategyFactory {
-    private static final ItemStack DEFAULT_TOOL = new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE);
     private static final List<UpgradeMapping> UPGRADE_MAPPINGS = List.of(
         new UpgradeMapping(Items.INSTANCE::getSilkTouchUpgrade, Enchantments.SILK_TOUCH, 1),
         new UpgradeMapping(Items.INSTANCE::getFortune3Upgrade, Enchantments.FORTUNE, 3),
@@ -34,7 +33,7 @@ public class BlockBreakDestructorStrategyFactory implements DestructorStrategyFa
                                                final Direction direction,
                                                final UpgradeState upgradeState,
                                                final boolean pickupItems) {
-        final ItemStack tool = DEFAULT_TOOL.copy();
+        final ItemStack tool = new ItemStack(net.minecraft.world.item.Items.DIAMOND_PICKAXE);
         enchantTool(level, upgradeState, tool);
         return Optional.of(new BlockBreakDestructorStrategy(level, pos, direction, tool));
     }

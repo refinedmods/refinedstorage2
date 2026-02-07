@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/configuration_card/inactive"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/configuration_card/active"
+    },
+    "property": "refinedstorage:active_configuration_card"
+  }
+}

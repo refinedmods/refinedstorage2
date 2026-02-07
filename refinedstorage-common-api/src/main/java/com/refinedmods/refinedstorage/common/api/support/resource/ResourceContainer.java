@@ -6,13 +6,11 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a {@link Container} that can hold any {@link ResourceType}.
@@ -52,7 +50,7 @@ public interface ResourceContainer {
         return true;
     }
 
-    default boolean isEmpty(int index) {
+    default boolean isEmpty(final int index) {
         return get(index) == null;
     }
 
@@ -68,10 +66,6 @@ public interface ResourceContainer {
 
     List<ResourceKey> getResources();
 
-    CompoundTag toTag(HolderLookup.Provider provider);
-
-    void fromTag(CompoundTag tag, HolderLookup.Provider provider);
-
     ResourceFactory getPrimaryResourceFactory();
 
     Set<ResourceFactory> getAlternativeResourceFactories();
@@ -81,6 +75,8 @@ public interface ResourceContainer {
     long insert(ResourceKey resource, long amount, Action action);
 
     long extract(ResourceKey resource, long amount, Action action);
+
+    void load(ResourceContainerContents contents);
 
     ResourceContainer copy();
 }

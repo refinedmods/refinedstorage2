@@ -1,0 +1,33 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:block/controller/nearly_off"
+        },
+        "threshold": 0.01
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:block/controller/nearly_on"
+        },
+        "threshold": 0.3
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:block/controller/green"
+        },
+        "threshold": 0.4
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:block/controller/off"
+    },
+    "property": "refinedstorage:controller_energy_level"
+  }
+}

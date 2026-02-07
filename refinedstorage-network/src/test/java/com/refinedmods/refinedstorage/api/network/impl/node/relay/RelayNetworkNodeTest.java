@@ -477,7 +477,7 @@ class RelayNetworkNodeTest {
     static Runnable addPattern(final AutocraftingNetworkComponent component, final ResourceKey output) {
         final Pattern pattern = pattern().ingredient(C, 1).output(output, 1).build();
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern);
+        patternProvider.tryUpdatePattern(0, pattern);
         final NetworkNodeContainer container = () -> patternProvider;
         component.onContainerAdded(container);
         return () -> component.onContainerRemoved(container);

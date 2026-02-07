@@ -12,18 +12,14 @@ import java.util.List;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 
 class ExternalStorageTrackedStorageRepository extends InMemoryTrackedStorageRepository {
-    private static final Codec<ChangedByAt> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    private static final Codec<ChangedByAt> SINGLE_CODEC = RecordCodecBuilder.create(instance -> instance.group(
         ResourceCodecs.CODEC.fieldOf("resource").forGetter(ChangedByAt::resource),
-        Codec.STRING.fieldOf("changedBy").forGetter(ChangedByAt::changedBy),
-        Codec.LONG.fieldOf("changedAt").forGetter(ChangedByAt::changedAt)
+        Codec.STRING.fieldOf("by").forGetter(ChangedByAt::changedBy),
+        Codec.LONG.fieldOf("at").forGetter(ChangedByAt::changedAt)
     ).apply(instance, ChangedByAt::new));
-    private static final Codec<List<ChangedByAt>> LIST_CODEC = Codec.list(CODEC);
+    public static final Codec<List<ChangedByAt>> CODEC = Codec.list(SINGLE_CODEC);
 
     private final Runnable listener;
 
@@ -37,15 +33,7 @@ class ExternalStorageTrackedStorageRepository extends InMemoryTrackedStorageRepo
         listener.run();
     }
 
-    Tag toTag(final HolderLookup.Provider provider) {
-        return LIST_CODEC.encode(
-            getTrackedResources(),
-            provider.createSerializationContext(NbtOps.INSTANCE),
-            new ListTag()
-        ).getOrThrow();
-    }
-
-    private List<ChangedByAt> getTrackedResources() {
+    List<ChangedByAt> getTrackedResources() {
         return trackedResourcesByActorType.getOrDefault(PlayerActor.class, Collections.emptyMap())
             .entrySet()
             .stream()
@@ -58,17 +46,15 @@ class ExternalStorageTrackedStorageRepository extends InMemoryTrackedStorageRepo
             .toList();
     }
 
-    void fromTag(final Tag tag, final HolderLookup.Provider provider) {
-        LIST_CODEC.decode(provider.createSerializationContext(NbtOps.INSTANCE), tag).ifSuccess(
-            result -> result.getFirst().forEach(
-                // call super to avoid marking dirty
-                changedByAt -> super.update(
-                    changedByAt.resource(),
-                    new PlayerActor(changedByAt.changedBy()),
-                    changedByAt.changedAt()
-                )));
+    void load(final List<ChangedByAt> items) {
+        // call super to avoid marking dirty
+        items.forEach(item -> super.update(
+            item.resource(),
+            new PlayerActor(item.changedBy()),
+            item.changedAt()
+        ));
     }
 
-    private record ChangedByAt(PlatformResourceKey resource, String changedBy, long changedAt) {
+    public record ChangedByAt(PlatformResourceKey resource, String changedBy, long changedAt) {
     }
 }

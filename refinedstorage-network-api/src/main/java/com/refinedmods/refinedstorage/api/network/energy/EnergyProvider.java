@@ -10,7 +10,7 @@ public interface EnergyProvider {
 
     long extract(long amount);
 
-    default boolean contains(EnergyProvider energyProvider) {
+    default boolean contains(final EnergyProvider energyProvider) {
         return false;
     }
 }

@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage.fabric.api;
 
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.minecraft.core.Direction;
+import org.jspecify.annotations.Nullable;
 
 public class RefinedStorageFabricApiProxy implements RefinedStorageFabricApi {
     @Nullable
@@ -32,7 +31,7 @@ public class RefinedStorageFabricApiProxy implements RefinedStorageFabricApi {
 
     @Override
     public void addStorageExternalPatternSinkStrategyFactory(
-        final FabricStorageExternalPatternSinkStrategyFactory factory) {
+        final StorageExternalPatternSinkStrategyFactory factory) {
         ensureLoaded().addStorageExternalPatternSinkStrategyFactory(factory);
     }
 }

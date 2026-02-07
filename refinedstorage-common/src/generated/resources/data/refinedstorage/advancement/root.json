@@ -1,0 +1,33 @@
+{
+  "criteria": {
+    "controller_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:controllers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "refinedstorage:gui/advancements",
+    "description": {
+      "translate": "advancements.refinedstorage.root.description"
+    },
+    "icon": {
+      "id": "refinedstorage:creative_controller"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "mod.refinedstorage"
+    }
+  },
+  "requirements": [
+    [
+      "controller_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
+    "#refinedstorage:detectors",
+    "#c:dyes/cyan"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:cyan_detector"
   }
 }

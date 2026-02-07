@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageConta
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import org.jspecify.annotations.Nullable;
 
 public class DiskContainerBlockEntityTicker
     <T extends AbstractStorageContainerNetworkNode, B extends AbstractDiskContainerBlockEntity<T>>

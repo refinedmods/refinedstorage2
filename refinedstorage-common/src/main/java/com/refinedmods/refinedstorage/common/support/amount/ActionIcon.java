@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.support.amount;
 
 import com.refinedmods.refinedstorage.common.support.Sprites;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public enum ActionIcon {
     ERROR(Sprites.ERROR),
@@ -11,13 +11,13 @@ public enum ActionIcon {
     RESET(Sprites.RESET),
     SET(Sprites.SET);
 
-    private final ResourceLocation sprite;
+    private final Identifier sprite;
 
-    ActionIcon(final ResourceLocation sprite) {
+    ActionIcon(final Identifier sprite) {
         this.sprite = sprite;
     }
 
-    public ResourceLocation getSprite() {
+    public Identifier getSprite() {
         return sprite;
     }
 }

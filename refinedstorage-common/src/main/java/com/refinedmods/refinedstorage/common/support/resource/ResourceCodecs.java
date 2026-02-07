@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import java.util.Optional;
@@ -18,7 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class ResourceCodecs {
     public static final MapCodec<ItemResource> ITEM_MAP_CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
@@ -26,16 +27,38 @@ public final class ResourceCodecs {
         DataComponentPatch.CODEC.fieldOf("components").forGetter(ItemResource::components)
     ).apply(ins, ItemResource::new));
     public static final Codec<ItemResource> ITEM_CODEC = ITEM_MAP_CODEC.codec();
+    public static final Codec<ResourceKey> NATIVE_ITEM_CODEC = ITEM_CODEC.xmap(
+        itemResource -> itemResource,
+        resourceKey -> {
+            if (resourceKey instanceof ItemResource itemResource) {
+                return itemResource;
+            }
+            throw new IllegalArgumentException("Expected ItemResource");
+        }
+    );
 
     public static final MapCodec<FluidResource> FLUID_MAP_CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
         BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(FluidResource::fluid),
         DataComponentPatch.CODEC.fieldOf("components").forGetter(FluidResource::components)
     ).apply(ins, FluidResource::new));
     public static final Codec<FluidResource> FLUID_CODEC = FLUID_MAP_CODEC.codec();
+    public static final Codec<ResourceKey> NATIVE_FLUID_CODEC = FLUID_CODEC.xmap(
+        fluidResource -> fluidResource,
+        resourceKey -> {
+            if (resourceKey instanceof FluidResource fluidResource) {
+                return fluidResource;
+            }
+            throw new IllegalArgumentException("Expected FluidResource");
+        }
+    );
 
     public static final Codec<PlatformResourceKey> CODEC = RefinedStorageApi.INSTANCE.getResourceTypeRegistry()
         .codec()
         .dispatch(PlatformResourceKey::getResourceType, ResourceType::getMapCodec);
+    public static final Codec<ResourceKey> NATIVE_CODEC = RefinedStorageApi.INSTANCE.getResourceTypeRegistry()
+        .codec()
+        .dispatch(r -> ((PlatformResourceKey) r).getResourceType(), ResourceType::getMapCodec);
+
     public static final Codec<ResourceAmount> AMOUNT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
         CODEC.fieldOf("resource").forGetter(resourceAmount -> (PlatformResourceKey) resourceAmount.resource()),
         Codec.LONG.fieldOf("amount").forGetter(ResourceAmount::amount)
@@ -43,10 +66,14 @@ public final class ResourceCodecs {
     public static final Codec<Optional<ResourceAmount>> AMOUNT_OPTIONAL_CODEC = AMOUNT_CODEC.optionalFieldOf("resource")
         .codec();
 
+    public static final Codec<ResourceContainerContents> CONTAINER_CONTENTS_CODEC =
+        Codec.list(ResourceCodecs.AMOUNT_OPTIONAL_CODEC)
+            .xmap(ResourceContainerContents::new, ResourceContainerContents::slots);
+
     public static final StreamCodec<RegistryFriendlyByteBuf, PlatformResourceKey> STREAM_CODEC = new StreamCodec<>() {
         @Override
         public PlatformResourceKey decode(final RegistryFriendlyByteBuf buf) {
-            final ResourceLocation id = buf.readResourceLocation();
+            final Identifier id = buf.readIdentifier();
             final ResourceType resourceType = RefinedStorageApi.INSTANCE.getResourceTypeRegistry()
                 .get(id)
                 .orElseThrow();
@@ -56,9 +83,9 @@ public final class ResourceCodecs {
         @Override
         public void encode(final RegistryFriendlyByteBuf buf, final PlatformResourceKey resourceKey) {
             final ResourceType resourceType = resourceKey.getResourceType();
-            final ResourceLocation id = RefinedStorageApi.INSTANCE.getResourceTypeRegistry().getId(resourceType)
+            final Identifier id = RefinedStorageApi.INSTANCE.getResourceTypeRegistry().getId(resourceType)
                 .orElseThrow();
-            buf.writeResourceLocation(id);
+            buf.writeIdentifier(id);
             resourceType.getStreamCodec().encode(buf, resourceKey);
         }
     };

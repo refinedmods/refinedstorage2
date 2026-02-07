@@ -7,13 +7,14 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW;
 import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW_HEIGHT;
 import static com.refinedmods.refinedstorage.common.support.Sprites.LIGHT_ARROW_WIDTH;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class SmithingTablePatternClientTooltipComponent implements ClientTooltipComponent {
     private static final int ARROW_SPACING = 8;
@@ -27,17 +28,18 @@ class SmithingTablePatternClientTooltipComponent implements ClientTooltipCompone
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
-        graphics.drawString(font, outputText, x, y, 0xAAAAAA);
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
+        graphics.text(font, outputText, x, y, 0xFFAAAAAA);
         final int slotsY = y + 9 + 2;
-        graphics.blitSprite(Sprites.SLOT, x, slotsY, 18, 18);
+        graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, x, slotsY, 18, 18);
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(ItemResource.class);
         rendering.render(pattern.template(), graphics, x + 1, slotsY + 1);
-        graphics.blitSprite(Sprites.SLOT, x + 18, slotsY, 18, 18);
+        graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, x + 18, slotsY, 18, 18);
         rendering.render(pattern.base(), graphics, x + 18 + 1, slotsY + 1);
-        graphics.blitSprite(Sprites.SLOT, x + 18 + 18, slotsY, 18, 18);
+        graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, x + 18 + 18, slotsY, 18, 18);
         rendering.render(pattern.addition(), graphics, x + 18 + 18 + 1, slotsY + 1);
-        graphics.blitSprite(
+        graphics.blitSprite(GUI_TEXTURED,
             LIGHT_ARROW,
             x + (18 * 3) + ARROW_SPACING,
             y + 9 + 2 + (18 / 2) - (LIGHT_ARROW_HEIGHT / 2),
@@ -45,12 +47,12 @@ class SmithingTablePatternClientTooltipComponent implements ClientTooltipCompone
             LIGHT_ARROW_HEIGHT
         );
         final int lastSlotX = x + (18 * 3) + ARROW_SPACING + LIGHT_ARROW_WIDTH + ARROW_SPACING;
-        graphics.blitSprite(Sprites.SLOT, lastSlotX, slotsY, 18, 18);
+        graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, lastSlotX, slotsY, 18, 18);
         rendering.render(pattern.output(), graphics, lastSlotX + 1, slotsY + 1);
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return 9 + 2 + 18 + 3;
     }
 

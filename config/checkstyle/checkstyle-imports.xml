@@ -3,5 +3,6 @@
         "https://checkstyle.org/dtds/import_control_1_4.dtd">
 <import-control pkg="com.refinedmods.refinedstorage" strategyOnMismatch="allowed">
     <disallow pkg="org.jetbrains.annotations"/>
+    <disallow pkg="javax.annotation"/>
     <disallow pkg="org.apache.logging.log4j"/>
 </import-control>

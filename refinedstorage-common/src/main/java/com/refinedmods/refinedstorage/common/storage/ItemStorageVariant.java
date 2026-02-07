@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage.common.storage;
 
 import com.refinedmods.refinedstorage.common.content.Items;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public enum ItemStorageVariant implements StringRepresentable, StorageVariant {
     ONE_K("1k", 1024L),
@@ -23,6 +22,7 @@ public enum ItemStorageVariant implements StringRepresentable, StorageVariant {
         this.capacity = capacity;
     }
 
+    @Override
     public String getName() {
         return name;
     }

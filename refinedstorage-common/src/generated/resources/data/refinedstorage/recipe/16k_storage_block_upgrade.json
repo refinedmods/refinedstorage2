@@ -1,0 +1,9 @@
+{
+  "type": "refinedstorage:storage_container_upgrade",
+  "part": "refinedstorage:16k_storage_part",
+  "result": "refinedstorage:16k_storage_block",
+  "sources": [
+    "refinedstorage:1k_storage_block",
+    "refinedstorage:4k_storage_block"
+  ]
+}

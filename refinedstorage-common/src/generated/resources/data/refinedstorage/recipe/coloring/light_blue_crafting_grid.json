@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:crafting_grids"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
+    "#refinedstorage:crafting_grids",
+    "#c:dyes/light_blue"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:crafting_grid"
   }
 }

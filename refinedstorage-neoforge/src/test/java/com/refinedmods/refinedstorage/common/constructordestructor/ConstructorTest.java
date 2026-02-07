@@ -1,21 +1,18 @@
 package com.refinedmods.refinedstorage.common.constructordestructor;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.List;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSITEMS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.assertFluidPresent;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.assertItemEntityPresentExactly;
@@ -28,13 +25,11 @@ import static net.minecraft.world.item.Items.FIREWORK_ROCKET;
 import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class ConstructorTest {
     private ConstructorTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPlaceBlock(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (constructor, pos, sequence) -> {
             // Arrange
@@ -59,7 +54,7 @@ public final class ConstructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPlaceWater(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (constructor, pos, sequence) -> {
             // Arrange
@@ -86,7 +81,7 @@ public final class ConstructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldDropItem(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (constructor, pos, sequence) -> {
             // Arrange
@@ -118,7 +113,7 @@ public final class ConstructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldDropItemWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (constructor, pos, sequence) -> {
             // Arrange
@@ -130,7 +125,7 @@ public final class ConstructorTest {
             // Act
             constructor.setDropItems(true);
             constructor.setFilters(List.of(asResource(DIRT)));
-            constructor.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            constructor.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -158,7 +153,7 @@ public final class ConstructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPlaceFireworks(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (constructor, pos, sequence) -> {
             // Arrange

@@ -15,7 +15,7 @@ public final class VariantUtil {
     }
 
     public static ItemResource ofItemVariant(final ItemVariant itemVariant) {
-        return new ItemResource(itemVariant.getItem(), itemVariant.getComponents());
+        return new ItemResource(itemVariant.getItem(), itemVariant.getComponentsPatch());
     }
 
     public static FluidVariant toFluidVariant(final FluidResource fluidResource) {
@@ -23,6 +23,6 @@ public final class VariantUtil {
     }
 
     public static FluidResource ofFluidVariant(final FluidVariant fluidVariant) {
-        return new FluidResource(fluidVariant.getFluid(), fluidVariant.getComponents());
+        return new FluidResource(fluidVariant.getFluid(), fluidVariant.getComponentsPatch());
     }
 }

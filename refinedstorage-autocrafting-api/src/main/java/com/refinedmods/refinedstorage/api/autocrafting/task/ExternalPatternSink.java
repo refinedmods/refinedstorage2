@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Gives the ability to a {@link Task} to dump inputs of an external {@link Pattern} into the external target.

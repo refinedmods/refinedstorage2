@@ -54,53 +54,30 @@
       "faces": {
         "down": {
           "texture": "#cutout",
-          "cullface": "down",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "down"
         },
         "up": {
           "texture": "#cutout",
-          "cullface": "up",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "up"
         },
         "north": {
           "texture": "#cutout",
-          "cullface": "north",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "north"
         },
         "south": {
           "texture": "#cutout",
-          "cullface": "south",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "south"
         },
         "west": {
           "texture": "#cutout",
-          "cullface": "west",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "west"
         },
         "east": {
           "texture": "#cutout",
-          "cullface": "east",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "east"
         }
-      }
+      },
+      "light_emission": 15
     }
   ]
 }

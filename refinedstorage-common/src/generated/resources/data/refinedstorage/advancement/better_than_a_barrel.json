@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "storage_monitor_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:storage_monitor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.better_than_a_barrel.description"
+    },
+    "icon": {
+      "id": "refinedstorage:storage_monitor"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.better_than_a_barrel"
+    }
+  },
+  "requirements": [
+    [
+      "storage_monitor_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

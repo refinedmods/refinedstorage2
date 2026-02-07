@@ -11,13 +11,12 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeSlot;
 
-import javax.annotation.Nullable;
-
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 public class WirelessTransmitterContainerMenu extends AbstractBaseContainerMenu {
     private final RateLimiter rangeRateLimiter = RateLimiter.create(4);

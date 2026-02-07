@@ -4,22 +4,20 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Matrix4f;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationAsHeading;
-import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class HelpClientTooltipComponent implements ClientTooltipComponent {
-    private static final ResourceLocation SPRITE = createIdentifier("help");
+    private static final Identifier SPRITE = createIdentifier("help");
     private static final ClientTooltipComponent PRESS_SHIFT_FOR_HELP = new SmallTextClientTooltipComponent(
         createTranslationAsHeading("misc", "press_shift_for_help")
     );
@@ -39,7 +37,7 @@ public class HelpClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return Math.max(HELP_ICON_SIZE + paddingTop, (9 * lines.size()) + paddingTop);
     }
 
@@ -57,26 +55,23 @@ public class HelpClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderText(final Font font,
-                           final int x,
-                           final int y,
-                           final Matrix4f pose,
-                           final MultiBufferSource.BufferSource buffer) {
+    public void extractText(final GuiGraphicsExtractor graphics, final Font font, final int x, final int y) {
         final int xx = x + HELP_ICON_SIZE + HELP_ICON_MARGIN;
         int yy = y + paddingTop;
         for (final FormattedCharSequence line : lines) {
-            SmallText.render(font, line, xx, yy, pose, buffer, SmallText.TOOLTIP_SCALE);
+            SmallText.render(graphics, font, line, xx, yy, -1, true, SmallText.TOOLTIP_SCALE);
             yy += 9;
         }
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
-        graphics.blitSprite(SPRITE, x, y + (paddingTop / 2), HELP_ICON_SIZE, HELP_ICON_SIZE);
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
+        graphics.blitSprite(GUI_TEXTURED, SPRITE, x, y + (paddingTop / 2), HELP_ICON_SIZE, HELP_ICON_SIZE);
     }
 
     public static ClientTooltipComponent create(final Component text) {
-        if (hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             return new HelpClientTooltipComponent(text, SmallText.isSmall() ? 4 : 0);
         } else {
             return PRESS_SHIFT_FOR_HELP;

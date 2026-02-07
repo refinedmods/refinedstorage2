@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "refinedstorage:quartz_enriched_iron",
+    "G": "#c:glass_blocks",
+    "R": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "GRG",
+    "R R",
+    "EEE"
+  ],
+  "result": {
+    "id": "refinedstorage:storage_housing"
+  }
+}

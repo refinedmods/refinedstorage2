@@ -7,7 +7,7 @@ import org.apiguardian.api.API;
 public interface SecurityDecisionProvider {
     SecurityDecision isAllowed(Permission permission, SecurityActor actor);
 
-    default SecurityDecision isAllowed(Permission permission) {
+    default SecurityDecision isAllowed(final Permission permission) {
         return SecurityDecision.PASS;
     }
 
@@ -15,7 +15,7 @@ public interface SecurityDecisionProvider {
         return true;
     }
 
-    default boolean contains(SecurityNetworkComponent component) {
+    default boolean contains(final SecurityNetworkComponent component) {
         return false;
     }
 }

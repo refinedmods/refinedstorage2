@@ -12,10 +12,9 @@ import java.util.List;
 import java.util.Locale;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
 
 public class FluidResourceRendering implements ResourceRendering {
     private static final DecimalFormat FORMATTER = new DecimalFormat(
@@ -51,23 +50,20 @@ public class FluidResourceRendering implements ResourceRendering {
     }
 
     @Override
-    public void render(final ResourceKey resource, final GuiGraphics graphics, final int x, final int y) {
+    public void render(final ResourceKey resource, final GuiGraphicsExtractor graphics, final int x, final int y) {
         if (!(resource instanceof FluidResource fluidResource)) {
             return;
         }
-        Platform.INSTANCE.getFluidRenderer().render(graphics.pose(), x, y, fluidResource);
+        Platform.INSTANCE.getFluidRenderer().render(graphics, x, y, fluidResource);
     }
 
     @Override
-    public void render(final ResourceKey resource,
-                       final PoseStack poseStack,
-                       final MultiBufferSource renderTypeBuffer,
-                       final int light,
-                       final Level level) {
+    public void render(final ResourceKey resource, final PoseStack poseStack, final SubmitNodeCollector nodes,
+                       final int light, final long seed) {
         if (!(resource instanceof FluidResource fluidResource)) {
             return;
         }
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, renderTypeBuffer, light, fluidResource);
+        Platform.INSTANCE.getFluidRenderer().render(poseStack, nodes, light, seed, fluidResource);
     }
 
     private static String formatWithUnits(final long droplets, final long bucketAmount) {

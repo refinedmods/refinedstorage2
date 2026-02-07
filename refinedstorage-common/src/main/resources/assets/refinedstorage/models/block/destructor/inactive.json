@@ -1,8 +1,0 @@
-{
-  "parent": "refinedstorage:block/constructor_destructor/inactive",
-  "textures": {
-    "border": "refinedstorage:block/cable/part_border",
-    "front": "refinedstorage:block/destructor/front",
-    "cutout": "refinedstorage:block/destructor/cutouts/inactive"
-  }
-}

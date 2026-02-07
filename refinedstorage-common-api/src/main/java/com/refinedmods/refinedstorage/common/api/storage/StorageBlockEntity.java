@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage.common.api.storage;
 
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implement this on a block entity that contains a storage (ID) that can be transferred to/from an item.

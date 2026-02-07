@@ -8,21 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardContainerMenu>
     extends AbstractStretchingScreen<T> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/security_card.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/security_card.png");
 
     private static final int RESET_BUTTON_WIDTH = 40;
     private static final int RESET_BUTTON_RIGHT_PADDING = 16;
@@ -33,10 +34,8 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
     private final List<Permission> permissions = new ArrayList<>();
 
     protected AbstractSecurityCardScreen(final T menu, final Inventory playerInventory, final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 193, 176);
         this.inventoryLabelY = 97;
-        this.imageWidth = 193;
-        this.imageHeight = 176;
     }
 
     @Override
@@ -164,7 +163,7 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
     }
 
     @Override
-    protected void renderRows(final GuiGraphics graphics,
+    protected void renderRows(final GuiGraphicsExtractor graphics,
                               final int x,
                               final int y,
                               final int topHeight,
@@ -177,7 +176,8 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
     }
 
     @Override
-    protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
+    protected void renderStretchingBackground(final GuiGraphicsExtractor graphics, final int x, final int y,
+                                              final int rows) {
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
             if (row == 0) {
@@ -185,7 +185,8 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
             } else if (row == rows - 1) {
                 textureY = 55;
             }
-            graphics.blit(getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE);
+            graphics.blit(GUI_TEXTURED, getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE,
+                256, 256);
         }
     }
 
@@ -200,7 +201,7 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 
@@ -215,9 +216,9 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
             resetButton.visible = visible;
         }
 
-        private void render(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-            checkbox.render(graphics, mouseX, mouseY, 0);
-            resetButton.render(graphics, mouseX, mouseY, 0);
+        private void render(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+            checkbox.extractRenderState(graphics, mouseX, mouseY, 0);
+            resetButton.extractRenderState(graphics, mouseX, mouseY, 0);
         }
     }
 }

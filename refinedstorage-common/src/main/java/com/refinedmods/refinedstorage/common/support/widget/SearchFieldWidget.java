@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage.common.content.KeyMappings;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
@@ -24,15 +26,16 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int mouseButton) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
         final boolean wasFocused = isFocused();
-        final boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
+        final boolean result = super.mouseClicked(event, doubleClick);
+        final double mouseX = event.x();
+        final double mouseY = event.y();
         final boolean clickedWidget = mouseX >= getX()
             && mouseX < getX() + width
             && mouseY >= getY()
             && mouseY < getY() + height;
-
-        if (clickedWidget && mouseButton == 1) {
+        if (clickedWidget && event.button() == 1) {
             setValue("");
             setFocused(true);
         } else if (wasFocused != isFocused()) {
@@ -40,25 +43,24 @@ public class SearchFieldWidget extends EditBox {
         } else if (!clickedWidget) {
             setFocused(false);
         }
-
         return result;
     }
 
     @Override
-    public boolean keyPressed(final int keyCode, final int scanCode, final int modifier) {
+    public boolean keyPressed(final KeyEvent event) {
         final boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
         // The search field takes control over everything if it's active and focused.
         // Calculate this here because "shouldMoveControlToParent" may change the focus.
         final boolean havingControl = isActive() && isFocused();
         // Sometimes pressing a special key (like ESC) should return control to the parent.
-        if (havingControl && shouldMoveControlToParent(keyCode, canLoseFocus)) {
+        if (havingControl && shouldMoveControlToParent(event.key(), canLoseFocus)) {
             return false;
         }
         if (Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
             toggleFocus();
         }
         // Call the parent to process more special characters.
-        super.keyPressed(keyCode, scanCode, modifier);
+        super.keyPressed(event);
         return havingControl;
     }
 

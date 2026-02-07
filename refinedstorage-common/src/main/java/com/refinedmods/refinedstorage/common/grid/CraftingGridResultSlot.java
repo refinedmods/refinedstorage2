@@ -104,7 +104,7 @@ class CraftingGridResultSlot extends ResultSlot {
 
     private void fireCraftingEvents(final Player player, final ItemStack crafted) {
         // reimplementation of checkTakeAchievements
-        crafted.onCraftedBy(player.level(), player, crafted.getCount());
+        crafted.onCraftedBy(player, crafted.getCount());
         Platform.INSTANCE.onItemCrafted(player, crafted, craftingGrid.getCraftingMatrix());
         if (container instanceof RecipeCraftingHolder recipeHolder) {
             recipeHolder.awardUsedRecipes(player, List.of(crafted));

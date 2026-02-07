@@ -1,0 +1,40 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:item/pattern/crafting"
+        },
+        "when": "crafting"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:item/pattern/processing"
+        },
+        "when": "processing"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:item/pattern/stonecutter"
+        },
+        "when": "stonecutter"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "refinedstorage:item/pattern/smithing_table"
+        },
+        "when": "smithing_table"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/pattern/empty"
+    },
+    "property": "refinedstorage:pattern_type"
+  }
+}

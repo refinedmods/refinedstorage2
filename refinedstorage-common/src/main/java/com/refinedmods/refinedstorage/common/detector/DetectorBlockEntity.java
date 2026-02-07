@@ -21,11 +21,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerD
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -34,6 +31,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,11 +57,11 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);
         this.filter = FilterWithFuzzyMode.createAndListenForFilters(
             resourceContainer,
-            () -> {
+            this::setChanged,
+            filters -> {
                 propagateAmount();
-                setChanged();
-            },
-            filters -> mainNetworkNode.setConfiguredResource(filters.isEmpty() ? null : filters.getFirst())
+                mainNetworkNode.setConfiguredResource(filters.isEmpty() ? null : filters.getFirst());
+            }
         );
         initialize();
     }
@@ -74,23 +74,19 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        filter.save(tag, provider);
-        tag.putDouble(TAG_AMOUNT, amount);
-        tag.putInt(TAG_MODE, DetectorModeSettings.getDetectorMode(mainNetworkNode.getMode()));
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        filter.store(output);
+        output.putDouble(TAG_AMOUNT, amount);
+        output.putInt(TAG_MODE, DetectorModeSettings.getDetectorMode(mainNetworkNode.getMode()));
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        filter.load(tag, provider);
-        if (tag.contains(TAG_AMOUNT)) {
-            this.amount = tag.getDouble(TAG_AMOUNT);
-        }
-        if (tag.contains(TAG_MODE)) {
-            mainNetworkNode.setMode(DetectorModeSettings.getDetectorMode(tag.getInt(TAG_MODE)));
-        }
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        filter.read(input);
+        this.amount = input.getDoubleOr(TAG_AMOUNT, 0);
+        input.getInt(TAG_MODE).map(DetectorModeSettings::getDetectorMode).ifPresent(mainNetworkNode::setMode);
         initialize();
         propagateAmount();
     }
@@ -186,5 +182,4 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
     protected boolean hasRedstoneMode() {
         return false;
     }
-
 }

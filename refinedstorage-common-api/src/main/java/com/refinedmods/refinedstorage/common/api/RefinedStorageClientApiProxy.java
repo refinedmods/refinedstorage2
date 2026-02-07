@@ -9,15 +9,15 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRender
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public class RefinedStorageClientApiProxy implements RefinedStorageClientApi {
     @Nullable
@@ -67,17 +67,17 @@ public class RefinedStorageClientApiProxy implements RefinedStorageClientApi {
     }
 
     @Override
-    public void registerDiskModel(final Item item, final ResourceLocation model) {
+    public void registerDiskModel(final Item item, final Identifier model) {
         ensureLoaded().registerDiskModel(item, model);
     }
 
     @Override
-    public Set<ResourceLocation> getDiskModels() {
+    public Set<Identifier> getDiskModels() {
         return ensureLoaded().getDiskModels();
     }
 
     @Override
-    public Map<Item, ResourceLocation> getDiskModelsByItem() {
+    public Map<Item, Identifier> getDiskModelsByItem() {
         return ensureLoaded().getDiskModelsByItem();
     }
 

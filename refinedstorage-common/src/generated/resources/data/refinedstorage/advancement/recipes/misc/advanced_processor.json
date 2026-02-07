@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_advanced_processor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:raw_advanced_processor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:advanced_processor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_advanced_processor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:advanced_processor"
+    ]
+  }
+}

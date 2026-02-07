@@ -16,17 +16,17 @@ class StorageMonitorInsertTracker {
     private final Map<UUID, Entry> entries = new HashMap<>();
 
     void trackInsertedItem(final GameProfile gameProfile, final ItemStack stack) {
-        entries.put(gameProfile.getId(), new Entry(System.currentTimeMillis(), ItemResource.ofItemStack(stack)));
+        entries.put(gameProfile.id(), new Entry(System.currentTimeMillis(), ItemResource.ofItemStack(stack)));
     }
 
     Optional<ItemResource> getLastInsertedItem(final GameProfile gameProfile) {
-        final Entry entry = entries.get(gameProfile.getId());
+        final Entry entry = entries.get(gameProfile.id());
         if (entry == null) {
             return Optional.empty();
         }
         final long time = System.currentTimeMillis();
         if (time - entry.time > MAX_DELAY) {
-            entries.remove(gameProfile.getId());
+            entries.remove(gameProfile.id());
             return Optional.empty();
         }
         return Optional.of(entry.itemResource);

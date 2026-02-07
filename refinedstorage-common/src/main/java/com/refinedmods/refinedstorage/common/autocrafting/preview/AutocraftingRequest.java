@@ -8,7 +8,8 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 
 import java.util.UUID;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class AutocraftingRequest {
     private final UUID id;

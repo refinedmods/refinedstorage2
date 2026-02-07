@@ -8,7 +8,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public record PlayerActor(String name) implements Actor {
     public PlayerActor(final Player player) {
-        this(player.getGameProfile().getName());
+        this(player.getGameProfile().name());
     }
 
     @Override

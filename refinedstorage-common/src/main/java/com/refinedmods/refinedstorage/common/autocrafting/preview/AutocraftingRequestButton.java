@@ -11,9 +11,10 @@ import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
 import java.util.function.Consumer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewScreen.REQUEST_BUTTON_HEIGHT;
@@ -35,7 +36,7 @@ class AutocraftingRequestButton extends AbstractButton {
         this.text = new TextMarquee(
             rendering.getDisplayName(resource),
             REQUEST_BUTTON_WIDTH - 16 - 4 - 4 - 4,
-            0xFFFFFF,
+            0xFFFFFFFF,
             true,
             true
         );
@@ -47,17 +48,14 @@ class AutocraftingRequestButton extends AbstractButton {
     }
 
     @Override
-    protected void renderWidget(final GuiGraphics graphics,
-                                final int mouseX,
-                                final int mouseY,
-                                final float partialTick) {
-        super.renderWidget(graphics, mouseX, mouseY, partialTick);
+    protected void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                   final float partialTicks) {
         renderResourceIcon(graphics);
         final int yOffset = SmallText.isSmall() ? 8 : 5;
         text.render(graphics, getX() + 3 + 16 + 3, getY() + yOffset, Minecraft.getInstance().font, isHovered);
     }
 
-    private void renderResourceIcon(final GuiGraphics graphics) {
+    private void renderResourceIcon(final GuiGraphicsExtractor graphics) {
         final ResourceKey resource = request.getResource();
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(resource.getClass());
         final int resourceX = getX() + 3;
@@ -70,7 +68,7 @@ class AutocraftingRequestButton extends AbstractButton {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(final InputWithModifiers inputWithModifiers) {
         onPress.accept(request);
     }
 

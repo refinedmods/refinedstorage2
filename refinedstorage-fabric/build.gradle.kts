@@ -33,13 +33,13 @@ val commonJava by configurations.existing
 val commonResources by configurations.existing
 
 dependencies {
-    modApi(libs.cloth.config) {
+    api(libs.cloth.config) {
         exclude(group = "net.fabricmc.fabric-api")
     }
-    modApi(libs.teamreborn.energy) {
+    api(libs.teamreborn.energy) {
         exclude(group = "net.fabricmc.fabric-api")
     }
-    modApi(libs.modmenu)
+    api(libs.modmenu)
     include(libs.cloth.config)
     include(libs.teamreborn.energy)
 
@@ -66,4 +66,15 @@ dependencies {
     commonJava(project(path = ":refinedstorage-network", configuration = "commonJava"))
     commonJava(project(path = ":refinedstorage-autocrafting-api", configuration = "commonJava"))
     commonJava(project(path = ":refinedstorage-query-parser", configuration = "commonJava"))
+}
+
+tasks.withType(ProcessResources::class.java) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(commonResources) {
+        filesMatching("assets/refinedstorage/blockstates/*.json") {
+            filter { line ->
+                line.replace("\"type\"", "\"fabric:type\"")
+            }
+        }
+    }
 }

@@ -16,16 +16,17 @@ import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.Objects;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -33,10 +34,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,25 +183,23 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
         if (placedByPlayerId != null) {
-            tag.putUUID(TAG_PLACED_BY_PLAYER_ID, placedByPlayerId);
+            output.store(TAG_PLACED_BY_PLAYER_ID, UUIDUtil.CODEC, placedByPlayerId);
         }
-        writeConfiguration(tag, provider);
+        writeConfiguration(output);
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        if (tag.hasUUID(TAG_PLACED_BY_PLAYER_ID)) {
-            setPlacedBy(tag.getUUID(TAG_PLACED_BY_PLAYER_ID));
-        }
-        if (tag.contains(TAG_DEBUG_NETWORK_ID)) {
-            debugNetworkId = tag.getInt(TAG_DEBUG_NETWORK_ID);
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        input.read(TAG_PLACED_BY_PLAYER_ID, UUIDUtil.CODEC).ifPresent(this::setPlacedBy);
+        input.getInt(TAG_DEBUG_NETWORK_ID).ifPresent(id -> {
+            debugNetworkId = id;
             Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
-        }
-        readConfiguration(tag, provider);
+        });
+        readConfiguration(input);
     }
 
     public int getDebugNetworkId() {
@@ -206,22 +207,22 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
+    public void writeConfiguration(final ValueOutput output) {
         if (customName != null) {
-            tag.putString(TAG_CUSTOM_NAME, Component.Serializer.toJson(customName, provider));
+            output.store(TAG_CUSTOM_NAME, ComponentSerialization.CODEC, customName);
         }
         if (hasRedstoneMode()) {
-            tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(redstoneMode));
+            output.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(redstoneMode));
         }
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_CUSTOM_NAME, Tag.TAG_STRING)) {
-            this.customName = parseCustomNameSafe(tag.getString(TAG_CUSTOM_NAME), provider);
-        }
-        if (hasRedstoneMode() && tag.contains(TAG_REDSTONE_MODE)) {
-            this.redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
+    public void readConfiguration(final ValueInput input) {
+        this.customName = parseCustomNameSafe(input, TAG_CUSTOM_NAME);
+        if (hasRedstoneMode()) {
+            this.redstoneMode = input.getInt(TAG_REDSTONE_MODE)
+                .map(RedstoneModeSettings::getRedstoneMode)
+                .orElse(RedstoneMode.IGNORE);
         }
     }
 
@@ -247,9 +248,9 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     }
 
     @Override
-    protected void applyImplicitComponents(final BlockEntity.DataComponentInput componentInput) {
-        super.applyImplicitComponents(componentInput);
-        this.customName = componentInput.get(DataComponents.CUSTOM_NAME);
+    protected void applyImplicitComponents(final DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        this.customName = components.get(DataComponents.CUSTOM_NAME);
     }
 
     @Override
@@ -301,11 +302,11 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     }
 
     @Override
-    public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
         if (!Platform.INSTANCE.getConfig().isDebug()) {
-            return super.getUpdateTag(provider);
+            return super.getUpdateTag(registries);
         }
-        final CompoundTag tag = super.getUpdateTag(provider);
+        final CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt(TAG_DEBUG_NETWORK_ID, debugNetworkId);
         return tag;
     }

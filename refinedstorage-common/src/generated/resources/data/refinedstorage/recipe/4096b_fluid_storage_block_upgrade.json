@@ -1,0 +1,10 @@
+{
+  "type": "refinedstorage:storage_container_upgrade",
+  "part": "refinedstorage:4096b_fluid_storage_part",
+  "result": "refinedstorage:4096b_fluid_storage_block",
+  "sources": [
+    "refinedstorage:64b_fluid_storage_block",
+    "refinedstorage:256b_fluid_storage_block",
+    "refinedstorage:1024b_fluid_storage_block"
+  ]
+}

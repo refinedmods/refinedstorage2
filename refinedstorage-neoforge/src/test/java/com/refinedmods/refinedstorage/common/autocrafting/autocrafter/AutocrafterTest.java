@@ -1,24 +1,20 @@
 package com.refinedmods.refinedstorage.common.autocrafting.autocrafter;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.autocrafting.ProcessingPatternState;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.containerContainsExactly;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.networkIsAvailable;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.startAutocraftingTask;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.storageContainsExactly;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.tickFurnace;
@@ -42,14 +38,12 @@ import static net.minecraft.world.item.Items.STICK;
 import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.item.Items.STONE_BRICKS;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class AutocrafterTest {
     private AutocrafterTest() {
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldAutocrafterCraftItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldCraftItem(final GameTestHelper helper) {
         preparePlot(helper, false, (autocrafter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
@@ -72,8 +66,8 @@ public final class AutocrafterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldAutocrafterProcessItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldProcessItem(final GameTestHelper helper) {
         preparePlot(helper, true, (autocrafter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
@@ -116,14 +110,14 @@ public final class AutocrafterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldChainedAutocrafterProcessItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldProcessItemChained(final GameTestHelper helper) {
         preparePlot(helper, true, (autocrafter, pos, sequence) -> {
             // Arrange
             final BlockPos secondAutocrafterPos = pos.above();
-            helper.setBlock(secondAutocrafterPos, RSBLOCKS.getAutocrafter().getDefault().rotated(Direction.DOWN));
+            helper.setBlock(secondAutocrafterPos, MOD_BLOCKS.getAutocrafter().getDefault().rotated(Direction.DOWN));
             final AutocrafterBlockEntity secondAutocrafter =
-                requireBlockEntity(helper, secondAutocrafterPos, AutocrafterBlockEntity.class);
+                helper.getBlockEntity(secondAutocrafterPos, AutocrafterBlockEntity.class);
 
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
                 insert(helper, network, IRON_ORE, 10)));
@@ -166,8 +160,8 @@ public final class AutocrafterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldAutocrafterProcessAndCraftItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldProcessAndCraftItem(final GameTestHelper helper) {
         preparePlot(helper, true, (autocrafter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> {
@@ -208,8 +202,8 @@ public final class AutocrafterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldAutocrafterStoneCutterItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldCraftStoneCutterItem(final GameTestHelper helper) {
         preparePlot(helper, false, (autocrafter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
@@ -232,8 +226,8 @@ public final class AutocrafterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
-    public static void shouldAutocrafterSmithingTableItem(final GameTestHelper helper) {
+    @MinecraftIntegrationTest
+    public static void shouldCraftSmithingTableItem(final GameTestHelper helper) {
         preparePlot(helper, false, (autocrafter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> {

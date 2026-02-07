@@ -15,19 +15,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
 public interface GridResource {
     @Nullable
-    TrackedResource getTrackedResource(Function<ResourceKey, TrackedResource> trackedResourceProvider);
+    TrackedResource getTrackedResource(Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider);
 
     long getAmount(ResourceRepository<GridResource> repository);
 
@@ -46,7 +46,7 @@ public interface GridResource {
     void onScroll(GridScrollMode scrollMode,
                   GridScrollingStrategy scrollingStrategy);
 
-    void render(GuiGraphics graphics, int x, int y);
+    void render(GuiGraphicsExtractor graphics, int x, int y);
 
     String getDisplayedAmount(ResourceRepository<GridResource> repository);
 

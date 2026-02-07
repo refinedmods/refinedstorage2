@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.storage;
 
 import com.refinedmods.refinedstorage.api.core.Action;
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.ExtractableStorage;
@@ -16,14 +15,15 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
     private final BlockApiCache<Storage<P>, Direction> cache;
-    private final Function<ResourceKey, @NullableType P> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable P> toPlatformMapper;
     private final Direction direction;
 
     public FabricStorageExtractableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
-                                           final Function<ResourceKey, @NullableType P> toPlatformMapper,
+                                           final Function<ResourceKey, @Nullable P> toPlatformMapper,
                                            final ServerLevel serverLevel,
                                            final BlockPos pos,
                                            final Direction direction) {
@@ -54,14 +54,15 @@ public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
         if (platformResource == null) {
             return 0L;
         }
-        return extract(resource, amount, action, storage);
+        return doExtract(platformResource, amount, action, storage);
     }
 
     @SuppressWarnings("deprecation")
-    private long extract(final ResourceKey resource, final long amount, final Action action, final Storage<P> storage) {
+    private long doExtract(final P platformResource, final long amount, final Action action,
+                           final Storage<P> storage) {
         final TransactionContext potentialOpenTransactionFromEarlierInTheStack = Transaction.getCurrentUnsafe();
         try (Transaction tx = Transaction.openNested(potentialOpenTransactionFromEarlierInTheStack)) {
-            final long extract = storage.extract(toPlatformMapper.apply(resource), amount, tx);
+            final long extract = storage.extract(platformResource, amount, tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
             }

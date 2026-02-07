@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage.common.exporter;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.exporter.ExporterNetworkNode;
-import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.Platform;
@@ -12,7 +11,6 @@ import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.AbstractCableLikeBlockEntity;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeContainer;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
@@ -23,33 +21,32 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerD
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractExporterBlockEntity
-    extends AbstractCableLikeBlockEntity<ExporterNetworkNode>
-    implements BlockEntityWithDrops, NetworkNodeExtendedMenuProvider<ExporterData> {
+public abstract class AbstractExporterBlockEntity extends AbstractCableLikeBlockEntity<ExporterNetworkNode>
+    implements NetworkNodeExtendedMenuProvider<ExporterData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractExporterBlockEntity.class);
     private static final String TAG_UPGRADES = "upgr";
 
@@ -67,23 +64,20 @@ public abstract class AbstractExporterBlockEntity
         this.upgradeContainer = new UpgradeContainer(UpgradeDestinations.EXPORTER, (c, upgradeEnergyUsage) -> {
             final long baseEnergyUsage = Platform.INSTANCE.getConfig().getExporter().getEnergyUsage();
             mainNetworkNode.setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
-            setChanged();
             if (level instanceof ServerLevel serverLevel) {
                 initialize(serverLevel);
             }
-        });
+        }, this::setChanged);
         this.ticker = upgradeContainer.getTicker();
-        this.schedulingModeContainer = new SchedulingModeContainer(this::schedulingModeChanged);
+        this.schedulingModeContainer = new SchedulingModeContainer(
+            mainNetworkNode::setSchedulingMode,
+            this::setChanged
+        );
         this.filter = FilterWithFuzzyMode.createAndListenForFilters(
             ResourceContainerImpl.createForFilter(),
             this::setChanged,
             this::setFilters
         );
-    }
-
-    private void schedulingModeChanged(final SchedulingMode schedulingMode) {
-        mainNetworkNode.setSchedulingMode(schedulingMode);
-        setChanged();
     }
 
     @Override
@@ -124,31 +118,30 @@ public abstract class AbstractExporterBlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_UPGRADES, ContainerUtil.write(upgradeContainer, provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_UPGRADES, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(upgradeContainer.getItems()));
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_UPGRADES)) {
-            ContainerUtil.read(tag.getCompound(TAG_UPGRADES), upgradeContainer, provider);
-        }
-        super.loadAdditional(tag, provider);
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_UPGRADES, ItemContainerContents.CODEC).ifPresent(upgradeContainer::load);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        schedulingModeContainer.writeToTag(tag);
-        filter.save(tag, provider);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        schedulingModeContainer.store(output);
+        filter.store(output);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        schedulingModeContainer.loadFromTag(tag);
-        filter.load(tag, provider);
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        schedulingModeContainer.read(input);
+        filter.read(input);
     }
 
     void setSchedulingModeType(final SchedulingModeType type) {
@@ -171,8 +164,11 @@ public abstract class AbstractExporterBlockEntity
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        return upgradeContainer.getDrops();
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            Containers.dropContents(level, pos, upgradeContainer.getDrops());
+        }
     }
 
     @Override
@@ -195,7 +191,7 @@ public abstract class AbstractExporterBlockEntity
         );
     }
 
-    private ExportingIndicator toExportingIndicator(@Nullable final ExporterTransferStrategy.Result result) {
+    private ExportingIndicator toExportingIndicator(final ExporterTransferStrategy.@Nullable Result result) {
         return switch (result) {
             case DESTINATION_DOES_NOT_ACCEPT -> ExportingIndicator.DESTINATION_DOES_NOT_ACCEPT_RESOURCE;
             case RESOURCE_MISSING -> ExportingIndicator.RESOURCE_MISSING;

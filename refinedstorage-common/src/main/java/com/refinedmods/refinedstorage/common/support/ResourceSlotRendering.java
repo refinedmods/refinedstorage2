@@ -5,34 +5,23 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public final class ResourceSlotRendering {
     private ResourceSlotRendering() {
     }
 
-    public static void render(final GuiGraphics graphics,
-                              final ResourceSlot slot,
-                              final int leftPos,
-                              final int topPos) {
+    public static void render(final GuiGraphicsExtractor graphics, final ResourceSlot slot) {
         final ResourceKey resource = slot.getResource();
         if (resource == null) {
             return;
         }
-        render(
-            graphics,
-            leftPos + slot.x,
-            topPos + slot.y,
-            resource,
-            slot.getAmount(),
-            slot.shouldRenderAmount()
-        );
+        render(graphics, slot.x, slot.y, resource, slot.getAmount(), slot.shouldRenderAmount());
     }
 
-    private static void render(final GuiGraphics graphics,
+    private static void render(final GuiGraphicsExtractor graphics,
                                final int x,
                                final int y,
                                final ResourceKey resource,
@@ -45,7 +34,7 @@ public final class ResourceSlotRendering {
         }
     }
 
-    public static void renderAmount(final GuiGraphics graphics,
+    public static void renderAmount(final GuiGraphicsExtractor graphics,
                                     final int x,
                                     final int y,
                                     final long amount,
@@ -57,26 +46,25 @@ public final class ResourceSlotRendering {
             x,
             y,
             formattedAmount,
-            0xFFFFFF,
+            0xFFFFFFFF,
             large
         );
     }
 
-    public static void renderAmount(final GuiGraphics graphics,
+    public static void renderAmount(final GuiGraphicsExtractor graphics,
                                     final int x,
                                     final int y,
                                     final String text,
                                     final int color,
                                     final boolean large) {
         final Font font = Minecraft.getInstance().font;
-        final PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
+        graphics.pose().pushMatrix();
         // Large amounts overlap with the slot lines (see Minecraft behavior)
-        poseStack.translate(x + (large ? 1D : 0D), y + (large ? 1D : 0D), 300);
+        graphics.pose().translate(x + (large ? 1F : 0F), y + (large ? 1F : 0F));
         if (!large) {
-            poseStack.scale(0.5F, 0.5F, 1);
+            graphics.pose().scale(0.5F, 0.5F);
         }
-        graphics.drawString(font, text, (large ? 16 : 30) - font.width(text), large ? 8 : 22, color, true);
-        poseStack.popPose();
+        graphics.text(font, text, (large ? 16 : 30) - font.width(text), large ? 8 : 22, color, true);
+        graphics.pose().popMatrix();
     }
 }

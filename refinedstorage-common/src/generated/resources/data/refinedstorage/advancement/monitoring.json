@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:autocrafting",
+  "criteria": {
+    "autocrafting_monitor_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:autocrafting_monitors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.monitoring.description"
+    },
+    "icon": {
+      "id": "refinedstorage:autocrafting_monitor"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.monitoring"
+    }
+  },
+  "requirements": [
+    [
+      "autocrafting_monitor_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.containermenu;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
 public interface TransferDestination {

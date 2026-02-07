@@ -20,7 +20,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 class RelayOutputStorage implements CompositeAwareChild, RootStorageListener, PriorityProvider {
     private final Set<ParentComposite> parentComposites = new HashSet<>();

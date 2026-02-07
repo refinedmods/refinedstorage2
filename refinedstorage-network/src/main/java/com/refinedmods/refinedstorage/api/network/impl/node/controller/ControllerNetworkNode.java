@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyProvider;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ControllerNetworkNode extends AbstractNetworkNode implements EnergyProvider {
     @Nullable

@@ -3,15 +3,12 @@ package com.refinedmods.refinedstorage.common.networking;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage.api.storage.AccessMode;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 
 import java.util.Set;
 
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.checkBlockEntityActiveness;
@@ -26,13 +23,11 @@ import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.DIRT;
 import static net.minecraft.world.item.Items.STONE;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class RelayTest {
     private RelayTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThrough(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -61,7 +56,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldNotPassThrough(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -88,7 +83,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughEnergy(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -116,7 +111,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorage(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -149,7 +144,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageBlocklist(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -182,7 +177,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageFuzzyBlocklist(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -223,7 +218,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageAllowlist(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -257,7 +252,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageFuzzyAllowlist(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -298,7 +293,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageAndInsertExtract(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -348,7 +343,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageAndInsert(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange
@@ -398,7 +393,7 @@ public final class RelayTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPassThroughStorageAndExtract(final GameTestHelper helper) {
         preparePlot(helper, (relay, pos, subnetworkPos, sequence) -> {
             // Arrange

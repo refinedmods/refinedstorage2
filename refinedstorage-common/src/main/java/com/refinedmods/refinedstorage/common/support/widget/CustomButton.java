@@ -2,11 +2,13 @@ package com.refinedmods.refinedstorage.common.support.widget;
 
 import java.util.function.Consumer;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class CustomButton extends Button {
     protected WidgetSprites sprites;
@@ -27,9 +29,10 @@ public class CustomButton extends Button {
     }
 
     @Override
-    public void renderWidget(final GuiGraphics graphics, final int x, final int y, final float partialTicks) {
+    protected void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                   final float partialTicks) {
         // only takes isHovered in account, not isFocused
-        final ResourceLocation location = sprites.get(isActive(), isHovered());
-        graphics.blitSprite(location, getX(), getY(), width, height);
+        final Identifier location = sprites.get(isActive(), isHovered());
+        graphics.blitSprite(GUI_TEXTURED, location, getX(), getY(), width, height);
     }
 }

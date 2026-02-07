@@ -1,7 +1,8 @@
 {
   "variants": {
     "": {
-      "model": "refinedstorage:block/disk_interface/blue"
+      "type": "refinedstorage:disk_interface",
+      "color": "blue"
     }
   }
 }

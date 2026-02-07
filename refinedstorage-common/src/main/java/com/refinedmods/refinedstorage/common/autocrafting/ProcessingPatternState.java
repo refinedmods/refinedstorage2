@@ -18,7 +18,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record ProcessingPatternState(
     List<Optional<ProcessingIngredient>> ingredients,
@@ -59,11 +59,11 @@ public record ProcessingPatternState(
         return new ArrayList<>(list.copyState());
     }
 
-    public record ProcessingIngredient(ResourceAmount input, List<ResourceLocation> allowedAlternativeIds) {
+    public record ProcessingIngredient(ResourceAmount input, List<Identifier> allowedAlternativeIds) {
         public static final Codec<ProcessingIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceCodecs.AMOUNT_CODEC.fieldOf("input")
                 .forGetter(ProcessingIngredient::input),
-            Codec.list(ResourceLocation.CODEC).fieldOf("allowedAlternativeIds")
+            Codec.list(Identifier.CODEC).fieldOf("allowedAlternativeIds")
                 .forGetter(ProcessingIngredient::allowedAlternativeIds)
         ).apply(instance, ProcessingIngredient::new));
         public static final Codec<Optional<ProcessingIngredient>> OPTIONAL_CODEC =
@@ -73,7 +73,7 @@ public record ProcessingPatternState(
             StreamCodec.composite(
                 ResourceCodecs.AMOUNT_STREAM_CODEC,
                 ProcessingIngredient::input,
-                ByteBufCodecs.collection(ArrayList::new, ResourceLocation.STREAM_CODEC),
+                ByteBufCodecs.collection(ArrayList::new, Identifier.STREAM_CODEC),
                 ProcessingIngredient::allowedAlternativeIds,
                 ProcessingIngredient::new
             );

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -27,13 +27,13 @@ class SearchModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_AUTOCRAFTER_NAMES = List.of(
         createTranslation("gui", "autocrafter_manager.search_mode.autocrafter_names").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation SPRITE_ALL =
+    private static final Identifier SPRITE_ALL =
         createIdentifier("widget/side_button/autocrafter_manager/search_mode/all");
-    private static final ResourceLocation SPRITE_PATTERN_INPUTS =
+    private static final Identifier SPRITE_PATTERN_INPUTS =
         createIdentifier("widget/side_button/autocrafter_manager/search_mode/pattern_inputs");
-    private static final ResourceLocation SPRITE_PATTERN_OUTPUTS =
+    private static final Identifier SPRITE_PATTERN_OUTPUTS =
         createIdentifier("widget/side_button/autocrafter_manager/search_mode/pattern_outputs");
-    private static final ResourceLocation SPRITE_AUTOCRAFTER_NAMES =
+    private static final Identifier SPRITE_AUTOCRAFTER_NAMES =
         createIdentifier("widget/side_button/autocrafter_manager/search_mode/autocrafter_names");
 
     private final AutocrafterManagerContainerMenu containerMenu;
@@ -51,7 +51,7 @@ class SearchModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (containerMenu.getSearchMode()) {
             case ALL -> SPRITE_ALL;
             case PATTERN_INPUTS -> SPRITE_PATTERN_INPUTS;

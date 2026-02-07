@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.support.packet.s2c;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
-import com.refinedmods.refinedstorage.common.storage.StorageCodecs;
+import com.refinedmods.refinedstorage.common.storage.TrackedResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
@@ -25,7 +25,7 @@ public record GridUpdatePacket(
     public static final StreamCodec<RegistryFriendlyByteBuf, GridUpdatePacket> STREAM_CODEC = StreamCodec.composite(
         ResourceCodecs.STREAM_CODEC, GridUpdatePacket::resource,
         ByteBufCodecs.VAR_LONG, GridUpdatePacket::amount,
-        StorageCodecs.TRACKED_RESOURCE_OPTIONAL_STREAM_CODEC, GridUpdatePacket::trackedResource,
+        TrackedResourceCodecs.OPTIONAL_STREAM_CODEC, GridUpdatePacket::trackedResource,
         GridUpdatePacket::new
     );
 

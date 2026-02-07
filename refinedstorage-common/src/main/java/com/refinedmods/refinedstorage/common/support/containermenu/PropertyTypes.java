@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.RedstoneModeSettings;
 import com.refinedmods.refinedstorage.common.support.SchedulingModeType;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -34,7 +34,7 @@ public final class PropertyTypes {
     private PropertyTypes() {
     }
 
-    public static PropertyType<Boolean> createBooleanProperty(final ResourceLocation id) {
+    public static PropertyType<Boolean> createBooleanProperty(final Identifier id) {
         return new PropertyType<>(
             id,
             value -> Boolean.TRUE.equals(value) ? 1 : 0,
@@ -42,7 +42,7 @@ public final class PropertyTypes {
         );
     }
 
-    public static PropertyType<Integer> createIntegerProperty(final ResourceLocation id) {
+    public static PropertyType<Integer> createIntegerProperty(final Identifier id) {
         return new PropertyType<>(
             id,
             value -> value,

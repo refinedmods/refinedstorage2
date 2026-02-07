@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.importer;
 
 import com.refinedmods.refinedstorage.api.core.Action;
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.network.impl.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
@@ -19,6 +18,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
@@ -32,7 +32,7 @@ class FabricStorageImporterSource<T> implements ImporterSource {
 
     FabricStorageImporterSource(final BlockApiLookup<Storage<T>, Direction> lookup,
                                 final Function<T, ResourceKey> fromPlatformMapper,
-                                final Function<ResourceKey, @NullableType T> toPlatformMapper,
+                                final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                 final ServerLevel serverLevel,
                                 final BlockPos pos,
                                 final Direction direction) {

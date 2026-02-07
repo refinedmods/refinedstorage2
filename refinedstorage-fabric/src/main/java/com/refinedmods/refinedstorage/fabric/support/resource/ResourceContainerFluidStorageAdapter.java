@@ -23,38 +23,38 @@ import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil
 
 public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<ResourceContainer>
     implements Storage<FluidVariant> {
-    private final ResourceContainer resourceContainer;
+    private final ResourceContainer container;
 
-    public ResourceContainerFluidStorageAdapter(final ResourceContainer resourceContainer) {
-        this.resourceContainer = resourceContainer;
+    public ResourceContainerFluidStorageAdapter(final ResourceContainer container) {
+        this.container = container;
     }
 
     @Override
     public long insert(final FluidVariant fluidVariant, final long maxAmount, final TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(fluidVariant, maxAmount);
         final FluidResource fluidResource = ofFluidVariant(fluidVariant);
-        final long insertedSimulated = resourceContainer.insert(fluidResource, maxAmount, Action.SIMULATE);
+        final long insertedSimulated = container.insert(fluidResource, maxAmount, Action.SIMULATE);
         if (insertedSimulated > 0) {
             updateSnapshots(transaction);
         }
-        return resourceContainer.insert(fluidResource, maxAmount, Action.EXECUTE);
+        return container.insert(fluidResource, maxAmount, Action.EXECUTE);
     }
 
     @Override
     public long extract(final FluidVariant fluidVariant, final long maxAmount, final TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(fluidVariant, maxAmount);
         final FluidResource fluidResource = ofFluidVariant(fluidVariant);
-        final long extractedSimulated = resourceContainer.extract(fluidResource, maxAmount, Action.SIMULATE);
+        final long extractedSimulated = container.extract(fluidResource, maxAmount, Action.SIMULATE);
         if (extractedSimulated > 0) {
             updateSnapshots(transaction);
         }
-        return resourceContainer.extract(fluidResource, maxAmount, Action.EXECUTE);
+        return container.extract(fluidResource, maxAmount, Action.EXECUTE);
     }
 
     @Override
     public Iterator<StorageView<FluidVariant>> iterator() {
         final List<StorageView<FluidVariant>> list = new ArrayList<>();
-        for (int i = 0; i < resourceContainer.size(); ++i) {
+        for (int i = 0; i < container.size(); ++i) {
             list.add(new StorageViewImpl(i));
         }
         return list.iterator();
@@ -62,7 +62,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
     @Override
     protected ResourceContainer createSnapshot() {
-        return resourceContainer.copy();
+        return container.copy();
     }
 
     @Override
@@ -70,9 +70,9 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
         for (int i = 0; i < snapshot.size(); ++i) {
             final ResourceAmount snapshotSlot = snapshot.get(i);
             if (snapshotSlot == null) {
-                resourceContainer.remove(i);
+                container.remove(i);
             } else {
-                resourceContainer.set(i, snapshotSlot);
+                container.set(i, snapshotSlot);
             }
         }
     }
@@ -86,7 +86,7 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long extract(final FluidVariant resource, final long maxAmount, final TransactionContext transaction) {
-            final ResourceAmount resourceAmount = resourceContainer.get(index);
+            final ResourceAmount resourceAmount = container.get(index);
             if (resourceAmount == null
                 || !(resourceAmount.resource() instanceof FluidResource fluidResource)
                 || !resource.equals(toFluidVariant(fluidResource))) {
@@ -96,18 +96,18 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
             if (extracted > 0) {
                 updateSnapshots(transaction);
             }
-            resourceContainer.shrink(index, extracted);
+            container.shrink(index, extracted);
             return extracted;
         }
 
         @Override
         public boolean isResourceBlank() {
-            return resourceContainer.isEmpty(index);
+            return container.isEmpty(index);
         }
 
         @Override
         public FluidVariant getResource() {
-            final PlatformResourceKey resource = resourceContainer.getResource(index);
+            final PlatformResourceKey resource = container.getResource(index);
             if (!(resource instanceof FluidResource fluidResource)) {
                 return FluidVariant.blank();
             }
@@ -116,16 +116,16 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long getAmount() {
-            return resourceContainer.getAmount(index);
+            return container.getAmount(index);
         }
 
         @Override
         public long getCapacity() {
-            final ResourceKey resource = resourceContainer.getResource(index);
+            final ResourceKey resource = container.getResource(index);
             if (resource == null) {
                 return 0;
             }
-            return resourceContainer.getMaxAmount(resource);
+            return container.getMaxAmount(resource);
         }
     }
 }

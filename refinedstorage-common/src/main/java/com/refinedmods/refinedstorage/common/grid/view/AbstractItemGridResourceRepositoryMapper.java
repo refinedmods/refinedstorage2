@@ -66,14 +66,14 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
 
     private Set<String> getTags(final Item item) {
         final Stream<String> itemTags = BuiltInRegistries.ITEM.getResourceKey(item)
-            .flatMap(BuiltInRegistries.ITEM::getHolder)
+            .flatMap(BuiltInRegistries.ITEM::get)
             .stream()
             .flatMap(Holder::tags)
             .map(tagKey -> tagKey.location().getPath());
 
         if (item instanceof BlockItem blockItem) {
             final Stream<String> blockTags = BuiltInRegistries.BLOCK.getResourceKey(blockItem.getBlock())
-                .flatMap(BuiltInRegistries.BLOCK::getHolder)
+                .flatMap(BuiltInRegistries.BLOCK::get)
                 .stream()
                 .flatMap(Holder::tags)
                 .map(tagKey -> tagKey.location().getPath());

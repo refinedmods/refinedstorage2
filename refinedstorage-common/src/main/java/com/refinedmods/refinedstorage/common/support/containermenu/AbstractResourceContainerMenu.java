@@ -8,13 +8,13 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractResourceContainerMenu extends AbstractBaseContainerMenu {
     @Nullable
@@ -122,8 +122,8 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
     }
 
     @Override
-    public void clicked(final int id, final int dragType, final ClickType clickType, final Player p) {
-        final Slot slot = id >= 0 ? getSlot(id) : null;
+    public void clicked(final int slotIndex, final int buttonNum, final ContainerInput containerInput, final Player p) {
+        final Slot slot = slotIndex >= 0 ? getSlot(slotIndex) : null;
         if (slot instanceof ResourceSlot resourceSlot
             && resourceSlot.supportsItemSlotInteractions()
             && !resourceSlot.isEmpty()
@@ -135,6 +135,6 @@ public abstract class AbstractResourceContainerMenu extends AbstractBaseContaine
                 return;
             }
         }
-        super.clicked(id, dragType, clickType, p);
+        super.clicked(slotIndex, buttonNum, containerInput, p);
     }
 }

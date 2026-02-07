@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage.common.detector;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
@@ -18,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -56,11 +57,13 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     private static final VoxelShape SHAPE_SOUTH = box(0, 0, 11, 16, 16, 16);
     private static final VoxelShape SHAPE_WEST = box(0, 0, 0, 5, 16, 16);
 
+    private final Identifier id;
     private final DyeColor color;
     private final MutableComponent name;
 
-    public DetectorBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.PROPERTIES);
+    public DetectorBlock(final Identifier id, final DyeColor color, final MutableComponent name) {
+        super(BlockProperties.stone(id));
+        this.id = id;
         this.color = color;
         this.name = name;
     }
@@ -73,7 +76,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+    protected boolean propagatesSkylightDown(final BlockState state) {
         return !state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
@@ -159,7 +162,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(id, this, HELP);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.neoforge.support.render.ModelProperties;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 
 public class ForgeDestructorBlockEntity extends AbstractDestructorBlockEntity {
     public ForgeDestructorBlockEntity(final BlockPos pos, final BlockState state) {

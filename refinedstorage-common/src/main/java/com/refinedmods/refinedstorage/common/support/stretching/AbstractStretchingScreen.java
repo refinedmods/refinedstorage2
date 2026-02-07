@@ -6,11 +6,13 @@ import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
+
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMenu & ScreenSizeListener>
     extends AbstractBaseScreen<T> {
@@ -28,20 +30,22 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
 
     protected AbstractStretchingScreen(final T menu,
                                        final Inventory playerInventory,
-                                       final TextMarquee title) {
-        super(menu, playerInventory, title);
+                                       final TextMarquee title,
+                                       final int width, final int height) {
+        super(menu, playerInventory, title, width, height);
     }
 
     protected AbstractStretchingScreen(final T menu,
                                        final Inventory playerInventory,
-                                       final Component title) {
-        super(menu, playerInventory, title);
+                                       final Component title,
+                                       final int width, final int height) {
+        super(menu, playerInventory, title, width, height);
     }
 
     @Override
     protected void init() {
         this.visibleRows = calculateVisibleRows();
-        this.imageHeight = TOP_HEIGHT + (ROW_SIZE * visibleRows) + getBottomHeight();
+        Platform.INSTANCE.updateImageHeight(this, TOP_HEIGHT + (ROW_SIZE * visibleRows) + getBottomHeight());
         this.inventoryLabelY = imageHeight - INVENTORY_INCLUDING_TITLE_HEIGHT + 4;
 
         resize();
@@ -90,28 +94,39 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
         renderBackground(graphics, x, y);
         renderRows(graphics, mouseX, mouseY, x, y);
     }
 
-    private void renderBackground(final GuiGraphics graphics, final int x, final int y) {
-        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, TOP_HEIGHT);
+    @Override
+    protected void extractDefaultBackground(final GuiGraphicsExtractor graphics) {
+        // no op
+    }
+
+    private void renderBackground(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        graphics.blit(GUI_TEXTURED, getTexture(), x, y, 0, 0, imageWidth, TOP_HEIGHT, 256, 256);
         renderStretchingBackground(graphics, x, y + TOP_HEIGHT, visibleRows);
         graphics.blit(
+            GUI_TEXTURED,
             getTexture(),
             x,
             y + TOP_HEIGHT + (ROW_SIZE * visibleRows),
             0,
             getBottomV(),
             imageWidth,
-            getBottomHeight()
+            getBottomHeight(),
+            256,
+            256
         );
     }
 
-    private void renderRows(final GuiGraphics graphics, final int mouseX, final int mouseY, final int x, final int y) {
+    private void renderRows(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final int x,
+                            final int y) {
         graphics.enableScissor(
             x + 7,
             y + TOP_HEIGHT + 1,
@@ -123,7 +138,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     protected abstract void renderRows(
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int x,
         int y,
         int topHeight,
@@ -132,22 +147,23 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         int mouseY
     );
 
-    protected abstract void renderStretchingBackground(GuiGraphics graphics, int x, int y, int rows);
+    protected abstract void renderStretchingBackground(GuiGraphicsExtractor graphics, int x, int y, int rows);
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        if (scrollbar != null && scrollbar.mouseClicked(event, doubleClick)) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
@@ -159,15 +175,18 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     @Override
-    public boolean mouseReleased(final double mx, final double my, final int button) {
-        return (scrollbar != null && scrollbar.mouseReleased(mx, my, button)) || super.mouseReleased(mx, my, button);
+    public boolean mouseReleased(final MouseButtonEvent event) {
+        if (scrollbar != null && scrollbar.mouseReleased(event)) {
+            return true;
+        }
+        return super.mouseReleased(event);
     }
 
     @Override
     public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
         final boolean didScrollbar = scrollbar != null
-            && !hasShiftDown()
-            && !hasControlDown()
+            && !minecraft.hasShiftDown()
+            && !minecraft.hasControlDown()
             && scrollbar.mouseScrolled(x, y, z, delta);
         return didScrollbar || super.mouseScrolled(x, y, z, delta);
     }

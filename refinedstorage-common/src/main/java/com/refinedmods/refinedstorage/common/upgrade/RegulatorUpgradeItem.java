@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotRefer
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeMapping;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
@@ -20,14 +21,14 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -35,6 +36,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -42,11 +44,13 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     private static final Component HELP = createTranslation("item", "regulator_upgrade.help");
 
     public RegulatorUpgradeItem(final UpgradeRegistry registry) {
-        super(new Item.Properties(), registry, HELP);
+        super(new Item.Properties().setId(
+                net.minecraft.resources.ResourceKey.create(Registries.ITEM, ContentIds.REGULATOR_UPGRADE)),
+            registry, HELP);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
+    public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer) {
             final RegulatorUpgradeState initialState = stack.getOrDefault(
@@ -61,7 +65,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand)
             ));
         }
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS;
     }
 
     private ResourceContainer createResourceFilterContainer(final ItemStack stack,

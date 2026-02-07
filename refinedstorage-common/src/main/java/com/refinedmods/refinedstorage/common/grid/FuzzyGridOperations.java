@@ -11,13 +11,15 @@ import com.refinedmods.refinedstorage.common.api.storage.root.FuzzyRootStorage;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
+import java.net.URI;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,8 @@ public class FuzzyGridOperations implements GridOperations {
         createTranslation("gui", "grid.inaccurate_extraction.check_chat_for_more_details");
     private static final Component READ_MORE = createTranslation("gui", "grid.inaccurate_extraction.read_more")
         .setStyle(Style.EMPTY
-            .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                "https://refinedmods.com/refined-storage/troubleshooting/inaccurate-extraction.html"))
+            .withClickEvent(new ClickEvent.OpenUrl(
+                URI.create("https://refinedmods.com/refined-storage/troubleshooting/inaccurate-extraction.html")))
             .withColor(ChatFormatting.BLUE)
             .withUnderlined(true));
 
@@ -59,7 +61,7 @@ public class FuzzyGridOperations implements GridOperations {
             if (resource instanceof ItemResource itemResource) {
                 itemResource.components().entrySet().forEach(e -> {
                     final DataComponentType<?> componentType = e.getKey();
-                    final ResourceLocation key = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType);
+                    final Identifier key = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType);
                     LOGGER.warn("Component {} = {}", key, e.getValue());
                 });
             }

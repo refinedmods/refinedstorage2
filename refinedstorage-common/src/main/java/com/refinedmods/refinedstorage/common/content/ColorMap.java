@@ -8,15 +8,15 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 
 public class ColorMap<T> {
     protected final DyeColor defaultColor;
     private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
-    private final ResourceLocation baseId;
+    private final Identifier baseId;
 
-    public ColorMap(final ResourceLocation baseId, final DyeColor defaultColor) {
+    public ColorMap(final Identifier baseId, final DyeColor defaultColor) {
         this.baseId = Objects.requireNonNull(baseId);
         this.defaultColor = Objects.requireNonNull(defaultColor);
     }
@@ -31,11 +31,11 @@ public class ColorMap<T> {
         }
     }
 
-    protected final ResourceLocation getId(final DyeColor color) {
+    protected final Identifier getId(final DyeColor color) {
         if (color == defaultColor) {
             return baseId;
         }
-        return ResourceLocation.fromNamespaceAndPath(baseId.getNamespace(), color.getName() + "_" + baseId.getPath());
+        return Identifier.fromNamespaceAndPath(baseId.getNamespace(), color.getName() + "_" + baseId.getPath());
     }
 
     public void forEach(final ColoredConsumer<T> consumer) {
@@ -69,6 +69,6 @@ public class ColorMap<T> {
 
     @FunctionalInterface
     public interface ColoredConsumer<T> {
-        void accept(DyeColor color, ResourceLocation id, Supplier<T> supplier);
+        void accept(DyeColor color, Identifier id, Supplier<T> supplier);
     }
 }

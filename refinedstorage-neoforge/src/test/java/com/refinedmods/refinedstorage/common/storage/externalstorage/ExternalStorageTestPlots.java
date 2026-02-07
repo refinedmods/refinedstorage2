@@ -9,8 +9,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
 import org.apache.commons.lang3.function.TriConsumer;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class ExternalStorageTestPlots {
@@ -33,20 +32,20 @@ final class ExternalStorageTestPlots {
                                 AbstractExternalStorageBlockEntity,
                                 BlockPos,
                                 GameTestSequence> consumer) {
-        helper.setBlock(ZERO.above(), RSBLOCKS.getCreativeController().getDefault());
+        helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
         if (itemStorage) {
-            helper.setBlock(ZERO.above().above(), RSBLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
+            helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         } else {
-            helper.setBlock(ZERO.above().above(), RSBLOCKS.getCable().getDefault());
+            helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getCable().getDefault());
         }
         helper.setBlock(
             ZERO.above().above().north(),
-            RSBLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
+            MOD_BLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
         );
         final BlockPos externalStoragePos = ZERO.above().above().above();
-        helper.setBlock(externalStoragePos, RSBLOCKS.getExternalStorage().getDefault().rotated(direction));
+        helper.setBlock(externalStoragePos, MOD_BLOCKS.getExternalStorage().getDefault().rotated(direction));
         consumer.accept(
-            requireBlockEntity(helper, externalStoragePos, AbstractExternalStorageBlockEntity.class),
+            helper.getBlockEntity(externalStoragePos, AbstractExternalStorageBlockEntity.class),
             externalStoragePos,
             helper.startSequence()
         );

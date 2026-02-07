@@ -15,11 +15,11 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import org.jspecify.annotations.Nullable;
 
 public class AutocraftingPreviewContainerMenu extends AbstractResourceContainerMenu {
     private final List<AutocraftingRequest> requests;

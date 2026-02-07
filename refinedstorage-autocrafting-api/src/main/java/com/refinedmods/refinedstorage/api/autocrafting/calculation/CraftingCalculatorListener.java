@@ -7,21 +7,25 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.12")
 public interface CraftingCalculatorListener<T> {
-    default void rootCalculationStarted(ResourceKey resource, long amount) {
+    default void rootCalculationStarted(final ResourceKey resource, final long amount) {
     }
 
     CraftingCalculatorListener<T> childCalculationStarted(Pattern childPattern, ResourceKey resource, Amount amount);
 
-    default void childCalculationCompleted(CraftingCalculatorListener<T> childListener) {
+    default void childCalculationCompleted(final CraftingCalculatorListener<T> childListener) {
     }
 
-    default void ingredientsExhausted(ResourceKey resource, long amount) {
+    default void ingredientsExhausted(final ResourceKey resource, final long amount) {
     }
 
-    default void ingredientUsed(Pattern ingredientPattern, int ingredientIndex, ResourceKey resource, long amount) {
+    default void ingredientUsed(final Pattern ingredientPattern,
+                                final int ingredientIndex,
+                                final ResourceKey resource,
+                                final long amount) {
     }
 
-    default void ingredientExtractedFromStorage(ResourceKey resource, long amount) {
+    default void ingredientExtractedFromStorage(final ResourceKey resource,
+                                                final long amount) {
     }
 
     T getData();

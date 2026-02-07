@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:autocrafting",
+  "criteria": {
+    "autocrafting_upgrade_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:autocrafting_upgrade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.autocrafting_on_demand.description"
+    },
+    "icon": {
+      "id": "refinedstorage:autocrafting_upgrade"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.autocrafting_on_demand"
+    }
+  },
+  "requirements": [
+    [
+      "autocrafting_upgrade_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

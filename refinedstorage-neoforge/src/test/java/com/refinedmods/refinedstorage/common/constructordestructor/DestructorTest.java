@@ -2,19 +2,16 @@ package com.refinedmods.refinedstorage.common.constructordestructor;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.Set;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSITEMS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.networkIsAvailable;
@@ -27,13 +24,11 @@ import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.LAVA;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class DestructorTest {
     private DestructorTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldBreakBlock(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -67,7 +62,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldBreakBlockAllowlist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -98,7 +93,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldBreakBlockBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -129,7 +124,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldBreakBlockWithSilkTouchUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -140,7 +135,7 @@ public final class DestructorTest {
 
             // Act
             helper.setBlock(pos.east(), Blocks.DIAMOND_ORE);
-            destructor.addUpgrade(RSITEMS.getSilkTouchUpgrade().getDefaultInstance());
+            destructor.addUpgrade(MOD_ITEMS.getSilkTouchUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -156,7 +151,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPickupItemAllowlist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -188,7 +183,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldPickupItemBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -221,7 +216,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldDrainFluidAllowlist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange
@@ -253,7 +248,7 @@ public final class DestructorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldDrainFluidBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (destructor, pos, sequence) -> {
             // Arrange

@@ -58,7 +58,6 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.ResourceSlotChan
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardBoundPlayerPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardPermissionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardResetPermissionPacket;
-import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.UseSlotReferencedItemPacket;
@@ -93,48 +92,42 @@ import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage.common.util.ServerListener;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApiProxy;
-import com.refinedmods.refinedstorage.neoforge.autocrafting.FluidHandlerExternalPatternProviderSinkFactory;
-import com.refinedmods.refinedstorage.neoforge.autocrafting.ItemHandlerExternalPatternProviderSinkFactory;
-import com.refinedmods.refinedstorage.neoforge.cape.TenthAnniversaryCape;
+import com.refinedmods.refinedstorage.neoforge.autocrafting.ResourceHandlerExternalPatternSinkStrategyFactoryImpl;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeConstructorBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.constructordestructor.ForgeDestructorBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.debug.DebugStickItem;
-import com.refinedmods.refinedstorage.neoforge.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.exporter.ForgeExporterBlockEntity;
-import com.refinedmods.refinedstorage.neoforge.exporter.ItemHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.neoforge.exporter.ResourceHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridExtractionStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridScrollingStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeFluidResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeItemResourceRepositoryMapper;
-import com.refinedmods.refinedstorage.neoforge.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.importer.ForgeImporterBlockEntity;
-import com.refinedmods.refinedstorage.neoforge.importer.ItemHandlerImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.neoforge.importer.ResourceHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.networking.ForgeCableBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.ForgeDiskInterfaceBlockEntity;
-import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.FluidHandlerExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.ForgeExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.ResourceHandlerPlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.ForgePortableGridBlockEntity;
-import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageAdapter;
-import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractItemHandler;
-import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerFluidHandlerAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnergyHandlerAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractResourceHandler;
+import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerResourceHandlerAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Supplier;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
@@ -146,6 +139,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -158,26 +152,27 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.transfer.RangedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 import static com.refinedmods.refinedstorage.common.content.ContentIds.CREATIVE_PORTABLE_GRID;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.CREATIVE_WIRELESS_AUTOCRAFTING_MONITOR;
@@ -186,7 +181,6 @@ import static com.refinedmods.refinedstorage.common.content.ContentIds.FALLBACK_
 import static com.refinedmods.refinedstorage.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.REGULATOR_UPGRADE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.SECURITY_CARD;
-import static com.refinedmods.refinedstorage.common.content.ContentIds.TENTH_ANNIVERSARY_CAPE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_AUTOCRAFTING_MONITOR;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.WIRELESS_GRID;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -221,8 +215,6 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, IdentifierUtil.MOD_ID);
     private final DeferredRegister<DataComponentType<?>> dataComponentTypeRegistry =
         DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, IdentifierUtil.MOD_ID);
-    private final DeferredRegister<AttachmentType<?>> attachmentTypeDeferredRegister =
-        DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, IdentifierUtil.MOD_ID);
     private final String modVersion;
 
     public ModInitializer(final IEventBus eventBus, final ModContainer modContainer) {
@@ -231,7 +223,7 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformProxy.loadPlatform(new PlatformImpl(modContainer));
         initializePlatformApi();
         ((RefinedStorageNeoForgeApiProxy) RefinedStorageNeoForgeApi.INSTANCE).setDelegate(
-            new RefinedStorageNeoForgeApiImpl()
+            new RefinedStorageNeoForgeApiImpl(RefinedStorageApi.INSTANCE)
         );
         registerGridResourceRepositoryMappers();
         registerAdditionalGridInsertionStrategyFactories();
@@ -240,21 +232,24 @@ public class ModInitializer extends AbstractModInitializer {
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
         registerExternalStorageProviderFactories();
-        registerPatternProviderSinkFactories();
+        registerExternalPatternSinkStrategyFactories();
         registerContent(eventBus);
         registerSounds(eventBus);
         registerRecipeSerializers(eventBus);
         registerTickHandler();
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             AbstractClientModInitializer.initializeClientPlatformApi();
             eventBus.addListener(ClientModInitializer::onClientSetup);
-            eventBus.addListener(ClientModInitializer::onRegisterCustomModels);
+            eventBus.addListener(ClientModInitializer::onRegisterItemModels);
+            eventBus.addListener(ClientModInitializer::onRegisterBlockStateModels);
             eventBus.addListener(ClientModInitializer::onRegisterMenuScreens);
             eventBus.addListener(ClientModInitializer::onRegisterKeyMappings);
             eventBus.addListener(ClientModInitializer::onRegisterTooltipFactories);
-            eventBus.addListener(ClientModInitializer::onConfigReloading);
-            NeoForge.EVENT_BUS.addListener(ClientModInitializer::onLoggingIn);
+            eventBus.addListener(ClientModInitializer::registerRangeItemProperties);
+            eventBus.addListener(ClientModInitializer::registerConditionalItemProperties);
+            eventBus.addListener(ClientModInitializer::registerSelectItemProperties);
+            NeoForge.EVENT_BUS.addListener(ClientModInitializer::onRecipesReceived);
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
 
@@ -264,6 +259,7 @@ public class ModInitializer extends AbstractModInitializer {
         eventBus.addListener(this::registerCapabilities);
 
         NeoForge.EVENT_BUS.addListener(this::registerWrenchingEvent);
+        NeoForge.EVENT_BUS.addListener(this::registerRecipeSync);
         NeoForge.EVENT_BUS.addListener(this::registerSecurityBlockBreakEvent);
     }
 
@@ -294,39 +290,78 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerImporterTransferStrategyFactories() {
         RefinedStorageApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("item"),
-            new ItemHandlerImporterTransferStrategyFactory()
+            new ResourceHandlerImporterTransferStrategyFactory<>(
+                1,
+                VariantUtil::optionalItemToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Item.BLOCK
+            )
         );
         RefinedStorageApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
-            new FluidHandlerImporterTransferStrategyFactory()
+            new ResourceHandlerImporterTransferStrategyFactory<>(
+                FluidType.BUCKET_VOLUME,
+                VariantUtil::optionalFluidToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Fluid.BLOCK
+            )
         );
     }
 
     private void registerExporterTransferStrategyFactories() {
         RefinedStorageApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("item"),
-            new ItemHandlerExporterTransferStrategyFactory()
+            new ResourceHandlerExporterTransferStrategyFactory<>(
+                1,
+                ItemResource.class,
+                VariantUtil::optionalItemToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Item.BLOCK
+            )
         );
         RefinedStorageApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
-            new FluidHandlerExporterTransferStrategyFactory()
+            new ResourceHandlerExporterTransferStrategyFactory<>(
+                FluidType.BUCKET_VOLUME,
+                FluidResource.class,
+                VariantUtil::optionalFluidToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Fluid.BLOCK
+            )
         );
     }
 
     private void registerExternalStorageProviderFactories() {
         RefinedStorageApi.INSTANCE.addExternalStorageProviderFactory(
-            new ItemHandlerPlatformExternalStorageProviderFactory());
+            new ResourceHandlerPlatformExternalStorageProviderFactory<>(
+                VariantUtil::optionalItemToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Item.BLOCK
+            )
+        );
         RefinedStorageApi.INSTANCE.addExternalStorageProviderFactory(
-            new FluidHandlerExternalStorageProviderFactory()
+            new ResourceHandlerPlatformExternalStorageProviderFactory<>(
+                VariantUtil::optionalFluidToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Fluid.BLOCK
+            )
         );
     }
 
-    private void registerPatternProviderSinkFactories() {
-        RefinedStorageApi.INSTANCE.addPatternProviderExternalPatternSinkFactory(
-            new ItemHandlerExternalPatternProviderSinkFactory()
+    private void registerExternalPatternSinkStrategyFactories() {
+        RefinedStorageNeoForgeApi.INSTANCE.addResourceHandlerExternalPatternSinkStrategyFactory(
+            new ResourceHandlerExternalPatternSinkStrategyFactoryImpl<>(
+                VariantUtil::optionalItemToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Item.BLOCK
+            )
         );
-        RefinedStorageApi.INSTANCE.addPatternProviderExternalPatternSinkFactory(
-            new FluidHandlerExternalPatternProviderSinkFactory()
+        RefinedStorageNeoForgeApi.INSTANCE.addResourceHandlerExternalPatternSinkStrategyFactory(
+            new ResourceHandlerExternalPatternSinkStrategyFactoryImpl<>(
+                VariantUtil::optionalFluidToPlatform,
+                VariantUtil::ofPlatform,
+                Capabilities.Fluid.BLOCK
+            )
         );
     }
 
@@ -336,7 +371,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerBlockEntities(eventBus);
         registerMenus(eventBus);
         registerDataComponents(eventBus);
-        registerAttachmentTypes(eventBus);
     }
 
     private void registerBlocks(final IEventBus eventBus) {
@@ -450,11 +484,10 @@ public class ModInitializer extends AbstractModInitializer {
         registerBlockEntities(
             new ForgeRegistryCallback<>(blockEntityTypeRegistry),
             new BlockEntityTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)));
                 }
             },
             BLOCK_ENTITY_PROVIDERS
@@ -488,12 +521,6 @@ public class ModInitializer extends AbstractModInitializer {
         dataComponentTypeRegistry.register(eventBus);
     }
 
-    private void registerAttachmentTypes(final IEventBus eventBus) {
-        TenthAnniversaryCape.setAttachment(attachmentTypeDeferredRegister.register(TENTH_ANNIVERSARY_CAPE.getPath(),
-            () -> AttachmentType.builder(() -> false).sync(ByteBufCodecs.BOOL).serialize(Codec.BOOL).build()));
-        attachmentTypeDeferredRegister.register(eventBus);
-    }
-
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getCable());
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getConstructor());
@@ -524,70 +551,72 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getAutocrafterManager());
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getAutocraftingMonitor());
         event.registerBlockEntity(
-            Capabilities.ItemHandler.BLOCK,
+            Capabilities.Item.BLOCK,
             BlockEntities.INSTANCE.getDiskDrive(),
-            (be, side) -> new InvWrapper(be.getDiskInventory())
+            (be, side) -> VanillaContainerWrapper.of(be.getDiskInventory())
         );
         event.registerBlockEntity(
-            Capabilities.ItemHandler.BLOCK,
+            Capabilities.Item.BLOCK,
             BlockEntities.INSTANCE.getInterface(),
-            (be, side) -> new InvWrapper(be.getExportedResourcesAsContainer())
+            (be, side) -> VanillaContainerWrapper.of(be.getExportedResourcesAsContainer())
         );
         event.registerBlockEntity(
-            Capabilities.ItemHandler.BLOCK,
+            Capabilities.Item.BLOCK,
             BlockEntities.INSTANCE.getPatternGrid(),
-            (be, side) -> new InvWrapper(be.getPatternInput())
+            (be, side) -> VanillaContainerWrapper.of(be.getPatternInput())
         );
         event.registerBlockEntity(
-            Capabilities.FluidHandler.BLOCK,
+            Capabilities.Fluid.BLOCK,
             BlockEntities.INSTANCE.getInterface(),
-            (be, side) -> new ResourceContainerFluidHandlerAdapter(be.getExportedResources())
+            (be, side) -> new ResourceContainerResourceHandlerAdapter(be.getExportedResources())
         );
         event.registerBlockEntity(
-            Capabilities.EnergyStorage.BLOCK,
+            Capabilities.Energy.BLOCK,
             BlockEntities.INSTANCE.getController(),
-            (be, side) -> new EnergyStorageAdapter(be.getEnergyStorage())
+            (be, side) -> new EnergyStorageEnergyHandlerAdapter(be.getEnergyStorage())
         );
         event.registerBlockEntity(
-            Capabilities.EnergyStorage.BLOCK,
+            Capabilities.Energy.BLOCK,
             BlockEntities.INSTANCE.getPortableGrid(),
-            (be, side) -> new EnergyStorageAdapter(be.getEnergyStorage())
+            (be, side) -> new EnergyStorageEnergyHandlerAdapter(be.getEnergyStorage())
         );
         event.registerItem(
-            Capabilities.EnergyStorage.ITEM,
-            (stack, ctx) -> new EnergyStorageAdapter(Items.INSTANCE.getWirelessGrid().createEnergyStorage(stack)),
+            Capabilities.Energy.ITEM,
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(
+                Items.INSTANCE.getWirelessGrid().createEnergyStorage(stack)),
             Items.INSTANCE.getWirelessGrid()
         );
         Items.INSTANCE.getControllers().forEach(controllerItem -> event.registerItem(
-            Capabilities.EnergyStorage.ITEM,
-            (stack, ctx) -> new EnergyStorageAdapter(controllerItem.get().createEnergyStorage(stack)),
+            Capabilities.Energy.ITEM,
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(controllerItem.get().createEnergyStorage(stack)),
             controllerItem.get()
         ));
         event.registerItem(
-            Capabilities.EnergyStorage.ITEM,
-            (stack, ctx) -> new EnergyStorageAdapter(PortableGridBlockItem.createEnergyStorage(stack)),
+            Capabilities.Energy.ITEM,
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(PortableGridBlockItem.createEnergyStorage(stack)),
             Items.INSTANCE.getPortableGrid()
         );
         event.registerItem(
-            Capabilities.EnergyStorage.ITEM,
-            (stack, ctx) -> new EnergyStorageAdapter(
+            Capabilities.Energy.ITEM,
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(
                 Items.INSTANCE.getWirelessAutocraftingMonitor().createEnergyStorage(stack)
             ),
             Items.INSTANCE.getWirelessAutocraftingMonitor()
         );
         event.registerBlockEntity(
-            Capabilities.ItemHandler.BLOCK,
+            Capabilities.Item.BLOCK,
             BlockEntities.INSTANCE.getDiskInterface(),
             (be, side) -> {
-                final InvWrapper wrapper = new InvWrapper(be.getDiskInventory());
-                return new InsertExtractItemHandler(
-                    new RangedWrapper(
-                        wrapper,
+                final ResourceHandler<net.neoforged.neoforge.transfer.item.ItemResource> diskHandler =
+                    VanillaContainerWrapper.of(be.getDiskInventory());
+                return new InsertExtractResourceHandler<>(
+                    RangedResourceHandler.of(
+                        diskHandler,
                         0,
                         AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2
                     ),
-                    new RangedWrapper(
-                        wrapper,
+                    RangedResourceHandler.of(
+                        diskHandler,
                         AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS / 2,
                         AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS
                     )
@@ -655,6 +684,11 @@ public class ModInitializer extends AbstractModInitializer {
                 .displayItems((params, output) -> CreativeModeTabItems.appendColoredVariants(output::accept))
                 .build()
         ));
+    }
+
+    @SubscribeEvent
+    private void registerRecipeSync(final OnDatapackSyncEvent e) {
+        e.sendRecipes(RecipeType.CRAFTING, RecipeType.STONECUTTING, RecipeType.SMITHING);
     }
 
     @SubscribeEvent
@@ -973,11 +1007,6 @@ public class ModInitializer extends AbstractModInitializer {
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
         );
-        registrar.playToServer(
-            SetTenthAnniversaryCapePacket.PACKET_TYPE,
-            SetTenthAnniversaryCapePacket.STREAM_CODEC,
-            wrapHandler(SetTenthAnniversaryCapePacket::handle)
-        );
     }
 
     private static <T extends CustomPacketPayload> IPayloadHandler<T> wrapHandler(final PacketHandler<T> handler) {
@@ -1001,7 +1030,7 @@ public class ModInitializer extends AbstractModInitializer {
 
     private record ForgeRegistryCallback<T>(DeferredRegister<T> registry) implements RegistryCallback<T> {
         @Override
-        public <R extends T> Supplier<R> register(final ResourceLocation id, final Supplier<R> value) {
+        public <R extends T> Supplier<R> register(final Identifier id, final Supplier<R> value) {
             return registry.register(id.getPath(), value);
         }
     }

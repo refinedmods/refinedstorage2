@@ -7,36 +7,34 @@ import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
+import com.refinedmods.refinedstorage.common.support.RecipeMapRecipeProvider;
+import com.refinedmods.refinedstorage.common.support.RecipeProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
-import com.refinedmods.refinedstorage.neoforge.cape.TenthAnniversaryCape;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.MenuOpenerImpl;
-import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnergyHandlerAdapter;
 import com.refinedmods.refinedstorage.neoforge.support.render.FluidStackFluidRenderer;
+import com.refinedmods.refinedstorage.neoforge.support.resource.SimpleItemStackResourceHandler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -62,33 +60,36 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.fluids.FluidActionResult;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
-import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.ofFluidStack;
-import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toFluidStack;
+import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.ofPlatform;
+import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toPlatform;
+import static java.util.Objects.requireNonNull;
 
 public final class PlatformImpl extends AbstractPlatform {
     private final ConfigImpl config = new ConfigImpl();
+    @Nullable
+    private RecipeProvider clientRecipeProvider;
 
     public PlatformImpl(final ModContainer modContainer) {
         super(new MenuOpenerImpl(), new FluidStackFluidRenderer(), ItemGridInsertionStrategy::new);
@@ -113,30 +114,31 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
         return !keyMapping.isUnbound() && InputConstants.isKeyDown(
-            Minecraft.getInstance().getWindow().getWindow(),
+            Minecraft.getInstance().getWindow(),
             keyMapping.getKey().getValue()
         );
     }
 
     @Override
     public Optional<FluidOperationResult> drainContainer(final ItemStack container) {
-        final FluidTank tank = new FluidTank(Integer.MAX_VALUE);
-        final FluidActionResult result = FluidUtil.tryEmptyContainer(
-            container,
-            tank,
-            Integer.MAX_VALUE,
-            null,
-            true
-        );
-        if (!result.isSuccess() || tank.isEmpty()) {
+        if (container.isEmpty()) {
             return Optional.empty();
         }
-        final FluidResource fluidResource = ofFluidStack(tank.getFluid());
-        return Optional.of(new FluidOperationResult(
-            result.getResult(),
-            fluidResource,
-            tank.getFluidAmount()
-        ));
+        final SimpleItemStackResourceHandler interceptingHandler = SimpleItemStackResourceHandler.forStack(container);
+        final ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> source =
+            container.getCapability(Capabilities.Fluid.ITEM, ItemAccess.forHandlerIndex(interceptingHandler, 0));
+        try (Transaction tx = Transaction.openRoot()) {
+            final var extracted = ResourceHandlerUtil.extractFirst(source, r -> true, Integer.MAX_VALUE,
+                tx);
+            if (extracted == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new FluidOperationResult(
+                interceptingHandler.getStack(),
+                ofPlatform(extracted.resource()),
+                extracted.amount()
+            ));
+        }
     }
 
     @Override
@@ -145,11 +147,20 @@ public final class PlatformImpl extends AbstractPlatform {
         if (!(resourceAmount.resource() instanceof FluidResource fluidResource)) {
             return Optional.empty();
         }
-        return FluidUtil.getFluidHandler(container.copy()).map(handler -> {
-            final FluidStack fluidStack = toFluidStack(fluidResource, resourceAmount.amount());
-            final long filled = handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
-            return new FluidOperationResult(handler.getContainer(), fluidResource, filled);
-        });
+        final SimpleItemStackResourceHandler interceptingHandler = SimpleItemStackResourceHandler.forStack(container);
+        final ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> storage =
+            container.getCapability(Capabilities.Fluid.ITEM, ItemAccess.forHandlerIndex(interceptingHandler, 0));
+        if (storage == null) {
+            return Optional.empty();
+        }
+        try (Transaction tx = Transaction.openRoot()) {
+            final long inserted = storage.insert(toPlatform(fluidResource), (int) resourceAmount.amount(), tx);
+            return Optional.of(new FluidOperationResult(
+                interceptingHandler.getStack(),
+                fluidResource,
+                inserted
+            ));
+        }
     }
 
     @Override
@@ -162,10 +173,16 @@ public final class PlatformImpl extends AbstractPlatform {
                                     final ItemResource itemResource,
                                     final long amount,
                                     final Action action) {
-        final InvWrapper wrapper = new InvWrapper(container);
-        final ItemStack stack = itemResource.toItemStack(amount);
-        final ItemStack remainder = ItemHandlerHelper.insertItem(wrapper, stack, action == Action.SIMULATE);
-        return amount - remainder.getCount();
+        final ResourceHandler<net.neoforged.neoforge.transfer.item.ItemResource> wrapper =
+            VanillaContainerWrapper.of(container);
+        final net.neoforged.neoforge.transfer.item.ItemResource platformResource = toPlatform(itemResource);
+        try (Transaction tx = Transaction.openRoot()) {
+            final long inserted = wrapper.insert(platformResource, (int) amount, tx);
+            if (inserted > 0 && action == Action.EXECUTE) {
+                tx.commit();
+            }
+            return inserted;
+        }
     }
 
     @Override
@@ -173,7 +190,7 @@ public final class PlatformImpl extends AbstractPlatform {
                                        final Level level,
                                        final BlockHitResult hitResult,
                                        final Player player) {
-        return state.getCloneItemStack(hitResult, level, hitResult.getBlockPos(), player);
+        return state.getCloneItemStack(hitResult.getBlockPos(), level, false, player);
     }
 
     @Override
@@ -195,7 +212,7 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
         return Optional.ofNullable(playerId)
-            .flatMap(id -> level.getServer().getProfileCache().get(id))
+            .flatMap(id -> level.getServer().services().profileResolver().fetchById(id))
             .map(profile -> FakePlayerFactory.get(level, profile))
             .orElseGet(() -> FakePlayerFactory.getMinecraft(level));
     }
@@ -236,17 +253,8 @@ public final class PlatformImpl extends AbstractPlatform {
         if (level.getBlockState(pos).getFluidState().isSource()) {
             return false;
         }
-        final FluidStack stack = toFluidStack(fluidResource, FluidType.BUCKET_VOLUME);
-        final FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
-        tank.fill(stack, IFluidHandler.FluidAction.EXECUTE);
-        return FluidUtil.tryPlaceFluid(
-            player,
-            level,
-            InteractionHand.MAIN_HAND,
-            pos,
-            tank,
-            toFluidStack(fluidResource, FluidType.BUCKET_VOLUME)
-        );
+        final net.neoforged.neoforge.transfer.fluid.FluidResource platformResource = toPlatform(fluidResource);
+        return FluidUtil.tryPlaceFluid(platformResource, player, level, InteractionHand.MAIN_HAND, pos);
     }
 
     @Override
@@ -257,10 +265,10 @@ public final class PlatformImpl extends AbstractPlatform {
                                          final BlockPos position,
                                          final Player player) {
         return block.getCloneItemStack(
-            state,
-            new BlockHitResult(Vec3.ZERO, direction, position, false),
             level,
             position,
+            state,
+            false,
             player
         );
     }
@@ -273,7 +281,7 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public List<ClientTooltipComponent> processTooltipComponents(
         final ItemStack stack,
-        final GuiGraphics graphics,
+        final GuiGraphicsExtractor graphics,
         final int mouseX,
         final Optional<TooltipComponent> imageComponent,
         final List<Component> components
@@ -290,43 +298,21 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void renderTooltip(final GuiGraphics graphics,
-                              final List<ClientTooltipComponent> components,
-                              final int x,
-                              final int y) {
-        graphics.renderTooltipInternal(
-            Minecraft.getInstance().font,
-            components,
-            x,
-            y,
-            DefaultTooltipPositioner.INSTANCE
-        );
-    }
-
-    @Override
     public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return Optional.ofNullable(stack.getCapability(Capabilities.EnergyStorage.ITEM))
-            .filter(EnergyStorageAdapter.class::isInstance)
-            .map(EnergyStorageAdapter.class::cast)
-            .map(EnergyStorageAdapter::energyStorage);
+        return Optional.ofNullable(stack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(stack)))
+            .filter(EnergyStorageEnergyHandlerAdapter.class::isInstance)
+            .map(EnergyStorageEnergyHandlerAdapter.class::cast)
+            .map(EnergyStorageEnergyHandlerAdapter::getEnergyStorage);
     }
 
     @Override
     public <T extends CustomPacketPayload> void sendPacketToServer(final T packet) {
-        PacketDistributor.sendToServer(packet);
+        ClientPacketDistributor.sendToServer(packet);
     }
 
     @Override
     public <T extends CustomPacketPayload> void sendPacketToClient(final ServerPlayer player, final T packet) {
         PacketDistributor.sendToPlayer(player, packet);
-    }
-
-    @Override
-    public void saveSavedData(final SavedData savedData,
-                              final File file,
-                              final HolderLookup.Provider provider,
-                              final BiConsumer<File, HolderLookup.Provider> defaultSaveFunction) {
-        defaultSaveFunction.accept(file, provider);
     }
 
     @Override
@@ -401,12 +387,23 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
-        player.setData(TenthAnniversaryCape.getAttachment(), enabled);
+    public void updateImageHeight(final AbstractContainerScreen<?> screen, final int height) {
+        screen.imageHeight = height;
     }
 
     @Override
-    public boolean isTenthAnniversaryCapeAvailable() {
-        return true;
+    public RecipeProvider getClientRecipeProvider(final Level level) {
+        if (!level.isClientSide()) {
+            return new RecipeMapRecipeProvider(requireNonNull(level.getServer()).getRecipeManager().recipeMap());
+        }
+        if (clientRecipeProvider == null) {
+            throw new RuntimeException("Recipe provider is not synced yet");
+        }
+        return clientRecipeProvider;
+    }
+
+    @Override
+    public void setClientRecipeProvider(final RecipeProvider recipeProvider) {
+        this.clientRecipeProvider = recipeProvider;
     }
 }

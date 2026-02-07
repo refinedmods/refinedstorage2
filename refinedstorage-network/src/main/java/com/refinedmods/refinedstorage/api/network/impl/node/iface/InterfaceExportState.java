@@ -5,7 +5,8 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.Collection;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public interface InterfaceExportState {
     int getSlots();

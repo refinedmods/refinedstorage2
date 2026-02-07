@@ -42,7 +42,7 @@ class AutocraftingInterfaceNetworkNodeTest {
         @InjectNetworkStorageComponent final StorageNetworkComponent storage
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
 
@@ -87,7 +87,7 @@ class AutocraftingInterfaceNetworkNodeTest {
     ) {
         // Arrange
         sut.setOnMissingResources(new InterfaceNetworkNode.AutocraftOnMissingResources());
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
 
@@ -110,7 +110,7 @@ class AutocraftingInterfaceNetworkNodeTest {
     ) {
         // Arrange
         sut.setOnMissingResources(new InterfaceNetworkNode.AutocraftOnMissingResources());
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
         storage.insert(C, 100, Action.EXECUTE, Actor.EMPTY);
@@ -138,7 +138,7 @@ class AutocraftingInterfaceNetworkNodeTest {
     ) {
         // Arrange
         sut.setOnMissingResources(new InterfaceNetworkNode.AutocraftOnMissingResources());
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
         storage.insert(C, 5, Action.EXECUTE, Actor.EMPTY);
@@ -166,7 +166,7 @@ class AutocraftingInterfaceNetworkNodeTest {
     ) {
         // Arrange
         sut.setOnMissingResources(new InterfaceNetworkNode.AutocraftOnMissingResources());
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
         storage.insert(C, 100, Action.EXECUTE, Actor.EMPTY);

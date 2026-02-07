@@ -28,8 +28,8 @@ public abstract class AbstractFluidGridResourceRepositoryMapper implements Resou
         final Map<GridResourceAttributeKey, Supplier<Set<String>>> attributes = Map.of(
             GridResourceAttributeKeys.MOD_ID, Suppliers.ofInstance(Set.of(modId)),
             GridResourceAttributeKeys.MOD_NAME, Suppliers.ofInstance(Set.of(modName)),
-            GridResourceAttributeKeys.TAGS, Suppliers.ofInstance(getTags(fluidResource.fluid())),
-            GridResourceAttributeKeys.TOOLTIP, Suppliers.ofInstance(Set.of(getTooltip(fluidResource)))
+            GridResourceAttributeKeys.TAGS, Suppliers.memoize(() -> getTags(fluidResource.fluid())),
+            GridResourceAttributeKeys.TOOLTIP, Suppliers.memoize(() -> Set.of(getTooltip(fluidResource)))
         );
         return new FluidGridResource(
             fluidResource,
@@ -40,7 +40,7 @@ public abstract class AbstractFluidGridResourceRepositoryMapper implements Resou
 
     private Set<String> getTags(final Fluid fluid) {
         return BuiltInRegistries.FLUID.getResourceKey(fluid)
-            .flatMap(BuiltInRegistries.FLUID::getHolder)
+            .flatMap(BuiltInRegistries.FLUID::get)
             .stream()
             .flatMap(Holder::tags)
             .map(tagKey -> tagKey.location().getPath())

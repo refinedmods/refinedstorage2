@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.common.api.support.network.ConnectionStrat
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jspecify.annotations.Nullable;
 
 public class InWorldNetworkNodeContainerBuilder implements InWorldNetworkNodeContainer.Builder {
     private final BlockEntity blockEntity;

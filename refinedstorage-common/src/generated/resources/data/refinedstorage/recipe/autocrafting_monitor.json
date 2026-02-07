@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:pattern",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "G": "#c:glass_blocks",
+    "M": "refinedstorage:machine_casing",
+    "P": "refinedstorage:improved_processor"
+  },
+  "pattern": [
+    "PAG",
+    "EMG",
+    "PAG"
+  ],
+  "result": {
+    "id": "refinedstorage:autocrafting_monitor"
+  }
+}

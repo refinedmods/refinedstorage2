@@ -12,16 +12,16 @@ import com.refinedmods.refinedstorage.common.support.containermenu.TransferManag
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -45,7 +45,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         return (ClientProperty<T>) requireNonNull(propertyMap.get(type), "Property not found");
     }
 
-    public void receivePropertyChangeFromClient(final ResourceLocation id, final int newValue) {
+    public void receivePropertyChangeFromClient(final Identifier id, final int newValue) {
         for (final Map.Entry<PropertyType<?>, Property<?>> entry : propertyMap.entrySet()) {
             final PropertyType<?> type = entry.getKey();
             if (!type.id().equals(id)) {
@@ -111,9 +111,10 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(final int id, final int dragType, final ClickType clickType, final Player player) {
-        final Slot slot = id >= 0 ? getSlot(id) : null;
-        if (isSwappingDisabledSlotWithNumberKeys(dragType, clickType)) {
+    public void clicked(final int slotIndex, final int buttonNum, final ContainerInput containerInput,
+                        final Player player) {
+        final Slot slot = slotIndex >= 0 ? getSlot(slotIndex) : null;
+        if (isSwappingDisabledSlotWithNumberKeys(buttonNum, containerInput)) {
             return;
         }
         if (slot instanceof FilterSlot) {
@@ -128,7 +129,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         if (slot instanceof DisabledSlot) {
             return;
         }
-        super.clicked(id, dragType, clickType, player);
+        super.clicked(slotIndex, buttonNum, containerInput, player);
     }
 
     @Override
@@ -139,10 +140,10 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
         return super.canTakeItemForPickAll(stack, slot);
     }
 
-    private boolean isSwappingDisabledSlotWithNumberKeys(final int dragType, final ClickType clickType) {
+    private boolean isSwappingDisabledSlotWithNumberKeys(final int buttonNum, final ContainerInput input) {
         return disabledSlot != null
-            && clickType == ClickType.SWAP
-            && disabledSlot.isDisabledSlot(dragType);
+            && input == ContainerInput.SWAP
+            && disabledSlot.isDisabledSlot(buttonNum);
     }
 
     public void handleFilterSlotChange(final int slotIndex, final ItemStack stack) {

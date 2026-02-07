@@ -19,12 +19,9 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerD
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -34,11 +31,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
-import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractExternalStorageBlockEntity
     extends AbstractCableLikeBlockEntity<ExternalStorageNetworkNode>
@@ -131,31 +130,31 @@ public abstract class AbstractExternalStorageBlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepository.toTag(provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_TRACKED_RESOURCES, ExternalStorageTrackedStorageRepository.CODEC,
+            trackedStorageRepository.getTrackedResources());
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        filter.save(tag, provider);
-        configContainer.save(tag);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        filter.store(output);
+        configContainer.store(output);
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        if (tag.contains(TAG_TRACKED_RESOURCES)) {
-            trackedStorageRepository.fromTag(requireNonNull(tag.get(TAG_TRACKED_RESOURCES)), provider);
-        }
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        input.read(TAG_TRACKED_RESOURCES, ExternalStorageTrackedStorageRepository.CODEC)
+            .ifPresent(trackedStorageRepository::load);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        filter.load(tag, provider);
-        configContainer.load(tag);
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        filter.read(input);
+        configContainer.read(input);
     }
 
     void setFilters(final Set<ResourceKey> filters) {

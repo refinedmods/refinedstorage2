@@ -105,7 +105,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -113,7 +112,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -128,7 +127,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.saveddata.SavedData;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -203,11 +202,7 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     @Override
     public StorageRepository getStorageRepository(final Level level) {
         final ServerLevel serverLevel = requireNonNull(level.getServer().getLevel(Level.OVERWORLD));
-        return serverLevel.getDataStorage().computeIfAbsent(new SavedData.Factory<>(
-            StorageRepositoryImpl::new,
-            StorageRepositoryImpl::new,
-            null
-        ), StorageRepositoryImpl.NAME);
+        return serverLevel.getDataStorage().computeIfAbsent(StorageRepositoryImpl.TYPE);
     }
 
     @Override
@@ -615,12 +610,12 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     }
 
     @Override
-    public ResourceLocation getCreativeModeTabId() {
+    public Identifier getCreativeModeTabId() {
         return ContentIds.CREATIVE_MODE_TAB;
     }
 
     @Override
-    public ResourceLocation getColoredCreativeModeTabId() {
+    public Identifier getColoredCreativeModeTabId() {
         return ContentIds.COLORED_CREATIVE_MODE_TAB;
     }
 

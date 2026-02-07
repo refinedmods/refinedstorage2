@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -21,8 +21,8 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_OFF = List.of(
         createTranslation("gui", "fuzzy_mode.off").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation ON = createIdentifier("widget/side_button/fuzzy_mode/on");
-    private static final ResourceLocation OFF = createIdentifier("widget/side_button/fuzzy_mode/off");
+    private static final Identifier ON = createIdentifier("widget/side_button/fuzzy_mode/on");
+    private static final Identifier OFF = createIdentifier("widget/side_button/fuzzy_mode/off");
 
     private final ClientProperty<Boolean> property;
     private final Supplier<Type> typeSupplier;
@@ -38,7 +38,7 @@ public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return Boolean.TRUE.equals(property.getValue()) ? ON : OFF;
     }
 

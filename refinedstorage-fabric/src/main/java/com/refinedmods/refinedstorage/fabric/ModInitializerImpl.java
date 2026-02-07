@@ -57,7 +57,6 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.ResourceSlotChan
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardBoundPlayerPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardPermissionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SecurityCardResetPermissionPacket;
-import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.SingleAmountChangePacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.UseSlotReferencedItemPacket;
@@ -92,7 +91,7 @@ import com.refinedmods.refinedstorage.common.util.ServerListener;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApiProxy;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStoragePlugin;
-import com.refinedmods.refinedstorage.fabric.autocrafting.FabricStorageExternalPatternSinkStrategyFactoryImpl;
+import com.refinedmods.refinedstorage.fabric.autocrafting.StorageExternalPatternSinkStrategyFactoryImpl;
 import com.refinedmods.refinedstorage.fabric.constructordestructor.FabricConstructorBlockEntity;
 import com.refinedmods.refinedstorage.fabric.constructordestructor.FabricDestructorBlockEntity;
 import com.refinedmods.refinedstorage.fabric.exporter.FabricExporterBlockEntity;
@@ -118,7 +117,6 @@ import com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -130,12 +128,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -147,6 +147,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -158,6 +159,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -214,6 +216,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerContent();
         registerPackets();
         registerPacketHandlers();
+        registerRecipeSync();
         registerSounds(new DirectRegistryCallback<>(BuiltInRegistries.SOUND_EVENT));
         registerRecipeSerializers(new DirectRegistryCallback<>(BuiltInRegistries.RECIPE_SERIALIZER));
         registerCapabilities();
@@ -320,14 +323,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerExternalPatternSinkStrategyFactories() {
         RefinedStorageFabricApi.INSTANCE.addStorageExternalPatternSinkStrategyFactory(
-            new FabricStorageExternalPatternSinkStrategyFactoryImpl<>(
+            new StorageExternalPatternSinkStrategyFactoryImpl<>(
                 ItemStorage.SIDED,
                 resource -> resource instanceof ItemResource itemResource
                     ? toItemVariant(itemResource) : null
             )
         );
         RefinedStorageFabricApi.INSTANCE.addStorageExternalPatternSinkStrategyFactory(
-            new FabricStorageExternalPatternSinkStrategyFactoryImpl<>(
+            new StorageExternalPatternSinkStrategyFactoryImpl<>(
                 FluidStorage.SIDED,
                 resource -> resource instanceof FluidResource fluidResource
                     ? toFluidVariant(fluidResource) : null
@@ -345,11 +348,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerBlockEntities(
             new DirectRegistryCallback<>(BuiltInRegistries.BLOCK_ENTITY_TYPE),
             new BlockEntityTypeFactory() {
-                @SuppressWarnings("DataFlowIssue") // data type can be null
                 @Override
                 public <T extends BlockEntity> BlockEntityType<T> create(final BlockEntityProvider<T> factory,
                                                                          final Block... allowedBlocks) {
-                    return new BlockEntityType<>(factory::create, new HashSet<>(Arrays.asList(allowedBlocks)), null);
+                    return FabricBlockEntityTypeBuilder.create(factory::create, allowedBlocks).build();
                 }
             },
             BLOCK_ENTITY_PROVIDERS
@@ -364,7 +366,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             public <T extends AbstractContainerMenu, D> MenuType<T> create(final MenuSupplier<T, D> supplier,
                                                                            final StreamCodec<RegistryFriendlyByteBuf, D>
                                                                                streamCodec) {
-                return new ExtendedScreenHandlerType<>(supplier::create, streamCodec);
+                return new ExtendedMenuType<>(supplier::create, streamCodec);
             }
         });
         registerLootFunctions(new DirectRegistryCallback<>(BuiltInRegistries.LOOT_FUNCTION_TYPE));
@@ -501,204 +503,201 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerServerToClientPackets() {
-        PayloadTypeRegistry.playS2C().register(EnergyInfoPacket.PACKET_TYPE, EnergyInfoPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(EnergyInfoPacket.PACKET_TYPE, EnergyInfoPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
             WirelessTransmitterDataPacket.PACKET_TYPE,
             WirelessTransmitterDataPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(GridActivePacket.PACKET_TYPE, GridActivePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(GridActivePacket.PACKET_TYPE, GridActivePacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocrafterManagerActivePacket.PACKET_TYPE,
             AutocrafterManagerActivePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(GridClearPacket.PACKET_TYPE, GridClearPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(GridUpdatePacket.PACKET_TYPE, GridUpdatePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(GridClearPacket.PACKET_TYPE, GridClearPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(GridUpdatePacket.PACKET_TYPE, GridUpdatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
             NetworkTransmitterStatusPacket.PACKET_TYPE,
             NetworkTransmitterStatusPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             MessagePacket.PACKET_TYPE,
             MessagePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             ResourceSlotUpdatePacket.PACKET_TYPE,
             ResourceSlotUpdatePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             StorageInfoResponsePacket.PACKET_TYPE,
             StorageInfoResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             PatternGridAllowedAlternativesUpdatePacket.PACKET_TYPE,
             PatternGridAllowedAlternativesUpdatePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocrafterNameUpdatePacket.PACKET_TYPE,
             AutocrafterNameUpdatePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocrafterLockedUpdatePacket.PACKET_TYPE,
             AutocrafterLockedUpdatePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingPreviewResponsePacket.PACKET_TYPE,
             AutocraftingPreviewResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingTreePreviewResponsePacket.PACKET_TYPE,
             AutocraftingTreePreviewResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingPreviewCancelResponsePacket.PACKET_TYPE,
             AutocraftingPreviewCancelResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingPreviewMaxAmountResponsePacket.PACKET_TYPE,
             AutocraftingPreviewMaxAmountResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingResponsePacket.PACKET_TYPE,
             AutocraftingResponsePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingMonitorTaskAddedPacket.PACKET_TYPE,
             AutocraftingMonitorTaskAddedPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingMonitorTaskRemovedPacket.PACKET_TYPE,
             AutocraftingMonitorTaskRemovedPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingMonitorTaskStatusChangedPacket.PACKET_TYPE,
             AutocraftingMonitorTaskStatusChangedPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingMonitorActivePacket.PACKET_TYPE,
             AutocraftingMonitorActivePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             AutocraftingTaskCompletedPacket.PACKET_TYPE,
             AutocraftingTaskCompletedPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playS2C().register(
+        PayloadTypeRegistry.clientboundPlay().register(
             ExportingIndicatorUpdatePacket.PACKET_TYPE,
             ExportingIndicatorUpdatePacket.STREAM_CODEC
         );
     }
 
     private void registerClientToServerPackets() {
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             CraftingGridClearPacket.PACKET_TYPE,
             CraftingGridClearPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridClearPacket.PACKET_TYPE,
             PatternGridClearPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridCreatePatternPacket.PACKET_TYPE,
             PatternGridCreatePatternPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             CraftingGridRecipeTransferPacket.PACKET_TYPE,
             CraftingGridRecipeTransferPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(GridExtractPacket.PACKET_TYPE, GridExtractPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(GridInsertPacket.PACKET_TYPE, GridInsertPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(GridScrollPacket.PACKET_TYPE, GridScrollPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PropertyChangePacket.PACKET_TYPE, PropertyChangePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(GridExtractPacket.PACKET_TYPE, GridExtractPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(GridInsertPacket.PACKET_TYPE, GridInsertPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(GridScrollPacket.PACKET_TYPE, GridScrollPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay()
+            .register(PropertyChangePacket.PACKET_TYPE, PropertyChangePacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
             ResourceFilterSlotChangePacket.PACKET_TYPE,
             ResourceFilterSlotChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             ResourceSlotAmountChangePacket.PACKET_TYPE,
             ResourceSlotAmountChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             ResourceSlotChangePacket.PACKET_TYPE,
             ResourceSlotChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             FilterSlotChangePacket.PACKET_TYPE,
             FilterSlotChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             SecurityCardBoundPlayerPacket.PACKET_TYPE,
             SecurityCardBoundPlayerPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             SecurityCardPermissionPacket.PACKET_TYPE,
             SecurityCardPermissionPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             SecurityCardResetPermissionPacket.PACKET_TYPE,
             SecurityCardResetPermissionPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             SingleAmountChangePacket.PACKET_TYPE,
             SingleAmountChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             StorageInfoRequestPacket.PACKET_TYPE,
             StorageInfoRequestPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             UseSlotReferencedItemPacket.PACKET_TYPE,
             UseSlotReferencedItemPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridAllowedAlternativesChangePacket.PACKET_TYPE,
             PatternGridAllowedAlternativesChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridCraftingRecipeTransferPacket.PACKET_TYPE,
             PatternGridCraftingRecipeTransferPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridProcessingRecipeTransferPacket.PACKET_TYPE,
             PatternGridProcessingRecipeTransferPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridStonecutterRecipeTransferPacket.PACKET_TYPE,
             PatternGridStonecutterRecipeTransferPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             PatternGridSmithingTableRecipeTransferPacket.PACKET_TYPE,
             PatternGridSmithingTableRecipeTransferPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocrafterNameChangePacket.PACKET_TYPE,
             AutocrafterNameChangePacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingPreviewRequestPacket.PACKET_TYPE,
             AutocraftingPreviewRequestPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingPreviewCancelRequestPacket.PACKET_TYPE,
             AutocraftingPreviewCancelRequestPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingPreviewMaxAmountRequestPacket.PACKET_TYPE,
             AutocraftingPreviewMaxAmountRequestPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingRequestPacket.PACKET_TYPE,
             AutocraftingRequestPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingMonitorCancelPacket.PACKET_TYPE,
             AutocraftingMonitorCancelPacket.STREAM_CODEC
         );
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC
-        );
-        PayloadTypeRegistry.playC2S().register(
-            SetTenthAnniversaryCapePacket.PACKET_TYPE,
-            SetTenthAnniversaryCapePacket.STREAM_CODEC
         );
     }
 
@@ -823,16 +822,26 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
         );
-        ServerPlayNetworking.registerGlobalReceiver(
-            SetTenthAnniversaryCapePacket.PACKET_TYPE,
-            wrapHandler(SetTenthAnniversaryCapePacket::handle)
-        );
     }
 
     private static <T extends CustomPacketPayload> ServerPlayNetworking.PlayPayloadHandler<T> wrapHandler(
         final PacketHandler<T> handler
     ) {
         return (packet, ctx) -> handler.handle(packet, ctx::player);
+    }
+
+    private void registerRecipeSync() {
+        for (final var entry : BuiltInRegistries.RECIPE_SERIALIZER.entrySet()) {
+            final ResourceKey<RecipeSerializer<?>> resourceKey = entry.getKey();
+            if (resourceKey.identifier().getNamespace().equals("minecraft")) {
+                final RecipeSerializer<?> serializer = entry.getValue();
+                try {
+                    RecipeSynchronization.synchronizeRecipeSerializer(serializer);
+                } catch (RuntimeException e) {
+                    LOGGER.warn("Failed to synchronize recipe serializer {}", resourceKey, e);
+                }
+            }
+        }
     }
 
     private void registerCapabilities() {
@@ -883,7 +892,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BlockEntities.INSTANCE.getPatternGrid()
         );
         ItemStorage.SIDED.registerForBlockEntity((blockEntity, context) -> {
-            final InventoryStorage storage = InventoryStorage.of(blockEntity.getDiskInventory(), context);
+            final ContainerStorage storage = ContainerStorage.of(blockEntity.getDiskInventory(), context);
             final List<Storage<ItemVariant>> parts = new ArrayList<>();
             for (int i = 0; i < AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS; ++i) {
                 final var slot = storage.getSlot(i);
@@ -915,7 +924,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
             if (test.test(blockEntity)) {
                 final T casted = caster.apply(blockEntity);
-                return InventoryStorage.of(containerSupplier.apply(casted), context);
+                return ContainerStorage.of(containerSupplier.apply(casted), context);
             }
             return null;
         }, type);

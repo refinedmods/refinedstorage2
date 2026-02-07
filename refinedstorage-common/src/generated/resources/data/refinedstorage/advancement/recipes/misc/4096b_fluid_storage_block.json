@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_storage_part": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:4096b_fluid_storage_part"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:4096b_fluid_storage_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_storage_part"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:4096b_fluid_storage_block"
+    ]
+  }
+}

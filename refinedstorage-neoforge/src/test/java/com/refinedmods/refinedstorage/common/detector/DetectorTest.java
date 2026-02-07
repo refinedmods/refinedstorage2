@@ -2,15 +2,12 @@ package com.refinedmods.refinedstorage.common.detector;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.detector.DetectorMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.RedStoneWireBlock;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
@@ -22,13 +19,11 @@ import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.DIRT;
 import static net.minecraft.world.item.Items.STONE;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class DetectorTest {
     private DetectorTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldNotEmitRedstone(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange
@@ -46,7 +41,7 @@ public final class DetectorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldEmitRedstoneUnder(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange
@@ -83,7 +78,7 @@ public final class DetectorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldUseEqualModeByDefault(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange
@@ -122,7 +117,7 @@ public final class DetectorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldEmitRedstoneEquals(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange
@@ -162,7 +157,7 @@ public final class DetectorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldEmitRedstoneAbove(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange
@@ -197,7 +192,7 @@ public final class DetectorTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldEmitRedstoneFuzzy(final GameTestHelper helper) {
         preparePlot(helper, Direction.DOWN, (detector, pos, sequence) -> {
             // Arrange

@@ -7,11 +7,11 @@ import com.refinedmods.refinedstorage.common.support.containermenu.AbstractSingl
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
 
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 

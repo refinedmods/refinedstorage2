@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:cables"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
+    "#refinedstorage:cables",
+    "#c:dyes/cyan"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:cyan_cable"
   }
 }

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "refinedstorage:quartz_enriched_iron",
+    "G": "#c:glass_blocks",
+    "R": "#c:buckets/empty",
+    "S": "#c:silicon"
+  },
+  "pattern": [
+    "SES",
+    "GRG",
+    "SGS"
+  ],
+  "result": {
+    "id": "refinedstorage:64b_fluid_storage_part"
+  }
+}

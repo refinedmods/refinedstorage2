@@ -4,31 +4,28 @@ import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
+import com.refinedmods.refinedstorage.common.support.BlockItemProvider;
 
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
 
-public class BlockTagsProvider extends TagsProvider<Block> {
-    public static final TagKey<Block> MINEABLE =
-        TagKey.create(Registries.BLOCK, ResourceLocation.withDefaultNamespace("mineable/pickaxe"));
+public class BlockTagsProvider extends IntrinsicHolderTagsProvider<Block> {
+    public static final TagKey<Block> MINEABLE = TagKey.create(Registries.BLOCK,
+        Identifier.withDefaultNamespace("mineable/pickaxe"));
 
-    public BlockTagsProvider(final PackOutput packOutput,
-                             final CompletableFuture<HolderLookup.Provider> providerCompletableFuture,
-                             final @Nullable ExistingFileHelper existingFileHelper) {
-        super(packOutput, Registries.BLOCK, providerCompletableFuture, MOD_ID, existingFileHelper);
+    @SuppressWarnings("deprecation")
+    public BlockTagsProvider(final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, Registries.BLOCK, registries, block -> block.builtInRegistryHolder().key(), MOD_ID);
     }
 
     @Override
@@ -68,17 +65,13 @@ public class BlockTagsProvider extends TagsProvider<Block> {
         markAsMineable(Blocks.INSTANCE.getAutocraftingMonitor());
     }
 
-    private void markAsMineable(final BlockColorMap<?, ?> map) {
-        tag(MINEABLE).addAll(map.values().stream().map(b -> ResourceKey.create(
-            Registries.BLOCK,
-            BuiltInRegistries.BLOCK.getKey(b)
-        )).toList());
+    private <T extends Block & BlockItemProvider<I>, I extends BlockItem> void markAsMineable(
+        final BlockColorMap<T, I> map
+    ) {
+        tag(MINEABLE).addAll(map.values().stream().map(b -> (Block) b).toList());
     }
 
     private void markAsMineable(final Block block) {
-        tag(MINEABLE).add(ResourceKey.create(
-            Registries.BLOCK,
-            BuiltInRegistries.BLOCK.getKey(block)
-        ));
+        tag(MINEABLE).add(block);
     }
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "#c:chests",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "F": "refinedstorage:fallback_security_card",
+    "M": "refinedstorage:machine_casing",
+    "S": "refinedstorage:security_card"
+  },
+  "pattern": [
+    "ECE",
+    "SMS",
+    "EFE"
+  ],
+  "result": {
+    "id": "refinedstorage:security_manager"
+  }
+}

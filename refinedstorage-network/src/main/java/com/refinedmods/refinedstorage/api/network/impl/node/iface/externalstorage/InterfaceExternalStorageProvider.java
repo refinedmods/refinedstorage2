@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.iface.externalstora
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage.api.storage.external.ExternalStorageProvider;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface InterfaceExternalStorageProvider extends ExternalStorageProvider {
     @Nullable

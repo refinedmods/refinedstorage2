@@ -36,7 +36,7 @@ public class CompositeSlotReferenceProvider implements SlotReferenceProvider {
             player.sendSystemMessage(createTranslation(
                 "item",
                 "network_item.cannot_open_with_shortcut_due_to_duplicate",
-                referenceItem.getDescription()
+                referenceItem.getName(referenceItem.getDefaultInstance())
             ).withStyle(ChatFormatting.RED));
             return Optional.empty();
         }
@@ -44,7 +44,7 @@ public class CompositeSlotReferenceProvider implements SlotReferenceProvider {
             player.sendSystemMessage(createTranslation(
                 "item",
                 "network_item.cannot_open_because_not_found",
-                referenceItem.getDescription()
+                referenceItem.getName(referenceItem.getDefaultInstance())
             ).withStyle(ChatFormatting.RED));
             return Optional.empty();
         }

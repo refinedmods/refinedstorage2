@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -19,9 +19,9 @@ class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
         createTranslation("gui", "grid.sorting.direction.ascending").withStyle(ChatFormatting.GRAY));
     private static final List<MutableComponent> SUBTEXT_DESCENDING = List.of(
         createTranslation("gui", "grid.sorting.direction.descending").withStyle(ChatFormatting.GRAY));
-    private static final ResourceLocation ASCENDING =
+    private static final Identifier ASCENDING =
         createIdentifier("widget/side_button/grid/sorting_direction/ascending");
-    private static final ResourceLocation DESCENDING =
+    private static final Identifier DESCENDING =
         createIdentifier("widget/side_button/grid/sorting_direction/descending");
 
     private final AbstractGridContainerMenu menu;
@@ -42,7 +42,7 @@ class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return menu.getSortingDirection() == SortingDirection.ASCENDING ? ASCENDING : DESCENDING;
     }
 

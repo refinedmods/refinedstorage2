@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -20,11 +21,12 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -35,15 +37,14 @@ abstract class AbstractSecurityCardItem<T> extends Item implements SecurityPolic
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                final TooltipContext context,
-                                final List<Component> lines,
-                                final TooltipFlag flag) {
-        super.appendHoverText(stack, context, lines, flag);
-        getPolicy(stack).ifPresent(policy -> appendHoverText(lines, policy, getDirtyPermissions(stack)));
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display,
+                                final Consumer<Component> builder, final TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, display, builder, tooltipFlag);
+        getPolicy(stack).ifPresent(policy -> appendHoverText(builder, policy, getDirtyPermissions(stack)));
     }
 
-    private void appendHoverText(final List<Component> lines,
+    private void appendHoverText(final Consumer<Component> builder,
                                  final SecurityPolicy policy,
                                  final Set<PlatformPermission> dirtyPermissions) {
         final List<PlatformPermission> allPermissions = RefinedStorageApi.INSTANCE.getPermissionRegistry().getAll();
@@ -57,17 +58,17 @@ abstract class AbstractSecurityCardItem<T> extends Item implements SecurityPolic
                 .append(permission.getName())
                 .append(dirty ? " (*)" : "")
                 .withStyle(style);
-            lines.add(permissionTooltip);
+            builder.accept(permissionTooltip);
         });
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
+    public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer) {
             doUse(hand, serverPlayer, stack);
         }
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME.heldItemTransformedTo(stack);
     }
 
     private void doUse(final InteractionHand hand, final ServerPlayer player, final ItemStack stack) {
@@ -78,7 +79,7 @@ abstract class AbstractSecurityCardItem<T> extends Item implements SecurityPolic
         getPolicy(stack).ifPresent(policy -> {
             final Set<PlatformPermission> dirtyPermissions = getDirtyPermissions(stack);
             Platform.INSTANCE.getMenuOpener().openMenu(player, createMenuProvider(
-                player.server,
+                player.level().getServer(),
                 RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand),
                 policy,
                 dirtyPermissions,

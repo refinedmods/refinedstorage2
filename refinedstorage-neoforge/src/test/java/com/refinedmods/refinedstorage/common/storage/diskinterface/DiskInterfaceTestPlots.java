@@ -8,19 +8,18 @@ import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.support.FilteredContainer;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirection;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirection;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import org.apache.commons.lang3.function.TriConsumer;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class DiskInterfaceTestPlots {
@@ -30,13 +29,13 @@ final class DiskInterfaceTestPlots {
     static void preparePlot(final GameTestHelper helper,
                             final Direction direction,
                             final TriConsumer<AbstractDiskInterfaceBlockEntity, BlockPos, GameTestSequence> consumer) {
-        helper.setBlock(ZERO.above(), RSBLOCKS.getCreativeController().getDefault());
-        helper.setBlock(ZERO.above().above(), RSBLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
+        helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
+        helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         final BlockPos diskInterfacePos = ZERO.above().above().above();
-        helper.setBlock(diskInterfacePos, RSBLOCKS.getDiskInterface().getDefault()
-            .rotated(BiDirection.forDirection(direction)));
+        helper.setBlock(diskInterfacePos, MOD_BLOCKS.getDiskInterface().getDefault()
+            .rotated(OrientedDirection.forDirection(direction)));
         consumer.accept(
-            requireBlockEntity(helper, diskInterfacePos, AbstractDiskInterfaceBlockEntity.class),
+            helper.getBlockEntity(diskInterfacePos, AbstractDiskInterfaceBlockEntity.class),
             diskInterfacePos,
             helper.startSequence()
         );
@@ -46,7 +45,7 @@ final class DiskInterfaceTestPlots {
                                        final BlockPos diskInterfacePos,
                                        final ResourceAmount... resources) {
         final ItemStack diskItem = new ItemStack(Items.INSTANCE.getItemStorageDisk(ItemStorageVariant.SIXTY_FOUR_K));
-        diskItem.inventoryTick(helper.getLevel(), helper.makeMockPlayer(GameType.SURVIVAL), 0, false);
+        diskItem.inventoryTick(helper.getLevel(), helper.makeMockPlayer(GameType.SURVIVAL), EquipmentSlot.BODY);
 
         final Storage storage = getStorageFromDisk(helper, diskItem);
         if (resources.length > 0) {
@@ -58,7 +57,7 @@ final class DiskInterfaceTestPlots {
             }
         }
 
-        final var diskInterfaceBlockEntity = requireBlockEntity(helper, diskInterfacePos,
+        final var diskInterfaceBlockEntity = helper.getBlockEntity(diskInterfacePos,
             AbstractDiskInterfaceBlockEntity.class);
         final FilteredContainer diskInterfaceContainer = diskInterfaceBlockEntity.getDiskInventory();
         diskInterfaceContainer.addItem(diskItem);
@@ -67,7 +66,7 @@ final class DiskInterfaceTestPlots {
     static void isDiskInOutputWithAmount(final GameTestHelper helper,
                                          final BlockPos diskInterfacePos,
                                          final int storedAmount) {
-        final var diskInterfaceBlockEntity = requireBlockEntity(helper, diskInterfacePos,
+        final var diskInterfaceBlockEntity = helper.getBlockEntity(diskInterfacePos,
             AbstractDiskInterfaceBlockEntity.class);
         final FilteredContainer diskInterfaceContainer = diskInterfaceBlockEntity.getDiskInventory();
 
@@ -84,6 +83,6 @@ final class DiskInterfaceTestPlots {
         return RefinedStorageApi.INSTANCE
             .getStorageContainerItemHelper()
             .resolveStorage(RefinedStorageApi.INSTANCE.getStorageRepository(helper.getLevel()), diskItem)
-            .orElseThrow(() -> new GameTestAssertException("Couldn't find SerializableStorage from Storage Disk"));
+            .orElseThrow(() -> helper.assertionException("Couldn't find SerializableStorage from Storage Disk"));
     }
 }

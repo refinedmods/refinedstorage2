@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage.common.api.support.registry;
 
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @param <T> the value type
@@ -22,19 +22,19 @@ public interface PlatformRegistry<T> {
      * @param id    the id
      * @param value the value
      */
-    void register(ResourceLocation id, T value);
+    void register(Identifier id, T value);
 
     /**
      * @param value the value
      * @return the id of the value, if present
      */
-    Optional<ResourceLocation> getId(T value);
+    Optional<Identifier> getId(T value);
 
     /**
      * @param id the id
      * @return the value, if present
      */
-    Optional<T> get(ResourceLocation id);
+    Optional<T> get(Identifier id);
 
     /**
      * @return an unmodifiable list of all values

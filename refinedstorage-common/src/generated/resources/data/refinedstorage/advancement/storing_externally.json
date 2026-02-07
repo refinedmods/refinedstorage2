@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "external_storage_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:external_storages"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.storing_externally.description"
+    },
+    "icon": {
+      "id": "refinedstorage:external_storage"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.storing_externally"
+    }
+  },
+  "requirements": [
+    [
+      "external_storage_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -9,13 +9,12 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.containermenu.ValidatedSlot;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 
-import javax.annotation.Nullable;
-
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 public class NetworkTransmitterContainerMenu extends AbstractBaseContainerMenu {
     @Nullable
@@ -36,7 +35,7 @@ public class NetworkTransmitterContainerMenu extends AbstractBaseContainerMenu {
         this.blockEntity = blockEntity;
         this.player = playerInventory.player;
         this.status = blockEntity.getStatus();
-        addSlots(playerInventory, blockEntity.getNetworkCardInventory());
+        addSlots(playerInventory, blockEntity.getNetworkCards());
     }
 
     public NetworkTransmitterContainerMenu(final int syncId,

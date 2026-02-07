@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageContainerItemHel
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
@@ -35,10 +35,10 @@ public abstract class AbstractContainerMenuMixin {
     @Inject(method = "doClick", at = @At("HEAD"), cancellable = true)
     public void doClick(final int slotId,
                         final int button,
-                        final ClickType clickType,
+                        final ContainerInput input,
                         final Player player,
                         final CallbackInfo ci) {
-        if (clickType != ClickType.CLONE
+        if (input != ContainerInput.CLONE
             || !player.hasInfiniteMaterials()
             || !this.getCarried().isEmpty()
             || slotId < 0) {
@@ -55,7 +55,7 @@ public abstract class AbstractContainerMenuMixin {
 
         final ItemStack copy = stack.copy();
         if (helper.clear(copy)) {
-            LOGGER.info("Cleared storage reference of storage container {}", copy);
+            LOGGER.debug("Cleared storage reference of storage container {}", copy);
             this.setCarried(copy.copyWithCount(stack.getMaxStackSize()));
             ci.cancel();
         }

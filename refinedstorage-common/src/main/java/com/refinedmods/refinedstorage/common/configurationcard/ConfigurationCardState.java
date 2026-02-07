@@ -20,7 +20,7 @@ public record ConfigurationCardState(BlockEntityType<?> blockEntityType, Compoun
             .forGetter(ConfigurationCardState::blockEntityType),
         CompoundTag.CODEC.fieldOf("config")
             .forGetter(ConfigurationCardState::config),
-        Codec.list(ItemStack.SINGLE_ITEM_CODEC).fieldOf("upgrades")
+        Codec.list(ItemStack.CODEC).fieldOf("upgrades")
             .forGetter(ConfigurationCardState::upgrades)
     ).apply(instance, ConfigurationCardState::new));
 

@@ -30,7 +30,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class RelayOutputNetworkNode extends AbstractNetworkNode
     implements EnergyProvider, SecurityDecisionProvider, StorageProvider, PatternProvider {

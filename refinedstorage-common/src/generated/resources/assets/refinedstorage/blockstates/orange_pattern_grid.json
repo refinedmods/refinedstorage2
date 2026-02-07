@@ -3,7 +3,7 @@
     "active=false,direction=down_east": {
       "model": "refinedstorage:block/pattern_grid/inactive",
       "x": 90,
-      "y": -90
+      "y": 270
     },
     "active=false,direction=down_north": {
       "model": "refinedstorage:block/pattern_grid/inactive",
@@ -32,21 +32,21 @@
     },
     "active=false,direction=up_east": {
       "model": "refinedstorage:block/pattern_grid/inactive",
-      "x": -90,
-      "y": -90
+      "x": 270,
+      "y": 270
     },
     "active=false,direction=up_north": {
       "model": "refinedstorage:block/pattern_grid/inactive",
-      "x": -90,
+      "x": 270,
       "y": 180
     },
     "active=false,direction=up_south": {
       "model": "refinedstorage:block/pattern_grid/inactive",
-      "x": -90
+      "x": 270
     },
     "active=false,direction=up_west": {
       "model": "refinedstorage:block/pattern_grid/inactive",
-      "x": -90,
+      "x": 270,
       "y": 90
     },
     "active=false,direction=west": {
@@ -56,7 +56,7 @@
     "active=true,direction=down_east": {
       "model": "refinedstorage:block/pattern_grid/orange",
       "x": 90,
-      "y": -90
+      "y": 270
     },
     "active=true,direction=down_north": {
       "model": "refinedstorage:block/pattern_grid/orange",
@@ -85,21 +85,21 @@
     },
     "active=true,direction=up_east": {
       "model": "refinedstorage:block/pattern_grid/orange",
-      "x": -90,
-      "y": -90
+      "x": 270,
+      "y": 270
     },
     "active=true,direction=up_north": {
       "model": "refinedstorage:block/pattern_grid/orange",
-      "x": -90,
+      "x": 270,
       "y": 180
     },
     "active=true,direction=up_south": {
       "model": "refinedstorage:block/pattern_grid/orange",
-      "x": -90
+      "x": 270
     },
     "active=true,direction=up_west": {
       "model": "refinedstorage:block/pattern_grid/orange",
-      "x": -90,
+      "x": 270,
       "y": 90
     },
     "active=true,direction=west": {

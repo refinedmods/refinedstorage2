@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "#c:ingots/copper",
+    "Q": "#c:gems/quartz"
+  },
+  "pattern": [
+    "CC",
+    "CQ"
+  ],
+  "result": {
+    "count": 4,
+    "id": "refinedstorage:quartz_enriched_copper"
+  }
+}

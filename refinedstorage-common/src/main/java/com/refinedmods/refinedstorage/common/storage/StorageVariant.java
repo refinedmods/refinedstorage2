@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage.common.storage;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public interface StorageVariant {
     @Nullable
@@ -10,4 +9,6 @@ public interface StorageVariant {
 
     @Nullable
     Item getStoragePart();
+
+    String getName();
 }

@@ -1,10 +1,9 @@
 package com.refinedmods.refinedstorage.common.support.tooltip;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
-import org.joml.Matrix4f;
 
 public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
     private final Component text;
@@ -14,16 +13,12 @@ public class SmallTextClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderText(final Font font,
-                           final int x,
-                           final int y,
-                           final Matrix4f pose,
-                           final MultiBufferSource.BufferSource buffer) {
-        SmallText.render(font, text.getVisualOrderText(), x, y, pose, buffer, SmallText.TOOLTIP_SCALE);
+    public void extractText(final GuiGraphicsExtractor graphics, final Font font, final int x, final int y) {
+        SmallText.render(graphics, font, text.getVisualOrderText(), x, y, -1, true, SmallText.TOOLTIP_SCALE);
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return 9;
     }
 

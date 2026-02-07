@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.common.api.support.registry.PlatformRegist
 
 import java.util.List;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PlatformRegistryImplTest {
-    private static final ResourceLocation A = ResourceLocation.parse("a");
-    private static final ResourceLocation B = ResourceLocation.parse("b");
-    private static final ResourceLocation C = ResourceLocation.parse("c");
+    private static final Identifier A = Identifier.parse("a");
+    private static final Identifier B = Identifier.parse("b");
+    private static final Identifier C = Identifier.parse("c");
 
     PlatformRegistry<Integer> sut;
 

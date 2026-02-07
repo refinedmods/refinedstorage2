@@ -11,36 +11,41 @@ import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class AlternativesScreen extends AbstractAmountScreen<AlternativeContainerMenu, Double> {
     static final int ALTERNATIVE_ROW_HEIGHT = 18;
     static final int ALTERNATIVE_HEIGHT = ALTERNATIVE_ROW_HEIGHT * 2;
     static final int RESOURCES_PER_ROW = 9;
 
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/alternatives.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/alternatives.png");
     private static final MutableComponent TITLE = createTranslation("gui", "configure_amount");
     private static final MutableComponent ALTERNATIVES = createTranslation("gui", "pattern_grid.alternatives");
     private static final MutableComponent EXPAND = createTranslation("gui", "pattern_grid.alternatives.expand");
@@ -71,11 +76,11 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
 
     private final List<CheckboxWidget> alternativeCheckboxes = new ArrayList<>();
     private final List<Button> expandButtons = new ArrayList<>();
-    private final Set<ResourceLocation> initialAllowedAlternativeIds;
+    private final Set<Identifier> initialAllowedAlternativeIds;
 
     AlternativesScreen(final Screen parent,
                        final Inventory playerInventory,
-                       final Set<ResourceLocation> allowedAlternativeIds,
+                       final Set<Identifier> allowedAlternativeIds,
                        final ResourceSlot slot) {
         super(
             new AlternativeContainerMenu(slot),
@@ -97,11 +102,11 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            DoubleAmountOperations.INSTANCE,
+            193,
+            226
         );
         this.slot = slot;
-        this.imageWidth = 193;
-        this.imageHeight = 226;
         this.initialAllowedAlternativeIds = allowedAlternativeIds;
     }
 
@@ -285,8 +290,8 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    protected void renderResourceSlots(final GuiGraphics graphics) {
-        ResourceSlotRendering.render(graphics, getMenu().getAmountSlot(), leftPos, topPos);
+    protected void renderResourceSlots(final GuiGraphicsExtractor graphics) {
+        ResourceSlotRendering.render(graphics, getMenu().getAmountSlot());
     }
 
     @Override
@@ -302,16 +307,18 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         final int x = getInsetX();
         final int y = getInsetY();
         graphics.enableScissor(x, y, x + INSET_WIDTH, y + INSET_HEIGHT);
@@ -321,13 +328,13 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             currentY += renderAlternativeBackground(graphics, mouseX, mouseY, i, y, x, currentY);
         }
         renderAlternativeMainSlots(graphics, mouseX, mouseY);
-        alternativeCheckboxes.forEach(c -> c.render(graphics, mouseX, mouseY, delta));
-        expandButtons.forEach(c -> c.render(graphics, mouseX, mouseY, delta));
+        alternativeCheckboxes.forEach(c -> c.extractRenderState(graphics, mouseX, mouseY, partialTicks));
+        expandButtons.forEach(c -> c.extractRenderState(graphics, mouseX, mouseY, partialTicks));
         graphics.disableScissor();
     }
 
     private int renderAlternativeBackground(
-        final GuiGraphics graphics,
+        final GuiGraphicsExtractor graphics,
         final int mouseX,
         final int mouseY,
         final int i,
@@ -348,7 +355,6 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 y,
                 x + INSET_WIDTH,
                 y + height,
-                0,
                 0xFFC6C6C6
             );
         }
@@ -367,7 +373,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     private void renderMainSlotsBackground(
-        final GuiGraphics graphics,
+        final GuiGraphicsExtractor graphics,
         final int startY,
         final int x,
         final int y,
@@ -376,12 +382,12 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
         if (y >= startY - ALTERNATIVE_ROW_HEIGHT && y < startY + INSET_HEIGHT) {
             for (int col = 0; col < Math.min(alternative.getResources().size(), RESOURCES_PER_ROW); ++col) {
                 final int slotX = x + 1 + (col * 18);
-                graphics.blitSprite(Sprites.SLOT, slotX, y, 18, 18);
+                graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, slotX, y, 18, 18);
             }
         }
     }
 
-    private int renderOverflowSlotsBackground(final GuiGraphics graphics,
+    private int renderOverflowSlotsBackground(final GuiGraphicsExtractor graphics,
                                               final int mouseX,
                                               final int mouseY,
                                               final int startY,
@@ -406,7 +412,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                     break;
                 }
                 final int slotX = x + 1 + (col * 18);
-                graphics.blitSprite(Sprites.SLOT, slotX, rowY, 18, 18);
+                graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, slotX, rowY, 18, 18);
             }
         }
         renderSlots(alternative.getOverflowSlots(), graphics, mouseX, mouseY);
@@ -414,7 +420,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
         return height;
     }
 
-    private void renderAlternativeMainSlots(final GuiGraphics graphics,
+    private void renderAlternativeMainSlots(final GuiGraphicsExtractor graphics,
                                             final int mouseX,
                                             final int mouseY) {
         for (final Alternative alternative : getMenu().getAlternatives()) {
@@ -423,32 +429,43 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     private void renderSlots(final List<AlternativeSlot> slots,
-                             final GuiGraphics graphics,
+                             final GuiGraphicsExtractor graphics,
                              final int mouseX,
                              final int mouseY) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(leftPos, topPos);
         for (final ResourceSlot resourceSlot : slots) {
-            if (resourceSlot.isActive()) {
-                ResourceSlotRendering.render(graphics, resourceSlot, leftPos, topPos);
-                if (isHovering(resourceSlot.x, resourceSlot.y, 16, 16, mouseX, mouseY)
-                    && canInteractWithResourceSlot(resourceSlot, mouseX, mouseY)) {
-                    renderSlotHighlight(graphics, leftPos + resourceSlot.x, topPos + resourceSlot.y, 0);
-                }
-            }
+            renderSlot(graphics, mouseX, mouseY, resourceSlot);
+        }
+        graphics.pose().popMatrix();
+    }
+
+    private void renderSlot(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                            final ResourceSlot resourceSlot) {
+        if (!resourceSlot.isActive()) {
+            return;
+        }
+        final boolean hovering = isHovering(resourceSlot.x, resourceSlot.y, 16, 16, mouseX, mouseY)
+            && canInteractWithResourceSlot(resourceSlot, mouseX, mouseY);
+        if (hovering) {
+            ClientPlatformUtil.renderSlotHighlightBack(graphics, resourceSlot.x, resourceSlot.y);
+        }
+        ResourceSlotRendering.render(graphics, resourceSlot);
+        if (hovering) {
+            ClientPlatformUtil.renderSlotHighlightFront(graphics, resourceSlot.x, resourceSlot.y);
         }
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
-        graphics.drawString(font, ALTERNATIVES, 7, 96, 4210752, false);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
+        graphics.text(font, ALTERNATIVES, 7, 96, -12566464, false);
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
-            return true;
-        }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        return (scrollbar != null && scrollbar.mouseClicked(event, doubleClick))
+            || super.mouseClicked(event, doubleClick);
     }
 
     @Override
@@ -460,9 +477,9 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    public boolean mouseReleased(final double mx, final double my, final int button) {
-        return (scrollbar != null && scrollbar.mouseReleased(mx, my, button))
-            || super.mouseReleased(mx, my, button);
+    public boolean mouseReleased(final MouseButtonEvent event) {
+        return (scrollbar != null && scrollbar.mouseReleased(event))
+            || super.mouseReleased(event);
     }
 
     @Override
@@ -474,21 +491,21 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (searchField != null && searchField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final CharacterEvent event) {
+        return (searchField != null && searchField.charTyped(event))
+            || super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (tryClose(key)) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (tryClose(event.key())) {
             return true;
         }
         if (searchField != null
-            && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+            && (searchField.keyPressed(event) || searchField.canConsumeInput())) {
             return true;
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     private boolean isOverAlternativesArea(final double x, final double y) {
@@ -499,7 +516,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 

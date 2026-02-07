@@ -6,26 +6,24 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
+import com.refinedmods.refinedstorage.common.support.RecipeProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.MenuOpener;
 import com.refinedmods.refinedstorage.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage.common.support.render.FluidRenderer;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -47,8 +45,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jspecify.annotations.Nullable;
 
 public interface Platform {
     Platform INSTANCE = new PlatformProxy();
@@ -102,24 +100,17 @@ public interface Platform {
 
     List<ClientTooltipComponent> processTooltipComponents(
         ItemStack stack,
-        GuiGraphics graphics,
+        GuiGraphicsExtractor graphics,
         int mouseX,
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<TooltipComponent> imageComponent,
         List<Component> components
     );
-
-    void renderTooltip(GuiGraphics graphics, List<ClientTooltipComponent> components, int x, int y);
 
     Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
 
     <T extends CustomPacketPayload> void sendPacketToServer(T packet);
 
     <T extends CustomPacketPayload> void sendPacketToClient(ServerPlayer player, T packet);
-
-    void saveSavedData(SavedData savedData,
-                       File file,
-                       HolderLookup.Provider provider,
-                       BiConsumer<File, HolderLookup.Provider> defaultSaveFunction);
 
     @Nullable
     NetworkNodeContainerProvider getContainerProvider(Level level, BlockPos pos, @Nullable Direction direction);
@@ -131,7 +122,9 @@ public interface Platform {
 
     void requestModelDataUpdateOnClient(BlockEntity blockEntity, boolean updateChunk);
 
-    void setTenthAnniversaryCape(Player player, boolean enabled);
+    void updateImageHeight(AbstractContainerScreen<?> screen, int height);
 
-    boolean isTenthAnniversaryCapeAvailable();
+    RecipeProvider getClientRecipeProvider(Level level);
+
+    void setClientRecipeProvider(RecipeProvider recipeProvider);
 }

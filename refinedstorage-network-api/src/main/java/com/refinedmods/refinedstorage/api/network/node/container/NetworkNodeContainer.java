@@ -2,9 +2,8 @@ package com.refinedmods.refinedstorage.api.network.node.container;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 
-import javax.annotation.Nullable;
-
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 @FunctionalInterface

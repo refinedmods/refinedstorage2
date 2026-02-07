@@ -3,43 +3,57 @@ package com.refinedmods.refinedstorage.common.storage;
 import com.refinedmods.refinedstorage.api.core.CoreValidations;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
+import com.refinedmods.refinedstorage.common.api.storage.StorageContents;
 import com.refinedmods.refinedstorage.common.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage.common.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage.common.support.AbstractPlatformSavedData;
+import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
-public class StorageRepositoryImpl extends AbstractPlatformSavedData implements StorageRepository {
-    public static final String NAME = "refinedstorage_storages";
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-    private final Codec<Map<UUID, SerializableStorage>> codec;
+public class StorageRepositoryImpl extends SavedData implements StorageRepository {
+    @SuppressWarnings("ConstantConditions") // Data fix type is null safe
+    public static final SavedDataType<StorageRepositoryImpl> TYPE = new SavedDataType<>(
+        createIdentifier("storages"),
+        StorageRepositoryImpl::new,
+        createCodec(),
+        null
+    );
+
     private final Map<UUID, SerializableStorage> entries;
 
-    public StorageRepositoryImpl(final CompoundTag tag, final HolderLookup.Provider provider) {
-        this.codec = createCodec(this::markAsChanged);
-        this.entries = new HashMap<>(codec.decode(provider.createSerializationContext(NbtOps.INSTANCE), tag)
-            .getOrThrow().getFirst());
-    }
-
     public StorageRepositoryImpl() {
-        this.codec = createCodec(this::markAsChanged);
-        this.entries = new HashMap<>();
+        this(new HashMap<>());
     }
 
-    private static Codec<Map<UUID, SerializableStorage>> createCodec(final Runnable listener) {
-        final Codec<SerializableStorage> storageCodec = RefinedStorageApi.INSTANCE.getStorageTypeRegistry()
+    public StorageRepositoryImpl(final Map<UUID, SerializableStorage> entries) {
+        this.entries = entries;
+    }
+
+    private static Codec<StorageRepositoryImpl> createCodec() {
+        final Codec<StorageContents> storageCodec = RefinedStorageApi.INSTANCE.getStorageTypeRegistry()
             .codec()
-            .dispatch(SerializableStorage::getType, storage -> storage.getMapCodec(listener));
-        return new ErrorHandlingMapCodec<>(UUIDUtil.STRING_CODEC, storageCodec);
+            .dispatch(StorageContents::type, StorageType::getCodec);
+        return new ErrorHandlingMapCodec<>(UUIDUtil.STRING_CODEC, storageCodec)
+            .xmap(entries -> {
+                final StorageRepositoryImpl repository = new StorageRepositoryImpl();
+                entries.forEach((id, contents) ->
+                    repository.entries.put(id, contents.type().create(contents, repository::markAsChanged)));
+                return repository;
+            }, repository -> repository.entries.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().toContents()
+            )));
     }
 
     @Override
@@ -83,11 +97,5 @@ public class StorageRepositoryImpl extends AbstractPlatformSavedData implements 
     @Override
     public void markAsChanged() {
         setDirty();
-    }
-
-    @Override
-    public CompoundTag save(final CompoundTag tag, final HolderLookup.Provider provider) {
-        return (CompoundTag) codec.encode(entries, provider.createSerializationContext(NbtOps.INSTANCE), tag)
-            .getOrThrow();
     }
 }

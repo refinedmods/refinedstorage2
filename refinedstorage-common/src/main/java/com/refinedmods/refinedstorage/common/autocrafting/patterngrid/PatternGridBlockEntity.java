@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternState;
@@ -21,54 +22,60 @@ import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.GridData;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.FilteredContainer;
 import com.refinedmods.refinedstorage.common.support.RecipeMatrix;
 import com.refinedmods.refinedstorage.common.support.RecipeMatrixContainer;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.ResourceSorters;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SelectableRecipe;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl.setResourceContainerData;
 
-public class PatternGridBlockEntity extends AbstractGridBlockEntity implements BlockEntityWithDrops,
-    NetworkNodeExtendedMenuProvider<PatternGridData> {
+public class PatternGridBlockEntity extends AbstractGridBlockEntity
+    implements NetworkNodeExtendedMenuProvider<PatternGridData> {
     private static final String TAG_CRAFTING_INPUT = "crafting_input";
     private static final String TAG_PATTERN_INPUT = "pattern_input";
     private static final String TAG_PATTERN_OUTPUT = "pattern_output";
     private static final String TAG_PROCESSING_INPUT = "processing_input";
+    private static final String TAG_PROCESSING_INPUT_ALLOWED_TAG_IDS = "processing_input_allowed_tag_ids";
     private static final String TAG_PROCESSING_OUTPUT = "processing_output";
     private static final String TAG_FUZZY_MODE = "fuzzy_mode";
     private static final String TAG_PATTERN_TYPE = "processing";
@@ -82,9 +89,27 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
     );
     private final ProcessingMatrixInputResourceContainer processingInput = createProcessingMatrixInputContainer();
     private final ResourceContainer processingOutput = createProcessingMatrixOutputContainer();
-    private final FilteredContainer patternInput = new FilteredContainer(1, PatternGridBlockEntity::isValidPattern);
-    private final FilteredContainer patternOutput = new PatternOutputContainer();
-    private final StonecutterInputContainer stonecutterInput = new StonecutterInputContainer(this::getLevel);
+    private final FilteredContainer patternInput = new FilteredContainer(1, PatternGridBlockEntity::isValidPattern) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            PatternGridBlockEntity.this.setChanged();
+        }
+    };
+    private final FilteredContainer patternOutput = new PatternOutputContainer() {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            PatternGridBlockEntity.this.setChanged();
+        }
+    };
+    private final StonecutterInputContainer stonecutterInput = new StonecutterInputContainer(this::getLevel) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            PatternGridBlockEntity.this.setChanged();
+        }
+    };
     private final RecipeMatrix<SmithingRecipe, SmithingRecipeInput> smithingTableRecipe = RecipeMatrix.smithingTable(
         this::setChanged,
         this::getLevel
@@ -100,11 +125,8 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
             state,
             Platform.INSTANCE.getConfig().getPatternGrid().getEnergyUsage()
         );
-        patternInput.addListener(container -> setChanged());
-        patternOutput.addListener(container -> setChanged());
         processingInput.setListener(this::setChanged);
         processingOutput.setListener(this::setChanged);
-        stonecutterInput.addListener(container -> setChanged());
     }
 
     RecipeMatrixContainer getCraftingMatrix() {
@@ -153,47 +175,56 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_PATTERN_INPUT, ContainerUtil.write(patternInput, provider));
-        tag.put(TAG_PATTERN_OUTPUT, ContainerUtil.write(patternOutput, provider));
-        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
-        tag.putInt(TAG_PATTERN_TYPE, PatternTypeSettings.getPatternType(patternType));
-        tag.put(TAG_PROCESSING_INPUT, processingInput.toTag(provider));
-        tag.put(TAG_PROCESSING_OUTPUT, processingOutput.toTag(provider));
-        tag.put(TAG_STONECUTTER_INPUT, ContainerUtil.write(stonecutterInput, provider));
-        tag.putInt(TAG_STONECUTTER_SELECTED_RECIPE, stonecutterInput.getSelectedRecipe());
-        tag.put(TAG_SMITHING_INPUT, smithingTableRecipe.writeToTag(provider));
-        tag.put(TAG_CRAFTING_INPUT, craftingRecipe.writeToTag(provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_PATTERN_INPUT, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(patternInput.getItems()));
+        output.store(TAG_PATTERN_OUTPUT, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(patternOutput.getItems()));
+        output.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
+        output.putInt(TAG_PATTERN_TYPE, PatternTypeSettings.getPatternType(patternType));
+        output.store(TAG_PROCESSING_INPUT, ResourceCodecs.CONTAINER_CONTENTS_CODEC,
+            ResourceContainerContents.of(processingInput));
+        output.store(TAG_PROCESSING_INPUT_ALLOWED_TAG_IDS, ProcessingMatrixInputResourceContainer.ALLOWED_TAG_IDS_CODEC,
+            processingInput.getAllowedTagIds());
+        output.store(TAG_PROCESSING_OUTPUT, ResourceCodecs.CONTAINER_CONTENTS_CODEC,
+            ResourceContainerContents.of(processingOutput));
+        output.store(TAG_STONECUTTER_INPUT, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(stonecutterInput.getItems()));
+        output.putInt(TAG_STONECUTTER_SELECTED_RECIPE, stonecutterInput.getSelectedRecipe());
+        output.store(TAG_SMITHING_INPUT, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(smithingTableRecipe.getMatrix().getItems()));
+        output.store(TAG_CRAFTING_INPUT, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(craftingRecipe.getMatrix().getItems()));
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        if (tag.contains(TAG_PATTERN_INPUT)) {
-            ContainerUtil.read(tag.getCompound(TAG_PATTERN_INPUT), patternInput, provider);
-        }
-        if (tag.contains(TAG_PATTERN_OUTPUT)) {
-            ContainerUtil.read(tag.getCompound(TAG_PATTERN_OUTPUT), patternOutput, provider);
-        }
-        fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
-        patternType = PatternTypeSettings.getPatternType(tag.getInt(TAG_PATTERN_TYPE));
-        if (tag.contains(TAG_PROCESSING_INPUT)) {
-            processingInput.fromTag(tag.getCompound(TAG_PROCESSING_INPUT), provider);
-        }
-        if (tag.contains(TAG_PROCESSING_OUTPUT)) {
-            processingOutput.fromTag(tag.getCompound(TAG_PROCESSING_OUTPUT), provider);
-        }
-        if (tag.contains(TAG_STONECUTTER_INPUT)) {
-            ContainerUtil.read(tag.getCompound(TAG_STONECUTTER_INPUT), stonecutterInput, provider);
-        }
-        stonecutterInput.setSelectedRecipe(tag.getInt(TAG_STONECUTTER_SELECTED_RECIPE));
-        if (tag.contains(TAG_SMITHING_INPUT)) {
-            smithingTableRecipe.readFromTag(tag.getCompound(TAG_SMITHING_INPUT), provider);
-        }
-        if (tag.contains(TAG_CRAFTING_INPUT)) {
-            craftingRecipe.readFromTag(tag.getCompound(TAG_CRAFTING_INPUT), provider);
-        }
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        input.read(TAG_PATTERN_INPUT, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(patternInput.getItems()));
+        input.read(TAG_PATTERN_OUTPUT, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(patternOutput.getItems()));
+        fuzzyMode = input.getBooleanOr(TAG_FUZZY_MODE, false);
+        patternType = input.getInt(TAG_PATTERN_TYPE)
+            .map(PatternTypeSettings::getPatternType)
+            .orElse(PatternType.CRAFTING);
+        input.read(TAG_PROCESSING_INPUT, ResourceCodecs.CONTAINER_CONTENTS_CODEC)
+            .ifPresent(processingInput::load);
+        input.read(TAG_PROCESSING_INPUT_ALLOWED_TAG_IDS, ProcessingMatrixInputResourceContainer.ALLOWED_TAG_IDS_CODEC)
+            .ifPresent(allowedTagIds -> {
+                for (int i = 0; i < allowedTagIds.size(); ++i) {
+                    final Set<Identifier> ids = allowedTagIds.get(i);
+                    processingInput.setAllowedTagIdsSilently(i, ids);
+                }
+            });
+        input.read(TAG_PROCESSING_OUTPUT, ResourceCodecs.CONTAINER_CONTENTS_CODEC)
+            .ifPresent(processingOutput::load);
+        input.read(TAG_STONECUTTER_INPUT, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(stonecutterInput.getItems()));
+        input.getInt(TAG_STONECUTTER_SELECTED_RECIPE).ifPresent(stonecutterInput::setSelectedRecipe);
+        input.read(TAG_SMITHING_INPUT, ItemContainerContents.CODEC).ifPresent(smithingTableRecipe::load);
+        input.read(TAG_CRAFTING_INPUT, ItemContainerContents.CODEC).ifPresent(craftingRecipe::load);
     }
 
     @Override
@@ -250,11 +281,14 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        final NonNullList<ItemStack> drops = NonNullList.create();
-        drops.add(patternInput.getItem(0));
-        drops.add(patternOutput.getItem(0));
-        return drops;
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            final NonNullList<ItemStack> drops = NonNullList.create();
+            drops.add(patternInput.getItem(0));
+            drops.add(patternOutput.getItem(0));
+            Containers.dropContents(level, pos, drops);
+        }
     }
 
     void clear() {
@@ -336,25 +370,25 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
             return null;
         }
         final ItemStack input = stonecutterInput.getItem(0);
-        final List<RecipeHolder<StonecutterRecipe>> recipes = stonecutterInput.getRecipes();
+        final List<SelectableRecipe.SingleInputEntry<StonecutterRecipe>> recipes =
+            stonecutterInput.getRecipes().entries();
         final int selectedRecipe = stonecutterInput.getSelectedRecipe();
         if (selectedRecipe < 0 || selectedRecipe >= recipes.size()) {
             return null;
         }
-        final ItemStack selectedOutput = recipes.get(selectedRecipe).value().assemble(
-            new SingleRecipeInput(input),
-            level.registryAccess()
-        );
-        if (selectedOutput.isEmpty()) {
-            return null;
-        }
-        final ItemStack result = createPatternStack(PatternType.STONECUTTER);
-        final StonecutterPatternState state = new StonecutterPatternState(
-            ItemResource.ofItemStack(input),
-            ItemResource.ofItemStack(selectedOutput)
-        );
-        result.set(DataComponents.INSTANCE.getStonecutterPatternState(), state);
-        return result;
+        return recipes.get(selectedRecipe).recipe().recipe().map(holder -> {
+            final ItemStack selectedOutput = holder.value().assemble(new SingleRecipeInput(input));
+            if (selectedOutput.isEmpty()) {
+                return null;
+            }
+            final ItemStack result = createPatternStack(PatternType.STONECUTTER);
+            final StonecutterPatternState state = new StonecutterPatternState(
+                ItemResource.ofItemStack(input),
+                ItemResource.ofItemStack(selectedOutput)
+            );
+            result.set(DataComponents.INSTANCE.getStonecutterPatternState(), state);
+            return result;
+        }).orElse(null);
     }
 
     @Nullable
@@ -461,11 +495,10 @@ public class PatternGridBlockEntity extends AbstractGridBlockEntity implements B
         stonecutterInput.clearContent();
         stonecutterInput.setSelectedRecipe(-1);
         stonecutterInput.setItem(0, input);
+        final ContextMap context = SlotDisplayContext.fromLevel(level);
         for (int i = 0; i < stonecutterInput.getRecipes().size(); ++i) {
-            final ItemStack result = stonecutterInput.getRecipes().get(i).value().assemble(
-                new SingleRecipeInput(input),
-                level.registryAccess()
-            );
+            final ItemStack result = stonecutterInput.getRecipes().entries().get(i).recipe().optionDisplay()
+                .resolveForFirstStack(context);
             if (ItemStack.isSameItemSameComponents(result, selectedOutput)) {
                 stonecutterInput.setSelectedRecipe(i);
                 return;

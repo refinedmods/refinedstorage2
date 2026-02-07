@@ -24,6 +24,7 @@ public class StorageNetworkNode extends AbstractStorageContainerNetworkNode impl
 
     @Override
     protected void onStorageChange(final AbstractStorageContainerNetworkNode.StorageChange change) {
+        super.onStorageChange(change);
         if (!isActive()) {
             return;
         }

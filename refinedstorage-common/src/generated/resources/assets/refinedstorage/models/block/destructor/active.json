@@ -1,0 +1,7 @@
+{
+  "parent": "refinedstorage:block/constructor_destructor/active",
+  "textures": {
+    "cutout": "refinedstorage:block/destructor/cutouts/active",
+    "front": "refinedstorage:block/destructor/front"
+  }
+}

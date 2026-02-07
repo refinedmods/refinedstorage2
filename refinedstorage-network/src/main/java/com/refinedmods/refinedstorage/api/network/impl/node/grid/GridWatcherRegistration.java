@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorageListener;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 class GridWatcherRegistration {
     private final GridWatcher watcher;

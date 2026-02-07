@@ -17,10 +17,10 @@ import com.refinedmods.refinedstorage.common.content.Menus;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

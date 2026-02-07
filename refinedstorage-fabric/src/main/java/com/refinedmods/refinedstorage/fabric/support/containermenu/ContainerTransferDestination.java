@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.fabric.support.containermenu;
 
 import com.refinedmods.refinedstorage.common.support.containermenu.TransferDestination;
 
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public record ContainerTransferDestination(Container destination) implements TransferDestination {
     @Override
     public ItemStack transfer(final ItemStack stack) {
-        final Storage<ItemVariant> storage = InventoryStorage.of(destination, null);
+        final Storage<ItemVariant> storage = ContainerStorage.of(destination, null);
         try (Transaction tx = Transaction.openOuter()) {
             final long inserted = storage.insert(
                 ItemVariant.of(stack),

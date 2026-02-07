@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
@@ -41,8 +42,7 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
         schedulingMode.execute(tasks);
     }
 
-    @Nullable
-    public ExporterTransferStrategy.Result getLastResult(final int filterIndex) {
+    public ExporterTransferStrategy.@Nullable Result getLastResult(final int filterIndex) {
         return tasks.get(filterIndex).lastResult;
     }
 
@@ -71,10 +71,9 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
 
     class ExporterTask implements SchedulingMode.ScheduledTask {
         private final ResourceKey filter;
-        @Nullable
-        private ExporterTransferStrategy.Result lastResult;
+        private ExporterTransferStrategy.@Nullable Result lastResult;
 
-        ExporterTask(final ResourceKey filter, @Nullable final ExporterTransferStrategy.Result lastResult) {
+        ExporterTask(final ResourceKey filter, final ExporterTransferStrategy.@Nullable Result lastResult) {
             this.filter = filter;
             this.lastResult = lastResult;
         }

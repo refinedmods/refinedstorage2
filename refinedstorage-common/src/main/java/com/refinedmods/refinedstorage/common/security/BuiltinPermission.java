@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -35,7 +35,7 @@ public enum BuiltinPermission implements PlatformPermission {
      */
     SECURITY("security");
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final Component name;
     private final Component description;
 
@@ -45,7 +45,7 @@ public enum BuiltinPermission implements PlatformPermission {
         this.description = createTranslation("permission", id + ".description");
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 

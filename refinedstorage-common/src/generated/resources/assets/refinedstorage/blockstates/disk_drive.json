@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "type": "refinedstorage:disk_drive"
+    }
+  }
+}

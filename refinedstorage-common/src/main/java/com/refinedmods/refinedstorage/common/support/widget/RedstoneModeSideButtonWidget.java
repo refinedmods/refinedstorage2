@@ -4,12 +4,12 @@ import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -28,9 +28,9 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final Component HELP_IGNORE = createTranslation("gui", "redstone_mode.ignore.help");
     private static final Component HELP_HIGH = createTranslation("gui", "redstone_mode.high.help");
     private static final Component HELP_LOW = createTranslation("gui", "redstone_mode.low.help");
-    private static final ResourceLocation IGNORE = createIdentifier("widget/side_button/redstone_mode/ignore");
-    private static final ResourceLocation HIGH = createIdentifier("widget/side_button/redstone_mode/high");
-    private static final ResourceLocation LOW = createIdentifier("widget/side_button/redstone_mode/low");
+    private static final Identifier IGNORE = createIdentifier("widget/side_button/redstone_mode/ignore");
+    private static final Identifier HIGH = createIdentifier("widget/side_button/redstone_mode/high");
+    private static final Identifier LOW = createIdentifier("widget/side_button/redstone_mode/low");
 
     private final ClientProperty<RedstoneMode> property;
     private final Component helpIgnore;
@@ -55,7 +55,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (property.getValue()) {
             case IGNORE -> IGNORE;
             case HIGH -> HIGH;

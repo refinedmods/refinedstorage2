@@ -7,10 +7,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public final class ServerListener {
             0L,
             TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(AUTOCRAFTING_MAX_QUEUED_REQUESTS),
-            new BasicThreadFactory.Builder().namingPattern("refinedstorage-autocrafting-%d").build(),
+            BasicThreadFactory.builder().namingPattern("refinedstorage-autocrafting-%d").build(),
             new ThreadPoolExecutor.AbortPolicy()
         );
     }

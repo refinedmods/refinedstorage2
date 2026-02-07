@@ -6,12 +6,15 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 
 import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -23,7 +26,8 @@ public class FallbackSecurityCardItem extends AbstractSecurityCardItem<SecurityC
     private static final Component HELP = createTranslation("item", "fallback_security_card.help");
 
     public FallbackSecurityCardItem() {
-        super(new Item.Properties().stacksTo(1));
+        super(new Item.Properties().stacksTo(1)
+            .setId(ResourceKey.create(Registries.ITEM, ContentIds.FALLBACK_SECURITY_CARD)));
     }
 
     @Override

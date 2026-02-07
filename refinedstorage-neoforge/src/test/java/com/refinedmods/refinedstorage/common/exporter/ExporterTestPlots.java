@@ -10,8 +10,7 @@ import net.minecraft.gametest.framework.GameTestSequence;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.function.TriConsumer;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class ExporterTestPlots {
@@ -22,17 +21,17 @@ final class ExporterTestPlots {
                             final Block block,
                             final Direction direction,
                             final TriConsumer<AbstractExporterBlockEntity, BlockPos, GameTestSequence> consumer) {
-        helper.setBlock(ZERO.above(), RSBLOCKS.getCreativeController().getDefault());
-        helper.setBlock(ZERO.above().above(), RSBLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
+        helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
+        helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         helper.setBlock(
             ZERO.above().above().north(),
-            RSBLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
+            MOD_BLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
         );
         final BlockPos exporterPos = ZERO.above().above().above();
-        helper.setBlock(exporterPos, RSBLOCKS.getExporter().getDefault().rotated(direction));
+        helper.setBlock(exporterPos, MOD_BLOCKS.getExporter().getDefault().rotated(direction));
         helper.setBlock(exporterPos.east(), block);
         consumer.accept(
-            requireBlockEntity(helper, exporterPos, AbstractExporterBlockEntity.class),
+            helper.getBlockEntity(exporterPos, AbstractExporterBlockEntity.class),
             exporterPos,
             helper.startSequence()
         );

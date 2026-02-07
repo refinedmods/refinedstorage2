@@ -2,10 +2,8 @@ package com.refinedmods.refinedstorage.common.support.tooltip;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Matrix4f;
 
 public final class SmallText {
     public static final float DEFAULT_SCALE = 0.5F;
@@ -14,50 +12,15 @@ public final class SmallText {
     private SmallText() {
     }
 
-    public static float correctScale(final float smallScale) {
-        return isSmall() ? smallScale : 1F;
-    }
-
     public static boolean isSmall() {
         return !Minecraft.getInstance().isEnforceUnicode();
     }
 
-    public static void render(final Font font,
-                              final FormattedCharSequence text,
-                              final int x,
-                              final int y,
-                              final Matrix4f pose,
-                              final MultiBufferSource.BufferSource buffer,
-                              final float smallScale) {
-        render(font, text, x, y, -1, pose, buffer, smallScale);
+    public static float correctScale(final float smallScale) {
+        return isSmall() ? smallScale : 1F;
     }
 
-    public static void render(final Font font,
-                              final FormattedCharSequence text,
-                              final int x,
-                              final int y,
-                              final int color,
-                              final Matrix4f pose,
-                              final MultiBufferSource.BufferSource buffer,
-                              final float smallScale) {
-        final float scale = correctScale(smallScale);
-        final Matrix4f scaled = new Matrix4f(pose);
-        scaled.scale(scale, scale, 1);
-        font.drawInBatch(
-            text,
-            x / scale,
-            (y / scale) + 1,
-            color,
-            true,
-            scaled,
-            buffer,
-            Font.DisplayMode.NORMAL,
-            0,
-            15728880
-        );
-    }
-
-    public static void render(final GuiGraphics graphics,
+    public static void render(final GuiGraphicsExtractor graphics,
                               final Font font,
                               final FormattedCharSequence text,
                               final int x,
@@ -66,13 +29,13 @@ public final class SmallText {
                               final boolean dropShadow,
                               final float smallScale) {
         final float scale = correctScale(smallScale);
-        graphics.pose().pushPose();
-        graphics.pose().scale(scale, scale, 1);
-        graphics.drawString(font, text, (int) (x / scale), (int) (y / scale) + 1, color, dropShadow);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(scale, scale);
+        graphics.text(font, text, (int) (x / scale), (int) (y / scale) + 1, color, dropShadow);
+        graphics.pose().popMatrix();
     }
 
-    public static void render(final GuiGraphics graphics,
+    public static void render(final GuiGraphicsExtractor graphics,
                               final Font font,
                               final String text,
                               final int x,
@@ -81,9 +44,9 @@ public final class SmallText {
                               final boolean dropShadow,
                               final float smallScale) {
         final float scale = correctScale(smallScale);
-        graphics.pose().pushPose();
-        graphics.pose().scale(scale, scale, 1);
-        graphics.drawString(font, text, (int) (x / scale), (int) (y / scale) + 1, color, dropShadow);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(scale, scale);
+        graphics.text(font, text, (int) (x / scale), (int) (y / scale) + 1, color, dropShadow);
+        graphics.pose().popMatrix();
     }
 }

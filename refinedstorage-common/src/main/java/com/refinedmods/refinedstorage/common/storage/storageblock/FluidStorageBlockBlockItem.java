@@ -15,9 +15,11 @@ import com.refinedmods.refinedstorage.common.storage.UpgradeableStorageContainer
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -25,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
@@ -36,10 +39,11 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
     private final FluidStorageVariant variant;
     private final Component helpText;
 
-    public FluidStorageBlockBlockItem(final Block block, final FluidStorageVariant variant) {
+    public FluidStorageBlockBlockItem(final Identifier id, final Block block, final FluidStorageVariant variant) {
         super(
             block,
-            new Item.Properties().stacksTo(1).fireResistant(),
+            new Item.Properties().stacksTo(1).fireResistant().useBlockDescriptionPrefix()
+                .setId(ResourceKey.create(Registries.ITEM, id)),
             RefinedStorageApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
@@ -47,10 +51,11 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
     }
 
     private static Component getHelpText(final FluidStorageVariant variant) {
-        if (variant.getCapacityInBuckets() == null) {
+        final Long buckets = variant.getCapacityInBuckets();
+        if (buckets == null) {
             return CREATIVE_HELP;
         }
-        return createTranslation("item", "fluid_storage_block.help", format(variant.getCapacityInBuckets()));
+        return createTranslation("item", "fluid_storage_block.help", format(buckets));
     }
 
     @Nullable

@@ -1,30 +1,45 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
-import com.refinedmods.refinedstorage.common.autocrafting.VanillaConstants;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
-import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SelectableRecipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen.INSET_PADDING;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
-import static java.util.Objects.requireNonNull;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class StonecutterPatternGridRenderer implements PatternGridRenderer {
-    private static final ResourceLocation SPRITE = createIdentifier("pattern_grid/stonecutter");
+    private static final Identifier STONECUTTER_RECIPE_SELECTED_SPRITE = Identifier.withDefaultNamespace(
+        "container/stonecutter/recipe_selected"
+    );
+    private static final Identifier STONECUTTER_RECIPE_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace(
+        "container/stonecutter/recipe_highlighted"
+    );
+    private static final Identifier STONECUTTER_RECIPE_SPRITE = Identifier.withDefaultNamespace(
+        "container/stonecutter/recipe"
+    );
+    private static final int STONECUTTER_RECIPES_PER_ROW = 4;
+    private static final int STONECUTTER_ROWS_VISIBLE = 3;
+    private static final Identifier SPRITE = createIdentifier("pattern_grid/stonecutter");
 
     @Nullable
     private ScrollbarWidget scrollbar;
@@ -67,8 +82,8 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
             return;
         }
         final int items = menu.getStonecutterRecipes().size();
-        final int rows = Math.ceilDiv(items, VanillaConstants.STONECUTTER_RECIPES_PER_ROW);
-        final int maxOffset = rows - VanillaConstants.STONECUTTER_ROWS_VISIBLE;
+        final int rows = Math.ceilDiv(items, STONECUTTER_RECIPES_PER_ROW);
+        final int maxOffset = rows - STONECUTTER_ROWS_VISIBLE;
         final int maxOffsetCorrected = maxOffset * (scrollbar.isSmoothScrolling() ? 18 : 1);
         scrollbar.setMaxOffset(maxOffsetCorrected);
         scrollbar.setEnabled(maxOffsetCorrected > 0);
@@ -80,12 +95,12 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void render(final GuiGraphics graphics,
+    public void render(final GuiGraphicsExtractor graphics,
                        final int mouseX,
                        final int mouseY,
                        final float partialTicks) {
         if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -100,70 +115,82 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void renderBackground(final GuiGraphics graphics,
+    public void renderBackground(final GuiGraphicsExtractor graphics,
                                  final float partialTicks,
                                  final int mouseX,
                                  final int mouseY) {
-        graphics.blitSprite(SPRITE, x + INSET_PADDING, y + INSET_PADDING + 4, 116, 56);
+        final Level level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+        graphics.blitSprite(GUI_TEXTURED, SPRITE, x + INSET_PADDING, y + INSET_PADDING + 4, 116, 56);
         graphics.enableScissor(x + 40, y + 9, x + 40 + 64, y + 9 + 54);
         final boolean isOverArea = isOverStonecutterArea(mouseX, mouseY);
+        final ContextMap context = SlotDisplayContext.fromLevel(level);
         for (int i = 0; i < menu.getStonecutterRecipes().size(); ++i) {
-            final RecipeHolder<StonecutterRecipe> recipe = menu.getStonecutterRecipes().get(i);
-            final int xx = getRecipeX(x, i);
-            final int row = i / VanillaConstants.STONECUTTER_RECIPES_PER_ROW;
-            final int yy = getRecipeY(y, row);
-            if (yy < y + 9 - 18 || yy > y + 9 + 54) {
-                continue;
-            }
-            final boolean hovering = mouseX >= xx && mouseY >= yy && mouseX < xx + 16 && mouseY < yy + 18;
-            final ResourceLocation buttonSprite;
-            if (i == menu.getStonecutterSelectedRecipe()) {
-                buttonSprite = VanillaConstants.STONECUTTER_RECIPE_SELECTED_SPRITE;
-            } else if (isOverArea && hovering) {
-                buttonSprite = VanillaConstants.STONECUTTER_RECIPE_HIGHLIGHTED_SPRITE;
-            } else {
-                buttonSprite = VanillaConstants.STONECUTTER_RECIPE_SPRITE;
-            }
-            graphics.blitSprite(buttonSprite, xx, yy, 16, 18);
-            graphics.renderItem(
-                recipe.value().getResultItem(requireNonNull(ClientPlatformUtil.getClientLevel()).registryAccess()),
-                xx,
-                yy + 1
-            );
+            renderButton(graphics, mouseX, mouseY, i, isOverArea, context);
         }
         graphics.disableScissor();
+    }
+
+    private void renderButton(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final int i,
+                              final boolean isOverArea, final ContextMap context) {
+        final SelectableRecipe.SingleInputEntry<StonecutterRecipe> recipe =
+            menu.getStonecutterRecipes().entries().get(i);
+        final int xx = getRecipeX(x, i);
+        final int row = i / STONECUTTER_RECIPES_PER_ROW;
+        final int yy = getRecipeY(y, row);
+        if (yy < y + 9 - 18 || yy > y + 9 + 54) {
+            return;
+        }
+        final boolean hovering = mouseX >= xx && mouseY >= yy && mouseX < xx + 16 && mouseY < yy + 18;
+        final Identifier buttonSprite;
+        if (i == menu.getStonecutterSelectedRecipe()) {
+            buttonSprite = STONECUTTER_RECIPE_SELECTED_SPRITE;
+        } else if (isOverArea && hovering) {
+            buttonSprite = STONECUTTER_RECIPE_HIGHLIGHTED_SPRITE;
+        } else {
+            buttonSprite = STONECUTTER_RECIPE_SPRITE;
+        }
+        graphics.blitSprite(GUI_TEXTURED, buttonSprite, xx, yy, 16, 18);
+        graphics.item(
+            recipe.recipe().optionDisplay().resolveForFirstStack(context),
+            xx,
+            yy + 1
+        );
     }
 
     @Override
     public void renderTooltip(final Font font,
                               @Nullable final Slot hoveredSlot,
-                              final GuiGraphics graphics,
+                              final GuiGraphicsExtractor graphics,
                               final int mouseX,
                               final int mouseY) {
-        if (!isOverStonecutterArea(mouseX, mouseY)) {
+        final Level level = Minecraft.getInstance().level;
+        if (level == null || !isOverStonecutterArea(mouseX, mouseY)) {
             return;
         }
+        final ContextMap context = SlotDisplayContext.fromLevel(level);
         for (int i = 0; i < menu.getStonecutterRecipes().size(); ++i) {
-            final RecipeHolder<StonecutterRecipe> recipe = menu.getStonecutterRecipes().get(i);
-            final ItemStack result = recipe.value().getResultItem(
-                requireNonNull(ClientPlatformUtil.getClientLevel()).registryAccess()
-            );
+            final SelectableRecipe.SingleInputEntry<StonecutterRecipe> recipe =
+                menu.getStonecutterRecipes().entries().get(i);
+            final ItemStack result = recipe.recipe().optionDisplay().resolveForFirstStack(context);
             final int xx = getRecipeX(x, i);
-            final int row = i / VanillaConstants.STONECUTTER_RECIPES_PER_ROW;
+            final int row = i / STONECUTTER_RECIPES_PER_ROW;
             final int yy = getRecipeY(y, row);
             if (yy < y + 9 - 18 || yy > y + 9 + 54) {
                 continue;
             }
             if (mouseX >= xx && mouseY >= yy && mouseX < xx + 16 && mouseY < yy + 18) {
-                graphics.renderTooltip(font, result, mouseX, mouseY);
+                graphics.setTooltipForNextFrame(font, Screen.getTooltipFromItem(Minecraft.getInstance(),
+                    result), result.getTooltipImage(), mouseX, mouseY, result.get(DataComponents.TOOLTIP_STYLE));
             }
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        return (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton))
-            || clickedRecipe(mouseX, mouseY);
+    public boolean mouseClicked(final MouseButtonEvent e, final boolean doubleClick) {
+        return (scrollbar != null && scrollbar.mouseClicked(e, doubleClick)) || clickedRecipe(e.x(), e.y());
     }
 
     @Override
@@ -174,8 +201,8 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
-        return scrollbar != null && scrollbar.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(final MouseButtonEvent e) {
+        return scrollbar != null && scrollbar.mouseReleased(e);
     }
 
     @Override
@@ -207,7 +234,7 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
         }
         for (int i = 0; i < menu.getStonecutterRecipes().size(); ++i) {
             final int xx = getRecipeX(x, i);
-            final int row = i / VanillaConstants.STONECUTTER_RECIPES_PER_ROW;
+            final int row = i / STONECUTTER_RECIPES_PER_ROW;
             final int yy = getRecipeY(y, row);
             if (yy < y + 9 - 18 || yy > y + 9 + 54) {
                 continue;
@@ -231,7 +258,7 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
     }
 
     private int getRecipeX(final int insetX, final int i) {
-        return insetX + 40 + i % VanillaConstants.STONECUTTER_RECIPES_PER_ROW * 16;
+        return insetX + 40 + i % STONECUTTER_RECIPES_PER_ROW * 16;
     }
 
     private int getRecipeY(final int insetY, final int row) {

@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage.common.content;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.sounds.SoundEvent;
+import org.jspecify.annotations.Nullable;
 
 public final class Sounds {
     public static final Sounds INSTANCE = new Sounds();

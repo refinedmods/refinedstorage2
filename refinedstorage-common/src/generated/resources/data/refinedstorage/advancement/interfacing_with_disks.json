@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:drives",
+  "criteria": {
+    "disk_interface_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:disk_interfaces"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.interfacing_with_disks.description"
+    },
+    "icon": {
+      "id": "refinedstorage:disk_interface"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.interfacing_with_disks"
+    }
+  },
+  "requirements": [
+    [
+      "disk_interface_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
