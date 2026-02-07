@@ -77,7 +77,7 @@
   "gui.refinedstorage.grid.inaccurate_extraction.due_to_bug_in_other_mod_wrong_resource_maybe_extracted": "Due to a bug in %s the wrong resource may have been extracted. The resource might remain in the Grid, only visually, until you reopen the Grid.",
   "gui.refinedstorage.grid.inaccurate_extraction.check_chat_for_more_details": "Check chat for more details.",
   "gui.refinedstorage.grid.inaccurate_extraction.read_more": "Read more",
-  "gui.refinedstorage.grid.tenth_anniversary_ribbon": "Refined Storage is 10 years!",
+  "gui.refinedstorage.grid.tenth_anniversary_ribbon": "10 years!",
   "gui.refinedstorage.grid.tenth_anniversary_ribbon.click_to_learn_more": "Click to learn more",
   "gui.refinedstorage.tenth_anniversary.title": "Refined Storage is 10 years!",
   "gui.refinedstorage.tenth_anniversary.enable_cape": "Enable anniversary cape",

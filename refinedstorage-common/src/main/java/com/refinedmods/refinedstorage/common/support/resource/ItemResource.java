@@ -114,5 +114,4 @@ public final class ItemResource
                 + "item=" + item + ", "
                 + "components=" + components + ']';
     }
-
 }

@@ -66,6 +66,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridScreen.class);
 
     private static final ResourceLocation ROW_SPRITE = createIdentifier("grid/row");
+    private static final ResourceLocation TENTH_ANNIVERSARY_RIBBON = createIdentifier("grid/tenth_anniversary_ribbon");
     private static final int MODIFIED_JUST_NOW_MAX_SECONDS = 10;
     private static final int COLUMNS = 9;
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
@@ -93,16 +94,16 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private int totalRows;
     private int currentGridSlotIndex;
 
-    private final boolean tenthAnniversaryRibbonVisible = shouldDisplayTenthAnniversaryTitle();
+    private final boolean tenthAnniversaryRibbonVisible = shouldDisplayTenthAnniversaryRibbon();
     private final Inventory playerInventory;
 
     protected AbstractGridScreen(final T menu,
                                  final Inventory playerInventory,
                                  final Component title,
                                  final int bottomHeight) {
-        super(menu, playerInventory, shouldDisplayTenthAnniversaryTitle() ? new TextMarquee(
+        super(menu, playerInventory, shouldDisplayTenthAnniversaryRibbon() ? new TextMarquee(
             TENTH_ANNIVERSARY_RIBBON_TITLE,
-            70,
+            60,
             16777045,
             true,
             false
@@ -111,7 +112,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         this.playerInventory = playerInventory;
     }
 
-    protected static boolean shouldDisplayTenthAnniversaryTitle() {
+    protected static boolean shouldDisplayTenthAnniversaryRibbon() {
         final LocalDate now = LocalDate.now();
         if (now.getYear() != 2026) {
             return false;
@@ -213,6 +214,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
+        if (tenthAnniversaryRibbonVisible) {
+            graphics.blitSprite(TENTH_ANNIVERSARY_RIBBON, x - 2, y - 14, 82, 14);
+        }
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
             if (row == 0) {

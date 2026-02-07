@@ -96,5 +96,4 @@ public final class FluidResource
             + "fluid=" + fluid + ", "
             + "components=" + components + ']';
     }
-
 }
