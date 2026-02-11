@@ -108,6 +108,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             true,
             false
         ) : new TextMarquee(title, 70));
+        if (shouldDisplayTenthAnniversaryRibbon()) {
+            this.titleLabelY -= 1;
+        }
         this.bottomHeight = bottomHeight;
         this.playerInventory = playerInventory;
     }

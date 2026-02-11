@@ -82,7 +82,7 @@ public class TenthAnniversaryScreen extends AbstractBaseScreen<TenthAnniversaryS
 
     @Override
     protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.blit(TEXTURE, -2, 5, 0, 93, 176, 14);
+        graphics.blit(TEXTURE, -3, 5, 0, 93, 176, 15);
         graphics.drawCenteredString(font, TITLE, imageWidth / 2, 7, 16777045);
     }
 
