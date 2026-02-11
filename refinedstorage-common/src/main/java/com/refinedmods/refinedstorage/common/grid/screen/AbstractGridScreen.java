@@ -215,7 +215,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Override
     protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
         if (tenthAnniversaryRibbonVisible) {
-            graphics.blitSprite(TENTH_ANNIVERSARY_RIBBON, x - 2, y - 14, 82, 14);
+            graphics.blitSprite(TENTH_ANNIVERSARY_RIBBON, x - 3, y - 15, 82, 15);
         }
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
