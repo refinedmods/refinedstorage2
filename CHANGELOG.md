@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-02-11
+
 ### Added
 
 -   Support for underscores and forward slashes in the Grid search.
@@ -1104,7 +1106,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...HEAD
+
+[2.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0...v2.0.1
 
 [2.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.17...v2.0.0
 
