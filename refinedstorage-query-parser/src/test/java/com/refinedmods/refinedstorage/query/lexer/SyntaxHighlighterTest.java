@@ -47,6 +47,16 @@ class SyntaxHighlighterTest {
                 )
             ),
             Arguments.of(
+                "a_b/c",
+                Arrays.asList(
+                    new SyntaxHighlightedCharacter("a", "WHITE"),
+                    new SyntaxHighlightedCharacter("_", "WHITE"),
+                    new SyntaxHighlightedCharacter("b", "WHITE"),
+                    new SyntaxHighlightedCharacter("/", "WHITE"),
+                    new SyntaxHighlightedCharacter("c", "WHITE")
+                )
+            ),
+            Arguments.of(
                 "!not&&",
                 Arrays.asList(
                     new SyntaxHighlightedCharacter("!", "AQUA"),

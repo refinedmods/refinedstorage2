@@ -69,6 +69,83 @@ class LexerTest {
     }
 
     @Test
+    void testUnderscoreInIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("foo_bar");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "foo_bar", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 7);
+    }
+
+    @Test
+    void testSlashInIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("foo/bar");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "foo/bar", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 7);
+    }
+
+    @Test
+    void testUnderscoreAndSlashInIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("foo/bar_baz");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "foo/bar_baz", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 11);
+    }
+
+    @Test
+    void testMultipleUnderscoreAndSlashInIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("foo_bar/ba__z/quux_1/e2//d");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "foo_bar/ba__z/quux_1/e2//d", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 26);
+    }
+
+    @Test
+    void testSlashOperatorWithSlashInIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("/ foo/ /bar");
+
+        // Assert
+        assertThat(tokens).hasSize(4);
+
+        final Token slash = tokens.getFirst();
+        assertToken(slash, "/", TokenType.BIN_OP);
+        assertPosition(slash.position(), SOURCE_NAME, 1, 1, 1, 1);
+
+        final Token foo = tokens.get(1);
+        assertToken(foo, "foo/", TokenType.IDENTIFIER);
+        assertPosition(foo.position(), SOURCE_NAME, 1, 3, 1, 6);
+
+        final Token slash2 = tokens.get(2);
+        assertToken(slash2, "/", TokenType.BIN_OP);
+        assertPosition(slash2.position(), SOURCE_NAME, 1, 8, 1, 8);
+
+        final Token bar = tokens.get(3);
+        assertToken(bar, "bar", TokenType.IDENTIFIER);
+        assertPosition(bar.position(), SOURCE_NAME, 1, 9, 1, 11);
+    }
+
+    @Test
     void testSingleStringIdentifier() {
         // Act
         final List<Token> tokens = getTokens("\"h_el1lo\"");

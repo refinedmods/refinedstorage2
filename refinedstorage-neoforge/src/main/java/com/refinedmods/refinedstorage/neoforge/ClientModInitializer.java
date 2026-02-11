@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage.common.networking.NetworkCardItemPropertyF
 import com.refinedmods.refinedstorage.common.security.SecurityCardItemPropertyFunction;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage.common.support.network.item.NetworkItemPropertyFunction;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -41,7 +43,9 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
@@ -263,5 +267,23 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             NetworkItemPropertyFunction.NAME,
             new NetworkItemPropertyFunction()
         );
+    }
+
+    @SubscribeEvent
+    public static void onLoggingIn(final ClientPlayerNetworkEvent.LoggingIn e) {
+        sendTenthAnniversaryCapeUpdate();
+    }
+
+    @SubscribeEvent
+    public static void onConfigReloading(final ModConfigEvent.Reloading e) {
+        if (Minecraft.getInstance().getConnection() == null) {
+            return; // Game was just loaded
+        }
+        sendTenthAnniversaryCapeUpdate();
+    }
+
+    private static void sendTenthAnniversaryCapeUpdate() {
+        final boolean cape = Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
+        Platform.INSTANCE.sendPacketToServer(new SetTenthAnniversaryCapePacket(cape));
     }
 }

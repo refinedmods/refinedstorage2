@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-02-11
+
+### Added
+
+-   Support for underscores and forward slashes in the Grid search.
+-   Support for searching for block tags on block items in the Grid search.
+
+### Fixed
+
+-   Improved performance in various scenarios like autocrafting and opening a Grid.
+-   Autocrafter name field history not working.
+-   The help descriptions of '#' and '$' prefix searches being swapped.
+
 ## [2.0.0] - 2025-09-27
 
 ### Fixed
@@ -14,10 +27,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Improved autocrafting toast texture.
 
 ## [2.0.0-beta.17] - 2025-09-27
-
-### Fixed
-
--   Final beta before the official release. This release contains breaking changes meant for addon developers. Do not update to this version!
 
 ## [2.0.0-beta.16] - 2025-09-26
 
@@ -1097,7 +1106,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...HEAD
+
+[2.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0...v2.0.1
 
 [2.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-beta.17...v2.0.0
 

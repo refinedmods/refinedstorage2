@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.cape.TenthAnniversaryScreen;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.grid.NoopGridSynchronizer;
@@ -30,14 +31,18 @@ import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighterColors;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
@@ -61,6 +66,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridScreen.class);
 
     private static final ResourceLocation ROW_SPRITE = createIdentifier("grid/row");
+    private static final ResourceLocation TENTH_ANNIVERSARY_RIBBON = createIdentifier("grid/tenth_anniversary_ribbon");
     private static final int MODIFIED_JUST_NOW_MAX_SECONDS = 10;
     private static final int COLUMNS = 9;
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
@@ -72,6 +78,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         .append(createTranslation("gui", "grid.search_help.tag_search").withStyle(ChatFormatting.GRAY))
         .append("\n")
         .append(createTranslation("gui", "grid.search_help.tooltip_search").withStyle(ChatFormatting.GRAY));
+    private static final Component TENTH_ANNIVERSARY_RIBBON_TITLE =
+        createTranslation("gui", "grid.tenth_anniversary_ribbon");
+    private static final Component CLICK_TO_LEARN_MORE =
+        createTranslation("gui", "grid.tenth_anniversary_ribbon.click_to_learn_more");
 
     protected final int bottomHeight;
 
@@ -84,12 +94,37 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private int totalRows;
     private int currentGridSlotIndex;
 
+    private final boolean tenthAnniversaryRibbonVisible = shouldDisplayTenthAnniversaryRibbon();
+    private final Inventory playerInventory;
+
     protected AbstractGridScreen(final T menu,
                                  final Inventory playerInventory,
                                  final Component title,
                                  final int bottomHeight) {
-        super(menu, playerInventory, new TextMarquee(title, 70));
+        super(menu, playerInventory, shouldDisplayTenthAnniversaryRibbon() ? new TextMarquee(
+            TENTH_ANNIVERSARY_RIBBON_TITLE,
+            60,
+            16777045,
+            true,
+            false
+        ) : new TextMarquee(title, 70));
+        if (shouldDisplayTenthAnniversaryRibbon()) {
+            this.titleLabelY -= 1;
+        }
         this.bottomHeight = bottomHeight;
+        this.playerInventory = playerInventory;
+    }
+
+    protected static boolean shouldDisplayTenthAnniversaryRibbon() {
+        final LocalDate now = LocalDate.now();
+        if (now.getYear() != 2026) {
+            return false;
+        }
+        if (now.getMonth() != Month.MARCH) {
+            return false;
+        }
+        final int day = now.getDayOfMonth();
+        return day >= 20 && day <= 22;
     }
 
     @Override
@@ -182,6 +217,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
+        if (tenthAnniversaryRibbonVisible) {
+            graphics.blitSprite(TENTH_ANNIVERSARY_RIBBON, x - 3, y - 15, 82, 15);
+        }
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
             if (row == 0) {
@@ -385,6 +423,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (getMenu().getCarried().isEmpty() && tryRenderAutocraftableResourceHintTooltip(graphics, x, y)) {
             return;
         }
+        if (isOverTenthAnniversaryRibbon(x, y)) {
+            Platform.INSTANCE.renderTooltip(graphics,
+                List.of(new ClientTextTooltip(CLICK_TO_LEARN_MORE.getVisualOrderText())), x, y);
+            return;
+        }
         super.renderTooltip(graphics, x, y);
     }
 
@@ -518,6 +561,15 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
         final ItemStack carriedStack = getMenu().getCarried();
         final GridResource resource = getCurrentGridResource();
+        if (isOverTenthAnniversaryRibbon(mouseX, mouseY)) {
+            Minecraft.getInstance().setScreen(new TenthAnniversaryScreen(playerInventory, this));
+            return true;
+        }
+        return mouseClicked(mouseX, mouseY, clickedButton, resource, carriedStack);
+    }
+
+    private boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton,
+                                 @Nullable final GridResource resource, final ItemStack carriedStack) {
         if (canExtract(resource, carriedStack)) {
             mouseClickedInGrid(clickedButton, resource);
             return true;
@@ -530,6 +582,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, clickedButton);
+    }
+
+    private boolean isOverTenthAnniversaryRibbon(final double mouseX, final double mouseY) {
+        return tenthAnniversaryRibbonVisible && isHovering(
+            titleLabelX,
+            titleLabelY,
+            titleMarquee.getEffectiveWidth(font),
+            font.lineHeight,
+            mouseX,
+            mouseY
+        );
     }
 
     private boolean canExtract(@Nullable final GridResource resource, final ItemStack carriedStack) {

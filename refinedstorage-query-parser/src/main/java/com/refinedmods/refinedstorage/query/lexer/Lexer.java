@@ -46,7 +46,7 @@ public class Lexer {
     }
 
     private boolean isValidIdentifier(final char c) {
-        return Character.isLetterOrDigit(c);
+        return c == '_' || c == '/' || Character.isLetterOrDigit(c);
     }
 
     private void scanNumber() {

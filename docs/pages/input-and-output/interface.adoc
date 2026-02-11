@@ -4,6 +4,8 @@
 
 The Interface combines the functions of the xref:importer.adoc[] and xref:exporter.adoc[].
 
+It provides intermediate storage slots for importing and exporting resources, but does not automatically interact with external inventories.
+
 == Exporting
 
 The top row configures which resources are exported from the storage network to the _intermediate storage slots_ below.
@@ -18,9 +20,17 @@ The last known state for each configured resource is displayed:
 
 The bottom row contains the intermediate storage slots where exported resources are stored. These slots are accessible for extraction by external blocks.
 
+> The {doctitle} does not insert resources into adjacent inventories automatically; you must extract them yourself.
+
 === Fuzzy mode
 
 Fuzzy mode, off by default, determines whether the filter considers additional attributes, such as a pickaxe's damage value.
+
+=== Differences from the Exporter
+
+* The xref:exporter.adoc[] must be connected to an external inventory, whereas the {doctitle} exports to intermediate storage slots.
+* The {doctitle} does not insert resources into adjacent inventories automatically; you must extract them yourself.
+* The {doctitle} instantly exports resources, while the xref:exporter.adoc[]'s speed depends on upgrades.
 
 == Importing
 
@@ -28,16 +38,12 @@ The {doctitle} accepts resources from external blocks and places them in the int
 
 > The {doctitle} does not extract resources from adjacent inventories automatically; you must insert them manually.
 
-== Differences from the Importer
+=== Differences from the Importer
 
 * The xref:importer.adoc[] must be connected to an external inventory, while the {doctitle} provides intermediate storage slots where external blocks can insert resources.
+* The {doctitle} does not extract resources from adjacent inventories automatically; you must insert them manually.
 * The xref:importer.adoc[] has no internal inventory and cannot receive resources directly.
 * The {doctitle} inserts resources instantly, while the xref:importer.adoc[]'s speed depends on upgrades.
-
-== Differences from the Exporter
-
-* The xref:exporter.adoc[] must be connected to an external inventory, whereas the {doctitle} exports to intermediate storage slots.
-* The {doctitle} instantly exports resources, while the xref:exporter.adoc[]'s speed depends on upgrades.
 
 == Interface acting as an External Storage source
 

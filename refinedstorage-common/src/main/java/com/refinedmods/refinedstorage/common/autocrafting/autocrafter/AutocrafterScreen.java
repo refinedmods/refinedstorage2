@@ -196,10 +196,12 @@ public class AutocrafterScreen extends AbstractBaseScreen<AutocrafterContainerMe
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         if (nameField != null && editName) {
+            if (nameField.keyPressed(key, scanCode, modifiers)) {
+                return true;
+            }
             if (nameField.isFocused() && saveOrCancel(key)) {
                 return true;
             }
-            return nameField.keyPressed(key, scanCode, modifiers);
         }
         return super.keyPressed(key, scanCode, modifiers);
     }

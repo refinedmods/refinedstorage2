@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
+import com.refinedmods.refinedstorage.neoforge.cape.TenthAnniversaryCape;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.MenuOpenerImpl;
@@ -397,5 +398,15 @@ public final class PlatformImpl extends AbstractPlatform {
                 Block.UPDATE_ALL
             );
         }
+    }
+
+    @Override
+    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
+        player.setData(TenthAnniversaryCape.getAttachment(), enabled);
+    }
+
+    @Override
+    public boolean isTenthAnniversaryCapeAvailable() {
+        return true;
     }
 }

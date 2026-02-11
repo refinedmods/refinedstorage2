@@ -1,5 +1,5 @@
 plugins {
-    id("refinedarchitect.base")
+    id("com.refinedmods.refinedarchitect.base")
 }
 
 refinedarchitect {

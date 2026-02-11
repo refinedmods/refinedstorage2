@@ -82,6 +82,17 @@ Cable Tiers is an addon for Refined Storage that adds new cable tiers, each with
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[CurseForge], link:https://modrinth.com/mod/cable-tiers[Modrinth]
 |===
 
+== Omni Grid
+
+An enhanced and versatile variant of the Portable Grid with crafting capabilities, automation compatibility, and can connect to networks.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/omni-grid[CurseForge]
+|===
+
+
 == Ender IO
 
 Ender IO adds Refined Storage conduits.
@@ -90,4 +101,54 @@ Ender IO adds Refined Storage conduits.
 |===
 | *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/ender-io[CurseForge], link:https://modrinth.com/mod/enderio[Modrinth]
+|===
+
+== Refined Storage: Requestify
+
+Refined Storage: Requestify adds the Requester, a block that allows you to maintain a specified stock level of resources in your Refined Storage system.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-requestify[CurseForge]
+|===
+
+== Pipe Connector
+
+A tool that places pipes (including Refined Storage cables) automatically along a selected route.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/pipe-connector[CurseForge]
+|===
+
+== Step Crafter
+
+This mod adds a Step Crafter and Step Requester which allows recursive crafting and keeping items in-stock.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/step-crafter[CurseForge], link:https://modrinth.com/mod/step-crafter[Modrinth]
+|===
+
+== Replication RS2 Bridge
+
+This mod allows you to autocraft using replication matter inside Refined Storage.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/replication-rs2-bridge[CurseForge]
+|===
+
+== Refined Equivalence
+
+This mod allows you to autocraft using EMC inside Refined Storage.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-equivalence[CurseForge]
 |===

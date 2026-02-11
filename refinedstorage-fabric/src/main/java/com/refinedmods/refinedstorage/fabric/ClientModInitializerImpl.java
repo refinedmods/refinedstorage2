@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage.fabric;
 
 import com.refinedmods.refinedstorage.common.AbstractClientModInitializer;
+import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
@@ -18,6 +20,7 @@ import com.refinedmods.refinedstorage.common.security.SecurityCardItemPropertyFu
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntityRenderer;
 import com.refinedmods.refinedstorage.common.support.network.item.NetworkItemPropertyFunction;
 import com.refinedmods.refinedstorage.common.support.packet.PacketHandler;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterLockedUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterManagerActivePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocrafterNameUpdatePacket;
@@ -62,11 +65,13 @@ import com.refinedmods.refinedstorage.fabric.support.render.QuadRotators;
 import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.KeyMapping;
@@ -79,6 +84,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
@@ -114,6 +120,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerResourceRendering();
         registerAlternativeGridHints();
         registerItemProperties();
+        // broken on Fabric: registerTenthAnniversaryCapeEvents();
     }
 
     private void setRenderLayers() {
@@ -597,5 +604,18 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             NetworkItemPropertyFunction.NAME,
             new NetworkItemPropertyFunction()
         );
+    }
+
+    private void registerTenthAnniversaryCapeEvents() {
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
+            sendTenthAnniversaryCapeUpdate(Platform.INSTANCE.getConfig()));
+        AutoConfig.getConfigHolder(ConfigImpl.class).registerSaveListener((configHolder, config) -> {
+            sendTenthAnniversaryCapeUpdate(config);
+            return InteractionResult.SUCCESS;
+        });
+    }
+
+    private static void sendTenthAnniversaryCapeUpdate(final Config config) {
+        PlatformImpl.INSTANCE.sendPacketToServer(new SetTenthAnniversaryCapePacket(config.isTenthAnniversaryCape()));
     }
 }

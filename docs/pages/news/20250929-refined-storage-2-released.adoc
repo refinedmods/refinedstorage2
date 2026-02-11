@@ -8,9 +8,9 @@ This marks a complete rewrite of the mod, establishing a stronger foundation for
 
 == Beta period
 
-The beta lasted 6 months and was an intensive phase of testing and refinement.
+The beta lasted 6 months and was an intensive phase of testing and refinement. During this time, 77 bugs were resolved.
 
-During this time, 77 bugs were resolved. We not only tracked issues on our own bug tracker, but also monitored GitHub issues and Discord of popular modpacks, responding to, reviewing, and fixing all reported problems.
+We not only tracked issues on our own bug tracker, but also monitored GitHub issues and Discord of popular modpacks, responding to, reviewing, and fixing all reported problems.
 
 The final betas saw only minor, hard-to-reproduce bugs being addressed, **and today the issue tracker stands at zero open issues**.
 
@@ -28,6 +28,7 @@ Refined Storage 2 has been rebuilt from the ground up with the following goals i
 == What has changed?
 
 The complete list of new features and changes is too extensive to summarize here.
+
 Read the dedicated article: xref:20250308-whats-new-in-refined-storage-2.adoc[].
 
 == Addons
@@ -35,19 +36,20 @@ Read the dedicated article: xref:20250308-whats-new-in-refined-storage-2.adoc[].
 At release, Refined Storage 2 already has an xref:../addons/index.adoc[impressive ecosystem of addons]:
 
 - 7 official addons, including the xref:../addons/mekanism.adoc[Mekanism chemical integration].
-- xref:../addons/community-addons.adoc[8 community addons], such as:
-* link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types], which introduces support for Forge Energy, Source (Ars Nouveau), and Souls (Industrial Foregoing) across Refined Storage components — enabling storage, transfer, viewing, and autocrafting with these resource types.
+- xref:../addons/community-addons.adoc[9 community addons], such as link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types], which introduces support for Forge Energy, Source (Ars Nouveau), and Souls (Industrial Foregoing) across Refined Storage components - enabling storage, transfer, viewing, and autocrafting with these resource types.
 
 == Next steps
 
 Planning for Refined Storage v2.1 is already underway. A roadmap will be published soon, outlining the features and improvements planned for the next iteration.
 
-Please try the new version out. Give feedback on Discord or GitHub, and report any issues you encounter.
+Please try out the new version. Give feedback on Discord or GitHub, and report any issues you encounter.
 
 == Special thanks
 
-- To all testers who helped identify and resolve issues during the beta.
-- To the addon developers who are building on the Refined Storage platform.
-- To our awesome contributors who helped make this release possible.
-- To the translators who are localizing Refined Storage into multiple languages.
-- To the community for their continued support and enthusiasm.
+Special thanks to:
+
+- All testers who helped identify and resolve issues during the beta.
+- Addon developers who are improving Refined Storage.
+- Our awesome contributors who helped make this release possible.
+- Our translators who are localizing Refined Storage into multiple languages.
+- The community for their continued support and enthusiasm.

@@ -18,6 +18,10 @@ public interface Config {
 
     void setScreenSize(ScreenSize size);
 
+    boolean isTenthAnniversaryCape();
+
+    void setTenthAnniversaryCape(boolean enabled);
+
     boolean isDebug();
 
     boolean isSmoothScrolling();

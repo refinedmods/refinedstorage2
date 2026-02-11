@@ -130,4 +130,8 @@ public interface Platform {
     void setSlotY(Slot slot, int y);
 
     void requestModelDataUpdateOnClient(BlockEntity blockEntity, boolean updateChunk);
+
+    void setTenthAnniversaryCape(Player player, boolean enabled);
+
+    boolean isTenthAnniversaryCapeAvailable();
 }

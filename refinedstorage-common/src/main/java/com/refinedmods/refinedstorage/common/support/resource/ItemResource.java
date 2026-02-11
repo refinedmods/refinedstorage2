@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,9 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @API(status = API.Status.INTERNAL)
-public record ItemResource(Item item, DataComponentPatch components)
+public final class ItemResource
     implements PlatformResourceKey, FuzzyModeNormalizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemResource.class);
+    private final Item item;
+    private final DataComponentPatch components;
+    private int hash = 0;
 
     public ItemResource(final Item item) {
         this(item, DataComponentPatch.EMPTY);
@@ -75,5 +79,39 @@ public record ItemResource(Item item, DataComponentPatch components)
 
     public static ItemResource ofItemStack(final ItemStack itemStack) {
         return new ItemResource(itemStack.getItem(), itemStack.getComponentsPatch());
+    }
+
+    public Item item() {
+        return item;
+    }
+
+    public DataComponentPatch components() {
+        return components;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof ItemResource that)) {
+            return false;
+        }
+        return this.item.equals(that.item) && this.components.equals(that.components);
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Objects.hash(item, components);
+        }
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemResource["
+                + "item=" + item + ", "
+                + "components=" + components + ']';
     }
 }

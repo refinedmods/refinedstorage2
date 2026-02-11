@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceTag;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,8 +17,12 @@ import net.minecraft.world.level.material.Fluid;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.INTERNAL)
-public record FluidResource(Fluid fluid, DataComponentPatch components)
+public final class FluidResource
     implements PlatformResourceKey, FuzzyModeNormalizer {
+    private final Fluid fluid;
+    private final DataComponentPatch components;
+    private int hash = 0;
+
     public FluidResource(final Fluid fluid) {
         this(fluid, DataComponentPatch.EMPTY);
     }
@@ -56,5 +61,39 @@ public record FluidResource(Fluid fluid, DataComponentPatch components)
     @Override
     public ResourceType getResourceType() {
         return ResourceTypes.FLUID;
+    }
+
+    public Fluid fluid() {
+        return fluid;
+    }
+
+    public DataComponentPatch components() {
+        return components;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof FluidResource that)) {
+            return false;
+        }
+        return fluid.equals(that.fluid) && components.equals(that.components);
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Objects.hash(fluid, components);
+        }
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "FluidResource["
+            + "fluid=" + fluid + ", "
+            + "components=" + components + ']';
     }
 }

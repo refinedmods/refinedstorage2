@@ -1,0 +1,6 @@
+= Ten years of Refined Storage
+:type: article
+:description: A retrospective on ten years of Refined Storage
+:date: 2026-03-20
+
+This article will be coming soon!

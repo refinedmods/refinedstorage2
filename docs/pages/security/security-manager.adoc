@@ -1,5 +1,5 @@
 = Security Manager
-:from: v1.4.0-beta
+:from: v1.4.1-beta
 :icon: security-manager.png
 
 The {doctitle} is used to lock down a storage network and define player permissions through inserted xref:security-card.adoc[Security Cards].
