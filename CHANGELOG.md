@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Correct the torch model for detectors.
+
 ## [2.0.1] - 2026-02-11
 
 ### Added
