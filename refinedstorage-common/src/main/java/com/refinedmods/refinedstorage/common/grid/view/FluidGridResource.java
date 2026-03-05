@@ -41,7 +41,9 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     public FluidGridResource(final FluidResource resource,
                              final String name,
                              final Function<GridResourceAttributeKey, Set<String>> attributes) {
-        super(resource, name, attributes);
+        super(resource,
+            List.of(BuiltInRegistries.FLUID.getKey(resource.fluid()).getPath(), name),
+            attributes);
         this.id = BuiltInRegistries.FLUID.getId(resource.fluid());
         this.rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(FluidResource.class);
     }

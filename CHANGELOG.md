@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Searching in the Grid now checks against the resource name, registry id, and display name (for renamed items)
+
 ## [3.0.0-beta.4] - 2026-04-16
 
 ### Added

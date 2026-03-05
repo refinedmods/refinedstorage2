@@ -52,7 +52,7 @@ class GridQueryParserImplTest {
         },
         MutableResourceListImpl.create(),
         new HashSet<>(),
-        v -> Comparator.comparing(GridResource::getName),
+        v -> Comparator.comparing(GridResource::getHoverName),
         v -> Comparator.comparingLong(resource -> resource.getAmount(v))
     );
 
@@ -68,13 +68,13 @@ class GridQueryParserImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt"})
+    @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt", "test", "TeSt"})
     void testNameQuery(final String query) throws GridQueryParserException {
         // Act
         final var predicate = sut.parse(query);
 
         // Assert
-        assertThat(predicate.test(repository, new R("Dirt"))).isTrue();
+        assertThat(predicate.test(repository, new R(List.of("Dirt", "test")))).isTrue();
         assertThat(predicate.test(repository, new R("Glass"))).isFalse();
     }
 
@@ -287,18 +287,42 @@ class GridQueryParserImplTest {
     }
 
     private static class R implements GridResource {
-        private final String name;
+        private final List<String> names;
         private final long amount;
         private final Map<GridResourceAttributeKey, Set<String>> attributes;
 
+        R(final List<String> names) {
+            this(names, 1);
+        }
+
+        R(final List<String> names, final long amount) {
+            this.names = names;
+            this.amount = amount;
+            this.attributes = Map.of();
+        }
+
+        R(
+            final List<String> names,
+            final long amount,
+            final String modId,
+            final String modName,
+            final Set<String> tags
+        ) {
+            this.names = names;
+            this.amount = amount;
+            this.attributes = Map.of(
+                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
+                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+                GridResourceAttributeKeys.TAGS, tags
+            );
+        }
+
         R(final String name) {
-            this(name, 1);
+            this(List.of(name), 1);
         }
 
         R(final String name, final long amount) {
-            this.name = name;
-            this.amount = amount;
-            this.attributes = Map.of();
+            this(List.of(name), amount);
         }
 
         R(
@@ -308,13 +332,7 @@ class GridQueryParserImplTest {
             final String modName,
             final Set<String> tags
         ) {
-            this.name = name;
-            this.amount = amount;
-            this.attributes = Map.of(
-                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
-                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags
-            );
+            this(List.of(name), amount, modId, modName, tags);
         }
 
         @Override
@@ -331,8 +349,13 @@ class GridQueryParserImplTest {
         }
 
         @Override
-        public String getName() {
-            return name;
+        public List<String> getSearchableNames() {
+            return names;
+        }
+
+        @Override
+        public String getHoverName() {
+            return getSearchableNames().getLast();
         }
 
         @Override

@@ -34,6 +34,7 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         final ItemResource itemResource = (ItemResource) resource;
         final Item item = itemResource.item();
         final ItemStack itemStack = itemResource.toItemStack();
+        final String hoverName = itemStack.getHoverName().getString();
         final String name = item.getName(itemStack).getString();
         final String modId = getModId(itemStack);
         final String modName = getModName(modId).orElse("");
@@ -46,6 +47,7 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         return new ItemGridResource(
             itemResource,
             itemStack,
+            hoverName,
             name,
             k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );

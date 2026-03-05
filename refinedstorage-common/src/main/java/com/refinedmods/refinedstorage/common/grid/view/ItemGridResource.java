@@ -25,6 +25,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -45,9 +46,12 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
 
     public ItemGridResource(final ItemResource resource,
                             final ItemStack itemStack,
+                            final String hoverName,
                             final String name,
                             final Function<GridResourceAttributeKey, Set<String>> attributes) {
-        super(resource, name, attributes);
+        super(resource,
+            List.of(BuiltInRegistries.ITEM.getKey(resource.item()).getPath(), name, hoverName),
+            attributes);
         this.id = Item.getId(resource.item());
         this.itemStack = itemStack;
         this.itemResource = resource;
