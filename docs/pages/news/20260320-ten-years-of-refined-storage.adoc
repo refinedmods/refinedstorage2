@@ -11,7 +11,7 @@ A decade later, it is time for a retrospective.
 
 To celebrate the ten-year anniversary, between March 20 and March 22, you can enable a special Refined Storage cape from the Grid UI!*
 
-image:../../assets/news/ten-years-of-refined-storage/anniversary-cape.png[Screenshot showing a player wearing the special ten year anniversary Refined Storage cape]
+image::../../assets/news/ten-years-of-refined-storage/anniversary-cape.png[Screenshot showing a player wearing the special ten year anniversary Refined Storage cape]
 
 _After March 22, you can enable or disable the cape via the configuration screen._
 
@@ -86,23 +86,23 @@ Soon after, Refined Storage was included in the link:https://www.curseforge.com/
 
 The original version has programmer art that I made:
 
-image:../../assets/news/ten-years-of-refined-storage/original-art.png[In-world screenshot of some blocks in v0.3, showing the original textures]
+image::../../assets/news/ten-years-of-refined-storage/original-art.png[In-world screenshot of some blocks in v0.3, showing the original textures]
 
-image:../../assets/news/ten-years-of-refined-storage/original-grid.png[Screenshot of the Grid UI in v0.3]
+image::../../assets/news/ten-years-of-refined-storage/original-grid.png[Screenshot of the Grid UI in v0.3]
 
-image:../../assets/news/ten-years-of-refined-storage/original-creative-menu.png[Screenshot of the creative menu tab of Refined Storage in v0.3]
+image::../../assets/news/ten-years-of-refined-storage/original-creative-menu.png[Screenshot of the creative menu tab of Refined Storage in v0.3]
 
 GustoniaEagle became the first texture artist for the mod, introducing new textures a few weeks after release:
 
-image:../../assets/news/ten-years-of-refined-storage/gustonia-art.png[In-world screenshot of some blocks in v0.5, showing the first textures made by a texture artist]
+image::../../assets/news/ten-years-of-refined-storage/gustonia-art.png[In-world screenshot of some blocks in v0.5, showing the first textures made by a texture artist]
 
 These textures got iterated upon a bit:
 
-image:../../assets/news/ten-years-of-refined-storage/gustonia-art-2.png[In-world screenshot of some blocks in v0.8.6, showing a slightly muted colorization compared to the one in v0.5]
+image::../../assets/news/ten-years-of-refined-storage/gustonia-art-2.png[In-world screenshot of some blocks in v0.8.6, showing a slightly muted colorization compared to the one in v0.5]
 
 Around the same time, link:https://github.com/cyanidex[CyanideX], whose work I greatly admired, created an alternative texture set. I quickly adopted it into the main project:
 
-image:../../assets/news/ten-years-of-refined-storage/cyanide-art.png[In-world screenshot of some blocks in v1.1.0, featuring art by CyanideX]
+image::../../assets/news/ten-years-of-refined-storage/cyanide-art.png[In-world screenshot of some blocks in v1.1.0, featuring art by CyanideX]
 
 Not long after, link:https://www.youtube.com/watch?v=EdLxX65VEIo[direwolf20 featured the mod in his ForgeCraft series], and I was invited to link:https://feed-the-beast.fandom.com/wiki/Forgecraft[ForgeCraft].
 
@@ -111,11 +111,11 @@ He was open to using alternative mods and new ideas, which made this a particula
 
 Roughly 2 months later, a first version of autocrafting was implemented.
 
-image:../../assets/news/ten-years-of-refined-storage/original-crafter.png[Screenshot of the Crafter UI in v0.6]
+image::../../assets/news/ten-years-of-refined-storage/original-crafter.png[Screenshot of the Crafter UI in v0.6]
 
-image:../../assets/news/ten-years-of-refined-storage/original-crafting-start.png[Screenshot of the crafting start UI in v0.6]
+image::../../assets/news/ten-years-of-refined-storage/original-crafting-start.png[Screenshot of the crafting start UI in v0.6]
 
-image:../../assets/news/ten-years-of-refined-storage/original-crafting-monitor.png[Screenshot of the crafting monitor UI in v0.6]
+image::../../assets/news/ten-years-of-refined-storage/original-crafting-monitor.png[Screenshot of the crafting monitor UI in v0.6]
 
 == Having a vision
 
