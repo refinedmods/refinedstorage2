@@ -7,8 +7,7 @@ The first version of Refined Storage, v0.3, was released on March 20th, 2016.
 
 A decade later, it is time for a retrospective.
 
-====
-*Enable your cape!*
+== Enable your cape!
 
 To celebrate the ten-year anniversary, between March 20 and March 22, you can enable a special Refined Storage cape from the Grid UI!*
 
@@ -17,7 +16,6 @@ image:../../assets/news/ten-years-of-refined-storage/anniversary-cape.png[Screen
 _After March 22, you can enable or disable the cape via the configuration screen._
 
 *The cape is available for NeoForge players only, using v2.0.1 or above.
-====
 
 == The beginning
 
