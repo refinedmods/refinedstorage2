@@ -120,7 +120,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerResourceRendering();
         registerAlternativeGridHints();
         registerItemProperties();
-        registerTenthAnniversaryCapeEvents();
+        // broken on Fabric: registerTenthAnniversaryCapeEvents();
     }
 
     private void setRenderLayers() {

@@ -255,6 +255,11 @@ public class PlatformProxy implements Platform {
         ensureLoaded().setTenthAnniversaryCape(player, enabled);
     }
 
+    @Override
+    public boolean isTenthAnniversaryCapeAvailable() {
+        return ensureLoaded().isTenthAnniversaryCapeAvailable();
+    }
+
     private Platform ensureLoaded() {
         if (platform == null) {
             throw new IllegalStateException("Platform not loaded yet");

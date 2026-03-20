@@ -43,12 +43,14 @@ public class TenthAnniversaryScreen extends AbstractBaseScreen<TenthAnniversaryS
     @Override
     protected void init() {
         super.init();
-        final boolean capeEnabled = Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
-        addRenderableWidget(Button.builder(capeEnabled ? DISABLE_CAPE : ENABLE_CAPE, button -> {
-            final boolean enabledNow = !Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
-            Platform.INSTANCE.getConfig().setTenthAnniversaryCape(enabledNow);
-            button.setMessage(enabledNow ? DISABLE_CAPE : ENABLE_CAPE);
-        }).tooltip(Tooltip.create(CAPE_INFO)).bounds(leftPos + 5, topPos + 20, 162, 20).build());
+        if (Platform.INSTANCE.isTenthAnniversaryCapeAvailable()) {
+            final boolean capeEnabled = Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
+            addRenderableWidget(Button.builder(capeEnabled ? DISABLE_CAPE : ENABLE_CAPE, button -> {
+                final boolean enabledNow = !Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
+                Platform.INSTANCE.getConfig().setTenthAnniversaryCape(enabledNow);
+                button.setMessage(enabledNow ? DISABLE_CAPE : ENABLE_CAPE);
+            }).tooltip(Tooltip.create(CAPE_INFO)).bounds(leftPos + 5, topPos + 20, 162, 20).build());
+        }
         addRenderableWidget(Button.builder(READ_MORE, button -> Util.getPlatform().openUri(URL))
             .bounds(leftPos + 5, topPos + 20 + 20 + 3, 162, 20).build());
         addRenderableWidget(Button.builder(BACK, button -> close())

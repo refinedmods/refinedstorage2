@@ -476,6 +476,11 @@ public final class PlatformImpl extends AbstractPlatform {
         player.setAttached(TenthAnniversaryCape.ATTACHMENT, enabled);
     }
 
+    @Override
+    public boolean isTenthAnniversaryCapeAvailable() {
+        return false;
+    }
+
     private void doSave(final CompoundTag compoundTag, final Path tempFile, final Path targetPath) throws IOException {
         // Write to temp file first.
         NbtIo.writeCompressed(compoundTag, tempFile);

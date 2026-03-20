@@ -52,10 +52,10 @@ public abstract class AbstractCapeLayerMixin {
         if (chestStack.is(Items.ELYTRA)) {
             return;
         }
-        if (Boolean.FALSE.equals(livingEntity.getData(TenthAnniversaryCape.getAttachment()))) {
-            return;
+        if (Boolean.TRUE.equals(livingEntity.getData(TenthAnniversaryCape.getAttachment()))) {
+            ci.cancel();
+            TenthAnniversaryCapeRenderer.render(poseStack, buffer, packedLight, livingEntity, partialTicks,
+                parentModel());
         }
-        ci.cancel();
-        TenthAnniversaryCapeRenderer.render(poseStack, buffer, packedLight, livingEntity, partialTicks, parentModel());
     }
 }

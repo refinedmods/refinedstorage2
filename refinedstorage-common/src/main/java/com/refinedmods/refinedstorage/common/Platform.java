@@ -132,4 +132,6 @@ public interface Platform {
     void requestModelDataUpdateOnClient(BlockEntity blockEntity, boolean updateChunk);
 
     void setTenthAnniversaryCape(Player player, boolean enabled);
+
+    boolean isTenthAnniversaryCapeAvailable();
 }

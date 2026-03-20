@@ -404,4 +404,9 @@ public final class PlatformImpl extends AbstractPlatform {
     public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
         player.setData(TenthAnniversaryCape.getAttachment(), enabled);
     }
+
+    @Override
+    public boolean isTenthAnniversaryCapeAvailable() {
+        return true;
+    }
 }
