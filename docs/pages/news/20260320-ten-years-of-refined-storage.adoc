@@ -51,7 +51,6 @@ In February 2016, I began experimenting with autocrafting, but this work was nev
 
 == First release
 
-Between February and March 2016, development slowed significantly.
 On March 19th, I ported the mod to Minecraft 1.9 and renamed it to *Refined Storage*.
 
 At that point, I decided to release it, even when it started out as an exercise. The mod felt solid, interesting, and, most importantly, there were barely any mass-storage mods available for that Minecraft version.
@@ -96,6 +95,8 @@ GustoniaEagle became the first texture artist for the mod, introducing new textu
 
 image::../../assets/news/ten-years-of-refined-storage/gustonia-art.png[In-world screenshot of some blocks in v0.5, showing the first textures made by a texture artist]
 
+_Notice that in the first versions, blocks that are now typical "cable" components, such as the importer and exporter, were still full blocks. At the time, I simply didn’t know how to implement them differently._
+
 These textures got iterated upon a bit:
 
 image::../../assets/news/ten-years-of-refined-storage/gustonia-art-2.png[In-world screenshot of some blocks in v0.8.6, showing a slightly muted colorization compared to the one in v0.5]
@@ -115,9 +116,11 @@ image::../../assets/news/ten-years-of-refined-storage/original-crafter.png[Scree
 
 image::../../assets/news/ten-years-of-refined-storage/original-crafting-start.png[Screenshot of the crafting start UI in v0.6]
 
+_The first crafting start UI is primitive compared to how it is nowadays._
+
 image::../../assets/news/ten-years-of-refined-storage/original-crafting-monitor.png[Screenshot of the crafting monitor UI in v0.6]
 
-== Having a vision
+== Thinking about the long term
 
 At some point, Applied Energistics became available for newer Minecraft versions. It made me think: how do we move forward? Is Refined Storage still relevant?
 
@@ -125,29 +128,28 @@ Turns out, yes. Over the years, many people had a clear preference for either mo
 
 Refined Storage was never meant to become Applied Energistics, nor to compete with it feature-for-feature. Both mods solve similar problems, but they do so from different perspectives. Where AE leans into complexity and depth, Refined Storage embraces simplicity. That difference is not a weakness to overcome, but a reason for existence.
 
-The years of constant comparison made one thing clear: measuring Refined Storage by how closely it resembles AE is the wrong axis entirely. Its value lies in being a different answer, not a similar one. If Refined Storage tried to become Applied Energistics, it would lose its reason to exist.
-
-The continued coexistence of both mods is not accidental. It shows that players want different experiences. Some prefer the depth and complexity of AE, others the direct and intuitive approach of Refined Storage. That diversity is what keeps the ecosystem healthy.
+The years of constant comparison made one thing clear: measuring Refined Storage by how closely it resembles AE is the wrong axis entirely. Its value lies in being a different answer, not a similar one. If Refined Storage tried to become Applied Energistics, it would lose its reason to exist. Players want different experiences. That diversity is what keeps the ecosystem healthy.
 
 === Core principles
 
-* *Simplicity and consistency*
+* *Simplicity and consistency:*
 Predictable, uniform behavior across modpacks to minimize cognitive load.
 
-* *Focus over feature parity*
-Not competing with other mods. A coherent, dedicated storage solution, not a catch-all system.
+* *Focus over feature parity:*
+Not competing with other mods. A coherent, dedicated storage solution, not a catch-all solution.
 
-* *Addon-driven evolution*
+* *Addon-driven evolution:*
 Core stays minimal and stable. Addons handle integrations and experimentation.
 
-* *Deliberate quality of life*
+* *Deliberate quality of life:*
 Convenience without hidden complexity. Maintain an intuitive, "peaceful" experience.
 
-xref:../design-philosophy.adoc[Read more about the design philosophy of Refined Storage]
+xref:../design-philosophy.adoc[Read more]
 
-== Rough ports
+== Ten years of development
 
 I work quickly as a programmer, both when writing code and when navigating large codebases.
+
 This ability was largely developed while maintaining and porting Refined Storage across multiple Minecraft versions.
 Starting a port with thousands of compiler errors forces you to move efficiently and make decisions fast.
 
@@ -179,8 +181,7 @@ During the period of 2017 to 2020, the focus was mainly on improving existing fe
 === 2019
 
 - Port to Minecraft 1.14.
-  * The transition to Minecraft 1.14 was especially rough.
-It broke the entire mod, to the point where I had to disable most functionality and rebuild almost from scratch, reintroducing features incrementally.
+  * This transition was especially rough. It broke the entire mod, to the point where I had to disable most functionality and rebuild almost from scratch, reintroducing features incrementally.
 - Cleanup of legacy systems (e.g., removal/replacement of oredict mechanics).
 - Architectural simplification and modernization.
 
@@ -210,7 +211,7 @@ It broke the entire mod, to the point where I had to disable most functionality 
 
 == Refined Storage 2
 
-By 2020, after roughly four years of working on Refined Storage, the need for a clean slate became clear to me. The codebase had evolved continuously and accumulated structural issues. Each Minecraft port further worsened the code quality and the overall player experience.
+By 2020, after roughly four years of working on Refined Storage, the need for a clean slate became clear to me. The codebase had evolved continuously and accumulated structural issues. Each Minecraft port further worsened the code quality, stability and overall player experience.
 
 I started experimenting on the Fabric modloader, privately. From the beginning, the goal was a full rewrite. Large rewrites often fail, so I kept the effort low-profile.
 
@@ -235,7 +236,7 @@ The rewrite was a substantial effort. Each existing feature was analyzed, then r
 
 The development of Refined Storage 2 took a long time due to a deliberate focus on doing things properly, alongside other life responsibilities.
 
-Beyond rethinking all features, significant effort went into code quality and maintainability:
+Significant effort went into code quality and maintainability:
 
 - Improved architecture: gameplay code is decoupled from the modloader, and core networking logic is separated from gameplay concerns
 - 96.1% code coverage on the core networking logic
@@ -248,7 +249,7 @@ In return, the codebase is far more robust and resilient to change. Ports are ea
 
 === The final push for Refined Storage 2
 
-Working on Refined Storage became increasingly difficult to sustain, balancing a full-time job with ongoing maintenance and continued porting of Refined Storage 1.
+Working on Refined Storage 2 became increasingly difficult to sustain, balancing a full-time job with ongoing maintenance and continued porting of Refined Storage 1.
 
 For Refined Storage 2, the release strategy targeted a Minecraft version boundary where world incompatibility would not be an issue. After Minecraft 1.20.4, development on Refined Storage 1 was largely halted to focus entirely on the final push.
 
@@ -256,7 +257,7 @@ This final phase was intensive. The beta period lasted six months, during which 
 
 After five years of development, Refined Storage 2.0 was released in March 2025.
 
-At release, Refined Storage 2 already had a strong addon ecosystem:
+Currently, Refined Storage has a strong addon ecosystem:
 
 - 7 official addons, including the xref:../addons/mekanism.adoc[Mekanism chemical integration]
 - xref:../addons/community-addons.adoc[14 community addons], such as link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types], which adds support for Forge Energy, Source (Ars Nouveau), and Souls (Industrial Foregoing) across Refined Storage systems
