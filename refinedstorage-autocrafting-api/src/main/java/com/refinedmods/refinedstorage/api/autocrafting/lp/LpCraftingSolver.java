@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,11 +14,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.ojalgo.optimisation.Expression;
+import org.ojalgo.optimisation.ExpressionsBasedModel;
+import org.ojalgo.optimisation.Optimisation;
+import org.ojalgo.optimisation.Variable;
+
 /**
  * Solver for LP-based crafting.
  * <p>This class provides methods to solve crafting problems using linear programming.</p>
  */
 public final class LpCraftingSolver {
+    private static final int TRACE_SAMPLE_LIMIT = 5;
+    private static final String TRACE_PREFIX = "[LpCraftingSolver] ";
+
     private final LpSolverOptions options;
 
     public LpCraftingSolver() {
@@ -28,15 +35,83 @@ public final class LpCraftingSolver {
 
     public LpCraftingSolver(final LpSolverOptions options) {
         this.options = Objects.requireNonNull(options, "options cannot be null");
+        trace(
+            "constructor",
+            "initialized solver with options=" + options
+        );
+    }
+
+    private static void trace(final String point, final String details) {
+        System.out.println(TRACE_PREFIX + point + " | " + details);
+    }
+
+    private static String summarizeRecipes(final Collection<LpPatternRecipe> recipes) {
+        return "count=" + recipes.size() + ", sample="
+            + recipes.stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(recipe -> recipe.uniqueId() + " {" + recipe.description() + "}")
+                .toList();
+    }
+
+    private static String summarizeResourceSet(final LpResourceSet resourceSet) {
+        return "resources=" + resourceSet.resourceKeys().size()
+            + ", totalAmount=" + resourceSet.totalAmount()
+            + ", sample=" + resourceSet.asMap().entrySet().stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .toList();
+    }
+
+    private static String summarizeResourceKeys(final Collection<ResourceKey> resourceKeys) {
+        return "count=" + resourceKeys.size() + ", sample="
+            + resourceKeys.stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(String::valueOf)
+                .toList();
+    }
+
+    private static String summarizeRecipeValues(final Map<UUID, Long> recipeValues) {
+        return "count=" + recipeValues.size() + ", sample="
+            + recipeValues.entrySet().stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .toList();
+    }
+
+    private static String summarizeResourceValues(final Map<ResourceKey, Long> resourceValues) {
+        return "count=" + resourceValues.size() + ", sample="
+            + resourceValues.entrySet().stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .toList();
+    }
+
+    private static String summarizeIds(final Collection<UUID> ids) {
+        return "count=" + ids.size() + ", sample="
+            + ids.stream()
+                .limit(TRACE_SAMPLE_LIMIT)
+                .map(String::valueOf)
+                .toList();
     }
 
     public PlanningOutcome solve(final List<LpPatternRecipe> recipes,
                                  final LpResourceSet startingResources,
                                  final LpResourceSet target) {
+        trace(
+            "solve.enter",
+            "recipes{" + summarizeRecipes(recipes) + "}, startingResources{"
+                + summarizeResourceSet(startingResources) + "}, target{"
+                + summarizeResourceSet(target) + "}, options=" + options
+        );
         final long maxCraftableAmount = computeMaxCraftableTargetAmount(
             recipes, startingResources, target
         );
+        trace("solve.maxCraftable", "maxCraftableAmount=" + maxCraftableAmount);
         if (maxCraftableAmount == 0) {
+            trace(
+                "solve.noCraftableAmount",
+                "target cannot currently be crafted, computing required base items"
+            );
             return new PlanningOutcome(
                 maxCraftableAmount,
                 Optional.empty(),
@@ -50,7 +125,21 @@ public final class LpCraftingSolver {
             startingResources,
             target
         );
+        trace(
+            "solve.cycleEliminationCompleted",
+            "hasExecutableResult=" + cycleEliminationResult.executableResult().isPresent()
+                + ", fallbackDisabledRecipes{"
+                + summarizeIds(cycleEliminationResult.fallbackDisabledRecipeIds()) + "}"
+        );
         if (cycleEliminationResult.executableResult().isPresent()) {
+            trace(
+                "solve.executablePlanFound",
+                "planStepCount=" + cycleEliminationResult.executableResult().get().plan().size()
+                    + ", recipeValues{"
+                    + summarizeRecipeValues(
+                        cycleEliminationResult.executableResult().get().solution().recipeValues()
+                    ) + "}"
+            );
             return new PlanningOutcome(
                 maxCraftableAmount,
                 cycleEliminationResult.executableResult(),
@@ -64,6 +153,11 @@ public final class LpCraftingSolver {
             .filter(recipe -> !disabledRecipeIds.contains(recipe.uniqueId()))
             .map(LpPatternRecipe::copy)
             .toList();
+        trace(
+            "solve.fallbackRequiredBaseItems",
+            "reducedRecipes{" + summarizeRecipes(reducedRecipes) + "}, disabledRecipeIds{"
+                + summarizeIds(disabledRecipeIds) + "}"
+        );
         return new PlanningOutcome(
             maxCraftableAmount,
             Optional.empty(),
@@ -78,7 +172,14 @@ public final class LpCraftingSolver {
         final LpResourceSet target
     ) {
         validateInputs(recipes, startingResources, target);
+        trace(
+            "computeMaxCraftableTargetAmount.enter",
+            "recipes{" + summarizeRecipes(recipes) + "}, startingResources{"
+                + summarizeResourceSet(startingResources) + "}, target{"
+                + summarizeResourceSet(target) + "}"
+        );
         if (target.isEmpty()) {
+            trace("computeMaxCraftableTargetAmount.emptyTarget", "target is empty, returning 0");
             return 0;
         }
 
@@ -86,6 +187,11 @@ public final class LpCraftingSolver {
             LpRecipeAnalysis.prioritizeAndPruneRelevantRecipesAndItems(copyRecipes(recipes), target);
         final Set<ResourceKey> relevantResources = new LinkedHashSet<>(prioritized.relevantResourceKeys());
         relevantResources.addAll(target.resourceKeys());
+        trace(
+            "computeMaxCraftableTargetAmount.prioritized",
+            "prioritizedRecipes{" + summarizeRecipes(prioritized.recipes()) + "}, relevantResources{"
+                + summarizeResourceKeys(relevantResources) + "}"
+        );
 
         final ResourceKey targetResource = target.resourceKeys().iterator().next();
         final FlowSearchResult result = new FlowSearchModel(
@@ -98,20 +204,38 @@ public final class LpCraftingSolver {
             options
         ).maximize(targetResource);
         if (result == null) {
+            trace(
+                "computeMaxCraftableTargetAmount.noFeasibleResult",
+                "objectiveResource=" + targetResource + ", returning 0"
+            );
             return 0;
         }
 
-        return Math.max(
+        final long maxCraftableAmount = Math.max(
             0L,
             result.finalInventoryValues().getOrDefault(targetResource, 0L)
                 - startingResources.getAmount(targetResource)
         );
+        trace(
+            "computeMaxCraftableTargetAmount.result",
+            "objectiveResource=" + targetResource + ", recipeValues{"
+                + summarizeRecipeValues(result.recipeValues()) + "}, finalInventoryValues{"
+                + summarizeResourceValues(result.finalInventoryValues()) + "}, maxCraftableAmount="
+                + maxCraftableAmount
+        );
+        return maxCraftableAmount;
     }
 
     public LpResourceSet computeRequiredBaseItems(final List<LpPatternRecipe> recipes,
                                                   final LpResourceSet startingResources,
                                                   final LpResourceSet target) {
         validateInputs(recipes, startingResources, target);
+        trace(
+            "computeRequiredBaseItems.enter",
+            "recipes{" + summarizeRecipes(recipes) + "}, startingResources{"
+                + summarizeResourceSet(startingResources) + "}, target{"
+                + summarizeResourceSet(target) + "}"
+        );
 
         final LpRecipeAnalysis.PrioritizedRecipeSet prioritized =
             LpRecipeAnalysis.prioritizeAndPruneRelevantRecipesAndItems(copyRecipes(recipes), target);
@@ -129,11 +253,23 @@ public final class LpCraftingSolver {
         deficitResources.addAll(
             LpRecipeAnalysis.collectLoopEntryDeficitResourcesOnTargetBranches(selectedRecipes, target)
         );
+        trace(
+            "computeRequiredBaseItems.analysis",
+            "prioritizedRecipes{" + summarizeRecipes(prioritized.recipes()) + "}, selectedRecipes{"
+                + summarizeRecipes(selectedRecipes) + "}, relevantResources{"
+                + summarizeResourceKeys(relevantResources) + "}, deficitResources{"
+                + summarizeResourceKeys(deficitResources) + "}"
+        );
 
         if (deficitResources.isEmpty()) {
             final Set<UUID> loopClosingRecipeIds =
                 LpRecipeAnalysis.collectLoopClosingRecipeIdsOnTargetBranches(selectedRecipes, target);
             if (!loopClosingRecipeIds.isEmpty()) {
+                trace(
+                    "computeRequiredBaseItems.loopClosingRecipes",
+                    "loopClosingRecipeIds{" + summarizeIds(loopClosingRecipeIds)
+                        + "}, recursing with reduced recipe set"
+                );
                 final List<LpPatternRecipe> reducedRecipes = selectedRecipes.stream()
                     .filter(recipe -> !loopClosingRecipeIds.contains(recipe.uniqueId()))
                     .map(LpPatternRecipe::copy)
@@ -150,6 +286,10 @@ public final class LpCraftingSolver {
                     required.addAmount(resource, needed);
                 }
             }
+            trace(
+                "computeRequiredBaseItems.noSelectedRecipes",
+                "requiredBaseItems{" + summarizeResourceSet(required) + "}"
+            );
             return required;
         }
 
@@ -170,6 +310,14 @@ public final class LpCraftingSolver {
             Set.of(),
             options
         ).lexicographicMinimum();
+        trace(
+            "computeRequiredBaseItems.lexicographicResult",
+            "resultPresent=" + (result != null)
+                + (result == null
+                ? ""
+                : ", recipeValues{" + summarizeRecipeValues(result.recipeValues())
+                    + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}")
+        );
 
         final Map<ResourceKey, Long> finalInventoryValues =
             result == null ? startingResources.asMap() : result.finalInventoryValues();
@@ -184,6 +332,10 @@ public final class LpCraftingSolver {
                 required.addAmount(resource, needed);
             }
         }
+        trace(
+            "computeRequiredBaseItems.result",
+            "requiredBaseItems{" + summarizeResourceSet(required) + "}"
+        );
         return required;
     }
 
@@ -191,6 +343,13 @@ public final class LpCraftingSolver {
                                                                             final LpResourceSet startingResources,
                                                                             final LpResourceSet target) {
         validateInputs(recipes, startingResources, target);
+        trace(
+            "findExecutableSolutionViaCycleElimination.enter",
+            "recipes{" + summarizeRecipes(recipes) + "}, startingResources{"
+                + summarizeResourceSet(startingResources) + "}, target{"
+                + summarizeResourceSet(target) + "}, maxBranches="
+                + options.maxCycleEliminationBranches()
+        );
 
         final ArrayDeque<Set<UUID>> attempts = new ArrayDeque<>();
         attempts.push(Set.of());
@@ -204,6 +363,11 @@ public final class LpCraftingSolver {
         while (!attempts.isEmpty() && exploredBranches < options.maxCycleEliminationBranches()) {
             final Set<UUID> disabledRecipeIds = attempts.pop();
             exploredBranches++;
+            trace(
+                "findExecutableSolutionViaCycleElimination.branch",
+                "exploredBranches=" + exploredBranches + ", remainingAttempts=" + attempts.size()
+                    + ", disabledRecipeIds{" + summarizeIds(disabledRecipeIds) + "}"
+            );
 
             final Optional<LpCraftingSolution> solution = solveWithDisabledRecipes(
                 recipes,
@@ -212,9 +376,19 @@ public final class LpCraftingSolver {
                 disabledRecipeIds
             );
             if (solution.isEmpty()) {
+                trace(
+                    "findExecutableSolutionViaCycleElimination.noSolution",
+                    "disabledRecipeIds{" + summarizeIds(disabledRecipeIds) + "}"
+                );
                 bestFallbackDisabledRecipeIds = keepLargerSet(bestFallbackDisabledRecipeIds, disabledRecipeIds);
                 continue;
             }
+            trace(
+                "findExecutableSolutionViaCycleElimination.solution",
+                "recipeValues{" + summarizeRecipeValues(solution.get().recipeValues())
+                    + "}, finalInventoryValues{"
+                    + summarizeResourceValues(solution.get().finalInventoryValues()) + "}"
+            );
 
             final Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
                 recipes,
@@ -222,6 +396,10 @@ public final class LpCraftingSolver {
                 startingResources
             );
             if (plan.isPresent()) {
+                trace(
+                    "findExecutableSolutionViaCycleElimination.executablePlan",
+                    "planStepCount=" + plan.get().size()
+                );
                 return new CycleEliminationResult(
                     Optional.of(new ExecutablePlanResult(solution.get(), plan.get())),
                     Set.of()
@@ -235,9 +413,18 @@ public final class LpCraftingSolver {
             final LpRecipeAnalysis.CycleDetectionResult cycleDetectionResult =
                 LpRecipeAnalysis.detectRecipeCycles(usedRecipes);
             if (cycleDetectionResult.cycles().isEmpty()) {
+                trace(
+                    "findExecutableSolutionViaCycleElimination.noCyclesInUsedRecipes",
+                    "usedRecipes{" + summarizeRecipes(usedRecipes) + "}"
+                );
                 bestFallbackDisabledRecipeIds = keepLargerSet(bestFallbackDisabledRecipeIds, disabledRecipeIds);
                 continue;
             }
+            trace(
+                "findExecutableSolutionViaCycleElimination.cyclesDetected",
+                "cycleCount=" + cycleDetectionResult.cycles().size() + ", usedRecipes{"
+                    + summarizeRecipes(usedRecipes) + "}"
+            );
 
             enqueueCycleBreakAttempts(
                 cycleDetectionResult.cycles(),
@@ -248,6 +435,11 @@ public final class LpCraftingSolver {
             );
         }
 
+        trace(
+            "findExecutableSolutionViaCycleElimination.fallback",
+            "exploredBranches=" + exploredBranches + ", fallbackDisabledRecipeIds{"
+                + summarizeIds(bestFallbackDisabledRecipeIds) + "}"
+        );
         return new CycleEliminationResult(Optional.empty(), Set.copyOf(bestFallbackDisabledRecipeIds));
     }
 
@@ -265,11 +457,22 @@ public final class LpCraftingSolver {
                                                   final Set<List<UUID>> visited,
                                                   final ArrayDeque<Set<UUID>> attempts) {
         for (final List<LpPatternRecipe> cycle : cycles) {
+            trace(
+                "enqueueCycleBreakAttempts.cycle",
+                "cycleLength=" + cycle.size() + ", cycleRecipes{" + summarizeRecipes(cycle)
+                    + "}, currentDisabledRecipeIds{" + summarizeIds(disabledRecipeIds) + "}"
+            );
             final Optional<LpPatternRecipe> recipeToDisable = cycle.stream()
                 .max(Comparator.comparingLong(solution::recipeUsageCount));
             if (recipeToDisable.isEmpty()) {
+                trace("enqueueCycleBreakAttempts.noRecipeSelected", "cycle produced no recipe to disable");
                 continue;
             }
+            trace(
+                "enqueueCycleBreakAttempts.recipeSelected",
+                "recipeToDisable=" + recipeToDisable.get().uniqueId()
+                    + ", usageCount=" + solution.recipeUsageCount(recipeToDisable.get())
+            );
             addAttemptIfUnseen(
                 disabledRecipeIds,
                 recipeToDisable.get().uniqueId(),
@@ -284,6 +487,10 @@ public final class LpCraftingSolver {
                                            final Set<List<UUID>> visited,
                                            final ArrayDeque<Set<UUID>> attempts) {
         if (disabledRecipeIds.contains(recipeIdToDisable)) {
+            trace(
+                "addAttemptIfUnseen.alreadyDisabled",
+                "recipeIdToDisable=" + recipeIdToDisable
+            );
             return;
         }
 
@@ -292,17 +499,40 @@ public final class LpCraftingSolver {
         final List<UUID> key = nextDisabledRecipeIds.stream().sorted().toList();
         if (visited.add(key)) {
             attempts.push(Set.copyOf(nextDisabledRecipeIds));
+            trace(
+                "addAttemptIfUnseen.enqueued",
+                "newDisabledRecipeIds{" + summarizeIds(nextDisabledRecipeIds) + "}, attemptsSize="
+                    + attempts.size() + ", visitedSize=" + visited.size()
+            );
+            return;
         }
+        trace(
+            "addAttemptIfUnseen.duplicate",
+            "newDisabledRecipeIds{" + summarizeIds(nextDisabledRecipeIds) + "}, visitedSize="
+                + visited.size()
+        );
     }
 
     private Optional<LpCraftingSolution> solveWithDisabledRecipes(final List<LpPatternRecipe> recipes,
                                                                   final LpResourceSet startingResources,
                                                                   final LpResourceSet target,
                                                                   final Set<UUID> disabledRecipeIds) {
+        trace(
+            "solveWithDisabledRecipes.enter",
+            "recipes{" + summarizeRecipes(recipes) + "}, startingResources{"
+                + summarizeResourceSet(startingResources) + "}, target{"
+                + summarizeResourceSet(target) + "}, disabledRecipeIds{"
+                + summarizeIds(disabledRecipeIds) + "}"
+        );
         final LpRecipeAnalysis.PrioritizedRecipeSet prioritized =
             LpRecipeAnalysis.prioritizeAndPruneRelevantRecipesAndItems(copyRecipes(recipes), target);
         final Set<ResourceKey> relevantResources = new LinkedHashSet<>(prioritized.relevantResourceKeys());
         relevantResources.addAll(target.resourceKeys());
+        trace(
+            "solveWithDisabledRecipes.prioritized",
+            "prioritizedRecipes{" + summarizeRecipes(prioritized.recipes()) + "}, relevantResources{"
+                + summarizeResourceKeys(relevantResources) + "}"
+        );
 
         final FlowSearchResult result = new FlowSearchModel(
             prioritized.recipes(),
@@ -314,12 +544,19 @@ public final class LpCraftingSolver {
             options
         ).lexicographicMinimum();
         if (result == null) {
+            trace("solveWithDisabledRecipes.noResult", "solver returned no feasible result");
             return Optional.empty();
         }
 
         final List<ResourceKey> sortedRelevantResources = relevantResources.stream()
             .sorted(Comparator.comparing(Object::toString))
             .toList();
+        trace(
+            "solveWithDisabledRecipes.result",
+            "sortedRelevantResources{" + summarizeResourceKeys(sortedRelevantResources)
+                + "}, recipeValues{" + summarizeRecipeValues(result.recipeValues())
+                + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}"
+        );
         return Optional.of(new LpCraftingSolution(
             result.recipeValues(),
             result.finalInventoryValues(),
@@ -376,7 +613,6 @@ public final class LpCraftingSolver {
         private final Set<ResourceKey> constrainedResources;
         private final Set<UUID> disabledRecipeIds;
         private final LpSolverOptions options;
-        private final Map<UUID, Integer> upperBounds;
 
         private FlowSearchModel(final List<LpPatternRecipe> recipes,
                                 final Set<ResourceKey> relevantResources,
@@ -400,209 +636,211 @@ public final class LpCraftingSolver {
             this.constrainedResources = Set.copyOf(constrainedResources);
             this.disabledRecipeIds = Set.copyOf(disabledRecipeIds);
             this.options = options;
-            this.upperBounds = computeUpperBounds();
+            trace(
+                "flowSearchModel.constructor",
+                "recipes{" + summarizeRecipes(this.recipes) + "}, relevantResources{"
+                    + summarizeResourceKeys(this.relevantResources) + "}, startingResources{"
+                    + summarizeResourceSet(this.startingResources) + "}, target{"
+                    + summarizeResourceSet(this.target) + "}, constrainedResources{"
+                    + summarizeResourceKeys(this.constrainedResources) + "}, disabledRecipeIds{"
+                    + summarizeIds(this.disabledRecipeIds) + "}, options=" + this.options
+            );
         }
 
         private FlowSearchResult lexicographicMinimum() {
-            final SearchBudget budget = new SearchBudget(options.maxSearchNodes());
-            final Map<UUID, Long> assignments = new LinkedHashMap<>();
-            final LpResourceSet currentInventory = startingResources.copy();
-            final boolean found = searchLexicographic(0, assignments, currentInventory, budget);
-            if (!found) {
+            trace(
+                "flowSearchModel.lexicographicMinimum.enter",
+                "reversePriorityRecipes{" + summarizeRecipes(reversePriorityRecipes) + "}"
+            );
+            final FlowSearchResult feasibilityResult = solveWithObjective(null, null, false, Map.of());
+            if (feasibilityResult == null) {
+                trace("flowSearchModel.lexicographicMinimum.noFeasibleResult", "initial feasibility solve failed");
                 return null;
             }
-            return new FlowSearchResult(assignments, currentInventory.asMap());
+            trace(
+                "flowSearchModel.lexicographicMinimum.feasible",
+                "recipeValues{" + summarizeRecipeValues(feasibilityResult.recipeValues())
+                    + "}, finalInventoryValues{"
+                    + summarizeResourceValues(feasibilityResult.finalInventoryValues()) + "}"
+            );
+
+            final Map<UUID, Long> lockedRecipeValues = new LinkedHashMap<>();
+            for (final LpPatternRecipe recipe : reversePriorityRecipes) {
+                final FlowSearchResult result = solveWithObjective(null, recipe.uniqueId(), false, lockedRecipeValues);
+                if (result == null) {
+                    trace(
+                        "flowSearchModel.lexicographicMinimum.lockSolveFailed",
+                        "objectiveRecipeId=" + recipe.uniqueId() + ", lockedRecipeValues{"
+                            + summarizeRecipeValues(lockedRecipeValues) + "}"
+                    );
+                    return null;
+                }
+                lockedRecipeValues.put(recipe.uniqueId(), result.recipeValues().getOrDefault(recipe.uniqueId(), 0L));
+                trace(
+                    "flowSearchModel.lexicographicMinimum.recipeLocked",
+                    "objectiveRecipeId=" + recipe.uniqueId() + ", lockedValue="
+                        + lockedRecipeValues.get(recipe.uniqueId()) + ", lockedRecipeValues{"
+                        + summarizeRecipeValues(lockedRecipeValues) + "}"
+                );
+            }
+            final FlowSearchResult finalResult = solveWithObjective(null, null, false, lockedRecipeValues);
+            trace(
+                "flowSearchModel.lexicographicMinimum.finalResult",
+                "resultPresent=" + (finalResult != null)
+                    + (finalResult == null
+                    ? ""
+                    : ", recipeValues{" + summarizeRecipeValues(finalResult.recipeValues())
+                        + "}, finalInventoryValues{"
+                        + summarizeResourceValues(finalResult.finalInventoryValues()) + "}")
+            );
+            return finalResult;
         }
 
         private FlowSearchResult maximize(final ResourceKey objectiveResource) {
-            final SearchBudget budget = new SearchBudget(options.maxSearchNodes());
-            final Map<UUID, Long> assignments = new LinkedHashMap<>();
-            final LpResourceSet currentInventory = startingResources.copy();
-            final BestResult bestResult = new BestResult(Long.MIN_VALUE, Map.of(), Map.of());
-            searchMaximize(0, assignments, currentInventory, objectiveResource, budget, bestResult);
-            if (bestResult.bestValue == Long.MIN_VALUE) {
-                return null;
-            }
-            return new FlowSearchResult(bestResult.recipeValues, bestResult.finalInventoryValues);
-        }
-
-        private boolean searchLexicographic(final int index,
-                                            final Map<UUID, Long> assignments,
-                                            final LpResourceSet currentInventory,
-                                            final SearchBudget budget) {
-            if (!budget.tryAdvance()
-                || !canStillReachTargets(index, currentInventory, reversePriorityRecipes)) {
-                return false;
-            }
-            if (index >= reversePriorityRecipes.size()) {
-                return constraintsSatisfied(currentInventory);
-            }
-
-            final LpPatternRecipe recipe = reversePriorityRecipes.get(index);
-            final int upperBound = upperBounds.getOrDefault(recipe.uniqueId(), 0);
-            for (int value = 0; value <= upperBound; value++) {
-                applyRecipeUsage(recipe, value, currentInventory);
-                assignments.put(recipe.uniqueId(), (long) value);
-                if (searchLexicographic(index + 1, assignments, currentInventory, budget)) {
-                    return true;
-                }
-                assignments.remove(recipe.uniqueId());
-                applyRecipeUsage(recipe, -value, currentInventory);
-            }
-            return false;
-        }
-
-        private void searchMaximize(final int index,
-                                    final Map<UUID, Long> assignments,
-                                    final LpResourceSet currentInventory,
-                                    final ResourceKey objectiveResource,
-                                    final SearchBudget budget,
-                                    final BestResult bestResult) {
-            if (!budget.tryAdvance() || !canStillReachTargets(index, currentInventory, recipes)) {
-                return;
-            }
-            final long optimisticValue = optimisticObjective(index, currentInventory, recipes, objectiveResource);
-            if (optimisticValue < bestResult.bestValue) {
-                return;
-            }
-            if (index >= recipes.size()) {
-                updateBestLeafResult(
-                    assignments,
-                    currentInventory,
-                    objectiveResource,
-                    bestResult
-                );
-                return;
-            }
-
-            final LpPatternRecipe recipe = recipes.get(index);
-            final int upperBound = upperBounds.getOrDefault(recipe.uniqueId(), 0);
-            for (int value = upperBound; value >= 0; value--) {
-                applyRecipeUsage(recipe, value, currentInventory);
-                assignments.put(recipe.uniqueId(), (long) value);
-                searchMaximize(index + 1, assignments, currentInventory, objectiveResource, budget, bestResult);
-                assignments.remove(recipe.uniqueId());
-                applyRecipeUsage(recipe, -value, currentInventory);
-            }
-        }
-
-        private void updateBestLeafResult(final Map<UUID, Long> assignments,
-                                          final LpResourceSet currentInventory,
-                                          final ResourceKey objectiveResource,
-                                          final BestResult bestResult) {
-            if (!constraintsSatisfied(currentInventory)) {
-                return;
-            }
-
-            final long objectiveValue = currentInventory.getAmount(objectiveResource);
-            if (objectiveValue > bestResult.bestValue) {
-                bestResult.bestValue = objectiveValue;
-                bestResult.recipeValues = Map.copyOf(new LinkedHashMap<>(assignments));
-                bestResult.finalInventoryValues = Map.copyOf(
-                    new LinkedHashMap<>(currentInventory.asMap())
-                );
-            }
-        }
-
-        private Map<UUID, Integer> computeUpperBounds() {
-            final Map<UUID, Integer> result = new HashMap<>();
-            final long dynamicBase = Math.max(1L, Math.max(startingResources.totalAmount(), target.totalAmount()));
-            final int dynamicBound = (int) Math.min(options.recipeUpperBound(), Math.max(8L, dynamicBase * 2L));
-            for (final LpPatternRecipe recipe : recipes) {
-                result.put(recipe.uniqueId(), disabledRecipeIds.contains(recipe.uniqueId()) ? 0 : dynamicBound);
-            }
+            trace(
+                "flowSearchModel.maximize.enter",
+                "objectiveResource=" + objectiveResource
+            );
+            final FlowSearchResult result = solveWithObjective(
+                Objects.requireNonNull(objectiveResource, "objectiveResource cannot be null"),
+                null,
+                true,
+                Map.of()
+            );
+            trace(
+                "flowSearchModel.maximize.result",
+                "resultPresent=" + (result != null)
+                    + (result == null
+                    ? ""
+                    : ", recipeValues{" + summarizeRecipeValues(result.recipeValues())
+                        + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}")
+            );
             return result;
         }
 
-        private boolean canStillReachTargets(final int index,
-                                             final LpResourceSet currentInventory,
-                                             final List<LpPatternRecipe> orderedRecipes) {
-            for (final ResourceKey resource : constrainedResources) {
-                long optimistic = currentInventory.getAmount(resource);
-                for (int remainingIndex = index; remainingIndex < orderedRecipes.size(); remainingIndex++) {
-                    final LpPatternRecipe remainingRecipe = orderedRecipes.get(remainingIndex);
-                    final long coefficient = remainingRecipe.coefficient(resource);
-                    if (coefficient > 0) {
-                        optimistic += coefficient * upperBounds.getOrDefault(remainingRecipe.uniqueId(), 0);
+        private FlowSearchResult solveWithObjective(final ResourceKey objectiveResource,
+                                                    final UUID objectiveRecipeId,
+                                                    final boolean maximize,
+                                                    final Map<UUID, Long> lockedRecipeValues) {
+            trace(
+                "flowSearchModel.solveWithObjective.enter",
+                "objectiveResource=" + objectiveResource + ", objectiveRecipeId=" + objectiveRecipeId
+                    + ", maximize=" + maximize + ", recipeCount=" + recipes.size()
+                    + ", relevantResourceCount=" + relevantResources.size()
+                    + ", constrainedResourceCount=" + constrainedResources.size()
+                    + ", disabledRecipeIds{" + summarizeIds(disabledRecipeIds) + "}, lockedRecipeValues{"
+                    + summarizeRecipeValues(lockedRecipeValues) + "}"
+            );
+            final ExpressionsBasedModel model = new ExpressionsBasedModel();
+            final Map<UUID, Variable> variableByRecipeId = new LinkedHashMap<>();
+            for (final LpPatternRecipe recipe : recipes) {
+                final boolean disabled = disabledRecipeIds.contains(recipe.uniqueId());
+                final Variable variable = model.addVariable(recipe.uniqueId().toString())
+                    .integer(true)
+                    .lower(0)
+                    .upper(disabled ? 0 : options.recipeUpperBound());
+                variableByRecipeId.put(recipe.uniqueId(), variable);
+            }
+            trace(
+                "flowSearchModel.solveWithObjective.variablesBuilt",
+                "variableCount=" + variableByRecipeId.size() + ", disabledVariableCount="
+                    + disabledRecipeIds.size() + ", recipeUpperBound=" + options.recipeUpperBound()
+            );
+
+            if (objectiveResource != null || objectiveRecipeId != null) {
+                final Expression objective = model.newExpression("objective").weight(1);
+                for (final LpPatternRecipe recipe : recipes) {
+                    final long coefficient;
+                    if (objectiveRecipeId != null) {
+                        coefficient = recipe.uniqueId().equals(objectiveRecipeId) ? 1 : 0;
+                    } else {
+                        coefficient = recipe.coefficient(objectiveResource);
+                    }
+                    if (coefficient != 0) {
+                        objective.set(variableByRecipeId.get(recipe.uniqueId()), coefficient);
                     }
                 }
-                if (optimistic < target.getAmount(resource)) {
-                    return false;
-                }
+                trace(
+                    "flowSearchModel.solveWithObjective.objectiveBuilt",
+                    "objectiveResource=" + objectiveResource + ", objectiveRecipeId=" + objectiveRecipeId
+                );
             }
-            return true;
-        }
 
-        private long optimisticObjective(final int index,
-                                         final LpResourceSet currentInventory,
-                                         final List<LpPatternRecipe> orderedRecipes,
-                                         final ResourceKey objectiveResource) {
-            long optimistic = currentInventory.getAmount(objectiveResource);
-            for (int remainingIndex = index; remainingIndex < orderedRecipes.size(); remainingIndex++) {
-                final LpPatternRecipe remainingRecipe = orderedRecipes.get(remainingIndex);
-                final long coefficient = remainingRecipe.coefficient(objectiveResource);
-                if (coefficient > 0) {
-                    optimistic += coefficient * upperBounds.getOrDefault(remainingRecipe.uniqueId(), 0);
-                }
-            }
-            return optimistic;
-        }
-
-        private boolean constraintsSatisfied(final LpResourceSet currentInventory) {
             for (final ResourceKey resource : constrainedResources) {
-                if (currentInventory.getAmount(resource) < target.getAmount(resource)) {
-                    return false;
+                final Expression expression = model.newExpression("constraint:" + resource);
+                final long lowerBound = target.getAmount(resource) - startingResources.getAmount(resource);
+                expression.lower(lowerBound);
+                for (final LpPatternRecipe recipe : recipes) {
+                    final long coefficient = recipe.coefficient(resource);
+                    if (coefficient != 0) {
+                        expression.set(variableByRecipeId.get(recipe.uniqueId()), coefficient);
+                    }
                 }
             }
-            return true;
-        }
+            trace(
+                "flowSearchModel.solveWithObjective.constraintsBuilt",
+                "constraintCount=" + constrainedResources.size() + ", constrainedResources{"
+                    + summarizeResourceKeys(constrainedResources) + "}"
+            );
 
-        private void applyRecipeUsage(final LpPatternRecipe recipe,
-                                      final long multiplier,
-                                      final LpResourceSet currentInventory) {
-            if (multiplier == 0L) {
-                return;
+            for (final Map.Entry<UUID, Long> lock : lockedRecipeValues.entrySet()) {
+                final Expression lockExpression = model.newExpression("lock:" + lock.getKey());
+                lockExpression.level(lock.getValue());
+                lockExpression.set(variableByRecipeId.get(lock.getKey()), 1);
             }
-            recipe.output().asMap().forEach((resource, outputCount) ->
-                currentInventory.addAmount(resource, outputCount * multiplier));
-            recipe.input().asMap().forEach((resource, inputCount) ->
-                currentInventory.subtractAmount(resource, inputCount * multiplier));
+            trace(
+                "flowSearchModel.solveWithObjective.locksBuilt",
+                "lockCount=" + lockedRecipeValues.size() + ", lockedRecipeValues{"
+                    + summarizeRecipeValues(lockedRecipeValues) + "}"
+            );
+
+            final Optimisation.Result result = maximize ? model.maximise() : model.minimise();
+            trace(
+                "flowSearchModel.solveWithObjective.optimized",
+                "state=" + result.getState() + ", value=" + result.getValue()
+            );
+            if (!result.getState().isFeasible()) {
+                trace("flowSearchModel.solveWithObjective.infeasible", "result is not feasible");
+                return null;
+            }
+
+            final Map<UUID, Long> recipeValues = new LinkedHashMap<>();
+            for (final LpPatternRecipe recipe : recipes) {
+                final Variable variable = variableByRecipeId.get(recipe.uniqueId());
+                final long value = variable.getValue() == null ? 0L : Math.round(variable.getValue().doubleValue());
+                if (value > 0) {
+                    recipeValues.put(recipe.uniqueId(), value);
+                }
+            }
+            trace(
+                "flowSearchModel.solveWithObjective.recipeValuesExtracted",
+                "recipeValues{" + summarizeRecipeValues(recipeValues) + "}"
+            );
+
+            final Map<ResourceKey, Long> finalInventoryValues = new LinkedHashMap<>();
             for (final ResourceKey resource : relevantResources) {
-                if (currentInventory.getAmount(resource) == 0L) {
-                    currentInventory.setAmount(resource, 0L);
+                long amount = startingResources.getAmount(resource);
+                for (final LpPatternRecipe recipe : recipes) {
+                    final long usage = recipeValues.getOrDefault(recipe.uniqueId(), 0L);
+                    if (usage == 0) {
+                        continue;
+                    }
+                    amount += recipe.coefficient(resource) * usage;
                 }
+                finalInventoryValues.put(resource, amount);
             }
-        }
-    }
+            trace(
+                "flowSearchModel.solveWithObjective.finalInventoryComputed",
+                "finalInventoryValues{" + summarizeResourceValues(finalInventoryValues) + "}"
+            );
 
-    private static final class BestResult {
-        private long bestValue;
-        private Map<UUID, Long> recipeValues;
-        private Map<ResourceKey, Long> finalInventoryValues;
-
-        private BestResult(final long bestValue,
-                           final Map<UUID, Long> recipeValues,
-                           final Map<ResourceKey, Long> finalInventoryValues) {
-            this.bestValue = bestValue;
-            this.recipeValues = recipeValues;
-            this.finalInventoryValues = finalInventoryValues;
+            return new FlowSearchResult(
+                Map.copyOf(recipeValues),
+                Map.copyOf(finalInventoryValues)
+            );
         }
     }
 
     private record FlowSearchResult(Map<UUID, Long> recipeValues, Map<ResourceKey, Long> finalInventoryValues) {
-    }
-
-    private static final class SearchBudget {
-        private final int maxNodes;
-        private int exploredNodes;
-
-        private SearchBudget(final int maxNodes) {
-            this.maxNodes = maxNodes;
-        }
-
-        private boolean tryAdvance() {
-            exploredNodes++;
-            return exploredNodes <= maxNodes;
-        }
     }
 }

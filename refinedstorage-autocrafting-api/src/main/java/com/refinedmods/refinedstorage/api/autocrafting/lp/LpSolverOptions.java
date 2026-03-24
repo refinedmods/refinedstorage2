@@ -4,7 +4,7 @@ package com.refinedmods.refinedstorage.api.autocrafting.lp;
  * Bounds for the standalone pure-Java prototype implementation.
  */
 public record LpSolverOptions(int recipeUpperBound, int maxSearchNodes, int maxCycleEliminationBranches) {
-    public static final int DEFAULT_RECIPE_UPPER_BOUND = 128;
+    public static final int DEFAULT_RECIPE_UPPER_BOUND = 1_000_000;
     public static final int DEFAULT_MAX_SEARCH_NODES = 250_000;
     public static final int DEFAULT_MAX_CYCLE_ELIMINATION_BRANCHES = 512;
 
