@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.Patt
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
@@ -28,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -317,11 +320,61 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId = startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(taskId).isPresent();
         assertThat(provider.getTasks()).hasSize(1);
+    }
+
+    @Test
+    void shouldUseLegacyPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LEGACY);
+    }
+
+    @Test
+    void shouldUseLpPlanningAlgorithmForRegularRecipeShapes() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LP);
+    }
+
+    @Test
+    void shouldExecuteLegacyPlanningPathWhenResourceAppearsInMultipleIngredients() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LEGACY
+        );
+
+        // Assert
+        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
+        assertThat(provider.getTasks()).isEmpty();
     }
 
     @Test
@@ -336,7 +389,14 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 1, Actor.EMPTY, false, new CancelledCancellationToken());
+        final Optional<TaskId> taskId = startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            new CancelledCancellationToken(),
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(taskId).isEmpty();
@@ -376,12 +436,37 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
-        final var result = sut.ensureTask(B, 10, Actor.EMPTY, CancellationToken.NONE);
+        assertThat(startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        )).isPresent();
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            10,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
-        final var result2 = sut.ensureTask(B, 10, Actor.EMPTY, CancellationToken.NONE);
+        final var result2 = ensureTaskExpectingAlgorithm(
+            B,
+            10,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
         assertThat(result2).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
-        final var result3 = sut.ensureTask(B, 9, Actor.EMPTY, CancellationToken.NONE);
+        final var result3 = ensureTaskExpectingAlgorithm(
+            B,
+            9,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
         assertThat(result3).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
         assertThat(provider.getTasks()).hasSize(2)
             .anyMatch(t -> t.getAmount() == 9)
@@ -399,7 +484,14 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(sut.startTask(B, 1, Actor.EMPTY, false, new CancelledCancellationToken())).isEmpty();
+        assertThat(startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            new CancelledCancellationToken(),
+            PlanningAlgorithm.LP
+        )).isEmpty();
     }
 
     @Test
@@ -432,7 +524,13 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 1, Actor.EMPTY, CancellationToken.NONE);
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
@@ -450,7 +548,13 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 11, Actor.EMPTY, CancellationToken.NONE);
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            11,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
@@ -468,7 +572,13 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(() -> provider);
 
         // Act
-        final var result = sut.ensureTask(B, 11, Actor.EMPTY, CancellationToken.NONE);
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            11,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
@@ -486,10 +596,23 @@ class AutocraftingNetworkComponentImplTest {
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
-        sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Act
-        final var result = sut.ensureTask(B, 1, Actor.EMPTY, CancellationToken.NONE);
+        final var result = ensureTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_ALREADY_RUNNING);
@@ -513,8 +636,22 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId1 = startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
+        final Optional<TaskId> taskId2 = startTaskExpectingAlgorithm(
+            C,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -566,8 +703,22 @@ class AutocraftingNetworkComponentImplTest {
         provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId1 = startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
+        final Optional<TaskId> taskId2 = startTaskExpectingAlgorithm(
+            C,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         assertThat(taskId1).isPresent();
         assertThat(taskId2).isPresent();
@@ -612,7 +763,14 @@ class AutocraftingNetworkComponentImplTest {
         sut.onContainerAdded(container);
 
         // Act
-        final Optional<TaskId> taskId = sut.startTask(B, 2, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId = startTaskExpectingAlgorithm(
+            B,
+            2,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
         // Assert
         assertThat(taskId).isEmpty();
@@ -637,10 +795,31 @@ class AutocraftingNetworkComponentImplTest {
         provider3.setPattern(1, pattern().ingredient(A, 3).output(D, 1).build());
         sut.onContainerAdded(() -> provider3);
 
-        final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
-        final Optional<TaskId> taskId2 = sut.startTask(C, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        final Optional<TaskId> taskId1 = startTaskExpectingAlgorithm(
+            B,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
+        final Optional<TaskId> taskId2 = startTaskExpectingAlgorithm(
+            C,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
 
-        sut.startTask(D, 1, Actor.EMPTY, false, CancellationToken.NONE);
+        startTaskExpectingAlgorithm(
+            D,
+            1,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
         sut.onContainerRemoved(() -> provider3);
 
         // Act
@@ -667,5 +846,48 @@ class AutocraftingNetworkComponentImplTest {
         public void cancel() {
             // no op
         }
+    }
+
+    private Optional<TaskId> startTaskExpectingAlgorithm(final ResourceKey resource,
+                                                         final long amount,
+                                                         final Actor actor,
+                                                         final boolean notify,
+                                                         final CancellationToken cancellationToken,
+                                                         final PlanningAlgorithm expectedAlgorithm) {
+        assertThat(determinePlanningAlgorithm(resource)).isEqualTo(expectedAlgorithm);
+        return sut.startTask(resource, amount, actor, notify, cancellationToken);
+    }
+
+    private AutocraftingNetworkComponent.EnsureResult ensureTaskExpectingAlgorithm(
+        final ResourceKey resource,
+        final long amount,
+        final Actor actor,
+        final CancellationToken cancellationToken,
+        final PlanningAlgorithm expectedAlgorithm
+    ) {
+        assertThat(determinePlanningAlgorithm(resource)).isEqualTo(expectedAlgorithm);
+        return sut.ensureTask(resource, amount, actor, cancellationToken);
+    }
+
+    private PlanningAlgorithm determinePlanningAlgorithm(final ResourceKey resource) {
+        return invokeShouldUseOldSystem(resource) ? PlanningAlgorithm.LEGACY : PlanningAlgorithm.LP;
+    }
+
+    private boolean invokeShouldUseOldSystem(final ResourceKey resource) {
+        try {
+            final Method method = AutocraftingNetworkComponentImpl.class.getDeclaredMethod(
+                "shouldUseOldSystem",
+                ResourceKey.class
+            );
+            method.setAccessible(true);
+            return (boolean) method.invoke(sut, resource);
+        } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new AssertionError("Unable to determine selected planning algorithm", e);
+        }
+    }
+
+    private enum PlanningAlgorithm {
+        LEGACY,
+        LP
     }
 }

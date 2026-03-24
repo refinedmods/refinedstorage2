@@ -6,6 +6,10 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpCraftingSolver;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanStep;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpPatternRecipe;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpResourceSet;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewCraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
@@ -29,9 +33,11 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -149,20 +155,27 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
     @Override
     public Optional<TaskId> startTask(final ResourceKey resource,
-                                      final long amount,
-                                      final Actor actor,
-                                      final boolean notify,
-                                      final CancellationToken cancellationToken) {
+                                  final long amount,
+                                  final Actor actor,
+                                  final boolean notify,
+                                  final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
         final RootStorage rootStorage = rootStorageProvider.get();
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculatePlan(calculator, resource, amount, cancellationToken)
-            .map(plan -> addTask(resource, amount, actor, plan, notify));
+
+        // Determine which system to use
+        if (shouldUseOldSystem(resource)) {
+            return calculatePlan(calculator, resource, amount, cancellationToken)
+                .map(plan -> addTask(resource, amount, actor, plan, notify));
+        } else {
+            return calculateLpPlan(rootStorage, resource, amount, cancellationToken)
+                .map(plan -> addTask(resource, amount, actor, plan, notify));
+        }
     }
 
     @Override
     public EnsureResult ensureTask(final ResourceKey resource, final long amount, final Actor actor,
-                                   final CancellationToken cancellationToken) {
+                               final CancellationToken cancellationToken) {
         ResourceAmount.validate(resource, amount);
         final long currentlyCrafting = providers.stream()
             .mapToLong(provider -> provider.getAmount(resource))
@@ -172,12 +185,41 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
         final RootStorage rootStorage = rootStorageProvider.get();
         final long correctedAmount = amount - currentlyCrafting;
-        final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-        return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
-            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
-            .map(taskId -> EnsureResult.TASK_CREATED)
-            .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
-                cancellationToken));
+
+        // Determine which system to use
+        if (shouldUseOldSystem(resource)) {
+            final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
+            return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
+                .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+                .map(taskId -> EnsureResult.TASK_CREATED)
+                .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
+                    cancellationToken));
+        } else {
+            return calculateLpPlan(rootStorage, resource, correctedAmount, cancellationToken)
+                .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+                .map(taskId -> EnsureResult.TASK_CREATED)
+                .orElseGet(() -> ensureTaskForCraftableAmountViaLp(
+                    rootStorage,
+                    resource,
+                    correctedAmount,
+                    actor,
+                    cancellationToken
+                ));
+        }
+    }
+
+    private boolean shouldUseOldSystem(final ResourceKey resource) {
+        if (patternRepository.getByOutput(resource).size() > 1) {
+            return true;
+        }
+
+        // Logic to determine if the old system should be used
+        // For example, check if the resource corresponds to recipes with multiple single items per resource key
+        return patternRepository.getByOutput(resource).stream()
+            .anyMatch(pattern -> pattern.layout().ingredients().stream()
+                .filter(ingredient -> ingredient.inputs().stream()
+                    .anyMatch(input -> input.equals(resource)))
+                .count() > 1);
     }
 
     private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,
@@ -194,6 +236,231 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);
+    }
+
+    private Optional<TaskPlan> calculateLpPlan(final RootStorage rootStorage,
+                                               final ResourceKey resource,
+                                               final long amount,
+                                               final CancellationToken cancellationToken) {
+        if (cancellationToken.isCancelled()) {
+            return Optional.empty();
+        }
+
+        final List<LpPatternRecipe> recipes = buildLpRecipes();
+        if (recipes.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final LpCraftingSolver.PlanningOutcome outcome = new LpCraftingSolver().solve(
+            recipes,
+            buildLpStartingResources(rootStorage),
+            buildTarget(resource, amount)
+        );
+        return toTaskPlan(resource, amount, outcome);
+    }
+
+    private EnsureResult ensureTaskForCraftableAmountViaLp(final RootStorage rootStorage,
+                                                           final ResourceKey resource,
+                                                           final long amount,
+                                                           final Actor actor,
+                                                           final CancellationToken cancellationToken) {
+        if (cancellationToken.isCancelled()) {
+            return EnsureResult.MISSING_RESOURCES;
+        }
+
+        final long correctedAmount = findMaxCraftableAmountViaLp(
+            rootStorage,
+            resource,
+            amount,
+            cancellationToken
+        );
+        if (correctedAmount <= 0) {
+            return EnsureResult.MISSING_RESOURCES;
+        }
+
+        return calculateLpPlan(rootStorage, resource, correctedAmount, cancellationToken)
+            .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+            .map(taskId -> EnsureResult.TASK_CREATED)
+            .orElse(EnsureResult.MISSING_RESOURCES);
+    }
+
+    private long findMaxCraftableAmountViaLp(final RootStorage rootStorage,
+                                             final ResourceKey resource,
+                                             final long amount,
+                                             final CancellationToken cancellationToken) {
+        long low = 1;
+        long high = amount;
+        long best = 0;
+
+        while (low <= high && !cancellationToken.isCancelled()) {
+            final long middle = low + ((high - low) / 2);
+            final boolean craftable = calculateLpPlan(rootStorage, resource, middle, cancellationToken).isPresent();
+            if (craftable) {
+                best = middle;
+                low = middle + 1;
+            } else {
+                high = middle - 1;
+            }
+        }
+
+        return best;
+    }
+
+    private List<LpPatternRecipe> buildLpRecipes() {
+        final List<Pattern> patterns = patternRepository.getAll().stream()
+            .sorted(Comparator.comparing(Pattern::id))
+            .toList();
+        final List<LpPatternRecipe> recipes = new ArrayList<>();
+        for (int index = 0; index < patterns.size(); index++) {
+            try {
+                recipes.add(LpPatternRecipe.fromPattern(patterns.get(index), index));
+            } catch (final IllegalArgumentException e) {
+                LOGGER.debug("Skipping LP-incompatible pattern {}", patterns.get(index), e);
+            }
+        }
+        return recipes;
+    }
+
+    private static LpResourceSet buildLpStartingResources(final RootStorage rootStorage) {
+        return LpResourceSet.fromResourceAmounts(rootStorage.getAll());
+    }
+
+    private static LpResourceSet buildTarget(final ResourceKey resource, final long amount) {
+        final LpResourceSet target = new LpResourceSet();
+        target.setAmount(resource, amount);
+        return target;
+    }
+
+    private Optional<TaskPlan> toTaskPlan(final ResourceKey resource,
+                                          final long amount,
+                                          final LpCraftingSolver.PlanningOutcome outcome) {
+        if (outcome.executableResult().isEmpty()) {
+            return Optional.empty();
+        }
+
+        final List<LpExecutionPlanStep> steps = outcome.executableResult().get().plan();
+        final Pattern rootPattern = findRootPattern(resource, steps);
+        if (rootPattern == null) {
+            return Optional.empty();
+        }
+
+        final Map<Pattern, PatternPlanAccumulator> accumulators = new LinkedHashMap<>();
+        for (final LpExecutionPlanStep step : steps) {
+            final Pattern pattern = step.recipe().pattern();
+            final PatternPlanAccumulator accumulator = accumulators.computeIfAbsent(
+                pattern,
+                ignored -> new PatternPlanAccumulator(pattern.equals(rootPattern))
+            );
+            accumulator.addIterations(step.iterations());
+            addIngredientUsage(accumulator, pattern, step.iterations());
+        }
+
+        final Map<Pattern, TaskPlan.PatternPlan> patterns = new LinkedHashMap<>();
+        accumulators.forEach((pattern, accumulator) -> patterns.put(pattern, accumulator.toPlan()));
+        return Optional.of(new TaskPlan(
+            resource,
+            amount,
+            rootPattern,
+            patterns,
+            computeInitialRequirements(steps, rootPattern)
+        ));
+    }
+
+    private static void addIngredientUsage(final PatternPlanAccumulator accumulator,
+                                           final Pattern pattern,
+                                           final long iterations) {
+        for (int ingredientIndex = 0; ingredientIndex < pattern.layout().ingredients().size(); ingredientIndex++) {
+            final var ingredient = pattern.layout().ingredients().get(ingredientIndex);
+            final ResourceKey ingredientResource = ingredient.inputs().getFirst();
+            accumulator.addIngredient(ingredientIndex, ingredientResource, ingredient.amount() * iterations);
+        }
+    }
+
+    private static List<ResourceAmount> computeInitialRequirements(final List<LpExecutionPlanStep> steps,
+                                                                   final Pattern rootPattern) {
+        final Map<ResourceKey, Long> internalStorage = new LinkedHashMap<>();
+        final Map<ResourceKey, Long> initialRequirements = new LinkedHashMap<>();
+
+        for (final LpExecutionPlanStep step : steps) {
+            final Pattern pattern = step.recipe().pattern();
+            for (int iteration = 0; iteration < step.iterations(); iteration++) {
+                consumeIterationInputs(pattern, internalStorage, initialRequirements);
+                if (!pattern.equals(rootPattern)) {
+                    addIterationOutputs(pattern, internalStorage);
+                }
+            }
+        }
+
+        return initialRequirements.entrySet().stream()
+            .map(entry -> new ResourceAmount(entry.getKey(), entry.getValue()))
+            .toList();
+    }
+
+    private static void consumeIterationInputs(final Pattern pattern,
+                                               final Map<ResourceKey, Long> internalStorage,
+                                               final Map<ResourceKey, Long> initialRequirements) {
+        pattern.layout().ingredients().forEach(ingredient -> {
+            final ResourceKey resource = ingredient.inputs().getFirst();
+            final long amount = ingredient.amount();
+            final long available = internalStorage.getOrDefault(resource, 0L);
+            final long fromInternalStorage = Math.min(available, amount);
+            final long missing = amount - fromInternalStorage;
+            if (fromInternalStorage > 0) {
+                internalStorage.put(resource, available - fromInternalStorage);
+            }
+            if (missing > 0) {
+                initialRequirements.merge(resource, missing, Long::sum);
+            }
+        });
+    }
+
+    private static void addIterationOutputs(final Pattern pattern,
+                                            final Map<ResourceKey, Long> internalStorage) {
+        pattern.layout().outputs().forEach(output ->
+            internalStorage.merge(output.resource(), output.amount(), Long::sum));
+        pattern.layout().byproducts().forEach(byproduct ->
+            internalStorage.merge(byproduct.resource(), byproduct.amount(), Long::sum));
+    }
+
+    private static Pattern findRootPattern(final ResourceKey resource,
+                                           final List<LpExecutionPlanStep> steps) {
+        for (int index = steps.size() - 1; index >= 0; index--) {
+            final Pattern pattern = steps.get(index).recipe().pattern();
+            final boolean producesResource = pattern.layout().outputs().stream()
+                .anyMatch(output -> output.resource().equals(resource));
+            if (producesResource) {
+                return pattern;
+            }
+        }
+        return null;
+    }
+
+    private static final class PatternPlanAccumulator {
+        private final boolean root;
+        private final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
+        private long iterations;
+
+        private PatternPlanAccumulator(final boolean root) {
+            this.root = root;
+        }
+
+        private void addIterations(final long iterations) {
+            this.iterations += iterations;
+        }
+
+        private void addIngredient(final int ingredientIndex,
+                                   final ResourceKey resource,
+                                   final long amount) {
+            ingredients.computeIfAbsent(ingredientIndex, ignored -> new LinkedHashMap<>())
+                .merge(resource, amount, Long::sum);
+        }
+
+        private TaskPlan.PatternPlan toPlan() {
+            final Map<Integer, Map<ResourceKey, Long>> copiedIngredients = new LinkedHashMap<>();
+            ingredients.forEach((ingredientIndex, resources) ->
+                copiedIngredients.put(ingredientIndex, Map.copyOf(new LinkedHashMap<>(resources))));
+            return new TaskPlan.PatternPlan(root, iterations, Map.copyOf(copiedIngredients));
+        }
     }
 
     private TaskId addTask(final ResourceKey resource,
