@@ -732,6 +732,40 @@ public final class LpCraftingSolver {
                     + summarizeRecipeValues(lockedRecipeValues) + "}"
             );
             final ExpressionsBasedModel model = new ExpressionsBasedModel();
+            final Map<UUID, Variable> variableByRecipeId = createRecipeVariables(model);
+            configureObjective(model, variableByRecipeId, objectiveResource, objectiveRecipeId);
+            addResourceConstraints(model, variableByRecipeId);
+            addRecipeLocks(model, variableByRecipeId, lockedRecipeValues);
+
+            final Optimisation.Result result = maximize ? model.maximise() : model.minimise();
+            trace(
+                "flowSearchModel.solveWithObjective.optimized",
+                "state=" + result.getState() + ", value=" + result.getValue()
+            );
+            if (!result.getState().isFeasible()) {
+                trace("flowSearchModel.solveWithObjective.infeasible", "result is not feasible");
+                return null;
+            }
+
+            final Map<UUID, Long> recipeValues = extractUsedRecipeValues(variableByRecipeId);
+            trace(
+                "flowSearchModel.solveWithObjective.recipeValuesExtracted",
+                "recipeValues{" + summarizeRecipeValues(recipeValues) + "}"
+            );
+
+            final Map<ResourceKey, Long> finalInventoryValues = computeFinalInventoryValues(recipeValues);
+            trace(
+                "flowSearchModel.solveWithObjective.finalInventoryComputed",
+                "finalInventoryValues{" + summarizeResourceValues(finalInventoryValues) + "}"
+            );
+
+            return new FlowSearchResult(
+                Map.copyOf(recipeValues),
+                Map.copyOf(finalInventoryValues)
+            );
+        }
+
+        private Map<UUID, Variable> createRecipeVariables(final ExpressionsBasedModel model) {
             final Map<UUID, Variable> variableByRecipeId = new LinkedHashMap<>();
             for (final LpPatternRecipe recipe : recipes) {
                 final boolean disabled = disabledRecipeIds.contains(recipe.uniqueId());
@@ -746,26 +780,41 @@ public final class LpCraftingSolver {
                 "variableCount=" + variableByRecipeId.size() + ", disabledVariableCount="
                     + disabledRecipeIds.size() + ", recipeUpperBound=" + options.recipeUpperBound()
             );
+            return variableByRecipeId;
+        }
 
-            if (objectiveResource != null || objectiveRecipeId != null) {
-                final Expression objective = model.newExpression("objective").weight(1);
-                for (final LpPatternRecipe recipe : recipes) {
-                    final long coefficient;
-                    if (objectiveRecipeId != null) {
-                        coefficient = recipe.uniqueId().equals(objectiveRecipeId) ? 1 : 0;
-                    } else {
-                        coefficient = recipe.coefficient(objectiveResource);
-                    }
-                    if (coefficient != 0) {
-                        objective.set(variableByRecipeId.get(recipe.uniqueId()), coefficient);
-                    }
-                }
-                trace(
-                    "flowSearchModel.solveWithObjective.objectiveBuilt",
-                    "objectiveResource=" + objectiveResource + ", objectiveRecipeId=" + objectiveRecipeId
-                );
+        private void configureObjective(final ExpressionsBasedModel model,
+                                        final Map<UUID, Variable> variableByRecipeId,
+                                        final ResourceKey objectiveResource,
+                                        final UUID objectiveRecipeId) {
+            if (objectiveResource == null && objectiveRecipeId == null) {
+                return;
             }
 
+            final Expression objective = model.newExpression("objective").weight(1);
+            for (final LpPatternRecipe recipe : recipes) {
+                final long coefficient = objectiveCoefficient(recipe, objectiveResource, objectiveRecipeId);
+                if (coefficient != 0) {
+                    objective.set(variableByRecipeId.get(recipe.uniqueId()), coefficient);
+                }
+            }
+            trace(
+                "flowSearchModel.solveWithObjective.objectiveBuilt",
+                "objectiveResource=" + objectiveResource + ", objectiveRecipeId=" + objectiveRecipeId
+            );
+        }
+
+        private long objectiveCoefficient(final LpPatternRecipe recipe,
+                                          final ResourceKey objectiveResource,
+                                          final UUID objectiveRecipeId) {
+            if (objectiveRecipeId != null) {
+                return recipe.uniqueId().equals(objectiveRecipeId) ? 1 : 0;
+            }
+            return recipe.coefficient(objectiveResource);
+        }
+
+        private void addResourceConstraints(final ExpressionsBasedModel model,
+                                            final Map<UUID, Variable> variableByRecipeId) {
             for (final ResourceKey resource : constrainedResources) {
                 final Expression expression = model.newExpression("constraint:" + resource);
                 final long lowerBound = target.getAmount(resource) - startingResources.getAmount(resource);
@@ -782,7 +831,11 @@ public final class LpCraftingSolver {
                 "constraintCount=" + constrainedResources.size() + ", constrainedResources{"
                     + summarizeResourceKeys(constrainedResources) + "}"
             );
+        }
 
+        private void addRecipeLocks(final ExpressionsBasedModel model,
+                                    final Map<UUID, Variable> variableByRecipeId,
+                                    final Map<UUID, Long> lockedRecipeValues) {
             for (final Map.Entry<UUID, Long> lock : lockedRecipeValues.entrySet()) {
                 final Expression lockExpression = model.newExpression("lock:" + lock.getKey());
                 lockExpression.level(lock.getValue());
@@ -793,17 +846,9 @@ public final class LpCraftingSolver {
                 "lockCount=" + lockedRecipeValues.size() + ", lockedRecipeValues{"
                     + summarizeRecipeValues(lockedRecipeValues) + "}"
             );
+        }
 
-            final Optimisation.Result result = maximize ? model.maximise() : model.minimise();
-            trace(
-                "flowSearchModel.solveWithObjective.optimized",
-                "state=" + result.getState() + ", value=" + result.getValue()
-            );
-            if (!result.getState().isFeasible()) {
-                trace("flowSearchModel.solveWithObjective.infeasible", "result is not feasible");
-                return null;
-            }
-
+        private Map<UUID, Long> extractUsedRecipeValues(final Map<UUID, Variable> variableByRecipeId) {
             final Map<UUID, Long> recipeValues = new LinkedHashMap<>();
             for (final LpPatternRecipe recipe : recipes) {
                 final Variable variable = variableByRecipeId.get(recipe.uniqueId());
@@ -812,11 +857,10 @@ public final class LpCraftingSolver {
                     recipeValues.put(recipe.uniqueId(), value);
                 }
             }
-            trace(
-                "flowSearchModel.solveWithObjective.recipeValuesExtracted",
-                "recipeValues{" + summarizeRecipeValues(recipeValues) + "}"
-            );
+            return recipeValues;
+        }
 
+        private Map<ResourceKey, Long> computeFinalInventoryValues(final Map<UUID, Long> recipeValues) {
             final Map<ResourceKey, Long> finalInventoryValues = new LinkedHashMap<>();
             for (final ResourceKey resource : relevantResources) {
                 long amount = startingResources.getAmount(resource);
@@ -829,15 +873,7 @@ public final class LpCraftingSolver {
                 }
                 finalInventoryValues.put(resource, amount);
             }
-            trace(
-                "flowSearchModel.solveWithObjective.finalInventoryComputed",
-                "finalInventoryValues{" + summarizeResourceValues(finalInventoryValues) + "}"
-            );
-
-            return new FlowSearchResult(
-                Map.copyOf(recipeValues),
-                Map.copyOf(finalInventoryValues)
-            );
+            return finalInventoryValues;
         }
     }
 

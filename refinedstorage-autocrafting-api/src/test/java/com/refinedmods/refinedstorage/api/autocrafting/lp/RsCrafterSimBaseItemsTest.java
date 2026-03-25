@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Java translations of the rs_crafter_sim {@code base_items_tests.rs} tests,
  * exercising {@link LpCraftingSolver#computeRequiredBaseItems}.
- * <p>
- * Each test corresponds 1:1 with a Rust {@code #[test]} in the Rust prototype.
+ *
+ * <p>Each test corresponds 1:1 with a Rust {@code #[test]} in the Rust prototype.
  * Resource IDs are integers; recipes use the same (input, output, priority) shape.
  */
 class RsCrafterSimBaseItemsTest {
@@ -22,19 +22,6 @@ class RsCrafterSimBaseItemsTest {
 
     // -------------------------------------------------------------------------
     // Infrastructure helpers
-
-    /** Lightweight integer-keyed resource, equivalent to Rust's item-ID usize. */
-    private record ItemId(int id) implements ResourceKey {
-        @Override
-        public boolean equals(final Object obj) {
-            return obj instanceof ItemId other && id == other.id;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id);
-        }
-    }
 
     private static ResourceKey item(final int id) {
         return new ItemId(id);
@@ -227,5 +214,18 @@ class RsCrafterSimBaseItemsTest {
         final LpResourceSet required = solver.computeRequiredBaseItems(recipes, startingItems, target);
 
         assertRequiredBaseItems(required, 1, 1, 3, 1);
+    }
+
+    /** Lightweight integer-keyed resource, equivalent to Rust's item-ID usize. */
+    private record ItemId(int id) implements ResourceKey {
+        @Override
+        public boolean equals(final Object obj) {
+            return obj instanceof ItemId other && id == other.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
     }
 }

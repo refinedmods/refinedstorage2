@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Java translations of all solver harness cases from the rs_crafter_sim Rust prototype
  * ({@code tests/cases/01_basics.json}, {@code 02_priorities.json},
  * {@code 03_cycles.json}, {@code 04_stress.json}).
- * <p>
- * Maps the Rust {@code find_executable_solution_via_cycle_elimination} to
+ *
+ * <p>Maps the Rust {@code find_executable_solution_via_cycle_elimination} to
  * {@link LpCraftingSolver#findExecutableSolutionViaCycleElimination}.
  * <ul>
  *   <li>Rust {@code Ok(solution, plan)} → {@code executableResult().isPresent()}</li>
@@ -28,19 +28,6 @@ class RsCrafterSimSolverHarnessTest {
 
     // -------------------------------------------------------------------------
     // Infrastructure helpers
-
-    /** Lightweight integer-keyed resource, equivalent to Rust's item-ID usize. */
-    private record ItemId(int id) implements ResourceKey {
-        @Override
-        public boolean equals(final Object obj) {
-            return obj instanceof ItemId other && id == other.id;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id);
-        }
-    }
 
     private static ResourceKey item(final int id) {
         return new ItemId(id);
@@ -296,8 +283,8 @@ class RsCrafterSimSolverHarnessTest {
      * ({@code item0 x2→item1, item1 x2→item2, ..., item4 x1→item0 x33}).
      * Starting with 16x item0; target 33x item0.
      * Expected invocations: [8, 4, 2, 1, 1]; final item0 = 33.
-     * <p>
-     * This is feasible within the Java solver's default {@code recipeUpperBound = 128}.
+        *
+        * <p>This is feasible within the Java solver's default {@code recipeUpperBound = 128}.
      */
     @Test
     void stress_smallExponentialChain_fiveItem() {
@@ -314,5 +301,18 @@ class RsCrafterSimSolverHarnessTest {
             new long[]{8, 4, 2, 1, 1},
             new int[][]{{0, 33}, {4, 0}}
         );
+    }
+
+    /** Lightweight integer-keyed resource, equivalent to Rust's item-ID usize. */
+    private record ItemId(int id) implements ResourceKey {
+        @Override
+        public boolean equals(final Object obj) {
+            return obj instanceof ItemId other && id == other.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
     }
 }

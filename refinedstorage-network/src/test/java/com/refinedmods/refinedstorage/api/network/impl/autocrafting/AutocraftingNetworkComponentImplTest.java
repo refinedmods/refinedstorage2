@@ -25,12 +25,12 @@ import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -836,18 +836,6 @@ class AutocraftingNetworkComponentImplTest {
             .anyMatch(ts -> ts.info().id().equals(taskId2.get()));
     }
 
-    private static class CancelledCancellationToken implements CancellationToken {
-        @Override
-        public boolean isCancelled() {
-            return true;
-        }
-
-        @Override
-        public void cancel() {
-            // no op
-        }
-    }
-
     private Optional<TaskId> startTaskExpectingAlgorithm(final ResourceKey resource,
                                                          final long amount,
                                                          final Actor actor,
@@ -889,5 +877,17 @@ class AutocraftingNetworkComponentImplTest {
     private enum PlanningAlgorithm {
         LEGACY,
         LP
+    }
+
+    private static class CancelledCancellationToken implements CancellationToken {
+        @Override
+        public boolean isCancelled() {
+            return true;
+        }
+
+        @Override
+        public void cancel() {
+            // no op
+        }
     }
 }

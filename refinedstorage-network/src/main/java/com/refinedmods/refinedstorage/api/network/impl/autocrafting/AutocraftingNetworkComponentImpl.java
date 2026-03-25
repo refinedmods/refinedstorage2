@@ -33,8 +33,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -435,34 +435,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         return null;
     }
 
-    private static final class PatternPlanAccumulator {
-        private final boolean root;
-        private final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
-        private long iterations;
-
-        private PatternPlanAccumulator(final boolean root) {
-            this.root = root;
-        }
-
-        private void addIterations(final long iterations) {
-            this.iterations += iterations;
-        }
-
-        private void addIngredient(final int ingredientIndex,
-                                   final ResourceKey resource,
-                                   final long amount) {
-            ingredients.computeIfAbsent(ingredientIndex, ignored -> new LinkedHashMap<>())
-                .merge(resource, amount, Long::sum);
-        }
-
-        private TaskPlan.PatternPlan toPlan() {
-            final Map<Integer, Map<ResourceKey, Long>> copiedIngredients = new LinkedHashMap<>();
-            ingredients.forEach((ingredientIndex, resources) ->
-                copiedIngredients.put(ingredientIndex, Map.copyOf(new LinkedHashMap<>(resources))));
-            return new TaskPlan.PatternPlan(root, iterations, Map.copyOf(copiedIngredients));
-        }
-    }
-
     private TaskId addTask(final ResourceKey resource,
                            final long amount,
                            final Actor actor,
@@ -593,5 +565,33 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     @Override
     public List<ExternalPatternSink> getSinksByPatternLayout(final PatternLayout patternLayout) {
         return sinksByPatternLayout.getOrDefault(patternLayout, Collections.emptyList());
+    }
+
+    private static final class PatternPlanAccumulator {
+        private final boolean root;
+        private final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
+        private long iterations;
+
+        private PatternPlanAccumulator(final boolean root) {
+            this.root = root;
+        }
+
+        private void addIterations(final long additionalIterations) {
+            this.iterations += additionalIterations;
+        }
+
+        private void addIngredient(final int ingredientIndex,
+                                   final ResourceKey resource,
+                                   final long amount) {
+            ingredients.computeIfAbsent(ingredientIndex, ignored -> new LinkedHashMap<>())
+                .merge(resource, amount, Long::sum);
+        }
+
+        private TaskPlan.PatternPlan toPlan() {
+            final Map<Integer, Map<ResourceKey, Long>> copiedIngredients = new LinkedHashMap<>();
+            ingredients.forEach((ingredientIndex, resources) ->
+                copiedIngredients.put(ingredientIndex, Map.copyOf(new LinkedHashMap<>(resources))));
+            return new TaskPlan.PatternPlan(root, iterations, Map.copyOf(copiedIngredients));
+        }
     }
 }
