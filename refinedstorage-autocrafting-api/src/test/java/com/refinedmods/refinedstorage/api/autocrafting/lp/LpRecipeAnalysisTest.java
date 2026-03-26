@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpRecipeAnalysisTest {
     @Test
     void shouldCollectRelevantResourceKeys() {
+        // Tests that relevant resource keys are collected from recipes and target items, including base items.
         final List<LpPatternRecipe> recipes = List.of(
             recipe(A, B, 1, 1, 0),
             recipe(B, C, 1, 1, 0)
@@ -31,6 +32,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldPrioritizeAndPruneRecipes() {
+        // Tests that recipes are prioritized by priority value and pruned to only those relevant to the target.
         final LpPatternRecipe lowPriority = recipe(A, B, 1, 1, 1);
         final LpPatternRecipe highPriority = recipe(A, B, 1, 1, 10);
         final LpPatternRecipe unrelated = recipe(X, Y, 1, 1, 99);
@@ -51,6 +53,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldCollectNonProducibleResources() {
+        // Tests that resources that cannot be produced by any recipe are correctly identified.
         final Set<ResourceKey> nonProducible = LpRecipeAnalysis.collectNonProducibleResources(
             List.of(recipe(A, B, 1, 1, 0)),
             Set.of(A, B, C)
@@ -61,6 +64,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldSelectTopPriorityRecipesPerOutputResource() {
+        // Tests that for each output resource, only the highest priority recipe is selected.
         final LpPatternRecipe topB = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe lowB = recipe(A, B, 2, 1, 0);
         final LpPatternRecipe topC = recipe(B, C, 1, 1, 0);
@@ -80,6 +84,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldDetectCyclesAndInLoopFlags() {
+        // Tests that recipe cycles are detected and recipes are correctly flagged as being in a cycle.
         final LpPatternRecipe ab = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe ba = recipe(B, A, 1, 1, 0);
         final LpPatternRecipe bc = recipe(B, C, 1, 1, 0);
@@ -94,6 +99,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldCollectLoopClosingAndLoopEntryResourcesOnTargetBranches() {
+        // Tests that recipes that close cycles and resources that enter cycles are correctly identified on target branches.
         final LpPatternRecipe ab = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe ba = recipe(B, A, 1, 1, 0);
 
@@ -112,6 +118,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldCanonicalizeAndSortDetectedCycles() {
+        // Tests that detected cycles are canonicalized and sorted into a consistent order for analysis.
         final LpPatternRecipe ab = recipe(A, B, 1, 1, 0); // index 0
         final LpPatternRecipe ba = recipe(B, A, 1, 1, 0); // index 1
         final LpPatternRecipe cx = recipe(C, X, 1, 1, 0); // index 2

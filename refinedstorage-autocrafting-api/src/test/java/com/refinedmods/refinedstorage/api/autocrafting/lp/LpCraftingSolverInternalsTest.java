@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpCraftingSolverInternalsTest {
     @Test
     void shouldExercisePrivateSetAndAttemptHelpers() throws Exception {
+        // Tests internal helper methods for set operations and tracking visited cycle break attempts.
         final UUID a = UUID.randomUUID();
         final UUID b = UUID.randomUUID();
 
@@ -43,6 +44,7 @@ class LpCraftingSolverInternalsTest {
 
     @Test
     void shouldExerciseComputeMaxCraftableTargetAmountPrivateMethod() throws Exception {
+        // Tests that the maximum craftable target amount is computed correctly based on available resources and recipes.
         final LpCraftingSolver solver = new LpCraftingSolver();
         final LpPatternRecipe recipe = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
@@ -69,6 +71,7 @@ class LpCraftingSolverInternalsTest {
 
     @Test
     void shouldEnqueueCycleBreakAttemptFromMostUsedRecipe() throws Exception {
+        // Tests that cycle-breaking attempts prioritize disabling the most frequently used recipes in a cycle.
         final LpPatternRecipe recipeA = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
             0

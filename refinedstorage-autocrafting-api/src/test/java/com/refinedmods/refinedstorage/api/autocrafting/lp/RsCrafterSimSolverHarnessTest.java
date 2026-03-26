@@ -114,6 +114,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void basics_twoStepChainSuccess() {
+        // Tests that a simple two-step crafting chain executes successfully, converting input resources through intermediate items to reach the target.
         // Inputs: 2x item0. Recipes: item0→item1, item1→item2. Target: 2x item2.
         // Each recipe runs twice; final inventory item0=0, item1=0, item2=2.
         final List<LpPatternRecipe> recipes = List.of(
@@ -131,6 +132,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void basics_infeasibleTargetProducesError() {
+        // Tests that the solver correctly fails when the target item cannot be produced by any available recipe.
         // Inputs: 1x item0. Only recipe: item0→item1. Target: 1x item2.
         // No recipe produces item2 → infeasible.
         final List<LpPatternRecipe> recipes = List.of(
@@ -145,6 +147,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void priorities_higherPriorityValueRouteIsSelected() {
+        // Tests that when multiple recipes produce the same output, only the highest priority recipe is used in the solution.
         // Two alternative item0→item2 recipes with priorities 0 and 10.
         // Only the higher-priority one (index 1) should run.
         final List<LpPatternRecipe> recipes = List.of(
@@ -162,6 +165,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void priorities_unrelatedRecipeIsEliminated() {
+        // Tests that recipes unrelated to the crafting goal are pruned and not used, even if they have high priority.
         // item0→item2 (relevant) and item3→item4 (irrelevant). Target: 1x item2.
         // Relevance pruning drops the irrelevant recipe; its usage stays 0.
         final List<LpPatternRecipe> recipes = List.of(
@@ -183,6 +187,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_singleItemSelfCycleExecutesWithSeed() {
+        // Tests that a self-amplifying recipe can execute when there is enough seed material to start the cycle.
         // item0 →2x item0 (self-amplifying). Have 1x item0; need 2x item0.
         // One execution: consume 1, produce 2 → final item0 = 2.
         final List<LpPatternRecipe> recipes = List.of(
@@ -199,6 +204,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_singleItemSelfCycleWithoutSeedErrors() {
+        // Tests that a self-amplifying cycle fails when there is no starting material to bootstrap the cycle.
         // Same self-amplifying recipe but starting with 0x item0 → cannot start.
         final List<LpPatternRecipe> recipes = List.of(
             recipe(new int[][]{{0, 1}}, new int[][]{{0, 2}}, 0)
@@ -208,6 +214,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_largerCycleWithoutSeedErrors() {
+        // Tests that a multi-recipe cycle fails when there is no seed material to initiate the cycle.
         // 4-recipe cycle 0→1→2→3→0 (amplifying return). No starting resources.
         // No seed → execution impossible.
         final List<LpPatternRecipe> recipes = List.of(
@@ -221,6 +228,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_overlappingCyclesWithoutSeedError() {
+        // Tests that overlapping cycles without seed material fail execution.
         // Two cycles sharing item1: (item0↔item1) and (item1↔item2). No seed.
         final List<LpPatternRecipe> recipes = List.of(
             recipe(new int[][]{{0, 1}}, new int[][]{{1, 1}}, 0),
@@ -233,6 +241,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_cycleThatIncludesTargetItemErrors() {
+        // Tests that a cycle containing the target item fails when there is no seed to bootstrap it.
         // Cycle item0↔item1. Target is item0 (inside the cycle). No seed.
         final List<LpPatternRecipe> recipes = List.of(
             recipe(new int[][]{{0, 1}}, new int[][]{{1, 1}}, 0),
@@ -243,6 +252,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_negativeCycleErrors() {
+        // Tests that a net-negative cycle (consumes more than it produces) fails even with sufficient starting material.
         // Recipe: 2x item0 → 1x item0 (net −1 per run). Have 10x item0; need 11.
         // Running the recipe only decreases item0 → impossible to reach 11.
         final List<LpPatternRecipe> recipes = List.of(
@@ -262,6 +272,7 @@ class RsCrafterSimSolverHarnessTest {
      */
     @Test
     void stress_twentyItemExponentialChainWithTerminalCycleRecipe() {
+        // Tests solver performance on a complex exponential chain with a terminal cycle recipe for system stress testing.
         final List<LpPatternRecipe> recipes = new ArrayList<>();
         for (int i = 0; i < 19; i++) {
             recipes.add(recipe(new int[][]{{i, 2}}, new int[][]{{i + 1, 1}}, 0));
@@ -288,6 +299,7 @@ class RsCrafterSimSolverHarnessTest {
      */
     @Test
     void stress_smallExponentialChain_fiveItem() {
+        // Tests a scaled-down exponential chain scenario to verify correct recipe invocation counts and final inventory values.
         final List<LpPatternRecipe> recipes = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             recipes.add(recipe(new int[][]{{i, 2}}, new int[][]{{i + 1, 1}}, 0));

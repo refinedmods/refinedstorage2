@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LpExecutionPlannerTest {
     @Test
     void shouldValidateNullInputs() {
+        // Tests that the execution planner validates all input arguments and rejects null values.
         final List<LpPatternRecipe> recipes = List.of(recipe(A, B, 1, 1, 0));
         final Map<java.util.UUID, Long> values = Map.of(recipes.getFirst().uniqueId(), 1L);
         final LpResourceSet resources = new LpResourceSet();
@@ -38,6 +39,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldRejectNegativeRecipeUsage() {
+        // Tests that negative recipe usage counts are rejected as invalid inputs.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
 
         assertThatThrownBy(() -> LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
@@ -51,6 +53,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldReturnEmptyPlanWhenNoRecipeUsageIsRequested() {
+        // Tests that when no recipes need to be executed, an empty plan is returned.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
 
         final java.util.Optional<List<LpExecutionPlanStep>> plan =
@@ -66,6 +69,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldBuildSimpleExecutablePlan() {
+        // Tests that a simple executable plan is built when recipes can be executed in order with available resources.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 3);
@@ -85,6 +89,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldReturnEmptyWhenUsageCannotBeAfforded() {
+        // Tests that an empty result is returned when recipe usage cannot be satisfied with available resources.
         final LpPatternRecipe recipe = recipe(A, B, 2, 1, 0);
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 1);
@@ -101,6 +106,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldBacktrackAndRollbackWhenLaterRequirementIsImpossible() {
+        // Tests that the planner correctly backtracks and rolls back when later recipe usage cannot be satisfied.
         final LpPatternRecipe neutral = recipe(A, A, 1, 1, 0);
         final LpPatternRecipe impossible = recipe(B, B, 1, 1, 0);
 
@@ -119,6 +125,7 @@ class LpExecutionPlannerTest {
 
     @Test
     void shouldHandleLoopAndNonLoopCandidateSorting() {
+        // Tests that the planner correctly sorts and prioritizes recipes involved in cycles versus linear chains.
         final LpPatternRecipe loopAtoB = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe loopBtoA = recipe(B, A, 1, 1, 0);
         final LpPatternRecipe nonLoopAtoC = recipe(A, C, 1, 1, 0);

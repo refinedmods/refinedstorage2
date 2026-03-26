@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LpResourceSetTest {
     @Test
     void constructorsAndFactoriesShouldHandleNullAndCopy() {
+        // Tests that constructors and factory methods validate null inputs and perform defensive copying.
         assertThatThrownBy(() -> new LpResourceSet(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("amounts cannot be null");
@@ -34,6 +35,7 @@ class LpResourceSetTest {
 
     @Test
     void fromResourceAmountsShouldAggregateValues() {
+        // Tests that the factory method correctly aggregates resource amounts from a list.
         assertThatThrownBy(() -> LpResourceSet.fromResourceAmounts(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("resourceAmounts cannot be null");
@@ -51,6 +53,7 @@ class LpResourceSetTest {
 
     @Test
     void setAddSubtractAndRemoveShouldWork() {
+        // Tests that set, add, and subtract operations modify resource amounts correctly and remove zero entries.
         final LpResourceSet sut = new LpResourceSet();
 
         sut.setAmount(A, 5);
@@ -66,6 +69,7 @@ class LpResourceSetTest {
 
     @Test
     void addAllShouldMergeAndValidateInput() {
+        // Tests that addAll merges multiple resource sets and validates null inputs.
         final LpResourceSet sut = new LpResourceSet();
         sut.setAmount(A, 1);
 
@@ -85,6 +89,7 @@ class LpResourceSetTest {
 
     @Test
     void shouldExposeUnmodifiableViews() {
+        // Tests that views returned by the resource set are unmodifiable to prevent accidental mutations.
         final LpResourceSet sut = new LpResourceSet();
         sut.setAmount(A, 1);
 
@@ -94,6 +99,7 @@ class LpResourceSetTest {
 
     @Test
     void shouldCopyAndReportState() {
+        // Tests that copy creates independent copies, and state reporting methods work correctly.
         final LpResourceSet sut = new LpResourceSet();
         sut.setAmount(A, 2);
         sut.setAmount(C, 3);

@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LpCraftingSolverValidationTest {
     @Test
     void constructorShouldValidateOptions() {
+        // Tests that the solver constructor validates and rejects null options.
         assertThatThrownBy(() -> new LpCraftingSolver(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("options cannot be null");
@@ -24,6 +25,7 @@ class LpCraftingSolverValidationTest {
 
     @Test
     void publicApisShouldValidateNullArguments() {
+        // Tests that all public solver methods validate their arguments and reject null values.
         final LpCraftingSolver solver = new LpCraftingSolver();
         final List<LpPatternRecipe> recipes = List.of(recipe());
         final LpResourceSet resources = new LpResourceSet();
@@ -45,6 +47,7 @@ class LpCraftingSolverValidationTest {
 
     @Test
     void executablePlanResultRecordShouldValidateAndCopy() {
+        // Tests that ExecutablePlanResult validates inputs and creates defensive copies of mutable collections.
         final LpPatternRecipe recipe = recipe();
         final LpCraftingSolution solution = new LpCraftingSolution(Map.of(), Map.of(), List.of(A));
         final List<LpExecutionPlanStep> mutablePlan =
@@ -65,6 +68,7 @@ class LpCraftingSolverValidationTest {
 
     @Test
     void cycleEliminationAndPlanningOutcomeRecordsShouldValidateAndCopy() {
+        // Tests that result record types validate inputs and create defensive copies of disabled recipe IDs.
         final LpCraftingSolver.CycleEliminationResult cycle = new LpCraftingSolver.CycleEliminationResult(
             Optional.empty(),
             Set.of(UUID.randomUUID())

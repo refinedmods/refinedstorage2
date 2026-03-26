@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LpRecipePriorityKeyTest {
     @Test
     void appendShouldValidateInput() {
+        // Tests that append method validates that the recipe argument is not null.
         final LpRecipePriorityKey sut = new LpRecipePriorityKey();
 
         assertThatThrownBy(() -> sut.appendRecipePriority(null))
@@ -20,6 +21,7 @@ class LpRecipePriorityKeyTest {
 
     @Test
     void compareToShouldPreferHigherPriorityAtFirstDifference() {
+        // Tests that compareTo correctly ranks keys by preferring higher priority values in the sequence.
         final LpRecipePriorityKey high = new LpRecipePriorityKey()
             .appendRecipePriority(recipe(10));
         final LpRecipePriorityKey low = new LpRecipePriorityKey()
@@ -31,6 +33,7 @@ class LpRecipePriorityKeyTest {
 
     @Test
     void compareToShouldUseLengthWhenPrefixesMatch() {
+        // Tests that compareTo uses the key length as a tiebreaker when priority sequences have matching prefixes.
         final LpRecipePriorityKey shorter = new LpRecipePriorityKey()
             .appendRecipePriority(recipe(5));
         final LpRecipePriorityKey longer = new LpRecipePriorityKey()
@@ -43,6 +46,7 @@ class LpRecipePriorityKeyTest {
 
     @Test
     void equalsAndHashCodeShouldUsePriorityValues() {
+        // Tests that equals and hashCode are based on priority values and behave consistently.
         final LpRecipePriorityKey left = new LpRecipePriorityKey()
             .appendRecipePriority(recipe(4))
             .appendRecipePriority(recipe(3));

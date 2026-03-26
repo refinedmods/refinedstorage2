@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpRecipeAnalysisInternalsTest {
     @Test
     void compareIndexCyclesAndCanonicalizeShouldBehaveDeterministically() throws Exception {
+        // Tests that cycle comparison and canonicalization produce deterministic and consistent results.
         final int compareLeftRight = invokeCompareIndexCycles(List.of(0, 2), List.of(0, 3));
         final int compareLength = invokeCompareIndexCycles(List.of(1, 2), List.of(1, 2, 4));
 
@@ -30,6 +31,7 @@ class LpRecipeAnalysisInternalsTest {
 
     @Test
     void shouldEvaluateRecipePriorityAndInputPriorityPropagation() throws Exception {
+        // Tests that recipe priority comparison correctly evaluates priority keys and propagates improved priorities through inputs.
         final LpPatternRecipe recipe = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
             7

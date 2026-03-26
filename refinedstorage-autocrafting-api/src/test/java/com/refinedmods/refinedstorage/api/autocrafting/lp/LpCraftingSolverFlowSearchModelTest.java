@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpCraftingSolverFlowSearchModelTest {
     @Test
     void objectiveCoefficientShouldHandleRecipeAndResourceObjectives() throws Exception {
+        // Tests that objective coefficients are correctly calculated for both resource and recipe-based objectives.
         final LpPatternRecipe recipe = recipe(A, B, 1, 2, 0);
         final Object model = flowSearchModel(
             List.of(recipe),
@@ -41,6 +42,7 @@ class LpCraftingSolverFlowSearchModelTest {
 
     @Test
     void solveWithObjectiveShouldReturnFeasibleAndInfeasibleResults() throws Exception {
+        // Tests that the solver returns feasible solutions when recipes are available and null when disabled.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
 
         final Object feasibleModel = flowSearchModel(
@@ -69,6 +71,7 @@ class LpCraftingSolverFlowSearchModelTest {
 
     @Test
     void maximizeAndLexicographicMinimumShouldProduceConsistentInventory() throws Exception {
+        // Tests that maximize and lexicographic minimum operations produce consistent final inventory states.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
         final Object model = flowSearchModel(
             List.of(recipe),

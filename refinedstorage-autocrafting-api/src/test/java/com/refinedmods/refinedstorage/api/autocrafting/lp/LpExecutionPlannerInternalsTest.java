@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpExecutionPlannerInternalsTest {
     @Test
     void internalsShouldHandleBatchGenerationAndPlanMutations() throws Exception {
+        // Tests that internal batch generation strategies correctly split recipe execution into feasible batches and plans.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
         final Object candidate = candidate(recipe, 5L, 3L);
 
@@ -42,6 +43,7 @@ class LpExecutionPlannerInternalsTest {
 
     @Test
     void internalsShouldApplyAndRollbackBatches() throws Exception {
+        // Tests that batches can be applied to inventory and rolled back to restore previous state correctly.
         final LpPatternRecipe recipe = recipe(A, B, 2, 3, 0);
         final LpResourceSet inventory = new LpResourceSet();
         inventory.setAmount(A, 5);
@@ -57,6 +59,7 @@ class LpExecutionPlannerInternalsTest {
 
     @Test
     void internalsShouldHandleCandidateAndBatchValidation() throws Exception {
+        // Tests that candidates are validated for feasibility and batch attempts are checked against recipe requirements.
         final LpPatternRecipe normalRecipe = recipe(A, B, 3, 1, 0);
         final LpResourceSet inventory = new LpResourceSet();
         inventory.setAmount(A, 10L);
@@ -99,6 +102,7 @@ class LpExecutionPlannerInternalsTest {
 
     @Test
     void internalsShouldSortCandidatesAndIgnoreNonPositiveInputs() throws Exception {
+        // Tests that candidates are sorted correctly by loop involvement and non-positive inputs are ignored.
         final LpPatternRecipe loopRecipe = recipe(A, B, 1, 1, 0);
         loopRecipe.setEffectivePriority(10);
 

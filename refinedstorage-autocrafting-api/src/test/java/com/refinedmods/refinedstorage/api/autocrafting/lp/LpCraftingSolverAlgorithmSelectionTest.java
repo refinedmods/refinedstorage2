@@ -14,6 +14,7 @@ class LpCraftingSolverAlgorithmSelectionTest {
 
     @Test
     void shouldUseExecutablePlanPathWhenResourcesPermitLinearCraft() {
+        // Tests that the solver uses the executable plan algorithm when simple linear crafting is sufficient.
         final List<LpPatternRecipe> recipes = List.of(
             LpPatternRecipe.fromPattern(
                 pattern().ingredient(ResourceFixtures.A, 1).output(ResourceFixtures.B, 1).build(),
@@ -31,6 +32,7 @@ class LpCraftingSolverAlgorithmSelectionTest {
 
     @Test
     void shouldUseBaseItemsPathWhenNothingIsCraftable() {
+        // Tests that the solver falls back to base items analysis when no recipes can produce the target.
         final List<LpPatternRecipe> recipes = List.of();
         final LpResourceSet startingResources = new LpResourceSet();
         final LpResourceSet target = resourceSet(ResourceFixtures.B, 3);
@@ -43,6 +45,7 @@ class LpCraftingSolverAlgorithmSelectionTest {
 
     @Test
     void shouldUseCycleFallbackPathWhenLpSolutionIsNotExecutableInOrder() {
+        // Tests that the solver uses cycle elimination fallback when the LP solution cannot be executed in linear order.
         final List<LpPatternRecipe> recipes = List.of(
             LpPatternRecipe.fromPattern(
                 pattern().ingredient(ResourceFixtures.A, 1).output(ResourceFixtures.B, 1).build(),

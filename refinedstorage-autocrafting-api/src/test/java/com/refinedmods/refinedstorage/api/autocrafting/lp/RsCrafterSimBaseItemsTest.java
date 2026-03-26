@@ -89,6 +89,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReportsSingleMissingBaseItem() {
+        // Tests that missing base items are correctly identified in a crafting chain when starting inventory is insufficient.
         // Rust: compute_required_base_items_reports_single_missing_base_item
         // Chain item0→item1→item2; have 1x item0, need 2x item2 → 1 more item0 required.
         final List<LpPatternRecipe> recipes = List.of(
@@ -105,6 +106,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReturnsEmptyWhenStartingInventoryIsSufficient() {
+        // Tests that no missing base items are reported when the starting inventory is sufficient to reach the target.
         // Rust: compute_required_base_items_returns_empty_when_starting_inventory_is_sufficient
         // Have 2x item0 – just enough to craft 2x item2 via two-step chain; nothing missing.
         final List<LpPatternRecipe> recipes = List.of(
@@ -121,6 +123,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReportsMultipleMissingBaseItemsForMultiInputRecipe() {
+        // Tests that multiple missing base items are correctly identified for recipes requiring multiple input types.
         // Rust: compute_required_base_items_reports_multiple_missing_base_items_for_multi_input_recipe
         // Recipe: 2x item0 + 1x item3 → 1x item2. Need 2x item2, have 2x item0 and 1x item3
         // (only enough for 1 craft); missing 2x item0 + 1x item3.
@@ -137,6 +140,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsHandlesNonProducibleTargetItemsWithRelevantRecipeGraph() {
+        // Tests that target items that cannot be produced (base items) are correctly identified as missing requirements.
         // Rust: compute_required_base_items_handles_non_producible_target_items_with_relevant_recipe_graph
         // item7 is in the target but not producible by any recipe; only 3 more needed (have 1, need 4).
         final List<LpPatternRecipe> recipes = List.of(
@@ -152,6 +156,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsLabelsNonProducibleTargetAsRequiredInput() {
+        // Tests that when only base items are needed (no recipes available), they are correctly labeled as required inputs.
         // Rust: compute_required_base_items_labels_non_producible_target_as_required_input
         // No recipes at all; item7 is the target item; missing 3x item7 (have 1, need 4).
         final List<LpPatternRecipe> recipes = List.of();
@@ -165,6 +170,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsBreaksCycleBranchWhenTargetNotInCycle() {
+        // Tests that base items required to break out of a cycle are identified when the target is outside the cycle.
         // Rust: compute_required_base_items_breaks_cycle_branch_when_target_not_in_cycle
         // Cycle: item0↔item1; item1→item2 (no cycle).
         // Target item2 is outside the cycle; requires 1x item0 to seed.
@@ -183,6 +189,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsBreaksCycleBranchWhenTargetIsInCycle() {
+        // Tests that base items required to break into a cycle are identified when the target is inside the cycle.
         // Rust: compute_required_base_items_breaks_cycle_branch_when_target_is_in_cycle
         // Cycle: item0↔item1. Target is item0 itself (inside the cycle).
         // Requires 1x item1 to enter the cycle and produce item0.
@@ -200,6 +207,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReportsLoopEntryAndMissingInputForUnstartableCycle() {
+        // Tests that both loop entry items and missing base items are correctly identified with multiple targets and cycles.
         // Rust: compute_required_base_items_reports_loop_entry_and_missing_input_for_unstartable_cycle
         // Cycle: item0↔item1; unrelated item3→item2. Multi-target: item0 + item2.
         // Requires 1x item1 (loop entry) and 1x item3 (item2 base input).

@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LpPatternRecipeTest {
     @Test
     void fromPatternShouldRejectNullPattern() {
+        // Tests that fromPattern rejects null pattern arguments.
         assertThatThrownBy(() -> LpPatternRecipe.fromPattern(null, 0))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("pattern cannot be null");
@@ -28,6 +29,7 @@ class LpPatternRecipeTest {
 
     @Test
     void fromPatternShouldRejectFuzzyIngredient() {
+        // Tests that fromPattern rejects patterns with fuzzy ingredients (multiple possible inputs).
         final Pattern pattern = PatternBuilder.pattern()
             .ingredient(1)
             .input(A)
@@ -43,6 +45,7 @@ class LpPatternRecipeTest {
 
     @Test
     void fromPatternShouldIncludeByproductsInOutput() {
+        // Tests that byproducts from patterns are included in the output resource set.
         final Pattern pattern = PatternBuilder.pattern()
             .ingredient(A, 1)
             .output(B, 2)
@@ -60,6 +63,7 @@ class LpPatternRecipeTest {
 
     @Test
     void gettersShouldReturnDefensiveCopies() {
+        // Tests that input and output getters return defensive copies to prevent external mutation.
         final LpPatternRecipe sut = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 2).output(B, 4).build(),
             0
@@ -77,6 +81,7 @@ class LpPatternRecipeTest {
 
     @Test
     void shouldCalculateConsumesProducesAndCoefficient() {
+        // Tests that consumption, production, and coefficient methods correctly report recipe resource transformations.
         final LpPatternRecipe sut = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 3).output(B, 5).build(),
             0
@@ -93,6 +98,7 @@ class LpPatternRecipeTest {
 
     @Test
     void shouldCopyAndPreserveEffectivePriority() {
+        // Tests that copying a recipe preserves the effective priority setting independently.
         final LpPatternRecipe sut = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
             1
@@ -108,6 +114,7 @@ class LpPatternRecipeTest {
 
     @Test
     void descriptionShouldRenderEmptySets() {
+        // Tests that the description method correctly renders recipes with empty input or output sets.
         final Pattern pattern = new Pattern(
             UUID.randomUUID(),
             PatternLayout.internal(
@@ -124,6 +131,7 @@ class LpPatternRecipeTest {
 
     @Test
     void equalsAndHashCodeShouldUseUniqueId() {
+        // Tests that equality and hashing are based on unique recipe IDs, not the resource details.
         final UUID id = UUID.randomUUID();
         final Pattern one = new Pattern(
             id,
@@ -155,6 +163,7 @@ class LpPatternRecipeTest {
 
     @Test
     void descriptionShouldRenderBothSidesWhenNonEmpty() {
+        // Tests that the description method renders both input and output sides with correct amounts and byproducts.
         final LpPatternRecipe sut = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern()
                 .ingredient(A, 2)
