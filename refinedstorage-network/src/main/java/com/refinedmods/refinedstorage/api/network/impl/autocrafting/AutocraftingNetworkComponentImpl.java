@@ -33,6 +33,7 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -209,18 +210,32 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
     }
 
-    private boolean shouldUseOldSystem(final ResourceKey resource) {
-        if (patternRepository.getByOutput(resource).size() > 1) {
-            return true;
+    private boolean shouldUseOldSystem(final ResourceKey requestedResource) {
+        // return true if any recipe in the crafting tree is fuzzy 
+        // (has an ingredient with multiple possible inputs),
+        // as the old system can handle this but the LP system cannot
+        final Set<ResourceKey> visitedResources = new HashSet<>();
+        final ArrayDeque<ResourceKey> resourcesToVisit = new ArrayDeque<>();
+        resourcesToVisit.add(requestedResource);
+
+        while (!resourcesToVisit.isEmpty()) {
+            final ResourceKey currentResource = resourcesToVisit.removeFirst();
+            if (!visitedResources.add(currentResource)) {
+                continue;
+            }
+
+            for (final Pattern pattern : patternRepository.getByOutput(currentResource)) {
+                if (pattern.layout().ingredients().stream().anyMatch(ingredient -> ingredient.inputs().size() != 1)) {
+                    return true;
+                }
+
+                pattern.layout().ingredients().forEach(ingredient ->
+                    resourcesToVisit.addLast(ingredient.inputs().getFirst())
+                );
+            }
         }
 
-        // Logic to determine if the old system should be used
-        // For example, check if the resource corresponds to recipes with multiple single items per resource key
-        return patternRepository.getByOutput(resource).stream()
-            .anyMatch(pattern -> pattern.layout().ingredients().stream()
-                .filter(ingredient -> ingredient.inputs().stream()
-                    .anyMatch(input -> input.equals(resource)))
-                .count() > 1);
+        return false;
     }
 
     private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,

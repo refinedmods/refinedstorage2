@@ -42,6 +42,7 @@ dependencies {
     modApi(libs.modmenu)
     include(libs.cloth.config)
     include(libs.teamreborn.energy)
+    include("org.ojalgo:ojalgo:55.2.0")
 
     testCompileOnly(libs.apiguardian)
     testCompileOnly("org.ojalgo:ojalgo:55.2.0")
