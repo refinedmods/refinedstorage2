@@ -336,7 +336,17 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldUseLegacyPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
+    void shouldUseTraditionalPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+    }
+
+    @Test
     void shouldTreatRequestedAmountAsAdditionalAmountForSelfConsumingRecipe() {
         // Arrange
         rootStorage.addSource(new StorageImpl());
@@ -373,14 +383,26 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldUseLegacyPlanningAlgorithmWhenPatternHasFuzzyInputs() {
+    void shouldUseTraditionalPlanningAlgorithmWhenPatternHasFuzzyInputs() {
         // Arrange
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LEGACY);
+        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+    }
+
+    @Test
+    void shouldUseTraditionalPlanningAlgorithmWhenRelevantDependencyPatternHasFuzzyInputs() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(B, 1).output(C, 1).build());
+        provider.setPattern(2, pattern().ingredient(1).input(A).input(D).end().output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
     }
 
     @Test
@@ -395,8 +417,9 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldExecuteLegacyPlanningPathWhenResourceAppearsInMultipleIngredients() {
+    void shouldExecuteTraditionalPlanningPathWhenResourceAppearsInMultipleIngredients() {
         // Arrange
+        rootStorage.addSource(new StorageImpl());
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
@@ -407,12 +430,12 @@ class AutocraftingNetworkComponentImplTest {
             1,
             Actor.EMPTY,
             CancellationToken.NONE,
-            PlanningAlgorithm.LEGACY
+            PlanningAlgorithm.TRADITIONAL
         );
 
         // Assert
-        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
-        assertThat(provider.getTasks()).isEmpty();
+        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
+        assertThat(provider.getTasks()).hasSize(1);
     }
 
     @Test
@@ -896,7 +919,7 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     private PlanningAlgorithm determinePlanningAlgorithm(final ResourceKey resource) {
-        return invokeShouldUseOldSystem(resource) ? PlanningAlgorithm.LEGACY : PlanningAlgorithm.LP;
+        return invokeShouldUseOldSystem(resource) ? PlanningAlgorithm.TRADITIONAL : PlanningAlgorithm.LP;
     }
 
     private boolean invokeShouldUseOldSystem(final ResourceKey resource) {
@@ -913,7 +936,7 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     private enum PlanningAlgorithm {
-        LEGACY,
+        TRADITIONAL,
         LP
     }
 

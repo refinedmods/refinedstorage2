@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
--   Autocrafting now uses a linear programming-based planner in some cases, while retaining the legacy planner for scenarios that are not yet handled by the new path.
+-   Autocrafting now uses a linear programming-based planner in some cases, while retaining the traditional planner for scenarios that are not yet handled by the new path.
 
 ### Fixed
 
