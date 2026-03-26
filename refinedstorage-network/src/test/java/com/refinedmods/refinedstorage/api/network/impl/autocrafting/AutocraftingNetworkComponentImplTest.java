@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewNode;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
@@ -336,9 +337,46 @@ class AutocraftingNetworkComponentImplTest {
 
     @Test
     void shouldUseLegacyPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
+    void shouldTreatRequestedAmountAsAdditionalAmountForSelfConsumingRecipe() {
         // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(B, 3, Action.EXECUTE, Actor.EMPTY);
+        rootStorage.insert(A, 4, Action.EXECUTE, Actor.EMPTY);
+
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
+        final Pattern duplicationPattern = pattern().ingredient(B, 1).ingredient(A, 1).output(B, 2).build();
+        provider.setPattern(1, duplicationPattern);
+        sut.onContainerAdded(() -> provider);
+
+        // Act
+        final Optional<TaskId> taskId = startTaskExpectingAlgorithm(
+            B,
+            4,
+            Actor.EMPTY,
+            false,
+            CancellationToken.NONE,
+            PlanningAlgorithm.LP
+        );
+
+        // Assert
+        assertThat(taskId).isPresent();
+        assertThat(provider.getTasks()).hasSize(1);
+        assertThat(provider.getTasks().getFirst().getAmount()).isEqualTo(4);
+
+        final TaskImpl task = (TaskImpl) provider.getTasks().getFirst();
+        final var snapshot = task.createSnapshot();
+        assertThat(snapshot.patterns()).containsKey(duplicationPattern);
+        assertThat(snapshot.patterns().get(duplicationPattern).internalPattern()).isNotNull();
+        assertThat(snapshot.patterns().get(duplicationPattern).internalPattern().iterationsRemaining())
+            .isEqualTo(4);
+    }
+
+    @Test
+    void shouldUseLegacyPlanningAlgorithmWhenPatternHasFuzzyInputs() {
+        // Arrange
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
