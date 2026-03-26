@@ -67,6 +67,39 @@ class LpCraftingSolverInternalsTest {
         assertThat(craftable).isGreaterThanOrEqualTo(1L);
     }
 
+    @Test
+    void shouldEnqueueCycleBreakAttemptFromMostUsedRecipe() throws Exception {
+        final LpPatternRecipe recipeA = LpPatternRecipe.fromPattern(
+            PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
+            0
+        );
+        final LpPatternRecipe recipeB = LpPatternRecipe.fromPattern(
+            PatternBuilder.pattern().ingredient(B, 1).output(A, 1).build(),
+            0
+        );
+
+        final LpCraftingSolution solution = new LpCraftingSolution(
+            java.util.Map.of(recipeA.uniqueId(), 2L, recipeB.uniqueId(), 5L),
+            java.util.Map.of(),
+            java.util.List.of()
+        );
+
+        final Set<List<UUID>> visited = new LinkedHashSet<>();
+        visited.add(List.of());
+        final ArrayDeque<Set<UUID>> attempts = new ArrayDeque<>();
+
+        invokeEnqueueCycleBreakAttempts(
+            List.of(List.of(recipeA, recipeB)),
+            solution,
+            Set.of(),
+            visited,
+            attempts
+        );
+
+        assertThat(attempts).hasSize(1);
+        assertThat(attempts.peek()).containsExactly(recipeB.uniqueId());
+    }
+
     private static LpResourceSet set(final Object... entries) {
         final LpResourceSet set = new LpResourceSet();
         for (int i = 0; i < entries.length; i += 2) {
@@ -113,5 +146,22 @@ class LpCraftingSolverInternalsTest {
         );
         method.setAccessible(true);
         return (long) method.invoke(solver, recipes, startingResources, target);
+    }
+
+    private static void invokeEnqueueCycleBreakAttempts(final List<List<LpPatternRecipe>> cycles,
+                                                        final LpCraftingSolution solution,
+                                                        final Set<UUID> disabledRecipeIds,
+                                                        final Set<List<UUID>> visited,
+                                                        final ArrayDeque<Set<UUID>> attempts) throws Exception {
+        final Method method = LpCraftingSolver.class.getDeclaredMethod(
+            "enqueueCycleBreakAttempts",
+            List.class,
+            LpCraftingSolution.class,
+            Set.class,
+            Set.class,
+            ArrayDeque.class
+        );
+        method.setAccessible(true);
+        method.invoke(null, cycles, solution, disabledRecipeIds, visited, attempts);
     }
 }

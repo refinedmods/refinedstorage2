@@ -185,6 +185,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
         final RootStorage rootStorage = rootStorageProvider.get();
         final long correctedAmount = amount - currentlyCrafting;
+        final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
         // Determine which system to use
         if (shouldUseOldSystem(resource)) {
@@ -254,7 +255,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final LpCraftingSolver.PlanningOutcome outcome = new LpCraftingSolver().solve(
             recipes,
             buildLpStartingResources(rootStorage),
-            buildTarget(resource, amount)
+            buildTarget(rootStorage, resource, amount)
         );
         return toTaskPlan(resource, amount, outcome);
     }
@@ -325,9 +326,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         return LpResourceSet.fromResourceAmounts(rootStorage.getAll());
     }
 
-    private static LpResourceSet buildTarget(final ResourceKey resource, final long amount) {
+    private static LpResourceSet buildTarget(final RootStorage rootStorage,
+                                             final ResourceKey resource,
+                                             final long amount) {
         final LpResourceSet target = new LpResourceSet();
-        target.setAmount(resource, amount);
+        target.setAmount(resource, rootStorage.get(resource) + amount);
         return target;
     }
 

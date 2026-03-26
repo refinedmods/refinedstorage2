@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -93,7 +92,8 @@ class LpExecutionPlannerInternalsTest {
 
         final LpResourceSet poorInventory = new LpResourceSet();
         poorInventory.setAmount(A, 1L);
-        final Object nullByAffordability = invokeToCandidate(normalRecipe, Map.of(normalRecipe.uniqueId(), 1L), poorInventory);
+        final Object nullByAffordability =
+            invokeToCandidate(normalRecipe, Map.of(normalRecipe.uniqueId(), 1L), poorInventory);
         assertThat(nullByAffordability).isNull();
     }
 
@@ -128,7 +128,10 @@ class LpExecutionPlannerInternalsTest {
                                           final long inAmount,
                                           final long outAmount,
                                           final int priority) {
-        return LpPatternRecipe.fromPattern(PatternBuilder.pattern().ingredient(in, inAmount).output(out, outAmount).build(), priority);
+        return LpPatternRecipe.fromPattern(
+            PatternBuilder.pattern().ingredient(in, inAmount).output(out, outAmount).build(),
+            priority
+        );
     }
 
     private static LpPatternRecipe customRecipeWithInput(final Map<ResourceKey, Long> input,
@@ -148,16 +151,21 @@ class LpExecutionPlannerInternalsTest {
         return set;
     }
 
-    private static Object candidate(final LpPatternRecipe recipe, final long remaining, final long maxBatch) throws Exception {
-        final Class<?> candidateClass = Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
-        final Constructor<?> constructor = candidateClass.getDeclaredConstructor(LpPatternRecipe.class, long.class, long.class);
+    private static Object candidate(final LpPatternRecipe recipe,
+                                    final long remaining,
+                                    final long maxBatch) throws Exception {
+        final Class<?> candidateClass =
+            Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
+        final Constructor<?> constructor =
+            candidateClass.getDeclaredConstructor(LpPatternRecipe.class, long.class, long.class);
         constructor.setAccessible(true);
         return constructor.newInstance(recipe, remaining, maxBatch);
     }
 
     @SuppressWarnings("unchecked")
     private static List<Long> invokeBuildBatchAttempts(final Object candidate) throws Exception {
-        final Class<?> candidateClass = Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
+        final Class<?> candidateClass =
+            Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
         final Method method = LpExecutionPlanner.class.getDeclaredMethod("buildBatchAttempts", candidateClass);
         method.setAccessible(true);
         return (List<Long>) method.invoke(null, candidate);
@@ -263,7 +271,8 @@ class LpExecutionPlannerInternalsTest {
                                                    final List<LpExecutionPlanStep> plan,
                                                    final Object candidate,
                                                    final long batch) throws Exception {
-        final Class<?> candidateClass = Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
+        final Class<?> candidateClass =
+            Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanner$Candidate");
         final Method method = LpExecutionPlanner.class.getDeclaredMethod(
             "tryCandidateBatch",
             List.class,
@@ -276,6 +285,16 @@ class LpExecutionPlannerInternalsTest {
             long.class
         );
         method.setAccessible(true);
-        return (boolean) method.invoke(null, recipes, inLoopById, remainingCounts, inventory, totalRemaining, plan, candidate, batch);
+        return (boolean) method.invoke(
+            null,
+            recipes,
+            inLoopById,
+            remainingCounts,
+            inventory,
+            totalRemaining,
+            plan,
+            candidate,
+            batch
+        );
     }
 }

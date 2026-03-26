@@ -21,7 +21,14 @@ class LpCraftingSolverFlowSearchModelTest {
     @Test
     void objectiveCoefficientShouldHandleRecipeAndResourceObjectives() throws Exception {
         final LpPatternRecipe recipe = recipe(A, B, 1, 2, 0);
-        final Object model = flowSearchModel(List.of(recipe), Set.of(A, B), set(A, 3), set(B, 1), Set.of(A, B), Set.of());
+        final Object model = flowSearchModel(
+            List.of(recipe),
+            Set.of(A, B),
+            set(A, 3),
+            set(B, 1),
+            Set.of(A, B),
+            Set.of()
+        );
 
         final long byResource = invokeObjectiveCoefficient(model, recipe, B, null);
         final long byRecipeMatch = invokeObjectiveCoefficient(model, recipe, C, recipe.uniqueId());
@@ -77,8 +84,10 @@ class LpCraftingSolverFlowSearchModelTest {
 
         assertThat(maxResult).isNotNull();
         assertThat(lexResult).isNotNull();
-        assertThat(finalInventoryValues(maxResult).getOrDefault(B, 0L)).isGreaterThanOrEqualTo(1L);
-        assertThat(finalInventoryValues(lexResult).getOrDefault(B, 0L)).isGreaterThanOrEqualTo(1L);
+        assertThat(finalInventoryValues(maxResult).getOrDefault(B, 0L))
+            .isGreaterThanOrEqualTo(1L);
+        assertThat(finalInventoryValues(lexResult).getOrDefault(B, 0L))
+            .isGreaterThanOrEqualTo(1L);
     }
 
     private static LpPatternRecipe recipe(final ResourceKey in,
@@ -86,7 +95,10 @@ class LpCraftingSolverFlowSearchModelTest {
                                           final long inAmount,
                                           final long outAmount,
                                           final int priority) {
-        return LpPatternRecipe.fromPattern(PatternBuilder.pattern().ingredient(in, inAmount).output(out, outAmount).build(), priority);
+        return LpPatternRecipe.fromPattern(
+            PatternBuilder.pattern().ingredient(in, inAmount).output(out, outAmount).build(),
+            priority
+        );
     }
 
     private static LpResourceSet set(final Object... entries) {
@@ -103,7 +115,8 @@ class LpCraftingSolverFlowSearchModelTest {
                                           final LpResourceSet target,
                                           final Set<ResourceKey> constrained,
                                           final Set<UUID> disabled) throws Exception {
-        final Class<?> flowClass = Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpCraftingSolver$FlowSearchModel");
+        final Class<?> flowClass =
+            Class.forName("com.refinedmods.refinedstorage.api.autocrafting.lp.LpCraftingSolver$FlowSearchModel");
         final Constructor<?> constructor = flowClass.getDeclaredConstructor(
             List.class,
             Set.class,
@@ -114,7 +127,15 @@ class LpCraftingSolverFlowSearchModelTest {
             LpSolverOptions.class
         );
         constructor.setAccessible(true);
-        return constructor.newInstance(recipes, relevant, starting, target, constrained, disabled, new LpSolverOptions(100, 1000, 50));
+        return constructor.newInstance(
+            recipes,
+            relevant,
+            starting,
+            target,
+            constrained,
+            disabled,
+            new LpSolverOptions(100, 1000, 50)
+        );
     }
 
     private static long invokeObjectiveCoefficient(final Object model,

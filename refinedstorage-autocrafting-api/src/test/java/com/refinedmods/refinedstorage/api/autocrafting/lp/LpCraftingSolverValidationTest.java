@@ -47,9 +47,11 @@ class LpCraftingSolverValidationTest {
     void executablePlanResultRecordShouldValidateAndCopy() {
         final LpPatternRecipe recipe = recipe();
         final LpCraftingSolution solution = new LpCraftingSolution(Map.of(), Map.of(), List.of(A));
-        final List<LpExecutionPlanStep> mutablePlan = new java.util.ArrayList<>(List.of(new LpExecutionPlanStep(recipe, 1)));
+        final List<LpExecutionPlanStep> mutablePlan =
+            new java.util.ArrayList<>(List.of(new LpExecutionPlanStep(recipe, 1)));
 
-        final LpCraftingSolver.ExecutablePlanResult result = new LpCraftingSolver.ExecutablePlanResult(solution, mutablePlan);
+        final LpCraftingSolver.ExecutablePlanResult result =
+            new LpCraftingSolver.ExecutablePlanResult(solution, mutablePlan);
         mutablePlan.clear();
 
         assertThat(result.plan()).hasSize(1);

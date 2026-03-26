@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder.pattern;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.A;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.B;
+import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.C;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -18,13 +19,19 @@ class LpExecutionPlannerTest {
         final Map<java.util.UUID, Long> values = Map.of(recipes.getFirst().uniqueId(), 1L);
         final LpResourceSet resources = new LpResourceSet();
 
-        assertThatThrownBy(() -> LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(null, values, resources))
+        assertThatThrownBy(() ->
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(null, values, resources)
+        )
             .isInstanceOf(NullPointerException.class)
             .hasMessage("recipes cannot be null");
-        assertThatThrownBy(() -> LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(recipes, null, resources))
+        assertThatThrownBy(() ->
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(recipes, null, resources)
+        )
             .isInstanceOf(NullPointerException.class)
             .hasMessage("recipeValues cannot be null");
-        assertThatThrownBy(() -> LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(recipes, values, null))
+        assertThatThrownBy(() ->
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(recipes, values, null)
+        )
             .isInstanceOf(NullPointerException.class)
             .hasMessage("startingResources cannot be null");
     }
@@ -46,7 +53,8 @@ class LpExecutionPlannerTest {
     void shouldReturnEmptyPlanWhenNoRecipeUsageIsRequested() {
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
 
-        final java.util.Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
             List.of(recipe),
             Map.of(),
             new LpResourceSet()
@@ -62,7 +70,8 @@ class LpExecutionPlannerTest {
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 3);
 
-        final java.util.Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
             List.of(recipe),
             Map.of(recipe.uniqueId(), 3L),
             starting
@@ -80,7 +89,8 @@ class LpExecutionPlannerTest {
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 1);
 
-        final java.util.Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
             List.of(recipe),
             Map.of(recipe.uniqueId(), 1L),
             starting
@@ -97,7 +107,8 @@ class LpExecutionPlannerTest {
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 1);
 
-        final java.util.Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
             List.of(neutral, impossible),
             Map.of(neutral.uniqueId(), 2L, impossible.uniqueId(), 1L),
             starting
@@ -110,13 +121,14 @@ class LpExecutionPlannerTest {
     void shouldHandleLoopAndNonLoopCandidateSorting() {
         final LpPatternRecipe loopAtoB = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe loopBtoA = recipe(B, A, 1, 1, 0);
-        final LpPatternRecipe nonLoopAtoC = recipe(A, com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.C, 1, 1, 0);
+        final LpPatternRecipe nonLoopAtoC = recipe(A, C, 1, 1, 0);
 
         final LpResourceSet starting = new LpResourceSet();
         starting.setAmount(A, 2);
         starting.setAmount(B, 1);
 
-        final java.util.Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
             List.of(loopAtoB, loopBtoA, nonLoopAtoC),
             Map.of(loopAtoB.uniqueId(), 1L, loopBtoA.uniqueId(), 1L, nonLoopAtoC.uniqueId(), 1L),
             starting

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.A;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.B;
-import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.C;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LpRecipeAnalysisInternalsTest {
@@ -43,7 +42,8 @@ class LpRecipeAnalysisInternalsTest {
 
         assertThat(invokeIsBetterRecipePriority(recipe, candidate, best)).isTrue();
         best.put(recipe.uniqueId(), candidate);
-        assertThat(invokeIsBetterRecipePriority(recipe, candidate, best)).isFalse();
+        assertThat(invokeIsBetterRecipePriority(recipe, candidate, best))
+            .isFalse();
 
         final Map<ResourceKey, LpRecipePriorityKey> bestResources = new LinkedHashMap<>();
         final ArrayDeque<ResourceKey> stack = new ArrayDeque<>();
@@ -73,7 +73,8 @@ class LpRecipeAnalysisInternalsTest {
 
     private static boolean invokeIsBetterRecipePriority(final LpPatternRecipe recipe,
                                                         final LpRecipePriorityKey candidate,
-                                                        final Map<java.util.UUID, LpRecipePriorityKey> best) throws Exception {
+                                                        final Map<java.util.UUID, LpRecipePriorityKey> best)
+        throws Exception {
         final Method method = LpRecipeAnalysis.class.getDeclaredMethod(
             "isBetterRecipePriority",
             LpPatternRecipe.class,
