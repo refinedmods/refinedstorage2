@@ -42,56 +42,32 @@ public final class LpCraftingSolver {
     }
 
     private static void trace(final String point, final String details) {
-        System.out.println(TRACE_PREFIX + point + " | " + details);
+        // intentionally no-op (diagnostic tracing disabled by default)
     }
 
     private static String summarizeRecipes(final Collection<LpPatternRecipe> recipes) {
-        return "count=" + recipes.size() + ", sample="
-            + recipes.stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(recipe -> recipe.uniqueId() + " {" + recipe.description() + "}")
-                .toList();
+        return "count=" + recipes.size();
     }
 
     private static String summarizeResourceSet(final LpResourceSet resourceSet) {
         return "resources=" + resourceSet.resourceKeys().size()
-            + ", totalAmount=" + resourceSet.totalAmount()
-            + ", sample=" + resourceSet.asMap().entrySet().stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .toList();
+            + ", totalAmount=" + resourceSet.totalAmount();
     }
 
     private static String summarizeResourceKeys(final Collection<ResourceKey> resourceKeys) {
-        return "count=" + resourceKeys.size() + ", sample="
-            + resourceKeys.stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(String::valueOf)
-                .toList();
+        return "count=" + resourceKeys.size();
     }
 
     private static String summarizeRecipeValues(final Map<UUID, Long> recipeValues) {
-        return "count=" + recipeValues.size() + ", sample="
-            + recipeValues.entrySet().stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .toList();
+        return "count=" + recipeValues.size();
     }
 
     private static String summarizeResourceValues(final Map<ResourceKey, Long> resourceValues) {
-        return "count=" + resourceValues.size() + ", sample="
-            + resourceValues.entrySet().stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .toList();
+        return "count=" + resourceValues.size();
     }
 
     private static String summarizeIds(final Collection<UUID> ids) {
-        return "count=" + ids.size() + ", sample="
-            + ids.stream()
-                .limit(TRACE_SAMPLE_LIMIT)
-                .map(String::valueOf)
-                .toList();
+        return "count=" + ids.size();
     }
 
     public PlanningOutcome solve(final List<LpPatternRecipe> recipes,
@@ -260,23 +236,6 @@ public final class LpCraftingSolver {
                 + summarizeResourceKeys(relevantResources) + "}, deficitResources{"
                 + summarizeResourceKeys(deficitResources) + "}"
         );
-
-        if (deficitResources.isEmpty()) {
-            final Set<UUID> loopClosingRecipeIds =
-                LpRecipeAnalysis.collectLoopClosingRecipeIdsOnTargetBranches(selectedRecipes, target);
-            if (!loopClosingRecipeIds.isEmpty()) {
-                trace(
-                    "computeRequiredBaseItems.loopClosingRecipes",
-                    "loopClosingRecipeIds{" + summarizeIds(loopClosingRecipeIds)
-                        + "}, recursing with reduced recipe set"
-                );
-                final List<LpPatternRecipe> reducedRecipes = selectedRecipes.stream()
-                    .filter(recipe -> !loopClosingRecipeIds.contains(recipe.uniqueId()))
-                    .map(LpPatternRecipe::copy)
-                    .toList();
-                return computeRequiredBaseItems(reducedRecipes, startingResources, target);
-            }
-        }
 
         if (selectedRecipes.isEmpty()) {
             final LpResourceSet required = new LpResourceSet();
@@ -667,14 +626,7 @@ public final class LpCraftingSolver {
             final Map<UUID, Long> lockedRecipeValues = new LinkedHashMap<>();
             for (final LpPatternRecipe recipe : reversePriorityRecipes) {
                 final FlowSearchResult result = solveWithObjective(null, recipe.uniqueId(), false, lockedRecipeValues);
-                if (result == null) {
-                    trace(
-                        "flowSearchModel.lexicographicMinimum.lockSolveFailed",
-                        "objectiveRecipeId=" + recipe.uniqueId() + ", lockedRecipeValues{"
-                            + summarizeRecipeValues(lockedRecipeValues) + "}"
-                    );
-                    return null;
-                }
+                Objects.requireNonNull(result, "Expected lexicographic lock step to remain feasible");
                 lockedRecipeValues.put(recipe.uniqueId(), result.recipeValues().getOrDefault(recipe.uniqueId(), 0L));
                 trace(
                     "flowSearchModel.lexicographicMinimum.recipeLocked",
