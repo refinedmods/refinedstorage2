@@ -88,7 +88,7 @@ class LpCraftingSolverInternalsTest {
 
         final LpCraftingSolution solution = new LpCraftingSolution(
             java.util.Map.of(recipeA.uniqueId(), 2L, recipeB.uniqueId(), 5L),
-            java.util.Map.of(),
+            LpResourceSet.empty(),
             java.util.List.of()
         );
 

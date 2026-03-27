@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -108,7 +109,9 @@ public class LpPatternRecipe {
 
     private static String describe(final LpResourceSet resources) {
         final StringJoiner joiner = new StringJoiner(" + ");
-        resources.asMap().forEach((resource, amount) -> joiner.add(resource + " x" + amount));
+        for (final Map.Entry<ResourceKey, Long> entry : resources) {
+            joiner.add(entry.getKey() + " x" + entry.getValue());
+        }
         return joiner.length() == 0 ? "<empty>" : joiner.toString();
     }
 

@@ -87,9 +87,9 @@ class LpCraftingSolverFlowSearchModelTest {
 
         assertThat(maxResult).isNotNull();
         assertThat(lexResult).isNotNull();
-        assertThat(finalInventoryValues(maxResult).getOrDefault(B, 0L))
+        assertThat(finalInventoryValues(maxResult).getAmount(B))
             .isGreaterThanOrEqualTo(1L);
-        assertThat(finalInventoryValues(lexResult).getOrDefault(B, 0L))
+        assertThat(finalInventoryValues(lexResult).getAmount(B))
             .isGreaterThanOrEqualTo(1L);
     }
 
@@ -214,10 +214,9 @@ class LpCraftingSolverFlowSearchModelTest {
         return (Map<UUID, Long>) method.invoke(flowResult);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map<ResourceKey, Long> finalInventoryValues(final Object flowResult) throws Exception {
+    private static LpResourceSet finalInventoryValues(final Object flowResult) throws Exception {
         final Method method = flowResult.getClass().getDeclaredMethod("finalInventoryValues");
         method.setAccessible(true);
-        return (Map<ResourceKey, Long>) method.invoke(flowResult);
+        return (LpResourceSet) method.invoke(flowResult);
     }
 }

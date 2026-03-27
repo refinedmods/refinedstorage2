@@ -12,14 +12,14 @@ import java.util.UUID;
  * Solved recipe usages and end-state inventory for the standalone LP prototype.
  */
 public record LpCraftingSolution(Map<UUID, Long> recipeValues,
-                                 Map<ResourceKey, Long> finalInventoryValues,
+                                 LpResourceSet finalInventoryValues,
                                  List<ResourceKey> relevantResourceKeys) {
     public LpCraftingSolution {
         Objects.requireNonNull(recipeValues, "recipeValues cannot be null");
         Objects.requireNonNull(finalInventoryValues, "finalInventoryValues cannot be null");
         Objects.requireNonNull(relevantResourceKeys, "relevantResourceKeys cannot be null");
         recipeValues = Map.copyOf(new LinkedHashMap<>(recipeValues));
-        finalInventoryValues = Map.copyOf(new LinkedHashMap<>(finalInventoryValues));
+        finalInventoryValues = finalInventoryValues.copy();
         relevantResourceKeys = List.copyOf(relevantResourceKeys);
     }
 
@@ -28,6 +28,6 @@ public record LpCraftingSolution(Map<UUID, Long> recipeValues,
     }
 
     public long finalInventoryCount(final ResourceKey resource) {
-        return finalInventoryValues.getOrDefault(resource, 0L);
+        return finalInventoryValues.getAmount(resource);
     }
 }

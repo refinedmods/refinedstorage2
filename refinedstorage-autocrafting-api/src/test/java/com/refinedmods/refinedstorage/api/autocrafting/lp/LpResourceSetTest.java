@@ -68,6 +68,91 @@ class LpResourceSetTest {
     }
 
     @Test
+    void addThenSubtractToZeroShouldResultInEmptySet() {
+        // Tests that adding and subtracting the same amount fully removes the resource from the set.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.addAmount(A, 3);
+        sut.subtractAmount(A, 3);
+
+        
+        assertThat(sut.totalAmount()).isZero();
+        assertThat(sut.getAmount(A)).isZero();
+        assertThat(sut.resourceKeys()).isEmpty();
+        assertThat(sut.isEmpty()).isTrue();
+    }
+
+    @Test
+    void addThenAddNegativeToZeroShouldResultInEmptySet() {
+        // Tests that adding a matching negative amount fully removes the resource from the set.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.addAmount(A, 3);
+        sut.addAmount(A, -3);
+
+        assertThat(sut.totalAmount()).isZero();
+        assertThat(sut.getAmount(A)).isZero();
+        assertThat(sut.resourceKeys()).isEmpty();
+        assertThat(sut.isEmpty()).isTrue();
+    }
+
+    @Test
+    void shouldAllowAddToMakeAmountNegative() {
+        // Tests that addAmount can lower a resource below zero.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.addAmount(A, 2);
+        sut.addAmount(A, -3);
+
+        assertThat(sut.getAmount(A)).isEqualTo(-1);
+        assertThat(sut.totalAmount()).isEqualTo(-1);
+        assertThat(sut.isEmpty()).isFalse();
+    }
+
+    @Test
+    void shouldAllowSubtractToMakeAmountNegative() {
+        // Tests that subtractAmount can lower a resource below zero.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.addAmount(A, 2);
+        sut.subtractAmount(A, 3);
+
+        assertThat(sut.getAmount(A)).isEqualTo(-1);
+        assertThat(sut.totalAmount()).isEqualTo(-1);
+        assertThat(sut.isEmpty()).isFalse();
+    }
+
+    @Test
+    void shouldAllowSetAmountToNegativeValue() {
+        // Tests that setAmount allows directly setting a negative amount.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.setAmount(A, -3);
+
+        assertThat(sut.getAmount(A)).isEqualTo(-3);
+        assertThat(sut.totalAmount()).isEqualTo(-3);
+        assertThat(sut.resourceKeys()).containsExactly(A);
+        assertThat(sut.isEmpty()).isFalse();
+    }
+
+    @Test
+    void setAmountZeroShouldKeepOrMakeSetEmpty() {
+        // Tests that setAmount with zero removes entries and leaves the set empty when all values are zero.
+        final LpResourceSet sut = new LpResourceSet();
+
+        sut.setAmount(A, 0);
+        assertThat(sut.isEmpty()).isTrue();
+
+        sut.setAmount(A, 3);
+        sut.setAmount(A, 0);
+
+        assertThat(sut.getAmount(A)).isZero();
+        assertThat(sut.totalAmount()).isZero();
+        assertThat(sut.resourceKeys()).isEmpty();
+        assertThat(sut.isEmpty()).isTrue();
+    }
+
+    @Test
     void addAllShouldMergeAndValidateInput() {
         // Tests that addAll merges multiple resource sets and validates null inputs.
         final LpResourceSet sut = new LpResourceSet();

@@ -181,7 +181,7 @@ public final class LpExecutionPlanner {
 
     private static long computeMaxAffordableBatch(final LpPatternRecipe recipe, final LpResourceSet inventory) {
         long maxBatch = Long.MAX_VALUE;
-        for (final Map.Entry<ResourceKey, Long> entry : recipe.input().asMap().entrySet()) {
+        for (final Map.Entry<ResourceKey, Long> entry : recipe.input()) {
             final long inputCount = entry.getValue();
             if (inputCount <= 0) {
                 continue;
@@ -195,19 +195,23 @@ public final class LpExecutionPlanner {
     private static void applyRecipeBatch(final LpPatternRecipe recipe,
                                          final long batch,
                                          final LpResourceSet inventory) {
-        recipe.input().asMap().forEach((resource, inputCount) ->
-            inventory.subtractAmount(resource, inputCount * batch));
-        recipe.output().asMap().forEach((resource, outputCount) ->
-            inventory.addAmount(resource, outputCount * batch));
+        for (final Map.Entry<ResourceKey, Long> entry : recipe.input()) {
+            inventory.subtractAmount(entry.getKey(), entry.getValue() * batch);
+        }
+        for (final Map.Entry<ResourceKey, Long> entry : recipe.output()) {
+            inventory.addAmount(entry.getKey(), entry.getValue() * batch);
+        }
     }
 
     private static void rollbackRecipeBatch(final LpPatternRecipe recipe,
                                             final long batch,
                                             final LpResourceSet inventory) {
-        recipe.output().asMap().forEach((resource, outputCount) ->
-            inventory.subtractAmount(resource, outputCount * batch));
-        recipe.input().asMap().forEach((resource, inputCount) ->
-            inventory.addAmount(resource, inputCount * batch));
+        for (final Map.Entry<ResourceKey, Long> entry : recipe.output()) {
+            inventory.subtractAmount(entry.getKey(), entry.getValue() * batch);
+        }
+        for (final Map.Entry<ResourceKey, Long> entry : recipe.input()) {
+            inventory.addAmount(entry.getKey(), entry.getValue() * batch);
+        }
     }
 
     private static void appendOrMergePlanStep(final List<LpExecutionPlanStep> plan,

@@ -49,7 +49,7 @@ class LpCraftingSolverValidationTest {
     void executablePlanResultRecordShouldValidateAndCopy() {
         // Tests that ExecutablePlanResult validates inputs and creates defensive copies of mutable collections.
         final LpPatternRecipe recipe = recipe();
-        final LpCraftingSolution solution = new LpCraftingSolution(Map.of(), Map.of(), List.of(A));
+        final LpCraftingSolution solution = new LpCraftingSolution(Map.of(), LpResourceSet.empty(), List.of(A));
         final List<LpExecutionPlanStep> mutablePlan =
             new java.util.ArrayList<>(List.of(new LpExecutionPlanStep(recipe, 1)));
 

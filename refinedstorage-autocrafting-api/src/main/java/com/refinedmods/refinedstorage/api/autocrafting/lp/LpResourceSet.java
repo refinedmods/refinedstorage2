@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Mutable resource-count map used by the standalone LP crafting prototype.
  */
-public class LpResourceSet {
+public class LpResourceSet implements Iterable<Map.Entry<ResourceKey, Long>> {
     private final Map<ResourceKey, Long> amounts;
 
     public LpResourceSet() {
@@ -66,6 +66,7 @@ public class LpResourceSet {
     }
 
     public boolean isEmpty() {
+        amounts.entrySet().removeIf(entry -> entry.getValue() == 0L);
         return amounts.isEmpty();
     }
 
@@ -93,6 +94,11 @@ public class LpResourceSet {
 
     public void subtractAmount(final ResourceKey resource, final long amount) {
         addAmount(resource, -amount);
+    }
+
+    @Override
+    public java.util.Iterator<Map.Entry<ResourceKey, Long>> iterator() {
+        return amounts.entrySet().iterator();
     }
 
     public LpResourceSet copy() {

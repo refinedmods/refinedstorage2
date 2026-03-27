@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 final class LpRecipePriorityKey implements Comparable<LpRecipePriorityKey> {
+    // Used for sorting recipes by priority in the crafting solver
+    // Required in order to simulate the inherited priority you get from the traditional approach
+    // For example when recipe A > recipe B, and so it tries A's child C before B even if B>C
     private final List<Integer> values;
 
     LpRecipePriorityKey() {

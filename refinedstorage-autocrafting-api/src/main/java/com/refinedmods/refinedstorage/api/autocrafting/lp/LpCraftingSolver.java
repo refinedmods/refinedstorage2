@@ -62,10 +62,6 @@ public final class LpCraftingSolver {
         return "count=" + recipeValues.size();
     }
 
-    private static String summarizeResourceValues(final Map<ResourceKey, Long> resourceValues) {
-        return "count=" + resourceValues.size();
-    }
-
     private static String summarizeIds(final Collection<UUID> ids) {
         return "count=" + ids.size();
     }
@@ -189,14 +185,14 @@ public final class LpCraftingSolver {
 
         final long maxCraftableAmount = Math.max(
             0L,
-            result.finalInventoryValues().getOrDefault(targetResource, 0L)
+            result.finalInventoryValues().getAmount(targetResource)
                 - startingResources.getAmount(targetResource)
         );
         trace(
             "computeMaxCraftableTargetAmount.result",
             "objectiveResource=" + targetResource + ", recipeValues{"
                 + summarizeRecipeValues(result.recipeValues()) + "}, finalInventoryValues{"
-                + summarizeResourceValues(result.finalInventoryValues()) + "}, maxCraftableAmount="
+                + summarizeResourceSet(result.finalInventoryValues()) + "}, maxCraftableAmount="
                 + maxCraftableAmount
         );
         return maxCraftableAmount;
@@ -275,17 +271,17 @@ public final class LpCraftingSolver {
                 + (result == null
                 ? ""
                 : ", recipeValues{" + summarizeRecipeValues(result.recipeValues())
-                    + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}")
+                    + "}, finalInventoryValues{" + summarizeResourceSet(result.finalInventoryValues()) + "}")
         );
 
-        final Map<ResourceKey, Long> finalInventoryValues =
-            result == null ? startingResources.asMap() : result.finalInventoryValues();
         final LpResourceSet required = new LpResourceSet();
         for (final ResourceKey resource : deficitResources) {
-            final long finalInventory = finalInventoryValues.getOrDefault(
-                resource,
-                startingResources.getAmount(resource)
-            );
+            long finalInventory;
+            if (result == null) {
+                finalInventory = startingResources.getAmount(resource);
+            } else {
+                finalInventory = result.finalInventoryValues().getAmount(resource);
+            }
             final long needed = Math.max(0L, target.getAmount(resource) - finalInventory);
             if (needed > 0) {
                 required.addAmount(resource, needed);
@@ -346,7 +342,7 @@ public final class LpCraftingSolver {
                 "findExecutableSolutionViaCycleElimination.solution",
                 "recipeValues{" + summarizeRecipeValues(solution.get().recipeValues())
                     + "}, finalInventoryValues{"
-                    + summarizeResourceValues(solution.get().finalInventoryValues()) + "}"
+                    + summarizeResourceSet(solution.get().finalInventoryValues()) + "}"
             );
 
             final Optional<List<LpExecutionPlanStep>> plan = LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
@@ -514,7 +510,7 @@ public final class LpCraftingSolver {
             "solveWithDisabledRecipes.result",
             "sortedRelevantResources{" + summarizeResourceKeys(sortedRelevantResources)
                 + "}, recipeValues{" + summarizeRecipeValues(result.recipeValues())
-                + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}"
+                + "}, finalInventoryValues{" + summarizeResourceSet(result.finalInventoryValues()) + "}"
         );
         return Optional.of(new LpCraftingSolution(
             result.recipeValues(),
@@ -619,7 +615,7 @@ public final class LpCraftingSolver {
                 "flowSearchModel.lexicographicMinimum.feasible",
                 "recipeValues{" + summarizeRecipeValues(feasibilityResult.recipeValues())
                     + "}, finalInventoryValues{"
-                    + summarizeResourceValues(feasibilityResult.finalInventoryValues()) + "}"
+                    + summarizeResourceSet(feasibilityResult.finalInventoryValues()) + "}"
             );
 
             final Map<UUID, Long> lockedRecipeValues = new LinkedHashMap<>();
@@ -642,7 +638,7 @@ public final class LpCraftingSolver {
                     ? ""
                     : ", recipeValues{" + summarizeRecipeValues(finalResult.recipeValues())
                         + "}, finalInventoryValues{"
-                        + summarizeResourceValues(finalResult.finalInventoryValues()) + "}")
+                        + summarizeResourceSet(finalResult.finalInventoryValues()) + "}")
             );
             return finalResult;
         }
@@ -664,7 +660,7 @@ public final class LpCraftingSolver {
                     + (result == null
                     ? ""
                     : ", recipeValues{" + summarizeRecipeValues(result.recipeValues())
-                        + "}, finalInventoryValues{" + summarizeResourceValues(result.finalInventoryValues()) + "}")
+                        + "}, finalInventoryValues{" + summarizeResourceSet(result.finalInventoryValues()) + "}")
             );
             return result;
         }
@@ -704,15 +700,15 @@ public final class LpCraftingSolver {
                 "recipeValues{" + summarizeRecipeValues(recipeValues) + "}"
             );
 
-            final Map<ResourceKey, Long> finalInventoryValues = computeFinalInventoryValues(recipeValues);
+            final LpResourceSet finalInventoryValues = computeFinalInventoryValues(recipeValues);
             trace(
                 "flowSearchModel.solveWithObjective.finalInventoryComputed",
-                "finalInventoryValues{" + summarizeResourceValues(finalInventoryValues) + "}"
+                "finalInventoryValues{" + summarizeResourceSet(finalInventoryValues) + "}"
             );
 
             return new FlowSearchResult(
                 Map.copyOf(recipeValues),
-                Map.copyOf(finalInventoryValues)
+                finalInventoryValues.copy()
             );
         }
 
@@ -811,8 +807,8 @@ public final class LpCraftingSolver {
             return recipeValues;
         }
 
-        private Map<ResourceKey, Long> computeFinalInventoryValues(final Map<UUID, Long> recipeValues) {
-            final Map<ResourceKey, Long> finalInventoryValues = new LinkedHashMap<>();
+        private LpResourceSet computeFinalInventoryValues(final Map<UUID, Long> recipeValues) {
+            final LpResourceSet finalInventoryValues = LpResourceSet.empty();
             for (final ResourceKey resource : relevantResources) {
                 long amount = startingResources.getAmount(resource);
                 for (final LpPatternRecipe recipe : recipes) {
@@ -822,12 +818,12 @@ public final class LpCraftingSolver {
                     }
                     amount += recipe.coefficient(resource) * usage;
                 }
-                finalInventoryValues.put(resource, amount);
+                finalInventoryValues.setAmount(resource, amount);
             }
             return finalInventoryValues;
         }
     }
 
-    private record FlowSearchResult(Map<UUID, Long> recipeValues, Map<ResourceKey, Long> finalInventoryValues) {
+    private record FlowSearchResult(Map<UUID, Long> recipeValues, LpResourceSet finalInventoryValues) {
     }
 }
