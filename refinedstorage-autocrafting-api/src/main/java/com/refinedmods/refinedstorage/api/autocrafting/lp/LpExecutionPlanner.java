@@ -109,9 +109,11 @@ public final class LpExecutionPlanner {
                 .reversed()
                 .thenComparing(Candidate::maxBatch, Comparator.reverseOrder())
                 .thenComparing(Candidate::remaining, Comparator.reverseOrder())
-                .thenComparing(candidate -> candidate.recipe.effectivePriority() == null
-                    ? Integer.MAX_VALUE
-                    : candidate.recipe.effectivePriority())
+                .thenComparing(
+                    Comparator.comparingInt((Candidate candidate) -> candidate.recipe.effectivePriority() == null
+                        ? Integer.MIN_VALUE
+                        : candidate.recipe.effectivePriority()).reversed()
+                )
                 .thenComparing(candidate -> candidate.recipe.uniqueId()))
             .toList();
     }

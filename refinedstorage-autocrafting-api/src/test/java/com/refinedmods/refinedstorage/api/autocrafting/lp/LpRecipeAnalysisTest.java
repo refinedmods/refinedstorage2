@@ -46,7 +46,9 @@ class LpRecipeAnalysisTest {
         assertThat(result.recipes()).hasSize(2);
         assertThat(result.recipes().getFirst().basePriority()).isEqualTo(10);
         assertThat(result.recipes().get(1).basePriority()).isEqualTo(1);
-        assertThat(result.recipes().getFirst().effectivePriority()).isZero();
+        assertThat(result.recipes().getFirst().effectivePriority())
+            .isGreaterThan(result.recipes().get(1).effectivePriority());
+        assertThat(result.recipes().get(1).effectivePriority()).isZero();
         assertThat(result.relevantResourceKeys()).contains(A, B);
         assertThat(result.relevantResourceKeys()).doesNotContain(X, Y);
     }
@@ -69,8 +71,8 @@ class LpRecipeAnalysisTest {
         final LpPatternRecipe lowB = recipe(A, B, 2, 1, 0);
         final LpPatternRecipe topC = recipe(B, C, 1, 1, 0);
 
-        topB.setEffectivePriority(0);
-        lowB.setEffectivePriority(10);
+        lowB.setEffectivePriority(0);
+        topB.setEffectivePriority(10);
         topC.setEffectivePriority(1);
 
         final List<LpPatternRecipe> selected = LpRecipeAnalysis.selectTopPriorityRecipesPerOutputResource(

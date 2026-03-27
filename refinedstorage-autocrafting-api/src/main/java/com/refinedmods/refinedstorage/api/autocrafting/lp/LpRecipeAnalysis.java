@@ -76,7 +76,7 @@ final class LpRecipeAnalysis {
         final Set<ResourceKey> relevantResourceKeys = new LinkedHashSet<>(target.resourceKeys());
         for (int index = 0; index < prunedRecipes.size(); index++) {
             final LpPatternRecipe recipe = prunedRecipes.get(index).getKey();
-            recipe.setEffectivePriority(index);
+            recipe.setEffectivePriority(prunedRecipes.size() - 1 - index);
             prioritizedRecipes.add(recipe);
             relevantResourceKeys.addAll(recipe.input().resourceKeys());
             relevantResourceKeys.addAll(recipe.output().resourceKeys());
@@ -108,8 +108,9 @@ final class LpRecipeAnalysis {
             .map(LpPatternRecipe::copy)
             .sorted(Comparator
                 .comparing((LpPatternRecipe recipe) -> recipe.effectivePriority() == null
-                    ? Integer.MAX_VALUE
+                    ? Integer.MIN_VALUE
                     : recipe.effectivePriority())
+                .reversed()
                 .thenComparing(LpPatternRecipe::uniqueId))
             .toList();
 

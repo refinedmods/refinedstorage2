@@ -93,6 +93,30 @@ class LpCraftingSolverFlowSearchModelTest {
             .isGreaterThanOrEqualTo(1L);
     }
 
+    @Test
+    void lexicographicMinimumShouldMinimizeLowerEffectivePriorityRecipesFirst() throws Exception {
+        // Tests that lower effective-priority recipes are minimized first, so higher effective-priority recipes are used.
+        final LpPatternRecipe low = recipe(A, B, 1, 1, 0);
+        final LpPatternRecipe high = recipe(A, B, 1, 1, 0);
+        low.setEffectivePriority(0);
+        high.setEffectivePriority(10);
+
+        final Object model = flowSearchModel(
+            List.of(low, high),
+            Set.of(A, B),
+            set(A, 1),
+            set(B, 1),
+            Set.of(A, B),
+            Set.of()
+        );
+
+        final Object result = invokeLexicographicMinimum(model);
+
+        assertThat(result).isNotNull();
+        assertThat(recipeValues(result).getOrDefault(high.uniqueId(), 0L)).isEqualTo(1L);
+        assertThat(recipeValues(result).getOrDefault(low.uniqueId(), 0L)).isZero();
+    }
+
     private static LpPatternRecipe recipe(final ResourceKey in,
                                           final ResourceKey out,
                                           final long inAmount,

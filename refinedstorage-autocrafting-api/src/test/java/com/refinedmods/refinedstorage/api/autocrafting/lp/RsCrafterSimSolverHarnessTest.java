@@ -294,8 +294,6 @@ class RsCrafterSimSolverHarnessTest {
      * ({@code item0 x2→item1, item1 x2→item2, ..., item4 x1→item0 x33}).
      * Starting with 16x item0; target 33x item0.
      * Expected invocations: [8, 4, 2, 1, 1]; final item0 = 33.
-        *
-        * <p>This is feasible within the Java solver's default {@code recipeUpperBound = 128}.
      */
     @Test
     void stress_smallExponentialChain_fiveItem() {

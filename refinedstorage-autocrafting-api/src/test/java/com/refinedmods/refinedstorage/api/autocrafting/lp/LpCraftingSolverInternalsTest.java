@@ -16,6 +16,11 @@ import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.B
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LpCraftingSolverInternalsTest {
+    /**
+     * Tests internal helper methods for set operations and cycle break attempt tracking.
+     * Verifies that {@code invokeKeepLargerSet} returns the larger set regardless of argument order,
+     * and {@code invokeAddAttemptIfUnseen} only adds new, unseen states to prevent revisiting duplicates.
+     */
     @Test
     void shouldExercisePrivateSetAndAttemptHelpers() throws Exception {
         // Tests internal helper methods for set operations and tracking visited cycle break attempts.

@@ -584,9 +584,8 @@ public final class LpCraftingSolver {
             this.reversePriorityRecipes = recipes.stream()
                 .sorted(Comparator
                     .comparing((LpPatternRecipe recipe) -> recipe.effectivePriority() == null
-                        ? Integer.MAX_VALUE
+                        ? Integer.MIN_VALUE
                         : recipe.effectivePriority())
-                    .reversed()
                     .thenComparing(LpPatternRecipe::uniqueId))
                 .toList();
             this.relevantResources = Set.copyOf(relevantResources);

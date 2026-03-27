@@ -14,7 +14,7 @@ class LpCraftingSolverAlgorithmSelectionTest {
 
     @Test
     void shouldUseExecutablePlanPathWhenResourcesPermitLinearCraft() {
-        // Tests that the solver uses the executable plan algorithm when simple linear crafting is sufficient.
+        // Tests that the solver uses the executable plan algorithm when lp crafting is sufficient.
         final List<LpPatternRecipe> recipes = List.of(
             LpPatternRecipe.fromPattern(
                 pattern().ingredient(ResourceFixtures.A, 1).output(ResourceFixtures.B, 1).build(),
@@ -45,7 +45,7 @@ class LpCraftingSolverAlgorithmSelectionTest {
 
     @Test
     void shouldUseCycleFallbackPathWhenLpSolutionIsNotExecutableInOrder() {
-        // Tests that the solver uses cycle elimination fallback when the LP solution cannot be executed in linear order.
+        // Tests that the solver uses cycle elimination fallback when it encounters a "borrow from the future" solution
         final List<LpPatternRecipe> recipes = List.of(
             LpPatternRecipe.fromPattern(
                 pattern().ingredient(ResourceFixtures.A, 1).output(ResourceFixtures.B, 1).build(),
