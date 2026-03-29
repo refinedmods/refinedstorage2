@@ -336,14 +336,14 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldUseTraditionalPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
+    void shouldUseLpPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
         // Arrange
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LP);
     }
 
     @Test
@@ -417,7 +417,7 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldExecuteTraditionalPlanningPathWhenResourceAppearsInMultipleIngredients() {
+    void shouldExecuteLpPlanningPathWhenResourceAppearsInMultipleIngredients() {
         // Arrange
         rootStorage.addSource(new StorageImpl());
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
@@ -430,12 +430,12 @@ class AutocraftingNetworkComponentImplTest {
             1,
             Actor.EMPTY,
             CancellationToken.NONE,
-            PlanningAlgorithm.TRADITIONAL
+            PlanningAlgorithm.LP
         );
 
         // Assert
-        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.TASK_CREATED);
-        assertThat(provider.getTasks()).hasSize(1);
+        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
+        assertThat(provider.getTasks()).isEmpty();
     }
 
     @Test

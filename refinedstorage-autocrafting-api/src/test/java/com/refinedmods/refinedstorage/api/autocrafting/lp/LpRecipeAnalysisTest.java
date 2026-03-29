@@ -18,16 +18,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LpRecipeAnalysisTest {
     @Test
     void shouldCollectRelevantResourceKeys() {
-        // Tests that relevant resource keys are collected from recipes and target items, including base items.
+        // Tests that relevant resource keys are collected from recipe inputs and outputs.
         final List<LpPatternRecipe> recipes = List.of(
             recipe(A, B, 1, 1, 0),
             recipe(B, C, 1, 1, 0)
         );
-        final LpResourceSet target = set(B, 1);
 
-        final Set<ResourceKey> relevant = LpRecipeAnalysis.collectRelevantResourceKeys(recipes, target, Set.of(X));
+        final Set<ResourceKey> relevant = LpRecipeAnalysis.collectRelevantResourceKeys(recipes);
 
-        assertThat(relevant).containsExactlyInAnyOrder(A, B, C, X);
+        assertThat(relevant).containsExactlyInAnyOrder(A, B, C);
     }
 
     @Test
@@ -37,20 +36,21 @@ class LpRecipeAnalysisTest {
         final LpPatternRecipe highPriority = recipe(A, B, 1, 1, 10);
         final LpPatternRecipe unrelated = recipe(X, Y, 1, 1, 99);
 
-        final LpRecipeAnalysis.PrioritizedRecipeSet result =
-            LpRecipeAnalysis.prioritizeAndPruneRelevantRecipesAndItems(
+        final List<LpPatternRecipe> result =
+            LpRecipeAnalysis.prioritizeAndPruneRelevantRecipes(
                 List.of(lowPriority, highPriority, unrelated),
                 set(B, 1)
             );
+        final Set<ResourceKey> relevant = LpRecipeAnalysis.collectRelevantResourceKeys(result);
 
-        assertThat(result.recipes()).hasSize(2);
-        assertThat(result.recipes().getFirst().basePriority()).isEqualTo(10);
-        assertThat(result.recipes().get(1).basePriority()).isEqualTo(1);
-        assertThat(result.recipes().getFirst().effectivePriority())
-            .isGreaterThan(result.recipes().get(1).effectivePriority());
-        assertThat(result.recipes().get(1).effectivePriority()).isZero();
-        assertThat(result.relevantResourceKeys()).contains(A, B);
-        assertThat(result.relevantResourceKeys()).doesNotContain(X, Y);
+        assertThat(result).hasSize(2);
+        assertThat(result.getFirst().basePriority()).isEqualTo(10);
+        assertThat(result.get(1).basePriority()).isEqualTo(1);
+        assertThat(result.getFirst().effectivePriority())
+            .isGreaterThan(result.get(1).effectivePriority());
+        assertThat(result.get(1).effectivePriority()).isZero();
+        assertThat(relevant).contains(A, B);
+        assertThat(relevant).doesNotContain(X, Y);
     }
 
     @Test

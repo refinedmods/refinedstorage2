@@ -165,11 +165,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
         // Determine which system to use
-        if (shouldUseOldSystem(resource)) {
-            return calculatePlan(calculator, resource, amount, cancellationToken)
-                .map(plan -> addTask(resource, amount, actor, plan, notify));
+        if (shouldUseLPSystem(resource)) {
+            return calculateLpSteps(rootStorage, resource, amount, cancellationToken)
+                .flatMap(steps -> addLpDispatcherTask(resource, amount, actor, steps, notify));
         } else {
-            return calculateLpPlan(rootStorage, resource, amount, cancellationToken)
+            return calculatePlan(calculator, resource, amount, cancellationToken)
                 .map(plan -> addTask(resource, amount, actor, plan, notify));
         }
     }
@@ -189,16 +189,9 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
         // Determine which system to use
-        if (shouldUseOldSystem(resource)) {
-            final CraftingCalculatorImpl calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
-            return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
-                .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
-                .map(taskId -> EnsureResult.TASK_CREATED)
-                .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
-                    cancellationToken));
-        } else {
-            return calculateLpPlan(rootStorage, resource, correctedAmount, cancellationToken)
-                .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+        if (shouldUseLPSystem(resource)) {
+            return calculateLpSteps(rootStorage, resource, correctedAmount, cancellationToken)
+                .flatMap(steps -> addLpDispatcherTask(resource, correctedAmount, actor, steps, false))
                 .map(taskId -> EnsureResult.TASK_CREATED)
                 .orElseGet(() -> ensureTaskForCraftableAmountViaLp(
                     rootStorage,
@@ -207,13 +200,19 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                     actor,
                     cancellationToken
                 ));
+        } else {
+            return calculatePlan(calculator, resource, correctedAmount, cancellationToken)
+                .map(plan -> addTask(resource, correctedAmount, actor, plan, false))
+                .map(taskId -> EnsureResult.TASK_CREATED)
+                .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
+                    cancellationToken));
         }
     }
 
-    private boolean shouldUseOldSystem(final ResourceKey requestedResource) {
-        // return true if any recipe in the crafting tree is fuzzy 
+    private boolean shouldUseLPSystem(final ResourceKey requestedResource) {
+        // return true if any recipe in the crafting tree is fuzzy
         // (has an ingredient with multiple possible inputs),
-        // as the old system can handle this but the LP system cannot
+        // as the traditional system can handle this but the LP system cannot.
         final Set<ResourceKey> visitedResources = new HashSet<>();
         final ArrayDeque<ResourceKey> resourcesToVisit = new ArrayDeque<>();
         resourcesToVisit.add(requestedResource);
@@ -226,7 +225,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
             for (final Pattern pattern : patternRepository.getByOutput(currentResource)) {
                 if (pattern.layout().ingredients().stream().anyMatch(ingredient -> ingredient.inputs().size() != 1)) {
-                    return true;
+                    return false;
                 }
 
                 pattern.layout().ingredients().forEach(ingredient ->
@@ -235,7 +234,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             }
         }
 
-        return false;
+        return true;
     }
 
     private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,

@@ -161,7 +161,7 @@ class LpCraftingSolverFlowSearchModelTest {
             target,
             constrained,
             disabled,
-            new LpSolverOptions(100, 1000, 50)
+            new LpSolverOptions(100, 50)
         );
     }
 
