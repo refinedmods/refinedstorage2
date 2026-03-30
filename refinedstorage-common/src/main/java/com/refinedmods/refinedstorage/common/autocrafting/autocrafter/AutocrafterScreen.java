@@ -229,7 +229,8 @@ public class AutocrafterScreen extends AbstractBaseScreen<AutocrafterContainerMe
         }
         final Component chainingTitle = getChainingTitle(getMenu());
         final int chainingTitleX = getChainingTitleX(chainingTitle);
-        if (isHovering(chainingTitleX, titleLabelY, font.width(chainingTitle), font.lineHeight, x, y)) {
+        if (isHovering(chainingTitleX, titleLabelY, font.width(chainingTitle), font.lineHeight, x, y)
+            && nameField != null && !nameField.isFocused()) {
             final Component chainingTooltip = getChainingTooltip();
             Platform.INSTANCE.renderTooltip(
                 graphics,
