@@ -114,7 +114,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void basics_twoStepChainSuccess() {
-        // Tests that a simple two-step crafting chain executes successfully, converting input resources through intermediate items to reach the target.
+        // A simple two-step chain should execute successfully.
         // Inputs: 2x item0. Recipes: item0→item1, item1→item2. Target: 2x item2.
         // Each recipe runs twice; final inventory item0=0, item1=0, item2=2.
         final List<LpPatternRecipe> recipes = List.of(
@@ -147,7 +147,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void priorities_higherPriorityValueRouteIsSelected() {
-        // Tests that when multiple recipes produce the same output, only the highest priority recipe is used in the solution.
+        // When outputs overlap, the highest-priority route should be selected.
         // Two alternative item0→item2 recipes with priorities 0 and 10.
         // Only the higher-priority one (index 1) should run.
         final List<LpPatternRecipe> recipes = List.of(
@@ -252,7 +252,7 @@ class RsCrafterSimSolverHarnessTest {
 
     @Test
     void cycles_negativeCycleErrors() {
-        // Tests that a net-negative cycle (consumes more than it produces) fails even with sufficient starting material.
+        // A net-negative cycle should fail even with significant starting material.
         // Recipe: 2x item0 → 1x item0 (net −1 per run). Have 10x item0; need 11.
         // Running the recipe only decreases item0 → impossible to reach 11.
         final List<LpPatternRecipe> recipes = List.of(
@@ -272,7 +272,7 @@ class RsCrafterSimSolverHarnessTest {
      */
     @Test
     void stress_twentyItemExponentialChainWithTerminalCycleRecipe() {
-        // Tests solver performance on a complex exponential chain with a terminal cycle recipe for system stress testing.
+        // Stress-test with an exponential chain and terminal cycle recipe.
         final List<LpPatternRecipe> recipes = new ArrayList<>();
         for (int i = 0; i < 19; i++) {
             recipes.add(recipe(new int[][]{{i, 2}}, new int[][]{{i + 1, 1}}, 0));
@@ -297,7 +297,7 @@ class RsCrafterSimSolverHarnessTest {
      */
     @Test
     void stress_smallExponentialChain_fiveItem() {
-        // Tests a scaled-down exponential chain scenario to verify correct recipe invocation counts and final inventory values.
+        // Scaled-down exponential chain should keep expected invocations and inventory.
         final List<LpPatternRecipe> recipes = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             recipes.add(recipe(new int[][]{{i, 2}}, new int[][]{{i + 1, 1}}, 0));

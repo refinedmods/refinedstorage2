@@ -20,10 +20,7 @@ import org.ojalgo.optimisation.Optimisation;
 import org.ojalgo.optimisation.Variable;
 
 public final class LpCraftingSolver {
-    // Solves a crafting problem defined by a set of recipes, starting inventory, and target inventory, using an LP solver. 
-    // Returns a list of recipes and how many times to use them
-    // Might create time travel solutions, such as "oh you want to make a netherite template? Just borrow one from the future, double it, then send one to the past"
-    // These can only happen in recipes with cycles, which is what the execution planner prevents
+    // Solves crafting problems with linear programming and execution-plan validation.
 
     private final LpSolverOptions options;
 
@@ -38,10 +35,6 @@ public final class LpCraftingSolver {
     public PlanningOutcome solve(final List<LpPatternRecipe> recipes,
                                  final LpResourceSet startingResources,
                                  final LpResourceSet target) {
-        // Main entry point for solving a crafting problem. First computes the max craftable amount of the target, 
-        // then tries to find an executable plan via cycle elimination, and if that fails, 
-        // computes what crafting tree leaf resources are missing to make it craftable
-        // (It does this by eliminating cycles until the tree has leaves)
         final long maxCraftableAmount = computeMaxCraftableTargetAmount(
             recipes, startingResources, target
         );
@@ -86,8 +79,6 @@ public final class LpCraftingSolver {
         final LpResourceSet startingResources,
         final LpResourceSet target
     ) {
-        // Computes the maximum craftable amount of the target resource given the recipes and starting inventory, without regard to execution feasibility.
-        // May overestimate in some cases with cycles
         validateInputs(recipes, startingResources, target);
         if (target.isEmpty()) {
             return 0;
@@ -125,11 +116,6 @@ public final class LpCraftingSolver {
     public LpResourceSet computeRequiredBaseItems(final List<LpPatternRecipe> recipes,
                                                   final LpResourceSet startingResources,
                                                   final LpResourceSet target) {
-        // Computes what items are missing in order to craft the target
-        // Only looks at crafting tree leaf resources, which are either non-producible or part of cycles
-        // Guaranteed to always give a resource set that, when added, will make it craftable
-        // Might not give the smallest set in cases where a more resource-efficient recipe has a lower priority than a less efficient one that produces the same resource
-        // Might not always give the smallest set when cycles are involved
         validateInputs(recipes, startingResources, target);
 
         final List<LpPatternRecipe> prioritizedRecipes =
@@ -150,7 +136,10 @@ public final class LpCraftingSolver {
         if (selectedRecipes.isEmpty()) {
             final LpResourceSet required = new LpResourceSet();
             for (final ResourceKey resource : deficitResources) {
-                final long needed = Math.max(0L, target.getAmount(resource) - startingResources.getAmount(resource));
+                final long needed = Math.max(
+                    0L,
+                    target.getAmount(resource) - startingResources.getAmount(resource)
+                );
                 if (needed > 0) {
                     required.addAmount(resource, needed);
                 }
@@ -178,12 +167,9 @@ public final class LpCraftingSolver {
 
         final LpResourceSet required = new LpResourceSet();
         for (final ResourceKey resource : deficitResources) {
-            long finalInventory;
-            if (result == null) {
-                finalInventory = startingResources.getAmount(resource);
-            } else {
-                finalInventory = result.finalInventoryValues().getAmount(resource);
-            }
+            final long finalInventory = result == null
+                ? startingResources.getAmount(resource)
+                : result.finalInventoryValues().getAmount(resource);
             final long needed = Math.max(0L, target.getAmount(resource) - finalInventory);
             if (needed > 0) {
                 required.addAmount(resource, needed);
@@ -195,12 +181,6 @@ public final class LpCraftingSolver {
     public CycleEliminationResult findExecutableSolutionViaCycleElimination(final List<LpPatternRecipe> recipes,
                                                                             final LpResourceSet startingResources,
                                                                             final LpResourceSet target) {
-        // Uses LP solving to find a solution, then tries to build an execution plan for it.
-        // If the solution is unplannable, it starts disabling cycles in the recipe graph until 
-        // it finds a plannable solution which it returns
-        // or it runs out of cycles to eliminate where it then gets defecit resources
-        // or it exhausts its branching limit, where it returns the best solution it found during the search as a fallback, along with the recipes that would need to be disabled to achieve it
-        // which is then used to calculate missing resources
         validateInputs(recipes, startingResources, target);
 
         final ArrayDeque<Set<UUID>> attempts = new ArrayDeque<>();
@@ -387,10 +367,6 @@ public final class LpCraftingSolver {
     }
 
     private static final class FlowSearchModel {
-        // The actual class used for LP solving. 
-        // Constructed with all the relevant recipes, resources, and constraints for a given crafting problem, 
-        // and provides methods for solving it with different objectives 
-        // (lexicographic minimum for required base item calculation, or maximizing target resource for max craftable amount calculation).
         private final List<LpPatternRecipe> recipes;
         private final List<LpPatternRecipe> reversePriorityRecipes;
         private final Set<ResourceKey> relevantResources;
@@ -432,7 +408,10 @@ public final class LpCraftingSolver {
             final Map<UUID, Long> lockedRecipeValues = new LinkedHashMap<>();
             for (final LpPatternRecipe recipe : reversePriorityRecipes) {
                 final FlowSearchResult result = solveWithObjective(null, recipe.uniqueId(), false, lockedRecipeValues);
-                Objects.requireNonNull(result, "Expected lexicographic lock step to remain feasible");
+                Objects.requireNonNull(
+                    result,
+                    "Expected lexicographic lock step to remain feasible"
+                );
                 lockedRecipeValues.put(recipe.uniqueId(), result.recipeValues().getOrDefault(recipe.uniqueId(), 0L));
             }
             final FlowSearchResult finalResult = solveWithObjective(null, null, false, lockedRecipeValues);

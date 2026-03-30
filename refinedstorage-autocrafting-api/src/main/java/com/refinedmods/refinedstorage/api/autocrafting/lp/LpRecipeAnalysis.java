@@ -29,8 +29,10 @@ final class LpRecipeAnalysis {
         return relevantResourceKeys;
     }
 
-    static List<LpPatternRecipe> prioritizeAndPruneRelevantRecipes(final List<LpPatternRecipe> recipes,
-                                                                          final LpResourceSet target) {
+    static List<LpPatternRecipe> prioritizeAndPruneRelevantRecipes(
+        final List<LpPatternRecipe> recipes,
+        final LpResourceSet target
+    ) {
         // Gives "relevant" recipes (recipes in the target's crafting tree) a priority
         // Priority is inherited, so if recipe A > recipe B, A's children get priority over B
         // Returns the prioritized recipes, sorted by priority
@@ -72,7 +74,11 @@ final class LpRecipeAnalysis {
             }
 
             final LpRecipePriorityKey candidateRecipePriority = outputEntry.priority().appendRecipePriority(recipe);
-            if (!tryUpdateBestRecipePriority(recipe.uniqueId(), candidateRecipePriority, state.bestRecipePriorities())) {
+            if (!tryUpdateBestRecipePriority(
+                recipe.uniqueId(),
+                candidateRecipePriority,
+                state.bestRecipePriorities()
+            )) {
                 continue;
             }
             pushImprovedInputPriorities(recipe, candidateRecipePriority, state);
@@ -130,7 +136,10 @@ final class LpRecipeAnalysis {
                 entries.add(new RecipePriorityEntry(recipe.uniqueId(), priority));
             }
         }
-        entries.sort(Comparator.comparing(RecipePriorityEntry::priority).thenComparing(RecipePriorityEntry::recipeId));
+        entries.sort(
+            Comparator.comparing(RecipePriorityEntry::priority)
+                .thenComparing(RecipePriorityEntry::recipeId)
+        );
         return entries;
     }
 
@@ -164,23 +173,9 @@ final class LpRecipeAnalysis {
         return prioritizedRecipes;
     }
 
-    private record ResourcePriorityEntry(ResourceKey resource, LpRecipePriorityKey priority) {
-        // Reduced cyclotomic complexity does not improve function quality
-    }
-
-    private record TraversalState(Map<ResourceKey, LpRecipePriorityKey> bestResourcePriorities,
-                                  Map<UUID, LpRecipePriorityKey> bestRecipePriorities,
-                                  List<ResourcePriorityEntry> queue) {
-        // Reduced cyclotomic complexity does not improve function quality
-    }
-
-    private record RecipePriorityEntry(UUID recipeId, LpRecipePriorityKey priority) {
-        // Reduced cyclotomic complexity does not improve function quality
-    }
-
     static Set<ResourceKey> collectNonProducibleResources(final List<LpPatternRecipe> recipes,
                                                           final Set<ResourceKey> relevantResourceKeys) {
-        // Given resources and recipes that can produce them, determines which resources cannot be produced by any recipe
+        // Finds relevant resources that no recipe can produce.
         final Set<ResourceKey> result = new LinkedHashSet<>();
         for (final ResourceKey resource : relevantResourceKeys) {
             boolean producible = false;
@@ -236,8 +231,7 @@ final class LpRecipeAnalysis {
     }
 
     static CycleDetectionResult detectRecipeCycles(final List<LpPatternRecipe> recipes) {
-        // Detects cycles in the recipe dependency graph
-        // Returns a list of cycles (where each cycle is a list of recipes), and a map of recipe ID to whether it's in any cycle
+        // Detects dependency cycles and loop membership per recipe.
         final List<List<Integer>> adjacency = new ArrayList<>(recipes.size());
         for (int fromIndex = 0; fromIndex < recipes.size(); fromIndex++) {
             final LpPatternRecipe fromRecipe = recipes.get(fromIndex);
@@ -283,7 +277,7 @@ final class LpRecipeAnalysis {
 
     private static boolean recipeOutputsFeedRecipeInputs(final LpPatternRecipe fromRecipe,
                                                          final LpPatternRecipe toRecipe) {
-        // Checks if a recipe produces any resource that another recipe consumes, indicating a directed edge in the dependency graph
+        // True when any output of one recipe is consumed by another.
         for (final ResourceKey outputResource : fromRecipe.output().resourceKeys()) {
             if (toRecipe.consumes(outputResource)) {
                 return true;
@@ -320,7 +314,7 @@ final class LpRecipeAnalysis {
     }
 
     private static List<Integer> canonicalizeCycle(final List<Integer> cycle) {
-        // To avoid duplicates, we want to represent each cycle in a canonical form. We can rotate the cycle so that the smallest index comes first.
+        // Rotates a cycle so equivalent cycles get a stable canonical form.
         if (cycle.isEmpty()) {
             return List.of();
         }
@@ -346,13 +340,6 @@ final class LpRecipeAnalysis {
             }
         }
         return Integer.compare(left.size(), right.size());
-    }
-
-    record CycleDetectionResult(Map<UUID, Boolean> inLoopByRecipeId, List<List<LpPatternRecipe>> cycles) {
-        CycleDetectionResult {
-            inLoopByRecipeId = Map.copyOf(inLoopByRecipeId);
-            cycles = List.copyOf(cycles);
-        }
     }
 
     static Set<UUID> collectLoopClosingRecipeIdsOnTargetBranches(final List<LpPatternRecipe> recipes,
@@ -402,10 +389,11 @@ final class LpRecipeAnalysis {
         }
     }
 
-    static Set<ResourceKey> collectLoopEntryDeficitResourcesOnTargetBranches(final List<LpPatternRecipe> recipes,
-                                                                             final LpResourceSet target) {
-        // Finds the set of item types that you'd need to add in order to make loops startable
-        // Similar to collectLoopClosingRecipeIdsOnTargetBranches, but collects resources that can start loops instead of recipes that close loops
+    static Set<ResourceKey> collectLoopEntryDeficitResourcesOnTargetBranches(
+        final List<LpPatternRecipe> recipes,
+        final LpResourceSet target
+    ) {
+        // Collects resources required to start loops on target branches.
         final Map<ResourceKey, List<LpPatternRecipe>> outputToRecipes = buildOutputToRecipes(recipes);
         final Set<ResourceKey> loopEntryDeficitResources = new LinkedHashSet<>();
         for (final ResourceKey targetResource : target.resourceKeys()) {
@@ -435,6 +423,26 @@ final class LpRecipeAnalysis {
                 walkLoopEntryDeficits(inputResource, outputToRecipes, pathResources, loopEntryDeficitResources);
                 pathResources.remove(inputResource);
             }
+        }
+    }
+
+    private record ResourcePriorityEntry(ResourceKey resource, LpRecipePriorityKey priority) {
+    }
+
+    private record TraversalState(
+        Map<ResourceKey, LpRecipePriorityKey> bestResourcePriorities,
+        Map<UUID, LpRecipePriorityKey> bestRecipePriorities,
+        List<ResourcePriorityEntry> queue
+    ) {
+    }
+
+    private record RecipePriorityEntry(UUID recipeId, LpRecipePriorityKey priority) {
+    }
+
+    record CycleDetectionResult(Map<UUID, Boolean> inLoopByRecipeId, List<List<LpPatternRecipe>> cycles) {
+        CycleDetectionResult {
+            inLoopByRecipeId = Map.copyOf(inLoopByRecipeId);
+            cycles = List.copyOf(cycles);
         }
     }
 }

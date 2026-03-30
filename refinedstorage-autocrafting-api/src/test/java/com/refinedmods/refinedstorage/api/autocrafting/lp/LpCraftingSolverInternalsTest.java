@@ -49,7 +49,7 @@ class LpCraftingSolverInternalsTest {
 
     @Test
     void shouldExerciseComputeMaxCraftableTargetAmountPrivateMethod() throws Exception {
-        // Tests that the maximum craftable target amount is computed correctly based on available resources and recipes.
+        // Maximum craftable target amount should be computed correctly.
         final LpCraftingSolver solver = new LpCraftingSolver();
         final LpPatternRecipe recipe = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),

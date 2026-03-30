@@ -11,7 +11,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class LpResourceSet implements Iterable<Map.Entry<ResourceKey, Long>> {
-    // A map from a resource key to the amount of that resource. Amounts are explicitly able to be negative, and zero amounts are not stored.
+    // Maps resources to amounts.
+    // Amounts may be negative, and zero amounts are not stored.
     // Not compatible with MutableResourceAmount because of negatives and also the set function
     private final Map<ResourceKey, Long> amounts;
 

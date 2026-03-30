@@ -49,11 +49,11 @@ final class LpStepPlanCalculator {
         if (outcome.executableResult().isEmpty()) {
             return Optional.empty();
         }
+
         final List<LpExecutionPlanStep> steps = outcome.executableResult().get().plan();
-        if (steps.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(new LpStepPlan(steps, hasRecipeCycles(steps)));
+        return steps.isEmpty()
+            ? Optional.empty()
+            : Optional.of(new LpStepPlan(steps, hasRecipeCycles(steps)));
     }
 
     private static List<LpPatternRecipe> buildLpRecipes(final Collection<Pattern> patterns, final Logger logger) {

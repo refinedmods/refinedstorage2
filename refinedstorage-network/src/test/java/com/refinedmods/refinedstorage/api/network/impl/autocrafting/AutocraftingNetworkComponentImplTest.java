@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewNode;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
-import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -507,9 +506,13 @@ class AutocraftingNetworkComponentImplTest {
         assertThat(dispatcherTask).isPresent();
         assertThat(blockedStepProvider.getTasks()).isEmpty();
         assertThat(rootProvider.getTasks())
-            .hasSize(2)
-            .anyMatch(TaskImpl.class::isInstance)
-            .anyMatch(task -> task.getId().equals(dispatcherTask.get()));
+            .hasSize(1)
+            .allMatch(task -> task.getId().equals(dispatcherTask.get()));
+        final TaskImpl dispatcher = (TaskImpl) rootProvider.getTasks().getFirst();
+        assertThat(dispatcher.createSnapshot().copyInternalStorage().copyState())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactly(new ResourceAmount(C, 1));
+        assertThat(rootStorage.getAll()).isEmpty();
     }
 
     @Test
@@ -543,8 +546,11 @@ class AutocraftingNetworkComponentImplTest {
         // Assert
         assertThat(dispatcherTask).isPresent();
         assertThat(rootProvider.getTasks()).hasSize(1);
-        assertThat(expandableStepProvider.getTasks()).hasSize(1);
-        assertThat(expandableStepProvider.getTasks().getFirst().getAmount()).isEqualTo(2);
+        assertThat(expandableStepProvider.getTasks()).isEmpty();
+        final TaskImpl dispatcher = (TaskImpl) rootProvider.getTasks().getFirst();
+        assertThat(dispatcher.createSnapshot().copyInternalStorage().copyState())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactly(new ResourceAmount(A, 2));
     }
 
     @Test

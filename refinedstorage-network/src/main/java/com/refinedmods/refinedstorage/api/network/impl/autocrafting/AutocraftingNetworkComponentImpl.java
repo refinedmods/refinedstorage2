@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
+import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculator;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorImpl;
@@ -23,6 +24,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlan;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskSnapshot;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.core.CoreValidations;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -32,11 +34,13 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
+import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
-import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -169,7 +172,14 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         // Determine which system to use
         if (shouldUseLPSystem(resource)) {
-            return LpStepPlanCalculator.calculateSteps(patternRepository.getAll(), LOGGER, rootStorage, resource, amount, cancellationToken)
+            return LpStepPlanCalculator.calculateSteps(
+                patternRepository.getAll(),
+                LOGGER,
+                rootStorage,
+                resource,
+                amount,
+                cancellationToken
+            )
                 .flatMap(steps -> addLpDispatcherTask(resource, amount, actor, steps, notify));
         } else {
             return calculatePlan(calculator, resource, amount, cancellationToken)
@@ -193,7 +203,14 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         // Determine which system to use
         if (shouldUseLPSystem(resource)) {
-            return LpStepPlanCalculator.calculateSteps(patternRepository.getAll(), LOGGER, rootStorage, resource, correctedAmount, cancellationToken)
+            return LpStepPlanCalculator.calculateSteps(
+                patternRepository.getAll(),
+                LOGGER,
+                rootStorage,
+                resource,
+                correctedAmount,
+                cancellationToken
+            )
                 .flatMap(steps -> addLpDispatcherTask(resource, correctedAmount, actor, steps, false))
                 .map(taskId -> EnsureResult.TASK_CREATED)
                 .orElseGet(() -> ensureTaskForCraftableAmountViaLp(
@@ -213,9 +230,12 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     private boolean shouldUseLPSystem(final ResourceKey requestedResource) {
-        // return true if any recipe in the crafting tree is fuzzy
-        // (has an ingredient with multiple possible inputs),
-        // as the traditional system can handle this but the LP system cannot.
+        // return true if all ingredients in the crafting tree have exactly one viable input
+        // (i.e., in storage or craftable via a pattern). If an ingredient has multiple
+        // possible inputs but only one is actually available or craftable, it is not
+        // considered fuzzy. Return false (use traditional system) only when multiple viable
+        // alternatives exist for the same ingredient.
+        final RootStorage rootStorage = rootStorageProvider.get();
         final Set<ResourceKey> visitedResources = new HashSet<>();
         final ArrayDeque<ResourceKey> resourcesToVisit = new ArrayDeque<>();
         resourcesToVisit.add(requestedResource);
@@ -227,13 +247,23 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             }
 
             for (final Pattern pattern : patternRepository.getByOutput(currentResource)) {
-                if (pattern.layout().ingredients().stream().anyMatch(ingredient -> ingredient.inputs().size() != 1)) {
-                    return false;
+                for (final var ingredient : pattern.layout().ingredients()) {
+                    if (ingredient.inputs().size() == 1) {
+                        resourcesToVisit.addLast(ingredient.inputs().getFirst());
+                        continue;
+                    }
+                    // Multiple possible inputs: only count those available in storage or craftable
+                    final List<ResourceKey> viableInputs = ingredient.inputs().stream()
+                        .filter(input -> rootStorage.get(input) > 0
+                            || !patternRepository.getByOutput(input).isEmpty())
+                        .toList();
+                    if (viableInputs.size() > 1) {
+                        return false;
+                    }
+                    if (!viableInputs.isEmpty()) {
+                        resourcesToVisit.addLast(viableInputs.getFirst());
+                    }
                 }
-
-                pattern.layout().ingredients().forEach(ingredient ->
-                    resourcesToVisit.addLast(ingredient.inputs().getFirst())
-                );
             }
         }
 
@@ -275,7 +305,14 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             return EnsureResult.MISSING_RESOURCES;
         }
 
-        return LpStepPlanCalculator.calculateSteps(patternRepository.getAll(), LOGGER, rootStorage, resource, correctedAmount, cancellationToken)
+        return LpStepPlanCalculator.calculateSteps(
+            patternRepository.getAll(),
+            LOGGER,
+            rootStorage,
+            resource,
+            correctedAmount,
+            cancellationToken
+        )
             .flatMap(steps -> addLpDispatcherTask(resource, correctedAmount, actor, steps, false))
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);
@@ -291,7 +328,14 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         while (low <= high && !cancellationToken.isCancelled()) {
             final long middle = low + ((high - low) / 2);
-            final boolean craftable = LpStepPlanCalculator.calculateSteps(patternRepository.getAll(), LOGGER, rootStorage, resource, middle, cancellationToken).isPresent();
+            final boolean craftable = LpStepPlanCalculator.calculateSteps(
+                patternRepository.getAll(),
+                LOGGER,
+                rootStorage,
+                resource,
+                middle,
+                cancellationToken
+            ).isPresent();
             if (craftable) {
                 best = middle;
                 low = middle + 1;
@@ -309,8 +353,8 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                                                  final LpStepPlan lpStepPlan,
                                                  final boolean notify) {
         if (lpStepPlan.steps().size() == 1) {
-            final TaskPlan singleStepPlan = toSingleStepPlan(resource, amount, lpStepPlan.steps().getFirst());
-            return Optional.of(addTask(resource, amount, actor, singleStepPlan, notify));
+            final TaskPlan singleStepPlan = toSingleStepPlan(resource, amount, lpStepPlan.steps().getFirst(), true);
+            return Optional.of(addSingleStepTask(actor, singleStepPlan, notify));
         }
 
         final Pattern rootPattern = findRootPattern(resource, lpStepPlan.steps());
@@ -323,7 +367,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             return Optional.empty();
         }
 
-        final Task dispatcher = new LpStepDispatcher(resource, amount, actor, notify, lpStepPlan);
+        final Task dispatcher = new LpStepDispatcher(resource, amount, actor, notify, lpStepPlan, rootPattern);
         provider.addTask(dispatcher);
         return Optional.of(dispatcher.getId());
     }
@@ -447,6 +491,39 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         return task.getId();
     }
 
+    private TaskId addSingleStepTask(final Actor actor,
+                                     final TaskPlan plan,
+                                     final boolean notify) {
+        final Task task = new TaskImpl(plan, actor, notify);
+        LOGGER.debug(
+            "Created single-step LP task {} for {}x {} for {}",
+            task.getId(),
+            plan.amount(),
+            plan.resource(),
+            actor
+        );
+
+        final PatternProvider provider;
+        if (plan.rootPattern().layout().type() == PatternType.EXTERNAL) {
+            provider = getSinksByPatternLayout(plan.rootPattern().layout()).stream()
+                .filter(PatternProvider.class::isInstance)
+                .map(PatternProvider.class::cast)
+                .findFirst()
+                .orElseGet(() -> CoreValidations.validateNotNull(
+                    providerByPattern.get(plan.rootPattern()),
+                    "No provider for pattern " + plan.rootPattern()
+                ));
+        } else {
+            provider = CoreValidations.validateNotNull(
+                providerByPattern.get(plan.rootPattern()),
+                "No provider for pattern " + plan.rootPattern()
+            );
+        }
+
+        provider.addTask(task);
+        return task.getId();
+    }
+
     @Override
     public void addListener(final PatternListener listener) {
         patternListeners.add(listener);
@@ -566,7 +643,8 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
     private TaskPlan toSingleStepPlan(final ResourceKey requestedResource,
                                       final long requestedAmount,
-                                      final LpExecutionPlanStep step) {
+                                      final LpExecutionPlanStep step,
+                                      final boolean root) {
         final Pattern pattern = step.recipe().pattern();
         final long iterations = step.iterations();
 
@@ -582,7 +660,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         final Map<Pattern, TaskPlan.PatternPlan> patterns = Map.of(
             pattern,
-            new TaskPlan.PatternPlan(true, iterations, Map.copyOf(ingredients))
+            new TaskPlan.PatternPlan(root, iterations, Map.copyOf(ingredients))
         );
 
         final ResourceKey outputResource = pattern.layout().outputs().isEmpty()
@@ -602,17 +680,24 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         );
     }
 
-    private final class LpStepDispatcher implements Task {
-        private final TaskId id = TaskId.create();
-        private final ResourceKey resource;
-        private final long amount;
-        private final Actor actor;
-        private final boolean notify;
+    private static TaskPlan createDispatcherPlan(final ResourceKey resource,
+                                                 final long amount,
+                                                 final Pattern rootPattern) {
+        return new TaskPlan(
+            resource,
+            amount,
+            rootPattern,
+            Map.of(rootPattern, new TaskPlan.PatternPlan(true, 1, Map.of())),
+            List.of()
+        );
+    }
+
+    private final class LpStepDispatcher extends TaskImpl {
         private final long startTime = System.currentTimeMillis();
         private final int totalSteps;
         private final List<LpExecutionPlanStep> pendingSteps = new ArrayList<>();
-        private final Map<TaskId, Map<ResourceKey, Long>> reservedBySubTask = new HashMap<>();
-        private final Set<TaskId> activeSubTasks = new HashSet<>();
+        private final MutableResourceList bufferedInternalStorage = MutableResourceListImpl.create();
+        private final Map<TaskId, DispatchedSubTask> activeSubTasks = new LinkedHashMap<>();
         private final boolean strictOrdering;
         private TaskState state = TaskState.READY;
         private boolean cancelled;
@@ -621,39 +706,17 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                                  final long amount,
                                  final Actor actor,
                                  final boolean notify,
-                                 final LpStepPlan lpStepPlan) {
-            this.resource = resource;
-            this.amount = amount;
-            this.actor = actor;
-            this.notify = notify;
+                                 final LpStepPlan lpStepPlan,
+                                 final Pattern rootPattern) {
+            super(createDispatcherPlan(resource, amount, rootPattern), actor, notify);
             this.strictOrdering = lpStepPlan.hasRecipeCycles();
             this.pendingSteps.addAll(lpStepPlan.steps());
             this.totalSteps = lpStepPlan.steps().size();
         }
 
         @Override
-        public Actor getActor() {
-            return actor;
-        }
-
-        @Override
         public boolean shouldNotify() {
-            return notify && !cancelled;
-        }
-
-        @Override
-        public ResourceKey getResource() {
-            return resource;
-        }
-
-        @Override
-        public long getAmount() {
-            return amount;
-        }
-
-        @Override
-        public TaskId getId() {
-            return id;
+            return super.shouldNotify() && !cancelled;
         }
 
         @Override
@@ -684,11 +747,20 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             }
 
             if (state == TaskState.RUNNING) {
+                final Set<TaskId> existingSubTasks = new HashSet<>(activeSubTasks.keySet());
+                changed |= stepSpecificSubTasks(existingSubTasks, rootStorage, sinkProvider, stepBehavior, listener);
+                changed |= pruneCompletedSubTasks();
+
                 if (strictOrdering) {
                     changed |= dispatchStrict(rootStorage);
                 } else {
                     changed |= dispatchRelaxed(rootStorage);
                 }
+
+                final Set<TaskId> newSubTasks = new HashSet<>(activeSubTasks.keySet());
+                newSubTasks.removeAll(existingSubTasks);
+                changed |= stepSpecificSubTasks(newSubTasks, rootStorage, sinkProvider, stepBehavior, listener);
+                changed |= pruneCompletedSubTasks();
 
                 if (pendingSteps.isEmpty() && activeSubTasks.isEmpty()) {
                     state = TaskState.COMPLETED;
@@ -701,12 +773,19 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         private boolean pruneCompletedSubTasks() {
             boolean changed = false;
-            final var it = activeSubTasks.iterator();
+            final var it = activeSubTasks.entrySet().iterator();
             while (it.hasNext()) {
-                final TaskId taskId = it.next();
-                if (!providerByTaskId.containsKey(taskId)) {
+                final var entry = it.next();
+                final TaskState subTaskState = entry.getValue().task().getState();
+                if (subTaskState == TaskState.COMPLETED
+                    || (!entry.getValue().root() && subTaskState == TaskState.RETURNING_INTERNAL_STORAGE)) {
+                    final MutableResourceList subTaskInternalStorage = entry.getValue()
+                        .task()
+                        .createSnapshot()
+                        .copyInternalStorage();
+                    subTaskInternalStorage.getAll().forEach(resource ->
+                        bufferedInternalStorage.add(resource, subTaskInternalStorage.get(resource)));
                     it.remove();
-                    reservedBySubTask.remove(taskId);
                     changed = true;
                 }
             }
@@ -714,13 +793,26 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
 
         private void cancelActiveSubTasks() {
-            final List<TaskId> snapshot = List.copyOf(activeSubTasks);
-            for (final TaskId taskId : snapshot) {
-                final PatternProvider provider = providerByTaskId.get(taskId);
-                if (provider != null) {
-                    provider.cancelTask(taskId);
-                }
+            final List<DispatchedSubTask> snapshot = List.copyOf(activeSubTasks.values());
+            for (final DispatchedSubTask subTask : snapshot) {
+                subTask.task().cancel();
             }
+        }
+
+        private boolean stepSpecificSubTasks(final Set<TaskId> taskIds,
+                                             final RootStorage rootStorage,
+                                             final ExternalPatternSinkProvider sinkProvider,
+                                             final StepBehavior stepBehavior,
+                                             final TaskListener listener) {
+            boolean changed = false;
+            for (final TaskId taskId : taskIds) {
+                final DispatchedSubTask subTask = activeSubTasks.get(taskId);
+                if (subTask == null) {
+                    continue;
+                }
+                changed |= subTask.task().step(rootStorage, sinkProvider, stepBehavior, listener);
+            }
+            return changed;
         }
 
         private boolean dispatchStrict(final RootStorage rootStorage) {
@@ -794,19 +886,64 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                                                  final long dispatchIterations,
                                                  final Map<ResourceKey, Long> requirements) {
             final LpExecutionPlanStep dispatchedStep = new LpExecutionPlanStep(step.recipe(), dispatchIterations);
-            final TaskPlan plan = toSingleStepPlan(resource, -1, dispatchedStep);
+            final boolean root = step.recipe().pattern().layout().outputs().stream()
+                .anyMatch(output -> output.resource().equals(getResource()));
+            final TaskPlan plan = toSingleStepPlan(getResource(), -1, dispatchedStep, root);
             final Pattern pattern = step.recipe().pattern();
             final PatternProvider provider = providerByPattern.get(pattern);
             if (provider == null) {
                 return Optional.empty();
             }
 
-            final Task subTask = new TaskImpl(plan, actor, false);
-            provider.addTask(subTask);
+            final SeededSubTask seededSubTask = createSeededSubTask(plan, requirements);
+            activeSubTasks.put(
+                seededSubTask.task().getId(),
+                new DispatchedSubTask(seededSubTask.task(), seededSubTask.remainingRequirements(), root)
+            );
+            return Optional.of(seededSubTask.task().getId());
+        }
 
-            activeSubTasks.add(subTask.getId());
-            reservedBySubTask.put(subTask.getId(), requirements);
-            return Optional.of(subTask.getId());
+        private SeededSubTask createSeededSubTask(final TaskPlan plan,
+                                                  final Map<ResourceKey, Long> requirements) {
+            final MutableResourceList seededInternalStorage = MutableResourceListImpl.create();
+            final MutableResourceList remainingInitialRequirements = MutableResourceListImpl.create();
+
+            requirements.forEach((resource, amountNeeded) -> {
+                final long bufferedAmount = bufferedInternalStorage.get(resource);
+                final long consumedFromBuffer = Math.min(bufferedAmount, amountNeeded);
+                if (consumedFromBuffer > 0) {
+                    bufferedInternalStorage.remove(resource, consumedFromBuffer);
+                    seededInternalStorage.add(resource, consumedFromBuffer);
+                }
+
+                final long remaining = amountNeeded - consumedFromBuffer;
+                if (remaining > 0) {
+                    remainingInitialRequirements.add(resource, remaining);
+                }
+            });
+
+            final TaskImpl baseTask = new TaskImpl(plan, getActor(), false);
+            final TaskSnapshot baseSnapshot = baseTask.createSnapshot();
+            final TaskState initialState = remainingInitialRequirements.isEmpty() ? TaskState.RUNNING : TaskState.READY;
+            final TaskImpl task = new TaskImpl(new TaskSnapshot(
+                baseSnapshot.id(),
+                baseSnapshot.resource(),
+                baseSnapshot.amount(),
+                baseSnapshot.actor(),
+                baseSnapshot.notifyActor(),
+                baseSnapshot.startTime(),
+                baseSnapshot.patterns(),
+                baseSnapshot.completedPatterns(),
+                remainingInitialRequirements.copy(),
+                seededInternalStorage.copy(),
+                initialState,
+                false
+            ));
+
+            final Map<ResourceKey, Long> remainingRequirements = new HashMap<>();
+            remainingInitialRequirements.getAll().forEach(resource ->
+                remainingRequirements.put(resource, remainingInitialRequirements.get(resource)));
+            return new SeededSubTask(task, remainingRequirements);
         }
 
         @Override
@@ -816,27 +953,96 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         @Override
         public TaskStatus getStatus() {
-            final TaskStatusBuilder builder = new TaskStatusBuilder(id, state, resource, amount, startTime);
+            final TaskStatusBuilder builder = new TaskStatusBuilder(
+                getId(),
+                state,
+                getResource(),
+                getAmount(),
+                startTime
+            );
             if (strictOrdering) {
-                builder.processing(resource, Math.max(1, activeSubTasks.size() + pendingSteps.size()), null);
+                builder.processing(getResource(), Math.max(1, activeSubTasks.size() + pendingSteps.size()), null);
             } else if (!pendingSteps.isEmpty()) {
-                builder.scheduled(resource, pendingSteps.size());
+                builder.scheduled(getResource(), pendingSteps.size());
             }
             return builder.build(progress());
         }
 
         @Override
+        public TaskSnapshot createSnapshot() {
+            final MutableResourceList internalStorage = MutableResourceListImpl.create();
+            final MutableResourceList initialRequirements = MutableResourceListImpl.create();
+
+            bufferedInternalStorage.getAll().forEach(resource ->
+                internalStorage.add(resource, bufferedInternalStorage.get(resource)));
+
+            for (final DispatchedSubTask subTask : activeSubTasks.values()) {
+                final TaskSnapshot snapshot = subTask.task().createSnapshot();
+                final MutableResourceList subTaskInternalStorage = snapshot.copyInternalStorage();
+                subTaskInternalStorage.getAll().forEach(resource ->
+                    internalStorage.add(resource, subTaskInternalStorage.get(resource)));
+                snapshot.initialRequirements().getAll().forEach(resource ->
+                    initialRequirements.add(resource, snapshot.initialRequirements().get(resource)));
+            }
+
+            return new TaskSnapshot(
+                getId(),
+                getResource(),
+                getAmount(),
+                getActor(),
+                shouldNotify(),
+                startTime,
+                Map.of(),
+                List.of(),
+                initialRequirements.copy(),
+                internalStorage.copy(),
+                state,
+                cancelled
+            );
+        }
+
+        @Override
         public long beforeInsert(final ResourceKey insertedResource, final long insertedAmount) {
-            return 0;
+            if (cancelled) {
+                return 0;
+            }
+
+            long intercepted = 0;
+            for (final DispatchedSubTask subTask : activeSubTasks.values()) {
+                final long available = insertedAmount - intercepted;
+                intercepted += subTask.task().beforeInsert(insertedResource, available);
+                if (intercepted == insertedAmount) {
+                    break;
+                }
+            }
+
+            final long remaining = insertedAmount - intercepted;
+            final long pendingNeed = getPendingRequirement(insertedResource)
+                - bufferedInternalStorage.get(insertedResource)
+                - getActiveInternalStorage(insertedResource);
+            if (remaining > 0 && pendingNeed > 0) {
+                final long buffered = Math.min(remaining, pendingNeed);
+                bufferedInternalStorage.add(insertedResource, buffered);
+                intercepted += buffered;
+            }
+            return intercepted;
         }
 
         @Override
         public long afterInsert(final ResourceKey insertedResource, final long insertedAmount) {
-            return 0;
+            long reserved = 0;
+            for (final DispatchedSubTask subTask : activeSubTasks.values()) {
+                final long available = insertedAmount - reserved;
+                reserved += subTask.task().afterInsert(insertedResource, available);
+                if (reserved == insertedAmount) {
+                    return reserved;
+                }
+            }
+            return reserved;
         }
 
         @Override
-        public void changed(final com.refinedmods.refinedstorage.api.resource.list.MutableResourceList.OperationResult change) {
+        public void changed(final MutableResourceList.OperationResult change) {
             // no op
         }
 
@@ -851,13 +1057,35 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
 
         private Map<ResourceKey, Long> availableWithReservations(final RootStorage rootStorage) {
             final Map<ResourceKey, Long> available = new HashMap<>();
-            for (final ResourceAmount amount : rootStorage.getAll()) {
-                available.put(amount.resource(), amount.amount());
+            for (final ResourceAmount resourceAmount : rootStorage.getAll()) {
+                available.put(resourceAmount.resource(), resourceAmount.amount());
             }
-            for (final Map<ResourceKey, Long> reserved : reservedBySubTask.values()) {
-                consume(reserved, available);
+            bufferedInternalStorage.getAll().forEach(resource ->
+                available.put(resource, available.getOrDefault(resource, 0L) + bufferedInternalStorage.get(resource)));
+            for (final DispatchedSubTask subTask : activeSubTasks.values()) {
+                consume(subTask.requirements(), available);
             }
             return available;
+        }
+
+        private long getPendingRequirement(final ResourceKey resource) {
+            long amount = 0;
+            for (final LpExecutionPlanStep step : pendingSteps) {
+                for (final var ingredient : step.recipe().pattern().layout().ingredients()) {
+                    if (ingredient.inputs().getFirst().equals(resource)) {
+                        amount += ingredient.amount() * step.iterations();
+                    }
+                }
+            }
+            return amount;
+        }
+
+        private long getActiveInternalStorage(final ResourceKey resource) {
+            long amount = 0;
+            for (final DispatchedSubTask subTask : activeSubTasks.values()) {
+                amount += subTask.task().createSnapshot().copyInternalStorage().get(resource);
+            }
+            return amount;
         }
 
         private static void consume(final Map<ResourceKey, Long> requirements,
@@ -905,6 +1133,12 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                 requirements.merge(ingredientResource, ingredient.amount() * iterations, Long::sum);
             }
             return requirements;
+        }
+
+        private record DispatchedSubTask(TaskImpl task, Map<ResourceKey, Long> requirements, boolean root) {
+        }
+
+        private record SeededSubTask(TaskImpl task, Map<ResourceKey, Long> remainingRequirements) {
         }
     }
 

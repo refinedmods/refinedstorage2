@@ -89,7 +89,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReportsSingleMissingBaseItem() {
-        // Tests that missing base items are correctly identified in a crafting chain when starting inventory is insufficient.
+        // Missing base items should be identified in an under-supplied chain.
         // Rust: compute_required_base_items_reports_single_missing_base_item
         // Chain item0→item1→item2; have 1x item0, need 2x item2 → 1 more item0 required.
         final List<LpPatternRecipe> recipes = List.of(
@@ -140,7 +140,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsHandlesNonProducibleTargetItemsWithRelevantRecipeGraph() {
-        // Tests that target items that cannot be produced (base items) are correctly identified as missing requirements.
+        // Non-producible target items should be treated as missing requirements.
         // Rust: compute_required_base_items_handles_non_producible_target_items_with_relevant_recipe_graph
         // item7 is in the target but not producible by any recipe; only 3 more needed (have 1, need 4).
         final List<LpPatternRecipe> recipes = List.of(
@@ -156,7 +156,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsLabelsNonProducibleTargetAsRequiredInput() {
-        // Tests that when only base items are needed (no recipes available), they are correctly labeled as required inputs.
+        // With no recipes, target base items should be marked as required.
         // Rust: compute_required_base_items_labels_non_producible_target_as_required_input
         // No recipes at all; item7 is the target item; missing 3x item7 (have 1, need 4).
         final List<LpPatternRecipe> recipes = List.of();
@@ -207,7 +207,7 @@ class RsCrafterSimBaseItemsTest {
 
     @Test
     void computeRequiredBaseItemsReportsLoopEntryAndMissingInputForUnstartableCycle() {
-        // Tests that both loop entry items and missing base items are correctly identified with multiple targets and cycles.
+        // Report both loop-entry and missing base items for unstartable cycles.
         // Rust: compute_required_base_items_reports_loop_entry_and_missing_input_for_unstartable_cycle
         // Cycle: item0↔item1; unrelated item3→item2. Multi-target: item0 + item2.
         // Requires 1x item1 (loop entry) and 1x item3 (item2 base input).

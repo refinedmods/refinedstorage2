@@ -20,8 +20,6 @@ public final class LpExecutionPlanner {
         final Map<UUID, Long> recipeValues,
         final LpResourceSet startingResources
     ) {
-        // Turns a list of (use this recipe N times) into an executable crafting plan, or returns empty if no such plan exists.
-        // Uses a depth-first search with backtracking, prioritizing recipes that are in loops, have higher remaining usage counts, and have higher effective priority.
         validateInputs(recipes, recipeValues, startingResources);
 
         final Map<UUID, Long> remainingCounts = new LinkedHashMap<>();
@@ -42,7 +40,10 @@ public final class LpExecutionPlanner {
         final Map<UUID, Boolean> inLoopById = cycleDetectionResult.inLoopByRecipeId();
 
         final LpResourceSet inventory = startingResources.copy();
-        final long totalRemaining = remainingCounts.values().stream().mapToLong(Long::longValue).sum();
+        final long totalRemaining = remainingCounts.values()
+            .stream()
+            .mapToLong(Long::longValue)
+            .sum();
         final List<LpExecutionPlanStep> plan = new ArrayList<>();
 
         final boolean success = recursivelyBacksolvePlan(
@@ -62,12 +63,16 @@ public final class LpExecutionPlanner {
                                                     final LpResourceSet inventory,
                                                     final long totalRemaining,
                                                     final List<LpExecutionPlanStep> plan) {
-        // Picks a recipe, uses it, recurses, and backtracks if it doesn't lead to a solution. Returns true if a solution is found.
         if (totalRemaining == 0) {
             return true;
         }
 
-        final List<Candidate> candidates = buildCandidates(recipes, inLoopById, remainingCounts, inventory);
+        final List<Candidate> candidates = buildCandidates(
+            recipes,
+            inLoopById,
+            remainingCounts,
+            inventory
+        );
 
         if (candidates.isEmpty()) {
             return false;
@@ -97,8 +102,6 @@ public final class LpExecutionPlanner {
                                                    final Map<UUID, Boolean> inLoopById,
                                                    final Map<UUID, Long> remainingCounts,
                                                    final LpResourceSet inventory) {
-        // Builds a list of candidate recipes to try, sorted by whether they're in loops, their remaining usage count, their effective priority, and their ID. 
-        // Also computes the max batch size for each candidate.
         return recipes.stream()
             .map(recipe -> toCandidate(recipe, remainingCounts, inventory))
             .filter(Objects::nonNull)
@@ -122,7 +125,6 @@ public final class LpExecutionPlanner {
     private static Candidate toCandidate(final LpPatternRecipe recipe,
                                          final Map<UUID, Long> remainingCounts,
                                          final LpResourceSet inventory) {
-        // Converts a recipe to a candidate if it has remaining usage and can be afforded with the current inventory, or returns null otherwise.
         final long remaining = remainingCounts.getOrDefault(recipe.uniqueId(), 0L);
         if (remaining <= 0) {
             return null;
@@ -135,7 +137,6 @@ public final class LpExecutionPlanner {
     }
 
     private static List<Long> buildBatchAttempts(final Candidate candidate) {
-        // Builds a list of batch sizes to try for a candidate, starting with the max batch, then 1, then half of the max batch if applicable.
         final List<Long> tryBatches = new ArrayList<>();
         tryBatches.add(candidate.maxBatch);
         if (candidate.maxBatch > 1) {
@@ -156,7 +157,6 @@ public final class LpExecutionPlanner {
                                              final List<LpExecutionPlanStep> plan,
                                              final Candidate candidate,
                                              final long batch) {
-        // Tries using a candidate recipe for a given batch size, returns true if it leads to a solution, and backtracks otherwise.
         if (batch <= 0 || batch > candidate.remaining) {
             return false;
         }

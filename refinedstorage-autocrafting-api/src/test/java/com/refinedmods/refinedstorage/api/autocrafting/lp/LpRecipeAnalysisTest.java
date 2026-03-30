@@ -101,7 +101,7 @@ class LpRecipeAnalysisTest {
 
     @Test
     void shouldCollectLoopClosingAndLoopEntryResourcesOnTargetBranches() {
-        // Tests that recipes that close cycles and resources that enter cycles are correctly identified on target branches.
+        // Loop-closing recipes and loop-entry resources should be detected.
         final LpPatternRecipe ab = recipe(A, B, 1, 1, 0);
         final LpPatternRecipe ba = recipe(B, A, 1, 1, 0);
 

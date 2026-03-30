@@ -30,7 +30,7 @@ class LpRecipeAnalysisInternalsTest {
 
     @Test
     void shouldEvaluateRecipePriorityAndInputPriorityPropagation() throws Exception {
-        // Tests that recipe priority comparison correctly evaluates priority keys and propagates improved priorities through inputs.
+        // Recipe priorities should evaluate and propagate to inputs.
         final LpPatternRecipe recipe = LpPatternRecipe.fromPattern(
             PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
             7
