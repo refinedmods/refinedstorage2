@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Autocrafter renaming not working
+
 ## [3.0.0-beta.2] - 2026-04-13
 
 ### Fixed
