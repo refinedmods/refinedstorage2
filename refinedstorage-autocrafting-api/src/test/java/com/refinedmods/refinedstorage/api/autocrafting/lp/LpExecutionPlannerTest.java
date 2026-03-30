@@ -68,6 +68,22 @@ class LpExecutionPlannerTest {
     }
 
     @Test
+    void shouldIgnoreExplicitZeroRecipeUsage() {
+        // Tests that an explicit zero usage value behaves like no usage and does not fail validation.
+        final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
+
+        final java.util.Optional<List<LpExecutionPlanStep>> plan =
+            LpExecutionPlanner.buildExecutablePlanFromRecipeUsage(
+                List.of(recipe),
+                Map.of(recipe.uniqueId(), 0L),
+                new LpResourceSet()
+            );
+
+        assertThat(plan).isPresent();
+        assertThat(plan.get()).isEmpty();
+    }
+
+    @Test
     void shouldBuildSimpleExecutablePlan() {
         // Tests that a simple executable plan is built when recipes can be executed in order with available resources.
         final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);

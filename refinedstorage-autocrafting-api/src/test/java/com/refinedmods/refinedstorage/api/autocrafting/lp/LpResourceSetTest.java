@@ -178,6 +178,9 @@ class LpResourceSetTest {
         final LpResourceSet sut = new LpResourceSet();
         sut.setAmount(A, 1);
 
+        assertThat(sut.asMap()).containsEntry(A, 1L);
+        assertThat(sut.resourceKeys()).containsExactly(A);
+
         assertThatThrownBy(() -> sut.asMap().put(B, 2L)).isInstanceOf(UnsupportedOperationException.class);
         assertThatThrownBy(() -> sut.resourceKeys().remove(A)).isInstanceOf(UnsupportedOperationException.class);
     }

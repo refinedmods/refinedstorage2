@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -125,6 +126,105 @@ class LpExecutionPlannerInternalsTest {
             set(A, 1, B, 1)
         );
         assertThat(candidates).hasSize(2);
+        assertThat(candidateRecipeId(candidates.getFirst())).isEqualTo(loopRecipe.uniqueId());
+        assertThat(candidateRecipeId(candidates.get(1))).isEqualTo(nonLoop.uniqueId());
+    }
+
+    @Test
+    void internalsShouldBuildDistinctDescendingBatchAttempts() throws Exception {
+        // Tests that batch attempts are generated with max, half and one, sorted descending and deduplicated.
+        final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
+        final Object candidate = candidate(recipe, 10L, 4L);
+
+        final List<Long> batches = invokeBuildBatchAttempts(candidate);
+
+        assertThat(batches).containsExactly(4L, 2L, 1L);
+    }
+
+    @Test
+    void internalsShouldPreferLoopCandidatesEvenWhenMaxBatchIsLower() throws Exception {
+        // Tests that loop membership takes precedence in candidate ordering, even if another candidate has a bigger batch.
+        final LpPatternRecipe loopRecipe = recipe(A, B, 1, 1, 0);
+        final LpPatternRecipe nonLoopRecipe = recipe(A, C, 1, 1, 0);
+        loopRecipe.setEffectivePriority(0);
+        nonLoopRecipe.setEffectivePriority(0);
+
+        final List<?> candidates = invokeBuildCandidates(
+            List.of(loopRecipe, nonLoopRecipe),
+            Map.of(loopRecipe.uniqueId(), true, nonLoopRecipe.uniqueId(), false),
+            Map.of(loopRecipe.uniqueId(), 1L, nonLoopRecipe.uniqueId(), 5L),
+            set(A, 5)
+        );
+
+        assertThat(candidates).hasSize(2);
+        assertThat(candidateRecipeId(candidates.getFirst())).isEqualTo(loopRecipe.uniqueId());
+    }
+
+    @Test
+    void internalsShouldUseMaxBatchBeforePriorityWhenSortingNonLoopCandidates() throws Exception {
+        // Tests that max batch ordering is applied before effective priority for non-loop candidates.
+        final LpPatternRecipe highBatchLowPriority = recipe(A, B, 1, 1, 0);
+        highBatchLowPriority.setEffectivePriority(0);
+
+        final LpPatternRecipe lowBatchHighPriority = recipe(A, C, 5, 1, 0);
+        lowBatchHighPriority.setEffectivePriority(10);
+
+        final List<?> candidates = invokeBuildCandidates(
+            List.of(highBatchLowPriority, lowBatchHighPriority),
+            Map.of(highBatchLowPriority.uniqueId(), false, lowBatchHighPriority.uniqueId(), false),
+            Map.of(highBatchLowPriority.uniqueId(), 10L, lowBatchHighPriority.uniqueId(), 10L),
+            set(A, 10)
+        );
+
+        assertThat(candidates).hasSize(2);
+        assertThat(candidateRecipeId(candidates.getFirst())).isEqualTo(highBatchLowPriority.uniqueId());
+    }
+
+    @Test
+    void internalsShouldIgnoreZeroInputCountsWhenComputingAffordableBatch() throws Exception {
+        // Tests that zero-count inputs are ignored when computing max affordable batch.
+        final LpPatternRecipe recipe = customRecipeWithInput(Map.of((ResourceKey) A, 0L, B, 2L), Map.of(C, 1L), 0);
+        final LpResourceSet inventory = set(A, 0, B, 4);
+
+        final long maxBatch = invokeComputeMaxAffordableBatch(recipe, inventory);
+
+        assertThat(maxBatch).isEqualTo(2L);
+    }
+
+    @Test
+    void internalsShouldRollbackStateWhenRecursiveAttemptFails() throws Exception {
+        // Tests that failed recursive attempts fully rollback inventory, remaining counts, and plan steps.
+        final LpPatternRecipe craftAtoB = recipe(A, B, 1, 1, 0);
+        final LpPatternRecipe impossibleBtoC = recipe(B, C, 2, 1, 0);
+
+        final LpResourceSet inventory = new LpResourceSet();
+        inventory.setAmount(A, 1L);
+        inventory.setAmount(B, 0L);
+
+        final Map<UUID, Long> remainingCounts = new LinkedHashMap<>();
+        remainingCounts.put(craftAtoB.uniqueId(), 1L);
+        remainingCounts.put(impossibleBtoC.uniqueId(), 1L);
+
+        final Object candidate = invokeToCandidate(craftAtoB, remainingCounts, inventory);
+        final List<LpExecutionPlanStep> plan = new ArrayList<>();
+
+        final boolean success = invokeTryCandidateBatch(
+            List.of(craftAtoB, impossibleBtoC),
+            Map.of(),
+            remainingCounts,
+            inventory,
+            2L,
+            plan,
+            candidate,
+            1L
+        );
+
+        assertThat(success).isFalse();
+        assertThat(plan).isEmpty();
+        assertThat(remainingCounts.get(craftAtoB.uniqueId())).isEqualTo(1L);
+        assertThat(remainingCounts.get(impossibleBtoC.uniqueId())).isEqualTo(1L);
+        assertThat(inventory.getAmount(A)).isEqualTo(1L);
+        assertThat(inventory.getAmount(B)).isZero();
     }
 
     private static LpPatternRecipe recipe(final ResourceKey in,
@@ -300,5 +400,12 @@ class LpExecutionPlannerInternalsTest {
             candidate,
             batch
         );
+    }
+
+    private static UUID candidateRecipeId(final Object candidate) throws Exception {
+        final Method method = candidate.getClass().getDeclaredMethod("recipe");
+        method.setAccessible(true);
+        final LpPatternRecipe recipe = (LpPatternRecipe) method.invoke(candidate);
+        return recipe.uniqueId();
     }
 }
