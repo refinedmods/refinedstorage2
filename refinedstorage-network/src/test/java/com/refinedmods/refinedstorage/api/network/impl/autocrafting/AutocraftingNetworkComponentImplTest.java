@@ -3,12 +3,15 @@ package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpExecutionPlanStep;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpPatternRecipe;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewItem;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewNode;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -436,6 +439,112 @@ class AutocraftingNetworkComponentImplTest {
         // Assert
         assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
         assertThat(provider.getTasks()).isEmpty();
+    }
+
+    @Test
+    void shouldEnforceGeneratedOrderForCyclePlans() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(C, 1, Action.EXECUTE, Actor.EMPTY);
+
+        final Pattern blockedFirstStepPattern = pattern().ingredient(A, 2).output(B, 1).build();
+        final Pattern laterStepPattern = pattern().ingredient(C, 1).output(D, 1).build();
+
+        final PatternProviderNetworkNode blockedStepProvider = new PatternProviderNetworkNode(0, 5);
+        blockedStepProvider.setPattern(1, blockedFirstStepPattern);
+        sut.onContainerAdded(() -> blockedStepProvider);
+
+        final PatternProviderNetworkNode rootProvider = new PatternProviderNetworkNode(0, 5);
+        rootProvider.setPattern(1, laterStepPattern);
+        sut.onContainerAdded(() -> rootProvider);
+
+        final List<LpExecutionPlanStep> steps = List.of(
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(blockedFirstStepPattern, 0), 2),
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(laterStepPattern, 1), 1)
+        );
+
+        // Act
+        final Optional<TaskId> dispatcherTask = invokeAddLpDispatcherTask(D, 1, steps, true);
+        rootProvider.setActive(true);
+        rootProvider.setNetwork(network);
+        rootProvider.doWork();
+
+        // Assert
+        assertThat(dispatcherTask).isPresent();
+        assertThat(rootProvider.getTasks()).hasSize(1);
+        assertThat(blockedStepProvider.getTasks()).isEmpty();
+    }
+
+    @Test
+    void shouldAllowLaterStepDispatchForAcyclicPlans() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(C, 1, Action.EXECUTE, Actor.EMPTY);
+
+        final Pattern blockedFirstStepPattern = pattern().ingredient(A, 2).output(B, 1).build();
+        final Pattern laterStepPattern = pattern().ingredient(C, 1).output(D, 1).build();
+
+        final PatternProviderNetworkNode blockedStepProvider = new PatternProviderNetworkNode(0, 5);
+        blockedStepProvider.setPattern(1, blockedFirstStepPattern);
+        sut.onContainerAdded(() -> blockedStepProvider);
+
+        final PatternProviderNetworkNode rootProvider = new PatternProviderNetworkNode(0, 5);
+        rootProvider.setPattern(1, laterStepPattern);
+        sut.onContainerAdded(() -> rootProvider);
+
+        final List<LpExecutionPlanStep> steps = List.of(
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(blockedFirstStepPattern, 0), 2),
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(laterStepPattern, 1), 1)
+        );
+
+        // Act
+        final Optional<TaskId> dispatcherTask = invokeAddLpDispatcherTask(D, 1, steps, false);
+        rootProvider.setActive(true);
+        rootProvider.setNetwork(network);
+        rootProvider.doWork();
+
+        // Assert
+        assertThat(dispatcherTask).isPresent();
+        assertThat(blockedStepProvider.getTasks()).isEmpty();
+        assertThat(rootProvider.getTasks())
+            .hasSize(2)
+            .anyMatch(TaskImpl.class::isInstance)
+            .anyMatch(task -> task.getId().equals(dispatcherTask.get()));
+    }
+
+    @Test
+    void shouldSplitStepWhenOnlyPartCanStart() {
+        // Arrange
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 2, Action.EXECUTE, Actor.EMPTY);
+
+        final Pattern expandableStepPattern = pattern().ingredient(A, 1).output(B, 1).build();
+        final Pattern rootPattern = pattern().ingredient(B, 1).output(C, 1).build();
+
+        final PatternProviderNetworkNode expandableStepProvider = new PatternProviderNetworkNode(0, 5);
+        expandableStepProvider.setPattern(1, expandableStepPattern);
+        sut.onContainerAdded(() -> expandableStepProvider);
+
+        final PatternProviderNetworkNode rootProvider = new PatternProviderNetworkNode(0, 5);
+        rootProvider.setPattern(1, rootPattern);
+        sut.onContainerAdded(() -> rootProvider);
+
+        final List<LpExecutionPlanStep> steps = List.of(
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(expandableStepPattern, 0), 4),
+            new LpExecutionPlanStep(LpPatternRecipe.fromPattern(rootPattern, 1), 1)
+        );
+
+        // Act
+        final Optional<TaskId> dispatcherTask = invokeAddLpDispatcherTask(C, 1, steps, true);
+        rootProvider.setActive(true);
+        rootProvider.setNetwork(network);
+        rootProvider.doWork();
+
+        // Assert
+        assertThat(dispatcherTask).isPresent();
+        assertThat(rootProvider.getTasks()).hasSize(1);
+        assertThat(expandableStepProvider.getTasks()).hasSize(1);
+        assertThat(expandableStepProvider.getTasks().getFirst().getAmount()).isEqualTo(2);
     }
 
     @Test
@@ -919,19 +1028,43 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     private PlanningAlgorithm determinePlanningAlgorithm(final ResourceKey resource) {
-        return invokeShouldUseOldSystem(resource) ? PlanningAlgorithm.TRADITIONAL : PlanningAlgorithm.LP;
+        return invokeShouldUseLpSystem(resource) ? PlanningAlgorithm.LP : PlanningAlgorithm.TRADITIONAL;
     }
 
-    private boolean invokeShouldUseOldSystem(final ResourceKey resource) {
+    private boolean invokeShouldUseLpSystem(final ResourceKey resource) {
         try {
             final Method method = AutocraftingNetworkComponentImpl.class.getDeclaredMethod(
-                "shouldUseOldSystem",
+                "shouldUseLPSystem",
                 ResourceKey.class
             );
             method.setAccessible(true);
             return (boolean) method.invoke(sut, resource);
         } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new AssertionError("Unable to determine selected planning algorithm", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Optional<TaskId> invokeAddLpDispatcherTask(final ResourceKey resource,
+                                                       final long amount,
+                                                       final List<LpExecutionPlanStep> steps,
+                                                       final boolean hasRecipeCycles) {
+        try {
+            final LpStepPlan lpStepPlan = new LpStepPlan(steps, hasRecipeCycles);
+            final Method method = AutocraftingNetworkComponentImpl.class.getDeclaredMethod(
+                "addLpDispatcherTask",
+                ResourceKey.class,
+                long.class,
+                Actor.class,
+                LpStepPlan.class,
+                boolean.class
+            );
+            method.setAccessible(true);
+            return (Optional<TaskId>) method.invoke(sut, resource, amount, Actor.EMPTY, lpStepPlan, false);
+        } catch (final NoSuchMethodException
+                     | IllegalAccessException
+                     | InvocationTargetException e) {
+            throw new AssertionError("Unable to invoke LP dispatcher task creation", e);
         }
     }
 
