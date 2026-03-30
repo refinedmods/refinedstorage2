@@ -387,6 +387,11 @@ class AutocraftingNetworkComponentImplTest {
     @Test
     void shouldUseTraditionalPlanningAlgorithmWhenPatternHasFuzzyInputs() {
         // Arrange
+        // Both alternatives (A and B) exist in storage, so the ingredient is genuinely fuzzy.
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+        rootStorage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
+
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(B, 1).build());
         sut.onContainerAdded(() -> provider);
@@ -396,8 +401,75 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
+    void shouldUseLpPlanningAlgorithmWhenPatternHasFuzzyInputsButOnlyOneAlternativeIsAvailable() {
+        // Arrange
+        // Only A exists in storage; B is neither in storage nor craftable.
+        // The ingredient [A, B] effectively has only one viable option, so LP can be used.
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(C, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.LP);
+    }
+
+    @Test
+    void shouldUseLpPlanningAlgorithmWhenPatternHasFuzzyInputsButOnlyOneAlternativeIsCraftable() {
+        // Arrange
+        // A has a pattern (craftable); B is neither in storage nor craftable.
+        // The ingredient [A, B] effectively has only one viable option, so LP can be used.
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(C, 1).build());
+        provider.setPattern(2, pattern().ingredient(D, 1).output(A, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.LP);
+    }
+
+    @Test
+    void shouldUseTraditionalPlanningAlgorithmWhenPatternHasFuzzyInputsAndOneAlternativeIsInStorageAndOneIsCraftable() {
+        // Arrange
+        // A exists in storage; B is craftable via a pattern.
+        // Both alternatives are viable, so the ingredient is genuinely fuzzy → use traditional.
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(C, 1).build());
+        provider.setPattern(2, pattern().ingredient(D, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+    }
+
+    @Test
+    void shouldUseTraditionalPlanningAlgorithmWhenPatternHasFuzzyInputsAndBothAlternativesAreCraftable() {
+        // Arrange
+        // Both A and B are craftable via patterns; neither is in storage.
+        // Both alternatives are viable, so the ingredient is genuinely fuzzy → use traditional.
+        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
+        provider.setPattern(1, pattern().ingredient(1).input(A).input(B).end().output(C, 1).build());
+        provider.setPattern(2, pattern().ingredient(D, 1).output(A, 1).build());
+        provider.setPattern(3, pattern().ingredient(D, 1).output(B, 1).build());
+        sut.onContainerAdded(() -> provider);
+
+        // Act & assert
+        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+    }
+
+    @Test
     void shouldUseTraditionalPlanningAlgorithmWhenRelevantDependencyPatternHasFuzzyInputs() {
         // Arrange
+        // Both alternatives (A and D) exist in storage, so the dependency ingredient is genuinely fuzzy.
+        rootStorage.addSource(new StorageImpl());
+        rootStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+        rootStorage.insert(D, 1, Action.EXECUTE, Actor.EMPTY);
+
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
         provider.setPattern(1, pattern().ingredient(B, 1).output(C, 1).build());
         provider.setPattern(2, pattern().ingredient(1).input(A).input(D).end().output(B, 1).build());
