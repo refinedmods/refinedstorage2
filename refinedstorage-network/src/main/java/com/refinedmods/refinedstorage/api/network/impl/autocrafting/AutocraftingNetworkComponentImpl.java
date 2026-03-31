@@ -31,6 +31,10 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetwo
 import com.refinedmods.refinedstorage.api.network.autocrafting.ParentContainer;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternListener;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpDispatcherHelper;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpPlanningHelper;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpStepPlan;
+import com.refinedmods.refinedstorage.api.autocrafting.lp.LpStepPlanCalculator;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -41,9 +45,11 @@ import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,9 +177,10 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
         // Determine which system to use
-        if (shouldUseLPSystem(resource)) {
+        if (shouldUseLPSystem(resource, rootStorage)) {
+            final Collection<Pattern> relevantPatterns = collectRelevantPatternsForLp(resource, rootStorage);
             return LpStepPlanCalculator.calculateSteps(
-                patternRepository.getAll(),
+                relevantPatterns,
                 LOGGER,
                 rootStorage,
                 resource,
@@ -202,9 +209,10 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
         // Determine which system to use
-        if (shouldUseLPSystem(resource)) {
+        if (shouldUseLPSystem(resource, rootStorage)) {
+            final Collection<Pattern> relevantPatterns = collectRelevantPatternsForLp(resource, rootStorage);
             return LpStepPlanCalculator.calculateSteps(
-                patternRepository.getAll(),
+                relevantPatterns,
                 LOGGER,
                 rootStorage,
                 resource,
@@ -214,6 +222,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                 .flatMap(steps -> addLpDispatcherTask(resource, correctedAmount, actor, steps, false))
                 .map(taskId -> EnsureResult.TASK_CREATED)
                 .orElseGet(() -> ensureTaskForCraftableAmountViaLp(
+                    relevantPatterns,
                     rootStorage,
                     resource,
                     correctedAmount,
@@ -230,44 +239,11 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     }
 
     private boolean shouldUseLPSystem(final ResourceKey requestedResource) {
-        // return true if all ingredients in the crafting tree have exactly one viable input
-        // (i.e., in storage or craftable via a pattern). If an ingredient has multiple
-        // possible inputs but only one is actually available or craftable, it is not
-        // considered fuzzy. Return false (use traditional system) only when multiple viable
-        // alternatives exist for the same ingredient.
-        final RootStorage rootStorage = rootStorageProvider.get();
-        final Set<ResourceKey> visitedResources = new HashSet<>();
-        final ArrayDeque<ResourceKey> resourcesToVisit = new ArrayDeque<>();
-        resourcesToVisit.add(requestedResource);
+        return LpPlanningHelper.shouldUseLPSystem(requestedResource, rootStorageProvider.get(), patternRepository);
+    }
 
-        while (!resourcesToVisit.isEmpty()) {
-            final ResourceKey currentResource = resourcesToVisit.removeFirst();
-            if (!visitedResources.add(currentResource)) {
-                continue;
-            }
-
-            for (final Pattern pattern : patternRepository.getByOutput(currentResource)) {
-                for (final var ingredient : pattern.layout().ingredients()) {
-                    if (ingredient.inputs().size() == 1) {
-                        resourcesToVisit.addLast(ingredient.inputs().getFirst());
-                        continue;
-                    }
-                    // Multiple possible inputs: only count those available in storage or craftable
-                    final List<ResourceKey> viableInputs = ingredient.inputs().stream()
-                        .filter(input -> rootStorage.get(input) > 0
-                            || !patternRepository.getByOutput(input).isEmpty())
-                        .toList();
-                    if (viableInputs.size() > 1) {
-                        return false;
-                    }
-                    if (!viableInputs.isEmpty()) {
-                        resourcesToVisit.addLast(viableInputs.getFirst());
-                    }
-                }
-            }
-        }
-
-        return true;
+    private boolean shouldUseLPSystem(final ResourceKey requestedResource, final RootStorage rootStorage) {
+        return LpPlanningHelper.shouldUseLPSystem(requestedResource, rootStorage, patternRepository);
     }
 
     private EnsureResult ensureTaskForCraftableAmount(final ResourceKey resource, final Actor actor,
@@ -285,8 +261,13 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             .map(taskId -> EnsureResult.TASK_CREATED)
             .orElse(EnsureResult.MISSING_RESOURCES);
     }
+    private Collection<Pattern> collectRelevantPatternsForLp(final ResourceKey requestedResource,
+                                                             final RootStorage rootStorage) {
+        return LpPlanningHelper.collectRelevantPatternsForLp(requestedResource, rootStorage, patternRepository);
+    }
 
-    private EnsureResult ensureTaskForCraftableAmountViaLp(final RootStorage rootStorage,
+    private EnsureResult ensureTaskForCraftableAmountViaLp(final Collection<Pattern> relevantPatterns,
+                                                           final RootStorage rootStorage,
                                                            final ResourceKey resource,
                                                            final long amount,
                                                            final Actor actor,
@@ -296,6 +277,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
 
         final long correctedAmount = findMaxCraftableAmountViaLp(
+            relevantPatterns,
             rootStorage,
             resource,
             amount,
@@ -318,7 +300,8 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             .orElse(EnsureResult.MISSING_RESOURCES);
     }
 
-    private long findMaxCraftableAmountViaLp(final RootStorage rootStorage,
+    private long findMaxCraftableAmountViaLp(final Collection<Pattern> relevantPatterns,
+                                             final RootStorage rootStorage,
                                              final ResourceKey resource,
                                              final long amount,
                                              final CancellationToken cancellationToken) {
@@ -329,7 +312,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         while (low <= high && !cancellationToken.isCancelled()) {
             final long middle = low + ((high - low) / 2);
             final boolean craftable = LpStepPlanCalculator.calculateSteps(
-                patternRepository.getAll(),
+                relevantPatterns,
                 LOGGER,
                 rootStorage,
                 resource,
@@ -357,7 +340,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
             return Optional.of(addSingleStepTask(actor, singleStepPlan, notify));
         }
 
-        final Pattern rootPattern = findRootPattern(resource, lpStepPlan.steps());
+        final Pattern rootPattern = LpDispatcherHelper.findRootPattern(resource, lpStepPlan.steps());
         if (rootPattern == null) {
             return Optional.empty();
         }
@@ -378,102 +361,8 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (outcome.executableResult().isEmpty()) {
             return Optional.empty();
         }
-
         final List<LpExecutionPlanStep> steps = outcome.executableResult().get().plan();
-        final Pattern rootPattern = findRootPattern(resource, steps);
-        if (rootPattern == null) {
-            return Optional.empty();
-        }
-
-        final Map<Pattern, PatternPlanAccumulator> accumulators = new LinkedHashMap<>();
-        for (final LpExecutionPlanStep step : steps) {
-            final Pattern pattern = step.recipe().pattern();
-            final PatternPlanAccumulator accumulator = accumulators.computeIfAbsent(
-                pattern,
-                ignored -> new PatternPlanAccumulator(pattern.equals(rootPattern))
-            );
-            accumulator.addIterations(step.iterations());
-            addIngredientUsage(accumulator, pattern, step.iterations());
-        }
-
-        final Map<Pattern, TaskPlan.PatternPlan> patterns = new LinkedHashMap<>();
-        accumulators.forEach((pattern, accumulator) -> patterns.put(pattern, accumulator.toPlan()));
-        return Optional.of(new TaskPlan(
-            resource,
-            amount,
-            rootPattern,
-            patterns,
-            computeInitialRequirements(steps, rootPattern)
-        ));
-    }
-
-    private static void addIngredientUsage(final PatternPlanAccumulator accumulator,
-                                           final Pattern pattern,
-                                           final long iterations) {
-        for (int ingredientIndex = 0; ingredientIndex < pattern.layout().ingredients().size(); ingredientIndex++) {
-            final var ingredient = pattern.layout().ingredients().get(ingredientIndex);
-            final ResourceKey ingredientResource = ingredient.inputs().getFirst();
-            accumulator.addIngredient(ingredientIndex, ingredientResource, ingredient.amount() * iterations);
-        }
-    }
-
-    private static List<ResourceAmount> computeInitialRequirements(final List<LpExecutionPlanStep> steps,
-                                                                   final Pattern rootPattern) {
-        final Map<ResourceKey, Long> internalStorage = new LinkedHashMap<>();
-        final Map<ResourceKey, Long> initialRequirements = new LinkedHashMap<>();
-
-        for (final LpExecutionPlanStep step : steps) {
-            final Pattern pattern = step.recipe().pattern();
-            for (int iteration = 0; iteration < step.iterations(); iteration++) {
-                consumeIterationInputs(pattern, internalStorage, initialRequirements);
-                if (!pattern.equals(rootPattern)) {
-                    addIterationOutputs(pattern, internalStorage);
-                }
-            }
-        }
-
-        return initialRequirements.entrySet().stream()
-            .map(entry -> new ResourceAmount(entry.getKey(), entry.getValue()))
-            .toList();
-    }
-
-    private static void consumeIterationInputs(final Pattern pattern,
-                                               final Map<ResourceKey, Long> internalStorage,
-                                               final Map<ResourceKey, Long> initialRequirements) {
-        pattern.layout().ingredients().forEach(ingredient -> {
-            final ResourceKey resource = ingredient.inputs().getFirst();
-            final long amount = ingredient.amount();
-            final long available = internalStorage.getOrDefault(resource, 0L);
-            final long fromInternalStorage = Math.min(available, amount);
-            final long missing = amount - fromInternalStorage;
-            if (fromInternalStorage > 0) {
-                internalStorage.put(resource, available - fromInternalStorage);
-            }
-            if (missing > 0) {
-                initialRequirements.merge(resource, missing, Long::sum);
-            }
-        });
-    }
-
-    private static void addIterationOutputs(final Pattern pattern,
-                                            final Map<ResourceKey, Long> internalStorage) {
-        pattern.layout().outputs().forEach(output ->
-            internalStorage.merge(output.resource(), output.amount(), Long::sum));
-        pattern.layout().byproducts().forEach(byproduct ->
-            internalStorage.merge(byproduct.resource(), byproduct.amount(), Long::sum));
-    }
-
-    private static Pattern findRootPattern(final ResourceKey resource,
-                                           final List<LpExecutionPlanStep> steps) {
-        for (int index = steps.size() - 1; index >= 0; index--) {
-            final Pattern pattern = steps.get(index).recipe().pattern();
-            final boolean producesResource = pattern.layout().outputs().stream()
-                .anyMatch(output -> output.resource().equals(resource));
-            if (producesResource) {
-                return pattern;
-            }
-        }
-        return null;
+        return LpDispatcherHelper.toTaskPlan(resource, amount, steps);
     }
 
     private TaskId addTask(final ResourceKey resource,
@@ -645,51 +534,13 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                                       final long requestedAmount,
                                       final LpExecutionPlanStep step,
                                       final boolean root) {
-        final Pattern pattern = step.recipe().pattern();
-        final long iterations = step.iterations();
-
-        final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
-        final List<ResourceAmount> initialRequirements = new ArrayList<>();
-        for (int ingredientIndex = 0; ingredientIndex < pattern.layout().ingredients().size(); ingredientIndex++) {
-            final var ingredient = pattern.layout().ingredients().get(ingredientIndex);
-            final ResourceKey resource = ingredient.inputs().getFirst();
-            final long totalAmount = ingredient.amount() * iterations;
-            ingredients.put(ingredientIndex, Map.of(resource, totalAmount));
-            initialRequirements.add(new ResourceAmount(resource, totalAmount));
-        }
-
-        final Map<Pattern, TaskPlan.PatternPlan> patterns = Map.of(
-            pattern,
-            new TaskPlan.PatternPlan(root, iterations, Map.copyOf(ingredients))
-        );
-
-        final ResourceKey outputResource = pattern.layout().outputs().isEmpty()
-            ? requestedResource
-            : pattern.layout().outputs().getFirst().resource();
-        final long outputAmount = pattern.layout().outputs().isEmpty()
-            ? iterations
-            : pattern.layout().outputs().getFirst().amount() * iterations;
-        final long taskAmount = requestedAmount > 0 ? requestedAmount : outputAmount;
-
-        return new TaskPlan(
-            outputResource,
-            taskAmount,
-            pattern,
-            patterns,
-            List.copyOf(initialRequirements)
-        );
+        return LpDispatcherHelper.toSingleStepPlan(requestedResource, requestedAmount, step, root);
     }
 
     private static TaskPlan createDispatcherPlan(final ResourceKey resource,
                                                  final long amount,
                                                  final Pattern rootPattern) {
-        return new TaskPlan(
-            resource,
-            amount,
-            rootPattern,
-            Map.of(rootPattern, new TaskPlan.PatternPlan(true, 1, Map.of())),
-            List.of()
-        );
+        return LpDispatcherHelper.createDispatcherPlan(resource, amount, rootPattern);
     }
 
     private final class LpStepDispatcher extends TaskImpl {
@@ -1139,34 +990,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         }
 
         private record SeededSubTask(TaskImpl task, Map<ResourceKey, Long> remainingRequirements) {
-        }
-    }
-
-    private static final class PatternPlanAccumulator {
-        private final boolean root;
-        private final Map<Integer, Map<ResourceKey, Long>> ingredients = new LinkedHashMap<>();
-        private long iterations;
-
-        private PatternPlanAccumulator(final boolean root) {
-            this.root = root;
-        }
-
-        private void addIterations(final long additionalIterations) {
-            this.iterations += additionalIterations;
-        }
-
-        private void addIngredient(final int ingredientIndex,
-                                   final ResourceKey resource,
-                                   final long amount) {
-            ingredients.computeIfAbsent(ingredientIndex, ignored -> new LinkedHashMap<>())
-                .merge(resource, amount, Long::sum);
-        }
-
-        private TaskPlan.PatternPlan toPlan() {
-            final Map<Integer, Map<ResourceKey, Long>> copiedIngredients = new LinkedHashMap<>();
-            ingredients.forEach((ingredientIndex, resources) ->
-                copiedIngredients.put(ingredientIndex, Map.copyOf(new LinkedHashMap<>(resources))));
-            return new TaskPlan.PatternPlan(root, iterations, Map.copyOf(copiedIngredients));
         }
     }
 }

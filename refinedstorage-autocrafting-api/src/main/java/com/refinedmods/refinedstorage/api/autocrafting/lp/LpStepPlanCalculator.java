@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage.api.network.impl.autocrafting;
+package com.refinedmods.refinedstorage.api.autocrafting.lp;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
@@ -22,11 +22,11 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 
-final class LpStepPlanCalculator {
+public final class LpStepPlanCalculator {
     private LpStepPlanCalculator() {
     }
 
-    static Optional<LpStepPlan> calculateSteps(final Collection<Pattern> patterns,
+    public static Optional<LpStepPlan> calculateSteps(final Collection<Pattern> patterns,
                                                final Logger logger,
                                                final RootStorage rootStorage,
                                                final ResourceKey resource,
@@ -65,7 +65,11 @@ final class LpStepPlanCalculator {
             try {
                 recipes.add(LpPatternRecipe.fromPattern(sorted.get(index), index));
             } catch (final IllegalArgumentException e) {
-                logger.debug("Skipping LP-incompatible pattern {}", sorted.get(index), e);
+                throw new IllegalStateException(
+                    "LP solver received LP-incompatible pattern %s. "
+                        .formatted(sorted.get(index)),
+                    e
+                );
             }
         }
         return recipes;
@@ -83,7 +87,7 @@ final class LpStepPlanCalculator {
         return target;
     }
 
-    static boolean hasRecipeCycles(final List<LpExecutionPlanStep> steps) {
+    public static boolean hasRecipeCycles(final List<LpExecutionPlanStep> steps) {
         final List<Pattern> patterns = steps.stream()
             .map(step -> step.recipe().pattern())
             .distinct()
