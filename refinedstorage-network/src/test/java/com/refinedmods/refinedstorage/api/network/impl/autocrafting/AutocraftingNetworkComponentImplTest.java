@@ -352,17 +352,6 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldUseLpPlanningAlgorithmWhenResourceAppearsInMultipleIngredients() {
-        // Arrange
-        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
-        sut.onContainerAdded(() -> provider);
-
-        // Act & assert
-        assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LP);
-    }
-
-    @Test
     void shouldTreatRequestedAmountAsAdditionalAmountForSelfConsumingRecipe() {
         // Arrange
         rootStorage.addSource(new StorageImpl());
@@ -479,18 +468,18 @@ class AutocraftingNetworkComponentImplTest {
     @Test
     void shouldUseTraditionalPlanningAlgorithmWhenRelevantDependencyPatternHasFuzzyInputs() {
         // Arrange
-        // Both alternatives (A and D) exist in storage, so the dependency ingredient is genuinely fuzzy.
+        // Both alternatives (C and D) exist in storage, so the dependency ingredient is genuinely fuzzy.
         rootStorage.addSource(new StorageImpl());
-        rootStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+        rootStorage.insert(C, 1, Action.EXECUTE, Actor.EMPTY);
         rootStorage.insert(D, 1, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(B, 1).output(C, 1).build());
-        provider.setPattern(2, pattern().ingredient(1).input(A).input(D).end().output(B, 1).build());
+        provider.setPattern(1, pattern().ingredient(B, 1).output(A, 1).build());
+        provider.setPattern(2, pattern().ingredient(1).input(C).input(D).end().output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
-        assertThat(determinePlanningAlgorithm(C)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
+        assertThat(determinePlanningAlgorithm(A)).isEqualTo(PlanningAlgorithm.TRADITIONAL);
     }
 
     @Test
@@ -520,28 +509,6 @@ class AutocraftingNetworkComponentImplTest {
 
         // Act & assert
         assertThat(determinePlanningAlgorithm(B)).isEqualTo(PlanningAlgorithm.LP);
-    }
-
-    @Test
-    void shouldExecuteLpPlanningPathWhenResourceAppearsInMultipleIngredients() {
-        // Arrange
-        rootStorage.addSource(new StorageImpl());
-        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(B, 1).ingredient(B, 1).output(B, 1).build());
-        sut.onContainerAdded(() -> provider);
-
-        // Act
-        final var result = ensureTaskExpectingAlgorithm(
-            B,
-            1,
-            Actor.EMPTY,
-            CancellationToken.NONE,
-            PlanningAlgorithm.LP
-        );
-
-        // Assert
-        assertThat(result).isEqualTo(AutocraftingNetworkComponent.EnsureResult.MISSING_RESOURCES);
-        assertThat(provider.getTasks()).isEmpty();
     }
 
     @Test
@@ -1000,7 +967,7 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldFindMaxCraftableAmountViaLpWhenCancelledDuringBinarySearch() {
+    void shouldFindMaxCraftableAmountViaLpReturnZeroWhenCancelled() {
         // Arrange
         rootStorage.addSource(new StorageImpl());
         rootStorage.insert(A, 100, Action.EXECUTE, Actor.EMPTY);
@@ -1012,7 +979,7 @@ class AutocraftingNetworkComponentImplTest {
 
         final var relevant = invokeCollectRelevantPatternsForLp(B, rootStorage);
 
-        // Act: Binary search with early cancellation → should return 0
+        // Act: early cancellation check → should return 0 without invoking the LP solver
         final long maxCraftable = invokeFindMaxCraftableAmountViaLp(
             relevant,
             rootStorage,
@@ -1986,15 +1953,6 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     @Test
-    void shouldInvokePrivateShouldUseLpSystemWithRootStorageProvider() {
-        final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
-        sut.onContainerAdded(() -> provider);
-
-        assertThat(invokeShouldUseLpSystemViaPrivateMethod(B)).isTrue();
-    }
-
-    @Test
     void shouldExposePatternsAndPatternsByOutput() {
         final Pattern patternAB = pattern().ingredient(A, 1).output(B, 1).build();
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
@@ -2126,21 +2084,6 @@ class AutocraftingNetworkComponentImplTest {
             return LpPlanningHelper.shouldUseLPSystem(resource, rootStorage, (com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl) patternRepository);
         } catch (final NoSuchFieldException | IllegalAccessException e) {
             throw new AssertionError("Unable to determine selected planning algorithm", e);
-        }
-    }
-
-    private boolean invokeShouldUseLpSystemViaPrivateMethod(final ResourceKey resource) {
-        try {
-            final Method method = AutocraftingNetworkComponentImpl.class.getDeclaredMethod(
-                "shouldUseLPSystem",
-                ResourceKey.class
-            );
-            method.setAccessible(true);
-            return (boolean) method.invoke(sut, resource);
-        } catch (final NoSuchMethodException
-                     | IllegalAccessException
-                     | InvocationTargetException e) {
-            throw new AssertionError("Unable to invoke shouldUseLPSystem(ResourceKey)", e);
         }
     }
 

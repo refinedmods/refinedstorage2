@@ -136,6 +136,46 @@ class LpRecipeAnalysisTest {
             .containsExactly(cx.uniqueId(), xc.uniqueId());
     }
 
+    @Test
+    void shouldDetectThreeNodeCycleWithoutDuplicates() {
+        // Covers depth-first cycle collection and canonicalization for longer cycles.
+        final LpPatternRecipe ab = recipe(A, B, 1, 1, 0);
+        final LpPatternRecipe bc = recipe(B, C, 1, 1, 0);
+        final LpPatternRecipe ca = recipe(C, A, 1, 1, 0);
+
+        final LpRecipeAnalysis.CycleDetectionResult result = LpRecipeAnalysis.detectRecipeCycles(List.of(ab, bc, ca));
+
+        assertThat(result.cycles()).hasSize(1);
+        assertThat(result.cycles().getFirst()).extracting(LpPatternRecipe::uniqueId)
+            .containsExactly(ab.uniqueId(), bc.uniqueId(), ca.uniqueId());
+    }
+
+    @Test
+    void shouldPropagatePriorityToSharedInputsFromBetterRecipe() {
+        // Covers pushImprovedInputPriorities/applyOutputPriorityToRecipes comparisons.
+        final LpPatternRecipe lowPriorityPath = recipe(B, C, 1, 1, 1);
+        final LpPatternRecipe highPriorityPath = recipe(B, C, 1, 1, 10);
+        final LpPatternRecipe parent = recipe(A, B, 1, 1, 0);
+
+        final List<LpPatternRecipe> result = LpRecipeAnalysis.prioritizeAndPruneRelevantRecipes(
+            List.of(lowPriorityPath, highPriorityPath, parent),
+            set(C, 1)
+        );
+
+        assertThat(result).extracting(LpPatternRecipe::uniqueId)
+            .contains(highPriorityPath.uniqueId(), lowPriorityPath.uniqueId(), parent.uniqueId());
+
+        final LpPatternRecipe high = result.stream()
+            .filter(recipe -> recipe.uniqueId().equals(highPriorityPath.uniqueId()))
+            .findFirst()
+            .orElseThrow();
+        final LpPatternRecipe low = result.stream()
+            .filter(recipe -> recipe.uniqueId().equals(lowPriorityPath.uniqueId()))
+            .findFirst()
+            .orElseThrow();
+        assertThat(high.effectivePriority()).isGreaterThan(low.effectivePriority());
+    }
+
     private static LpPatternRecipe recipe(final ResourceKey input,
                                           final ResourceKey output,
                                           final long inputAmount,

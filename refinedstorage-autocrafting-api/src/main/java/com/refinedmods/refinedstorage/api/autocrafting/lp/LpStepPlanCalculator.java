@@ -92,14 +92,36 @@ public final class LpStepPlanCalculator {
             .map(step -> step.recipe().pattern())
             .distinct()
             .toList();
-        if (patterns.isEmpty()) {
+        return hasPatternRecipeCycles(patterns);
+    }
+
+    public static long calculateMaxAmount(final Collection<Pattern> patterns,
+                                          final Logger logger,
+                                          final RootStorage rootStorage,
+                                          final ResourceKey resource,
+                                          final long amount) {
+        final List<LpPatternRecipe> recipes = buildLpRecipes(patterns, logger);
+        if (recipes.isEmpty()) {
+            return 0;
+        }
+        final LpCraftingSolver.PlanningOutcome outcome = new LpCraftingSolver().solve(
+            recipes,
+            buildLpStartingResources(rootStorage),
+            buildTarget(rootStorage, resource, 1)
+        );
+        return Math.min(outcome.maxCraftableAmount(), amount);
+    }
+
+    public static boolean hasPatternRecipeCycles(final Collection<Pattern> patterns) {
+        final List<Pattern> patternList = patterns.stream().distinct().toList();
+        if (patternList.isEmpty()) {
             return false;
         }
 
         final Map<Pattern, Set<ResourceKey>> producedByPattern = new HashMap<>();
         final Map<Pattern, Set<ResourceKey>> consumedByPattern = new HashMap<>();
 
-        for (final Pattern pattern : patterns) {
+        for (final Pattern pattern : patternList) {
             final Set<ResourceKey> produced = new HashSet<>();
             pattern.layout().outputs().forEach(output -> produced.add(output.resource()));
             pattern.layout().byproducts().forEach(byproduct -> produced.add(byproduct.resource()));
@@ -111,10 +133,10 @@ public final class LpStepPlanCalculator {
         }
 
         final Map<Pattern, Set<Pattern>> dependencies = new HashMap<>();
-        for (final Pattern pattern : patterns) {
+        for (final Pattern pattern : patternList) {
             dependencies.putIfAbsent(pattern, new HashSet<>());
             final Set<ResourceKey> produced = producedByPattern.get(pattern);
-            for (final Pattern target : patterns) {
+            for (final Pattern target : patternList) {
                 final Set<ResourceKey> consumed = consumedByPattern.get(target);
                 if (produced.stream().anyMatch(consumed::contains)) {
                     dependencies.get(pattern).add(target);
@@ -124,7 +146,7 @@ public final class LpStepPlanCalculator {
 
         final Set<Pattern> visiting = new HashSet<>();
         final Set<Pattern> visited = new HashSet<>();
-        for (final Pattern pattern : patterns) {
+        for (final Pattern pattern : patternList) {
             if (containsCycle(pattern, dependencies, visiting, visited)) {
                 return true;
             }

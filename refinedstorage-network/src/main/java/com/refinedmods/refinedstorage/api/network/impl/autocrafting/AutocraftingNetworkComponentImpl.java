@@ -176,7 +176,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final RootStorage rootStorage = rootStorageProvider.get();
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
-        // Determine which system to use
         if (shouldUseLPSystem(resource, rootStorage)) {
             final Collection<Pattern> relevantPatterns = collectRelevantPatternsForLp(resource, rootStorage);
             return LpStepPlanCalculator.calculateSteps(
@@ -208,7 +207,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         final long correctedAmount = amount - currentlyCrafting;
         final CraftingCalculator calculator = new CraftingCalculatorImpl(patternRepository, rootStorage);
 
-        // Determine which system to use
         if (shouldUseLPSystem(resource, rootStorage)) {
             final Collection<Pattern> relevantPatterns = collectRelevantPatternsForLp(resource, rootStorage);
             return LpStepPlanCalculator.calculateSteps(
@@ -236,10 +234,6 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                 .orElseGet(() -> ensureTaskForCraftableAmount(resource, actor, correctedAmount, calculator,
                     cancellationToken));
         }
-    }
-
-    private boolean shouldUseLPSystem(final ResourceKey requestedResource) {
-        return LpPlanningHelper.shouldUseLPSystem(requestedResource, rootStorageProvider.get(), patternRepository);
     }
 
     private boolean shouldUseLPSystem(final ResourceKey requestedResource, final RootStorage rootStorage) {
@@ -305,8 +299,23 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
                                              final ResourceKey resource,
                                              final long amount,
                                              final CancellationToken cancellationToken) {
+        if (cancellationToken.isCancelled()) {
+            return 0;
+        }
+
+        final long lpMax = LpStepPlanCalculator.calculateMaxAmount(
+            relevantPatterns, LOGGER, rootStorage, resource, amount
+        );
+        if (lpMax <= 0) {
+            return 0;
+        }
+
+        if (!LpStepPlanCalculator.hasPatternRecipeCycles(relevantPatterns)) {
+            return lpMax;
+        }
+
         long low = 1;
-        long high = amount;
+        long high = lpMax;
         long best = 0;
 
         while (low <= high && !cancellationToken.isCancelled()) {

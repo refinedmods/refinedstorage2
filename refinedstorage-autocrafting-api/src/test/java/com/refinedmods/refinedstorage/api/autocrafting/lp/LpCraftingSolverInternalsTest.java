@@ -108,6 +108,53 @@ class LpCraftingSolverInternalsTest {
         assertThat(attempts.peek()).containsExactly(recipeB.uniqueId());
     }
 
+    @Test
+    void shouldKeepCurrentBestWhenCandidateSetHasEqualSize() throws Exception {
+        // Covers keepLargerSet branch where candidate.size() == currentBest.size().
+        final UUID first = UUID.randomUUID();
+        final UUID second = UUID.randomUUID();
+
+        final Set<UUID> kept = invokeKeepLargerSet(Set.of(first), Set.of(second));
+
+        assertThat(kept).containsExactly(first);
+    }
+
+    @Test
+    void shouldFindExecutableSolutionViaCycleEliminationForSimpleAcyclicRecipe() {
+        // Covers successful findExecutableSolutionViaCycleElimination path.
+        final LpCraftingSolver solver = new LpCraftingSolver();
+        final LpPatternRecipe recipe = LpPatternRecipe.fromPattern(
+            PatternBuilder.pattern().ingredient(A, 1).output(B, 1).build(),
+            0
+        );
+
+        final LpCraftingSolver.CycleEliminationResult result = solver.findExecutableSolutionViaCycleElimination(
+            List.of(recipe),
+            set(A, 2),
+            set(B, 1)
+        );
+
+        assertThat(result.executableResult()).isPresent();
+        assertThat(result.fallbackDisabledRecipeIds()).isEmpty();
+    }
+
+    @Test
+    void shouldSolveWithBaseItemsWhenTargetIsNotCraftable() {
+        // Covers solve() branch where max craftable amount is zero.
+        final LpCraftingSolver solver = new LpCraftingSolver();
+
+        final LpCraftingSolver.PlanningOutcome outcome = solver.solve(
+            List.of(),
+            LpResourceSet.empty(),
+            set(B, 1)
+        );
+
+        assertThat(outcome.maxCraftableAmount()).isZero();
+        assertThat(outcome.executableResult()).isEmpty();
+        assertThat(outcome.requiredBaseItems().getAmount(B)).isEqualTo(1L);
+        assertThat(outcome.fallbackDisabledRecipeIds()).isEmpty();
+    }
+
     private static LpResourceSet set(final Object... entries) {
         final LpResourceSet set = new LpResourceSet();
         for (int i = 0; i < entries.length; i += 2) {

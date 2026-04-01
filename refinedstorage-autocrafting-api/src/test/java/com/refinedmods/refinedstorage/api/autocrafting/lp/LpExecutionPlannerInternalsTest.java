@@ -142,6 +142,38 @@ class LpExecutionPlannerInternalsTest {
     }
 
     @Test
+    void internalsShouldBuildTwoBatchAttemptsForMaxBatchTwo() throws Exception {
+        // Covers buildBatchAttempts branch where maxBatch==2 (include 1, skip half).
+        final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
+        final Object candidate = candidate(recipe, 10L, 2L);
+
+        final List<Long> batches = invokeBuildBatchAttempts(candidate);
+
+        assertThat(batches).containsExactly(2L, 1L);
+    }
+
+    @Test
+    void internalsShouldReturnNullCandidateWhenRemainingIsNegative() throws Exception {
+        // Covers toCandidate path where remaining <= 0.
+        final LpPatternRecipe recipe = recipe(A, B, 1, 1, 0);
+        final LpResourceSet inventory = set(A, 10);
+
+        final Object candidate = invokeToCandidate(recipe, Map.of(recipe.uniqueId(), -1L), inventory);
+
+        assertThat(candidate).isNull();
+    }
+
+    @Test
+    void internalsShouldComputeAffordableBatchWithUnevenDivision() throws Exception {
+        // Covers integer division path in computeMaxAffordableBatch.
+        final LpPatternRecipe recipe = recipe(A, B, 2, 1, 0);
+
+        final long maxBatch = invokeComputeMaxAffordableBatch(recipe, set(A, 5));
+
+        assertThat(maxBatch).isEqualTo(2L);
+    }
+
+    @Test
     void internalsShouldPreferLoopCandidatesEvenWhenMaxBatchIsLower() throws Exception {
         // Loop membership should take precedence in candidate ordering.
         final LpPatternRecipe loopRecipe = recipe(A, B, 1, 1, 0);
