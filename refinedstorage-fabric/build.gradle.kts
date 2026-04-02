@@ -42,8 +42,10 @@ dependencies {
     modApi(libs.modmenu)
     include(libs.cloth.config)
     include(libs.teamreborn.energy)
+    include("org.ojalgo:ojalgo:55.2.0")
 
     testCompileOnly(libs.apiguardian)
+    testCompileOnly("org.ojalgo:ojalgo:55.2.0")
 
     compileOnly(project(":refinedstorage-common"))
     compileOnly(project(":refinedstorage-common-api"))
@@ -55,6 +57,7 @@ dependencies {
     compileOnly(project(":refinedstorage-network"))
     compileOnly(project(":refinedstorage-autocrafting-api"))
     compileOnly(project(":refinedstorage-query-parser"))
+    compileOnly("org.ojalgo:ojalgo:55.2.0")
     commonJava(project(path = ":refinedstorage-common", configuration = "commonJava"))
     commonResources(project(path = ":refinedstorage-common", configuration = "commonResources"))
     commonJava(project(path = ":refinedstorage-common-api", configuration = "commonJava"))
@@ -66,4 +69,5 @@ dependencies {
     commonJava(project(path = ":refinedstorage-network", configuration = "commonJava"))
     commonJava(project(path = ":refinedstorage-autocrafting-api", configuration = "commonJava"))
     commonJava(project(path = ":refinedstorage-query-parser", configuration = "commonJava"))
+    commonJava("org.ojalgo:ojalgo:55.2.0")
 }

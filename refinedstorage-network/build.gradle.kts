@@ -19,6 +19,7 @@ dependencies {
     api(project(":refinedstorage-network-api"))
     api(project(":refinedstorage-resource-api"))
     api(project(":refinedstorage-storage-api"))
+    api(project(":refinedstorage-autocrafting-api"))
     implementation(libs.slf4j.api)
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.params)
