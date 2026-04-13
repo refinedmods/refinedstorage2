@@ -12,12 +12,17 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.Level;
+import org.lwjgl.glfw.GLFW;
+
+import static net.minecraft.client.gui.screens.Screen.hasControlDown;
 
 public final class ClientPlatformUtil {
     private static final SystemToast.SystemToastId MESSAGE_TOAST_ID = new SystemToast.SystemToastId();
@@ -81,5 +86,18 @@ public final class ClientPlatformUtil {
 
     public static void autocraftingTaskCompleted(final PlatformResourceKey resource, final long amount) {
         Minecraft.getInstance().getToasts().addToast(new TaskCompletedToast(resource, amount));
+    }
+
+    public static boolean isCommand() {
+        return Util.getPlatform() == Util.OS.OSX;
+    }
+
+    public static boolean isCommandOrControlDown() {
+        if (isCommand()) {
+            final long window = Minecraft.getInstance().getWindow().getWindow();
+            return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SUPER)
+                || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SUPER);
+        }
+        return hasControlDown();
     }
 }

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.common.grid.AbstractCraftingGridContainerM
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.List;
 import javax.annotation.Nullable;
@@ -108,7 +109,7 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
         final boolean mayFilterOnCraftingMatrixItems = hoveredSlot != null
             && hoveredSlot.container instanceof ResultContainer
             && hasShiftDown()
-            && hasControlDown();
+            && ClientPlatformUtil.isCommandOrControlDown();
         if (mayFilterOnCraftingMatrixItems && !filteringBasedOnCraftingMatrixItems) {
             filteringBasedOnCraftingMatrixItems = true;
             getMenu().filterBasedOnCraftingMatrixItems();
@@ -213,9 +214,10 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
                 stack.getTooltipImage(),
                 lines
             );
+            final String key = ClientPlatformUtil.isCommand() ? "cmd" : "ctrl";
             processedLines.add(HelpClientTooltipComponent.create(createTranslation(
                 "gui",
-                "crafting_grid.press_shift_ctrl_to_only_show_items_used_in_crafting"
+                "crafting_grid.press_shift_" + key + "_to_only_show_items_used_in_crafting"
             )));
             Platform.INSTANCE.renderTooltip(graphics, processedLines, x, y);
             return;
