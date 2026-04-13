@@ -106,7 +106,6 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             }
         });
         // TODO: fix fabric startup warnings
-        // TODO: scrolling in grid is going wrong direction always down! :)
         registerKeyMappings();
         registerResourceRendering();
         registerAlternativeGridHints();

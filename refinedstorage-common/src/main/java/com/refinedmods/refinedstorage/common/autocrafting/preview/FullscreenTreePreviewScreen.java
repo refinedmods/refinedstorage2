@@ -58,10 +58,10 @@ class FullscreenTreePreviewScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
         if (treePreviewWidget == null) {
-            return super.mouseScrolled(x, y, z, delta);
+            return super.mouseScrolled(x, y, scrollX, scrollY);
         }
-        return treePreviewWidget.mouseScrolled(x, y, z, delta);
+        return treePreviewWidget.mouseScrolled(x, y, scrollX, scrollY);
     }
 }

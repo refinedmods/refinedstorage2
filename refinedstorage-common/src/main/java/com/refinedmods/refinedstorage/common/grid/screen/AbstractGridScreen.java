@@ -604,9 +604,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
-        final boolean up = delta > 0;
-
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        final boolean up = scrollX < 0;
         if (isOverStorageArea((int) x, (int) y)) {
             final GridResource resource = getCurrentGridResource();
             if (resource != null) {
@@ -615,8 +614,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         } else if (hoveredSlot != null && hoveredSlot.hasItem() && !(hoveredSlot instanceof DisabledSlot)) {
             mouseScrolledInInventory(up, hoveredSlot);
         }
-
-        return super.mouseScrolled(x, y, z, delta);
+        return super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private void mouseScrolledInInventory(final boolean up, final Slot slot) {
