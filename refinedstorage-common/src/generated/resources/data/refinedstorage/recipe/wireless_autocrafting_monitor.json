@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "M": "#refinedstorage:autocrafting_monitors",
+    "P": "#c:ender_pearls"
+  },
+  "pattern": [
+    "EPE",
+    "EME",
+    "EAE"
+  ],
+  "result": {
+    "id": "refinedstorage:wireless_autocrafting_monitor"
+  }
+}

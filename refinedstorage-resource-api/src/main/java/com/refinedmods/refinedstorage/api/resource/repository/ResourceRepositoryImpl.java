@@ -7,9 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,8 +110,8 @@ public class ResourceRepositoryImpl<T> implements ResourceRepository<T> {
         tryAddNewResource(resource);
     }
 
-    @Nullable
-    private MutableResourceList.OperationResult updateBackingList(final ResourceKey resource, final long amount) {
+    private MutableResourceList.@Nullable OperationResult updateBackingList(final ResourceKey resource,
+                                                                            final long amount) {
         if (amount < 0) {
             return backingList.remove(resource, Math.abs(amount));
         }

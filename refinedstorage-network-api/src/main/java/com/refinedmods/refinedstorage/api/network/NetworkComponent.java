@@ -8,18 +8,18 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public interface NetworkComponent {
-    default void onContainerAdded(NetworkNodeContainer container) {
+    default void onContainerAdded(final NetworkNodeContainer container) {
     }
 
-    default void onContainerRemoved(NetworkNodeContainer container) {
+    default void onContainerRemoved(final NetworkNodeContainer container) {
     }
 
     default void onNetworkRemoved() {
     }
 
-    default void onNetworkSplit(Set<Network> networks) {
+    default void onNetworkSplit(final Set<Network> networks) {
     }
 
-    default void onNetworkMergedWith(Network newMainNetwork) {
+    default void onNetworkMergedWith(final Network newMainNetwork) {
     }
 }

@@ -19,7 +19,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class StorageTransferNetworkNode extends AbstractStorageContainerNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);

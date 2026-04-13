@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,7 +41,7 @@ class ProcessingMatrixResourceSlot extends ResourceSlot {
     private final int startY;
     private final int endY;
 
-    private Set<ResourceLocation> cachedAllowedAlternatives;
+    private Set<Identifier> cachedAllowedAlternatives;
 
     ProcessingMatrixResourceSlot(final ResourceContainer resourceContainer,
                                  final int index,
@@ -76,7 +76,7 @@ class ProcessingMatrixResourceSlot extends ResourceSlot {
         final ServerPlayer serverPlayer,
         final boolean resourceChanged
     ) {
-        final Set<ResourceLocation> currentAllowedAlternatives = container.getAllowedTagIds(
+        final Set<Identifier> currentAllowedAlternatives = container.getAllowedTagIds(
             getContainerSlot()
         );
         // If the resource has changed, also re-send the allowed alternatives.

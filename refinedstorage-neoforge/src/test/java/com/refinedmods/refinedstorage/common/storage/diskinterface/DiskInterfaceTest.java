@@ -3,18 +3,15 @@ package com.refinedmods.refinedstorage.common.storage.diskinterface;
 import com.refinedmods.refinedstorage.api.network.impl.node.storagetransfer.StorageTransferMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 
 import java.util.Set;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSITEMS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
@@ -27,13 +24,11 @@ import static com.refinedmods.refinedstorage.common.storage.diskinterface.DiskIn
 import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.DIRT;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class DiskInterfaceTest {
     private DiskInterfaceTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldInsertItemsIntoNetwork(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -65,7 +60,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldInsertItemsIntoNetworkWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -74,7 +69,7 @@ public final class DiskInterfaceTest {
 
             // Act
             diskInterface.setTransferMode(StorageTransferMode.INSERT_INTO_NETWORK);
-            diskInterface.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            diskInterface.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -98,7 +93,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldInsertItemsIntoNetworkBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -137,7 +132,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldInsertItemsIntoNetworkFuzzyBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -177,7 +172,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExtractItemsFromNetwork(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -202,7 +197,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExtractItemsFromNetworkWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             // Arrange
@@ -211,7 +206,7 @@ public final class DiskInterfaceTest {
 
             // Act
             diskInterface.setTransferMode(StorageTransferMode.EXTRACT_FROM_NETWORK);
-            diskInterface.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            diskInterface.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -228,7 +223,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExtractItemsFromNetworkBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             final ItemStack damagedDiamondChestplate = getItemAsDamaged(DIAMOND_CHESTPLATE.getDefaultInstance(), 500);
@@ -265,7 +260,7 @@ public final class DiskInterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExtractItemsFromNetworkFuzzyBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.NORTH, (diskInterface, pos, sequence) -> {
             final ItemStack damagedDiamondChestplate = getItemAsDamaged(DIAMOND_CHESTPLATE.getDefaultInstance(), 500);

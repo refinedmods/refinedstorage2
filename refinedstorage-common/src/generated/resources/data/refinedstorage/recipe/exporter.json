@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "refinedstorage:cable",
+    "refinedstorage:construction_core",
+    "refinedstorage:improved_processor"
+  ],
+  "result": {
+    "id": "refinedstorage:exporter"
+  }
+}

@@ -3,15 +3,13 @@ package com.refinedmods.refinedstorage.fabric.support.containermenu;
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.MenuOpener;
 
-import javax.annotation.Nullable;
-
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 public class MenuOpenerImpl implements MenuOpener {
     @Override
@@ -24,7 +22,7 @@ public class MenuOpenerImpl implements MenuOpener {
     }
 
     private <T> void openExtendedMenu(final ServerPlayer player, final ExtendedMenuProvider<T> extendedMenuProvider) {
-        player.openMenu(new ExtendedScreenHandlerFactory<T>() {
+        player.openMenu(new net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<>() {
             @Nullable
             @Override
             public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {

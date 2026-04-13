@@ -11,20 +11,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -36,7 +37,7 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     static final int INSET_WIDTH = 138;
     static final int INSET_HEIGHT = 71;
 
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/pattern_grid.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/pattern_grid.png");
     private static final MutableComponent CREATE_PATTERN = createTranslation("gui", "pattern_grid.create_pattern");
     private static final MutableComponent CLEAR = createTranslation("gui", "pattern_grid.clear");
 
@@ -63,15 +64,13 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
 
     private final Map<PatternType, PatternTypeButton> patternTypeButtons = new EnumMap<>(PatternType.class);
     private final Inventory playerInventory;
-    private final Map<Pair<PlatformResourceKey, Set<ResourceLocation>>, ProcessingMatrixInputClientTooltipComponent>
+    private final Map<Pair<PlatformResourceKey, Set<Identifier>>, ProcessingMatrixInputClientTooltipComponent>
         processingMatrixInputTooltipCache = new HashMap<>();
     private final Map<PatternType, PatternGridRenderer> renderers = new EnumMap<>(PatternType.class);
 
     public PatternGridScreen(final PatternGridContainerMenu menu, final Inventory inventory, final Component title) {
-        super(menu, inventory, title, 177);
+        super(menu, inventory, title, 177, 193, 249);
         this.inventoryLabelY = 153;
-        this.imageWidth = 193;
-        this.imageHeight = 249;
         this.playerInventory = inventory;
     }
 
@@ -161,31 +160,33 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
         if (renderer != null) {
             renderer.render(graphics, mouseX, mouseY, partialTicks);
         }
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float partialTicks, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         if (renderer != null) {
             renderer.renderBackground(graphics, partialTicks, mouseX, mouseY);
         }
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        super.renderTooltip(graphics, x, y);
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        super.extractTooltip(graphics, x, y);
         if (renderer != null) {
             renderer.renderTooltip(font, hoveredSlot, graphics, x, y);
         }
     }
 
     @Override
-    protected void renderResourceSlots(final GuiGraphics graphics) {
+    protected void renderResourceSlots(final GuiGraphicsExtractor graphics) {
         // no op, we render them in the scissor rendering
     }
 
@@ -200,11 +201,11 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     protected void addResourceSlotTooltips(final ResourceSlot resourceSlot,
                                            final List<ClientTooltipComponent> tooltip) {
         if (resourceSlot instanceof ProcessingMatrixResourceSlot matrixSlot && matrixSlot.isInput()) {
-            final Set<ResourceLocation> allowedAlternatives = getMenu().getAllowedAlternatives(
+            final Set<Identifier> allowedAlternatives = getMenu().getAllowedAlternatives(
                 matrixSlot.getContainerSlot()
             );
             if (matrixSlot.getResource() != null && !allowedAlternatives.isEmpty()) {
-                final Pair<PlatformResourceKey, Set<ResourceLocation>> cacheKey = Pair.of(
+                final Pair<PlatformResourceKey, Set<Identifier>> cacheKey = Pair.of(
                     matrixSlot.getResource(),
                     allowedAlternatives
                 );
@@ -231,20 +232,20 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
         if (renderer != null) {
-            renderer.renderLabels(graphics, font, mouseX, mouseY);
+            renderer.extractLabels(graphics, font, mouseX, mouseY);
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        final boolean clickedInRecipe = renderer != null && renderer.mouseClicked(mouseX, mouseY, clickedButton);
+    public boolean mouseClicked(final MouseButtonEvent e, final boolean doubleClick) {
+        final boolean clickedInRecipe = renderer != null && renderer.mouseClicked(e, doubleClick);
         if (clickedInRecipe) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+        return super.mouseClicked(e, doubleClick);
     }
 
     @Override
@@ -256,9 +257,11 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     }
 
     @Override
-    public boolean mouseReleased(final double mx, final double my, final int button) {
-        return (renderer != null && renderer.mouseReleased(mx, my, button))
-            || super.mouseReleased(mx, my, button);
+    public boolean mouseReleased(final MouseButtonEvent e) {
+        if (renderer != null && renderer.mouseReleased(e)) {
+            return true;
+        }
+        return super.mouseReleased(e);
     }
 
     @Override
@@ -268,7 +271,7 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 

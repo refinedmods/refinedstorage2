@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
-import com.refinedmods.refinedstorage.fabric.util.SimpleSingleStackStorage;
+import com.refinedmods.refinedstorage.fabric.support.resource.SimpleSingleStackStorage;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;

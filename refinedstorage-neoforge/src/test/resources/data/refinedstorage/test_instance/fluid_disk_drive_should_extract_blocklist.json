@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "refinedstorage:fluid_disk_drive_should_extract_blocklist",
+  "structure": "refinedstorage:empty_15x15",
+  "environment": "minecraft:default",
+  "max_ticks": 400
+}

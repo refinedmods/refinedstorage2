@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.RecipeMatrix;
 import com.refinedmods.refinedstorage.common.support.RecipeMatrixContainer;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
@@ -15,26 +14,28 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
-public class CraftingGridBlockEntity extends AbstractGridBlockEntity implements BlockEntityWithDrops,
-    NetworkNodeExtendedMenuProvider<GridData>, CraftingGrid {
+public class CraftingGridBlockEntity extends AbstractGridBlockEntity
+    implements NetworkNodeExtendedMenuProvider<GridData>, CraftingGrid {
     private static final String TAG_MATRIX = "matrix";
 
     private final RecipeMatrix<CraftingRecipe, CraftingInput> craftingRecipe = RecipeMatrix.crafting(
@@ -142,17 +143,16 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity implements 
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_MATRIX, craftingRecipe.writeToTag(provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_MATRIX, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(craftingRecipe.getMatrix().getItems()));
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        if (tag.contains(TAG_MATRIX)) {
-            craftingRecipe.readFromTag(tag.getCompound(TAG_MATRIX), provider);
-        }
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        input.read(TAG_MATRIX, ItemContainerContents.CODEC).ifPresent(craftingRecipe::load);
     }
 
     @Override
@@ -162,12 +162,15 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity implements 
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        final NonNullList<ItemStack> drops = NonNullList.create();
-        for (int i = 0; i < craftingRecipe.getMatrix().getContainerSize(); ++i) {
-            drops.add(craftingRecipe.getMatrix().getItem(i));
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            final NonNullList<ItemStack> drops = NonNullList.create();
+            for (int i = 0; i < craftingRecipe.getMatrix().getContainerSize(); ++i) {
+                drops.add(craftingRecipe.getMatrix().getItem(i));
+            }
+            Containers.dropContents(level, pos, drops);
         }
-        return drops;
     }
 
     private Optional<Network> getNetwork() {

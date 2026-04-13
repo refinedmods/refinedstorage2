@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "upgrade_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:upgrade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.upgrading.description"
+    },
+    "icon": {
+      "id": "refinedstorage:upgrade"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.upgrading"
+    }
+  },
+  "requirements": [
+    [
+      "upgrade_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

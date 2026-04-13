@@ -3,15 +3,17 @@ package com.refinedmods.refinedstorage.common.support;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
+import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public final class FilterWithFuzzyMode {
     private static final String TAG_FUZZY_MODE = "fm";
@@ -35,14 +37,7 @@ public final class FilterWithFuzzyMode {
         this.listener = listener;
         this.uniqueFilterListener = uniqueFilterListener;
         this.filterListener = filterListener;
-        this.filterContainer.setListener(this::filterContainerChanged);
-    }
-
-    private void filterContainerChanged() {
-        notifyListeners();
-        if (listener != null) {
-            listener.run();
-        }
+        this.filterContainer.setListener(() -> notifyListeners(true));
     }
 
     public ResourceContainer getFilterContainer() {
@@ -56,34 +51,7 @@ public final class FilterWithFuzzyMode {
     public void setFuzzyMode(final boolean fuzzyMode) {
         this.fuzzyMode = fuzzyMode;
         // We need to reload the filters as the normalizer will give different outputs now.
-        notifyListeners();
-        if (listener != null) {
-            listener.run();
-        }
-    }
-
-    public void load(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            filterContainer.fromTag(tag.getCompound(TAG_RESOURCE_FILTER), provider);
-        }
-        if (tag.contains(TAG_FUZZY_MODE)) {
-            fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
-        }
-        notifyListeners();
-    }
-
-    private void notifyListeners() {
-        if (uniqueFilterListener != null) {
-            uniqueFilterListener.accept(filterContainer.getUniqueResources());
-        }
-        if (filterListener != null) {
-            filterListener.accept(filterContainer.getResources());
-        }
-    }
-
-    public void save(final CompoundTag tag, final HolderLookup.Provider provider) {
-        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
-        tag.put(TAG_RESOURCE_FILTER, filterContainer.toTag(provider));
+        notifyListeners(true);
     }
 
     public UnaryOperator<ResourceKey> createNormalizer() {
@@ -98,24 +66,50 @@ public final class FilterWithFuzzyMode {
         };
     }
 
-    public static FilterWithFuzzyMode create(final ResourceContainer resourceContainer,
-                                             @Nullable final Runnable listener) {
-        return new FilterWithFuzzyMode(resourceContainer, listener, null, null);
+    public void store(final ValueOutput output) {
+        output.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
+        output.store(TAG_RESOURCE_FILTER, ResourceCodecs.CONTAINER_CONTENTS_CODEC,
+            ResourceContainerContents.of(filterContainer));
+    }
+
+    public void read(final ValueInput input) {
+        fuzzyMode = input.getBooleanOr(TAG_FUZZY_MODE, false);
+        input.read(TAG_RESOURCE_FILTER, ResourceCodecs.CONTAINER_CONTENTS_CODEC).ifPresent(filterContainer::load);
+        notifyListeners(false);
+    }
+
+    private void notifyListeners(final boolean changed) {
+        if (uniqueFilterListener != null) {
+            uniqueFilterListener.accept(filterContainer.getUniqueResources());
+        }
+        if (filterListener != null) {
+            filterListener.accept(filterContainer.getResources());
+        }
+        if (changed && listener != null) {
+            listener.run();
+        }
+    }
+
+    public static FilterWithFuzzyMode create(
+        final ResourceContainer resourceContainer,
+        @Nullable final Runnable changeListener
+    ) {
+        return new FilterWithFuzzyMode(resourceContainer, changeListener, null, null);
     }
 
     public static FilterWithFuzzyMode createAndListenForFilters(
         final ResourceContainer resourceContainer,
-        final Runnable listener,
-        final Consumer<List<ResourceKey>> filterListener
+        final Runnable changeListener,
+        final Consumer<List<ResourceKey>> listener
     ) {
-        return new FilterWithFuzzyMode(resourceContainer, listener, null, filterListener);
+        return new FilterWithFuzzyMode(resourceContainer, changeListener, null, listener);
     }
 
     public static FilterWithFuzzyMode createAndListenForUniqueFilters(
         final ResourceContainer resourceContainer,
-        final Runnable listener,
-        final Consumer<Set<ResourceKey>> filterListener
+        final Runnable changeListener,
+        final Consumer<Set<ResourceKey>> listener
     ) {
-        return new FilterWithFuzzyMode(resourceContainer, listener, filterListener, null);
+        return new FilterWithFuzzyMode(resourceContainer, changeListener, listener, null);
     }
 }

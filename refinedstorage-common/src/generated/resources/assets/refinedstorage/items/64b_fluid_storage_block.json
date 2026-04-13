@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "refinedstorage:block/fluid_storage_block/64b_fluid_storage_block"
+  }
+}

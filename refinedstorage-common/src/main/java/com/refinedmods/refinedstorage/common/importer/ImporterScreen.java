@@ -12,7 +12,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class ImporterScreen extends AbstractFilterScreen<ImporterContainerMenu> {
     public ImporterScreen(final ImporterContainerMenu menu, final Inventory playerInventory, final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, true);
     }
 
     @Override

@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 
 import java.util.Objects;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;

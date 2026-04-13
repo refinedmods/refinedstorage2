@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafting_monitors"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
+    "#refinedstorage:autocrafting_monitors",
+    "#c:dyes/yellow"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:yellow_autocrafting_monitor"
   }
 }

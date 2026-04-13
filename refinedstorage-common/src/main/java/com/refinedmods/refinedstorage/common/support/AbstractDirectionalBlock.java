@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage.common.support;
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
 
 import java.util.Objects;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringRepresentable> extends AbstractBaseBlock {
     protected AbstractDirectionalBlock(final Properties properties) {

@@ -4,7 +4,10 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -15,8 +18,9 @@ public class RangeUpgradeItem extends AbstractUpgradeItem {
 
     private final boolean creative;
 
-    public RangeUpgradeItem(final UpgradeRegistry registry, final boolean creative) {
-        super(new Item.Properties(), registry, creative ? CREATIVE_HELP : HELP);
+    public RangeUpgradeItem(final Identifier id, final UpgradeRegistry registry, final boolean creative) {
+        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)), registry,
+            creative ? CREATIVE_HELP : HELP);
         this.creative = creative;
     }
 

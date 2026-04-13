@@ -13,9 +13,11 @@ import com.refinedmods.refinedstorage.common.storage.StorageVariant;
 import com.refinedmods.refinedstorage.common.storage.UpgradeableStorageContainer;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -23,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
@@ -34,10 +37,11 @@ public class ItemStorageBlockBlockItem extends AbstractStorageContainerBlockItem
     private final ItemStorageVariant variant;
     private final Component helpText;
 
-    public ItemStorageBlockBlockItem(final Block block, final ItemStorageVariant variant) {
+    public ItemStorageBlockBlockItem(final Identifier id, final Block block, final ItemStorageVariant variant) {
         super(
             block,
-            new Item.Properties().stacksTo(1).fireResistant(),
+            new Item.Properties().stacksTo(1).useBlockDescriptionPrefix().fireResistant()
+                .setId(ResourceKey.create(Registries.ITEM, id)),
             RefinedStorageApi.INSTANCE.getStorageContainerItemHelper()
         );
         this.variant = variant;
@@ -45,9 +49,10 @@ public class ItemStorageBlockBlockItem extends AbstractStorageContainerBlockItem
     }
 
     private static Component getHelpText(final ItemStorageVariant variant) {
-        return variant.getCapacity() == null
+        final Long capacity = variant.getCapacity();
+        return capacity == null
             ? CREATIVE_HELP
-            : createTranslation("item", "storage_block.help", format(variant.getCapacity()));
+            : createTranslation("item", "storage_block.help", format(capacity));
     }
 
     @Nullable

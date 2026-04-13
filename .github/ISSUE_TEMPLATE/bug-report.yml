@@ -35,6 +35,7 @@ body:
       description: |
         If your Minecraft version isn't listed here, it means that it isn't supported. In that case, don't create an issue.
       options:
+        - Minecraft 26.1.x
         - Minecraft 1.21.1
     validations:
       required: true

@@ -1,5 +1,4 @@
-@ParametersAreNonnullByDefault
-@FieldsAndMethodsAreNonnullByDefault
+@NullMarked
 package com.refinedmods.refinedstorage.api.core;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

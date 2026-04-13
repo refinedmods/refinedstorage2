@@ -7,10 +7,10 @@ import com.refinedmods.refinedstorage.common.support.ColorableBlock;
 import com.refinedmods.refinedstorage.common.support.DirectionalCableBlockShapes;
 
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractConstructorDestructorBlock<T extends Block & BlockItemProvider<I>,
     B extends BlockEntity, I extends BlockItem>
@@ -37,10 +38,11 @@ public abstract class AbstractConstructorDestructorBlock<T extends Block & Block
     private final DyeColor color;
     private final MutableComponent name;
 
-    protected AbstractConstructorDestructorBlock(final DyeColor color,
+    protected AbstractConstructorDestructorBlock(final Identifier id,
+                                                 final DyeColor color,
                                                  final MutableComponent name,
                                                  final AbstractBlockEntityTicker<B> ticker) {
-        super(SHAPE_CACHE);
+        super(id, SHAPE_CACHE);
         this.color = color;
         this.name = name;
         this.ticker = ticker;

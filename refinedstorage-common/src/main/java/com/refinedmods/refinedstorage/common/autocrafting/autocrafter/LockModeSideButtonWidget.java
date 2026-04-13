@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -16,20 +16,20 @@ class LockModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final String PREFIX = "autocrafter.lock_mode";
 
     private static final MutableComponent TITLE = createTranslation("gui", PREFIX);
-    private static final ResourceLocation NEVER = createIdentifier("widget/side_button/autocrafter/lock_mode/never");
-    private static final ResourceLocation LOCK_UNTIL_REDSTONE_PULSE_RECEIVED = createIdentifier(
+    private static final Identifier NEVER = createIdentifier("widget/side_button/autocrafter/lock_mode/never");
+    private static final Identifier LOCK_UNTIL_REDSTONE_PULSE_RECEIVED = createIdentifier(
         "widget/side_button/autocrafter/lock_mode/lock_until_redstone_pulse_is_received"
     );
-    private static final ResourceLocation LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY = createIdentifier(
+    private static final Identifier LOCK_UNTIL_CONNECTED_MACHINE_IS_EMPTY = createIdentifier(
         "widget/side_button/autocrafter/lock_mode/lock_until_connected_machine_is_empty"
     );
-    private static final ResourceLocation LOCK_UNTIL_ALL_OUTPUTS_ARE_RECEIVED = createIdentifier(
+    private static final Identifier LOCK_UNTIL_ALL_OUTPUTS_ARE_RECEIVED = createIdentifier(
         "widget/side_button/autocrafter/lock_mode/lock_until_all_outputs_are_received"
     );
-    private static final ResourceLocation LOCK_UNTIL_HIGH_REDSTONE_SIGNAL = createIdentifier(
+    private static final Identifier LOCK_UNTIL_HIGH_REDSTONE_SIGNAL = createIdentifier(
         "widget/side_button/autocrafter/lock_mode/lock_until_high_redstone_signal"
     );
-    private static final ResourceLocation LOCK_UNTIL_LOW_REDSTONE_SIGNAL = createIdentifier(
+    private static final Identifier LOCK_UNTIL_LOW_REDSTONE_SIGNAL = createIdentifier(
         "widget/side_button/autocrafter/lock_mode/lock_until_low_redstone_signal"
     );
 
@@ -64,7 +64,7 @@ class LockModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (property.getValue()) {
             case NEVER -> NEVER;
             case LOCK_UNTIL_REDSTONE_PULSE_RECEIVED -> LOCK_UNTIL_REDSTONE_PULSE_RECEIVED;

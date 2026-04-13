@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:drives",
+  "criteria": {
+    "fluid_storage_disk_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:fluid_storage_disks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.storing_fluids.description"
+    },
+    "icon": {
+      "id": "refinedstorage:64b_fluid_storage_disk"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.storing_fluids"
+    }
+  },
+  "requirements": [
+    [
+      "fluid_storage_disk_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.ArrayList;
-import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
@@ -18,6 +17,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public final class AutocraftingMonitorStreamCodecs {
     public static final StreamCodec<RegistryFriendlyByteBuf, TaskId> TASK_ID_STREAM_CODEC = StreamCodec.composite(

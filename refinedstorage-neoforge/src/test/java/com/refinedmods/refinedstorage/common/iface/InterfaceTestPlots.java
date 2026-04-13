@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
 import org.apache.commons.lang3.function.TriConsumer;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class InterfaceTestPlots {
@@ -18,16 +17,16 @@ final class InterfaceTestPlots {
 
     static void preparePlot(final GameTestHelper helper,
                             final TriConsumer<InterfaceBlockEntity, BlockPos, GameTestSequence> consumer) {
-        helper.setBlock(ZERO.above(), RSBLOCKS.getCreativeController().getDefault());
-        helper.setBlock(ZERO.above().above(), RSBLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
+        helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
+        helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         helper.setBlock(
             ZERO.above().above().north(),
-            RSBLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
+            MOD_BLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
         );
         final BlockPos interfacePos = ZERO.above().above().above();
-        helper.setBlock(interfacePos, RSBLOCKS.getInterface());
+        helper.setBlock(interfacePos, MOD_BLOCKS.getInterface());
         consumer.accept(
-            requireBlockEntity(helper, interfacePos, InterfaceBlockEntity.class),
+            helper.getBlockEntity(interfacePos, InterfaceBlockEntity.class),
             interfacePos,
             helper.startSequence()
         );

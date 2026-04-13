@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage.common.api.constructordestructor.Construct
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 public class ConstructorNetworkNode extends SimpleNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);
@@ -64,17 +64,15 @@ public class ConstructorNetworkNode extends SimpleNetworkNode {
         this.strategy = strategy;
     }
 
-    @Nullable
-    public ConstructorStrategy.Result getLastResult(final int filterIndex) {
+    public ConstructorStrategy.@Nullable Result getLastResult(final int filterIndex) {
         return tasks.get(filterIndex).lastResult;
     }
 
     private class ConstructorTask implements SchedulingMode.ScheduledTask {
         private final ResourceKey filter;
-        @Nullable
-        private ConstructorStrategy.Result lastResult;
+        private ConstructorStrategy.@Nullable Result lastResult;
 
-        private ConstructorTask(final ResourceKey filter, @Nullable final ConstructorStrategy.Result lastResult) {
+        private ConstructorTask(final ResourceKey filter, final ConstructorStrategy.@Nullable Result lastResult) {
             this.filter = filter;
             this.lastResult = lastResult;
         }

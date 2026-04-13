@@ -6,13 +6,13 @@ import com.refinedmods.refinedstorage.common.api.support.network.ConnectionStrat
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

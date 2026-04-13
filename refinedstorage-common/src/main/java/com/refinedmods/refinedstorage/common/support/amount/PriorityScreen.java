@@ -4,14 +4,14 @@ import java.util.function.IntConsumer;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
 public class PriorityScreen extends AbstractAmountScreen<AbstractAmountScreen.DefaultDummyContainerMenu, Integer> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/priority.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/priority.png");
 
     private final IntConsumer priorityChanged;
 
@@ -35,11 +35,10 @@ public class PriorityScreen extends AbstractAmountScreen<AbstractAmountScreen.De
                 .withMaxAmount(Integer.MAX_VALUE)
                 .withResetAmount(0)
                 .build(),
-            IntegerAmountOperations.INSTANCE
+            IntegerAmountOperations.INSTANCE,
+            172, 92
         );
         this.priorityChanged = priorityChanged;
-        this.imageWidth = 172;
-        this.imageHeight = 92;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class PriorityScreen extends AbstractAmountScreen<AbstractAmountScreen.De
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

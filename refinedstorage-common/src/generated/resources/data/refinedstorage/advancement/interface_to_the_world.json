@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "interface_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:interface"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.interface_to_the_world.description"
+    },
+    "icon": {
+      "id": "refinedstorage:interface"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.interface_to_the_world"
+    }
+  },
+  "requirements": [
+    [
+      "interface_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

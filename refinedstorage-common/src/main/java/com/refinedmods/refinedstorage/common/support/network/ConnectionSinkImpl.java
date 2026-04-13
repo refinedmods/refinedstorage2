@@ -4,12 +4,12 @@ import com.refinedmods.refinedstorage.common.api.support.network.ConnectionSink;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 class ConnectionSinkImpl implements ConnectionSink {
     private final GlobalPos source;

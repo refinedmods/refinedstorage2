@@ -7,7 +7,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -29,11 +29,11 @@ class ViewTypeSideButtonWidget extends AbstractSideButtonWidget {
     );
     private static final MutableComponent HELP_ALL =
         createTranslation("gui", "autocrafter_manager.view_type.all.help");
-    private static final ResourceLocation SPRITE_VISIBLE =
+    private static final Identifier SPRITE_VISIBLE =
         createIdentifier("widget/side_button/autocrafter_manager/view_type/visible");
-    private static final ResourceLocation SPRITE_NOT_FULL =
+    private static final Identifier SPRITE_NOT_FULL =
         createIdentifier("widget/side_button/autocrafter_manager/view_type/not_full");
-    private static final ResourceLocation SPRITE_ALL =
+    private static final Identifier SPRITE_ALL =
         createIdentifier("widget/side_button/autocrafter_manager/view_type/all");
 
     private final AutocrafterManagerContainerMenu containerMenu;
@@ -48,7 +48,7 @@ class ViewTypeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (containerMenu.getViewType()) {
             case VISIBLE -> SPRITE_VISIBLE;
             case NOT_FULL -> SPRITE_NOT_FULL;

@@ -14,10 +14,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public final class ResourceSorters {
     private ResourceSorters() {

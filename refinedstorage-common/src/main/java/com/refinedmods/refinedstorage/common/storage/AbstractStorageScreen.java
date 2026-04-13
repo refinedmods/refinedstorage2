@@ -6,10 +6,9 @@ import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonW
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.StoragePrioritySideButtonWidget;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
@@ -24,8 +23,9 @@ public abstract class AbstractStorageScreen<T extends AbstractStorageContainerMe
     @Nullable
     private VoidExcessSideButtonWidget voidExcessSideButtonWidget;
 
-    protected AbstractStorageScreen(final T menu, final Inventory inventory, final Component title) {
-        super(menu, inventory, title);
+    protected AbstractStorageScreen(final T menu, final Inventory inventory, final Component title,
+                                    final int width, final int height) {
+        super(menu, inventory, title, width, height);
         this.playerInventory = inventory;
     }
 

@@ -2,16 +2,13 @@ package com.refinedmods.refinedstorage.common.iface;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.List;
 
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.assertInterfaceEmpty;
@@ -26,13 +23,11 @@ import static net.minecraft.world.item.Items.DIRT;
 import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class InterfaceTest {
     private InterfaceTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItem(final GameTestHelper helper) {
         preparePlot(helper, (iface, pos, sequence) -> {
             // Arrange
@@ -101,7 +96,7 @@ public final class InterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItemFuzzy(final GameTestHelper helper) {
         preparePlot(helper, (iface, pos, sequence) -> {
             // Arrange
@@ -159,7 +154,7 @@ public final class InterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportFluid(final GameTestHelper helper) {
         preparePlot(helper, (iface, pos, sequence) -> {
             // Arrange
@@ -215,7 +210,7 @@ public final class InterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItem(final GameTestHelper helper) {
         preparePlot(helper, (iface, pos, sequence) -> {
             // Arrange
@@ -245,7 +240,7 @@ public final class InterfaceTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportFluid(final GameTestHelper helper) {
         preparePlot(helper, (iface, pos, sequence) -> {
             // Arrange

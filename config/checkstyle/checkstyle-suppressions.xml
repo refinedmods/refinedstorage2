@@ -5,12 +5,13 @@
 <suppressions>
     <!-- Test directories don't need a package-info.java file -->
     <suppress checks="JavadocPackage" files="test[\\/].*.java"/>
-    <!-- Mod initializer can be longer due to initialization logic, config can be long too -->
+    <!-- Suppress initialization logic, datagen and config length issues -->
     <suppress checks="FileLength" files="(ModInitializer.*\.java|ConfigImpl\.java)"/>
     <suppress checks="MethodCount" files="Items.java"/>
+    <suppress checks="MethodLength" files="AdvancementProvider.java"/>
     <!-- Shadow target contains underscore -->
     <suppress checks="MemberName" files="ModelBakerImplMixin.java"/>
     <suppress checks="HideUtilityClassConstructor" files="GridClearPacket.java"/>
     <suppress checks="HideUtilityClassConstructor" files="TestMod.java"/>
-    <suppress checks="." files="repackage/.*" />
+    <suppress checks="." files="repackage/.*"/>
 </suppressions>

@@ -4,13 +4,18 @@ import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 
 public class CreativeControllerBlock extends AbstractControllerBlock<CreativeControllerBlockItem> {
-    public CreativeControllerBlock(final MutableComponent name,
+    private final Identifier id;
+
+    public CreativeControllerBlock(final Identifier id,
+                                   final MutableComponent name,
                                    final ControllerBlockEntityTicker ticker,
                                    final DyeColor color) {
-        super(ControllerType.CREATIVE, name, ticker, color);
+        super(id, ControllerType.CREATIVE, name, ticker, color);
+        this.id = id;
     }
 
     @Override
@@ -22,6 +27,6 @@ public class CreativeControllerBlock extends AbstractControllerBlock<CreativeCon
 
     @Override
     public CreativeControllerBlockItem createBlockItem() {
-        return new CreativeControllerBlockItem(this);
+        return new CreativeControllerBlockItem(this, id);
     }
 }

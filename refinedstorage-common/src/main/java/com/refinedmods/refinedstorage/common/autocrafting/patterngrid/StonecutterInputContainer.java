@@ -1,33 +1,26 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
-import com.refinedmods.refinedstorage.api.core.NullableType;
-
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerListener;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.SelectableRecipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
-class StonecutterInputContainer extends SimpleContainer implements ContainerListener {
-    private List<RecipeHolder<StonecutterRecipe>> recipes = Collections.emptyList();
-    private final Supplier<Level> levelSupplier;
-    private int selectedRecipe;
+class StonecutterInputContainer extends SimpleContainer {
+    private SelectableRecipe.SingleInputSet<StonecutterRecipe> recipes;
+    private final Supplier<@Nullable Level> levelSupplier;
+    private int selectedRecipe = -1;
 
-    StonecutterInputContainer(final Supplier<@NullableType Level> levelSupplier) {
+    StonecutterInputContainer(final Supplier<@Nullable Level> levelSupplier) {
         super(1);
         this.levelSupplier = levelSupplier;
-        addListener(this);
+        this.recipes = SelectableRecipe.SingleInputSet.empty();
     }
 
-    List<RecipeHolder<StonecutterRecipe>> getRecipes() {
+    SelectableRecipe.SingleInputSet<StonecutterRecipe> getRecipes() {
         return recipes;
     }
 
@@ -44,7 +37,8 @@ class StonecutterInputContainer extends SimpleContainer implements ContainerList
     }
 
     @Override
-    public void containerChanged(final Container container) {
+    public void setChanged() {
+        super.setChanged();
         final Level level = levelSupplier.get();
         if (level == null) {
             return;
@@ -56,9 +50,9 @@ class StonecutterInputContainer extends SimpleContainer implements ContainerList
     void updateRecipes(final Level level) {
         final ItemStack input = getItem(0);
         if (input.isEmpty()) {
-            recipes = Collections.emptyList();
+            recipes = SelectableRecipe.SingleInputSet.empty();
             return;
         }
-        recipes = level.getRecipeManager().getRecipesFor(RecipeType.STONECUTTING, new SingleRecipeInput(input), level);
+        recipes = level.recipeAccess().stonecutterRecipes().selectByInput(input);
     }
 }

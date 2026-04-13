@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "cable_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:cables"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.connecting.description"
+    },
+    "icon": {
+      "id": "refinedstorage:cable"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.connecting"
+    }
+  },
+  "requirements": [
+    [
+      "cable_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -17,7 +17,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.LongSupplier;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<ExternalStorage>
     implements TrackedStorage, ExternalStorageListener {

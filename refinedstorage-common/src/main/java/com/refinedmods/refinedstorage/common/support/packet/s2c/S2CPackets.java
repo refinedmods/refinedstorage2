@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import org.jspecify.annotations.Nullable;
 
 public final class S2CPackets {
     private S2CPackets() {
@@ -87,7 +87,7 @@ public final class S2CPackets {
 
     public static void sendPatternGridAllowedAlternativesUpdate(final ServerPlayer player,
                                                                 final int index,
-                                                                final Set<ResourceLocation> ids) {
+                                                                final Set<Identifier> ids) {
         Platform.INSTANCE.sendPacketToClient(player, new PatternGridAllowedAlternativesUpdatePacket(index, ids));
     }
 

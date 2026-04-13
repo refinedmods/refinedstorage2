@@ -10,7 +10,8 @@ import com.refinedmods.refinedstorage.query.parser.node.UnaryOpNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class Parser {
     private final List<Token> tokens;

@@ -6,51 +6,56 @@ import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternTooltipCache;
-import com.refinedmods.refinedstorage.common.configurationcard.ConfigurationCardItemPropertyFunction;
+import com.refinedmods.refinedstorage.common.autocrafting.PatternTypeItemModelProperty;
+import com.refinedmods.refinedstorage.common.configurationcard.ActiveConfigurationCardItemModelProperty;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
-import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.KeyMappings;
-import com.refinedmods.refinedstorage.common.controller.ControllerItemPropertyFunction;
-import com.refinedmods.refinedstorage.common.networking.NetworkCardItemPropertyFunction;
-import com.refinedmods.refinedstorage.common.security.SecurityCardItemPropertyFunction;
+import com.refinedmods.refinedstorage.common.controller.ControllerEnergyLevelItemModelProperty;
+import com.refinedmods.refinedstorage.common.networking.ActiveNetworkCardItemModelProperty;
+import com.refinedmods.refinedstorage.common.security.ActiveSecurityCardItemModelProperty;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntityRenderer;
-import com.refinedmods.refinedstorage.common.support.network.item.NetworkItemPropertyFunction;
-import com.refinedmods.refinedstorage.common.support.packet.c2s.SetTenthAnniversaryCapePacket;
+import com.refinedmods.refinedstorage.common.support.RecipeMapRecipeProvider;
+import com.refinedmods.refinedstorage.common.support.network.item.NetworkBoundItemModelProperty;
 import com.refinedmods.refinedstorage.common.support.tooltip.CompositeClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinationClientTooltipComponent;
-import com.refinedmods.refinedstorage.neoforge.autocrafting.PatternGeometryLoader;
 import com.refinedmods.refinedstorage.neoforge.debug.NetworkDebugRenderer;
-import com.refinedmods.refinedstorage.neoforge.networking.CableGeometryLoader;
-import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveGeometryLoader;
-import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.DiskInterfaceBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.DiskInterfaceGeometryLoader;
-import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.PortableGridBlockEntityRendererImpl;
-import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.PortableGridGeometryLoader;
+import com.refinedmods.refinedstorage.neoforge.networking.ActiveInactiveCablePartUnbakedBlockStateModel;
+import com.refinedmods.refinedstorage.neoforge.networking.CablePartUnbakedBlockStateModel;
+import com.refinedmods.refinedstorage.neoforge.networking.CableUnbakedBlockStateModel;
+import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveItemModel;
+import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.DiskDriveUnbakedBlockStateModel;
+import com.refinedmods.refinedstorage.neoforge.storage.diskdrive.ForgeDiskDriveBlockEntityRenderer;
+import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.DiskInterfaceItemModel;
+import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.DiskInterfaceUnbakedBlockStateModel;
+import com.refinedmods.refinedstorage.neoforge.storage.diskinterface.ForgeDiskInterfaceBlockEntityRenderer;
+import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.ForgePortableGridBlockEntityRenderer;
+import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.PortableGridItemModel;
+import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.PortableGridUnbakedBlockStateModel;
 
 import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
+import net.neoforged.neoforge.client.event.RegisterBlockStateModels;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
+import net.neoforged.neoforge.client.event.RegisterItemModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
+import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
@@ -59,7 +64,6 @@ import org.lwjgl.glfw.GLFW;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.DISK_INTERFACE;
-import static com.refinedmods.refinedstorage.common.content.ContentIds.PATTERN;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.PORTABLE_GRID;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -74,8 +78,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         if (Platform.INSTANCE.getConfig().isDebug()) {
             NeoForge.EVENT_BUS.addListener(NetworkDebugRenderer::renderDebugOverlay);
         }
-        e.enqueueWork(ClientModInitializer::registerModelPredicates);
-        e.enqueueWork(ClientModInitializer::registerItemProperties);
         registerBlockEntityRenderer();
         registerResourceRendering();
         registerAlternativeGridHints();
@@ -92,22 +94,22 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         handleInputEvents();
     }
 
-    private static void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(
-            controllerBlockItem.get(),
-            createIdentifier("stored_in_controller"),
-            new ControllerItemPropertyFunction()
-        ));
+    @SubscribeEvent
+    public static void onRegisterItemModels(final RegisterItemModelsEvent e) {
+        e.register(DISK_DRIVE, DiskDriveItemModel.Unbaked.CODEC);
+        e.register(DISK_INTERFACE, DiskInterfaceItemModel.Unbaked.CODEC);
+        e.register(PORTABLE_GRID, PortableGridItemModel.Unbaked.CODEC);
     }
 
     @SubscribeEvent
-    public static void onRegisterCustomModels(final ModelEvent.RegisterGeometryLoaders e) {
-        registerDiskModels();
-        e.register(PATTERN, new PatternGeometryLoader());
-        e.register(DISK_DRIVE, new DiskDriveGeometryLoader());
-        e.register(PORTABLE_GRID, new PortableGridGeometryLoader());
-        e.register(DISK_INTERFACE, new DiskInterfaceGeometryLoader());
-        e.register(CABLE, new CableGeometryLoader());
+    public static void onRegisterBlockStateModels(final RegisterBlockStateModels e) {
+        e.registerModel(CABLE, CableUnbakedBlockStateModel.MODEL_CODEC);
+        e.registerModel(createIdentifier("active_inactive_cable_part"),
+            ActiveInactiveCablePartUnbakedBlockStateModel.MODEL_CODEC);
+        e.registerModel(createIdentifier("cable_part"), CablePartUnbakedBlockStateModel.MODEL_CODEC);
+        e.registerModel(DISK_DRIVE, DiskDriveUnbakedBlockStateModel.MODEL_CODEC);
+        e.registerModel(DISK_INTERFACE, DiskInterfaceUnbakedBlockStateModel.MODEL_CODEC);
+        e.registerModel(PORTABLE_GRID, PortableGridUnbakedBlockStateModel.MODEL_CODEC);
     }
 
     @SubscribeEvent
@@ -125,11 +127,14 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(final RegisterKeyMappingsEvent e) {
+        final KeyMapping.Category category = new KeyMapping.Category(createIdentifier("keymappings"));
+        e.registerCategory(category);
+
         final KeyMapping focusSearchBarKeyBinding = new KeyMapping(
             ContentNames.FOCUS_SEARCH_BAR_TRANSLATION_KEY,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_TAB,
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(focusSearchBarKeyBinding);
         KeyMappings.INSTANCE.setFocusSearchBar(focusSearchBarKeyBinding);
@@ -140,7 +145,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             KeyModifier.CONTROL,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_X,
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(clearCraftingGridMatrixToNetwork);
         KeyMappings.INSTANCE.setClearCraftingGridMatrixToNetwork(clearCraftingGridMatrixToNetwork);
@@ -148,7 +153,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         final KeyMapping clearCraftingGridMatrixToInventory = new KeyMapping(
             ContentNames.CLEAR_CRAFTING_MATRIX_TO_INVENTORY_TRANSLATION_KEY,
             InputConstants.UNKNOWN.getValue(),
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(clearCraftingGridMatrixToInventory);
         KeyMappings.INSTANCE.setClearCraftingGridMatrixToInventory(clearCraftingGridMatrixToInventory);
@@ -157,7 +162,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             ContentNames.OPEN_WIRELESS_GRID_TRANSLATION_KEY,
             KeyConflictContext.IN_GAME,
             InputConstants.UNKNOWN,
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(openWirelessGrid);
         KeyMappings.INSTANCE.setOpenWirelessGrid(openWirelessGrid);
@@ -166,7 +171,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             ContentNames.OPEN_PORTABLE_GRID_TRANSLATION_KEY,
             KeyConflictContext.IN_GAME,
             InputConstants.UNKNOWN,
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(openPortableGrid);
         KeyMappings.INSTANCE.setOpenPortableGrid(openPortableGrid);
@@ -175,7 +180,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             ContentNames.OPEN_WIRELESS_AUTOCRAFTING_MONITOR_TRANSLATION_KEY,
             KeyConflictContext.IN_GAME,
             InputConstants.UNKNOWN,
-            ContentNames.MOD_TRANSLATION_KEY
+            category
         );
         e.register(openWirelessAutocraftingMonitor);
         KeyMappings.INSTANCE.setOpenWirelessAutocraftingMonitor(openWirelessAutocraftingMonitor);
@@ -184,7 +189,11 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
     private static void registerBlockEntityRenderer() {
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getDiskDrive(),
-            ctx -> new DiskDriveBlockEntityRendererImpl<>()
+            ctx -> new ForgeDiskDriveBlockEntityRenderer<>()
+        );
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getDiskInterface(),
+            ctx -> new ForgeDiskInterfaceBlockEntityRenderer<>()
         );
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getStorageMonitor(),
@@ -192,15 +201,11 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         );
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getPortableGrid(),
-            ctx -> new PortableGridBlockEntityRendererImpl<>()
+            ctx -> new ForgePortableGridBlockEntityRenderer<>()
         );
         BlockEntityRenderers.register(
             BlockEntities.INSTANCE.getCreativePortableGrid(),
-            ctx -> new PortableGridBlockEntityRendererImpl<>()
-        );
-        BlockEntityRenderers.register(
-            BlockEntities.INSTANCE.getDiskInterface(),
-            ctx -> new DiskInterfaceBlockEntityRendererImpl<>()
+            ctx -> new ForgePortableGridBlockEntityRenderer<>()
         );
     }
 
@@ -231,59 +236,41 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         e.register(PatternItem.SmithingTablePatternTooltipComponent.class, PatternTooltipCache::getComponent);
     }
 
-    private static void registerItemProperties() {
-        ItemProperties.register(
-            Items.INSTANCE.getWirelessGrid(),
-            NetworkItemPropertyFunction.NAME,
-            new NetworkItemPropertyFunction()
+    @SubscribeEvent
+    public static void registerRangeItemProperties(final RegisterRangeSelectItemModelPropertyEvent e) {
+        e.register(ControllerEnergyLevelItemModelProperty.NAME, ControllerEnergyLevelItemModelProperty.MAP_CODEC);
+    }
+
+    @SubscribeEvent
+    public static void registerConditionalItemProperties(final RegisterConditionalItemModelPropertyEvent e) {
+        e.register(
+            ActiveNetworkCardItemModelProperty.NAME,
+            ActiveNetworkCardItemModelProperty.MAP_CODEC
         );
-        ItemProperties.register(
-            Items.INSTANCE.getCreativeWirelessGrid(),
-            NetworkItemPropertyFunction.NAME,
-            new NetworkItemPropertyFunction()
+        e.register(
+            ActiveConfigurationCardItemModelProperty.NAME,
+            ActiveConfigurationCardItemModelProperty.MAP_CODEC
         );
-        ItemProperties.register(
-            Items.INSTANCE.getConfigurationCard(),
-            ConfigurationCardItemPropertyFunction.NAME,
-            new ConfigurationCardItemPropertyFunction()
+        e.register(
+            ActiveSecurityCardItemModelProperty.NAME,
+            ActiveSecurityCardItemModelProperty.MAP_CODEC
         );
-        ItemProperties.register(
-            Items.INSTANCE.getNetworkCard(),
-            NetworkCardItemPropertyFunction.NAME,
-            new NetworkCardItemPropertyFunction()
-        );
-        ItemProperties.register(
-            Items.INSTANCE.getSecurityCard(),
-            SecurityCardItemPropertyFunction.NAME,
-            new SecurityCardItemPropertyFunction()
-        );
-        ItemProperties.register(
-            Items.INSTANCE.getWirelessAutocraftingMonitor(),
-            NetworkItemPropertyFunction.NAME,
-            new NetworkItemPropertyFunction()
-        );
-        ItemProperties.register(
-            Items.INSTANCE.getCreativeWirelessAutocraftingMonitor(),
-            NetworkItemPropertyFunction.NAME,
-            new NetworkItemPropertyFunction()
+        e.register(
+            NetworkBoundItemModelProperty.NAME,
+            NetworkBoundItemModelProperty.MAP_CODEC
         );
     }
 
     @SubscribeEvent
-    public static void onLoggingIn(final ClientPlayerNetworkEvent.LoggingIn e) {
-        sendTenthAnniversaryCapeUpdate();
+    public static void registerSelectItemProperties(final RegisterSelectItemModelPropertyEvent e) {
+        e.register(
+            PatternTypeItemModelProperty.NAME,
+            PatternTypeItemModelProperty.PROPERTY_TYPE
+        );
     }
 
     @SubscribeEvent
-    public static void onConfigReloading(final ModConfigEvent.Reloading e) {
-        if (Minecraft.getInstance().getConnection() == null) {
-            return; // Game was just loaded
-        }
-        sendTenthAnniversaryCapeUpdate();
-    }
-
-    private static void sendTenthAnniversaryCapeUpdate() {
-        final boolean cape = Platform.INSTANCE.getConfig().isTenthAnniversaryCape();
-        Platform.INSTANCE.sendPacketToServer(new SetTenthAnniversaryCapePacket(cape));
+    public static void onRecipesReceived(final RecipesReceivedEvent e) {
+        Platform.INSTANCE.setClientRecipeProvider(new RecipeMapRecipeProvider(e.getRecipeMap()));
     }
 }

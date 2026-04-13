@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "refinedstorage:disk_interface_should_extract_items_from_network_fuzzy_blocklist",
+  "structure": "refinedstorage:empty_15x15",
+  "environment": "minecraft:default",
+  "max_ticks": 400
+}

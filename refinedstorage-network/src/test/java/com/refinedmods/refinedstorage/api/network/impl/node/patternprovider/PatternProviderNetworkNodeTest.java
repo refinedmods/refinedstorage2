@@ -39,6 +39,7 @@ import static com.refinedmods.refinedstorage.api.autocrafting.PatternBuilder.pat
 import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.A;
 import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.B;
 import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.C;
+import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.D;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.clearInvocations;
@@ -53,6 +54,7 @@ import static org.mockito.Mockito.verify;
 class PatternProviderNetworkNodeTest {
     private static final Pattern PATTERN_A = pattern().output(A, 1).ingredient(C, 1).build();
     private static final Pattern PATTERN_B = pattern().output(B, 1).ingredient(C, 1).build();
+    private static final Pattern PATTERN_D = pattern().output(D, 1).ingredient(C, 1).build();
 
     @AddNetworkNode(properties = {
         @AddNetworkNode.Property(key = PatternProviderNetworkNodeFactory.PROPERTY_SIZE, intValue = 3)
@@ -68,42 +70,62 @@ class PatternProviderNetworkNodeTest {
     }
 
     @Test
-    void shouldSetPatternAndNotifyNetwork(
+    void shouldDetectNewPattern(
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Act
-        sut.setPattern(0, PATTERN_A);
+        sut.tryUpdatePattern(0, PATTERN_A);
 
         // Assert
         assertThat(autocrafting.getOutputs()).containsExactly(A);
     }
 
     @Test
-    void shouldRemovePatternAndNotifyNetwork(
+    void shouldDetectRemovedPattern(
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        sut.setPattern(0, PATTERN_A);
+        sut.tryUpdatePattern(0, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_B);
 
         // Act
-        sut.setPattern(0, null);
+        sut.tryUpdatePattern(1, null);
 
         // Assert
-        assertThat(autocrafting.getOutputs()).isEmpty();
+        assertThat(autocrafting.getOutputs()).containsExactly(A);
     }
 
     @Test
-    void shouldReplacePatternAndNotifyNetwork(
+    void shouldDetectReplacedPattern(
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        sut.setPattern(0, PATTERN_A);
+        sut.tryUpdatePattern(0, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_B);
 
         // Act
-        sut.setPattern(0, PATTERN_B);
+        sut.tryUpdatePattern(0, PATTERN_D);
 
         // Assert
-        assertThat(autocrafting.getOutputs()).containsExactly(B);
+        assertThat(autocrafting.getOutputs()).containsExactlyInAnyOrder(B, D);
+    }
+
+    @Test
+    void shouldNotDetectAnythingWhenThereAreNoChanges(
+        @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
+    ) {
+        // Arrange
+        sut.tryUpdatePattern(0, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_B);
+        sut.tryUpdatePattern(2, null);
+
+        // Act
+        sut.tryUpdatePattern(0, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_B);
+        sut.tryUpdatePattern(2, null);
+
+        // Assert
+        assertThat(autocrafting.getOutputs()).containsExactlyInAnyOrder(A, B);
     }
 
     @Test
@@ -111,7 +133,7 @@ class PatternProviderNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        sut.setPattern(0, PATTERN_A);
+        sut.tryUpdatePattern(0, PATTERN_A);
 
         // Act
         sut.setActive(false);
@@ -125,7 +147,7 @@ class PatternProviderNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        sut.setPattern(0, PATTERN_A);
+        sut.tryUpdatePattern(0, PATTERN_A);
         sut.setActive(false);
 
         // Act
@@ -144,7 +166,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act
@@ -167,7 +189,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act
@@ -190,7 +212,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
@@ -229,7 +251,7 @@ class PatternProviderNetworkNodeTest {
             }
         });
 
-        sut.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         assertThat(autocrafting.startTask(B, 20, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
@@ -266,7 +288,7 @@ class PatternProviderNetworkNodeTest {
 
         final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
         sut.setSink(sink);
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
@@ -308,7 +330,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
         sut.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
@@ -347,7 +369,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 1).build());
         assertThat(autocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
 
         // Act & assert
@@ -387,7 +409,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 6, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 5).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 3).output(B, 5).build());
         // swallow resources
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
         sut.setListener(listener);
@@ -488,7 +510,7 @@ class PatternProviderNetworkNodeTest {
         });
         storage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(B, 1).output(A, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(B, 1).output(A, 1).build());
         // swallow resources
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
@@ -527,8 +549,8 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1).build());
-        sut.setPattern(2, pattern().ingredient(B, 1).output(C, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1).build());
+        sut.tryUpdatePattern(2, pattern().ingredient(B, 1).output(C, 1).build());
         // swallow resources
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
@@ -625,7 +647,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(C, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_A);
 
         // Act
         final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -646,7 +668,7 @@ class PatternProviderNetworkNodeTest {
         final TaskStatusListener listener = mock(TaskStatusListener.class);
         autocrafting.addListener(listener);
 
-        sut.setPattern(1, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_A);
 
         // Act
         final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -669,7 +691,7 @@ class PatternProviderNetworkNodeTest {
         storage.insert(C, 10, Action.EXECUTE, Actor.EMPTY);
 
         sut.setActive(true);
-        sut.setPattern(1, PATTERN_A);
+        sut.tryUpdatePattern(1, PATTERN_A);
 
         // Act & assert
         final Optional<TaskId> createdId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -698,7 +720,7 @@ class PatternProviderNetworkNodeTest {
         storage.addSource(new StorageImpl());
         storage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-        sut.setPattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1).build());
+        sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1).build());
         // swallow resources
         sut.setSink((resources, action) -> ExternalPatternSink.Result.ACCEPTED);
 
@@ -819,11 +841,11 @@ class PatternProviderNetworkNodeTest {
 
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
-            sut.setPattern(1, patternBuilder.build());
+            sut.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
             sut.setSink(sink);
 
-            sut2.setPattern(1, patternBuilder.build());
+            sut2.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink2 = new PatternProviderExternalPatternSinkImpl();
             sut2.setSink(sink2);
 
@@ -896,14 +918,14 @@ class PatternProviderNetworkNodeTest {
 
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
-            sut.setPattern(1, patternBuilder.build());
+            sut.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
             sut.setSink(sink);
 
-            sut2.setPattern(1, patternBuilder.build());
+            sut2.tryUpdatePattern(1, patternBuilder.build());
             sut2.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
-            sut3.setPattern(1, patternBuilder.build());
+            sut3.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink3 = new PatternProviderExternalPatternSinkImpl();
             sut3.setSink(sink3);
 
@@ -977,10 +999,10 @@ class PatternProviderNetworkNodeTest {
 
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
-            sut.setPattern(1, patternBuilder.build());
+            sut.tryUpdatePattern(1, patternBuilder.build());
             sut.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
-            sut2.setPattern(1, patternBuilder.build());
+            sut2.tryUpdatePattern(1, patternBuilder.build());
             sut2.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
             assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
@@ -1018,11 +1040,11 @@ class PatternProviderNetworkNodeTest {
 
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
-            sut.setPattern(1, patternBuilder.build());
+            sut.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
             sut.setSink(sink);
 
-            sut2.setPattern(1, patternBuilder.build());
+            sut2.tryUpdatePattern(1, patternBuilder.build());
             sut2.setSink((resources, action) -> ExternalPatternSink.Result.REJECTED);
 
             assertThat(autocrafting.startTask(B, 3, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
@@ -1088,7 +1110,7 @@ class PatternProviderNetworkNodeTest {
 
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
-            sut.setPattern(1, patternBuilder.build());
+            sut.tryUpdatePattern(1, patternBuilder.build());
             final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
             sut.setSink(sink);
 
@@ -1118,7 +1140,7 @@ class PatternProviderNetworkNodeTest {
                 new ResourceAmount(A, 1)
             );
 
-            sut.setPattern(1, null);
+            sut.tryUpdatePattern(1, null);
             sut.doWork();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst())).containsExactly(
@@ -1149,11 +1171,11 @@ class PatternProviderNetworkNodeTest {
 
             otherStorage.addSource(new StorageImpl());
 
-            sut.setPattern(1, pattern(PatternType.EXTERNAL)
+            sut.tryUpdatePattern(1, pattern(PatternType.EXTERNAL)
                 .ingredient(B, 1)
                 .output(A, 1)
                 .build());
-            sut.setPattern(2, pattern(PatternType.EXTERNAL)
+            sut.tryUpdatePattern(2, pattern(PatternType.EXTERNAL)
                 .ingredient(C, 1)
                 .output(B, 1)
                 .build());
@@ -1281,7 +1303,7 @@ class PatternProviderNetworkNodeTest {
             storage.addSource(new StorageImpl());
             storage.insert(C, 10, Action.EXECUTE, Actor.EMPTY);
 
-            sut.setPattern(1, PATTERN_A);
+            sut.tryUpdatePattern(1, PATTERN_A);
 
             // Act & assert
             final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -1321,7 +1343,7 @@ class PatternProviderNetworkNodeTest {
             storage.addSource(new StorageImpl());
             storage.insert(C, 10, Action.EXECUTE, Actor.EMPTY);
 
-            sut.setPattern(1, PATTERN_A);
+            sut.tryUpdatePattern(1, PATTERN_A);
 
             // Act & assert
             final var taskId = autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -1357,13 +1379,13 @@ class PatternProviderNetworkNodeTest {
             storage.insert(C, 10, Action.EXECUTE, Actor.EMPTY);
 
             final Pattern patternForA = pattern().output(A, 1).ingredient(B, 1).build();
-            sut.setPattern(0, patternForA);
+            sut.tryUpdatePattern(0, patternForA);
 
             final Pattern patternForB = pattern(PatternType.EXTERNAL)
                 .output(B, 1)
                 .ingredient(C, 1)
                 .build();
-            other.setPattern(0, patternForB);
+            other.tryUpdatePattern(0, patternForB);
 
             // Act & assert
             assertThat(autocrafting.startTask(A, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
@@ -1404,10 +1426,10 @@ class PatternProviderNetworkNodeTest {
 
             // Act
             final Pattern patternWithLowestPriority = pattern().output(A, 1).ingredient(C, 1).build();
-            sut.setPattern(0, patternWithLowestPriority);
+            sut.tryUpdatePattern(0, patternWithLowestPriority);
 
             final Pattern patternWithHighestPriority = pattern().output(A, 1).output(B, 1).ingredient(C, 1).build();
-            other.setPattern(0, patternWithHighestPriority);
+            other.tryUpdatePattern(0, patternWithHighestPriority);
 
             // Assert
             assertThat(autocrafting.getOutputs()).containsExactlyInAnyOrder(A, B);
@@ -1424,10 +1446,10 @@ class PatternProviderNetworkNodeTest {
             sut.setPriority(0);
 
             final Pattern patternWithLowestPriority = pattern().output(A, 1).ingredient(C, 1).build();
-            sut.setPattern(0, patternWithLowestPriority);
+            sut.tryUpdatePattern(0, patternWithLowestPriority);
 
             final Pattern patternWithHighestPriority = pattern().output(A, 1).output(B, 1).ingredient(C, 1).build();
-            other.setPattern(0, patternWithHighestPriority);
+            other.tryUpdatePattern(0, patternWithHighestPriority);
 
             // Act
             other.setActive(false);
@@ -1446,10 +1468,10 @@ class PatternProviderNetworkNodeTest {
             sut.setPriority(0);
 
             final Pattern patternWithLowestPriority = pattern().output(A, 1).ingredient(C, 1).build();
-            sut.setPattern(0, patternWithLowestPriority);
+            sut.tryUpdatePattern(0, patternWithLowestPriority);
 
             final Pattern patternWithHighestPriority = pattern().output(A, 1).output(B, 1).ingredient(C, 1).build();
-            other.setPattern(0, patternWithHighestPriority);
+            other.tryUpdatePattern(0, patternWithHighestPriority);
 
             sut.setActive(false);
             other.setActive(false);
@@ -1473,10 +1495,10 @@ class PatternProviderNetworkNodeTest {
             sut.setPriority(0);
 
             final Pattern patternWithLowestPriority = pattern().output(A, 1).ingredient(C, 1).build();
-            sut.setPattern(0, patternWithLowestPriority);
+            sut.tryUpdatePattern(0, patternWithLowestPriority);
 
             final Pattern patternWithHighestPriority = pattern().output(A, 1).output(B, 1).ingredient(C, 1).build();
-            other.setPattern(0, patternWithHighestPriority);
+            other.tryUpdatePattern(0, patternWithHighestPriority);
 
             // Act
             sut.setPriority(2);

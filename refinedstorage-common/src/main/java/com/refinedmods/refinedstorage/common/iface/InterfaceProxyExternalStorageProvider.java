@@ -10,10 +10,10 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public class InterfaceProxyExternalStorageProvider implements InterfaceExternalStorageProvider {
     private final Level level;

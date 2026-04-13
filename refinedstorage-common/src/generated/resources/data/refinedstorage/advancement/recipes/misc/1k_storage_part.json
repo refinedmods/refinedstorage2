@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_quartz_enriched_iron": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:quartz_enriched_iron"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:1k_storage_part"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_quartz_enriched_iron"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:1k_storage_part"
+    ]
+  }
+}

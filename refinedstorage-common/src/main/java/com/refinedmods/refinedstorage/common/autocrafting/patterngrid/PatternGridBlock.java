@@ -10,17 +10,17 @@ import com.refinedmods.refinedstorage.common.support.BlockItemProvider;
 import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -32,8 +32,11 @@ public class PatternGridBlock extends AbstractGridBlock<PatternGridBlock, BaseBl
         ACTIVE
     );
 
-    public PatternGridBlock(final DyeColor color, final MutableComponent name) {
-        super(name, color);
+    private final Identifier id;
+
+    public PatternGridBlock(final Identifier id, final DyeColor color, final MutableComponent name) {
+        super(id, color, name);
+        this.id = id;
     }
 
     @Override
@@ -57,6 +60,6 @@ public class PatternGridBlock extends AbstractGridBlock<PatternGridBlock, BaseBl
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(id, this, HELP);
     }
 }

@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage.common.support;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractBlockEntityTicker<T extends BlockEntity> implements BlockEntityTicker<T> {
     private final Supplier<BlockEntityType<T>> allowedTypeSupplier;
@@ -18,7 +18,7 @@ public abstract class AbstractBlockEntityTicker<T extends BlockEntity> implement
     @SuppressWarnings("unchecked")
     @Nullable
     public <O extends BlockEntity> AbstractBlockEntityTicker<O> get(final Level level, final BlockEntityType<O> type) {
-        return !level.isClientSide && allowedTypeSupplier.get().equals(type)
+        return !level.isClientSide() && allowedTypeSupplier.get().equals(type)
             ? (AbstractBlockEntityTicker<O>) this
             : null;
     }

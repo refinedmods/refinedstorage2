@@ -19,7 +19,7 @@ public final class PatternRendering {
         if (!(stack.getItem() instanceof PatternProviderItem)) {
             return false;
         }
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             return true;
         }
         final Screen screen = Minecraft.getInstance().screen;

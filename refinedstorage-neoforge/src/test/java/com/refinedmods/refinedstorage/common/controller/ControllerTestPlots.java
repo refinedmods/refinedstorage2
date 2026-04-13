@@ -5,8 +5,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
 import org.apache.commons.lang3.function.TriConsumer;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class ControllerTestPlots {
@@ -18,10 +17,10 @@ final class ControllerTestPlots {
                             final TriConsumer<ControllerBlockEntity, BlockPos, GameTestSequence> consumer) {
         final BlockPos controllerPos = ZERO.above();
         helper.setBlock(controllerPos, isCreative
-            ? RSBLOCKS.getCreativeController().getDefault()
-            : RSBLOCKS.getController().getDefault());
+            ? MOD_BLOCKS.getCreativeController().getDefault()
+            : MOD_BLOCKS.getController().getDefault());
         consumer.accept(
-            requireBlockEntity(helper, controllerPos, ControllerBlockEntity.class),
+            helper.getBlockEntity(controllerPos, ControllerBlockEntity.class),
             controllerPos,
             helper.startSequence()
         );

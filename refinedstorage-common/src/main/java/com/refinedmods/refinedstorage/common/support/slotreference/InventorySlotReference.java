@@ -38,7 +38,7 @@ public final class InventorySlotReference implements SlotReference {
 
     public static SlotReference of(final Player player, final InteractionHand hand) {
         return new InventorySlotReference(hand == InteractionHand.MAIN_HAND
-            ? player.getInventory().selected
+            ? player.getInventory().getSelectedSlot()
             : Inventory.SLOT_OFFHAND);
     }
 }

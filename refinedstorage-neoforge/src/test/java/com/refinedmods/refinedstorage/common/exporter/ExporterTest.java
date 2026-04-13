@@ -1,23 +1,20 @@
 package com.refinedmods.refinedstorage.common.exporter;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.List;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSITEMS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.containerContainsExactly;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
@@ -31,13 +28,11 @@ import static net.minecraft.world.item.Items.DIRT;
 import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class ExporterTest {
     private ExporterTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItem(final GameTestHelper helper) {
         preparePlot(helper, Blocks.CHEST, Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
@@ -70,7 +65,7 @@ public final class ExporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItemWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Blocks.CHEST, Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
@@ -81,7 +76,7 @@ public final class ExporterTest {
 
             // Act
             exporter.setFilters(List.of(asResource(DIRT)));
-            exporter.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            exporter.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -114,7 +109,7 @@ public final class ExporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItemWithRegulatorUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Blocks.CHEST, Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
@@ -126,7 +121,7 @@ public final class ExporterTest {
             // Act
             exporter.setFilters(List.of(asResource(DIRT.getDefaultInstance())));
 
-            final ItemStack upgrade = RSITEMS.getRegulatorUpgrade().getDefaultInstance();
+            final ItemStack upgrade = MOD_ITEMS.getRegulatorUpgrade().getDefaultInstance();
             if (upgrade.getItem() instanceof RegulatorUpgradeItem upgradeItem) {
                 upgradeItem.setAmount(upgrade, asResource(DIRT.getDefaultInstance()), 10);
             }
@@ -150,7 +145,7 @@ public final class ExporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportItemFuzzy(final GameTestHelper helper) {
         preparePlot(helper, Blocks.CHEST, Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
@@ -185,7 +180,7 @@ public final class ExporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportFluid(final GameTestHelper helper) {
         preparePlot(helper, Blocks.CAULDRON, Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
@@ -213,9 +208,9 @@ public final class ExporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldExportFluidWithStackUpgrade(final GameTestHelper helper) {
-        preparePlot(helper, RSBLOCKS.getInterface(), Direction.EAST, (exporter, pos, sequence) -> {
+        preparePlot(helper, MOD_BLOCKS.getInterface(), Direction.EAST, (exporter, pos, sequence) -> {
             // Arrange
             sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> {
                 insert(helper, network, DIRT, 10);
@@ -225,7 +220,7 @@ public final class ExporterTest {
 
             // Act
             exporter.setFilters(List.of(asResource(WATER)));
-            exporter.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            exporter.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence

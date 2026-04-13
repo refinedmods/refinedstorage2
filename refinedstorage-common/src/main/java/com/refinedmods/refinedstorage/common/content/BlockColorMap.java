@@ -7,15 +7,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -32,7 +32,7 @@ public class BlockColorMap<T extends Block & BlockItemProvider<I>, I extends Blo
     private final MutableComponent baseName;
 
     public BlockColorMap(final BlockFactory<T> blockFactory,
-                         final ResourceLocation baseId,
+                         final Identifier baseId,
                          final MutableComponent baseName,
                          final DyeColor defaultColor) {
         super(baseId, defaultColor);
@@ -45,14 +45,14 @@ public class BlockColorMap<T extends Block & BlockItemProvider<I>, I extends Blo
                                                    final Level level,
                                                    final BlockPos pos,
                                                    final Player player) {
-        final DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getDyeColor() : null;
+        final DyeColor color = heldItem.get(DataComponents.DYE);
         if (color == null || state.getBlock().equals(get(color))) {
             return Optional.empty();
         }
         if (!level.isClientSide()) {
             updateColorOnServer(state, heldItem, level, pos, (ServerPlayer) player, color);
         }
-        return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
+        return Optional.of(InteractionResult.SUCCESS);
     }
 
     private void updateColorOnServer(final BlockState state,
@@ -96,7 +96,7 @@ public class BlockColorMap<T extends Block & BlockItemProvider<I>, I extends Blo
     public void registerBlocks(final RegistryCallback<Block> callback) {
         putAll(color -> callback.register(
             getId(color),
-            () -> blockFactory.createBlock(color, getName(color))
+            () -> blockFactory.createBlock(getId(color), color, getName(color))
         ));
     }
 

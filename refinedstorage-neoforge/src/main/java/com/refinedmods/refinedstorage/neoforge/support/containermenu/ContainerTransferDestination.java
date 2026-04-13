@@ -4,13 +4,27 @@ import com.refinedmods.refinedstorage.common.support.containermenu.TransferDesti
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 public record ContainerTransferDestination(Container destination) implements TransferDestination {
     @Override
     public ItemStack transfer(final ItemStack stack) {
-        final InvWrapper destinationInv = new InvWrapper(destination);
-        return ItemHandlerHelper.insertItem(destinationInv, stack, false);
+        final ResourceHandler<ItemResource> target = VanillaContainerWrapper.of(destination);
+        try (Transaction tx = Transaction.openRoot()) {
+            final ItemResource resource = ItemResource.of(stack);
+            final long inserted = target.insert(resource, stack.getCount(), tx);
+            tx.commit();
+            final long remainder = stack.getCount() - inserted;
+            if (remainder == 0) {
+                return ItemStack.EMPTY;
+            } else {
+                final ItemStack remainderStack = stack.copy();
+                remainderStack.setCount((int) remainder);
+                return remainderStack;
+            }
+        }
     }
 }

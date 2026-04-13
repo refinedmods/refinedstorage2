@@ -381,7 +381,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
         patternProvider.setStepBehavior(new StepBehavior() {
             @Override
             public int getSteps(final Pattern pattern) {
@@ -450,7 +450,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
         storage.insert(B, 100, Action.EXECUTE, Actor.EMPTY);
@@ -485,7 +485,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
 
         storage.addSource(new StorageImpl());
         storage.insert(A, 100, Action.EXECUTE, Actor.EMPTY);
@@ -522,7 +522,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(B, 1).ingredient(A, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(B, 1).ingredient(A, 1).build());
 
         final Storage destination = new LimitedStorageImpl(100);
         final ExporterTransferStrategy strategy = new MissingResourcesListeningExporterTransferStrategy(
@@ -547,7 +547,7 @@ class DefaultExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
     ) {
         // Arrange
-        patternProvider.setPattern(1, pattern().output(A, 1).ingredient(C, 1).build());
+        patternProvider.tryUpdatePattern(1, pattern().output(A, 1).ingredient(C, 1).build());
         patternProvider.setStepBehavior(new StepBehavior() {
             @Override
             public int getSteps(final Pattern pattern) {

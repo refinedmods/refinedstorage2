@@ -10,12 +10,12 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.containermenu.ValidatedSlot;
 
 import java.util.function.Predicate;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.Nullable;
 
 public class SecurityManagerContainerMenu extends AbstractBaseContainerMenu {
     private final Predicate<Player> stillValid;

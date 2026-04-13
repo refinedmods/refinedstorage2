@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.storage.StorageContainerItem;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
@@ -17,10 +18,12 @@ import java.util.Map;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +33,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class DebugStickItem extends Item {
     public DebugStickItem() {
-        super(new Item.Properties().stacksTo(1));
+        super(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, ContentIds.DEBUG_STICK)));
     }
 
     @Override
@@ -41,18 +44,17 @@ public class DebugStickItem extends Item {
         }
         final Level level = context.getLevel();
         final BlockEntity blockEntity = level.getBlockEntity(context.getClickedPos());
-        if (blockEntity != null) {
-            dump(level, blockEntity, player);
+        if (blockEntity != null && player instanceof ServerPlayer serverPlayer) {
+            dump(level, blockEntity, serverPlayer);
         }
         return InteractionResult.CONSUME;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level level, final Player player,
-                                                  final InteractionHand usedHand) {
-        if (!level.isClientSide()) {
+    public InteractionResult use(final Level level, final Player player, final InteractionHand usedHand) {
+        if (player instanceof ServerPlayer serverPlayer) {
             final ItemStack storageDisk = new ItemStack(Items.INSTANCE.getItemStorageDisk(ItemStorageVariant.CREATIVE));
-            storageDisk.inventoryTick(level, player, 0, false);
+            storageDisk.inventoryTick(level, player, null);
             ((StorageContainerItem) storageDisk.getItem()).resolve(
                 RefinedStorageApi.INSTANCE.getStorageRepository(level),
                 storageDisk
@@ -74,13 +76,13 @@ public class DebugStickItem extends Item {
                     }
                 }
                 player.getInventory().add(storageDisk);
-                player.sendSystemMessage(Component.literal("Gave a storage disk with " + size + " item types"));
+                serverPlayer.sendSystemMessage(Component.literal("Gave a storage disk with " + size + " item types"));
             });
         }
         return super.use(level, player, usedHand);
     }
 
-    private static void dump(final Level level, final BlockEntity blockEntity, final Player player) {
+    private static void dump(final Level level, final BlockEntity blockEntity, final ServerPlayer player) {
         if (level.isClientSide()) {
             return;
         }
@@ -91,7 +93,7 @@ public class DebugStickItem extends Item {
         player.sendSystemMessage(Component.literal("---"));
     }
 
-    private static void dump(final Player player, final InWorldNetworkNodeContainer container) {
+    private static void dump(final ServerPlayer player, final InWorldNetworkNodeContainer container) {
         final Network network = container.getNode().getNetwork();
         player.sendSystemMessage(Component.literal(
             container.getNode().getClass().getSimpleName() + " --> ").append((network == null
@@ -103,7 +105,7 @@ public class DebugStickItem extends Item {
         }
     }
 
-    private static void dump(final Player player, final Network network) {
+    private static void dump(final ServerPlayer player, final Network network) {
         final Map<String, Integer> nodesByType = network.getComponent(GraphNetworkComponent.class)
             .getContainers()
             .stream()

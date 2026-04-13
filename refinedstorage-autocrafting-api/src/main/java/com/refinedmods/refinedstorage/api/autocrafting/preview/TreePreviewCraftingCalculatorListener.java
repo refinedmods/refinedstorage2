@@ -11,7 +11,8 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.PatternCycleD
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.Collections;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

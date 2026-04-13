@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 
 public class ResourceAmountScreen
     extends AbstractAmountScreen<ResourceAmountScreen.SingleResourceContainerMenu, Double> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "configure_amount");
 
     private final ResourceSlot slot;
@@ -40,11 +40,10 @@ public class ResourceAmountScreen
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            DoubleAmountOperations.INSTANCE,
+            180, 99
         );
         this.slot = slot;
-        this.imageWidth = 180;
-        this.imageHeight = 99;
     }
 
     @Override
@@ -54,7 +53,7 @@ public class ResourceAmountScreen
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 

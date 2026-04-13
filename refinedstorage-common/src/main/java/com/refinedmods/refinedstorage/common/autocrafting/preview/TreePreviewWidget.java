@@ -16,32 +16,33 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class TreePreviewWidget extends AbstractWidget {
-    private static final ResourceLocation BACKGROUND = createIdentifier("autocrafting_preview/tree_background");
-    private static final ResourceLocation NODE_BACKGROUND = createIdentifier("autocrafting_preview/tree_node");
-    private static final ResourceLocation NODE_BACKGROUND_HOVER =
+    private static final Identifier BACKGROUND = createIdentifier("autocrafting_preview/tree_background");
+    private static final Identifier NODE_BACKGROUND = createIdentifier("autocrafting_preview/tree_node");
+    private static final Identifier NODE_BACKGROUND_HOVER =
         createIdentifier("autocrafting_preview/tree_node_hover");
-    private static final ResourceLocation CRAFTING_NODE_BACKGROUND =
+    private static final Identifier CRAFTING_NODE_BACKGROUND =
         createIdentifier("autocrafting_preview/tree_node_crafting");
-    private static final ResourceLocation CRAFTING_NODE_BACKGROUND_HOVER =
+    private static final Identifier CRAFTING_NODE_BACKGROUND_HOVER =
         createIdentifier("autocrafting_preview/tree_node_crafting_hover");
-    private static final ResourceLocation MISSING_NODE_BACKGROUND =
+    private static final Identifier MISSING_NODE_BACKGROUND =
         createIdentifier("autocrafting_preview/tree_node_missing");
-    private static final ResourceLocation MISSING_NODE_BACKGROUND_HOVER =
+    private static final Identifier MISSING_NODE_BACKGROUND_HOVER =
         createIdentifier("autocrafting_preview/tree_node_missing_hover");
 
     private static final double MIN_ZOOM = 0.5;
@@ -53,7 +54,6 @@ class TreePreviewWidget extends AbstractWidget {
     private static final int INACTIVE_LINE_COLOR = 0x80818181;
     private static final int NODE_SIZE = 26;
 
-    private final Screen screen;
     private final Set<TreePreviewNode> activeNodes = new HashSet<>();
 
     @Nullable
@@ -69,19 +69,22 @@ class TreePreviewWidget extends AbstractWidget {
     private double targetTranslateX = 0;
     private double targetTranslateY = 0;
 
-    TreePreviewWidget(final Screen screen, final int x, final int y, final int width, final int height) {
+    TreePreviewWidget(final int x, final int y, final int width, final int height) {
         super(x, y, width, height, Component.empty());
-        this.screen = screen;
     }
 
     void update(@Nullable final TreePreview preview) {
-        if (preview == null || preview.rootNode() == null) {
+        if (preview == null) {
             this.tree = null;
             return;
         }
-        final DefaultTreeForTreeLayout<TreePreviewNode> treeContents =
-            new DefaultTreeForTreeLayout<>(preview.rootNode());
-        addChildren(treeContents, preview.rootNode());
+        final TreePreviewNode rootNode = preview.rootNode();
+        if (rootNode == null) {
+            this.tree = null;
+            return;
+        }
+        final DefaultTreeForTreeLayout<TreePreviewNode> treeContents = new DefaultTreeForTreeLayout<>(rootNode);
+        addChildren(treeContents, rootNode);
         this.tree = new TreeLayout<>(
             treeContents,
             new FixedNodeExtentProvider<>(NODE_SIZE, NODE_SIZE),
@@ -126,8 +129,8 @@ class TreePreviewWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY,
-                                final float partialTicks) {
+    protected void extractWidgetRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                            final float partialTicks) {
         if (!visible) {
             return;
         }
@@ -138,22 +141,22 @@ class TreePreviewWidget extends AbstractWidget {
         zoom += (targetZoom - zoom) * SMOOTH_FACTOR;
         translateX += (targetTranslateX - translateX) * DRAG_SMOOTH_FACTOR;
         translateY += (targetTranslateY - translateY) * DRAG_SMOOTH_FACTOR;
-        graphics.pose().pushPose();
-        graphics.pose().translate(translateX, translateY, 0);
-        graphics.pose().scale((float) zoom, (float) zoom, 1.0f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate((float) translateX, (float) translateY);
+        graphics.pose().scale((float) zoom, (float) zoom);
         renderEdges(graphics, tree.getTree().getRoot());
         if (!renderNode(graphics, tree.getTree().getRoot(), mouseX, mouseY)) {
             hoveredNode = null;
             activeNodes.clear();
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
-    private void renderBackground(final GuiGraphics graphics) {
-        graphics.blitSprite(BACKGROUND, 0, 0, width, height);
+    private void renderBackground(final GuiGraphicsExtractor graphics) {
+        graphics.blitSprite(GUI_TEXTURED, BACKGROUND, 0, 0, width, height);
     }
 
-    private boolean renderNode(final GuiGraphics graphics, final TreePreviewNode node,
+    private boolean renderNode(final GuiGraphicsExtractor graphics, final TreePreviewNode node,
                                final int mouseX, final int mouseY) {
         if (tree == null) {
             return false;
@@ -174,7 +177,8 @@ class TreePreviewWidget extends AbstractWidget {
         return anyHovering;
     }
 
-    private boolean renderNode(final GuiGraphics graphics, final TreePreviewNode node, final Rectangle2D.Double bounds,
+    private boolean renderNode(final GuiGraphicsExtractor graphics, final TreePreviewNode node,
+                               final Rectangle2D.Double bounds,
                                final ResourceRendering rendering, final double mouseX, final double mouseY) {
         final double worldMouseX = (mouseX - getX() - translateX) / zoom;
         final double worldMouseY = (mouseY - getY() - translateY) / zoom;
@@ -188,10 +192,11 @@ class TreePreviewWidget extends AbstractWidget {
                 activeNodes.clear();
                 calculateActiveNodes(hoveredNode);
             }
-            screen.setTooltipForNextRenderPass(getTooltip(node, rendering));
+            graphics.setTooltipForNextFrame(getTooltip(node, rendering), (int) mouseX, (int) mouseY);
         }
-        final ResourceLocation background = getNodeBackground(node, hovering);
-        graphics.blitSprite(background, (int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height);
+        final Identifier background = getNodeBackground(node, hovering);
+        graphics.blitSprite(GUI_TEXTURED, background, (int) bounds.x, (int) bounds.y,
+            (int) bounds.width, (int) bounds.height);
         rendering.render(node.getResource(), graphics, (int) bounds.x + 5, (int) bounds.y + 5);
         final boolean large = Minecraft.getInstance().isEnforceUnicode()
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
@@ -200,13 +205,13 @@ class TreePreviewWidget extends AbstractWidget {
             (int) bounds.x + 5,
             (int) bounds.y + 5,
             rendering.formatAmount(node.getAmount(), true),
-            0xFFFFFF,
+            0xFFFFFFFF,
             large
         );
         final boolean inactive = !activeNodes.isEmpty() && !activeNodes.contains(node);
         if (inactive) {
             graphics.fill((int) bounds.x + 2, (int) bounds.y + 2,
-                (int) bounds.x + (int) bounds.width - 2, (int) bounds.y + (int) bounds.height - 2, 400, 0x80000000);
+                (int) bounds.x + (int) bounds.width - 2, (int) bounds.y + (int) bounds.height - 2, 0x80000000);
         }
         return hovering;
     }
@@ -216,7 +221,7 @@ class TreePreviewWidget extends AbstractWidget {
         node.getChildren().forEach(this::calculateActiveNodes);
     }
 
-    private static ResourceLocation getNodeBackground(final TreePreviewNode node, final boolean hovering) {
+    private static Identifier getNodeBackground(final TreePreviewNode node, final boolean hovering) {
         if (node.getMissing() > 0) {
             return hovering ? MISSING_NODE_BACKGROUND_HOVER : MISSING_NODE_BACKGROUND;
         }
@@ -245,7 +250,7 @@ class TreePreviewWidget extends AbstractWidget {
         return tooltip;
     }
 
-    private void renderEdges(final GuiGraphics graphics, final TreePreviewNode node) {
+    private void renderEdges(final GuiGraphicsExtractor graphics, final TreePreviewNode node) {
         if (tree == null || tree.getTree().isLeaf(node)) {
             return;
         }
@@ -269,7 +274,7 @@ class TreePreviewWidget extends AbstractWidget {
         }
     }
 
-    private void drawLine(final GuiGraphics graphics, final int x1, final int y1, final int x2, final int y2,
+    private void drawLine(final GuiGraphicsExtractor graphics, final int x1, final int y1, final int x2, final int y2,
                           final int color) {
         final int dx = Math.abs(x2 - x1);
         final int dy = Math.abs(y2 - y1);
@@ -279,7 +284,7 @@ class TreePreviewWidget extends AbstractWidget {
         int yy = y1;
         int err = dx - dy;
         while (true) {
-            graphics.hLine(xx, xx, yy, color);
+            graphics.horizontalLine(xx, xx, yy, color);
             if (xx == x2 && yy == y2) {
                 break;
             }
@@ -337,10 +342,9 @@ class TreePreviewWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double dragX,
-                                final double dragY) {
-        targetTranslateX += dragX;
-        targetTranslateY += dragY;
+    public boolean mouseDragged(final MouseButtonEvent event, final double dx, final double dy) {
+        targetTranslateX += dx;
+        targetTranslateY += dy;
         return true;
     }
 

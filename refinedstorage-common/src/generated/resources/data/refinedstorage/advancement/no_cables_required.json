@@ -1,0 +1,38 @@
+{
+  "parent": "refinedstorage:wireless",
+  "criteria": {
+    "network_transmitter_receiver_card_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:network_transmitters"
+          },
+          {
+            "items": "#refinedstorage:network_receivers"
+          },
+          {
+            "items": "refinedstorage:network_card"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.no_cables_required.description"
+    },
+    "icon": {
+      "id": "refinedstorage:network_transmitter"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.no_cables_required"
+    }
+  },
+  "requirements": [
+    [
+      "network_transmitter_receiver_card_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

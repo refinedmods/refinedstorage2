@@ -32,10 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -46,16 +44,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 import static net.minecraft.world.item.Items.AIR;
 
 public final class GameTestUtil {
-    public static final Blocks RSBLOCKS = Blocks.INSTANCE;
-    public static final Items RSITEMS = Items.INSTANCE;
+    public static final Blocks MOD_BLOCKS = Blocks.INSTANCE;
+    public static final Items MOD_ITEMS = Items.INSTANCE;
 
     private GameTestUtil() {
     }
@@ -63,7 +61,7 @@ public final class GameTestUtil {
     @Nullable
     private static Network getNetwork(final GameTestHelper helper, final BlockPos pos) {
         try {
-            final var be = requireBlockEntity(helper, pos, AbstractNetworkNodeContainerBlockEntity.class);
+            final var be = helper.getBlockEntity(pos, AbstractNetworkNodeContainerBlockEntity.class);
             final var field = AbstractNetworkNodeContainerBlockEntity.class.getDeclaredField("mainNetworkNode");
             field.setAccessible(true);
             final NetworkNode mainNode = (NetworkNode) field.get(be);
@@ -86,8 +84,7 @@ public final class GameTestUtil {
     public static void checkBlockEntityActiveness(final GameTestHelper helper,
                                                   final BlockPos pos,
                                                   final boolean expectedActive) {
-        final var blockEntity = requireBlockEntity(
-            helper,
+        final var blockEntity = helper.getBlockEntity(
             pos,
             AbstractBaseNetworkNodeContainerBlockEntity.class
         );
@@ -191,21 +188,6 @@ public final class GameTestUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends BlockEntity> T requireBlockEntity(
-        final GameTestHelper helper,
-        final BlockPos pos,
-        final Class<T> clazz
-    ) {
-        final BlockEntity blockEntity = helper.getBlockEntity(pos);
-        if (!clazz.isInstance(blockEntity)) {
-            throw new GameTestAssertException(
-                "Expected block entity of type " + clazz + " but was " + blockEntity.getClass()
-            );
-        }
-        return (T) blockEntity;
-    }
-
     public static void assertFluidPresent(final GameTestHelper helper,
                                           final BlockPos pos,
                                           final Fluid fluid,
@@ -228,7 +210,7 @@ public final class GameTestUtil {
         ItemEntity itemEntity;
         do {
             if (!entityIterator.hasNext()) {
-                throw new GameTestAssertException("Expected " + itemStack.getItem().getDescription().getString()
+                throw helper.assertionException("Expected " + itemStack.getItemName().getString()
                     + " item at: " + blockpos + " with count: " + itemStack.getCount());
             }
             itemEntity = entityIterator.next();
@@ -238,18 +220,20 @@ public final class GameTestUtil {
 
     public static Runnable assertInterfaceEmpty(final GameTestHelper helper,
                                                 final BlockPos pos) {
-        final var interfaceBlockEntity = requireBlockEntity(helper, pos, InterfaceBlockEntity.class);
+        final var interfaceBlockEntity = helper.getBlockEntity(pos, InterfaceBlockEntity.class);
         return assertResourceContainerEmpty(
             interfaceBlockEntity.getDisplayName(),
-            interfaceBlockEntity.getExportedResources()
+            interfaceBlockEntity.getExportedResources(),
+            helper
         );
     }
 
     private static Runnable assertResourceContainerEmpty(final Component displayName,
-                                                         final ResourceContainer container) {
+                                                         final ResourceContainer container,
+                                                         final GameTestHelper helper) {
         return () -> {
             if (!container.isEmpty()) {
-                throw new GameTestAssertException(displayName.getString() + " should be empty");
+                throw helper.assertionException(displayName.getString() + " should be empty");
             }
         };
     }
@@ -263,26 +247,27 @@ public final class GameTestUtil {
             long storedEnergy = energyComponent.getStored();
             storedEnergy = storedConsumer.apply(storedEnergy);
 
-            energyStoredExactly(storedEnergy, energyComponent.getCapacity());
+            energyStoredExactly(storedEnergy, energyComponent.getCapacity(), helper);
         });
     }
 
     public static void energyStoredExactly(final long storedEnergy,
-                                           final long energyAmount) {
+                                           final long energyAmount,
+                                           final GameTestHelper helper) {
         if (storedEnergy != energyAmount) {
-            throw new GameTestAssertException("Energy stored should be: " + energyAmount
-                + " but is " + storedEnergy);
+            throw helper.assertionException("Energy stored should be: " + energyAmount + " but is " + storedEnergy);
         }
     }
 
     public static Runnable interfaceContainsExactly(final GameTestHelper helper,
                                                     final BlockPos pos,
                                                     final ResourceAmount... expected) {
-        final var interfaceBlockEntity = requireBlockEntity(helper, pos, InterfaceBlockEntity.class);
-        return resourceContainerContainsExactly(interfaceBlockEntity.getExportedResources(), expected);
+        final var interfaceBlockEntity = helper.getBlockEntity(pos, InterfaceBlockEntity.class);
+        return resourceContainerContainsExactly(helper, interfaceBlockEntity.getExportedResources(), expected);
     }
 
-    private static Runnable resourceContainerContainsExactly(final ResourceContainer container,
+    private static Runnable resourceContainerContainsExactly(final GameTestHelper helper,
+                                                             final ResourceContainer container,
                                                              final ResourceAmount... expected) {
         final ResourceList expectedList = toResourceList(expected);
         return () -> {
@@ -293,14 +278,14 @@ public final class GameTestUtil {
                     given.add(item);
                 }
             }
-            listContainsExactly(given, expectedList);
+            listContainsExactly(given, expectedList, helper);
         };
     }
 
     public static Runnable containerContainsExactly(final GameTestHelper helper,
                                                     final BlockPos pos,
                                                     final ResourceAmount... expected) {
-        final var containerBlockEntity = requireBlockEntity(helper, pos, BaseContainerBlockEntity.class);
+        final var containerBlockEntity = helper.getBlockEntity(pos, BaseContainerBlockEntity.class);
         final ResourceList expectedList = toResourceList(expected);
         return () -> {
             final MutableResourceList given = MutableResourceListImpl.create();
@@ -310,7 +295,7 @@ public final class GameTestUtil {
                     given.add(asResource(itemStack), itemStack.getCount());
                 }
             }
-            listContainsExactly(given, expectedList);
+            listContainsExactly(given, expectedList, helper);
         };
     }
 
@@ -320,7 +305,7 @@ public final class GameTestUtil {
         final ResourceList expectedList = toResourceList(expected);
         return networkIsAvailable(helper, networkPos, network -> {
             final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-            listContainsExactly(toResourceList(storage.getAll()), expectedList);
+            listContainsExactly(toResourceList(storage.getAll()), expectedList, helper);
         });
     }
 
@@ -344,11 +329,12 @@ public final class GameTestUtil {
         return list;
     }
 
-    private static void listContainsExactly(final ResourceList given, final ResourceList expected) {
+    private static void listContainsExactly(final ResourceList given, final ResourceList expected,
+                                            final GameTestHelper helper) {
         for (final ResourceAmount expectedItem : expected.copyState()) {
             final long givenAmount = given.get(expectedItem.resource());
             if (givenAmount != expectedItem.amount()) {
-                throw new GameTestAssertException(
+                throw helper.assertionException(
                     "Expected " + expectedItem.amount() + " of " + expectedItem.resource() + ", but was " + givenAmount
                 );
             }
@@ -356,7 +342,7 @@ public final class GameTestUtil {
         for (final ResourceAmount givenItem : given.copyState()) {
             final long expectedAmount = expected.get(givenItem.resource());
             if (expectedAmount != givenItem.amount()) {
-                throw new GameTestAssertException(
+                throw helper.assertionException(
                     "Expected " + expectedAmount + " of " + givenItem.resource() + ", but was " + givenItem.amount()
                 );
             }
@@ -367,7 +353,7 @@ public final class GameTestUtil {
                                     final BlockPos pos,
                                     final ItemStack... stacks) {
         helper.setBlock(pos, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState());
-        final var chestBlockEntity = requireBlockEntity(helper, pos, BaseContainerBlockEntity.class);
+        final var chestBlockEntity = helper.getBlockEntity(pos, BaseContainerBlockEntity.class);
         for (int i = 0; i < stacks.length; i++) {
             chestBlockEntity.setItem(i, stacks[i]);
         }
@@ -376,7 +362,7 @@ public final class GameTestUtil {
     public static void addItemToChest(final GameTestHelper helper,
                                       final BlockPos pos,
                                       final ItemStack stack) {
-        final var chestBlockEntity = requireBlockEntity(helper, pos, BaseContainerBlockEntity.class);
+        final var chestBlockEntity = helper.getBlockEntity(pos, BaseContainerBlockEntity.class);
         for (int i = 0; i < chestBlockEntity.getContainerSize(); i++) {
             if (chestBlockEntity.getItem(i).isEmpty()) {
                 chestBlockEntity.setItem(i, stack);
@@ -388,7 +374,7 @@ public final class GameTestUtil {
     public static void removeItemFromChest(final GameTestHelper helper,
                                            final BlockPos pos,
                                            final ItemStack stack) {
-        final var chestBlockEntity = requireBlockEntity(helper, pos, BaseContainerBlockEntity.class);
+        final var chestBlockEntity = helper.getBlockEntity(pos, BaseContainerBlockEntity.class);
         for (int i = 0; i < chestBlockEntity.getContainerSize(); i++) {
             if (chestBlockEntity.getItem(i).is(stack.getItem())) {
                 chestBlockEntity.removeItem(i, stack.getCount());
@@ -399,8 +385,8 @@ public final class GameTestUtil {
     public static void prepareInterface(final GameTestHelper helper,
                                         final BlockPos pos,
                                         final ResourceAmount... resources) {
-        helper.setBlock(pos, RSBLOCKS.getInterface());
-        final var interfaceBlockEntity = requireBlockEntity(helper, pos, InterfaceBlockEntity.class);
+        helper.setBlock(pos, MOD_BLOCKS.getInterface());
+        final var interfaceBlockEntity = helper.getBlockEntity(pos, InterfaceBlockEntity.class);
         final ExportedResourcesContainer exportedResources = interfaceBlockEntity.getExportedResources();
 
         for (int i = 0; i < resources.length; i++) {
@@ -411,7 +397,7 @@ public final class GameTestUtil {
     public static void addFluidToInterface(final GameTestHelper helper,
                                            final BlockPos pos,
                                            final ResourceAmount resource) {
-        final var interfaceBlockEntity = requireBlockEntity(helper, pos, InterfaceBlockEntity.class);
+        final var interfaceBlockEntity = helper.getBlockEntity(pos, InterfaceBlockEntity.class);
         final ExportedResourcesContainer exportedResources = interfaceBlockEntity.getExportedResources();
 
         exportedResources.insert(resource.resource(), resource.amount(), Action.EXECUTE);
@@ -420,13 +406,13 @@ public final class GameTestUtil {
     public static void removeFluidFromInterface(final GameTestHelper helper,
                                                 final BlockPos pos,
                                                 final ResourceAmount resource) {
-        final var interfaceBlockEntity = requireBlockEntity(helper, pos, InterfaceBlockEntity.class);
+        final var interfaceBlockEntity = helper.getBlockEntity(pos, InterfaceBlockEntity.class);
         final ExportedResourcesContainer exportedResources = interfaceBlockEntity.getExportedResources();
 
         final long extracted = exportedResources.extract(resource.resource(), resource.amount(), Action.EXECUTE);
 
         if (extracted <= 0) {
-            throw new GameTestAssertException(
+            throw helper.assertionException(
                 "Resource " + resource.resource() + " with amount " + resource.amount() + " could not be extracted "
             );
         }
@@ -445,7 +431,7 @@ public final class GameTestUtil {
                                    final BlockPos pos,
                                    final int amount) {
         final AbstractFurnaceBlockEntity furnaceBlockEntity =
-            requireBlockEntity(helper, pos.below(), AbstractFurnaceBlockEntity.class);
+            helper.getBlockEntity(pos.below(), AbstractFurnaceBlockEntity.class);
         for (int i = 0; i < amount; i++) {
             AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), pos.below(),
                 furnaceBlockEntity.getBlockState(), furnaceBlockEntity);

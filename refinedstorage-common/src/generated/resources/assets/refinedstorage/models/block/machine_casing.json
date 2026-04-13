@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "refinedstorage:block/machine_casing/end",
+    "side": "refinedstorage:block/machine_casing/side"
+  }
+}

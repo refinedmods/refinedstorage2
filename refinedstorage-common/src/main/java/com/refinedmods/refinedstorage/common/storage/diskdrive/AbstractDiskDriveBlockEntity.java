@@ -14,14 +14,14 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public abstract class AbstractDiskDriveBlockEntity extends AbstractDiskContainerBlockEntity<StorageNetworkNode> {
     static final int AMOUNT_OF_DISKS = 8;
@@ -71,15 +71,15 @@ public abstract class AbstractDiskDriveBlockEntity extends AbstractDiskContainer
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        configContainer.load(tag);
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        configContainer.read(input);
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        configContainer.save(tag);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        configContainer.store(output);
     }
 
     @Override

@@ -3,15 +3,17 @@ package com.refinedmods.refinedstorage.common.support.widget;
 import com.refinedmods.refinedstorage.common.Platform;
 
 import java.util.function.DoubleConsumer;
-import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class ScrollbarWidget extends AbstractWidget {
     private static final int SCROLLER_HEIGHT = 15;
@@ -52,7 +54,7 @@ public class ScrollbarWidget extends AbstractWidget {
         this.enabled = enabled;
     }
 
-    private ResourceLocation getTexture() {
+    private Identifier getTexture() {
         if (!enabled) {
             return type.disabledTexture;
         }
@@ -60,11 +62,13 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
+    public void extractWidgetRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                         final float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }
         graphics.blitSprite(
+            GUI_TEXTURED,
             getTexture(),
             getX(),
             getY() + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)),
@@ -112,10 +116,13 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
         if (!isActive()) {
             return false;
         }
+        final int button = event.button();
+        final double mouseX = event.x();
+        final double mouseY = event.y();
         final boolean inBounds = mouseX >= getX()
             && mouseY >= getY()
             && mouseX <= getX() + width
@@ -129,7 +136,7 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
+    public boolean mouseReleased(final MouseButtonEvent event) {
         if (clicked) {
             clicked = false;
             return true;
@@ -206,14 +213,14 @@ public class ScrollbarWidget extends AbstractWidget {
             7
         );
 
-        private final ResourceLocation texture;
-        private final ResourceLocation clickedTexture;
-        private final ResourceLocation disabledTexture;
+        private final Identifier texture;
+        private final Identifier clickedTexture;
+        private final Identifier disabledTexture;
         private final int width;
 
-        Type(final ResourceLocation texture,
-             final ResourceLocation clickedTexture,
-             final ResourceLocation disabledTexture,
+        Type(final Identifier texture,
+             final Identifier clickedTexture,
+             final Identifier disabledTexture,
              final int width) {
             this.texture = texture;
             this.clickedTexture = clickedTexture;

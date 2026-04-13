@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.fabric.exporter;
 
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.network.impl.node.exporter.ExporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.exporter.MissingResourcesListeningExporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.network.node.exporter.ExporterTransferStrategy;
@@ -20,18 +19,19 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.api.network.impl.node.exporter.MissingResourcesListeningExporterTransferStrategy.OnMissingResources.scheduleAutocrafting;
 
 public class FabricStorageExporterTransferStrategyFactory<T> implements ExporterTransferStrategyFactory {
     private final Class<? extends ResourceKey> resourceType;
     private final BlockApiLookup<Storage<T>, Direction> lookup;
-    private final Function<ResourceKey, @NullableType T> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final long singleAmount;
 
     public FabricStorageExporterTransferStrategyFactory(final Class<? extends ResourceKey> resourceType,
                                                         final BlockApiLookup<Storage<T>, Direction> lookup,
-                                                        final Function<ResourceKey, @NullableType T> toPlatformMapper,
+                                                        final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                                         final long singleAmount) {
         this.resourceType = resourceType;
         this.lookup = lookup;

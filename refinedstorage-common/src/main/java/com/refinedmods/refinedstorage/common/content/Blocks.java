@@ -39,15 +39,15 @@ import com.refinedmods.refinedstorage.common.storage.externalstorage.ExternalSto
 import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridBlock;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
-import com.refinedmods.refinedstorage.common.support.SimpleBlock;
+import com.refinedmods.refinedstorage.common.support.SimpleStoneBlock;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -84,7 +84,8 @@ public final class Blocks {
     );
     private final BlockColorMap<AbstractControllerBlock<ControllerBlockItem>, ControllerBlockItem> controller =
         new BlockColorMap<>(
-            (color, name) -> new ControllerBlock(
+            (id, color, name) -> new ControllerBlock(
+                id,
                 name,
                 new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
                 color
@@ -95,7 +96,8 @@ public final class Blocks {
         );
     private final BlockColorMap
         <AbstractControllerBlock<CreativeControllerBlockItem>, CreativeControllerBlockItem> creativeController =
-        new BlockColorMap<>((color, name) -> new CreativeControllerBlock(
+        new BlockColorMap<>((id, color, name) -> new CreativeControllerBlock(
+            id,
             name,
             new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
             color
@@ -168,7 +170,7 @@ public final class Blocks {
     @Nullable
     private Supplier<DiskDriveBlock> diskDrive;
     @Nullable
-    private Supplier<SimpleBlock> machineCasing;
+    private Supplier<SimpleStoneBlock> machineCasing;
     private final Map<ItemStorageVariant, Supplier<Block>> itemStorageBlocks = new EnumMap<>(ItemStorageVariant.class);
     private final Map<FluidStorageVariant, Supplier<Block>> fluidStorageBlocks =
         new EnumMap<>(FluidStorageVariant.class);
@@ -185,9 +187,10 @@ public final class Blocks {
     }
 
     public BlockColorMap<CableBlock, BaseBlockItem> setCable(
-        final BlockEntityProvider<AbstractCableBlockEntity> provider) {
+        final BlockEntityProvider<AbstractCableBlockEntity> provider
+    ) {
         cable = new BlockColorMap<>(
-            (color, name) -> new CableBlock(color, name, provider),
+            (id, color, name) -> new CableBlock(id, color, name, provider),
             ContentIds.CABLE,
             ContentNames.CABLE,
             CABLE_LIKE_COLOR
@@ -203,7 +206,7 @@ public final class Blocks {
         return requireNonNull(diskDrive).get();
     }
 
-    public SimpleBlock getMachineCasing() {
+    public SimpleStoneBlock getMachineCasing() {
         return requireNonNull(machineCasing).get();
     }
 
@@ -233,7 +236,7 @@ public final class Blocks {
         this.diskDrive = diskDriveSupplier;
     }
 
-    public void setMachineCasing(final Supplier<SimpleBlock> machineCasingSupplier) {
+    public void setMachineCasing(final Supplier<SimpleStoneBlock> machineCasingSupplier) {
         this.machineCasing = machineCasingSupplier;
     }
 
@@ -257,7 +260,7 @@ public final class Blocks {
         final BlockEntityProvider<AbstractImporterBlockEntity> provider
     ) {
         importer = new BlockColorMap<>(
-            (pos, state) -> new ImporterBlock(pos, state, provider),
+            (id, pos, state) -> new ImporterBlock(id, pos, state, provider),
             ContentIds.IMPORTER,
             ContentNames.IMPORTER,
             CABLE_LIKE_COLOR
@@ -273,7 +276,7 @@ public final class Blocks {
         final BlockEntityProvider<AbstractExporterBlockEntity> provider
     ) {
         exporter = new BlockColorMap<>(
-            (color, name) -> new ExporterBlock(color, name, provider),
+            (id, color, name) -> new ExporterBlock(id, color, name, provider),
             ContentIds.EXPORTER,
             ContentNames.EXPORTER,
             CABLE_LIKE_COLOR
@@ -298,7 +301,7 @@ public final class Blocks {
         final BlockEntityProvider<AbstractExternalStorageBlockEntity> provider
     ) {
         externalStorage = new BlockColorMap<>(
-            (color, name) -> new ExternalStorageBlock(color, name, provider),
+            (id, color, name) -> new ExternalStorageBlock(id, color, name, provider),
             ContentIds.EXTERNAL_STORAGE,
             ContentNames.EXTERNAL_STORAGE,
             CABLE_LIKE_COLOR
@@ -318,7 +321,7 @@ public final class Blocks {
         final BlockEntityProvider<AbstractDestructorBlockEntity> provider
     ) {
         destructor = new BlockColorMap<>(
-            (color, name) -> new DestructorBlock(color, name, provider),
+            (id, color, name) -> new DestructorBlock(id, color, name, provider),
             ContentIds.DESTRUCTOR,
             ContentNames.DESTRUCTOR,
             CABLE_LIKE_COLOR
@@ -334,7 +337,7 @@ public final class Blocks {
         final BlockEntityProvider<AbstractConstructorBlockEntity> provider
     ) {
         constructor = new BlockColorMap<>(
-            (color, name) -> new ConstructorBlock(color, name, provider),
+            (id, color, name) -> new ConstructorBlock(id, color, name, provider),
             ContentIds.CONSTRUCTOR,
             ContentNames.CONSTRUCTOR,
             CABLE_LIKE_COLOR
@@ -394,7 +397,8 @@ public final class Blocks {
         final BlockEntityProvider<AbstractDiskInterfaceBlockEntity> provider
     ) {
         this.diskInterface = new BlockColorMap<>(
-            (color, name) -> new DiskInterfaceBlock(
+            (id, color, name) -> new DiskInterfaceBlock(
+                id,
                 color,
                 name,
                 provider

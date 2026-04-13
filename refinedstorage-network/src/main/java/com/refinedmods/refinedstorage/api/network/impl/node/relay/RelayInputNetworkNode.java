@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class RelayInputNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;

@@ -3,21 +3,22 @@ package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen.INSET_PADDING;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class CraftingPatternGridRenderer implements PatternGridRenderer {
-    private static final ResourceLocation CRAFTING = createIdentifier("pattern_grid/crafting");
+    private static final Identifier CRAFTING = createIdentifier("pattern_grid/crafting");
     private static final MutableComponent FUZZY_MODE = createTranslation("gui", "pattern_grid.fuzzy_mode");
     private static final MutableComponent FUZZY_MODE_ON_HELP =
         createTranslation("gui", "pattern_grid.fuzzy_mode.on.help");
@@ -95,10 +96,10 @@ class CraftingPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void renderBackground(final GuiGraphics graphics,
+    public void renderBackground(final GuiGraphicsExtractor graphics,
                                  final float partialTicks,
                                  final int mouseX,
                                  final int mouseY) {
-        graphics.blitSprite(CRAFTING, x + INSET_PADDING, y + INSET_PADDING, 130, 54);
+        graphics.blitSprite(GUI_TEXTURED, CRAFTING, x + INSET_PADDING, y + INSET_PADDING, 130, 54);
     }
 }

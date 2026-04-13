@@ -4,11 +4,11 @@ import com.refinedmods.refinedstorage.common.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage.common.support.ColorableBlock;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
 

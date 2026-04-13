@@ -11,14 +11,14 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 class ItemResourceType implements ResourceType {
     private static final MutableComponent TITLE = createTranslation("misc", "resource_type.item");
-    private static final ResourceLocation SPRITE = createIdentifier("widget/side_button/resource_type/item");
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/resource_type/item");
 
     @Override
     public long normalizeAmount(final double amount) {
@@ -65,7 +65,7 @@ class ItemResourceType implements ResourceType {
     }
 
     @Override
-    public ResourceLocation getSprite() {
+    public Identifier getSprite() {
         return SPRITE;
     }
 

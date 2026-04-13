@@ -14,22 +14,22 @@ import com.refinedmods.refinedstorage.common.storage.AbstractDiskContainerBlockE
 import com.refinedmods.refinedstorage.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public abstract class AbstractDiskInterfaceBlockEntity
     extends AbstractDiskContainerBlockEntity<StorageTransferNetworkNode>
@@ -51,8 +51,7 @@ public abstract class AbstractDiskInterfaceBlockEntity
         this.upgradeContainer = new UpgradeContainer(UpgradeDestinations.DISK_INTERFACE, (c, upgradeEnergyUsage) -> {
             final long baseEnergyUsage = Platform.INSTANCE.getConfig().getDiskInterface().getEnergyUsage();
             mainNetworkNode.setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
-            setChanged();
-        });
+        }, this::setChanged);
         this.ticker = upgradeContainer.getTicker();
         this.mainNetworkNode.setListener(this);
         this.mainNetworkNode.setTransferQuotaProvider(storage -> {
@@ -76,35 +75,30 @@ public abstract class AbstractDiskInterfaceBlockEntity
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_UPGRADES)) {
-            ContainerUtil.read(tag.getCompound(TAG_UPGRADES), upgradeContainer, provider);
-        }
-        super.loadAdditional(tag, provider);
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_UPGRADES, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(upgradeContainer.getUpgrades()));
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_UPGRADES, ContainerUtil.write(upgradeContainer, provider));
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(mainNetworkNode.getFilterMode()));
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_UPGRADES, ItemContainerContents.CODEC).ifPresent(upgradeContainer::load);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        if (tag.contains(TAG_TRANSFER_MODE)) {
-            mainNetworkNode.setMode(TransferModeSettings.getTransferMode(tag.getInt(TAG_TRANSFER_MODE)));
-        }
-        if (tag.contains(TAG_FILTER_MODE)) {
-            mainNetworkNode.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        input.getInt(TAG_TRANSFER_MODE).map(TransferModeSettings::getTransferMode).ifPresent(mainNetworkNode::setMode);
+        input.getInt(TAG_FILTER_MODE).map(FilterModeSettings::getFilterMode).ifPresent(mainNetworkNode::setFilterMode);
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        tag.putInt(TAG_TRANSFER_MODE, TransferModeSettings.getTransferMode(mainNetworkNode.getMode()));
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        output.putInt(TAG_TRANSFER_MODE, TransferModeSettings.getTransferMode(mainNetworkNode.getMode()));
+        output.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(mainNetworkNode.getFilterMode()));
     }
 
     @Override
@@ -135,12 +129,11 @@ public abstract class AbstractDiskInterfaceBlockEntity
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        final NonNullList<ItemStack> drops = super.getDrops();
-        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            drops.add(upgradeContainer.getItem(i));
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            Containers.dropContents(level, pos, upgradeContainer.getItems());
         }
-        return drops;
     }
 
     boolean isFuzzyMode() {

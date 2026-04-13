@@ -31,10 +31,10 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorContai
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeContainerMenu;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

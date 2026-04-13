@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -16,12 +16,12 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createSt
 
 public class EnergyItemHelperImpl implements EnergyItemHelper {
     @Override
-    public void addTooltip(final ItemStack stack, final List<Component> lines) {
+    public void addTooltip(final ItemStack stack, final Consumer<Component> builder) {
         RefinedStorageApi.INSTANCE.getEnergyStorage(stack).ifPresent(energyStorage -> {
             final long stored = energyStorage.getStored();
             final long capacity = energyStorage.getCapacity();
             final double pct = stored / (double) capacity;
-            lines.add(createStoredWithCapacityTranslation(stored, capacity, pct).withStyle(ChatFormatting.GRAY));
+            builder.accept(createStoredWithCapacityTranslation(stored, capacity, pct).withStyle(ChatFormatting.GRAY));
         });
     }
 

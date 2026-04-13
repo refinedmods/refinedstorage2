@@ -21,21 +21,22 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuP
 import com.refinedmods.refinedstorage.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.energy.ItemBlockEnergyStorage;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.network.protocol.Packet;
@@ -44,11 +45,14 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +68,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     @Nullable
     protected Disk disk;
     @Nullable
-    private Component name;
+    private Component customName;
 
     private final DiskInventory diskInventory;
     private final DiskStateChangeListener diskStateListener = new DiskStateChangeListener(this);
@@ -77,32 +81,26 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
 
     protected AbstractPortableGridBlockEntity(final PortableGridType type, final BlockPos pos, final BlockState state) {
         super(getBlockEntityType(type), pos, state);
-        this.diskInventory = new DiskInventory((inventory, slot) -> onDiskChanged(), 1);
+        this.diskInventory = new DiskInventory(inv -> onDiskChanged(), 1);
         this.energyStorage = createEnergyStorage(type, this);
         this.grid = new InWorldPortableGrid(energyStorage, diskInventory, diskStateListener, this);
         this.type = type;
     }
 
-    static void readDiskInventory(final CompoundTag tag,
-                                  final DiskInventory diskInventory,
-                                  final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_DISK_INVENTORY)) {
-            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory, provider);
-        }
+    static void readDiskInventory(final ValueInput input, final DiskInventory diskInventory) {
+        input.read(TAG_DISK_INVENTORY, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(diskInventory.getItems()));
     }
 
-    static void writeDiskInventory(final CompoundTag tag,
-                                   final DiskInventory diskInventory,
-                                   final HolderLookup.Provider provider) {
-        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory, provider));
+    static void writeDiskInventory(final ValueOutput output, final DiskInventory diskInventory) {
+        output.store(TAG_DISK_INVENTORY, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(diskInventory.getItems()));
     }
 
-    static ItemStack getDisk(final CustomData customData, final HolderLookup.Provider provider) {
-        final CompoundTag tag = customData.copyTag();
-        if (!tag.contains(TAG_DISK_INVENTORY)) {
-            return ItemStack.EMPTY;
-        }
-        return ContainerUtil.getItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), 0, provider);
+    static ItemStack getDisk(final CompoundTag tag) {
+        return tag.read(TAG_DISK_INVENTORY, ItemContainerContents.CODEC)
+            .map(ItemContainerContents::copyOne)
+            .orElse(ItemStack.EMPTY);
     }
 
     private static EnergyStorage createEnergyStorage(final PortableGridType type, final BlockEntity blockEntity) {
@@ -142,10 +140,6 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     }
 
     private void onDiskChanged() {
-        final boolean isJustPlacedIntoLevelOrLoading = level == null || level.isClientSide();
-        if (isJustPlacedIntoLevelOrLoading) {
-            return;
-        }
         grid.updateStorage();
         PlatformUtil.sendBlockUpdateToClient(level, worldPosition);
         setChanged();
@@ -165,30 +159,36 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        fromClientTag(tag);
-        readDiskInventory(tag, diskInventory, provider);
-        ItemBlockEnergyStorage.readFromTag(energyStorage, tag);
-        readConfiguration(tag, provider);
-        super.loadAdditional(tag, provider);
+    protected void loadAdditional(final ValueInput input) {
+        fromClientTag(input);
+        readDiskInventory(input, diskInventory);
+        ItemBlockEnergyStorage.read(energyStorage, input);
+        readConfiguration(input);
+        final boolean wasPlacedDismantled = level != null && !level.isClientSide();
+        if (wasPlacedDismantled) {
+            initialize(level);
+        }
+        super.loadAdditional(input);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_REDSTONE_MODE)) {
-            redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
-        }
-        if (tag.contains(TAG_CUSTOM_NAME, Tag.TAG_STRING)) {
-            this.name = parseCustomNameSafe(tag.getString(TAG_CUSTOM_NAME), provider);
-        }
+    public void readConfiguration(final ValueInput input) {
+        this.customName = parseCustomNameSafe(input, TAG_CUSTOM_NAME);
+        this.redstoneMode = input.getInt(TAG_REDSTONE_MODE)
+            .map(RedstoneModeSettings::getRedstoneMode)
+            .orElse(RedstoneMode.IGNORE);
     }
 
-    private void fromClientTag(final CompoundTag tag) {
-        if (!tag.contains(TAG_DISKS)) {
-            return;
+    private void fromClientTag(final ValueInput input) {
+        final Optional<List<Disk>> optionalDisk = input.read(TAG_DISKS, Disk.LIST_CODEC);
+        final boolean potentialDiskDataPresent = optionalDisk.isPresent();
+        disk = optionalDisk
+            .map(d -> d.toArray(new Disk[0]))
+            .map(disks -> disks[0])
+            .orElse(null);
+        if (potentialDiskDataPresent) {
+            onClientDriveStateUpdated();
         }
-        disk = diskInventory.fromSyncTag(tag.getList(TAG_DISKS, Tag.TAG_COMPOUND))[0];
-        onClientDriveStateUpdated();
     }
 
     protected void onClientDriveStateUpdated() {
@@ -196,42 +196,46 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        writeDiskInventory(tag, diskInventory, provider);
-        ItemBlockEnergyStorage.writeToTag(tag, energyStorage.getStored());
-        writeConfiguration(tag, provider);
+    protected void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        writeDiskInventory(output, diskInventory);
+        ItemBlockEnergyStorage.store(output, energyStorage.getStored());
+        writeConfiguration(output);
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(redstoneMode));
-        if (name != null) {
-            tag.putString(TAG_CUSTOM_NAME, Component.Serializer.toJson(name, provider));
+    public void writeConfiguration(final ValueOutput output) {
+        if (customName != null) {
+            output.store(TAG_CUSTOM_NAME, ComponentSerialization.CODEC, customName);
         }
+        output.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(redstoneMode));
     }
 
     @Override
-    protected void applyImplicitComponents(final BlockEntity.DataComponentInput componentInput) {
-        super.applyImplicitComponents(componentInput);
-        this.name = componentInput.get(DataComponents.CUSTOM_NAME);
+    protected void applyImplicitComponents(final DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        this.customName = components.get(DataComponents.CUSTOM_NAME);
     }
 
     @Override
     protected void collectImplicitComponents(final DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
-        components.set(DataComponents.CUSTOM_NAME, name);
+        components.set(DataComponents.CUSTOM_NAME, customName);
     }
 
     @Override
+    @Nullable
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
-        final CompoundTag tag = new CompoundTag();
-        tag.put(TAG_DISKS, diskInventory.toSyncTag(idx -> grid.getStorageState()));
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        final List<Disk> diskState = new ArrayList<>();
+        final ItemStack diskItem = diskInventory.getItem(0);
+        diskState.add(new Disk(diskItem.isEmpty() ? null : diskItem.getItem(), grid.getStorageState()));
+        tag.store(TAG_DISKS, Disk.LIST_CODEC, diskState);
         return tag;
     }
 
@@ -249,7 +253,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
         final MutableComponent defaultName = type == PortableGridType.CREATIVE
             ? ContentNames.CREATIVE_PORTABLE_GRID
             : ContentNames.PORTABLE_GRID;
-        return name == null ? defaultName : name;
+        return customName == null ? defaultName : customName;
     }
 
     @Override

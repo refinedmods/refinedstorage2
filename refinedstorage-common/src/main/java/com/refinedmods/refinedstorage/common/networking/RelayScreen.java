@@ -9,11 +9,10 @@ import com.refinedmods.refinedstorage.common.support.widget.AbstractSideButtonWi
 import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.StoragePrioritySideButtonWidget;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -48,14 +47,9 @@ public class RelayScreen extends AbstractFilterScreen<RelayContainerMenu>
     private AbstractSideButtonWidget priorityButton;
 
     public RelayScreen(final RelayContainerMenu menu, final Inventory playerInventory, final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, false);
         this.playerInventory = playerInventory;
         menu.setPassThroughListener(this);
-    }
-
-    @Override
-    protected boolean hasUpgrades() {
-        return false;
     }
 
     @Override

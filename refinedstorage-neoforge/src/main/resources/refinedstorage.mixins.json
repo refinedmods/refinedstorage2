@@ -7,8 +7,7 @@
     "AbstractContainerMenuMixin"
   ],
   "client": [
-    "AbstractGuiGraphicsMixin",
-    "AbstractCapeLayerMixin"
+    "AbstractGuiGraphicsExtractorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

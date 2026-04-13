@@ -15,8 +15,6 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -26,6 +24,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,20 +77,20 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        ItemBlockEnergyStorage.writeToTag(tag, mainNetworkNode.getActualStored());
-        saveRenderingInfo(tag);
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        ItemBlockEnergyStorage.store(output, mainNetworkNode.getActualStored());
+        saveRenderingInfo(output);
     }
 
-    private void saveRenderingInfo(final CompoundTag tag) {
-        tag.putLong(TAG_CAPACITY, mainNetworkNode.getActualCapacity());
+    private void saveRenderingInfo(final ValueOutput output) {
+        output.putLong(TAG_CAPACITY, mainNetworkNode.getActualCapacity());
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        ItemBlockEnergyStorage.readFromTag(energyStorage, tag);
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        ItemBlockEnergyStorage.read(energyStorage, input);
     }
 
     @Override

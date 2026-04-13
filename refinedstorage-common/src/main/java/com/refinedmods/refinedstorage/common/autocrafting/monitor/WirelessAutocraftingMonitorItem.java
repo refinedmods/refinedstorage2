@@ -8,15 +8,17 @@ import com.refinedmods.refinedstorage.common.api.security.SecurityHelper;
 import com.refinedmods.refinedstorage.common.api.support.energy.AbstractNetworkEnergyItem;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.security.BuiltinPermission;
 
-import javax.annotation.Nullable;
-
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -25,7 +27,8 @@ public class WirelessAutocraftingMonitorItem extends AbstractNetworkEnergyItem {
 
     public WirelessAutocraftingMonitorItem(final boolean creative) {
         super(
-            new Item.Properties().stacksTo(1),
+            new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, creative
+                ? ContentIds.CREATIVE_WIRELESS_AUTOCRAFTING_MONITOR : ContentIds.WIRELESS_AUTOCRAFTING_MONITOR)),
             RefinedStorageApi.INSTANCE.getEnergyItemHelper(),
             RefinedStorageApi.INSTANCE.getNetworkItemHelper()
         );

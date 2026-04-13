@@ -1,31 +1,34 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.function.Consumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen.INSET_HEIGHT;
 import static com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen.INSET_PADDING;
 import static com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridScreen.INSET_WIDTH;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.renderSlotHighlight;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 class ProcessingPatternGridRenderer implements PatternGridRenderer {
-    private static final ResourceLocation PROCESSING = createIdentifier("pattern_grid/processing");
-    private static final ResourceLocation PROCESSING_MATRIX = createIdentifier("pattern_grid/processing_matrix");
+    private static final Identifier PROCESSING = createIdentifier("pattern_grid/processing");
+    private static final Identifier PROCESSING_MATRIX = createIdentifier("pattern_grid/processing_matrix");
     private static final int INDIVIDUAL_PROCESSING_MATRIX_SIZE = 54;
     private static final int PROCESSING_MATRIX_SLOT_SIZE = 18;
     private static final int PROCESSING_INSET_Y_PADDING = 9;
@@ -150,12 +153,12 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void render(final GuiGraphics graphics,
+    public void render(final GuiGraphicsExtractor graphics,
                        final int mouseX,
                        final int mouseY,
                        final float partialTicks) {
         if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -170,11 +173,12 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void renderBackground(final GuiGraphics graphics,
+    public void renderBackground(final GuiGraphicsExtractor graphics,
                                  final float partialTicks,
                                  final int mouseX,
                                  final int mouseY) {
-        graphics.blitSprite(PROCESSING, x + INSET_PADDING, y + INSET_PADDING + PROCESSING_INSET_Y_PADDING, 130, 54);
+        graphics.blitSprite(GUI_TEXTURED, PROCESSING,
+            x + INSET_PADDING, y + INSET_PADDING + PROCESSING_INSET_Y_PADDING, 130, 54);
         renderMatrix(
             graphics,
             x + INSET_PADDING + 1,
@@ -193,7 +197,7 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
         );
     }
 
-    private void renderMatrix(final GuiGraphics graphics,
+    private void renderMatrix(final GuiGraphicsExtractor graphics,
                               final int startX,
                               final int endX,
                               final int mouseX,
@@ -208,7 +212,7 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
         graphics.disableScissor();
     }
 
-    private void renderMatrix(final GuiGraphics graphics, final boolean input) {
+    private void renderMatrix(final GuiGraphicsExtractor graphics, final boolean input) {
         final int xx = x + INSET_PADDING + (!input ? INDIVIDUAL_PROCESSING_MATRIX_SIZE + 2 : 0);
         final int startY = y + PROCESSING_INSET_Y_PADDING - INDIVIDUAL_PROCESSING_MATRIX_SIZE;
         final int endY = y + PROCESSING_INSET_Y_PADDING + 4 + INDIVIDUAL_PROCESSING_MATRIX_SIZE;
@@ -224,6 +228,7 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
                 continue;
             }
             graphics.blitSprite(
+                GUI_TEXTURED,
                 PROCESSING_MATRIX,
                 xx,
                 yy,
@@ -233,10 +238,12 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
         }
     }
 
-    private void renderMatrixSlots(final GuiGraphics graphics,
+    private void renderMatrixSlots(final GuiGraphicsExtractor graphics,
                                    final int mouseX,
                                    final int mouseY,
                                    final boolean input) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(leftPos, topPos);
         for (final ResourceSlot resourceSlot : menu.getResourceSlots()) {
             if (resourceSlot.isActive()
                 && resourceSlot instanceof ProcessingMatrixResourceSlot matrixSlot
@@ -244,29 +251,35 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
                 renderMatrixSlot(graphics, mouseX, mouseY, resourceSlot, matrixSlot);
             }
         }
+        graphics.pose().popMatrix();
     }
 
-    private void renderMatrixSlot(final GuiGraphics graphics,
+    private void renderMatrixSlot(final GuiGraphicsExtractor graphics,
                                   final int mouseX,
                                   final int mouseY,
                                   final ResourceSlot resourceSlot,
                                   final ProcessingMatrixResourceSlot matrixSlot) {
-        if (matrixSlot.getResource() != null && menu.getRepository().isSticky(matrixSlot.getResource())) {
+        final PlatformResourceKey resource = matrixSlot.getResource();
+        if (resource != null && menu.getRepository().isSticky(resource)) {
             AbstractGridScreen.renderSlotBackground(
                 graphics,
-                resourceSlot.x + leftPos,
-                resourceSlot.y + topPos,
+                resourceSlot.x,
+                resourceSlot.y,
                 false,
                 AutocraftableResourceHint.AUTOCRAFTABLE.getColor()
             );
         }
-        ResourceSlotRendering.render(graphics, resourceSlot, leftPos, topPos);
         final boolean hovering = mouseX >= resourceSlot.x + leftPos
             && mouseX < resourceSlot.x + leftPos + 16
             && mouseY >= resourceSlot.y + topPos
             && mouseY < resourceSlot.y + topPos + 16;
-        if (hovering && canInteractWithResourceSlot(resourceSlot, mouseX, mouseY)) {
-            renderSlotHighlight(graphics, leftPos + resourceSlot.x, topPos + resourceSlot.y, 0);
+        final boolean interact = hovering && canInteractWithResourceSlot(resourceSlot, mouseX, mouseY);
+        if (interact) {
+            ClientPlatformUtil.renderSlotHighlightBack(graphics, resourceSlot.x, resourceSlot.y);
+        }
+        ResourceSlotRendering.render(graphics, resourceSlot);
+        if (interact) {
+            ClientPlatformUtil.renderSlotHighlightFront(graphics, resourceSlot.x, resourceSlot.y);
         }
     }
 
@@ -286,16 +299,17 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public void renderLabels(final GuiGraphics graphics, final Font font, final int mouseX, final int mouseY) {
+    public void extractLabels(final GuiGraphicsExtractor graphics, final Font font, final int mouseX,
+                              final int mouseY) {
         final int xx = x - leftPos + INSET_PADDING;
         final int yy = y - topPos - 1 + INSET_PADDING;
-        graphics.drawString(font, INPUTS, xx, yy, 4210752, false);
-        graphics.drawString(font, OUTPUTS, xx + 56, yy, 4210752, false);
+        graphics.text(font, INPUTS, xx, yy, -12566464, false);
+        graphics.text(font, OUTPUTS, xx + 56, yy, -12566464, false);
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        return scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton);
+    public boolean mouseClicked(final MouseButtonEvent e, final boolean doubleClick) {
+        return scrollbar != null && scrollbar.mouseClicked(e, doubleClick);
     }
 
     @Override
@@ -306,8 +320,8 @@ class ProcessingPatternGridRenderer implements PatternGridRenderer {
     }
 
     @Override
-    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
-        return scrollbar != null && scrollbar.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(final MouseButtonEvent e) {
+        return scrollbar != null && scrollbar.mouseReleased(e);
     }
 
     @Override

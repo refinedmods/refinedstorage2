@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "refinedstorage:speed_upgrade",
+    "U": "minecraft:sugar"
+  },
+  "pattern": [
+    "USU",
+    "SUS",
+    "USU"
+  ],
+  "result": {
+    "id": "refinedstorage:stack_upgrade"
+  }
+}

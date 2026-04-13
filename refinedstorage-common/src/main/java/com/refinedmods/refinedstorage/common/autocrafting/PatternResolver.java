@@ -5,17 +5,18 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.support.RecipeMatrixContainer;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -45,10 +46,11 @@ public class PatternResolver {
         final RecipeMatrixContainer craftingMatrix = getFilledCraftingMatrix(state);
         final CraftingInput.Positioned positionedCraftingInput = craftingMatrix.asPositionedCraftInput();
         final CraftingInput craftingInput = positionedCraftingInput.input();
-        return level.getRecipeManager()
-            .getRecipeFor(RecipeType.CRAFTING, craftingInput, level)
+        return Platform.INSTANCE.getClientRecipeProvider(level)
+            .getRecipesFor(RecipeType.CRAFTING, craftingInput, level)
             .map(RecipeHolder::value)
-            .map(recipe -> toCraftingPattern(level, recipe, craftingInput, state, patternState));
+            .map(recipe -> toCraftingPattern(recipe, craftingInput, state, patternState))
+            .findFirst();
     }
 
     private RecipeMatrixContainer getFilledCraftingMatrix(final CraftingPatternState state) {
@@ -61,13 +63,12 @@ public class PatternResolver {
         return craftingMatrix;
     }
 
-    private ResolvedCraftingPattern toCraftingPattern(final Level level,
-                                                      final CraftingRecipe recipe,
+    private ResolvedCraftingPattern toCraftingPattern(final CraftingRecipe recipe,
                                                       final CraftingInput craftingInput,
                                                       final CraftingPatternState state,
                                                       final PatternState patternState) {
         final List<List<ResourceKey>> inputs = getInputs(recipe, state);
-        final ResourceAmount output = getOutput(level, recipe, craftingInput);
+        final ResourceAmount output = getOutput(recipe, craftingInput);
         final List<ResourceAmount> byproducts = getByproducts(recipe, craftingInput);
         return new ResolvedCraftingPattern(patternState.id(), inputs, output, byproducts);
     }
@@ -87,19 +88,23 @@ public class PatternResolver {
         return inputs;
     }
 
+    @SuppressWarnings("deprecation")
     private List<ResourceKey> getFuzzyInput(final CraftingRecipe recipe, final CraftingPatternState state,
                                             final int index, final ItemStack input) {
         final int width = state.input().input().width();
-        final boolean mirror = isMirror(recipe.getIngredients(), state.input().input(), width);
+        final List<net.minecraft.world.item.crafting.Ingredient> ingredients = recipe.placementInfo()
+            .ingredients();
+        final boolean mirror = isMirror(ingredients, state.input().input(), width);
         final int col = index % width;
         final int row = index / width;
         final int ingredientIndex = mirror
             ? (width - 1 - col) + row * width
             : index;
-        if (ingredientIndex >= 0 && ingredientIndex < recipe.getIngredients().size()) {
-            final ItemStack[] ingredients = recipe.getIngredients().get(ingredientIndex).getItems();
-            return Arrays.stream(ingredients)
-                .map(item -> (ResourceKey) ItemResource.ofItemStack(item))
+        if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
+            return ingredients.get(ingredientIndex).items()
+                .map(Holder::value)
+                .map(ItemResource::new)
+                .map(ResourceKey.class::cast)
                 .toList();
         }
         return List.of(ItemResource.ofItemStack(input));
@@ -127,10 +132,8 @@ public class PatternResolver {
         return false;
     }
 
-    private ResourceAmount getOutput(final Level level,
-                                     final CraftingRecipe recipe,
-                                     final CraftingInput craftingInput) {
-        final ItemStack outputStack = recipe.assemble(craftingInput, level.registryAccess());
+    private ResourceAmount getOutput(final CraftingRecipe recipe, final CraftingInput craftingInput) {
+        final ItemStack outputStack = recipe.assemble(craftingInput);
         return new ResourceAmount(ItemResource.ofItemStack(outputStack), outputStack.getCount());
     }
 
@@ -167,9 +170,10 @@ public class PatternResolver {
                                                                        final StonecutterPatternState state) {
         final SingleRecipeInput input = new SingleRecipeInput(state.input().toItemStack());
         final ItemStack selectedOutput = state.selectedOutput().toItemStack();
-        final var recipes = level.getRecipeManager().getRecipesFor(RecipeType.STONECUTTING, input, level);
-        for (final var recipe : recipes) {
-            final ItemStack output = recipe.value().assemble(input, level.registryAccess());
+        final var recipes = Platform.INSTANCE.getClientRecipeProvider(level).getRecipesFor(RecipeType.STONECUTTING,
+            input, level);
+        for (final var recipe : recipes.toList()) {
+            final ItemStack output = recipe.value().assemble(input);
             if (ItemStack.isSameItemSameComponents(output, selectedOutput)) {
                 return Optional.of(new ResolvedStonecutterPattern(
                     patternState.id(),
@@ -199,14 +203,15 @@ public class PatternResolver {
             state.base().toItemStack(),
             state.addition().toItemStack()
         );
-        return level.getRecipeManager()
-            .getRecipeFor(RecipeType.SMITHING, input, level)
+        return Platform.INSTANCE.getClientRecipeProvider(level)
+            .getRecipesFor(RecipeType.SMITHING, input, level)
+            .findFirst()
             .map(recipe -> new ResolvedSmithingTablePattern(
                 patternState.id(),
                 state.template(),
                 state.base(),
                 state.addition(),
-                ItemResource.ofItemStack(recipe.value().assemble(input, level.registryAccess())))
+                ItemResource.ofItemStack(recipe.value().assemble(input)))
             );
     }
 

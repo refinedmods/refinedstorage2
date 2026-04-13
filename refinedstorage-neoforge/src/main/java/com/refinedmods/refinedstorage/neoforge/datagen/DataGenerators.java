@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage.neoforge.datagen;
 
 import com.refinedmods.refinedstorage.neoforge.datagen.loot.LootTableProviderImpl;
+import com.refinedmods.refinedstorage.neoforge.datagen.model.ModelProviders;
+import com.refinedmods.refinedstorage.neoforge.datagen.recipe.MainRecipeProvider;
 import com.refinedmods.refinedstorage.neoforge.datagen.recipe.RecoloringRecipeProvider;
 import com.refinedmods.refinedstorage.neoforge.datagen.tag.BlockTagsProvider;
-import com.refinedmods.refinedstorage.neoforge.datagen.tag.ItemTagsProviderImpl;
+import com.refinedmods.refinedstorage.neoforge.datagen.tag.ItemTagsProvider;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataGenerator.PackGenerator;
+import net.minecraft.data.advancements.AdvancementProvider;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
@@ -23,60 +23,21 @@ public class DataGenerators {
     }
 
     @SubscribeEvent
-    public static void onGatherData(final GatherDataEvent e) {
-        registerBlockModelProviders(e.getGenerator(), e.getExistingFileHelper());
-        registerItemModelProviders(e.getGenerator(), e.getExistingFileHelper());
-        registerBlockStateProviders(e.getGenerator(), e.getExistingFileHelper());
-        registerLootTableProviders(e.getGenerator(), e.getLookupProvider());
-        registerRecipeProviders(e.getGenerator(), e.getLookupProvider());
-        registerTagProviders(e.getGenerator(), e.getLookupProvider(), e.getExistingFileHelper());
-    }
-
-    // this function has to happen after the models, since the jsons refer to files generated there
-    private static void registerBlockStateProviders(final DataGenerator generator,
-                                                    final ExistingFileHelper existingFileHelper) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        mainPack.addProvider(output -> new BlockStateProviderImpl(output, existingFileHelper));
-    }
-
-    private static void registerBlockModelProviders(final DataGenerator generator,
-                                                    final ExistingFileHelper existingFileHelper) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        mainPack.addProvider(output -> new BlockModelProviderImpl(output, existingFileHelper));
-    }
-
-    private static void registerItemModelProviders(final DataGenerator generator,
-                                                   final ExistingFileHelper existingFileHelper) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        mainPack.addProvider(output -> new ItemModelProviderImpl(output, existingFileHelper));
-    }
-
-    private static void registerLootTableProviders(final DataGenerator generator,
-                                                   final CompletableFuture<HolderLookup.Provider> provider) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        mainPack.addProvider(output -> new LootTableProviderImpl(output, provider));
-    }
-
-    private static void registerRecipeProviders(final DataGenerator generator,
-                                                final CompletableFuture<HolderLookup.Provider> provider) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        mainPack.addProvider(output -> new RecoloringRecipeProvider(output, provider));
-    }
-
-    private static void registerTagProviders(
-        final DataGenerator generator,
-        final CompletableFuture<HolderLookup.Provider> lookupProvider,
-        final ExistingFileHelper existingFileHelper
-    ) {
-        final PackGenerator mainPack = generator.getVanillaPack(true);
-        final BlockTagsProvider blockTagsProvider = mainPack.addProvider(
-            output -> new BlockTagsProvider(output, lookupProvider, existingFileHelper)
-        );
-        mainPack.addProvider(output -> new ItemTagsProviderImpl(
+    public static void onGatherData(final GatherDataEvent.Client e) {
+        final DataGenerator generator = e.getGenerator();
+        final DataGenerator.PackGenerator pack = generator.getVanillaPack(true);
+        pack.addProvider(ModelProviders::new);
+        pack.addProvider(output -> new LootTableProviderImpl(output, e.getLookupProvider()));
+        pack.addProvider(output -> new RecoloringRecipeProvider.Runner(output, e.getLookupProvider()));
+        pack.addProvider(output -> new MainRecipeProvider.Runner(output, e.getLookupProvider()));
+        final BlockTagsProvider blockTagsProvider = pack.addProvider(output ->
+            new BlockTagsProvider(output, e.getLookupProvider()));
+        pack.addProvider(output ->
+            new ItemTagsProvider(output, e.getLookupProvider(), blockTagsProvider.contentsGetter()));
+        pack.addProvider(output -> new AdvancementProvider(
             output,
-            lookupProvider,
-            blockTagsProvider,
-            existingFileHelper
+            e.getLookupProvider(),
+            List.of(new com.refinedmods.refinedstorage.neoforge.datagen.advancement.AdvancementProvider())
         ));
     }
 }

@@ -4,33 +4,35 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderItem;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationKey;
 
 public class PatternItem extends Item implements PatternProviderItem {
     private static final Map<UUID, PatternResolver.ResolvedCraftingPattern> CRAFTING_PATTERN_CACHE = new HashMap<>();
@@ -48,31 +50,30 @@ public class PatternItem extends Item implements PatternProviderItem {
     private final PatternResolver resolver = new PatternResolver();
 
     public PatternItem() {
-        super(new Item.Properties());
+        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, ContentIds.PATTERN)));
     }
 
     @Override
-    public String getDescriptionId(final ItemStack stack) {
+    public Component getName(final ItemStack stack) {
         final PatternState state = stack.get(DataComponents.INSTANCE.getPatternState());
         if (state != null) {
-            return createTranslationKey("misc", "pattern." + state.type().getSerializedName());
+            return state.type().getTranslatedName();
         }
-        return super.getDescriptionId(stack);
+        return super.getName(stack);
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                final TooltipContext context,
-                                final List<Component> lines,
-                                final TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, lines, tooltipFlag);
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display,
+                                final Consumer<Component> builder, final TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, display, builder, tooltipFlag);
         final PatternState state = stack.get(DataComponents.INSTANCE.getPatternState());
         if (state == null) {
             return;
         }
         final CraftingPatternState craftingState = stack.get(DataComponents.INSTANCE.getCraftingPatternState());
         if (craftingState != null && craftingState.fuzzyMode()) {
-            lines.add(FUZZY_MODE);
+            builder.accept(FUZZY_MODE);
         }
     }
 
@@ -240,15 +241,13 @@ public class PatternItem extends Item implements PatternProviderItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
+    public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide() && player.isCrouching()) {
-            return new InteractionResultHolder<>(
-                InteractionResult.CONSUME,
-                new ItemStack(Items.INSTANCE.getPattern(), stack.getCount())
-            );
+            return InteractionResult.CONSUME
+                .heldItemTransformedTo(new ItemStack(Items.INSTANCE.getPattern(), stack.getCount()));
         }
-        return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+        return InteractionResult.PASS;
     }
 
     public record CraftingPatternTooltipComponent(UUID id,

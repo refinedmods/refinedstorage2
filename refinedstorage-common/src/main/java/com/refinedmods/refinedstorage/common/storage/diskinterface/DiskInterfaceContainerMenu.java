@@ -77,10 +77,7 @@ public class DiskInterfaceContainerMenu extends AbstractResourceContainerMenu {
         super(Menus.INSTANCE.getDiskInterface(), syncId);
         addSlots(
             playerInventory.player,
-            new FilteredContainer(
-                AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS,
-                StorageContainerItem.stackValidator()
-            ),
+            new FilteredContainer(AbstractDiskInterfaceBlockEntity.AMOUNT_OF_DISKS, StorageContainerItem.VALIDATOR),
             ResourceContainerImpl.createForFilter(resourceContainerData),
             new UpgradeContainer(UpgradeDestinations.DISK_INTERFACE)
         );

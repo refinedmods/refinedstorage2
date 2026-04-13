@@ -10,24 +10,24 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage.common.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongFunction;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,13 +104,13 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> tryDisassembly(final Level level,
-                                                             final Player player,
-                                                             final ItemStack stack,
-                                                             final ItemStack primaryByproduct,
-                                                             @Nullable final ItemStack secondaryByproduct) {
+    public InteractionResult tryDisassembly(final Level level,
+                                            final Player player,
+                                            final ItemStack stack,
+                                            final ItemStack primaryByproduct,
+                                            @Nullable final ItemStack secondaryByproduct) {
         if (!(level instanceof ServerLevel) || !player.isShiftKeyDown()) {
-            return InteractionResultHolder.fail(stack);
+            return InteractionResult.FAIL;
         }
 
         final Optional<UUID> storageId = getId(stack);
@@ -121,15 +121,15 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
         return storageId
             .flatMap(id -> RefinedStorageApi.INSTANCE.getStorageRepository(level).removeIfEmpty(id))
             .map(disk -> returnByproducts(level, player, primaryByproduct, secondaryByproduct))
-            .orElseGet(() -> InteractionResultHolder.fail(stack));
+            .orElse(InteractionResult.FAIL);
     }
 
-    private InteractionResultHolder<ItemStack> returnByproducts(final Level level,
-                                                                final Player player,
-                                                                final ItemStack primaryByproduct,
-                                                                @Nullable final ItemStack secondaryByproduct) {
+    private InteractionResult returnByproducts(final Level level,
+                                               final Player player,
+                                               final ItemStack primaryByproduct,
+                                               @Nullable final ItemStack secondaryByproduct) {
         tryReturnByproductToInventory(level, player, secondaryByproduct);
-        return InteractionResultHolder.success(primaryByproduct);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(primaryByproduct);
     }
 
     private static void tryReturnByproductToInventory(final Level level,
@@ -143,7 +143,7 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
     @Override
     public void appendToTooltip(final ItemStack stack,
                                 final StorageRepository storageRepository,
-                                final List<Component> tooltip,
+                                final Consumer<Component> builder,
                                 final TooltipFlag context,
                                 final LongFunction<String> amountFormatter,
                                 @Nullable final Long capacity) {
@@ -152,21 +152,21 @@ public class StorageContainerItemHelperImpl implements StorageContainerItemHelpe
             final StorageInfo info = storageRepository.getInfo(id);
             if (capacity != null) {
                 StorageTooltipHelper.addAmountStoredWithCapacity(
-                    tooltip,
+                    builder,
                     info.stored(),
                     transferring ? capacity : info.capacity(),
                     amountFormatter
                 );
             } else {
                 StorageTooltipHelper.addAmountStoredWithoutCapacity(
-                    tooltip,
+                    builder,
                     info.stored(),
                     amountFormatter
                 );
             }
             if (context.isAdvanced()) {
                 final MutableComponent idComponent = Component.literal(id.toString()).withStyle(ChatFormatting.GRAY);
-                tooltip.add(idComponent);
+                builder.accept(idComponent);
             }
         });
     }

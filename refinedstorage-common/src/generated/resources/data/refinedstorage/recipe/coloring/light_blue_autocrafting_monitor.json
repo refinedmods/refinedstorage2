@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafting_monitors"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
+    "#refinedstorage:autocrafting_monitors",
+    "#c:dyes/light_blue"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:autocrafting_monitor"
   }
 }

@@ -16,7 +16,8 @@ import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.Collection;
 import java.util.function.ToLongFunction;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class InterfaceNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
@@ -24,7 +25,7 @@ public class InterfaceNetworkNode extends AbstractNetworkNode {
     @Nullable
     private InterfaceExportState exportState;
     @Nullable
-    private InterfaceTransferResult[] lastResults;
+    private InterfaceTransferResult @Nullable [] lastResults;
     private ToLongFunction<ResourceKey> transferQuotaProvider = resource -> Long.MAX_VALUE;
     private OnMissingResources onMissingResources = OnMissingResources.EMPTY;
 

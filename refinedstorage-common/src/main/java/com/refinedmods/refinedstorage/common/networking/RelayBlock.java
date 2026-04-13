@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage.common.networking;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.support.AbstractActiveColoredDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
@@ -12,12 +12,11 @@ import com.refinedmods.refinedstorage.common.support.direction.DefaultDirectionT
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
@@ -25,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -36,8 +36,11 @@ public class RelayBlock extends AbstractActiveColoredDirectionalBlock<Direction,
         ACTIVE
     );
 
-    public RelayBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.PROPERTIES, color, name);
+    private final Identifier id;
+
+    public RelayBlock(final Identifier id, final DyeColor color, final MutableComponent name) {
+        super(BlockProperties.stone(id), color, name);
+        this.id = id;
     }
 
     @Nullable
@@ -61,7 +64,7 @@ public class RelayBlock extends AbstractActiveColoredDirectionalBlock<Direction,
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new BaseBlockItem(this, HELP);
+        return new BaseBlockItem(id, this, HELP);
     }
 
     @Override

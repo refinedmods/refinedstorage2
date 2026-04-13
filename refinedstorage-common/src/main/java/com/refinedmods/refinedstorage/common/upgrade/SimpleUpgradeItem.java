@@ -4,10 +4,14 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 
 import java.util.function.LongSupplier;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -17,11 +21,12 @@ public final class SimpleUpgradeItem extends AbstractUpgradeItem {
     private final LongSupplier energyUsageResolver;
     private final boolean foil;
 
-    private SimpleUpgradeItem(final UpgradeRegistry registry,
+    private SimpleUpgradeItem(final Identifier id,
+                              final UpgradeRegistry registry,
                               final LongSupplier energyUsageResolver,
                               final boolean foil,
                               final Component helpText) {
-        super(new Item.Properties(), registry, helpText);
+        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)), registry, helpText);
         this.energyUsageResolver = energyUsageResolver;
         this.foil = foil;
     }
@@ -38,6 +43,7 @@ public final class SimpleUpgradeItem extends AbstractUpgradeItem {
 
     public static SimpleUpgradeItem speedUpgrade() {
         return new SimpleUpgradeItem(
+            ContentIds.SPEED_UPGRADE,
             RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
             Platform.INSTANCE.getConfig().getUpgrade()::getSpeedUpgradeEnergyUsage,
             false,
@@ -47,6 +53,7 @@ public final class SimpleUpgradeItem extends AbstractUpgradeItem {
 
     public static SimpleUpgradeItem stackUpgrade() {
         return new SimpleUpgradeItem(
+            ContentIds.STACK_UPGRADE,
             RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
             Platform.INSTANCE.getConfig().getUpgrade()::getStackUpgradeEnergyUsage,
             false,
@@ -56,6 +63,7 @@ public final class SimpleUpgradeItem extends AbstractUpgradeItem {
 
     public static SimpleUpgradeItem silkTouchUpgrade() {
         return new SimpleUpgradeItem(
+            ContentIds.SILK_TOUCH_UPGRADE,
             RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
             Platform.INSTANCE.getConfig().getUpgrade()::getSilkTouchUpgradeEnergyUsage,
             true,
@@ -65,6 +73,7 @@ public final class SimpleUpgradeItem extends AbstractUpgradeItem {
 
     public static SimpleUpgradeItem autocraftingUpgrade() {
         return new SimpleUpgradeItem(
+            ContentIds.AUTOCRAFTING_UPGRADE,
             RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
             Platform.INSTANCE.getConfig().getUpgrade()::getAutocraftingUpgradeEnergyUsage,
             false,

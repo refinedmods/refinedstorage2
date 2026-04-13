@@ -8,7 +8,8 @@ import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class SecurityDecisionProviderImpl implements SecurityDecisionProvider {
     private final Map<SecurityActor, SecurityPolicy> policyByActor = new HashMap<>();

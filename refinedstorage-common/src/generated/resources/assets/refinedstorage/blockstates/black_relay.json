@@ -17,7 +17,7 @@
     },
     "active=false,direction=up": {
       "model": "refinedstorage:block/relay/inactive",
-      "x": -90,
+      "x": 270,
       "y": 180
     },
     "active=false,direction=west": {
@@ -41,7 +41,7 @@
     },
     "active=true,direction=up": {
       "model": "refinedstorage:block/relay/black",
-      "x": -90,
+      "x": 270,
       "y": 180
     },
     "active=true,direction=west": {

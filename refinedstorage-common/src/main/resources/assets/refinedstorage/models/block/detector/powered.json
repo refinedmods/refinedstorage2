@@ -1,6 +1,12 @@
 {
   "render_type": "cutout",
   "parent": "block/cube",
+  "textures": {
+    "side": "refinedstorage:block/detector/side",
+    "bottom": "refinedstorage:block/detector/bottom",
+    "top": "refinedstorage:block/detector/top",
+    "particle": "refinedstorage:block/detector/side"
+  },
   "elements": [
     {
       "name": "Handle",
@@ -144,11 +150,7 @@
             10,
             10
           ],
-          "texture": "#torch",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "texture": "#torch"
         },
         "west": {
           "uv": [
@@ -157,13 +159,10 @@
             10,
             10
           ],
-          "texture": "#torch",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "texture": "#torch"
         }
-      }
+      },
+      "light_emission": 15
     },
     {
       "name": "Torch",
@@ -186,11 +185,7 @@
             10,
             10
           ],
-          "texture": "#torch",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "texture": "#torch"
         },
         "south": {
           "uv": [
@@ -228,13 +223,10 @@
             9,
             7
           ],
-          "texture": "#torch",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "texture": "#torch"
         }
-      }
+      },
+      "light_emission": 15
     }
   ]
 }

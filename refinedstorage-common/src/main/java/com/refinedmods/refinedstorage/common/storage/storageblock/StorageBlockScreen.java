@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRender
 import com.refinedmods.refinedstorage.common.storage.AbstractProgressStorageScreen;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
 public class StorageBlockScreen extends AbstractProgressStorageScreen<StorageBlockContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/storage.png");
 
     private final ResourceRendering resourceRendering;
 
@@ -23,7 +23,7 @@ public class StorageBlockScreen extends AbstractProgressStorageScreen<StorageBlo
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 

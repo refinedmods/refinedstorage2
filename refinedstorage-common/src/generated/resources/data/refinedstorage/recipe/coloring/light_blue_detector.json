@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/light_blue"
-    }
+    "#refinedstorage:detectors",
+    "#c:dyes/light_blue"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:detector"
   }
 }

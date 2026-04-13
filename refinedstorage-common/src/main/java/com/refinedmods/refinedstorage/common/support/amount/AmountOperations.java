@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public interface AmountOperations<N extends Number> {
     String format(N value);

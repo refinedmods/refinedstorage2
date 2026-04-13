@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.10")
 public record TaskStatus(TaskInfo info, TaskState state, double percentageCompleted, List<Item> items) {

@@ -5,11 +5,11 @@ import com.refinedmods.refinedstorage.api.network.impl.node.task.RandomSchedulin
 import com.refinedmods.refinedstorage.api.network.impl.node.task.RoundRobinSchedulingMode;
 import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -51,25 +51,25 @@ public enum SchedulingModeType {
         return id;
     }
 
-    public SchedulingMode createSchedulingMode(@Nullable final CompoundTag tag,
+    public SchedulingMode createSchedulingMode(@Nullable final ValueInput input,
                                                final RandomSchedulingMode.Randomizer randomizer,
                                                final Runnable listener) {
         return switch (this) {
             case DEFAULT -> new DefaultSchedulingMode();
             case RANDOM -> new RandomSchedulingMode(randomizer);
-            case ROUND_ROBIN -> createRoundRobinSchedulingMode(tag, listener);
+            case ROUND_ROBIN -> createRoundRobinSchedulingMode(input, listener);
         };
     }
 
-    private RoundRobinSchedulingMode createRoundRobinSchedulingMode(@Nullable final CompoundTag tag,
+    private RoundRobinSchedulingMode createRoundRobinSchedulingMode(@Nullable final ValueInput input,
                                                                     final Runnable listener) {
-        final int index = tag != null ? tag.getInt(TAG_ROUND_ROBIN_INDEX) : 0;
+        final int index = input != null ? input.getIntOr(TAG_ROUND_ROBIN_INDEX, 0) : 0;
         return new RoundRobinSchedulingMode(new RoundRobinSchedulingMode.State(listener, index));
     }
 
-    public void writeToTag(final CompoundTag tag, final SchedulingMode schedulingMode) {
+    public void store(final ValueOutput output, final SchedulingMode schedulingMode) {
         if (schedulingMode instanceof RoundRobinSchedulingMode roundRobin) {
-            tag.putInt(TAG_ROUND_ROBIN_INDEX, roundRobin.getIndex());
+            output.putInt(TAG_ROUND_ROBIN_INDEX, roundRobin.getIndex());
         }
     }
 }

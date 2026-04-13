@@ -3,10 +3,9 @@ package com.refinedmods.refinedstorage.common.storage;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.content.Items;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public enum FluidStorageVariant implements StringRepresentable, StorageVariant {
     SIXTY_FOUR_B("64b", 64L),
@@ -24,6 +23,7 @@ public enum FluidStorageVariant implements StringRepresentable, StorageVariant {
         this.capacityInBuckets = capacityInBuckets;
     }
 
+    @Override
     public String getName() {
         return name;
     }

@@ -13,7 +13,7 @@ public class DestructorScreen extends AbstractFilterScreen<DestructorContainerMe
     public DestructorScreen(final DestructorContainerMenu menu,
                             final Inventory playerInventory,
                             final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, true);
     }
 
     @Override

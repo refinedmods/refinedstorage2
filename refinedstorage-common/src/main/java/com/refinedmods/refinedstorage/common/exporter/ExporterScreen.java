@@ -5,13 +5,13 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes
 import com.refinedmods.refinedstorage.common.support.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SchedulingModeSideButtonWidget;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ExporterScreen extends AbstractFilterScreen<ExporterContainerMenu> {
     public ExporterScreen(final ExporterContainerMenu menu, final Inventory playerInventory, final Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, true);
     }
 
     @Override
@@ -25,11 +25,11 @@ public class ExporterScreen extends AbstractFilterScreen<ExporterContainerMenu> 
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        if (renderExportingIndicators(graphics, leftPos, topPos, x, y, getMenu().getIndicators(),
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        if (renderExportingIndicators(font, graphics, leftPos, topPos, x, y, getMenu().getIndicators(),
             getMenu()::getIndicator)) {
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 }

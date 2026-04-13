@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -23,8 +23,8 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
         createTranslation("gui", "filter_mode.allow").withStyle(ChatFormatting.GRAY)
     );
     private static final Component FILTER_MODE_WARNING = createTranslation("gui", "storage.filter_mode.empty_warning");
-    private static final ResourceLocation ALLOW = createIdentifier("widget/side_button/storage/filter_mode/allow");
-    private static final ResourceLocation BLOCK = createIdentifier("widget/side_button/storage/filter_mode/block");
+    private static final Identifier ALLOW = createIdentifier("widget/side_button/storage/filter_mode/allow");
+    private static final Identifier BLOCK = createIdentifier("widget/side_button/storage/filter_mode/block");
 
     private final ClientProperty<FilterMode> property;
     private final Component helpAllow;
@@ -56,7 +56,7 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return property.getValue() == FilterMode.BLOCK ? BLOCK : ALLOW;
     }
 

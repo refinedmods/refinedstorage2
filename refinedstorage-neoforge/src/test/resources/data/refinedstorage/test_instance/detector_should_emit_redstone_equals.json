@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "refinedstorage:detector_should_emit_redstone_equals",
+  "structure": "refinedstorage:empty_15x15",
+  "environment": "minecraft:default",
+  "max_ticks": 400
+}

@@ -12,9 +12,9 @@ import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperation
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public class FluidStorageMonitorInsertionStrategy implements StorageMonitorInsertionStrategy {
     @Override

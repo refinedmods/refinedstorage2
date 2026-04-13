@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage.common.support.exportingindicator;
 
 import com.refinedmods.refinedstorage.common.support.Sprites;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -18,15 +17,15 @@ public enum ExportingIndicator {
 
     private final Component tooltip;
     @Nullable
-    private final ResourceLocation sprite;
+    private final Identifier sprite;
 
-    ExportingIndicator(@Nullable final ResourceLocation sprite) {
+    ExportingIndicator(@Nullable final Identifier sprite) {
         this.tooltip = createTranslation("gui", "exporting_indicator." + name().toLowerCase());
         this.sprite = sprite;
     }
 
     @Nullable
-    public ResourceLocation getSprite() {
+    public Identifier getSprite() {
         return sprite;
     }
 

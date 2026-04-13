@@ -1,16 +1,36 @@
 {
-  "variants": {
-    "energy_type=nearly_off": {
-      "model": "refinedstorage:block/controller/nearly_off"
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage:block/controller/off"
+      },
+      "when": {
+        "energy_type": "off"
+      }
     },
-    "energy_type=nearly_on": {
-      "model": "refinedstorage:block/controller/nearly_on"
+    {
+      "apply": {
+        "model": "refinedstorage:block/controller/nearly_on"
+      },
+      "when": {
+        "energy_type": "nearly_on"
+      }
     },
-    "energy_type=off": {
-      "model": "refinedstorage:block/controller/off"
+    {
+      "apply": {
+        "model": "refinedstorage:block/controller/lime"
+      },
+      "when": {
+        "energy_type": "on"
+      }
     },
-    "energy_type=on": {
-      "model": "refinedstorage:block/controller/lime"
+    {
+      "apply": {
+        "model": "refinedstorage:block/controller/nearly_off"
+      },
+      "when": {
+        "energy_type": "nearly_off"
+      }
     }
-  }
+  ]
 }

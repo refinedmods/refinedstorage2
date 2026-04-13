@@ -26,7 +26,7 @@ public record SecurityCardBoundPlayerPacket(UUID playerId) implements CustomPack
 
     public static void handle(final SecurityCardBoundPlayerPacket packet, final PacketContext ctx) {
         final Player player = ctx.getPlayer();
-        final MinecraftServer server = player.getServer();
+        final MinecraftServer server = player.level().getServer();
         if (server == null) {
             return;
         }

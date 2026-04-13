@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:external_storages"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
+    "#refinedstorage:external_storages",
+    "#c:dyes/magenta"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:magenta_external_storage"
   }
 }

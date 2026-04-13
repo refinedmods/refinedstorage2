@@ -23,12 +23,9 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -36,6 +33,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
 import static java.util.Objects.requireNonNull;
@@ -242,60 +242,49 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        filter.save(tag, provider);
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(filterMode));
-        tag.putBoolean(TAG_PASS_THROUGH, passThrough);
-        tag.putBoolean(TAG_PASS_ENERGY, mainNetworkNode.hasComponentType(RelayComponentType.ENERGY));
-        tag.putBoolean(TAG_PASS_STORAGE, mainNetworkNode.hasComponentType(RelayComponentType.STORAGE));
-        tag.putBoolean(TAG_PASS_SECURITY, mainNetworkNode.hasComponentType(RelayComponentType.SECURITY));
-        tag.putBoolean(TAG_PASS_AUTOCRAFTING, mainNetworkNode.hasComponentType(RelayComponentType.AUTOCRAFTING));
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(accessMode));
-        tag.putInt(TAG_INSERT_PRIORITY, insertPriority);
-        tag.putInt(TAG_EXTRACT_PRIORITY, extractPriority);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        filter.store(output);
+        output.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(filterMode));
+        output.putBoolean(TAG_PASS_THROUGH, passThrough);
+        output.putBoolean(TAG_PASS_ENERGY, mainNetworkNode.hasComponentType(RelayComponentType.ENERGY));
+        output.putBoolean(TAG_PASS_STORAGE, mainNetworkNode.hasComponentType(RelayComponentType.STORAGE));
+        output.putBoolean(TAG_PASS_SECURITY, mainNetworkNode.hasComponentType(RelayComponentType.SECURITY));
+        output.putBoolean(TAG_PASS_AUTOCRAFTING, mainNetworkNode.hasComponentType(RelayComponentType.AUTOCRAFTING));
+        output.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(accessMode));
+        output.putInt(TAG_INSERT_PRIORITY, insertPriority);
+        output.putInt(TAG_EXTRACT_PRIORITY, extractPriority);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        filter.load(tag, provider);
-        if (tag.contains(TAG_FILTER_MODE)) {
-            filterMode = FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE));
-        }
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        filter.read(input);
+        filterMode = input.getInt(TAG_FILTER_MODE).map(FilterModeSettings::getFilterMode).orElse(FilterMode.BLOCK);
         mainNetworkNode.setFilterMode(filterMode);
-        if (tag.contains(TAG_PASS_THROUGH)) {
-            passThrough = tag.getBoolean(TAG_PASS_THROUGH);
-        }
-        mainNetworkNode.setComponentTypes(getComponentTypes(tag));
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            accessMode = AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE));
-        }
+        passThrough = input.getBooleanOr(TAG_PASS_THROUGH, false);
+        mainNetworkNode.setComponentTypes(getComponentTypes(input));
+        accessMode = input.getInt(TAG_ACCESS_MODE).map(AccessModeSettings::getAccessMode)
+            .orElse(AccessMode.INSERT_EXTRACT);
         mainNetworkNode.setAccessMode(accessMode);
-        if (tag.contains(TAG_INSERT_PRIORITY)) {
-            insertPriority = tag.getInt(TAG_INSERT_PRIORITY);
-        }
+        insertPriority = input.getIntOr(TAG_INSERT_PRIORITY, 0);
         mainNetworkNode.setInsertPriority(insertPriority);
-        if (tag.contains(TAG_EXTRACT_PRIORITY)) {
-            extractPriority = tag.getInt(TAG_EXTRACT_PRIORITY);
-        } else {
-            extractPriority = insertPriority; // bit of compat
-        }
+        extractPriority = input.getIntOr(TAG_EXTRACT_PRIORITY, 0);
         mainNetworkNode.setExtractPriority(extractPriority);
     }
 
-    private Set<RelayComponentType<?>> getComponentTypes(final CompoundTag tag) {
+    private Set<RelayComponentType<?>> getComponentTypes(final ValueInput input) {
         final Set<RelayComponentType<?>> types = new HashSet<>();
-        if (tag.getBoolean(TAG_PASS_ENERGY)) {
+        if (input.getBooleanOr(TAG_PASS_ENERGY, false)) {
             types.add(RelayComponentType.ENERGY);
         }
-        if (tag.getBoolean(TAG_PASS_SECURITY)) {
+        if (input.getBooleanOr(TAG_PASS_SECURITY, false)) {
             types.add(RelayComponentType.SECURITY);
         }
-        if (tag.getBoolean(TAG_PASS_STORAGE)) {
+        if (input.getBooleanOr(TAG_PASS_STORAGE, false)) {
             types.add(RelayComponentType.STORAGE);
         }
-        if (tag.getBoolean(TAG_PASS_AUTOCRAFTING)) {
+        if (input.getBooleanOr(TAG_PASS_AUTOCRAFTING, false)) {
             types.add(RelayComponentType.AUTOCRAFTING);
         }
         return types;

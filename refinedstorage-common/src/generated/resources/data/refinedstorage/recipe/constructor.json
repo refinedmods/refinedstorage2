@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "refinedstorage:construction_core",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "I": "refinedstorage:improved_processor",
+    "M": "refinedstorage:cable",
+    "R": "#c:gems/diamond"
+  },
+  "pattern": [
+    "ECE",
+    "RMR",
+    "EIE"
+  ],
+  "result": {
+    "id": "refinedstorage:constructor"
+  }
+}

@@ -4,30 +4,33 @@ import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipComponent;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import org.jspecify.annotations.Nullable;
+
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 // A custom checkbox so that we can change the font color and size.
 public class CheckboxWidget extends AbstractButton {
-    private static final ResourceLocation CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace(
         "widget/checkbox_selected_highlighted"
     );
-    private static final ResourceLocation CHECKBOX_SELECTED_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier CHECKBOX_SELECTED_SPRITE = Identifier.withDefaultNamespace(
         "widget/checkbox_selected"
     );
-    private static final ResourceLocation CHECKBOX_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier CHECKBOX_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace(
         "widget/checkbox_highlighted"
     );
-    private static final ResourceLocation CHECKBOX_SPRITE = ResourceLocation.withDefaultNamespace("widget/checkbox");
+    private static final Identifier CHECKBOX_SPRITE = Identifier.withDefaultNamespace("widget/checkbox");
     private static final int CHECKBOX_TEXT_SPACING = 4;
 
     private boolean selected;
@@ -73,7 +76,8 @@ public class CheckboxWidget extends AbstractButton {
         this.onPressed = onPressed;
     }
 
-    public void onPress() {
+    @Override
+    public void onPress(final InputWithModifiers input) {
         this.selected = !this.selected;
         if (onPressed != null) {
             onPressed.onPressed(this, selected);
@@ -88,6 +92,7 @@ public class CheckboxWidget extends AbstractButton {
         return selected;
     }
 
+    @Override
     public void updateWidgetNarration(final NarrationElementOutput output) {
         output.add(NarratedElementType.TITLE, createNarrationMessage());
         if (active) {
@@ -100,26 +105,23 @@ public class CheckboxWidget extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
         final Minecraft minecraft = Minecraft.getInstance();
         if (isHovered && helpTooltip != null && minecraft.screen instanceof AbstractBaseScreen<?> screen) {
             screen.setDeferredTooltip(List.of(HelpClientTooltipComponent.createAlwaysDisplayed(helpTooltip)));
         }
-        RenderSystem.enableDepthTest();
-        final Font font = minecraft.font;
-        graphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.enableBlend();
-        final ResourceLocation sprite;
+        final Identifier sprite;
         if (selected) {
             sprite = isFocused() ? CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE : CHECKBOX_SELECTED_SPRITE;
         } else {
             sprite = isFocused() ? CHECKBOX_HIGHLIGHTED_SPRITE : CHECKBOX_SPRITE;
         }
-        graphics.blitSprite(sprite, getX(), getY(), size.widthHeight, size.widthHeight);
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        final int color = ARGB.white(alpha);
+        graphics.blitSprite(GUI_TEXTURED, sprite, getX(), getY(), size.widthHeight, size.widthHeight, color);
         final int textX = getX() + size.widthHeight + CHECKBOX_TEXT_SPACING;
         final int textY = (getY() + (height >> 1)) - (9 >> 1);
-        marquee.render(graphics, textX, textY, font, isHovered);
+        marquee.render(graphics, textX, textY, minecraft.font, isHovered);
     }
 
     @FunctionalInterface

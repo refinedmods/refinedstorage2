@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:importers"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
+    "#refinedstorage:importers",
+    "#c:dyes/magenta"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:magenta_importer"
   }
 }

@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:external_storages"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
+    "#refinedstorage:external_storages",
+    "#c:dyes/blue"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:blue_external_storage"
   }
 }

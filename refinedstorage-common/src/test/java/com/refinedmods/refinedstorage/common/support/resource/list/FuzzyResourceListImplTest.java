@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.support.resource.list;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
-import com.refinedmods.refinedstorage.common.SetupMinecraft;
+import com.refinedmods.refinedstorage.common.MinecraftRegistriesTest;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.Collection;
@@ -13,11 +13,10 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SetupMinecraft.class)
+@MinecraftRegistriesTest
 class FuzzyResourceListImplTest {
     private static final ItemResource DUMMY_A = new ItemResource(Items.DIRT, DataComponentPatch.EMPTY);
     private static final ItemResource DUMMY_B = new ItemResource(Items.DIRT, DataComponentPatch.builder()

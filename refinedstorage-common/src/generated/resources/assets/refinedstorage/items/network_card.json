@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/network_card/inactive"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/network_card/active"
+    },
+    "property": "refinedstorage:active_network_card"
+  }
+}

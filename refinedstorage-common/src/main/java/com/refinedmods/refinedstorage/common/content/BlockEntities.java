@@ -31,9 +31,9 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockE
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

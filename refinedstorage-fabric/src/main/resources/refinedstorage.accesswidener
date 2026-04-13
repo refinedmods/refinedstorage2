@@ -1,11 +1,7 @@
-accessWidener	v1	named
-accessible class  net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
-accessible class  net/minecraft/client/renderer/RenderType$CompositeState
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-accessible class net/minecraft/client/resources/model/ModelBakery$BakedCacheKey
-accessible class net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl
-accessible method net/minecraft/client/resources/model/ModelBakery$BakedCacheKey <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/math/Transformation;Z)V
-accessible method net/minecraft/client/gui/GuiGraphics renderTooltipInternal (Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;)V
-accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
+accessWidener	v1	official
 mutable field net/minecraft/world/inventory/Slot y I
-accessible method net/minecraft/client/gui/GuiGraphics renderItem (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+accessible method net/minecraft/client/gui/GuiGraphicsExtractor item (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V
+accessible field net/minecraft/client/KeyMapping key Lcom/mojang/blaze3d/platform/InputConstants$Key;
+accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/minecraft/world/item/crafting/RecipeMap;

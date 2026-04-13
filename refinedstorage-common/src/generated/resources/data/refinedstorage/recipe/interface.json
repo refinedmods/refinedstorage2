@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "refinedstorage:exporter",
+    "I": "refinedstorage:importer",
+    "M": "refinedstorage:machine_casing",
+    "R": "#c:dusts/redstone",
+    "U": "refinedstorage:quartz_enriched_iron"
+  },
+  "pattern": [
+    "UIU",
+    "RMR",
+    "UEU"
+  ],
+  "result": {
+    "id": "refinedstorage:interface"
+  }
+}

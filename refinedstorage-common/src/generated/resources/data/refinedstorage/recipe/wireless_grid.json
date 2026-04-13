@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "G": "#refinedstorage:grids",
+    "P": "#c:ender_pearls"
+  },
+  "pattern": [
+    "EPE",
+    "EGE",
+    "EAE"
+  ],
+  "result": {
+    "id": "refinedstorage:wireless_grid"
+  }
+}

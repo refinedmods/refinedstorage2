@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 interface AutocraftingPreviewListener {
     void requestChanged(AutocraftingRequest request);

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "refinedstorage:grid",
+    "refinedstorage:advanced_processor",
+    "#c:player_workstations/crafting_tables"
+  ],
+  "result": {
+    "id": "refinedstorage:crafting_grid"
+  }
+}

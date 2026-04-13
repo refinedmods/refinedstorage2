@@ -20,9 +20,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ResultContainer;
@@ -30,12 +29,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.item.crafting.RecipeAccess;
+import net.minecraft.world.item.crafting.RecipePropertySet;
+import net.minecraft.world.item.crafting.SelectableRecipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 public class PatternGridContainerMenu extends AbstractGridContainerMenu {
     private static final int Y_OFFSET_BETWEEN_PLAYER_INVENTORY_AND_PATTERN_INPUT_SLOT = 81;
@@ -55,7 +55,9 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
     private final StonecutterInputContainer stonecutterInput;
     private final Container smithingTableMatrix;
     private final Container smithingTableResult;
-    private final List<RecipeHolder<SmithingRecipe>> smithingTableRecipes;
+    private final RecipePropertySet smithingBaseItemTest;
+    private final RecipePropertySet smithingTemplateItemTest;
+    private final RecipePropertySet smithingAdditionItemTest;
 
     @Nullable
     private PatternGridListener listener;
@@ -81,8 +83,10 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
         this.stonecutterInput = new StonecutterInputContainer(playerInventory.player::level);
         this.smithingTableMatrix = new RecipeMatrixContainer(null, 3, 1);
         this.smithingTableResult = new ResultContainer();
-        this.smithingTableRecipes = playerInventory.player.level().getRecipeManager()
-            .getAllRecipesFor(RecipeType.SMITHING);
+        final RecipeAccess recipeAccess = playerInventory.player.level().recipeAccess();
+        this.smithingBaseItemTest = recipeAccess.propertySet(RecipePropertySet.SMITHING_BASE);
+        this.smithingTemplateItemTest = recipeAccess.propertySet(RecipePropertySet.SMITHING_TEMPLATE);
+        this.smithingAdditionItemTest = recipeAccess.propertySet(RecipePropertySet.SMITHING_ADDITION);
         resized(0, 0, 0);
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         registerProperty(new ClientProperty<>(PatternGridPropertyTypes.PATTERN_TYPE, patternGridData.patternType()) {
@@ -122,8 +126,9 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
         this.processingOutput = grid.getProcessingOutput();
         this.smithingTableMatrix = grid.getSmithingTableMatrix();
         this.smithingTableResult = grid.getSmithingTableResult();
-        this.smithingTableRecipes = playerInventory.player.level().getRecipeManager()
-            .getAllRecipesFor(RecipeType.SMITHING);
+        this.smithingBaseItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_BASE);
+        this.smithingTemplateItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_TEMPLATE);
+        this.smithingAdditionItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_ADDITION);
         this.patternGrid = grid;
         resized(0, 0, 0);
         registerProperty(new ServerProperty<>(
@@ -340,12 +345,12 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
 
                 @Override
                 public boolean mayPlace(final ItemStack stack) {
-                    return smithingTableRecipes.stream().anyMatch(recipe -> switch (ii) {
-                        case 0 -> recipe.value().isTemplateIngredient(stack);
-                        case 1 -> recipe.value().isBaseIngredient(stack);
-                        case 2 -> recipe.value().isAdditionIngredient(stack);
+                    return switch (ii) {
+                        case 0 -> smithingTemplateItemTest.test(stack);
+                        case 1 -> smithingBaseItemTest.test(stack);
+                        case 2 -> smithingAdditionItemTest.test(stack);
                         default -> false;
-                    });
+                    };
                 }
             });
         }
@@ -368,7 +373,7 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
         return Optional.empty();
     }
 
-    List<RecipeHolder<StonecutterRecipe>> getStonecutterRecipes() {
+    SelectableRecipe.SingleInputSet<StonecutterRecipe> getStonecutterRecipes() {
         return stonecutterInput.getRecipes();
     }
 
@@ -449,11 +454,11 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
         }
     }
 
-    public void handleAllowedAlternativesUpdate(final int slotIndex, final Set<ResourceLocation> ids) {
+    public void handleAllowedAlternativesUpdate(final int slotIndex, final Set<Identifier> ids) {
         processingInput.setAllowedTagIds(slotIndex, ids);
     }
 
-    Set<ResourceLocation> getAllowedAlternatives(final int containerSlot) {
+    Set<Identifier> getAllowedAlternatives(final int containerSlot) {
         return processingInput.getAllowedTagIds(containerSlot);
     }
 

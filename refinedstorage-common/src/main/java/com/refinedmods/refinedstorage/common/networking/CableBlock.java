@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage.common.networking;
 
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.support.AbstractColoredBlock;
@@ -15,17 +15,18 @@ import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -52,12 +54,15 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
         );
     private static final Component HELP = createTranslation("item", "cable.help");
 
+    private final Identifier id;
     private final BlockEntityProvider<AbstractCableBlockEntity> blockEntityProvider;
 
-    public CableBlock(final DyeColor color,
+    public CableBlock(final Identifier id,
+                      final DyeColor color,
                       final MutableComponent name,
                       final BlockEntityProvider<AbstractCableBlockEntity> blockEntityProvider) {
-        super(BlockConstants.CABLE_PROPERTIES, color, name);
+        super(BlockProperties.cable(id), color, name);
+        this.id = id;
         this.blockEntityProvider = blockEntityProvider;
     }
 
@@ -67,7 +72,7 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+    protected boolean propagatesSkylightDown(final BlockState state) {
         return !state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
@@ -90,12 +95,11 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
     }
 
     @Override
-    protected BlockState updateShape(final BlockState state,
-                                     final Direction direction,
-                                     final BlockState neighborState,
-                                     final LevelAccessor level,
+    protected BlockState updateShape(final BlockState state, final LevelReader level, final ScheduledTickAccess ticks,
                                      final BlockPos pos,
-                                     final BlockPos neighborPos) {
+                                     final Direction directionToNeighbour, final BlockPos neighbourPos,
+                                     final BlockState neighbourState,
+                                     final RandomSource random) {
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof AbstractCableBlockEntity cable) {
             cable.updateConnections();
@@ -106,7 +110,7 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
                 Platform.INSTANCE.requestModelDataUpdateOnClient(blockEntity, false);
             }
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
     @Override
@@ -156,6 +160,6 @@ public class CableBlock extends AbstractColoredBlock<CableBlock>
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(id, this, HELP);
     }
 }

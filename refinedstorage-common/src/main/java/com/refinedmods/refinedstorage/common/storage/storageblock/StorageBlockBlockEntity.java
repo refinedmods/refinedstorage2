@@ -23,11 +23,9 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -37,6 +35,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,12 +85,13 @@ public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlo
         }
         if (storageId == null) {
             // We are a new block entity, or:
-            // - We are placed through NBT
-            //   (#setLevel(Level) -> #load(CompoundTag)),
-            // - We are placed with an existing storage ID
-            //   (#setLevel(Level) -> #modifyStorageAfterAlreadyInitialized(UUID)).
+            // - We are placed with NBT:
+            //   (#setLevel(Level) -> #loadAdditional(ValueInput)),
+            // - We are placed with an existing storage ID:
+            //   (#setLevel(Level) -> StorageContainerItemHelper#transferToBlockEntity() -> #setStorageId(UUID)).
             // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
+            LOGGER.debug("Creating new storage with ID {} for new block entity", storageId);
             final StorageRepository storageRepository = RefinedStorageApi.INSTANCE.getStorageRepository(level);
             final SerializableStorage storage = storageBlockProvider.createStorage(storageRepository::markAsChanged);
             storageRepository.set(storageId, storage);
@@ -98,53 +100,54 @@ public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlo
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_STORAGE_ID)) {
-            setStorageId(tag.getUUID(TAG_STORAGE_ID));
-        }
-        super.loadAdditional(tag, provider);
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_STORAGE_ID, UUIDUtil.CODEC).ifPresent(this::setStorageId);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        configContainer.load(tag);
-        filter.load(tag, provider);
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        configContainer.read(input);
+        filter.read(input);
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
         if (storageId != null) {
-            tag.putUUID(TAG_STORAGE_ID, storageId);
+            output.store(TAG_STORAGE_ID, UUIDUtil.CODEC, storageId);
         }
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        configContainer.save(tag);
-        filter.save(tag, provider);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        configContainer.store(output);
+        filter.store(output);
     }
 
     @Override
     public void setStorageId(final UUID storageId) {
+        LOGGER.debug("Setting storage ID to {}", storageId);
         tryRemoveCurrentStorage(storageId);
         this.storageId = storageId;
-        mainNetworkNode.onStorageChanged(0);
+        mainNetworkNode.onStorageChanged();
     }
 
     private void tryRemoveCurrentStorage(final UUID newStorageId) {
         if (level == null || storageId == null || storageId.equals(newStorageId)) {
             return;
         }
-        // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
-        // we got placed with an existing storage ID (#setLevel(Level) -> #setStorageId(UUID)).
+        // We got placed through NBT:
+        //   #setLevel(Level) -> #loadAdditional(ValueInput))
+        // or, we got placed with an existing storage ID:
+        //   #setLevel(Level) -> StorageContainerItemHelper#transferToBlockEntity() -> #setStorageId(UUID)
         // Clean up the storage created earlier in #setLevel(Level).
-        LOGGER.info("Updating storage ID from {} to {}. Removing old storage", storageId, newStorageId);
+        LOGGER.debug("Updating storage ID from {} to {}. Removing old storage", storageId, newStorageId);
         final StorageRepository storageRepository = RefinedStorageApi.INSTANCE.getStorageRepository(level);
         storageRepository.removeIfEmpty(storageId).ifPresentOrElse(
-            storage -> LOGGER.info("Storage {} successfully removed", storageId),
+            storage -> LOGGER.debug("Storage {} successfully removed", storageId),
             () -> LOGGER.warn("Storage {} could not be removed", storageId)
         );
     }

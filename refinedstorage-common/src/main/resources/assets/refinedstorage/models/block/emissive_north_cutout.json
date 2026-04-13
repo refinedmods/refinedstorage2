@@ -54,13 +54,10 @@
       "faces": {
         "north": {
           "texture": "#cutout",
-          "cullface": "north",
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          }
+          "cullface": "north"
         }
-      }
+      },
+      "light_emission": 15
     }
   ]
 }

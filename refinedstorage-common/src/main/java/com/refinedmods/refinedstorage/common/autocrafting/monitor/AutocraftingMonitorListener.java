@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 interface AutocraftingMonitorListener {
     void currentTaskChanged(@Nullable TaskStatus taskStatus);

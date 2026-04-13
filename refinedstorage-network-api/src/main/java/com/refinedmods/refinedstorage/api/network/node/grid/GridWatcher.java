@@ -3,9 +3,8 @@ package com.refinedmods.refinedstorage.api.network.node.grid;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 
-import javax.annotation.Nullable;
-
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A grid listener.

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "#c:chests",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "M": "refinedstorage:machine_casing",
+    "P": "refinedstorage:advanced_processor"
+  },
+  "pattern": [
+    "ECE",
+    "EME",
+    "EPE"
+  ],
+  "result": {
+    "id": "refinedstorage:disk_drive"
+  }
+}
