@@ -1,6 +1,7 @@
 {
   "mod.refinedstorage": "Refined Storage",
   "mod.refinedstorage.colorized": "Refined Storage (colorized)",
+  "key.category.refinedstorage.keymappings": "Refined Storage",
   "block.refinedstorage.cable": "Cable",
   "block.refinedstorage.disk_drive": "Disk Drive",
   "block.refinedstorage.machine_casing": "Machine Casing",

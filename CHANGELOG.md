@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   For keybindings on Mac, CMD is now always used instead of CTRL.
+-   Missing translation key for Refined Storage controls.
 
 ## [3.0.0-beta.1] - 2026-04-13
 

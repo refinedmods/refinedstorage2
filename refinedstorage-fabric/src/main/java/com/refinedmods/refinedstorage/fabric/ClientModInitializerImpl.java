@@ -107,8 +107,6 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         });
         // TODO: fix fabric startup warnings
         // TODO: Fix version info files
-        // TODO: keymappings translation:
-        // "key.category.refinedstorage_quartz_arsenal.keymappings": "Refined Storage - Quartz Arsenal",
         // TODO: does the tag translation system work?
         // TODO: Multicraft buttons don't render bg
         // TODO: Check usages of CTRL (should be CMD)
