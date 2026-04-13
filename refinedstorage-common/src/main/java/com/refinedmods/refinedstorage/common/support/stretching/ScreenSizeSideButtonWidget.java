@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -29,10 +29,10 @@ public class ScreenSizeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_EXTRA_LARGE = List.of(
         createTranslation("gui", "screen_size.extra_large").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation STRETCH = createIdentifier("widget/side_button/screen_size/stretch");
-    private static final ResourceLocation SMALL = createIdentifier("widget/side_button/screen_size/small");
-    private static final ResourceLocation MEDIUM = createIdentifier("widget/side_button/screen_size/medium");
-    private static final ResourceLocation EXTRA_LARGE = createIdentifier("widget/side_button/screen_size/extra_large");
+    private static final Identifier STRETCH = createIdentifier("widget/side_button/screen_size/stretch");
+    private static final Identifier SMALL = createIdentifier("widget/side_button/screen_size/small");
+    private static final Identifier MEDIUM = createIdentifier("widget/side_button/screen_size/medium");
+    private static final Identifier EXTRA_LARGE = createIdentifier("widget/side_button/screen_size/extra_large");
 
     public ScreenSizeSideButtonWidget(final AbstractStretchingScreen<?> stretchingScreen) {
         super(createPressAction(stretchingScreen));
@@ -46,7 +46,7 @@ public class ScreenSizeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         final ScreenSize screenSize = Platform.INSTANCE.getConfig().getScreenSize();
         return switch (screenSize) {
             case STRETCH -> STRETCH;

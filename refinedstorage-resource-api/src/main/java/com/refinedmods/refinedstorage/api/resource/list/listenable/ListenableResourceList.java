@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A resource list that can have listeners to track changes.

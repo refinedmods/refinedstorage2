@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage.common.util;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jspecify.annotations.Nullable;
 
 public class CustomBlockPlaceContext extends BlockPlaceContext {
     public CustomBlockPlaceContext(final Level level,

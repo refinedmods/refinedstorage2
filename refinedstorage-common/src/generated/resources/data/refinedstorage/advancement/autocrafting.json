@@ -1,0 +1,38 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "autocrafter_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:pattern_grids"
+          },
+          {
+            "items": "#refinedstorage:autocrafters"
+          },
+          {
+            "items": "refinedstorage:pattern"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.autocrafting.description"
+    },
+    "icon": {
+      "id": "refinedstorage:autocrafter"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.autocrafting"
+    }
+  },
+  "requirements": [
+    [
+      "autocrafter_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

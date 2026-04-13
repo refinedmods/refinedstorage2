@@ -3,9 +3,8 @@ package com.refinedmods.refinedstorage.api.resource.list;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
-import javax.annotation.Nullable;
-
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Mutable variant of {@link ResourceList}.
@@ -29,7 +28,7 @@ public interface MutableResourceList extends ResourceList {
      * @param resourceAmount the resource and the amount
      * @return the result of the operation
      */
-    default OperationResult add(ResourceAmount resourceAmount) {
+    default OperationResult add(final ResourceAmount resourceAmount) {
         return add(resourceAmount.resource(), resourceAmount.amount());
     }
 
@@ -53,7 +52,7 @@ public interface MutableResourceList extends ResourceList {
      * @return a result if the removal operation was successful, otherwise null
      */
     @Nullable
-    default OperationResult remove(ResourceAmount resourceAmount) {
+    default OperationResult remove(final ResourceAmount resourceAmount) {
         return remove(resourceAmount.resource(), resourceAmount.amount());
     }
 

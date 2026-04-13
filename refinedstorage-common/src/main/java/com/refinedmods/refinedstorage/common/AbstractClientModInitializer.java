@@ -52,7 +52,6 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinationClientToo
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -61,12 +60,13 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -180,12 +180,12 @@ public abstract class AbstractClientModInitializer {
     }
 
     protected static void registerDiskModels() {
-        final ResourceLocation diskModel = createIdentifier("block/disk/disk");
+        final Identifier diskModel = createIdentifier("block/disk/disk");
         for (final ItemStorageVariant variant : ItemStorageVariant.values()) {
             final Item item = Items.INSTANCE.getItemStorageDisk(variant);
             RefinedStorageClientApi.INSTANCE.registerDiskModel(item, diskModel);
         }
-        final ResourceLocation fluidDiskModel = createIdentifier("block/disk/fluid_disk");
+        final Identifier fluidDiskModel = createIdentifier("block/disk/fluid_disk");
         for (final FluidStorageVariant variant : FluidStorageVariant.values()) {
             final Item item = Items.INSTANCE.getFluidStorageDisk(variant);
             RefinedStorageClientApi.INSTANCE.registerDiskModel(item, fluidDiskModel);

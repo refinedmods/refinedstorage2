@@ -12,10 +12,10 @@ import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeState;
 
 import java.util.UUID;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

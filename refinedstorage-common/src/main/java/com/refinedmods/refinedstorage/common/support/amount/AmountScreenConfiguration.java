@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 

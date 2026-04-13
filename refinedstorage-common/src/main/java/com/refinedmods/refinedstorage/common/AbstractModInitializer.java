@@ -44,10 +44,10 @@ import com.refinedmods.refinedstorage.common.constructordestructor.ItemPickupDes
 import com.refinedmods.refinedstorage.common.constructordestructor.PlaceBlockConstructorStrategy;
 import com.refinedmods.refinedstorage.common.constructordestructor.PlaceFireworksConstructorStrategy;
 import com.refinedmods.refinedstorage.common.constructordestructor.PlaceFluidConstructorStrategy;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProviders;
 import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
@@ -56,6 +56,7 @@ import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.LootFunctions;
 import com.refinedmods.refinedstorage.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Menus;
+import com.refinedmods.refinedstorage.common.content.RecipeSerializers;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.content.Sounds;
 import com.refinedmods.refinedstorage.common.controller.ControllerBlockEntity;
@@ -107,7 +108,6 @@ import com.refinedmods.refinedstorage.common.security.SecurityManagerContainerMe
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.StorageContainerUpgradeRecipe;
-import com.refinedmods.refinedstorage.common.storage.StorageContainerUpgradeRecipeSerializer;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveBlock;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveContainerMenu;
@@ -134,8 +134,8 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
-import com.refinedmods.refinedstorage.common.support.SimpleBlock;
 import com.refinedmods.refinedstorage.common.support.SimpleItem;
+import com.refinedmods.refinedstorage.common.support.SimpleStoneBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
 import com.refinedmods.refinedstorage.common.support.energy.EnergyLootItemFunction;
 import com.refinedmods.refinedstorage.common.support.network.component.PlatformStorageNetworkComponent;
@@ -151,7 +151,7 @@ import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeContainerMe
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeState;
 import com.refinedmods.refinedstorage.common.upgrade.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
-import com.refinedmods.refinedstorage.common.upgrade.UpgradeWithEnchantedBookRecipeSerializer;
+import com.refinedmods.refinedstorage.common.upgrade.UpgradeWithEnchantedBookRecipe;
 import com.refinedmods.refinedstorage.common.util.ServerListener;
 
 import java.util.Optional;
@@ -164,6 +164,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
@@ -171,7 +172,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -305,12 +306,13 @@ public abstract class AbstractModInitializer {
             ContentIds.DISK_DRIVE,
             () -> new DiskDriveBlock(blockEntityProviders.diskDrive())
         ));
-        Blocks.INSTANCE.setMachineCasing(callback.register(ContentIds.MACHINE_CASING, SimpleBlock::new));
+        Blocks.INSTANCE.setMachineCasing(callback.register(ContentIds.MACHINE_CASING,
+            () -> new SimpleStoneBlock(ContentIds.MACHINE_CASING)));
         for (final ItemStorageVariant variant : ItemStorageVariant.values()) {
             Blocks.INSTANCE.setItemStorageBlock(variant, callback.register(
                 ContentIds.forItemStorageBlock(variant),
                 () -> RefinedStorageApi.INSTANCE.createStorageBlock(
-                    BlockConstants.PROPERTIES,
+                    BlockProperties.stone(ContentIds.forItemStorageBlock(variant)),
                     new ItemStorageBlockProvider(variant)
                 )
             ));
@@ -319,7 +321,7 @@ public abstract class AbstractModInitializer {
             Blocks.INSTANCE.setFluidStorageBlock(variant, callback.register(
                 ContentIds.forFluidStorageBlock(variant),
                 () -> RefinedStorageApi.INSTANCE.createStorageBlock(
-                    BlockConstants.PROPERTIES,
+                    BlockProperties.stone(ContentIds.forFluidStorageBlock(variant)),
                     new FluidStorageBlockProvider(variant)
                 )
             ));
@@ -386,18 +388,25 @@ public abstract class AbstractModInitializer {
     }
 
     private void registerSimpleItems(final RegistryCallback<Item> callback) {
-        Items.INSTANCE.setQuartzEnrichedIron(callback.register(ContentIds.QUARTZ_ENRICHED_IRON, SimpleItem::new));
-        Items.INSTANCE.setQuartzEnrichedCopper(callback.register(ContentIds.QUARTZ_ENRICHED_COPPER, SimpleItem::new));
-        Items.INSTANCE.setSilicon(callback.register(ContentIds.SILICON, SimpleItem::new));
-        Items.INSTANCE.setProcessorBinding(callback.register(ContentIds.PROCESSOR_BINDING, SimpleItem::new));
+        Items.INSTANCE.setQuartzEnrichedIron(callback.register(ContentIds.QUARTZ_ENRICHED_IRON,
+            () -> new SimpleItem(ContentIds.QUARTZ_ENRICHED_IRON)));
+        Items.INSTANCE.setQuartzEnrichedCopper(callback.register(ContentIds.QUARTZ_ENRICHED_COPPER,
+            () -> new SimpleItem(ContentIds.QUARTZ_ENRICHED_COPPER)));
+        Items.INSTANCE.setSilicon(callback.register(ContentIds.SILICON, () -> new SimpleItem(ContentIds.SILICON)));
+        Items.INSTANCE.setProcessorBinding(callback.register(ContentIds.PROCESSOR_BINDING,
+            () -> new SimpleItem(ContentIds.PROCESSOR_BINDING)));
         callback.register(ContentIds.DISK_DRIVE, () -> Blocks.INSTANCE.getDiskDrive().createBlockItem());
         Items.INSTANCE.setWrench(callback.register(ContentIds.WRENCH, WrenchItem::new));
-        Items.INSTANCE.setStorageHousing(callback.register(ContentIds.STORAGE_HOUSING, SimpleItem::new));
-        callback.register(ContentIds.MACHINE_CASING, () -> new BaseBlockItem(Blocks.INSTANCE.getMachineCasing()));
+        Items.INSTANCE.setStorageHousing(callback.register(ContentIds.STORAGE_HOUSING,
+            () -> new SimpleItem(ContentIds.STORAGE_HOUSING)));
+        callback.register(ContentIds.MACHINE_CASING, () -> new BaseBlockItem(ContentIds.MACHINE_CASING,
+            Blocks.INSTANCE.getMachineCasing()));
         callback.register(ContentIds.STORAGE_MONITOR, () -> Blocks.INSTANCE.getStorageMonitor().createBlockItem());
         callback.register(ContentIds.INTERFACE, () -> Blocks.INSTANCE.getInterface().createBlockItem());
-        Items.INSTANCE.setConstructionCore(callback.register(ContentIds.CONSTRUCTION_CORE, SimpleItem::new));
-        Items.INSTANCE.setDestructionCore(callback.register(ContentIds.DESTRUCTION_CORE, SimpleItem::new));
+        Items.INSTANCE.setConstructionCore(callback.register(ContentIds.CONSTRUCTION_CORE,
+            () -> new SimpleItem(ContentIds.CONSTRUCTION_CORE)));
+        Items.INSTANCE.setDestructionCore(callback.register(ContentIds.DESTRUCTION_CORE,
+            () -> new SimpleItem(ContentIds.DESTRUCTION_CORE)));
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
             registerProcessor(callback, type);
         }
@@ -410,7 +419,8 @@ public abstract class AbstractModInitializer {
     }
 
     private void registerProcessor(final RegistryCallback<Item> callback, final ProcessorItem.Type type) {
-        Items.INSTANCE.setProcessor(type, callback.register(ContentIds.forProcessor(type), ProcessorItem::new));
+        final Identifier id = ContentIds.forProcessor(type);
+        Items.INSTANCE.setProcessor(type, callback.register(id, () -> new ProcessorItem(id)));
     }
 
     private void registerStorageItems(final RegistryCallback<Item> callback) {
@@ -427,16 +437,17 @@ public abstract class AbstractModInitializer {
         if (variant != ItemStorageVariant.CREATIVE) {
             Items.INSTANCE.setItemStoragePart(variant, callback.register(
                 ContentIds.forItemStoragePart(variant),
-                SimpleItem::new
+                () -> new SimpleItem(ContentIds.forItemStoragePart(variant))
             ));
         }
         Items.INSTANCE.setItemStorageDisk(variant, callback.register(
             ContentIds.forStorageDisk(variant),
-            () -> new ItemStorageDiskItem(variant)
+            () -> new ItemStorageDiskItem(ContentIds.forStorageDisk(variant), variant)
         ));
         callback.register(
             ContentIds.forItemStorageBlock(variant),
-            () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), variant)
+            () -> new ItemStorageBlockBlockItem(ContentIds.forItemStorageBlock(variant),
+                Blocks.INSTANCE.getItemStorageBlock(variant), variant)
         );
     }
 
@@ -445,23 +456,24 @@ public abstract class AbstractModInitializer {
         if (variant != FluidStorageVariant.CREATIVE) {
             Items.INSTANCE.setFluidStoragePart(variant, callback.register(
                 ContentIds.forFluidStoragePart(variant),
-                SimpleItem::new)
-            );
+                () -> new SimpleItem(ContentIds.forFluidStoragePart(variant))
+            ));
         }
         Items.INSTANCE.setFluidStorageDisk(variant, callback.register(
             ContentIds.forFluidStorageDisk(variant),
-            () -> new FluidStorageDiskItem(variant)
+            () -> new FluidStorageDiskItem(ContentIds.forFluidStorageDisk(variant), variant)
         ));
         callback.register(
             ContentIds.forFluidStorageBlock(variant),
-            () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), variant)
+            () -> new FluidStorageBlockBlockItem(ContentIds.forFluidStorageBlock(variant),
+                Blocks.INSTANCE.getFluidStorageBlock(variant), variant)
         );
     }
 
     private void registerUpgrades(final RegistryCallback<Item> callback) {
         Items.INSTANCE.setUpgrade(callback.register(
             ContentIds.UPGRADE,
-            SimpleItem::new
+            () -> new SimpleItem(ContentIds.UPGRADE)
         ));
         final Supplier<AbstractUpgradeItem> speedUpgrade = callback.register(
             ContentIds.SPEED_UPGRADE,
@@ -475,17 +487,20 @@ public abstract class AbstractModInitializer {
         Items.INSTANCE.setStackUpgrade(stackUpgrade);
         final Supplier<AbstractUpgradeItem> fortune1Upgrade = callback.register(
             ContentIds.FORTUNE_1_UPGRADE,
-            () -> new FortuneUpgradeItem(RefinedStorageApi.INSTANCE.getUpgradeRegistry(), 1)
+            () -> new FortuneUpgradeItem(ContentIds.FORTUNE_1_UPGRADE, RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
+                1)
         );
         Items.INSTANCE.setFortune1Upgrade(fortune1Upgrade);
         final Supplier<AbstractUpgradeItem> fortune2Upgrade = callback.register(
             ContentIds.FORTUNE_2_UPGRADE,
-            () -> new FortuneUpgradeItem(RefinedStorageApi.INSTANCE.getUpgradeRegistry(), 2)
+            () -> new FortuneUpgradeItem(ContentIds.FORTUNE_2_UPGRADE, RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
+                2)
         );
         Items.INSTANCE.setFortune2Upgrade(fortune2Upgrade);
         final Supplier<AbstractUpgradeItem> fortune3Upgrade = callback.register(
             ContentIds.FORTUNE_3_UPGRADE,
-            () -> new FortuneUpgradeItem(RefinedStorageApi.INSTANCE.getUpgradeRegistry(), 3)
+            () -> new FortuneUpgradeItem(ContentIds.FORTUNE_3_UPGRADE, RefinedStorageApi.INSTANCE.getUpgradeRegistry(),
+                3)
         );
         Items.INSTANCE.setFortune3Upgrade(fortune3Upgrade);
         final Supplier<AbstractUpgradeItem> silkTouchUpgrade = callback.register(
@@ -495,11 +510,13 @@ public abstract class AbstractModInitializer {
         Items.INSTANCE.setSilkTouchUpgrade(silkTouchUpgrade);
         Items.INSTANCE.setRangeUpgrade(callback.register(
             ContentIds.RANGE_UPGRADE,
-            () -> new RangeUpgradeItem(RefinedStorageApi.INSTANCE.getUpgradeRegistry(), false)
+            () -> new RangeUpgradeItem(ContentIds.RANGE_UPGRADE,
+                RefinedStorageApi.INSTANCE.getUpgradeRegistry(), false)
         ));
         Items.INSTANCE.setCreativeRangeUpgrade(callback.register(
             ContentIds.CREATIVE_RANGE_UPGRADE,
-            () -> new RangeUpgradeItem(RefinedStorageApi.INSTANCE.getUpgradeRegistry(), true)
+            () -> new RangeUpgradeItem(ContentIds.CREATIVE_RANGE_UPGRADE,
+                RefinedStorageApi.INSTANCE.getUpgradeRegistry(), true)
         ));
         final Supplier<AbstractUpgradeItem> autocraftingUpgrade = callback.register(
             ContentIds.AUTOCRAFTING_UPGRADE,
@@ -853,18 +870,18 @@ public abstract class AbstractModInitializer {
         ));
     }
 
-    protected final void registerLootFunctions(final RegistryCallback<LootItemFunctionType<?>> callback) {
+    protected final void registerLootFunctions(final RegistryCallback<MapCodec<? extends LootItemFunction>> callback) {
         LootFunctions.INSTANCE.setStorageBlock(callback.register(
             ContentIds.STORAGE_BLOCK,
-            () -> new LootItemFunctionType<>(MapCodec.unit(new StorageBlockLootItemFunction()))
+            () -> StorageBlockLootItemFunction.FUNCTION_CODEC
         ));
         LootFunctions.INSTANCE.setPortableGrid(callback.register(
             ContentIds.PORTABLE_GRID,
-            () -> new LootItemFunctionType<>(MapCodec.unit(new PortableGridLootItemFunction()))
+            () -> PortableGridLootItemFunction.FUNCTION_CODEC
         ));
         LootFunctions.INSTANCE.setEnergy(callback.register(
-            createIdentifier("energy"),
-            () -> new LootItemFunctionType<>(MapCodec.unit(new EnergyLootItemFunction()))
+            EnergyLootItemFunction.NAME,
+            () -> EnergyLootItemFunction.FUNCTION_CODEC
         ));
     }
 
@@ -876,46 +893,20 @@ public abstract class AbstractModInitializer {
     }
 
     protected final void registerRecipeSerializers(final RegistryCallback<RecipeSerializer<?>> callback) {
-        callback.register(
+        RecipeSerializers.INSTANCE.setUpgradeWithEnchantedBook(callback.register(
             createIdentifier("upgrade_with_enchanted_book"),
-            UpgradeWithEnchantedBookRecipeSerializer::new
-        );
-        callback.register(
-            createIdentifier("storage_disk_upgrade"),
-            () -> new StorageContainerUpgradeRecipeSerializer<>(
-                ItemStorageVariant.values(),
-                to -> new StorageContainerUpgradeRecipe<>(
-                    ItemStorageVariant.values(), to, Items.INSTANCE::getItemStorageDisk
-                )
+            () -> new RecipeSerializer<>(
+                UpgradeWithEnchantedBookRecipe.CODEC,
+                UpgradeWithEnchantedBookRecipe.STREAM_CODEC
             )
-        );
-        callback.register(
-            createIdentifier("fluid_storage_disk_upgrade"),
-            () -> new StorageContainerUpgradeRecipeSerializer<>(
-                FluidStorageVariant.values(),
-                to -> new StorageContainerUpgradeRecipe<>(
-                    FluidStorageVariant.values(), to, Items.INSTANCE::getFluidStorageDisk
-                )
+        ));
+        RecipeSerializers.INSTANCE.setStorageContainerUpgrade(callback.register(
+            createIdentifier("storage_container_upgrade"),
+            () -> new RecipeSerializer<>(
+                StorageContainerUpgradeRecipe.CODEC,
+                StorageContainerUpgradeRecipe.STREAM_CODEC
             )
-        );
-        callback.register(
-            createIdentifier("storage_block_upgrade"),
-            () -> new StorageContainerUpgradeRecipeSerializer<>(
-                ItemStorageVariant.values(),
-                to -> new StorageContainerUpgradeRecipe<>(
-                    ItemStorageVariant.values(), to, Blocks.INSTANCE::getItemStorageBlock
-                )
-            )
-        );
-        callback.register(
-            createIdentifier("fluid_storage_block_upgrade"),
-            () -> new StorageContainerUpgradeRecipeSerializer<>(
-                FluidStorageVariant.values(),
-                to -> new StorageContainerUpgradeRecipe<>(
-                    FluidStorageVariant.values(), to, Blocks.INSTANCE::getFluidStorageBlock
-                )
-            )
-        );
+        ));
     }
 
     protected final void registerDataComponents(final RegistryCallback<DataComponentType<?>> callback) {

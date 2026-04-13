@@ -7,8 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSBLOCKS;
-import static com.refinedmods.refinedstorage.common.GameTestUtil.requireBlockEntity;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static net.minecraft.core.BlockPos.ZERO;
 
 final class RelayTestPlots {
@@ -17,20 +16,20 @@ final class RelayTestPlots {
 
     static void preparePlot(final GameTestHelper helper,
                             final RelayConsumer consumer) {
-        helper.setBlock(ZERO.above(), RSBLOCKS.getCreativeController().getDefault());
-        helper.setBlock(ZERO.above().above(), RSBLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
+        helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
+        helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         helper.setBlock(
             ZERO.above().above().north(),
-            RSBLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
+            MOD_BLOCKS.getFluidStorageBlock(FluidStorageVariant.SIXTY_FOUR_B)
         );
         final BlockPos relayPos = ZERO.above().above().above();
-        helper.setBlock(relayPos, RSBLOCKS.getRelay().getDefault().rotated(Direction.UP));
+        helper.setBlock(relayPos, MOD_BLOCKS.getRelay().getDefault().rotated(Direction.UP));
 
         final BlockPos subnetworkPos = relayPos.above();
-        helper.setBlock(subnetworkPos, RSBLOCKS.getGrid().getDefault());
+        helper.setBlock(subnetworkPos, MOD_BLOCKS.getGrid().getDefault());
 
         consumer.accept(
-            requireBlockEntity(helper, relayPos, RelayBlockEntity.class),
+            helper.getBlockEntity(relayPos, RelayBlockEntity.class),
             relayPos,
             subnetworkPos,
             helper.startSequence()

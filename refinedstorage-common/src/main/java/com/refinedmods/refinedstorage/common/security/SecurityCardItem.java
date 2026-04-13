@@ -6,23 +6,27 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -33,29 +37,28 @@ public class SecurityCardItem extends AbstractSecurityCardItem<PlayerBoundSecuri
     private static final Component BOUND_HELP = createTranslation("item", "security_card.bound.help");
 
     public SecurityCardItem() {
-        super(new Item.Properties().stacksTo(1));
+        super(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, ContentIds.SECURITY_CARD)));
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                final TooltipContext context,
-                                final List<Component> lines,
-                                final TooltipFlag flag) {
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display,
+                                final Consumer<Component> builder, final TooltipFlag tooltipFlag) {
         final SecurityCardBoundPlayer boundPlayer = stack.get(DataComponents.INSTANCE.getSecurityCardBoundPlayer());
         if (boundPlayer == null) {
-            lines.add(createTranslation("item", "security_card.unbound").withStyle(ChatFormatting.GRAY));
+            builder.accept(createTranslation("item", "security_card.unbound").withStyle(ChatFormatting.GRAY));
         } else {
-            lines.add(createTranslation(
+            builder.accept(createTranslation(
                 "item",
                 "security_card.bound",
                 Component.literal(boundPlayer.playerName()).withStyle(ChatFormatting.YELLOW)
             ).withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, context, lines, flag);
+        super.appendHoverText(stack, context, display, builder, tooltipFlag);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
+    public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer
             && !stack.has(DataComponents.INSTANCE.getSecurityCardBoundPlayer())) {

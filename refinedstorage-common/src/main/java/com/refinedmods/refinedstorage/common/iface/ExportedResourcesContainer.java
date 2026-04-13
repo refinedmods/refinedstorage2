@@ -12,7 +12,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 
 import java.util.Collection;
 import java.util.Collections;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExportedResourcesContainer extends ResourceContainerImpl implements InterfaceExportState {
     private final FilterWithFuzzyMode filter;

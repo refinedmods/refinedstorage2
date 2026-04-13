@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "refinedstorage:fluid_storage_block_should_respect_extract_access_mode",
+  "structure": "refinedstorage:empty_15x15",
+  "environment": "minecraft:default",
+  "max_ticks": 400
+}

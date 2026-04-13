@@ -9,11 +9,11 @@ public interface StepBehavior {
     StepBehavior DEFAULT = new StepBehavior() {
     };
 
-    default boolean canStep(Pattern pattern) {
+    default boolean canStep(final Pattern pattern) {
         return true;
     }
 
-    default int getSteps(Pattern pattern) {
+    default int getSteps(final Pattern pattern) {
         return 1;
     }
 }

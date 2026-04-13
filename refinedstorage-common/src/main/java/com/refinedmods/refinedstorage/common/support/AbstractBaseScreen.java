@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage.common.support;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
@@ -22,21 +21,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationAsHeading;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     protected static final int TITLE_MAX_WIDTH = 162;
@@ -64,12 +67,14 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     @Nullable
     private List<ClientTooltipComponent> deferredTooltip;
 
-    protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final Component title) {
-        this(menu, playerInventory, new TextMarquee(title, TITLE_MAX_WIDTH));
+    protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final Component title,
+                                 final int width, final int height) {
+        this(menu, playerInventory, new TextMarquee(title, TITLE_MAX_WIDTH), width, height);
     }
 
-    protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final TextMarquee title) {
-        super(menu, playerInventory, title.getText());
+    protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final TextMarquee title,
+                                 final int width, final int height) {
+        super(menu, playerInventory, title.getText(), width, height);
         this.playerInventory = playerInventory;
         this.titleLabelX = 7;
         this.titleLabelY = 7;
@@ -98,19 +103,33 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         exclusionZones.clear();
     }
 
-    protected abstract ResourceLocation getTexture();
+    protected abstract Identifier getTexture();
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        final int x = (width - imageWidth) / 2;
-        final int y = (height - imageHeight) / 2;
-        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
-        renderResourceSlots(graphics);
+    protected void extractSlot(final GuiGraphicsExtractor graphics, final Slot slot, final int mouseX,
+                               final int mouseY) {
+        // This slot is already rendered somewhere else. Don't render items twice.
+        if (slot instanceof ResourceSlot resourceSlot && resourceSlot.supportsItemSlotInteractions()) {
+            return;
+        }
+        super.extractSlot(graphics, slot, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.pose().popPose();
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+        extractDefaultBackground(graphics);
+    }
+
+    protected void extractDefaultBackground(final GuiGraphicsExtractor graphics) {
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
+        graphics.blit(GUI_TEXTURED, getTexture(), x, y, 0, 0, imageWidth, imageHeight, 256, 256);
+    }
+
+    @Override
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
         final boolean hoveringOverTitle = isHovering(
             titleLabelX,
             titleLabelY,
@@ -119,28 +138,26 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             mouseX,
             mouseY
         );
-        titleMarquee.render(graphics, leftPos + titleLabelX, topPos + titleLabelY, font, hoveringOverTitle);
-        graphics.pose().pushPose();
-        graphics.pose().translate(leftPos, topPos, 0.0F);
+        titleMarquee.render(graphics, titleLabelX, titleLabelY, font, hoveringOverTitle);
         renderPlayerInventoryTitle(graphics);
     }
 
-    protected final void renderPlayerInventoryTitle(final GuiGraphics graphics) {
-        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 4210752, false);
+    protected final void renderPlayerInventoryTitle(final GuiGraphicsExtractor graphics) {
+        graphics.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, -12566464, false);
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
-        renderTooltip(graphics, mouseX, mouseY);
+    protected void extractSlots(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        super.extractSlots(graphics, mouseX, mouseY);
+        renderResourceSlots(graphics);
     }
 
-    protected void renderResourceSlots(final GuiGraphics graphics) {
+    protected void renderResourceSlots(final GuiGraphicsExtractor graphics) {
         if (!(menu instanceof AbstractResourceContainerMenu resourceContainerMenu)) {
             return;
         }
         for (final ResourceSlot slot : resourceContainerMenu.getResourceSlots()) {
-            ResourceSlotRendering.render(graphics, slot, leftPos, topPos);
+            ResourceSlotRendering.render(graphics, slot);
         }
     }
 
@@ -158,26 +175,26 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         if (hoveredSlot instanceof UpgradeSlot upgradeSlot) {
             final List<ClientTooltipComponent> tooltip = getUpgradeTooltip(menu.getCarried(), upgradeSlot);
             if (!tooltip.isEmpty()) {
-                Platform.INSTANCE.renderTooltip(graphics, tooltip, x, y);
+                graphics.tooltip(font, tooltip, x, y, DefaultTooltipPositioner.INSTANCE, null);
                 return;
             }
         }
         if (hoveredSlot instanceof ResourceSlot resourceSlot && canInteractWithResourceSlot(resourceSlot, x, y)) {
             final List<ClientTooltipComponent> tooltip = getResourceSlotTooltip(menu.getCarried(), resourceSlot);
             if (!tooltip.isEmpty()) {
-                Platform.INSTANCE.renderTooltip(graphics, tooltip, x, y);
+                graphics.tooltip(font, tooltip, x, y, DefaultTooltipPositioner.INSTANCE, null);
                 return;
             }
         }
         if (deferredTooltip != null) {
-            Platform.INSTANCE.renderTooltip(graphics, deferredTooltip, x, y);
+            graphics.tooltip(font, deferredTooltip, x, y, DefaultTooltipPositioner.INSTANCE, null);
             deferredTooltip = null;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 
     public void setDeferredTooltip(@Nullable final List<ClientTooltipComponent> deferredTooltip) {
@@ -276,30 +293,30 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
         if (hoveredSlot instanceof ResourceSlot resourceSlot
             && !resourceSlot.supportsItemSlotInteractions()
             && !resourceSlot.isDisabled()
-            && canInteractWithResourceSlot(resourceSlot, mouseX, mouseY)) {
+            && canInteractWithResourceSlot(resourceSlot, event.x(), event.y())) {
             if (!tryOpenResourceAmountScreen(resourceSlot)
                 && getMenu() instanceof AbstractResourceContainerMenu resourceMenu) {
-                resourceMenu.sendResourceSlotChange(hoveredSlot.index, clickedButton == 1);
+                resourceMenu.sendResourceSlotChange(hoveredSlot.index, event.button() == 1);
             }
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+        return super.mouseClicked(event, doubleClick);
     }
 
     private boolean tryOpenResourceAmountScreen(final ResourceSlot slot) {
         final boolean isFilterSlot = slot.getResource() != null;
         final boolean canModifyAmount = isFilterSlot && slot.canModifyAmount();
-        final boolean isNotTryingToRemoveFilter = !hasShiftDown();
+        final boolean isNotTryingToRemoveFilter = !minecraft.hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
         final boolean canOpen = isFilterSlot
             && canModifyAmount
             && isNotTryingToRemoveFilter
             && isNotCarryingItem;
-        if (canOpen && minecraft != null) {
+        if (canOpen) {
             minecraft.setScreen(createResourceAmountScreen(slot));
         }
         return canOpen;

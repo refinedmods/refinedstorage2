@@ -51,7 +51,7 @@ public final class FluidResource
     public List<ResourceTag> getTags() {
         return BuiltInRegistries.FLUID.wrapAsHolder(fluid)
             .tags()
-            .flatMap(tagKey -> BuiltInRegistries.FLUID.getTag(tagKey).stream())
+            .flatMap(tagKey -> BuiltInRegistries.FLUID.get(tagKey).stream())
             .map(tag -> new ResourceTag(
                 tag.key(),
                 tag.stream().map(holder -> (PlatformResourceKey) new FluidResource(holder.value())).toList()

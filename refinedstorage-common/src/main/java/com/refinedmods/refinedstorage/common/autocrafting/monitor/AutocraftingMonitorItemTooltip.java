@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.InWorldExt
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,42 +40,43 @@ class AutocraftingMonitorItemTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
         int yy = y;
-        graphics.drawString(
+        graphics.text(
             font,
             rendering.getDisplayName(item.resource()),
             x,
             yy,
-            0xFFFFFF
+            0xFFFFFFFF
         );
         yy += 9 + SPACING;
         if (item.type() != TaskStatus.ItemType.NORMAL) {
-            graphics.drawString(
+            graphics.text(
                 font,
                 getErrorTooltip(item.type()),
                 x,
                 yy,
-                0xAAAAAA
+                0xFFAAAAAA
             );
             yy += 9 + SPACING;
         }
         if (item.sinkKey() instanceof InWorldExternalPatternSinkKey(String name, ItemStack stack)) {
-            graphics.renderItem(stack, x, yy);
-            graphics.drawString(
+            graphics.item(stack, x, yy);
+            graphics.text(
                 font,
                 name,
                 x + 18 + SPACING,
                 yy + 4,
-                0xAAAAAA
+                0xFFAAAAAA
             );
         }
     }
 
     @Override
-    public int getHeight() {
-        return 9 + SPACING
-            + (item.type() != TaskStatus.ItemType.NORMAL ? 9 + SPACING : 0)
+    public int getHeight(final Font font) {
+        return font.lineHeight + SPACING
+            + (item.type() != TaskStatus.ItemType.NORMAL ? font.lineHeight + SPACING : 0)
             + (item.sinkKey() != null ? 18 : 0);
     }
 

@@ -21,8 +21,9 @@ import com.refinedmods.refinedstorage.network.test.NetworkTest;
 import com.refinedmods.refinedstorage.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage.network.test.fixtures.ActorFixture;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +65,7 @@ class StorageNetworkNodeTest {
     }
 
     @Test
-    void shouldInitializeButNotShowResourcesYet(
+    void shouldInitializeButNotLoadResourcesInStorage(
         @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
     ) {
         // Arrange
@@ -84,7 +85,7 @@ class StorageNetworkNodeTest {
     }
 
     @Test
-    void shouldInitializeAndShowResourcesAfterEnabling(
+    void shouldInitializeAndLoadResourcesAfterEnabling(
         @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
     ) {
         // Arrange
@@ -185,28 +186,66 @@ class StorageNetworkNodeTest {
     @Test
     void shouldDetectNewStorage(@InjectNetworkStorageComponent final StorageNetworkComponent networkStorage) {
         // Arrange
+        final Storage remainingStorage = new LimitedStorageImpl(10);
+        remainingStorage.insert(C, 7, Action.EXECUTE, Actor.EMPTY);
+        provider.set(8, remainingStorage);
+
+        initializeAndActivate();
+
+        final Storage storage = new LimitedStorageImpl(10);
+        storage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        provider.set(0, storage);
+
+        // Act
+        final List<ResourceAmount> beforeChanging = new ArrayList<>(networkStorage.getAll());
+        sut.onStorageChanged();
+        final List<ResourceAmount> afterChanging = new ArrayList<>(networkStorage.getAll());
+
+        // Assert
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_STORAGE * 2));
+        assertThat(beforeChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(C, 7)
+        );
+        assertThat(afterChanging).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(C, 7),
+            new ResourceAmount(A, 5)
+        );
+    }
+
+    @Test
+    void shouldNotDetectAnythingWhenThereAreNoChanges(
+        @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
+    ) {
+        // Arrange
         initializeAndActivate();
 
         final Storage storage = new LimitedStorageImpl(10);
         storage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
         provider.set(8, storage);
+        sut.onStorageChanged();
 
         // Act
-        sut.onStorageChanged(8);
+        sut.onStorageChanged();
 
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(A, 5)
         );
+        assertThat(networkStorage.getStored()).isEqualTo(5);
     }
 
     @Test
-    void shouldDetectChangedStorage(@InjectNetworkStorageComponent final StorageNetworkComponent networkStorage) {
+    void shouldDetectReplacedStorage(@InjectNetworkStorageComponent final StorageNetworkComponent networkStorage) {
         // Arrange
         final Storage originalStorage = new LimitedStorageImpl(10);
         originalStorage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
         provider.set(0, originalStorage);
+
+        final Storage remainingStorage = new LimitedStorageImpl(10);
+        remainingStorage.insert(C, 7, Action.EXECUTE, Actor.EMPTY);
+        provider.set(8, remainingStorage);
+
         initializeAndActivate();
 
         final Storage replacedStorage = new LimitedStorageImpl(10);
@@ -214,19 +253,21 @@ class StorageNetworkNodeTest {
         provider.set(0, replacedStorage);
 
         // Act
-        final Collection<ResourceAmount> preChanging = new HashSet<>(networkStorage.getAll());
-        sut.onStorageChanged(0);
-        final Collection<ResourceAmount> postChanging = networkStorage.getAll();
+        final Collection<ResourceAmount> beforeChanging = new ArrayList<>(networkStorage.getAll());
+        sut.onStorageChanged();
+        final Collection<ResourceAmount> afterChanging = networkStorage.getAll();
 
         // Assert
-        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
-        assertThat(preChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount(A, 5)
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_STORAGE * 2));
+        assertThat(beforeChanging).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 5),
+            new ResourceAmount(C, 7)
         );
-        assertThat(postChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount(B, 2)
+        assertThat(afterChanging).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(B, 2),
+            new ResourceAmount(C, 7)
         );
-        assertThat(networkStorage.getStored()).isEqualTo(2L);
+        assertThat(networkStorage.getStored()).isEqualTo(9);
     }
 
     @Test
@@ -235,37 +276,34 @@ class StorageNetworkNodeTest {
         final Storage storage = new LimitedStorageImpl(10);
         storage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
         provider.set(7, storage);
+
+        final Storage remainingStorage = new LimitedStorageImpl(10);
+        remainingStorage.insert(B, 7, Action.EXECUTE, Actor.EMPTY);
+        provider.set(8, remainingStorage);
+
         initializeAndActivate();
 
         provider.remove(7);
 
         // Act
-        final Collection<ResourceAmount> preRemoval = new HashSet<>(networkStorage.getAll());
-        sut.onStorageChanged(7);
-        final Collection<ResourceAmount> postRemoval = networkStorage.getAll();
+        final Collection<ResourceAmount> beforeChanging = new ArrayList<>(networkStorage.getAll());
+        sut.onStorageChanged();
+        final Collection<ResourceAmount> afterChanging = networkStorage.getAll();
 
         // Assert
-        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
-        assertThat(preRemoval).isNotEmpty();
-        assertThat(postRemoval).isEmpty();
-        assertThat(networkStorage.getStored()).isZero();
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
+        assertThat(beforeChanging).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount(A, 5),
+            new ResourceAmount(B, 7)
+        );
+        assertThat(afterChanging).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(B, 7)
+        );
+        assertThat(networkStorage.getStored()).isEqualTo(7);
     }
 
     @Test
-    void shouldNotDetectStorageChangeInInvalidIndex() {
-        // Act
-        sut.onStorageChanged(-1);
-        sut.onStorageChanged(9);
-
-        // Assert
-        assertThat(sut.getSize()).isEqualTo(9);
-        for (int i = 0; i < 9; ++i) {
-            assertThat(sut.getState(i)).isEqualTo(StorageState.NONE);
-        }
-    }
-
-    @Test
-    void shouldNotUpdateNetworkStorageWhenChangingStorageWhenInactive(
+    void shouldNotUpdateNetworkStorageWhenChangingStorageDuringInactiveness(
         @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
     ) {
         // Arrange
@@ -276,14 +314,14 @@ class StorageNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        final Collection<ResourceAmount> preInactive = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> beforeBecomingInactive = new ArrayList<>(networkStorage.getAll());
         sut.setActive(false);
-        sut.onStorageChanged(1);
-        final Collection<ResourceAmount> postInactive = networkStorage.getAll();
+        sut.onStorageChanged();
+        final Collection<ResourceAmount> afterBecomingInactive = networkStorage.getAll();
 
         // Assert
-        assertThat(preInactive).isNotEmpty();
-        assertThat(postInactive).isEmpty();
+        assertThat(beforeBecomingInactive).isNotEmpty();
+        assertThat(afterBecomingInactive).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
     }
 
@@ -622,13 +660,13 @@ class StorageNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        final Collection<ResourceAmount> preInactiveness = new HashSet<>(networkStorage.getAll());
+        final Collection<ResourceAmount> beforeBecomingInactive = new ArrayList<>(networkStorage.getAll());
         sut.setActive(false);
-        final Collection<ResourceAmount> postInactiveness = networkStorage.getAll();
+        final Collection<ResourceAmount> afterBecomingInactive = networkStorage.getAll();
 
         // Assert
-        assertThat(preInactiveness).isNotEmpty();
-        assertThat(postInactiveness).isEmpty();
+        assertThat(beforeBecomingInactive).isNotEmpty();
+        assertThat(afterBecomingInactive).isEmpty();
         assertThat(sut.getStored()).isEqualTo(100);
         assertThat(sut.getCapacity()).isEqualTo(100);
     }
@@ -648,7 +686,7 @@ class StorageNetworkNodeTest {
         final Storage storage2 = new LimitedStorageImpl(100);
         storage2.insert(B, 50, Action.EXECUTE, Actor.EMPTY);
         provider.set(2, storage2);
-        sut.onStorageChanged(2);
+        sut.onStorageChanged();
 
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount(A, 50),
@@ -661,7 +699,7 @@ class StorageNetworkNodeTest {
         final Storage storage3 = new LimitedStorageImpl(100);
         storage3.insert(C, 50, Action.EXECUTE, Actor.EMPTY);
         provider.set(3, storage3);
-        sut.onStorageChanged(3);
+        sut.onStorageChanged();
 
         assertThat(networkStorage.getAll()).isEmpty();
     }

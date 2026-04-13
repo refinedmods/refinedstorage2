@@ -65,7 +65,7 @@ public final class ItemResource
     public List<ResourceTag> getTags() {
         return BuiltInRegistries.ITEM.wrapAsHolder(item)
             .tags()
-            .flatMap(tagKey -> BuiltInRegistries.ITEM.getTag(tagKey).stream())
+            .flatMap(tagKey -> BuiltInRegistries.ITEM.get(tagKey).stream())
             .map(tag -> new ResourceTag(
                 tag.key(),
                 tag.stream().map(holder -> (PlatformResourceKey) new ItemResource(holder.value())).toList()
@@ -111,7 +111,7 @@ public final class ItemResource
     @Override
     public String toString() {
         return "ItemResource["
-                + "item=" + item + ", "
-                + "components=" + components + ']';
+            + "item=" + item + ", "
+            + "components=" + components + ']';
     }
 }

@@ -10,17 +10,16 @@ import com.refinedmods.refinedstorage.common.networking.CableConnections;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeMenuProvider;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -29,7 +28,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -40,13 +39,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractBaseBlock extends Block {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
         Registries.ITEM,
-        ResourceLocation.fromNamespaceAndPath("c", "tools/wrench")
+        Identifier.fromNamespaceAndPath("c", "tools/wrench")
     );
 
     protected AbstractBaseBlock(final Properties properties) {
@@ -109,23 +109,6 @@ public abstract class AbstractBaseBlock extends Block {
     }
 
     @Override
-    public void onRemove(final BlockState state,
-                         final Level level,
-                         final BlockPos pos,
-                         final BlockState newState,
-                         final boolean moved) {
-        if (state.getBlock() != newState.getBlock()
-            && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
-            final BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof BlockEntityWithDrops blockEntityDrops) {
-                Containers.dropContents(level, pos, blockEntityDrops.getDrops());
-                level.updateNeighbourForOutputSignal(pos, this);
-            }
-            super.onRemove(state, level, pos, newState, moved);
-        }
-    }
-
-    @Override
     public void setPlacedBy(final Level level,
                             final BlockPos pos,
                             final BlockState state,
@@ -134,7 +117,7 @@ public abstract class AbstractBaseBlock extends Block {
         super.setPlacedBy(level, pos, state, entity, stack);
         if (entity instanceof Player player
             && level.getBlockEntity(pos) instanceof PlayerAwareBlockEntity playerAware) {
-            playerAware.setPlacedBy(player.getGameProfile().getId());
+            playerAware.setPlacedBy(player.getGameProfile().id());
         }
     }
 
@@ -168,7 +151,7 @@ public abstract class AbstractBaseBlock extends Block {
                 );
             }
         }
-        return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
+        return Optional.of(InteractionResult.SUCCESS);
     }
 
     private boolean dismantleOrRotate(final BlockState state,
@@ -229,8 +212,9 @@ public abstract class AbstractBaseBlock extends Block {
         final ItemStack stack = Platform.INSTANCE.getCloneItemStack(state, level, hitResult, player);
         if (blockEntity != null) {
             if (!(blockEntity instanceof AbstractCableBlockEntity)) {
-                blockEntity.saveToItem(stack, level.registryAccess());
-                CustomData.update(DataComponents.BLOCK_ENTITY_DATA, stack, CableConnections::stripTag);
+                final CompoundTag tag = blockEntity.saveWithoutMetadata(level.registryAccess());
+                CableConnections.stripTag(tag);
+                stack.set(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(blockEntity.getType(), tag));
             }
             // Ensure that we don't drop items
             level.removeBlockEntity(hitResult.getBlockPos());

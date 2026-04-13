@@ -8,27 +8,30 @@ import com.refinedmods.refinedstorage.common.support.tooltip.HelpClientTooltipCo
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/crafting_grid.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/crafting_grid.png");
 
     private static final WidgetSprites CLEAR_BUTTON_TO_PLAYER_INVENTORY_SPRITES = new WidgetSprites(
         createIdentifier("widget/move_down"),
@@ -42,7 +45,7 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
         createIdentifier("widget/move_up_focused"),
         createIdentifier("widget/move_up_disabled")
     );
-    private static final ResourceLocation CRAFTING_MATRIX_FILTERING_SLOT_HIGHLIGHT = createIdentifier(
+    private static final Identifier CRAFTING_MATRIX_FILTERING_SLOT_HIGHLIGHT = createIdentifier(
         "crafting_grid/crafting_matrix_filtering_slot_highlight"
     );
 
@@ -54,10 +57,8 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
     public CraftingGridScreen(final AbstractCraftingGridContainerMenu menu,
                               final Inventory inventory,
                               final Component title) {
-        super(menu, inventory, title, 156);
+        super(menu, inventory, title, 156, 193, 229);
         this.inventoryLabelY = 134;
-        this.imageWidth = 193;
-        this.imageHeight = 229;
     }
 
     @Override
@@ -80,19 +81,21 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         if (filteringBasedOnCraftingMatrixItems) {
             renderCraftingMatrixFilteringHighlights(graphics);
         }
     }
 
-    private void renderCraftingMatrixFilteringHighlights(final GuiGraphics graphics) {
+    private void renderCraftingMatrixFilteringHighlights(final GuiGraphicsExtractor graphics) {
         for (final Slot slot : getMenu().getCraftingMatrixSlots()) {
             if (!slot.hasItem()) {
                 continue;
             }
             graphics.blitSprite(
+                GUI_TEXTURED,
                 CRAFTING_MATRIX_FILTERING_SLOT_HIGHLIGHT,
                 leftPos + slot.x - 1,
                 topPos + slot.y - 1,
@@ -107,8 +110,8 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
         super.containerTick();
         final boolean mayFilterOnCraftingMatrixItems = hoveredSlot != null
             && hoveredSlot.container instanceof ResultContainer
-            && hasShiftDown()
-            && hasControlDown();
+            && minecraft.hasShiftDown()
+            && minecraft.hasControlDown();
         if (mayFilterOnCraftingMatrixItems && !filteringBasedOnCraftingMatrixItems) {
             filteringBasedOnCraftingMatrixItems = true;
             getMenu().filterBasedOnCraftingMatrixItems();
@@ -169,15 +172,15 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (KeyMappings.INSTANCE.getClearCraftingGridMatrixToInventory() != null
-            && Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getClearCraftingGridMatrixToInventory())) {
+    public boolean keyPressed(final KeyEvent event) {
+        final KeyMapping clearToInventory = KeyMappings.INSTANCE.getClearCraftingGridMatrixToInventory();
+        final KeyMapping clearToNetwork = KeyMappings.INSTANCE.getClearCraftingGridMatrixToNetwork();
+        if (clearToInventory != null && Platform.INSTANCE.isKeyDown(clearToInventory)) {
             getMenu().clear(true);
-        } else if (KeyMappings.INSTANCE.getClearCraftingGridMatrixToNetwork() != null
-            && Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getClearCraftingGridMatrixToNetwork())) {
+        } else if (clearToNetwork != null && Platform.INSTANCE.isKeyDown(clearToNetwork)) {
             getMenu().clear(false);
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
@@ -194,12 +197,12 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         final boolean hoveredSlotValidForHelp = hoveredSlot != null
             && hoveredSlot.container instanceof ResultContainer
             && hoveredSlot.hasItem();
@@ -217,9 +220,9 @@ public class CraftingGridScreen extends AbstractGridScreen<AbstractCraftingGridC
                 "gui",
                 "crafting_grid.press_shift_ctrl_to_only_show_items_used_in_crafting"
             )));
-            Platform.INSTANCE.renderTooltip(graphics, processedLines, x, y);
+            graphics.tooltip(font, processedLines, x, y, DefaultTooltipPositioner.INSTANCE, null);
             return;
         }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 }

@@ -3,4 +3,302 @@
 :description: A retrospective on ten years of Refined Storage
 :date: 2026-03-20
 
-This article will be coming soon!
+The first version of Refined Storage, v0.3, was released on March 20th, 2016.
+
+A decade later, it is time for a retrospective.
+
+== Enable your cape!
+
+To celebrate the ten-year anniversary, between March 20 and March 22, you can enable a special Refined Storage cape from the Grid UI!*
+
+image::../../assets/news/ten-years-of-refined-storage/anniversary-cape.png[Screenshot showing a player wearing the special ten year anniversary Refined Storage cape]
+
+_After March 22, you can enable or disable the cape via the configuration screen._
+
+*The cape is available for NeoForge players only, using v2.0.1 or above.
+
+== The beginning
+
+Refined Storage began life under the name *StorageCraft* as a personal experiment.
+At the time, I spent a lot of time playing tech-focused modpacks and was particularly impressed by Applied Energistics (1).
+
+I was 17 years old and had been programming for about five years.
+Minecraft modding combined two things I enjoyed, so building my own mod felt like a natural next step.
+
+In December 2015, I started working on StorageCraft for Minecraft 1.7.10 as a self-imposed challenge.
+
+The initial commit contained only a cable and a controller.
+There was no storage yet; the first problem I wanted to solve was network connectivity and rendering of cable components.
+
+Within a week, basic storage was functional.
+By January 2016, drives, exporters, importers, external storage, constructors, destructors, detectors, and a wireless transmitter were implemented.
+
+At no point was a public release planned.
+The project existed purely as a learning exercise, and there was little practical need for it since Applied Energistics was already available for Minecraft 1.7.10.
+
+== Porting out of boredom
+
+After proving to myself that I could build a system comparable to Applied Energistics, I looked for a new challenge: porting the mod to Minecraft 1.8.9.
+
+At the time, this was difficult.
+The new model system had just been introduced, breaking many mods.
+Documentation was scarce, so progress depended largely on reading Minecraft's source code and asking others for help.
+
+Versions v0.1 and v0.2 were never publicly released.
+They were only shared with my family for testing.
+
+In February 2016, I began experimenting with autocrafting, but this work was never completed.
+
+== First release
+
+On March 19th, I ported the mod to Minecraft 1.9 and renamed it to *Refined Storage*.
+
+At that point, I decided to release it, even when it started out as an exercise. The mod felt solid, interesting, and, most importantly, there were barely any mass-storage mods available for that Minecraft version.
+
+== Quality
+
+The code quality during this period was not great.
+I already had some intuition for clean code, but many features in Refined Storage were built primarily as learning exercises and proofs of concept.
+The main goal was to see whether I could build a mod of this scope at all.
+
+I was also unfamiliar with the performance characteristics of a game environment, which led to decisions that would later prove problematic.
+
+For example, storage network caching and Grid synchronization were only optimized after issues started to appear, which caused problems at scale.
+
+Another feature, exposing the entire Refined Storage network as a Minecraft inventory, had to be abandoned entirely due to its performance impact.
+
+A healthy dose of arrogance did not help either.
+I deliberately avoided reading the source code of similar mods.
+Since this was a learning exercise, I believed there was little value in studying existing implementations rather than figuring things out myself.
+
+== Early supporters
+
+I introduced Refined Storage publicly through a link:https://old.reddit.com/r/feedthebeast/comments/4b7e6l/will_ae2_be_ported_to_190_what_about_ae2_stuff/d16q9wh/[reply on Reddit].
+A few weeks later, I followed up with a dedicated link:https://old.reddit.com/r/feedthebeast/comments/4d65gk/refined_storage_an_applied_energistics_1_like_mod/[post].
+
+One of the first people to use the mod in a playthrough (and modpack) was link:https://www.youtube.com/watch?v=PMY___O3zu0[Danny & Son].
+Seeing someone build with it for the first time was a major milestone.
+
+link:https://www.youtube.com/watch?v=giY-FFcYOdI[LHS Buster] was one of the first to make a mod spotlight.
+
+Soon after, Refined Storage was included in the link:https://www.curseforge.com/minecraft/modpacks/ftb-unstable-1-10[Feed the Beast pack "Unstable"].
+
+The original version has programmer art that I made:
+
+image::../../assets/news/ten-years-of-refined-storage/original-art.png[In-world screenshot of some blocks in v0.3, showing the original textures]
+
+image::../../assets/news/ten-years-of-refined-storage/original-grid.png[Screenshot of the Grid UI in v0.3]
+
+image::../../assets/news/ten-years-of-refined-storage/original-creative-menu.png[Screenshot of the creative menu tab of Refined Storage in v0.3]
+
+GustoniaEagle became the first texture artist for the mod, introducing new textures a few weeks after release:
+
+image::../../assets/news/ten-years-of-refined-storage/gustonia-art.png[In-world screenshot of some blocks in v0.5, showing the first textures made by a texture artist]
+
+_Notice that in the first versions, blocks that are now typical "cable" components, such as the importer and exporter, were still full blocks. At the time, I simply didn’t know how to implement them differently._
+
+These textures got iterated upon a bit:
+
+image::../../assets/news/ten-years-of-refined-storage/gustonia-art-2.png[In-world screenshot of some blocks in v0.8.6, showing a slightly muted colorization compared to the one in v0.5]
+
+Around the same time, link:https://github.com/cyanidex[CyanideX], whose work I greatly admired, created an alternative texture set. I quickly adopted it into the main project:
+
+image::../../assets/news/ten-years-of-refined-storage/cyanide-art.png[In-world screenshot of some blocks in v1.1.0, featuring art by CyanideX]
+
+Not long after, link:https://www.youtube.com/watch?v=EdLxX65VEIo[direwolf20 featured the mod in his ForgeCraft series], and I was invited to link:https://feed-the-beast.fandom.com/wiki/Forgecraft[ForgeCraft].
+
+link:https://www.twitch.tv/darkosto[Darkosto], streamer and most notably, pack author of link:https://www.curseforge.com/minecraft/modpacks/ftb-presents-skyfactory-3[Sky Factory], trusted me and the project enough to include Refined Storage in his pack.
+He was open to using alternative mods and new ideas, which made this a particularly productive period for me personally.
+
+Roughly 2 months later, a first version of autocrafting was implemented.
+
+image::../../assets/news/ten-years-of-refined-storage/original-crafter.png[Screenshot of the Crafter UI in v0.6]
+
+image::../../assets/news/ten-years-of-refined-storage/original-crafting-start.png[Screenshot of the crafting start UI in v0.6]
+
+_The first crafting start UI is primitive compared to how it is nowadays._
+
+image::../../assets/news/ten-years-of-refined-storage/original-crafting-monitor.png[Screenshot of the crafting monitor UI in v0.6]
+
+== Thinking about the long term
+
+At some point, Applied Energistics became available for newer Minecraft versions. It made me think: how do we move forward? Is Refined Storage still relevant?
+
+Turns out, yes. Over the years, many people had a clear preference for either mod. At this point I distilled the design philosophy a bit more for myself.
+
+Refined Storage was never meant to become Applied Energistics, nor to compete with it feature-for-feature. Both mods solve similar problems, but they do so from different perspectives. Where AE leans into complexity and depth, Refined Storage embraces simplicity. That difference is not a weakness to overcome, but a reason for existence.
+
+The years of constant comparison made one thing clear: measuring Refined Storage by how closely it resembles AE is the wrong axis entirely. Its value lies in being a different answer, not a similar one. If Refined Storage tried to become Applied Energistics, it would lose its reason to exist. Players want different experiences. That diversity is what keeps the ecosystem healthy.
+
+=== Core principles
+
+* *Simplicity and consistency:*
+Predictable, uniform behavior across modpacks to minimize cognitive load.
+
+* *Focus over feature parity:*
+Not competing with other mods. A coherent, dedicated storage solution, not a catch-all solution.
+
+* *Addon-driven evolution:*
+Core stays minimal and stable. Addons handle integrations and experimentation.
+
+* *Deliberate quality of life:*
+Convenience without hidden complexity. Maintain an intuitive, "peaceful" experience.
+
+xref:../design-philosophy.adoc[Read more]
+
+== Ten years of development
+
+I work quickly as a programmer, both when writing code and when navigating large codebases.
+
+This ability was largely developed while maintaining and porting Refined Storage across multiple Minecraft versions.
+Starting a port with thousands of compiler errors forces you to move efficiently and make decisions fast.
+
+During the period of 2017 to 2020, the focus was mainly on improving existing features, fixing bugs, and porting to newer Minecraft versions.
+
+=== 2016
+
+- Initial releases and rapid feature expansion.
+- Core systems introduced: storage network, Grid, Importer/Exporter, External Storage.
+- Autocrafting introduced and quickly iterated (major rewrites).
+- Wireless access (Wireless Grid, Transmitter).
+- Integrations (JEI, energy systems, other mods).
+
+=== 2017
+
+- Major autocrafting improvements and performance work.
+- Introduction of Security Manager, Reader/Writer, advanced filtering.
+- Cross-mod integrations (OpenComputers, Storage Drawers, etc.).
+- Porting to newer Minecraft versions (1.11, 1.12).
+- Refinement of Grid UX (sorting, search, tabs, tooltips).
+
+=== 2018
+
+- Full rewrite of autocrafting and energy systems.
+- New disk storage architecture (externalized disk data).
+- Fluid systems significantly expanded (fluid autocrafting).
+- Performance and scalability improvements for large networks.
+
+=== 2019
+
+- Port to Minecraft 1.14.
+  * This transition was especially rough. It broke the entire mod, to the point where I had to disable most functionality and rebuild almost from scratch, reintroducing features incrementally.
+- Cleanup of legacy systems (e.g., removal/replacement of oredict mechanics).
+- Architectural simplification and modernization.
+
+=== 2020
+
+- Port to Minecraft 1.15 and 1.16.
+- Introduction of experimental autocrafting engine (performance-focused).
+- New UX features (JEI integration improvements, grid interactions).
+- Commands and debugging/network inspection tools added.
+
+=== 2021
+
+- Port to Minecraft 1.18.
+- Pattern Grid improvements (combined item/fluid view, more slots).
+- Quality-of-life features (covers, Curios support).
+
+=== 2022
+
+- Port to Minecraft 1.18.2 and 1.19.2.
+- JEI integration improvements (live updating, better feedback).
+- Increased robustness against crashes and network inconsistencies.
+
+=== 2023 and 2024
+
+- Port to Minecraft 1.20.x and 1.20.4.
+- No major new systems; maintenance phase while work on Refined Storage 2 progressed.
+
+== Refined Storage 2
+
+By 2020, after roughly four years of working on Refined Storage, the need for a clean slate became clear to me. The codebase had evolved continuously and accumulated structural issues. Each Minecraft port further worsened the code quality, stability and overall player experience.
+
+I started experimenting on the Fabric modloader, privately. From the beginning, the goal was a full rewrite. Large rewrites often fail, so I kept the effort low-profile.
+
+I had the following goals in mind:
+
+- Focus on code quality and long-term maintainability
+- Mod loader independence (support for Fabric and NeoForge)
+- Rethinking and modernization of nearly every feature
+- A strong addon ecosystem
+
+A first working version came together quickly, followed by milestone builds published on GitHub for early testers.
+
+Initially, the intention was to release exclusively for Fabric, as it offered a cleaner architecture and more modern development model than Forge at the time. During this period, I became involved in the Fabric community and connected with link:https://github.com/Technici4n[Technici4n], now known as a co-maintainer of Applied Energistics. He played an important role in shaping the early design of the Refined Storage 2 API.
+
+However, Forge's dominance made it impossible to ignore. After a few months, work began on a cross-platform abstraction layer.
+
+=== Working feature by feature
+
+The rewrite was a substantial effort. Each existing feature was analyzed, then reorganized into logical groups and milestones. Reimplementation was not a direct translation: both code and functionality were reconsidered from first principles. Many systems received significant improvements, while preserving the core experience that had proven solid over time.
+
+=== Solid improvements
+
+The development of Refined Storage 2 took a long time due to a deliberate focus on doing things properly, alongside other life responsibilities.
+
+Significant effort went into code quality and maintainability:
+
+- Improved architecture: gameplay code is decoupled from the modloader, and core networking logic is separated from gameplay concerns
+- 96.1% code coverage on the core networking logic
+- Mutation testing is used to measure how good the tests themselves are
+- A comprehensive integration test suite simulating real Minecraft server behavior
+
+The tradeoff was a significantly longer development time, delaying the release while these foundations were put in place.
+
+In return, the codebase is far more robust and resilient to change. Ports are easier to sustain, and optimizations to complex systems like autocrafting can be implemented with confidence, without breaking existing behavior. This significantly improves maintainability and development speed compared to Refined Storage 1.
+
+=== The final push for Refined Storage 2
+
+Working on Refined Storage 2 became increasingly difficult to sustain, balancing a full-time job with ongoing maintenance and continued porting of Refined Storage 1.
+
+For Refined Storage 2, the release strategy targeted a Minecraft version boundary where world incompatibility would not be an issue. After Minecraft 1.20.4, development on Refined Storage 1 was largely halted to focus entirely on the final push.
+
+This final phase was intensive. The beta period lasted six months, during which we not only tracked issues on our own bug tracker, but also actively monitored GitHub issues and Discord channels of major modpacks. Every reported issue was reviewed, reproduced, and addressed.
+
+After five years of development, Refined Storage 2.0 was released in March 2025.
+
+Currently, Refined Storage has a strong addon ecosystem:
+
+- 7 official addons, including the xref:../addons/mekanism.adoc[Mekanism chemical integration]
+- xref:../addons/community-addons.adoc[14 community addons], such as link:https://www.curseforge.com/minecraft/mc-mods/refined-types[Refined Types], which adds support for Forge Energy, Source (Ars Nouveau), and Souls (Industrial Foregoing) across Refined Storage systems
+
+Addon developers play a central role in Refined Storage, extending the mod in ways that go far beyond the core.
+
+== Let's do 10 more years
+
+Maintaining a project for a decade is significant, especially when it started as a hobby.
+
+Refined Storage shaped how I write code, approach long-term maintainability, and work with a community. It forced me to deal with real-world complexity: bug reports, performance issues, evolving requirements, and collaboration.
+
+== Looking forward
+
+Ten years of Refined Storage reflect a gradual shift from experimentation to deliberate design. What began as a learning project grew into a big project.
+
+Refined Storage 2 establishes a foundation that can sustain that direction. The challenge for the coming years is not scale, but discipline: preserving simplicity and resisting unnecessary complexity.
+
+If the first ten years were about building the system, the next ten are about keeping it coherent.
+
+=== Thanks
+
+Thank you to everyone who has played Refined Storage over the years. Special thanks to those who have been there from the beginning and stayed through every version, port, and rewrite. Your support made this possible.
+
+Special thanks to my supporters on link:https://www.patreon.com/raoulvdberge[Patreon] and link:https://ko-fi.com/raoulvdberge[Ko-Fi].
+
+== Ten years in numbers
+
+After ten years... Refined Storage has:
+
+- 140 million downloads on the main mod
+- 121 million downloads across the official addons
+- 340 releases
+- 3,935 issues reported on GitHub (of which 3764 are closed)
+- link:https://www.modpackindex.com/modpack/finder?included_mods=6518[Included in 20,000 modpacks]
+
+== Contributors along the way
+
+link:https://github.com/refinedmods/refinedstorage/graphs/contributors[Refined Storage 1] and link:https://github.com/refinedmods/refinedstorage2/graphs/contributors[Refined Storage 2] had many contributors over the past decade. A few notable ones:
+
+- link:https://github.com/way2muchnoise[way2muchnoise] worked on autocrafting, significantly improving the algorithm and rewriting it entirely at one point.
+- link:https://github.com/Darkere[Darkere] contributed across the entire codebase and remains active as a moderator in the Discord community.
+- link:http://curseforge.com/members/ultramegaaa/projects[Ultramega] worked extensively on integration tests and developed several addon mods.
+- link:https://github.com/SirYwell[SirYwell] is currently focused on improving the performance of the autocrafting algorithm.

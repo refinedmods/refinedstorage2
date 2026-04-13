@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "refinedstorage:cable",
+    "D": "refinedstorage:destruction_core",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "I": "#c:gems/diamond",
+    "P": "refinedstorage:improved_processor"
+  },
+  "pattern": [
+    "EDE",
+    "ICI",
+    "EPE"
+  ],
+  "result": {
+    "id": "refinedstorage:destructor"
+  }
+}

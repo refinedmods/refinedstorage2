@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -27,10 +27,10 @@ class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_LAST_MODIFIED = List.of(
         createTranslation("gui", "grid.sorting.type.last_modified").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation QUANTITY = createIdentifier("widget/side_button/grid/sorting_type/quantity");
-    private static final ResourceLocation NAME = createIdentifier("widget/side_button/grid/sorting_type/name");
-    private static final ResourceLocation ID = createIdentifier("widget/side_button/grid/sorting_type/id");
-    private static final ResourceLocation LAST_MODIFIED =
+    private static final Identifier QUANTITY = createIdentifier("widget/side_button/grid/sorting_type/quantity");
+    private static final Identifier NAME = createIdentifier("widget/side_button/grid/sorting_type/name");
+    private static final Identifier ID = createIdentifier("widget/side_button/grid/sorting_type/id");
+    private static final Identifier LAST_MODIFIED =
         createIdentifier("widget/side_button/grid/sorting_type/last_modified");
 
     private final AbstractGridContainerMenu menu;
@@ -54,7 +54,7 @@ class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (menu.getSortingType()) {
             case QUANTITY -> QUANTITY;
             case NAME -> NAME;

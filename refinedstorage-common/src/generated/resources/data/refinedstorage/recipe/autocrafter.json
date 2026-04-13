@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "refinedstorage:advanced_processor",
+    "C": "refinedstorage:construction_core",
+    "D": "refinedstorage:destruction_core",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "M": "refinedstorage:machine_casing"
+  },
+  "pattern": [
+    "ECE",
+    "AMA",
+    "EDE"
+  ],
+  "result": {
+    "id": "refinedstorage:autocrafter"
+  }
+}

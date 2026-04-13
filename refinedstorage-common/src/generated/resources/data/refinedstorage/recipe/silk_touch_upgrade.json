@@ -1,0 +1,8 @@
+{
+  "type": "refinedstorage:upgrade_with_enchanted_book",
+  "enchantment": "minecraft:silk_touch",
+  "level": 0,
+  "result": {
+    "id": "refinedstorage:silk_touch_upgrade"
+  }
+}

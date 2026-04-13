@@ -6,19 +6,21 @@ import com.refinedmods.refinedstorage.api.storage.StorageState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractStorageContainerNetworkNode extends AbstractNetworkNode {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageContainerNetworkNode.class);
 
+    @Nullable
     protected final StateTrackedStorage[] storages;
 
     private long energyUsage;
@@ -26,8 +28,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
 
     @Nullable
     private Provider provider;
-    @Nullable
-    private StateTrackedStorage.Listener listener;
+    private StateTrackedStorage.@Nullable Listener listener;
     private int activeStorages;
 
     protected AbstractStorageContainerNetworkNode(final long energyUsage,
@@ -46,8 +47,9 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         this.provider = provider;
         final List<StorageChange> changes = new ArrayList<>();
         for (int i = 0; i < storages.length; ++i) {
-            changes.addAll(initializeStorage(i));
+            changes.addAll(tryUpdateStorage(i));
         }
+        LOGGER.info("Set provider for storage container network node, got {} changes", changes.size());
         // If we are already initialized, update all the storages to keep the exposed storages in sync.
         // If we are not initialized, update nothing as we have to wait for an activeness update.
         if (activeStorages > 0) {
@@ -56,32 +58,46 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         updateActiveStorageCount();
     }
 
-    public void onStorageChanged(final int index) {
-        if (index < 0 || index >= storages.length) {
-            LOGGER.warn("Invalid index {}", index);
-            return;
+    public void onStorageChanged() {
+        for (int i = 0; i < storages.length; ++i) {
+            final Set<StorageChange> storageChanges = tryUpdateStorage(i);
+            if (!storageChanges.isEmpty()) {
+                LOGGER.info("Detected storage change at index {}, got {} changes", i, storageChanges.size());
+            }
+            storageChanges.forEach(this::onStorageChange);
         }
-        initializeStorage(index).forEach(this::onStorageChange);
         updateActiveStorageCount();
     }
 
-    protected void onStorageChange(final StorageChange change) {
-        // no op
+    private Set<StorageChange> tryUpdateStorage(final int index) {
+        final Set<StorageChange> changes = new HashSet<>();
+        final StateTrackedStorage current = storages[index];
+        final Storage resolved = provider != null ? provider.resolve(index).orElse(null) : null;
+        if (current == null && resolved == null) {
+            return Collections.emptySet();
+        }
+        if (current != null && current.getDelegate() == resolved) {
+            return Collections.emptySet();
+        }
+        if (current == null) {
+            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, listener);
+            storages[index] = tracked;
+            changes.add(StorageChange.addedAt(index, tracked));
+        } else if (resolved == null) {
+            storages[index] = null;
+            changes.add(StorageChange.removedAt(index, current));
+        } else {
+            storages[index] = null;
+            changes.add(StorageChange.removedAt(index, current));
+            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, listener);
+            storages[index] = tracked;
+            changes.add(StorageChange.addedAt(index, tracked));
+        }
+        return changes;
     }
 
-    private Set<StorageChange> initializeStorage(final int index) {
-        final Set<StorageChange> results = new HashSet<>();
-        if (storages[index] != null) {
-            results.add(new StorageChange(true, storages[index]));
-        }
-        if (provider != null) {
-            provider.resolve(index).ifPresentOrElse(resolved -> {
-                final StateTrackedStorage newStorage = new StateTrackedStorage(resolved, listener);
-                storages[index] = newStorage;
-                results.add(new StorageChange(false, newStorage));
-            }, () -> storages[index] = null);
-        }
-        return results;
+    protected void onStorageChange(final StorageChange change) {
+        LOGGER.info("Detected storage change: {}", change);
     }
 
     private void updateActiveStorageCount() {
@@ -112,7 +128,14 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         return storage.getState();
     }
 
-    protected record StorageChange(boolean removed, StateTrackedStorage storage) {
+    protected record StorageChange(int index, boolean removed, StateTrackedStorage storage) {
+        private static StorageChange removedAt(final int index, final StateTrackedStorage storage) {
+            return new StorageChange(index, true, storage);
+        }
+
+        private static StorageChange addedAt(final int index, final StateTrackedStorage storage) {
+            return new StorageChange(index, false, storage);
+        }
     }
 
     @FunctionalInterface

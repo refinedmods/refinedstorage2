@@ -24,7 +24,8 @@ public class FluidGridInsertionHint implements GridInsertionHint {
             MouseClientTooltipComponent.Type.RIGHT,
             (FluidResource) result.fluid(),
             amount == Platform.INSTANCE.getBucketAmount() ? null : RefinedStorageClientApi.INSTANCE
-                .getResourceRendering(FluidResource.class).formatAmount(amount)
+                                                                   .getResourceRendering(FluidResource.class)
+                                                                   .formatAmount(amount)
         );
     }
 }

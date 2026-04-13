@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage.common.support.stretching.ScreenSize;
 
 import java.util.Optional;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationKey;
@@ -29,7 +29,6 @@ public class ConfigImpl implements Config {
     private final ModConfigSpec.EnumValue<ScreenSize> screenSize;
     private final ModConfigSpec.BooleanValue smoothScrolling;
     private final ModConfigSpec.BooleanValue debug;
-    private final ModConfigSpec.BooleanValue tenthAnniversaryCape;
     private final ModConfigSpec.IntValue maxRowsStretch;
     private final ModConfigSpec.BooleanValue searchBoxAutoSelected;
     private final ModConfigSpec.BooleanValue autocraftingNotification;
@@ -76,9 +75,6 @@ public class ConfigImpl implements Config {
         debug = builder
             .translation(translationKey("debug"))
             .define("debug", false);
-        tenthAnniversaryCape = builder
-            .translation(translationKey("tenthAnniversaryCape"))
-            .define("tenthAnniversaryCape", false);
         maxRowsStretch = builder
             .translation(translationKey("maxRowsStretch"))
             .defineInRange("maxRowsStretch", 256, 3, 256);
@@ -184,19 +180,6 @@ public class ConfigImpl implements Config {
         if (screenSize != this.screenSize.get()) {
             this.screenSize.set(screenSize);
             this.spec.save();
-        }
-    }
-
-    @Override
-    public boolean isTenthAnniversaryCape() {
-        return tenthAnniversaryCape.get();
-    }
-
-    @Override
-    public void setTenthAnniversaryCape(final boolean enabled) {
-        if (enabled != Boolean.TRUE.equals(this.tenthAnniversaryCape.get())) {
-            this.tenthAnniversaryCape.set(enabled);
-            ConfigImpl.this.spec.save();
         }
     }
 
@@ -537,15 +520,15 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public Optional<ResourceLocation> getSynchronizer() {
+        public Optional<Identifier> getSynchronizer() {
             if (synchronizer.get().trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(synchronizer.get()).map(ResourceLocation::tryParse);
+            return Optional.of(synchronizer.get()).map(Identifier::tryParse);
         }
 
         @Override
-        public void setSynchronizer(final ResourceLocation synchronizerId) {
+        public void setSynchronizer(final Identifier synchronizerId) {
             if (!synchronizerId.toString().equals(this.synchronizer.get())) {
                 this.synchronizer.set(synchronizerId.toString());
                 ConfigImpl.this.spec.save();
@@ -600,15 +583,15 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public Optional<ResourceLocation> getResourceType() {
+        public Optional<Identifier> getResourceType() {
             if (resourceType.get().trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(resourceType.get()).map(ResourceLocation::tryParse);
+            return Optional.of(resourceType.get()).map(Identifier::tryParse);
         }
 
         @Override
-        public void setResourceType(final ResourceLocation resourceTypeId) {
+        public void setResourceType(final Identifier resourceTypeId) {
             if (!resourceTypeId.toString().equals(this.resourceType.get())) {
                 this.resourceType.set(resourceTypeId.toString());
                 ConfigImpl.this.spec.save();

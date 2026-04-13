@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.storage.root.FuzzyRootStorage;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
@@ -25,13 +26,13 @@ import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
@@ -40,6 +41,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -51,6 +54,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,7 +185,7 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
             SoundEvents.ITEM_PICKUP,
             SoundSource.PLAYERS,
             .2f,
-            ((level.random.nextFloat() - level.random.nextFloat()) * .7f + 1) * 2
+            ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * .7f + 1) * 2
         );
         return true;
     }
@@ -295,25 +301,24 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     @Override
-    public void writeConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.writeConfiguration(tag, provider);
-        filter.save(tag, provider);
+    public void writeConfiguration(final ValueOutput output) {
+        super.writeConfiguration(output);
+        filter.store(output);
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_CLIENT_FILTER) && tag.contains(TAG_CLIENT_AMOUNT) && tag.contains(TAG_CLIENT_ACTIVE)) {
-            filter.getFilterContainer().fromTag(tag.getCompound(TAG_CLIENT_FILTER), provider);
-            currentAmount = tag.getLong(TAG_CLIENT_AMOUNT);
-            currentlyActive = tag.getBoolean(TAG_CLIENT_ACTIVE);
-        }
-        super.loadAdditional(tag, provider);
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_CLIENT_FILTER, ResourceCodecs.CONTAINER_CONTENTS_CODEC)
+            .ifPresent(filterContents -> filter.getFilterContainer().load(filterContents));
+        currentAmount = input.getLongOr(TAG_CLIENT_AMOUNT, 0);
+        currentlyActive = input.getBooleanOr(TAG_CLIENT_ACTIVE, false);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void readConfiguration(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.readConfiguration(tag, provider);
-        filter.load(tag, provider);
+    public void readConfiguration(final ValueInput input) {
+        super.readConfiguration(input);
+        filter.read(input);
     }
 
     @Override
@@ -338,14 +343,16 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    @Nullable
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
         final CompoundTag tag = new CompoundTag();
-        tag.put(TAG_CLIENT_FILTER, filter.getFilterContainer().toTag(provider));
+        tag.store(TAG_CLIENT_FILTER, ResourceCodecs.CONTAINER_CONTENTS_CODEC,
+            ResourceContainerContents.of(filter.getFilterContainer()));
         tag.putLong(TAG_CLIENT_AMOUNT, currentAmount);
         tag.putBoolean(TAG_CLIENT_ACTIVE, currentlyActive);
         return tag;

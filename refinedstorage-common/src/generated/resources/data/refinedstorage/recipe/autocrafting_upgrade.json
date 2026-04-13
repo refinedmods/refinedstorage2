@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "#c:player_workstations/crafting_tables",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "O": "refinedstorage:construction_core",
+    "U": "refinedstorage:upgrade"
+  },
+  "pattern": [
+    "EOE",
+    "CUC",
+    "EEE"
+  ],
+  "result": {
+    "id": "refinedstorage:autocrafting_upgrade"
+  }
+}

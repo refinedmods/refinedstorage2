@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -320,7 +320,7 @@ class GridQueryParserImplTest {
         @Override
         @Nullable
         public TrackedResource getTrackedResource(
-            final Function<ResourceKey, TrackedResource> trackedResourceProvider
+            final Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider
         ) {
             return null;
         }
@@ -364,7 +364,7 @@ class GridQueryParserImplTest {
         }
 
         @Override
-        public void render(final GuiGraphics graphics, final int x, final int y) {
+        public void render(final GuiGraphicsExtractor graphics, final int x, final int y) {
 
             throw new UnsupportedOperationException();
         }

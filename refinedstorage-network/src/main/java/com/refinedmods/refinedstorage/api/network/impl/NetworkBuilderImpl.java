@@ -16,7 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class NetworkBuilderImpl implements NetworkBuilder {
     private static final Comparator<NetworkNodeContainer> LOWEST_PRIORITY_FIRST = Comparator.comparingInt(

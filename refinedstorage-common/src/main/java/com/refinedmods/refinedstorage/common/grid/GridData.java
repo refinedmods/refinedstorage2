@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.storage.StorageCodecs;
+import com.refinedmods.refinedstorage.common.storage.TrackedResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public record GridData(boolean active, List<GridResource> resources, Set<Platfor
         ByteBufCodecs.BOOL, GridData::active,
         ByteBufCodecs.collection(ArrayList::new, StreamCodec.composite(
             ResourceCodecs.AMOUNT_STREAM_CODEC, GridResource::resourceAmount,
-            StorageCodecs.TRACKED_RESOURCE_OPTIONAL_STREAM_CODEC, GridResource::trackedResource,
+            TrackedResourceCodecs.OPTIONAL_STREAM_CODEC, GridResource::trackedResource,
             GridResource::new
         )), GridData::resources,
         ByteBufCodecs.collection(HashSet::new, ResourceCodecs.STREAM_CODEC), GridData::autocraftableResources,

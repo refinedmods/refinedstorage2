@@ -19,17 +19,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,11 +110,11 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int x, final int y) {
+    public void render(final GuiGraphicsExtractor graphics, final int x, final int y) {
         final Font font = Minecraft.getInstance().font;
         try {
-            graphics.renderItem(itemStack, x, y);
-            graphics.renderItemDecorations(font, itemStack, x, y, null);
+            graphics.item(itemStack, x, y);
+            graphics.itemDecorations(font, itemStack, x, y, null);
         } catch (final Throwable t) {
             LOGGER.warn("Failed to render item {}", itemStack, t);
         }

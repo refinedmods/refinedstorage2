@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "refinedstorage:block/bottom",
+    "east": "refinedstorage:block/storage_monitor/left",
+    "north": "refinedstorage:block/storage_monitor/front",
+    "particle": "refinedstorage:block/side",
+    "south": "refinedstorage:block/storage_monitor/back",
+    "up": "refinedstorage:block/storage_monitor/top",
+    "west": "refinedstorage:block/storage_monitor/right"
+  }
+}

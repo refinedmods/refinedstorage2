@@ -28,8 +28,7 @@ public record StorageInfoRequestPacket(UUID storageId) implements CustomPacketPa
 
     public static void handle(final StorageInfoRequestPacket packet, final PacketContext ctx) {
         final Player player = ctx.getPlayer();
-        final StorageInfo info = RefinedStorageApi.INSTANCE
-            .getStorageRepository(player.getCommandSenderWorld())
+        final StorageInfo info = RefinedStorageApi.INSTANCE.getStorageRepository(player.level())
             .getInfo(packet.storageId());
         S2CPackets.sendStorageInfoResponse((ServerPlayer) player, packet.storageId, info);
     }

@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.support.widget;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class TextMarquee {
@@ -30,14 +30,15 @@ public class TextMarquee {
     }
 
     public TextMarquee(final Component text, final int maxWidth) {
-        this(text, maxWidth, 4210752, false, false);
+        this(text, maxWidth, -12566464, false, false);
     }
 
     public int getEffectiveWidth(final Font font) {
         return Math.min(maxWidth, font.width(text));
     }
 
-    public void render(final GuiGraphics graphics, final int x, final int y, final Font font, final boolean hovering) {
+    public void render(final GuiGraphicsExtractor graphics, final int x, final int y, final Font font,
+                       final boolean hovering) {
         if (!hovering) {
             offset = 0;
             state = State.MOVING_LEFT;
@@ -62,7 +63,7 @@ public class TextMarquee {
                     SmallText.DEFAULT_SCALE
                 );
             } else {
-                graphics.drawString(font, text, x + offset, y, color, dropShadow);
+                graphics.text(font, text, x + offset, y, color, dropShadow);
             }
             graphics.disableScissor();
         } else {
@@ -78,7 +79,7 @@ public class TextMarquee {
                     SmallText.DEFAULT_SCALE
                 );
             } else {
-                graphics.drawString(font, text, x, y, color, dropShadow);
+                graphics.text(font, text, x, y, color, dropShadow);
             }
         }
     }

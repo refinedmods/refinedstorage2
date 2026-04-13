@@ -9,9 +9,18 @@ import java.util.Optional;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.Nullable;
 
 public class FluidResourceContainerInsertStrategy implements ResourceContainerInsertStrategy {
-    private static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
+    @Nullable
+    private ItemStack emptyBucket;
+
+    private ItemStack getEmptyBucket() {
+        if (emptyBucket == null) {
+            emptyBucket = new ItemStack(Items.BUCKET);
+        }
+        return emptyBucket;
+    }
 
     @Override
     public Optional<InsertResult> insert(final ItemStack container, final ResourceAmount resourceAmount) {
@@ -25,7 +34,7 @@ public class FluidResourceContainerInsertStrategy implements ResourceContainerIn
         if (!(resource instanceof FluidResource fluidResource)) {
             return Optional.empty();
         }
-        final ItemStack container = carriedStack.isEmpty() ? EMPTY_BUCKET : carriedStack;
+        final ItemStack container = carriedStack.isEmpty() ? getEmptyBucket() : carriedStack;
         final ResourceAmount toFill = new ResourceAmount(fluidResource, Platform.INSTANCE.getBucketAmount());
         return Platform.INSTANCE.fillContainer(container, toFill)
             .filter(result -> result.amount() > 0)

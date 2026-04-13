@@ -20,9 +20,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

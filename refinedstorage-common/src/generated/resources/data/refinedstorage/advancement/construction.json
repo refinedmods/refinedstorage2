@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:exporting",
+  "criteria": {
+    "constructor_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:constructors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.construction.description"
+    },
+    "icon": {
+      "id": "refinedstorage:constructor"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.construction"
+    }
+  },
+  "requirements": [
+    [
+      "constructor_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

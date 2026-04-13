@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "refinedstorage:item/creative_fluid_storage_disk"
+  }
+}

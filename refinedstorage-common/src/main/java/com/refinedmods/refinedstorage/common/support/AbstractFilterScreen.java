@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.common.support;
 
-import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.exportingindicator.ExportingIndicator;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
@@ -8,29 +7,27 @@ import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButt
 import java.util.List;
 import java.util.function.IntFunction;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage.common.support.Sprites.WARNING_SIZE;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> extends AbstractBaseScreen<T> {
-    public static final ResourceLocation TEXTURE = createIdentifier("textures/gui/generic_filter.png");
+    public static final Identifier TEXTURE = createIdentifier("textures/gui/generic_filter.png");
 
     protected AbstractFilterScreen(final T menu,
                                    final Inventory playerInventory,
-                                   final Component title) {
-        super(menu, playerInventory, title);
+                                   final Component title,
+                                   final boolean upgrades) {
+        super(menu, playerInventory, title, upgrades ? 210 : 176, 137);
         this.inventoryLabelY = 42;
-        this.imageWidth = hasUpgrades() ? 210 : 176;
-        this.imageHeight = 137;
-    }
-
-    protected boolean hasUpgrades() {
-        return true;
     }
 
     @Override
@@ -40,11 +37,12 @@ public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> 
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 
-    public static boolean renderExportingIndicators(final GuiGraphics graphics,
+    public static boolean renderExportingIndicators(final Font font,
+                                                    final GuiGraphicsExtractor graphics,
                                                     final int leftPos,
                                                     final int topPos,
                                                     final int mouseX,
@@ -55,21 +53,20 @@ public abstract class AbstractFilterScreen<T extends AbstractBaseContainerMenu> 
             final ExportingIndicator indicator = indicatorProvider.apply(i);
             final int xx = leftPos + 7 + (i * 18) + 18 - 10 + 1;
             final int yy = topPos + 19 + 18 - 10 + 1;
-            final ResourceLocation sprite = indicator.getSprite();
+            final Identifier sprite = indicator.getSprite();
             if (sprite != null) {
-                graphics.pose().pushPose();
-                graphics.pose().translate(0, 0, 300);
-                graphics.blitSprite(sprite, xx, yy, WARNING_SIZE, WARNING_SIZE);
-                graphics.pose().popPose();
+                graphics.blitSprite(GUI_TEXTURED, sprite, xx, yy, WARNING_SIZE, WARNING_SIZE);
             }
             final boolean hovering =
                 mouseX >= xx && mouseX <= xx + WARNING_SIZE && mouseY >= yy && mouseY <= yy + WARNING_SIZE;
             if (indicator != ExportingIndicator.NONE && hovering) {
-                Platform.INSTANCE.renderTooltip(
-                    graphics,
+                graphics.tooltip(
+                    font,
                     List.of(ClientTooltipComponent.create(indicator.getTooltip().getVisualOrderText())),
                     mouseX,
-                    mouseY
+                    mouseY,
+                    DefaultTooltipPositioner.INSTANCE,
+                    null
                 );
                 return true;
             }

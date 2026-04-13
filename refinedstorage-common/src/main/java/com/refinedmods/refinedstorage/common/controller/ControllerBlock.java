@@ -4,13 +4,18 @@ import com.refinedmods.refinedstorage.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 
 public class ControllerBlock extends AbstractControllerBlock<ControllerBlockItem> {
-    public ControllerBlock(final MutableComponent name,
+    private final Identifier id;
+
+    public ControllerBlock(final Identifier id,
+                           final MutableComponent name,
                            final ControllerBlockEntityTicker ticker,
                            final DyeColor color) {
-        super(ControllerType.NORMAL, name, ticker, color);
+        super(id, ControllerType.NORMAL, name, ticker, color);
+        this.id = id;
     }
 
     @Override
@@ -20,6 +25,6 @@ public class ControllerBlock extends AbstractControllerBlock<ControllerBlockItem
 
     @Override
     public ControllerBlockItem createBlockItem() {
-        return new ControllerBlockItem(this);
+        return new ControllerBlockItem(id, this);
     }
 }

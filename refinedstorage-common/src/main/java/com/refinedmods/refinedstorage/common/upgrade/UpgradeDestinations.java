@@ -6,10 +6,10 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.Items;
 
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public enum UpgradeDestinations implements UpgradeDestination {
     IMPORTER(ContentNames.IMPORTER, () -> new ItemStack(Items.INSTANCE.getImporters().getFirst().get())),

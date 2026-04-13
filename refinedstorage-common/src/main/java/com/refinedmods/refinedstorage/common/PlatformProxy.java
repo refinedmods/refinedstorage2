@@ -6,26 +6,24 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
+import com.refinedmods.refinedstorage.common.support.RecipeProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.MenuOpener;
 import com.refinedmods.refinedstorage.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage.common.support.render.FluidRenderer;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -47,8 +45,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jspecify.annotations.Nullable;
 
 public class PlatformProxy implements Platform {
     @Nullable
@@ -186,19 +184,11 @@ public class PlatformProxy implements Platform {
 
     @Override
     public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack,
-                                                                 final GuiGraphics graphics,
+                                                                 final GuiGraphicsExtractor graphics,
                                                                  final int mouseX,
                                                                  final Optional<TooltipComponent> imageComponent,
                                                                  final List<Component> components) {
         return ensureLoaded().processTooltipComponents(stack, graphics, mouseX, imageComponent, components);
-    }
-
-    @Override
-    public void renderTooltip(final GuiGraphics graphics,
-                              final List<ClientTooltipComponent> components,
-                              final int x,
-                              final int y) {
-        ensureLoaded().renderTooltip(graphics, components, x, y);
     }
 
     @Override
@@ -214,14 +204,6 @@ public class PlatformProxy implements Platform {
     @Override
     public <T extends CustomPacketPayload> void sendPacketToClient(final ServerPlayer player, final T packet) {
         ensureLoaded().sendPacketToClient(player, packet);
-    }
-
-    @Override
-    public void saveSavedData(final SavedData savedData,
-                              final File file,
-                              final HolderLookup.Provider provider,
-                              final BiConsumer<File, HolderLookup.Provider> defaultSaveFunction) {
-        ensureLoaded().saveSavedData(savedData, file, provider, defaultSaveFunction);
     }
 
     @Nullable
@@ -251,13 +233,18 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
-        ensureLoaded().setTenthAnniversaryCape(player, enabled);
+    public void updateImageHeight(final AbstractContainerScreen<?> screen, final int height) {
+        ensureLoaded().updateImageHeight(screen, height);
     }
 
     @Override
-    public boolean isTenthAnniversaryCapeAvailable() {
-        return ensureLoaded().isTenthAnniversaryCapeAvailable();
+    public RecipeProvider getClientRecipeProvider(final Level level) {
+        return ensureLoaded().getClientRecipeProvider(level);
+    }
+
+    @Override
+    public void setClientRecipeProvider(final RecipeProvider recipeProvider) {
+        ensureLoaded().setClientRecipeProvider(recipeProvider);
     }
 
     private Platform ensureLoaded() {

@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class TaskStatusBuilder {
     private final TaskStatus.TaskInfo info;

@@ -31,7 +31,7 @@ class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
                         final SyntaxHighlighter syntaxHighlighter,
                         final History history) {
         super(textRenderer, x, y, width, history);
-        setFormatter((text, firstCharacterIndex) -> format(syntaxHighlighter, text));
+        addFormatter((text, firstCharacterIndex) -> format(syntaxHighlighter, text));
         setResponder(text -> listeners.forEach(l -> l.accept(text)));
     }
 
@@ -78,6 +78,6 @@ class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     @Override
     public void setValid(final boolean valid) {
         this.valid = valid;
-        setTextColor(valid ? 0xFFFFFF : 0xFF5555);
+        setTextColor(valid ? 0xFFFFFFFF : 0xFFFF5555);
     }
 }

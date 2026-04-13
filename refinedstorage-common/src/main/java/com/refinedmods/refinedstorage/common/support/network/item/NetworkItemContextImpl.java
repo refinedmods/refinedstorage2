@@ -10,11 +10,11 @@ import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkIte
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 class NetworkItemContextImpl implements NetworkItemContext {
     private final Player player;
@@ -48,7 +48,7 @@ class NetworkItemContextImpl implements NetworkItemContext {
         if (networkLocation == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(player.getServer())
+        return Optional.ofNullable(player.level().getServer())
             .map(server -> server.getLevel(networkLocation.dimension()))
             .filter(level -> level.isLoaded(networkLocation.pos()))
             .map(level -> level.getBlockEntity(networkLocation.pos()))

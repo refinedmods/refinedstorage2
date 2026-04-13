@@ -10,11 +10,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-public record PatternGridAllowedAlternativesChangePacket(int slotIndex, Set<ResourceLocation> ids)
+public record PatternGridAllowedAlternativesChangePacket(int slotIndex, Set<Identifier> ids)
     implements CustomPacketPayload {
     public static final Type<PatternGridAllowedAlternativesChangePacket> PACKET_TYPE = new Type<>(
         createIdentifier("pattern_grid_allowed_alternatives_change")
@@ -22,7 +22,7 @@ public record PatternGridAllowedAlternativesChangePacket(int slotIndex, Set<Reso
     public static final StreamCodec<RegistryFriendlyByteBuf, PatternGridAllowedAlternativesChangePacket> STREAM_CODEC =
         StreamCodec.composite(
             ByteBufCodecs.INT, PatternGridAllowedAlternativesChangePacket::slotIndex,
-            ByteBufCodecs.collection(HashSet::new, ResourceLocation.STREAM_CODEC),
+            ByteBufCodecs.collection(HashSet::new, Identifier.STREAM_CODEC),
             PatternGridAllowedAlternativesChangePacket::ids,
             PatternGridAllowedAlternativesChangePacket::new
         );

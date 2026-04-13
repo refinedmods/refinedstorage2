@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewItem;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen;
@@ -21,33 +20,35 @@ import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.MathUtil.darkenARGB;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class AutocraftingPreviewScreen extends AbstractAmountScreen<AutocraftingPreviewContainerMenu, Double>
     implements AutocraftingPreviewListener {
     static final int REQUEST_BUTTON_HEIGHT = 96 / 4;
     static final int REQUEST_BUTTON_WIDTH = 64;
 
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/autocrafting_preview.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/autocrafting_preview.png");
     private static final MutableComponent TITLE = createTranslation("gui", "autocrafting_preview.title");
     private static final MutableComponent START = createTranslation("gui", "autocrafting_preview.start");
     private static final MutableComponent PENDING = createTranslation("gui", "autocrafting_preview.pending");
@@ -99,15 +100,15 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         "autocrafting_preview.not_available"
     );
     private static final MutableComponent ZOOM = createTranslation("gui", "autocrafting_preview.zoom");
-    private static final ResourceLocation ROW = createIdentifier("autocrafting_preview/row");
-    private static final ResourceLocation CRAFTING_REQUESTS = createIdentifier("autocrafting_preview/requests");
-    private static final ResourceLocation LIST_PREVIEW = createIdentifier("autocrafting_preview/list_preview");
-    private static final ResourceLocation TREE_PREVIEW = createIdentifier("autocrafting_preview/tree_preview");
-    private static final ResourceLocation TREE_PREVIEW_VIGNETTE =
+    private static final Identifier ROW = createIdentifier("autocrafting_preview/row");
+    private static final Identifier CRAFTING_REQUESTS = createIdentifier("autocrafting_preview/requests");
+    private static final Identifier LIST_PREVIEW = createIdentifier("autocrafting_preview/list_preview");
+    private static final Identifier TREE_PREVIEW = createIdentifier("autocrafting_preview/tree_preview");
+    private static final Identifier TREE_PREVIEW_VIGNETTE =
         createIdentifier("autocrafting_preview/tree_preview_vignette");
-    private static final ResourceLocation LIST_ICON = createIdentifier("widget/autocrafting_list_preview");
-    private static final ResourceLocation TREE_ICON = createIdentifier("widget/autocrafting_tree_preview");
-    private static final ResourceLocation ZOOM_ICON = createIdentifier("widget/autocrafting_zoom_tree_preview");
+    private static final Identifier LIST_ICON = createIdentifier("widget/autocrafting_list_preview");
+    private static final Identifier TREE_ICON = createIdentifier("widget/autocrafting_tree_preview");
+    private static final Identifier ZOOM_ICON = createIdentifier("widget/autocrafting_zoom_tree_preview");
 
     private static final int ROWS_VISIBLE = 4;
     private static final int COLUMNS = 3;
@@ -186,10 +187,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 .withResetAmount(1D)
                 .withConfirmButtonText(START)
                 .build(),
-            DoubleAmountOperations.INSTANCE
+            DoubleAmountOperations.INSTANCE,
+            254, 249
         );
-        this.imageWidth = 254;
-        this.imageHeight = 249;
         this.requestsButtonsVisible = getMenu().getRequests().size() > 1;
         getMenu().setListener(this);
     }
@@ -227,8 +227,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         maxButton.active = wasActive;
         addRenderableWidget(maxButton);
 
-        tree = new TreePreviewWidget(this, leftPos + 8, topPos + 98,
-            PREVIEW_AREA_CONTENTS_TREE_WIDTH, PREVIEW_AREA_CONTENTS_HEIGHT);
+        tree = new TreePreviewWidget(leftPos + 8, topPos + 98, PREVIEW_AREA_CONTENTS_TREE_WIDTH,
+            PREVIEW_AREA_CONTENTS_HEIGHT);
 
         zoomButton = new ImageButton(
             leftPos + imageWidth - 6 - ImageButton.BUTTON_SIZE,
@@ -398,13 +398,14 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         if (scrollbar != null) {
-            scrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
         if (requestButtonsScrollbar != null) {
-            requestButtonsScrollbar.render(graphics, mouseX, mouseY, partialTicks);
+            requestButtonsScrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
         if (requestsButtonsVisible) {
             final int requestsInnerX = getRequestButtonsInnerX();
@@ -416,43 +417,14 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 requestsInnerY + REQUESTS_INNER_HEIGHT
             );
             for (final AutocraftingRequestButton requestButton : requestButtons) {
-                requestButton.render(graphics, mouseX, mouseY, partialTicks);
+                requestButton.extractRenderState(graphics, mouseX, mouseY, partialTicks);
             }
             graphics.disableScissor();
         }
     }
 
-    @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
-        if (requestsButtonsVisible) {
-            graphics.blitSprite(CRAFTING_REQUESTS, leftPos - REQUESTS_WIDTH + 4, topPos, REQUESTS_WIDTH,
-                REQUESTS_HEIGHT);
-        }
-        final int contentsX = leftPos + 8;
-        final int contentsY = topPos + 98;
-        final AutocraftingPreviewStyle style = getMenu().getStyle();
-        renderContentsBackground(graphics, style, contentsX, contentsY);
-        final int contentsWidth = style == AutocraftingPreviewStyle.LIST
-            ? PREVIEW_AREA_CONTENTS_LIST_WIDTH
-            : PREVIEW_AREA_CONTENTS_TREE_WIDTH;
-        graphics.enableScissor(contentsX, contentsY, contentsX + contentsWidth,
-            contentsY + PREVIEW_AREA_CONTENTS_HEIGHT);
-        renderContents(graphics, mouseX, mouseY, style, contentsX, contentsY);
-        graphics.disableScissor();
-    }
-
-    private void renderContentsBackground(final GuiGraphics graphics, final AutocraftingPreviewStyle style,
-                                          final int contentsX, final int contentsY) {
-        if (style == AutocraftingPreviewStyle.LIST) {
-            graphics.blitSprite(LIST_PREVIEW, contentsX - 1, contentsY - 1, PREVIEW_AREA_WIDTH, PREVIEW_AREA_HEIGHT);
-        } else if (style == AutocraftingPreviewStyle.TREE) {
-            graphics.blitSprite(TREE_PREVIEW, contentsX - 1, contentsY - 1, PREVIEW_AREA_WIDTH, PREVIEW_AREA_HEIGHT);
-        }
-    }
-
-    private void renderContents(final GuiGraphics graphics, final int mouseX, final int mouseY,
-                                final AutocraftingPreviewStyle style, final int x, final int y) {
+    private void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                 final AutocraftingPreviewStyle style, final int x, final int y) {
         final Preview preview = getMenu().getCurrentRequest().getPreview();
         final TreePreview treePreview = getMenu().getCurrentRequest().getTreePreview();
         final PreviewType type = getType(preview, treePreview);
@@ -462,6 +434,38 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             renderListPreview(graphics, mouseX, mouseY, preview, x, y);
         } else if (style == AutocraftingPreviewStyle.TREE) {
             renderTreePreview(graphics, mouseX, mouseY, x, y);
+        }
+    }
+
+    @Override
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+        if (requestsButtonsVisible) {
+            graphics.blitSprite(GUI_TEXTURED, CRAFTING_REQUESTS, leftPos - REQUESTS_WIDTH + 4, topPos, REQUESTS_WIDTH,
+                REQUESTS_HEIGHT);
+        }
+        final int contentsX = leftPos + 8;
+        final int contentsY = topPos + 98;
+        final AutocraftingPreviewStyle style = getMenu().getStyle();
+        extractContentsBackground(graphics, style, contentsX, contentsY);
+        final int contentsWidth = style == AutocraftingPreviewStyle.LIST
+            ? PREVIEW_AREA_CONTENTS_LIST_WIDTH
+            : PREVIEW_AREA_CONTENTS_TREE_WIDTH;
+        graphics.enableScissor(contentsX, contentsY, contentsX + contentsWidth,
+            contentsY + PREVIEW_AREA_CONTENTS_HEIGHT);
+        extractContents(graphics, mouseX, mouseY, style, contentsX, contentsY);
+        graphics.disableScissor();
+    }
+
+    private void extractContentsBackground(final GuiGraphicsExtractor graphics, final AutocraftingPreviewStyle style,
+                                           final int contentsX, final int contentsY) {
+        if (style == AutocraftingPreviewStyle.LIST) {
+            graphics.blitSprite(GUI_TEXTURED, LIST_PREVIEW, contentsX - 1, contentsY - 1, PREVIEW_AREA_WIDTH,
+                PREVIEW_AREA_HEIGHT);
+        } else if (style == AutocraftingPreviewStyle.TREE) {
+            graphics.blitSprite(GUI_TEXTURED, TREE_PREVIEW, contentsX - 1, contentsY - 1, PREVIEW_AREA_WIDTH,
+                PREVIEW_AREA_HEIGHT);
         }
     }
 
@@ -485,7 +489,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         return Collections.emptyList();
     }
 
-    private void renderError(final GuiGraphics graphics, final PreviewType type, final int y, final int x,
+    private void renderError(final GuiGraphicsExtractor graphics, final PreviewType type, final int y, final int x,
                              final List<ResourceAmount> outputsOfPatternWithCycle) {
         if (type == PreviewType.CYCLE_DETECTED) {
             renderCycleDetected(graphics, y, x, outputsOfPatternWithCycle);
@@ -498,7 +502,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
     }
 
-    private void renderCycleDetected(final GuiGraphics graphics, final int y, final int x,
+    private void renderCycleDetected(final GuiGraphicsExtractor graphics, final int y, final int x,
                                      final List<ResourceAmount> outputsOfPatternWithCycle) {
         int yy = y + 4;
         SmallText.render(
@@ -554,7 +558,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         );
     }
 
-    private void renderRequestTooLargeToHandle(final GuiGraphics graphics, final int x, final int y) {
+    private void renderRequestTooLargeToHandle(final GuiGraphicsExtractor graphics, final int x, final int y) {
         SmallText.render(
             graphics,
             font,
@@ -577,7 +581,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         );
     }
 
-    private void renderCancelled(final GuiGraphics graphics, final int x, final int y) {
+    private void renderCancelled(final GuiGraphicsExtractor graphics, final int x, final int y) {
         SmallText.render(
             graphics,
             font,
@@ -610,7 +614,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         );
     }
 
-    private void renderNotAvailable(final GuiGraphics graphics, final int x, final int y) {
+    private void renderNotAvailable(final GuiGraphicsExtractor graphics, final int x, final int y) {
         SmallText.render(
             graphics,
             font,
@@ -623,7 +627,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         );
     }
 
-    private void renderListPreview(final GuiGraphics graphics,
+    private void renderListPreview(final GuiGraphicsExtractor graphics,
                                    final int mouseX,
                                    final int mouseY,
                                    @Nullable final Preview preview,
@@ -650,7 +654,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             : (int) scrollbar.getOffset() * ROW_HEIGHT);
     }
 
-    private void renderRow(final GuiGraphics graphics,
+    private void renderRow(final GuiGraphicsExtractor graphics,
                            final int x,
                            final int y,
                            final int i,
@@ -660,7 +664,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (y <= topPos + 98 - ROW_HEIGHT || y > topPos + 98 + PREVIEW_AREA_CONTENTS_HEIGHT) {
             return;
         }
-        graphics.blitSprite(ROW, x, y, ROW_WIDTH, ROW_HEIGHT);
+        graphics.blitSprite(GUI_TEXTURED, ROW, x, y, ROW_WIDTH, ROW_HEIGHT);
         for (int column = i * COLUMNS; column < Math.min(i * COLUMNS + COLUMNS, items.size()); ++column) {
             final PreviewItem item = items.get(column);
             final int xx = x + (column % COLUMNS) * 74;
@@ -668,7 +672,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
     }
 
-    private void renderCell(final GuiGraphics graphics,
+    private void renderCell(final GuiGraphicsExtractor graphics,
                             final int x,
                             final int y,
                             final PreviewItem item,
@@ -683,9 +687,9 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         rendering.render(item.resource(), graphics, xx, yy);
         if (isHovering(xx - leftPos, yy - topPos, 16, 16, mouseX, mouseY)
             && isHoveringOverPreviewArea(mouseX, mouseY)) {
-            setTooltipForNextRenderPass(rendering.getTooltip(item.resource()).stream()
+            graphics.setTooltipForNextFrame(rendering.getTooltip(item.resource()).stream()
                 .map(Component::getVisualOrderText)
-                .toList());
+                .toList(), (int) mouseX, (int) mouseY);
         }
         if (!SmallText.isSmall()) {
             yy -= 2;
@@ -704,8 +708,8 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
     }
 
-    private void renderCellBackground(final GuiGraphics graphics, final int x, final int y, final PreviewItem item,
-                                      final double mouseX, final double mouseY) {
+    private void renderCellBackground(final GuiGraphicsExtractor graphics, final int x, final int y,
+                                      final PreviewItem item, final double mouseX, final double mouseY) {
         final boolean hovering =
             isHovering(x + 1 - leftPos, y + 1 - topPos, CELL_WIDTH - 1, CELL_HEIGHT - 1, mouseX, mouseY);
         if (item.missing() > 0 || hovering) {
@@ -715,7 +719,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         }
     }
 
-    private void renderCellText(final GuiGraphics graphics,
+    private void renderCellText(final GuiGraphicsExtractor graphics,
                                 final String type,
                                 final ResourceRendering rendering,
                                 final int x,
@@ -728,53 +732,54 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 .getVisualOrderText(),
             x,
             y,
-            0x404040,
+            0xFF404040,
             false,
             SmallText.DEFAULT_SCALE
         );
     }
 
-    private void renderTreePreview(final GuiGraphics graphics, final int mouseX, final int mouseY, final int x,
+    private void renderTreePreview(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final int x,
                                    final int y) {
         if (tree == null) {
             return;
         }
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        tree.renderWidget(graphics, mouseX, mouseY, 0);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        tree.extractRenderState(graphics, mouseX, mouseY, 0);
+        graphics.pose().popMatrix();
         renderTreePreviewVignette(graphics, x, y);
     }
 
-    private void renderTreePreviewVignette(final GuiGraphics graphics, final int contentsX, final int contentsY) {
-        RenderSystem.enableBlend();
-        graphics.blitSprite(TREE_PREVIEW_VIGNETTE, contentsX, contentsY, PREVIEW_AREA_CONTENTS_TREE_WIDTH,
+    private void renderTreePreviewVignette(final GuiGraphicsExtractor graphics, final int contentsX,
+                                           final int contentsY) {
+        graphics.blitSprite(GUI_TEXTURED, TREE_PREVIEW_VIGNETTE, contentsX, contentsY, PREVIEW_AREA_CONTENTS_TREE_WIDTH,
             PREVIEW_AREA_CONTENTS_HEIGHT);
-        RenderSystem.disableBlend();
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
-        super.renderTooltip(graphics, x, y);
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
+        super.extractTooltip(graphics, x, y);
         if (maxButton != null && maxButton.isHovered()) {
-            Platform.INSTANCE.renderTooltip(
-                graphics,
+            graphics.tooltip(
+                font,
                 List.of(HelpClientTooltipComponent.createAlwaysDisplayed(MAX_HELP)),
                 x,
-                y
+                y,
+                DefaultTooltipPositioner.INSTANCE,
+                null
             );
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
-        if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        if (scrollbar != null && scrollbar.mouseClicked(event, doubleClick)) {
             return true;
         }
-        if (requestButtonsScrollbar != null && requestButtonsScrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
+        if (requestButtonsScrollbar != null && requestButtonsScrollbar.mouseClicked(event, doubleClick)) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
@@ -789,26 +794,26 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
-    public boolean mouseReleased(final double mx, final double my, final int button) {
-        if (scrollbar != null && scrollbar.mouseReleased(mx, my, button)) {
+    public boolean mouseReleased(final MouseButtonEvent event) {
+        if (scrollbar != null && scrollbar.mouseReleased(event)) {
             return true;
         }
-        if (requestButtonsScrollbar != null && requestButtonsScrollbar.mouseReleased(mx, my, button)) {
+        if (requestButtonsScrollbar != null && requestButtonsScrollbar.mouseReleased(event)) {
             return true;
         }
-        return super.mouseReleased(mx, my, button);
+        return super.mouseReleased(event);
     }
 
+
     @Override
-    public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double dragX,
-                                final double dragY) {
-        if (tree != null
-            && tree.visible
-            && isHoveringOverPreviewArea(mouseX, mouseY)
-            && tree.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+    public boolean mouseDragged(final MouseButtonEvent event, final double dx, final double dy) {
+        final double mouseX = event.x();
+        final double mouseY = event.y();
+        if (tree != null && tree.visible && isHoveringOverPreviewArea(mouseX, mouseY)
+            && tree.mouseDragged(event, dx, dy)) {
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
@@ -857,7 +862,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 
@@ -870,10 +875,10 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         getAndValidateAmount().ifPresentOrElse(amount -> {
             confirmButton.setMessage(PENDING);
             changedAmount = amount;
-            amountField.setTextColor(0xFFFFFF);
+            amountField.setTextColor(0xFFFFFFFF);
         }, () -> {
             confirmButton.setMessage(START);
-            amountField.setTextColor(0xFF5555);
+            amountField.setTextColor(0xFFFF5555);
         });
     }
 

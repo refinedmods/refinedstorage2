@@ -51,13 +51,12 @@ import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTra
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -71,6 +70,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 public class RefinedStorageApiProxy implements RefinedStorageApi {
     @Nullable
@@ -417,12 +417,12 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
-    public ResourceLocation getCreativeModeTabId() {
+    public Identifier getCreativeModeTabId() {
         return ensureLoaded().getCreativeModeTabId();
     }
 
     @Override
-    public ResourceLocation getColoredCreativeModeTabId() {
+    public Identifier getColoredCreativeModeTabId() {
         return ensureLoaded().getColoredCreativeModeTabId();
     }
 

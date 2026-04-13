@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage.common.controller;
 
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseBlock;
 import com.refinedmods.refinedstorage.common.support.BlockItemProvider;
 import com.refinedmods.refinedstorage.common.support.ColorableBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
@@ -33,11 +34,12 @@ public abstract class AbstractControllerBlock<I extends BlockItem>
     private final ControllerBlockEntityTicker ticker;
     private final DyeColor color;
 
-    protected AbstractControllerBlock(final ControllerType type,
+    protected AbstractControllerBlock(final Identifier id,
+                                      final ControllerType type,
                                       final MutableComponent name,
                                       final ControllerBlockEntityTicker ticker,
                                       final DyeColor color) {
-        super(BlockConstants.PROPERTIES);
+        super(BlockProperties.stone(id));
         this.type = type;
         this.name = name;
         this.ticker = ticker;

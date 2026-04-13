@@ -51,13 +51,12 @@ import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTra
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -72,6 +71,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public interface RefinedStorageApi {
@@ -216,9 +216,9 @@ public interface RefinedStorageApi {
 
     Optional<Pattern> getPattern(ItemStack stack, Level level);
 
-    ResourceLocation getCreativeModeTabId();
+    Identifier getCreativeModeTabId();
 
-    ResourceLocation getColoredCreativeModeTabId();
+    Identifier getColoredCreativeModeTabId();
 
     AbstractNetworkNodeContainerBlockEntity<?> createStorageBlockEntity(BlockPos pos,
                                                                         BlockState state,

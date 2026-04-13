@@ -21,7 +21,7 @@ public class PendingAutocraftingRequests {
 
     public void cancelAll() {
         if (!cancellationTokens.isEmpty()) {
-            LOGGER.info("Cancelling {} pending autocrafting requests", cancellationTokens.size());
+            LOGGER.debug("Cancelling {} pending autocrafting requests", cancellationTokens.size());
         }
         cancellationTokens.forEach(CancellationToken::cancel);
         cancellationTokens.clear();

@@ -2,22 +2,19 @@ package com.refinedmods.refinedstorage.common.importer;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
+import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
-import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
 import java.util.Set;
 
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import static com.refinedmods.refinedstorage.common.GameTestUtil.RSITEMS;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.assertInterfaceEmpty;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.containerContainsExactly;
@@ -36,13 +33,11 @@ import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.LAVA;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
-@GameTestHolder(IdentifierUtil.MOD_ID)
-@PrefixGameTestTemplate(false)
 public final class ImporterTest {
     private ImporterTest() {
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItem(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -73,7 +68,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -90,7 +85,7 @@ public final class ImporterTest {
                 DIRT.getDefaultInstance()
             );
 
-            importer.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            importer.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence
@@ -119,7 +114,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemWithRegulatorUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -136,7 +131,7 @@ public final class ImporterTest {
                 DIRT.getDefaultInstance().copyWithCount(15)
             );
 
-            final ItemStack upgrade = RSITEMS.getRegulatorUpgrade().getDefaultInstance();
+            final ItemStack upgrade = MOD_ITEMS.getRegulatorUpgrade().getDefaultInstance();
             if (upgrade.getItem() instanceof RegulatorUpgradeItem upgradeItem) {
                 upgradeItem.setAmount(upgrade, asResource(DIRT.getDefaultInstance()), 10);
             }
@@ -161,7 +156,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -202,7 +197,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemFuzzyBlocklist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -244,7 +239,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemAllowlist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -287,7 +282,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportItemFuzzyAllowlist(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -325,7 +320,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportFluid(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -352,7 +347,7 @@ public final class ImporterTest {
         });
     }
 
-    @GameTest(template = "empty_15x15")
+    @MinecraftIntegrationTest
     public static void shouldImportFluidWithStackUpgrade(final GameTestHelper helper) {
         preparePlot(helper, Direction.EAST, (importer, pos, sequence) -> {
             // Arrange
@@ -371,7 +366,7 @@ public final class ImporterTest {
                 new ResourceAmount(asResource(WATER), Platform.INSTANCE.getBucketAmount() * 15),
                 new ResourceAmount(asResource(LAVA), Platform.INSTANCE.getBucketAmount())
             );
-            importer.addUpgrade(RSITEMS.getStackUpgrade().getDefaultInstance());
+            importer.addUpgrade(MOD_ITEMS.getStackUpgrade().getDefaultInstance());
 
             // Assert
             sequence

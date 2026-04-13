@@ -11,29 +11,32 @@ import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButt
 import com.refinedmods.refinedstorage.common.support.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class AutocrafterManagerScreen extends AbstractStretchingScreen<AutocrafterManagerContainerMenu>
     implements PatternOutputRenderingScreen {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/autocrafter_manager.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/autocrafter_manager.png");
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
-    private static final ResourceLocation AUTOCRAFTER_NAME = createIdentifier("autocrafter_manager/autocrafter_name");
+    private static final Identifier AUTOCRAFTER_NAME = createIdentifier("autocrafter_manager/autocrafter_name");
     private static final int COLUMNS = 9;
     private static final int INACTIVE_COLOR = 0xFF5B5B5B;
 
@@ -52,10 +55,8 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     public AutocrafterManagerScreen(final AutocrafterManagerContainerMenu menu,
                                     final Inventory playerInventory,
                                     final Component title) {
-        super(menu, playerInventory, new TextMarquee(title, 70));
+        super(menu, playerInventory, new TextMarquee(title, 70), 193, 176);
         this.inventoryLabelY = 75;
-        this.imageWidth = 193;
-        this.imageHeight = 176;
     }
 
     @Override
@@ -126,29 +127,32 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         if (searchField != null) {
-            searchField.render(graphics, 0, 0, 0);
+            searchField.extractRenderState(graphics, 0, 0, 0);
         }
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (searchField != null && searchField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
-    }
-
-    @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (searchField != null && searchField.keyPressed(key, scanCode, modifiers)) {
+    public boolean charTyped(final CharacterEvent event) {
+        if (searchField != null && searchField.charTyped(event)) {
             return true;
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.charTyped(event);
     }
 
     @Override
-    protected void renderRows(final GuiGraphics graphics,
+    public boolean keyPressed(final KeyEvent event) {
+        if (searchField != null && searchField.keyPressed(event)) {
+            return true;
+        }
+        return super.keyPressed(event);
+    }
+
+    @Override
+    protected void renderRows(final GuiGraphicsExtractor graphics,
                               final int x,
                               final int y,
                               final int topHeight,
@@ -157,7 +161,6 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
                               final int mouseY) {
         if (!menu.isActive()) {
             graphics.fill(
-                RenderType.guiOverlay(),
                 x + 7 + 1,
                 y + TOP_HEIGHT + 1,
                 x + 7 + (ROW_SIZE * COLUMNS) - 1,
@@ -170,7 +173,7 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
         renderSlotContents(graphics, mouseX, mouseY, y, topHeight, rows);
     }
 
-    private void renderGroups(final GuiGraphics graphics,
+    private void renderGroups(final GuiGraphicsExtractor graphics,
                               final int x,
                               final int y,
                               final int topHeight,
@@ -182,15 +185,15 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
                 continue;
             }
             if (!isOutOfFrame(y, topHeight, rows, rowY)) {
-                graphics.blitSprite(AUTOCRAFTER_NAME, rowX, rowY, 162, ROW_SIZE);
-                graphics.drawString(font, group.getName(), rowX + 4, rowY + 6, 4210752, false);
+                graphics.blitSprite(GUI_TEXTURED, AUTOCRAFTER_NAME, rowX, rowY, 162, ROW_SIZE);
+                graphics.text(font, group.getName(), rowX + 4, rowY + 6, -12566464, false);
             }
             renderGroup(graphics, y, topHeight, rows, group, rowX, rowY);
             rowY += (group.getVisibleRows() + 1) * ROW_SIZE;
         }
     }
 
-    private static void renderGroup(final GuiGraphics graphics,
+    private static void renderGroup(final GuiGraphicsExtractor graphics,
                                     final int y,
                                     final int topHeight,
                                     final int rows,
@@ -203,43 +206,47 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
                 final int slotX = rowX + ((j % COLUMNS) * 18);
                 final int slotY = rowY + 18 + ((j / COLUMNS) * 18);
                 if (!isOutOfFrame(y, topHeight, rows, slotY)) {
-                    graphics.blitSprite(Sprites.SLOT, slotX, slotY, 18, 18);
+                    graphics.blitSprite(GUI_TEXTURED, Sprites.SLOT, slotX, slotY, 18, 18);
                 }
                 ++j;
             }
         }
     }
 
-    private void renderSlotContents(final GuiGraphics graphics,
+    private void renderSlotContents(final GuiGraphicsExtractor graphics,
                                     final int mouseX,
                                     final int mouseY,
                                     final int y,
                                     final int topHeight,
                                     final int rows) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(leftPos, topPos, 0);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(leftPos, topPos);
         for (final Slot slot : menu.getAutocrafterSlots()) {
             if (isOutOfFrame(y, topHeight, rows, topPos + slot.y)) {
                 continue;
             }
-            super.renderSlot(graphics, slot);
             final boolean hovering = mouseX >= slot.x + leftPos
                 && mouseX < slot.x + leftPos + 16
                 && mouseY >= slot.y + topPos
                 && mouseY < slot.y + topPos + 16;
             if (slot.isActive() && hovering) {
-                renderSlotHighlight(graphics, slot.x, slot.y, 0);
+                ClientPlatformUtil.renderSlotHighlightBack(graphics, slot.x, slot.y);
+            }
+            super.extractSlot(graphics, slot, mouseX, mouseY);
+            if (slot.isActive() && hovering) {
+                ClientPlatformUtil.renderSlotHighlightFront(graphics, slot.x, slot.y);
             }
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     @Override
-    protected void renderSlot(final GuiGraphics guiGraphics, final Slot slot) {
+    protected void extractSlot(final GuiGraphicsExtractor graphics, final Slot slot, final int mouseX,
+                               final int mouseY) {
         if (slot instanceof AutocrafterManagerSlot) {
             return;
         }
-        super.renderSlot(guiGraphics, slot);
+        super.extractSlot(graphics, slot, mouseX, mouseY);
     }
 
     private static boolean isOutOfFrame(final int y,
@@ -251,7 +258,8 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     }
 
     @Override
-    protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
+    protected void renderStretchingBackground(final GuiGraphicsExtractor graphics, final int x, final int y,
+                                              final int rows) {
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
             if (row == 0) {
@@ -259,7 +267,8 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
             } else if (row == rows - 1) {
                 textureY = 55;
             }
-            graphics.blit(getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE);
+            graphics.blit(GUI_TEXTURED, getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE, 256,
+                256);
         }
     }
 
@@ -274,7 +283,7 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 

@@ -8,17 +8,17 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "scheduling_mode");
-    private static final ResourceLocation DEFAULT = createIdentifier("widget/side_button/scheduling_mode/default");
-    private static final ResourceLocation ROUND_ROBIN =
+    private static final Identifier DEFAULT = createIdentifier("widget/side_button/scheduling_mode/default");
+    private static final Identifier ROUND_ROBIN =
         createIdentifier("widget/side_button/scheduling_mode/round_robin");
-    private static final ResourceLocation RANDOM = createIdentifier("widget/side_button/scheduling_mode/random");
+    private static final Identifier RANDOM = createIdentifier("widget/side_button/scheduling_mode/random");
 
     private final ClientProperty<SchedulingModeType> property;
 
@@ -40,7 +40,7 @@ public class SchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (property.getValue()) {
             case DEFAULT -> DEFAULT;
             case ROUND_ROBIN -> ROUND_ROBIN;

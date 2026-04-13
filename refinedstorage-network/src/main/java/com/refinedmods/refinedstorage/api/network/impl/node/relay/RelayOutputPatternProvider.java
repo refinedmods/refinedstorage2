@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 class RelayOutputPatternProvider implements PatternProvider, PatternListener, TaskListener {
     private final RelayOutputNetworkNode outputNode;
@@ -119,10 +120,11 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     void doWork() {
-        if (outputNode.getNetwork() == null) {
+        final Network network = outputNode.getNetwork();
+        if (network == null) {
             return;
         }
-        tasks.step(outputNode.getNetwork(), stepBehavior, this);
+        tasks.step(network, stepBehavior, this);
     }
 
     void setStepBehavior(final StepBehavior stepBehavior) {

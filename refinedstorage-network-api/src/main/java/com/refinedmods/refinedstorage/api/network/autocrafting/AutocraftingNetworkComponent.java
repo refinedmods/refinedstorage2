@@ -11,9 +11,9 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.8")
 public interface AutocraftingNetworkComponent

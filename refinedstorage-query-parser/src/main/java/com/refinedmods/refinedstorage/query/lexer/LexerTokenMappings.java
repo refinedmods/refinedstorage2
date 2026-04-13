@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage.query.lexer;
 
 import java.util.Set;
 import java.util.TreeSet;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class LexerTokenMappings {
     public static final LexerTokenMappings DEFAULT_MAPPINGS = new LexerTokenMappings()

@@ -11,21 +11,19 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
 
 public class RecoloringRecipeProvider extends RecipeProvider {
-    public RecoloringRecipeProvider(final PackOutput output,
-                                    final CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries);
+    public RecoloringRecipeProvider(final HolderLookup.Provider registries, final RecipeOutput output) {
+        super(registries, output);
     }
 
     @Override
-    protected void buildRecipes(final RecipeOutput output) {
+    protected void buildRecipes() {
         Blocks.INSTANCE.getCable().forEach((color, id, block) ->
             recipe(Tags.CABLES, block.get().asItem(), color)
                 .save(output, recipeId(color, "cable")));
@@ -88,12 +86,12 @@ public class RecoloringRecipeProvider extends RecipeProvider {
                 .save(output, recipeId(color, "autocrafting_monitor")));
     }
 
-    private ResourceLocation recipeId(final DyeColor color, final String suffix) {
-        return createIdentifier("coloring/" + color.getName() + "_" + suffix);
+    private String recipeId(final DyeColor color, final String suffix) {
+        return MOD_ID + ":coloring/" + color.getName() + "_" + suffix;
     }
 
     private ShapelessRecipeBuilder recipe(final TagKey<Item> dyeable, final Item result, final DyeColor color) {
-        return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result)
+        return ShapelessRecipeBuilder.shapeless(items, RecipeCategory.MISC, result)
             .requires(dyeable)
             .requires(getDyeTag(color))
             .unlockedBy("has_" + dyeable.location().getPath(), has(dyeable));
@@ -118,5 +116,22 @@ public class RecoloringRecipeProvider extends RecipeProvider {
             case GREEN -> net.neoforged.neoforge.common.Tags.Items.DYES_GREEN;
             case BLACK -> net.neoforged.neoforge.common.Tags.Items.DYES_BLACK;
         };
+    }
+
+    public static final class Runner extends RecipeProvider.Runner {
+        public Runner(final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> registries) {
+            super(packOutput, registries);
+        }
+
+        @Override
+        protected RecipeProvider createRecipeProvider(final HolderLookup.Provider registries,
+                                                      final RecipeOutput output) {
+            return new RecoloringRecipeProvider(registries, output);
+        }
+
+        @Override
+        public String getName() {
+            return "Refined Storage recoloring recipes";
+        }
     }
 }

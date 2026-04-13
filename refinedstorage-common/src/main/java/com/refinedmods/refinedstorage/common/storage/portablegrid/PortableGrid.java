@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 class PortableGrid implements Grid {
     private final EnergyStorage energyStorage;

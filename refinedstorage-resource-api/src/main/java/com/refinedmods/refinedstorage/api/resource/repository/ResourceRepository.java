@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 
 import java.util.Comparator;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a view over a {@link com.refinedmods.refinedstorage.api.resource.list.ResourceList}.

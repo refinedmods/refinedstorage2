@@ -1,62 +1,9 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "refinedstorage:block/cable/lime"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage",
-        "x": 90
-      },
-      "when": {
-        "direction": "down"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage",
-        "x": 270
-      },
-      "when": {
-        "direction": "up"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage"
-      },
-      "when": {
-        "direction": "north"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage",
-        "x": 180
-      },
-      "when": {
-        "direction": "south"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage",
-        "y": 270
-      },
-      "when": {
-        "direction": "west"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage:block/external_storage",
-        "y": 90
-      },
-      "when": {
-        "direction": "east"
-      }
+  "variants": {
+    "": {
+      "type": "refinedstorage:cable_part",
+      "color": "lime",
+      "part_model": "refinedstorage:block/external_storage/base"
     }
-  ]
+  }
 }

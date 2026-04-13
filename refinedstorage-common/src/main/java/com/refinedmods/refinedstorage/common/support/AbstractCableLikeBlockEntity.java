@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage.common.networking.CableConnections;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -19,6 +17,9 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
 
@@ -34,15 +35,15 @@ public abstract class AbstractCableLikeBlockEntity<T extends AbstractNetworkNode
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        connections.writeToTag(tag);
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        connections.store(output);
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        connections = CableConnections.fromTag(tag);
+    public void loadAdditional(final ValueInput input) {
+        super.loadAdditional(input);
+        connections = CableConnections.load(input);
         if (level != null && level.isClientSide()) {
             Platform.INSTANCE.requestModelDataUpdateOnClient(this, true);
         }
@@ -54,13 +55,16 @@ public abstract class AbstractCableLikeBlockEntity<T extends AbstractNetworkNode
     }
 
     @Override
+    @Nullable
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundTag getUpdateTag(final HolderLookup.Provider provider) {
-        return connections.writeToTag(super.getUpdateTag(provider));
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        connections.store(tag);
+        return tag;
     }
 
     public CableConnections getConnections() {

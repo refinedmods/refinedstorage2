@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InitialState {
     TestResource[] value() default {};
+
     long amount() default 1;
 }

@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage.neoforge.api;
 
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.BlockCapability;
+import org.jspecify.annotations.Nullable;
 
 public class RefinedStorageNeoForgeApiProxy implements RefinedStorageNeoForgeApi {
     @Nullable
@@ -19,8 +18,15 @@ public class RefinedStorageNeoForgeApiProxy implements RefinedStorageNeoForgeApi
     }
 
     @Override
-    public BlockCapability<NetworkNodeContainerProvider, Direction> getNetworkNodeContainerProviderCapability() {
+    public BlockCapability<NetworkNodeContainerProvider,
+        @Nullable Direction> getNetworkNodeContainerProviderCapability() {
         return ensureLoaded().getNetworkNodeContainerProviderCapability();
+    }
+
+    @Override
+    public void addResourceHandlerExternalPatternSinkStrategyFactory(
+        final ResourceHandlerExternalPatternSinkStrategyFactory factory) {
+        ensureLoaded().addResourceHandlerExternalPatternSinkStrategyFactory(factory);
     }
 
     private RefinedStorageNeoForgeApi ensureLoaded() {

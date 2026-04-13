@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafter_managers"
-    },
-    {
-      "tag": "c:dyes/gray"
-    }
+    "#refinedstorage:autocrafter_managers",
+    "#c:dyes/gray"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:gray_autocrafter_manager"
   }
 }

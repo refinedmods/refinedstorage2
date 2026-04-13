@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -24,9 +24,9 @@ class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
     private static final List<MutableComponent> SUBTEXT_UNDER = List.of(
         createTranslation("gui", "detector.mode.under").withStyle(ChatFormatting.GRAY)
     );
-    private static final ResourceLocation EQUAL = createIdentifier("widget/side_button/detector_mode/equal");
-    private static final ResourceLocation ABOVE = createIdentifier("widget/side_button/detector_mode/above");
-    private static final ResourceLocation UNDER = createIdentifier("widget/side_button/detector_mode/under");
+    private static final Identifier EQUAL = createIdentifier("widget/side_button/detector_mode/equal");
+    private static final Identifier ABOVE = createIdentifier("widget/side_button/detector_mode/above");
+    private static final Identifier UNDER = createIdentifier("widget/side_button/detector_mode/under");
 
     private final ClientProperty<DetectorMode> property;
 
@@ -48,7 +48,7 @@ class DetectorModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    protected ResourceLocation getSprite() {
+    protected Identifier getSprite() {
         return switch (property.getValue()) {
             case UNDER -> UNDER;
             case EQUAL -> EQUAL;

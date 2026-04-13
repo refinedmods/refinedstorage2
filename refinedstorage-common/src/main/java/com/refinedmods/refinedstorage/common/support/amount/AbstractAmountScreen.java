@@ -4,13 +4,14 @@ import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.Alternativ
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
@@ -51,8 +53,9 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
                                    final Inventory playerInventory,
                                    final Component title,
                                    final AmountScreenConfiguration<N> configuration,
-                                   final AmountOperations<N> amountOperations) {
-        super(containerMenu, playerInventory, title);
+                                   final AmountOperations<N> amountOperations,
+                                   final int width, final int height) {
+        super(containerMenu, playerInventory, title, width, height);
         this.parent = parent;
         this.configuration = configuration;
         this.amountOperations = amountOperations;
@@ -150,12 +153,15 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             Component.empty()
         );
         amountField.setBordered(false);
-        amountField.setTextColor(0xFFFFFF);
+        amountField.setTextColor(0xFFFFFFFF);
         if (originalValue != null) {
             amountField.setValue(originalValue);
             onAmountFieldChanged();
-        } else if (configuration.getInitialAmount() != null) {
-            updateAmount(configuration.getInitialAmount());
+        } else {
+            final N initialAmount = configuration.getInitialAmount();
+            if (initialAmount != null) {
+                updateAmount(initialAmount);
+            }
         }
         amountField.setVisible(true);
         amountField.setCanLoseFocus(this instanceof AlternativesScreen);
@@ -184,7 +190,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         } else {
             tryConfirm();
         }
-        amountField.setTextColor(valid ? 0xFFFFFF : 0xFF5555);
+        amountField.setTextColor(valid ? 0xFFFFFFFF : 0xFFFF5555);
     }
 
     private void addIncrementButtons() {
@@ -261,18 +267,18 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        graphics.drawString(font, title, titleLabelX, titleLabelY, 4210752, false);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        graphics.text(font, title, titleLabelX, titleLabelY, -12566464, false);
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (amountField != null && amountField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final CharacterEvent event) {
+        return (amountField != null && amountField.charTyped(event)) || super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
+    public boolean keyPressed(final KeyEvent event) {
+        final int key = event.key();
         if (tryClose(key)) {
             return true;
         }
@@ -282,11 +288,10 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             tryConfirmAndCloseToParent();
             return true;
         }
-        if (amountField != null
-            && (amountField.keyPressed(key, scanCode, modifiers) || amountField.canConsumeInput())) {
+        if (amountField != null && (amountField.keyPressed(event) || amountField.canConsumeInput())) {
             return true;
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     protected final boolean tryClose(final int key) {
@@ -298,10 +303,11 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     protected void reset() {
-        if (amountField == null || configuration.getResetAmount() == null) {
+        final N resetAmount = configuration.getResetAmount();
+        if (amountField == null || resetAmount == null) {
             return;
         }
-        updateAmount(configuration.getResetAmount());
+        updateAmount(resetAmount);
     }
 
     private void tryConfirm() {

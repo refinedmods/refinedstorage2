@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.MOD_ID;
@@ -14,7 +14,7 @@ class IdentifierUtilTest {
     void verifyModId() {
         assertThat(MOD_ID).isEqualTo("refinedstorage");
         assertThat(createIdentifier("test")).isEqualTo(
-            ResourceLocation.fromNamespaceAndPath("refinedstorage", "test")
+            Identifier.fromNamespaceAndPath("refinedstorage", "test")
         );
     }
 

@@ -52,7 +52,7 @@ public interface CompositeAwareChild extends Storage {
      */
     Amount compositeExtract(ResourceKey resource, long amount, Action action, Actor actor);
 
-    default boolean contains(Storage storage) {
+    default boolean contains(final Storage storage) {
         return false;
     }
 

@@ -17,7 +17,7 @@ public interface UpgradeRegistry {
     interface DestinationBuilder {
         DestinationBuilder add(Item upgradeItem, int maxAmount);
 
-        default DestinationBuilder add(Item upgradeItem) {
+        default DestinationBuilder add(final Item upgradeItem) {
             return add(upgradeItem, 1);
         }
     }

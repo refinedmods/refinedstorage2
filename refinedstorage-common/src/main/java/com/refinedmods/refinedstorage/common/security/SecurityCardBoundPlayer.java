@@ -26,7 +26,7 @@ public record SecurityCardBoundPlayer(UUID playerId, String playerName) {
 
     static SecurityCardBoundPlayer of(final ServerPlayer player) {
         final GameProfile profile = player.getGameProfile();
-        return new SecurityCardBoundPlayer(profile.getId(), profile.getName());
+        return new SecurityCardBoundPlayer(profile.id(), profile.name());
     }
 
     PlayerSecurityActor toSecurityActor() {

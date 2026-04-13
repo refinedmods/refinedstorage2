@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage.common.api.support.network.item;
 
 import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +15,7 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
 public interface NetworkItemHelper {
-    void addTooltip(ItemStack stack, List<Component> lines);
+    void addTooltip(ItemStack stack, Consumer<Component> builder);
 
     InteractionResult bind(UseOnContext ctx);
 

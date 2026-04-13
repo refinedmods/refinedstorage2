@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 class ViewList<T> {
     private final List<T> list = new ArrayList<>();

@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "refinedstorage:block/storage_block/creative_storage_block"
+  }
+}

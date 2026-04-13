@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage.common.api.support.energy;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
@@ -18,14 +19,14 @@ public abstract class AbstractEnergyItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-        final ItemStack stack,
-        final TooltipContext context,
-        final List<Component> lines,
-        final TooltipFlag flag
-    ) {
-        super.appendHoverText(stack, context, lines, flag);
-        helper.addTooltip(stack, lines);
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(final ItemStack stack,
+                                final TooltipContext context,
+                                final TooltipDisplay display,
+                                final Consumer<Component> builder,
+                                final TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, builder, flag);
+        helper.addTooltip(stack, builder);
     }
 
     @Override

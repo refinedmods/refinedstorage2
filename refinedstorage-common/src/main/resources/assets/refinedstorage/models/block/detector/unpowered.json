@@ -28,7 +28,7 @@
             7,
             7,
             9,
-            11
+            10
           ],
           "texture": "#side"
         },
@@ -37,7 +37,7 @@
             7,
             7,
             9,
-            11
+            10
           ],
           "texture": "#side"
         },
@@ -46,7 +46,7 @@
             7,
             7,
             9,
-            11
+            10
           ],
           "texture": "#side"
         },
@@ -55,16 +55,7 @@
             7,
             7,
             9,
-            11
-          ],
-          "texture": "#side"
-        },
-        "up": {
-          "uv": [
-            7,
-            7,
-            9,
-            9
+            10
           ],
           "texture": "#side"
         }
@@ -143,31 +134,31 @@
       "name": "Torch",
       "from": [
         7,
-        5,
-        6
+        8,
+        7
       ],
       "to": [
         9,
-        11,
-        10
+        10,
+        9
       ],
       "shade": false,
       "faces": {
         "east": {
           "uv": [
-            6,
-            4,
-            10,
-            12
+            7,
+            5,
+            9,
+            7
           ],
           "texture": "#torch"
         },
         "west": {
           "uv": [
-            6,
-            4,
-            10,
-            12
+            7,
+            5,
+            9,
+            7
           ],
           "texture": "#torch"
         }
@@ -176,34 +167,63 @@
     {
       "name": "Torch",
       "from": [
-        6,
-        5,
+        7,
+        8,
         7
       ],
       "to": [
+        9,
         10,
-        11,
         9
       ],
       "shade": false,
       "faces": {
         "north": {
           "uv": [
-            6,
-            4,
-            10,
-            12
+            7,
+            5,
+            9,
+            7
           ],
           "texture": "#torch"
         },
         "south": {
           "uv": [
-            6,
-            4,
-            10,
-            12
+            7,
+            5,
+            9,
+            7
           ],
           "texture": "#torch"
+        }
+      }
+    },
+    {
+      "name": "Torch",
+      "from": [
+        7,
+        10,
+        7
+      ],
+      "to": [
+        9,
+        10,
+        9
+      ],
+      "shade": false,
+      "faces": {
+        "up": {
+          "uv": [
+            7,
+            5,
+            9,
+            7
+          ],
+          "texture": "#torch",
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
         }
       }
     }

@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/wireless_autocrafting_monitor/inactive"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "refinedstorage:item/wireless_autocrafting_monitor/active"
+    },
+    "property": "refinedstorage:network_bound"
+  }
+}

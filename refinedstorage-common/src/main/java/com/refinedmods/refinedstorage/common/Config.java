@@ -11,16 +11,12 @@ import com.refinedmods.refinedstorage.common.support.stretching.ScreenSize;
 
 import java.util.Optional;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface Config {
     ScreenSize getScreenSize();
 
     void setScreenSize(ScreenSize size);
-
-    boolean isTenthAnniversaryCape();
-
-    void setTenthAnniversaryCape(boolean enabled);
 
     boolean isDebug();
 
@@ -115,9 +111,9 @@ public interface Config {
 
         boolean isRememberSearchQuery();
 
-        Optional<ResourceLocation> getSynchronizer();
+        Optional<Identifier> getSynchronizer();
 
-        void setSynchronizer(ResourceLocation synchronizerId);
+        void setSynchronizer(Identifier synchronizerId);
 
         void clearSynchronizer();
 
@@ -133,9 +129,9 @@ public interface Config {
 
         void setViewType(GridViewType viewType);
 
-        Optional<ResourceLocation> getResourceType();
+        Optional<Identifier> getResourceType();
 
-        void setResourceType(ResourceLocation resourceTypeId);
+        void setResourceType(Identifier resourceTypeId);
 
         void clearResourceType();
     }

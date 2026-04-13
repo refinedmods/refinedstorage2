@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.0")
 public abstract class AbstractGridResource<T extends PlatformResourceKey> implements GridResource {
@@ -27,7 +27,9 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
 
     @Override
     @Nullable
-    public TrackedResource getTrackedResource(final Function<ResourceKey, TrackedResource> trackedResourceProvider) {
+    public TrackedResource getTrackedResource(
+        final Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider
+    ) {
         return trackedResourceProvider.apply(resource);
     }
 

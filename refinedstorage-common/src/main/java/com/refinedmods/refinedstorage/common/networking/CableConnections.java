@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public record CableConnections(boolean north, boolean east, boolean south, boolean west, boolean up, boolean down) {
     public static final CableConnections NONE = new CableConnections(false, false, false, false, false, false);
@@ -12,25 +15,44 @@ public record CableConnections(boolean north, boolean east, boolean south, boole
     private static final String TAG_UP = "Up";
     private static final String TAG_DOWN = "Down";
 
-    public static CableConnections fromTag(final CompoundTag tag) {
+    public boolean isConnected(final Direction direction) {
+        return switch (direction) {
+            case NORTH -> north;
+            case EAST -> east;
+            case SOUTH -> south;
+            case WEST -> west;
+            case UP -> up;
+            case DOWN -> down;
+        };
+    }
+
+    public static CableConnections load(final ValueInput input) {
         return new CableConnections(
-            tag.getBoolean(TAG_NORTH),
-            tag.getBoolean(TAG_EAST),
-            tag.getBoolean(TAG_SOUTH),
-            tag.getBoolean(TAG_WEST),
-            tag.getBoolean(TAG_UP),
-            tag.getBoolean(TAG_DOWN)
+            input.getBooleanOr(TAG_NORTH, false),
+            input.getBooleanOr(TAG_EAST, false),
+            input.getBooleanOr(TAG_SOUTH, false),
+            input.getBooleanOr(TAG_WEST, false),
+            input.getBooleanOr(TAG_UP, false),
+            input.getBooleanOr(TAG_DOWN, false)
         );
     }
 
-    public CompoundTag writeToTag(final CompoundTag tag) {
+    public void store(final ValueOutput output) {
+        output.putBoolean(TAG_NORTH, north);
+        output.putBoolean(TAG_EAST, east);
+        output.putBoolean(TAG_SOUTH, south);
+        output.putBoolean(TAG_WEST, west);
+        output.putBoolean(TAG_UP, up);
+        output.putBoolean(TAG_DOWN, down);
+    }
+
+    public void store(final CompoundTag tag) {
         tag.putBoolean(TAG_NORTH, north);
         tag.putBoolean(TAG_EAST, east);
         tag.putBoolean(TAG_SOUTH, south);
         tag.putBoolean(TAG_WEST, west);
         tag.putBoolean(TAG_UP, up);
         tag.putBoolean(TAG_DOWN, down);
-        return tag;
     }
 
     public static void stripTag(final CompoundTag tag) {

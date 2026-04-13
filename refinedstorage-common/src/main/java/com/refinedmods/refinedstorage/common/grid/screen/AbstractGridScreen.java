@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
-import com.refinedmods.refinedstorage.common.cape.TenthAnniversaryScreen;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.grid.NoopGridSynchronizer;
@@ -28,45 +27,43 @@ import com.refinedmods.refinedstorage.common.support.widget.History;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighterColors;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationKey;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> extends AbstractStretchingScreen<T> {
     protected static final int CLEAR_BUTTON_SIZE = 7;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridScreen.class);
 
-    private static final ResourceLocation ROW_SPRITE = createIdentifier("grid/row");
-    private static final ResourceLocation TENTH_ANNIVERSARY_RIBBON = createIdentifier("grid/tenth_anniversary_ribbon");
+    private static final Identifier ROW_SPRITE = createIdentifier("grid/row");
     private static final int MODIFIED_JUST_NOW_MAX_SECONDS = 10;
     private static final int COLUMNS = 9;
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
@@ -78,10 +75,6 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         .append(createTranslation("gui", "grid.search_help.tag_search").withStyle(ChatFormatting.GRAY))
         .append("\n")
         .append(createTranslation("gui", "grid.search_help.tooltip_search").withStyle(ChatFormatting.GRAY));
-    private static final Component TENTH_ANNIVERSARY_RIBBON_TITLE =
-        createTranslation("gui", "grid.tenth_anniversary_ribbon");
-    private static final Component CLICK_TO_LEARN_MORE =
-        createTranslation("gui", "grid.tenth_anniversary_ribbon.click_to_learn_more");
 
     protected final int bottomHeight;
 
@@ -94,37 +87,14 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private int totalRows;
     private int currentGridSlotIndex;
 
-    private final boolean tenthAnniversaryRibbonVisible = shouldDisplayTenthAnniversaryRibbon();
-    private final Inventory playerInventory;
-
     protected AbstractGridScreen(final T menu,
                                  final Inventory playerInventory,
                                  final Component title,
-                                 final int bottomHeight) {
-        super(menu, playerInventory, shouldDisplayTenthAnniversaryRibbon() ? new TextMarquee(
-            TENTH_ANNIVERSARY_RIBBON_TITLE,
-            60,
-            16777045,
-            true,
-            false
-        ) : new TextMarquee(title, 70));
-        if (shouldDisplayTenthAnniversaryRibbon()) {
-            this.titleLabelY -= 1;
-        }
+                                 final int bottomHeight,
+                                 final int width,
+                                 final int height) {
+        super(menu, playerInventory, new TextMarquee(title, 70), width, height);
         this.bottomHeight = bottomHeight;
-        this.playerInventory = playerInventory;
-    }
-
-    protected static boolean shouldDisplayTenthAnniversaryRibbon() {
-        final LocalDate now = LocalDate.now();
-        if (now.getYear() != 2026) {
-            return false;
-        }
-        if (now.getMonth() != Month.MARCH) {
-            return false;
-        }
-        final int day = now.getDayOfMonth();
-        return day >= 20 && day <= 22;
     }
 
     @Override
@@ -216,10 +186,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    protected void renderStretchingBackground(final GuiGraphics graphics, final int x, final int y, final int rows) {
-        if (tenthAnniversaryRibbonVisible) {
-            graphics.blitSprite(TENTH_ANNIVERSARY_RIBBON, x - 3, y - 15, 82, 15);
-        }
+    protected void renderStretchingBackground(final GuiGraphicsExtractor graphics, final int x, final int y,
+                                              final int rows) {
         for (int row = 0; row < rows; ++row) {
             int textureY = 37;
             if (row == 0) {
@@ -227,7 +195,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             } else if (row == rows - 1) {
                 textureY = 55;
             }
-            graphics.blit(getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE);
+            graphics.blit(GUI_TEXTURED, getTexture(), x, y + (ROW_SIZE * row), 0, textureY, imageWidth, ROW_SIZE,
+                256, 256);
         }
     }
 
@@ -242,7 +211,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    protected void renderRows(final GuiGraphics graphics,
+    protected void renderRows(final GuiGraphicsExtractor graphics,
                               final int x,
                               final int y,
                               final int topHeight,
@@ -262,19 +231,19 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
     }
 
-    private void renderRow(final GuiGraphics graphics,
+    private void renderRow(final GuiGraphicsExtractor graphics,
                            final int mouseX,
                            final int mouseY,
                            final int rowX,
                            final int rowY,
                            final int row) {
-        graphics.blitSprite(ROW_SPRITE, rowX, rowY, 162, ROW_SIZE);
+        graphics.blitSprite(GUI_TEXTURED, ROW_SPRITE, rowX, rowY, 162, ROW_SIZE);
         for (int column = 0; column < COLUMNS; ++column) {
             renderCell(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
         }
     }
 
-    private void renderCell(final GuiGraphics graphics,
+    private void renderCell(final GuiGraphicsExtractor graphics,
                             final int mouseX,
                             final int mouseY,
                             final int rowX,
@@ -302,36 +271,41 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    protected void renderSlot(final GuiGraphics guiGraphics, final Slot slot) {
-        tryRenderAutocraftableResourceHintBackground(guiGraphics, slot);
-        super.renderSlot(guiGraphics, slot);
+    protected void extractSlot(final GuiGraphicsExtractor graphics, final Slot slot, final int mouseX,
+                               final int mouseY) {
+        tryRenderAutocraftableResourceHintBackground(graphics, slot);
+        super.extractSlot(graphics, slot, mouseX, mouseY);
     }
 
-    private void renderSlot(final GuiGraphics graphics,
+    private void renderSlot(final GuiGraphicsExtractor graphics,
                             final int mouseX,
                             final int mouseY,
                             final int idx,
                             final ResourceRepository<GridResource> repository,
                             final int slotX,
                             final int slotY) {
-        final boolean inBounds = mouseX >= slotX
+        final boolean hovering = mouseX >= slotX
             && mouseY >= slotY
             && mouseX <= slotX + 16
             && mouseY <= slotY + 16;
+        final boolean interact = hovering && isOverStorageArea(mouseX, mouseY);
+        if (interact) {
+            ClientPlatformUtil.renderSlotHighlightBack(graphics, slotX, slotY);
+        }
         GridResource resource = null;
         if (idx < repository.getViewList().size()) {
             resource = repository.getViewList().get(idx);
             renderResourceWithAmount(graphics, slotX, slotY, resource);
         }
-        if (inBounds && isOverStorageArea(mouseX, mouseY)) {
-            AbstractContainerScreen.renderSlotHighlight(graphics, slotX, slotY, 0);
+        if (interact) {
+            ClientPlatformUtil.renderSlotHighlightFront(graphics, slotX, slotY);
             if (resource != null) {
                 currentGridSlotIndex = idx;
             }
         }
     }
 
-    private void tryRenderAutocraftableResourceHintBackground(final GuiGraphics graphics, final Slot slot) {
+    private void tryRenderAutocraftableResourceHintBackground(final GuiGraphicsExtractor graphics, final Slot slot) {
         if (!slot.isHighlightable() || !slot.isActive()) {
             return;
         }
@@ -341,7 +315,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
     }
 
-    private void renderResourceWithAmount(final GuiGraphics graphics,
+    private void renderResourceWithAmount(final GuiGraphicsExtractor graphics,
                                           final int slotX,
                                           final int slotY,
                                           final GridResource resource) {
@@ -366,7 +340,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         renderAmount(graphics, slotX, slotY, resource);
     }
 
-    public static void renderSlotBackground(final GuiGraphics graphics,
+    public static void renderSlotBackground(final GuiGraphicsExtractor graphics,
                                             final int slotX,
                                             final int slotY,
                                             final boolean large,
@@ -381,26 +355,25 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         );
     }
 
-    private void renderAmount(final GuiGraphics graphics,
+    private void renderAmount(final GuiGraphicsExtractor graphics,
                               final int slotX,
                               final int slotY,
                               final GridResource resource) {
         final long amount = resource.getAmount(getMenu().getRepository());
         final String text = getAmountText(resource, amount);
         final int color = getAmountColor(resource, amount);
-        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
-            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+        final boolean large = minecraft.isEnforceUnicode() || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
         ResourceSlotRendering.renderAmount(graphics, slotX, slotY, text, color, large);
     }
 
     private int getAmountColor(final GridResource resource, final long amount) {
         if (amount == 0) {
             if (resource.isAutocraftable(getMenu().getRepository())) {
-                return 0xFFFFFF;
+                return 0xFFFFFFFF;
             }
-            return 0xFF5555;
+            return 0xFFFF5555;
         }
-        return 0xFFFFFF;
+        return 0xFFFFFFFF;
     }
 
     private String getAmountText(final GridResource resource, final long amount) {
@@ -410,12 +383,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return resource.getDisplayedAmount(getMenu().getRepository());
     }
 
-    private void renderDisabledSlot(final GuiGraphics graphics, final int slotX, final int slotY) {
-        graphics.fill(RenderType.guiOverlay(), slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR);
+    private void renderDisabledSlot(final GuiGraphicsExtractor graphics, final int slotX, final int slotY) {
+        graphics.fill(slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR);
     }
 
     @Override
-    protected void renderTooltip(final GuiGraphics graphics, final int x, final int y) {
+    protected void extractTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         if (isOverStorageArea(x, y)) {
             renderOverStorageAreaTooltip(graphics, x, y);
             return;
@@ -423,15 +396,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (getMenu().getCarried().isEmpty() && tryRenderAutocraftableResourceHintTooltip(graphics, x, y)) {
             return;
         }
-        if (isOverTenthAnniversaryRibbon(x, y)) {
-            Platform.INSTANCE.renderTooltip(graphics,
-                List.of(new ClientTextTooltip(CLICK_TO_LEARN_MORE.getVisualOrderText())), x, y);
-            return;
-        }
-        super.renderTooltip(graphics, x, y);
+        super.extractTooltip(graphics, x, y);
     }
 
-    private boolean tryRenderAutocraftableResourceHintTooltip(final GuiGraphics graphics, final int x, final int y) {
+    private boolean tryRenderAutocraftableResourceHintTooltip(final GuiGraphicsExtractor graphics, final int x,
+                                                              final int y) {
         if (hoveredSlot == null || !hoveredSlot.hasItem()) {
             return false;
         }
@@ -449,11 +418,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             lines
         );
         processedLines.add(AutocraftableClientTooltipComponent.autocraftable(hint));
-        Platform.INSTANCE.renderTooltip(graphics, processedLines, x, y);
+        graphics.tooltip(font, processedLines, x, y, DefaultTooltipPositioner.INSTANCE, null);
         return true;
     }
 
-    private void renderOverStorageAreaTooltip(final GuiGraphics graphics, final int x, final int y) {
+    private void renderOverStorageAreaTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         final GridResource gridResource = getCurrentGridResource();
         if (gridResource != null) {
             renderHoveredResourceTooltip(graphics, x, y, gridResource);
@@ -465,10 +434,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
         final List<ClientTooltipComponent> hints = RefinedStorageClientApi.INSTANCE.getGridInsertionHints()
             .getHints(carried);
-        Platform.INSTANCE.renderTooltip(graphics, hints, x, y);
+        graphics.tooltip(font, hints, x, y, DefaultTooltipPositioner.INSTANCE, null);
     }
 
-    private void renderHoveredResourceTooltip(final GuiGraphics graphics,
+    private void renderHoveredResourceTooltip(final GuiGraphicsExtractor graphics,
                                               final int mouseX,
                                               final int mouseY,
                                               final GridResource resource) {
@@ -495,7 +464,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (amount > 0) {
             processedLines.addAll(resource.getExtractionHints(getMenu().getCarried(), getMenu().getRepository()));
         }
-        Platform.INSTANCE.renderTooltip(graphics, processedLines, mouseX, mouseY);
+        graphics.tooltip(font, processedLines, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
     }
 
     private void addDetailedTooltip(final GridResource resource, final List<ClientTooltipComponent> lines) {
@@ -550,53 +519,43 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public void render(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                final float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
         if (searchField != null) {
-            searchField.render(graphics, 0, 0, 0);
+            searchField.extractRenderState(graphics, 0, 0, 0);
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
+    public boolean mouseClicked(final MouseButtonEvent e, final boolean doubleClick) {
         final ItemStack carriedStack = getMenu().getCarried();
         final GridResource resource = getCurrentGridResource();
-        if (isOverTenthAnniversaryRibbon(mouseX, mouseY)) {
-            Minecraft.getInstance().setScreen(new TenthAnniversaryScreen(playerInventory, this));
+        if (mouseClicked(e, resource, carriedStack)) {
             return true;
         }
-        return mouseClicked(mouseX, mouseY, clickedButton, resource, carriedStack);
+        return super.mouseClicked(e, doubleClick);
     }
 
-    private boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton,
-                                 @Nullable final GridResource resource, final ItemStack carriedStack) {
+    private boolean mouseClicked(final MouseButtonEvent e, @Nullable final GridResource resource,
+                                 final ItemStack carriedStack) {
         if (canExtract(resource, carriedStack)) {
-            mouseClickedInGrid(clickedButton, resource);
+            mouseClickedInGrid(e.button(), resource);
             return true;
         }
-        if (canInsert((int) mouseX, (int) mouseY, clickedButton, carriedStack)) {
-            mouseClickedInGrid(clickedButton);
+        if (canInsert((int) e.x(), (int) e.y(), e.button(), carriedStack)) {
+            mouseClickedInGrid(e.button());
             return true;
         }
-        if (resource != null && resource.isAutocraftable(getMenu().getRepository()) && tryStartAutocrafting(resource)) {
-            return true;
-        }
-        return super.mouseClicked(mouseX, mouseY, clickedButton);
-    }
-
-    private boolean isOverTenthAnniversaryRibbon(final double mouseX, final double mouseY) {
-        return tenthAnniversaryRibbonVisible && isHovering(
-            titleLabelX,
-            titleLabelY,
-            titleMarquee.getEffectiveWidth(font),
-            font.lineHeight,
-            mouseX,
-            mouseY
-        );
+        return resource != null
+            && resource.isAutocraftable(getMenu().getRepository())
+            && tryStartAutocrafting(resource);
     }
 
     private boolean canExtract(@Nullable final GridResource resource, final ItemStack carriedStack) {
-        return resource != null && resource.canExtract(carriedStack, getMenu().getRepository()) && !hasControlDown();
+        return resource != null
+            && resource.canExtract(carriedStack, getMenu().getRepository())
+            && !minecraft.hasControlDown();
     }
 
     private boolean canInsert(final int mouseX,
@@ -640,8 +599,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return GridExtractMode.ENTIRE_RESOURCE;
     }
 
-    private static boolean shouldExtractToCursor() {
-        return !Screen.hasShiftDown();
+    private boolean shouldExtractToCursor() {
+        return !minecraft.hasShiftDown();
     }
 
     @Override
@@ -684,17 +643,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Nullable
-    private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(final boolean up) {
-        if (Screen.hasShiftDown()) {
+    private GridScrollMode getScrollModeWhenScrollingOnInventoryArea(final boolean up) {
+        if (minecraft.hasShiftDown()) {
             return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
         }
         return null;
     }
 
     @Nullable
-    private static GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
-        final boolean shift = Screen.hasShiftDown();
-        final boolean ctrl = Screen.hasControlDown();
+    private GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
+        final boolean shift = minecraft.hasShiftDown();
+        final boolean ctrl = minecraft.hasControlDown();
         if (shift && ctrl) {
             return null;
         }
@@ -720,32 +679,28 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public boolean charTyped(final char unknown1, final int unknown2) {
-        return (searchField != null && searchField.charTyped(unknown1, unknown2))
-            || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final CharacterEvent event) {
+        return (searchField != null && searchField.charTyped(event)) || super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
+    public boolean keyPressed(final KeyEvent event) {
         // First check if we have to prevent sorting.
         // Order matters. In auto-selected mode, the search field will swallow the SHIFT key.
-        if (Screen.hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
+        if (minecraft.hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
             getMenu().getRepository().setPreventSorting(true);
         }
-
-        if (searchField != null && searchField.keyPressed(key, scanCode, modifiers)) {
+        if (searchField != null && searchField.keyPressed(event)) {
             return true;
         }
-
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean keyReleased(final int key, final int scanCode, final int modifiers) {
+    public boolean keyReleased(final KeyEvent event) {
         if (getMenu().getRepository().setPreventSorting(false)) {
             getMenu().getRepository().sort();
         }
-
-        return super.keyReleased(key, scanCode, modifiers);
+        return super.keyReleased(event);
     }
 }

@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "importer_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:importers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.importing.description"
+    },
+    "icon": {
+      "id": "refinedstorage:importer"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.importing"
+    }
+  },
+  "requirements": [
+    [
+      "importer_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

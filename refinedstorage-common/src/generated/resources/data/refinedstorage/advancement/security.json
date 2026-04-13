@@ -1,0 +1,38 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "security_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:security_managers"
+          },
+          {
+            "items": [
+              "refinedstorage:security_card",
+              "refinedstorage:fallback_security_card"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.security.description"
+    },
+    "icon": {
+      "id": "refinedstorage:security_manager"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.security"
+    }
+  },
+  "requirements": [
+    [
+      "security_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -14,12 +14,12 @@ import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -39,14 +40,17 @@ public class ImporterBlock extends AbstractDirectionalCableBlock implements
     private static final AbstractBlockEntityTicker<AbstractImporterBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getImporter);
 
+    private final Identifier id;
     private final DyeColor color;
     private final MutableComponent name;
     private final BlockEntityProvider<AbstractImporterBlockEntity> blockEntityProvider;
 
-    public ImporterBlock(final DyeColor color,
+    public ImporterBlock(final Identifier id,
+                         final DyeColor color,
                          final MutableComponent name,
                          final BlockEntityProvider<AbstractImporterBlockEntity> blockEntityProvider) {
-        super(SHAPE_CACHE);
+        super(id, SHAPE_CACHE);
+        this.id = id;
         this.color = color;
         this.name = name;
         this.blockEntityProvider = blockEntityProvider;
@@ -94,6 +98,6 @@ public class ImporterBlock extends AbstractDirectionalCableBlock implements
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(id, this, HELP);
     }
 }

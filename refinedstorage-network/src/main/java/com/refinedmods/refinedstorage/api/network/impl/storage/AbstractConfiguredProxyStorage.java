@@ -13,9 +13,9 @@ import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public abstract class AbstractConfiguredProxyStorage<S extends Storage>

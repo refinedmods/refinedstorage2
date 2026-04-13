@@ -8,7 +8,7 @@ public final class CubeBuilder {
     private CubeBuilder() {
     }
 
-    public static void putCube(final PoseStack poseStack,
+    public static void putCube(final PoseStack.Pose pose,
                                final VertexConsumer builder,
                                final float x1,
                                final float y1,
@@ -21,17 +21,15 @@ public final class CubeBuilder {
                                final int b,
                                final int a,
                                final Direction exclude) {
-        poseStack.pushPose();
         for (final Direction face : Direction.values()) {
             if (face == exclude) {
                 continue;
             }
-            putFace(poseStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, face);
+            putFace(pose, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, face);
         }
-        poseStack.popPose();
     }
 
-    private static void putFace(final PoseStack poseStack,
+    private static void putFace(final PoseStack.Pose pose,
                                 final VertexConsumer builder,
                                 final float x1,
                                 final float y1,
@@ -46,46 +44,46 @@ public final class CubeBuilder {
                                 final Direction face) {
         switch (face) {
             case DOWN -> {
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z1);
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z1);
             }
             case UP -> {
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z1);
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z1);
             }
             case NORTH -> {
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z1);
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z1);
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z1);
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z1);
             }
             case SOUTH -> {
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z2);
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z2);
             }
             case WEST -> {
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z1);
-                putVertex(builder, poseStack, r, g, b, a, x1, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z2);
-                putVertex(builder, poseStack, r, g, b, a, x1, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x1, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x1, y2, z1);
             }
             case EAST -> {
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z1);
-                putVertex(builder, poseStack, r, g, b, a, x2, y2, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z2);
-                putVertex(builder, poseStack, r, g, b, a, x2, y1, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z1);
+                putVertex(builder, pose, r, g, b, a, x2, y2, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z2);
+                putVertex(builder, pose, r, g, b, a, x2, y1, z1);
             }
         }
     }
 
     private static void putVertex(final VertexConsumer builder,
-                                  final PoseStack poseStack,
+                                  final PoseStack.Pose pose,
                                   final int r,
                                   final int g,
                                   final int b,
@@ -93,6 +91,6 @@ public final class CubeBuilder {
                                   final float x,
                                   final float y,
                                   final float z) {
-        builder.addVertex(poseStack.last().pose(), x, y, z).setColor(r, g, b, a);
+        builder.addVertex(pose, x, y, z).setColor(r, g, b, a);
     }
 }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_basic_processor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:raw_basic_processor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "refinedstorage:basic_processor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_basic_processor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "refinedstorage:basic_processor"
+    ]
+  }
+}

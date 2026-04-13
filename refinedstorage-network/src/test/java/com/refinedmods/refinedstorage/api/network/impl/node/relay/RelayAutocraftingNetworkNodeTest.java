@@ -360,7 +360,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern()
+        patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -393,7 +393,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern()
+        patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -425,7 +425,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern()
+        patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -467,7 +467,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern()
+        patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -503,7 +503,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern()
+        patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -553,7 +553,7 @@ class RelayAutocraftingNetworkNodeTest {
         inputStorage.addSource(new StorageImpl());
 
         final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-        patternProvider.setPattern(0, pattern(PatternType.EXTERNAL)
+        patternProvider.tryUpdatePattern(0, pattern(PatternType.EXTERNAL)
             .ingredient(A, 1)
             .output(B, 1)
             .build());
@@ -630,7 +630,7 @@ class RelayAutocraftingNetworkNodeTest {
             inputStorage.addSource(new StorageImpl());
 
             final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-            patternProvider.setPattern(0, pattern(PatternType.EXTERNAL)
+            patternProvider.tryUpdatePattern(0, pattern(PatternType.EXTERNAL)
                 .ingredient(A, 1)
                 .output(B, 1)
                 .build());
@@ -705,7 +705,7 @@ class RelayAutocraftingNetworkNodeTest {
             outputStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
             final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-            patternProvider.setPattern(0, pattern().ingredient(A, 1).output(B, 1).build());
+            patternProvider.tryUpdatePattern(0, pattern().ingredient(A, 1).output(B, 1).build());
             inputAutocrafting.onContainerAdded(() -> patternProvider);
 
             input.setActive(true);
@@ -760,7 +760,7 @@ class RelayAutocraftingNetworkNodeTest {
             outputStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
             final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
-            patternProvider.setPattern(0, pattern().ingredient(A, 1).output(B, 1).build());
+            patternProvider.tryUpdatePattern(0, pattern().ingredient(A, 1).output(B, 1).build());
             inputAutocrafting.onContainerAdded(() -> patternProvider);
 
             input.setActive(true);

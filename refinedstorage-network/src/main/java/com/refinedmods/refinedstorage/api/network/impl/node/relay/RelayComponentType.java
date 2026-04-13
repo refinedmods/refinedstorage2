@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
@@ -10,6 +9,8 @@ import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponen
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.jspecify.annotations.Nullable;
 
 public class RelayComponentType<T> {
     public static final RelayComponentType<EnergyNetworkComponent> ENERGY = new RelayComponentType<>(
@@ -31,10 +32,10 @@ public class RelayComponentType<T> {
     public static final Set<RelayComponentType<?>> ALL = Set.of(ENERGY, SECURITY, STORAGE, AUTOCRAFTING);
 
     private final Function<Network, T> componentProvider;
-    private final Function<RelayOutputNetworkNode, Consumer<@NullableType T>> componentApplier;
+    private final Function<RelayOutputNetworkNode, Consumer<@Nullable T>> componentApplier;
 
     private RelayComponentType(final Function<Network, T> componentProvider,
-                               final Function<RelayOutputNetworkNode, Consumer<@NullableType T>> componentApplier) {
+                               final Function<RelayOutputNetworkNode, Consumer<@Nullable T>> componentApplier) {
         this.componentProvider = componentProvider;
         this.componentApplier = componentApplier;
     }

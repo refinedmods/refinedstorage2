@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:autocrafting",
+  "criteria": {
+    "autocrafter_manager_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:autocrafter_managers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.managing_patterns.description"
+    },
+    "icon": {
+      "id": "refinedstorage:autocrafter_manager"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.managing_patterns"
+    }
+  },
+  "requirements": [
+    [
+      "autocrafter_manager_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

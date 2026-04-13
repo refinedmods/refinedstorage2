@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage.common.api.constructordestructor.Destructo
 
 import java.util.Set;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 public class DestructorNetworkNode extends SimpleNetworkNode {
     private final Actor actor = new NetworkNodeActor(this);

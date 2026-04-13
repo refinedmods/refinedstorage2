@@ -3,9 +3,8 @@ package com.refinedmods.refinedstorage.api.storage;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
-import javax.annotation.Nullable;
-
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,7 @@
 {
   "variants": {
     "active=false,direction=down": {
-      "model": "refinedstorage:block/autocrafter/inactive",
-      "x": 180
+      "model": "refinedstorage:block/autocrafter/inactive"
     },
     "active=false,direction=east": {
       "model": "refinedstorage:block/autocrafter/inactive",
@@ -19,7 +18,8 @@
       "y": 180
     },
     "active=false,direction=up": {
-      "model": "refinedstorage:block/autocrafter/inactive"
+      "model": "refinedstorage:block/autocrafter/inactive",
+      "x": 180
     },
     "active=false,direction=west": {
       "model": "refinedstorage:block/autocrafter/inactive",
@@ -27,8 +27,7 @@
       "y": 270
     },
     "active=true,direction=down": {
-      "model": "refinedstorage:block/autocrafter/brown",
-      "x": 180
+      "model": "refinedstorage:block/autocrafter/brown"
     },
     "active=true,direction=east": {
       "model": "refinedstorage:block/autocrafter/brown",
@@ -45,7 +44,8 @@
       "y": 180
     },
     "active=true,direction=up": {
-      "model": "refinedstorage:block/autocrafter/brown"
+      "model": "refinedstorage:block/autocrafter/brown",
+      "x": 180
     },
     "active=true,direction=west": {
       "model": "refinedstorage:block/autocrafter/brown",

@@ -4,7 +4,10 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -16,8 +19,8 @@ public class FortuneUpgradeItem extends AbstractUpgradeItem {
     private final int fortuneLevel;
     private final Component name;
 
-    public FortuneUpgradeItem(final UpgradeRegistry registry, final int fortuneLevel) {
-        super(new Item.Properties(), registry, HELP);
+    public FortuneUpgradeItem(final Identifier id, final UpgradeRegistry registry, final int fortuneLevel) {
+        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)), registry, HELP);
         this.fortuneLevel = fortuneLevel;
         this.name = createTranslation("item", "fortune_upgrade." + fortuneLevel);
     }

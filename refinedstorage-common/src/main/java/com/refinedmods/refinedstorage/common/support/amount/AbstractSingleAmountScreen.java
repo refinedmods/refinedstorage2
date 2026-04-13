@@ -4,9 +4,9 @@ import com.refinedmods.refinedstorage.common.support.containermenu.AbstractSingl
 
 import java.util.function.Supplier;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
 
@@ -14,7 +14,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 
 public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountContainerMenu>
     extends AbstractAmountScreen<T, Double> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/amount_with_inventory.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/amount_with_inventory.png");
 
     protected AbstractSingleAmountScreen(final T containerMenu,
                                          final Inventory playerInventory,
@@ -33,10 +33,8 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                 .withActionButtonsEnabled(false)
                 .withMinAmount(minAmount)
                 .withResetAmount(minAmount.get())
-                .build(), DoubleAmountOperations.INSTANCE);
+                .build(), DoubleAmountOperations.INSTANCE, 176, 188);
         this.inventoryLabelY = 94;
-        this.imageWidth = 176;
-        this.imageHeight = 188;
     }
 
     @Override
@@ -46,13 +44,13 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics graphics, final int mouseX, final int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
+    protected void extractLabels(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
         renderPlayerInventoryTitle(graphics);
     }
 }

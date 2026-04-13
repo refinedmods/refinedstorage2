@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage.common.util.MathUtil;
 
@@ -17,21 +18,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.ToLongFunction;
-import javax.annotation.Nullable;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 public class ResourceContainerImpl implements ResourceContainer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceContainerImpl.class);
-
+    @Nullable
     private final ResourceAmount[] slots;
+    @Nullable
     private final ItemStack[] stackRepresentations;
     private final ToLongFunction<ResourceKey> maxAmountProvider;
     private final ResourceFactory primaryResourceFactory;
@@ -224,48 +219,16 @@ public class ResourceContainerImpl implements ResourceContainer {
     }
 
     @Override
-    public CompoundTag toTag(final HolderLookup.Provider provider) {
-        final CompoundTag tag = new CompoundTag();
-        for (int i = 0; i < size(); ++i) {
-            final ResourceAmount slot = slots[i];
-            if (slot == null) {
-                continue;
-            }
-            addToTag(tag, i, slot, provider);
-        }
-        return tag;
-    }
-
-    private void addToTag(final CompoundTag tag,
-                          final int index,
-                          final ResourceAmount slot,
-                          final HolderLookup.Provider provider) {
-        final Tag serialized = ResourceCodecs.AMOUNT_CODEC.encode(
-            slot,
-            provider.createSerializationContext(NbtOps.INSTANCE),
-            new CompoundTag()
-        ).getOrThrow();
-        tag.put("s" + index, serialized);
-    }
-
-    @Override
-    public void fromTag(final CompoundTag tag, final HolderLookup.Provider provider) {
-        for (int i = 0; i < size(); ++i) {
-            final String key = "s" + i;
-            if (!tag.contains(key)) {
+    public void load(final ResourceContainerContents contents) {
+        final List<Optional<ResourceAmount>> contentsSlots = contents.slots();
+        for (int i = 0; i < size() && i < contentsSlots.size(); ++i) {
+            final Optional<ResourceAmount> slotContents = contentsSlots.get(i);
+            if (slotContents.isPresent()) {
+                setSilently(i, slotContents.get());
+            } else {
                 removeSilently(i);
-                continue;
             }
-            final CompoundTag item = tag.getCompound(key);
-            fromTag(i, item, provider);
         }
-    }
-
-    private void fromTag(final int index, final CompoundTag tag, final HolderLookup.Provider provider) {
-        ResourceCodecs.AMOUNT_CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag)
-            .resultOrPartial(error ->
-                LOGGER.error("Failed to load resource container slot {} {}: {}", index, tag, error))
-            .ifPresent(resourceAmount -> setSilently(index, resourceAmount));
     }
 
     @Override

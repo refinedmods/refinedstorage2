@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class GridNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;

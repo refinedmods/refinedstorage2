@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:comparator",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "M": "refinedstorage:machine_casing",
+    "P": "refinedstorage:improved_processor",
+    "R": "minecraft:redstone_torch"
+  },
+  "pattern": [
+    "ERE",
+    "CMC",
+    "EPE"
+  ],
+  "result": {
+    "id": "refinedstorage:detector"
+  }
+}

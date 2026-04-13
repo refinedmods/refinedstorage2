@@ -7,34 +7,26 @@ import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
+import com.refinedmods.refinedstorage.common.support.RecipeMapRecipeProvider;
+import com.refinedmods.refinedstorage.common.support.RecipeProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.TransferManager;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
-import com.refinedmods.refinedstorage.fabric.cape.TenthAnniversaryCape;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.fabric.mixin.EditBoxAccessor;
-import com.refinedmods.refinedstorage.fabric.mixin.KeyMappingAccessor;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage.fabric.support.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage.fabric.support.render.FluidVariantFluidRenderer;
+import com.refinedmods.refinedstorage.fabric.support.resource.SimpleSingleStackStorage;
 import com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil;
-import com.refinedmods.refinedstorage.fabric.util.SimpleSingleStackStorage;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -45,7 +37,7 @@ import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -53,17 +45,13 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -97,17 +85,17 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil.toFluidVariant;
 import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil.toItemVariant;
+import static java.util.Objects.requireNonNull;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformImpl.class);
+    @Nullable
+    private RecipeProvider clientRecipeProvider;
 
     public PlatformImpl() {
         super(new MenuOpenerImpl(), new FluidVariantFluidRenderer(), ItemGridInsertionStrategy::new);
@@ -131,8 +119,8 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
         return !keyMapping.isUnbound() && InputConstants.isKeyDown(
-            Minecraft.getInstance().getWindow().getWindow(),
-            ((KeyMappingAccessor) keyMapping).getKey().getValue()
+            Minecraft.getInstance().getWindow(),
+            keyMapping.key.getValue()
         );
     }
 
@@ -141,7 +129,7 @@ public final class PlatformImpl extends AbstractPlatform {
         if (container.isEmpty()) {
             return Optional.empty();
         }
-        final SimpleSingleStackStorage interceptingStorage = new SimpleSingleStackStorage(container);
+        final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forStack(container);
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(container, ContainerItemContext.ofSingleSlot(
             interceptingStorage
         ));
@@ -164,7 +152,7 @@ public final class PlatformImpl extends AbstractPlatform {
         if (!(resourceAmount.resource() instanceof FluidResource fluidResource)) {
             return Optional.empty();
         }
-        final SimpleSingleStackStorage interceptingStorage = new SimpleSingleStackStorage(container);
+        final SimpleSingleStackStorage interceptingStorage = SimpleSingleStackStorage.forStack(container);
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(container, ContainerItemContext.ofSingleSlot(
             interceptingStorage
         ));
@@ -192,9 +180,7 @@ public final class PlatformImpl extends AbstractPlatform {
                                     final long amount,
                                     final Action action) {
         try (Transaction tx = Transaction.openOuter()) {
-            final long inserted = InventoryStorage
-                .of(container, null)
-                .insert(toItemVariant(itemResource), amount, tx);
+            final long inserted = ContainerStorage.of(container, null).insert(toItemVariant(itemResource), amount, tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
             }
@@ -207,7 +193,7 @@ public final class PlatformImpl extends AbstractPlatform {
                                        final Level level,
                                        final BlockHitResult hitResult,
                                        final Player player) {
-        return state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
+        return state.getCloneItemStack(level, hitResult.getBlockPos(), false);
     }
 
     @Override
@@ -225,7 +211,7 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Player getFakePlayer(final ServerLevel level, @Nullable final UUID playerId) {
         return Optional.ofNullable(playerId)
-            .flatMap(id -> level.getServer().getProfileCache().get(id))
+            .flatMap(id -> level.getServer().services().profileResolver().fetchById(id))
             .map(profile -> FakePlayer.get(level, profile))
             .orElseGet(() -> FakePlayer.get(level));
     }
@@ -325,7 +311,7 @@ public final class PlatformImpl extends AbstractPlatform {
                                          final LevelReader level,
                                          final BlockPos position,
                                          final Player player) {
-        return block.getCloneItemStack(level, position, state);
+        return state.getCloneItemStack(level, position, false);
     }
 
     @Override
@@ -335,7 +321,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public List<ClientTooltipComponent> processTooltipComponents(final ItemStack stack,
-                                                                 final GuiGraphics graphics,
+                                                                 final GuiGraphicsExtractor graphics,
                                                                  final int mouseX,
                                                                  final Optional<TooltipComponent> imageComponent,
                                                                  final List<Component> components) {
@@ -346,20 +332,6 @@ public final class PlatformImpl extends AbstractPlatform {
             .collect(Collectors.toList());
         imageComponent.ifPresent(image -> processedComponents.add(1, ClientTooltipComponent.create(image)));
         return processedComponents;
-    }
-
-    @Override
-    public void renderTooltip(final GuiGraphics graphics,
-                              final List<ClientTooltipComponent> components,
-                              final int x,
-                              final int y) {
-        graphics.renderTooltipInternal(
-            Minecraft.getInstance().font,
-            components,
-            x,
-            y,
-            DefaultTooltipPositioner.INSTANCE
-        );
     }
 
     @Override
@@ -382,27 +354,6 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public <T extends CustomPacketPayload> void sendPacketToClient(final ServerPlayer player, final T packet) {
         ServerPlayNetworking.send(player, packet);
-    }
-
-    @Override
-    public void saveSavedData(final SavedData savedData,
-                              final File file,
-                              final HolderLookup.Provider provider,
-                              final BiConsumer<File, HolderLookup.Provider> defaultSaveFunction) {
-        if (!savedData.isDirty()) {
-            return;
-        }
-        final var targetPath = file.toPath().toAbsolutePath();
-        final var tempFile = targetPath.getParent().resolve(file.getName() + ".temp");
-        final CompoundTag compoundTag = new CompoundTag();
-        compoundTag.put("data", savedData.save(new CompoundTag(), provider));
-        NbtUtils.addCurrentDataVersion(compoundTag);
-        try {
-            doSave(compoundTag, tempFile, targetPath);
-        } catch (final IOException e) {
-            LOGGER.error("Could not save data", e);
-        }
-        savedData.setDirty(false);
     }
 
     @Nullable
@@ -472,23 +423,23 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void setTenthAnniversaryCape(final Player player, final boolean enabled) {
-        player.setAttached(TenthAnniversaryCape.ATTACHMENT, enabled);
+    public void updateImageHeight(final AbstractContainerScreen<?> screen, final int height) {
+        screen.imageHeight = height;
     }
 
     @Override
-    public boolean isTenthAnniversaryCapeAvailable() {
-        return false;
+    public RecipeProvider getClientRecipeProvider(final Level level) {
+        if (!level.isClientSide()) {
+            return new RecipeMapRecipeProvider(requireNonNull(level.getServer()).getRecipeManager().recipes);
+        }
+        if (clientRecipeProvider == null) {
+            throw new RuntimeException("Recipe provider is not synced yet");
+        }
+        return clientRecipeProvider;
     }
 
-    private void doSave(final CompoundTag compoundTag, final Path tempFile, final Path targetPath) throws IOException {
-        // Write to temp file first.
-        NbtIo.writeCompressed(compoundTag, tempFile);
-        // Try atomic move
-        try {
-            Files.move(tempFile, targetPath, StandardCopyOption.ATOMIC_MOVE);
-        } catch (final AtomicMoveNotSupportedException ignored) {
-            Files.move(tempFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
-        }
+    @Override
+    public void setClientRecipeProvider(final RecipeProvider recipeProvider) {
+        this.clientRecipeProvider = recipeProvider;
     }
 }

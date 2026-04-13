@@ -5,9 +5,10 @@ import com.refinedmods.refinedstorage.api.network.security.Permission;
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 
 public class PlatformSecurityNetworkComponentImpl extends SecurityNetworkComponentImpl
     implements PlatformSecurityNetworkComponent {
@@ -17,15 +18,13 @@ public class PlatformSecurityNetworkComponentImpl extends SecurityNetworkCompone
 
     @Override
     public boolean isAllowed(final Permission permission, final ServerPlayer player) {
-        final MinecraftServer server = player.getServer();
-        if (server == null) {
-            return false;
-        }
-        final GameProfile gameProfile = player.getGameProfile();
-        if (server.getPlayerList().isOp(gameProfile)) {
+        final ServerLevel level = player.level();
+        final MinecraftServer server = level.getServer();
+        final NameAndId nameAndId = player.nameAndId();
+        if (server.getPlayerList().isOp(nameAndId)) {
             return true;
         }
-        final PlayerSecurityActor actor = new PlayerSecurityActor(gameProfile.getId());
+        final PlayerSecurityActor actor = new PlayerSecurityActor(nameAndId.id());
         return super.isAllowed(permission, actor);
     }
 }

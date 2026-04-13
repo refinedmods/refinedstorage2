@@ -3,21 +3,21 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridContainerMenu> {
     private static final int DISK_SLOT_WIDTH = 30;
     private static final int DISK_SLOT_HEIGHT = 26;
 
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/portable_grid.png");
+    private static final Identifier TEXTURE = createIdentifier("textures/gui/portable_grid.png");
 
     @Nullable
     private ProgressWidget progressWidget;
@@ -25,10 +25,8 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     public PortableGridScreen(final AbstractPortableGridContainerMenu menu,
                               final Inventory inventory,
                               final Component title) {
-        super(menu, inventory, title, 99);
+        super(menu, inventory, title, 99, 193, 176);
         this.inventoryLabelY = 75;
-        this.imageWidth = 193;
-        this.imageHeight = 176;
     }
 
     @Override
@@ -40,13 +38,12 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     protected boolean hasClickedOutside(final double mouseX,
                                         final double mouseY,
                                         final int leftPos,
-                                        final int topPos,
-                                        final int clickedButton) {
+                                        final int topPos) {
         if (mouseX >= leftPos - DISK_SLOT_WIDTH + 3 && mouseX <= leftPos
             && mouseY >= topPos + 3 && mouseY <= topPos + 3 + DISK_SLOT_HEIGHT) {
             return false;
         }
-        return super.hasClickedOutside(mouseX, mouseY, leftPos, topPos, clickedButton);
+        return super.hasClickedOutside(mouseX, mouseY, leftPos, topPos);
     }
 
     @Override
@@ -77,15 +74,17 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     }
 
     @Override
-    protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
-        super.renderBg(graphics, delta, mouseX, mouseY);
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
-        graphics.blit(getTexture(), x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0, DISK_SLOT_WIDTH, DISK_SLOT_HEIGHT);
+        graphics.blit(GUI_TEXTURED, getTexture(), x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0,
+            DISK_SLOT_WIDTH, DISK_SLOT_HEIGHT, 256, 256);
     }
 
     @Override
-    protected ResourceLocation getTexture() {
+    protected Identifier getTexture() {
         return TEXTURE;
     }
 }

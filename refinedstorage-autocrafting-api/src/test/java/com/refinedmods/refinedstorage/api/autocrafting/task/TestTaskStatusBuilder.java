@@ -7,7 +7,8 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exactly the same as {@link TaskStatusBuilder}, but for use in tests.

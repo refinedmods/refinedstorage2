@@ -19,7 +19,7 @@ public interface PatternProviderExternalPatternSink {
      * @param resource the resource
      * @return true if this sink can accept the given resource type
      */
-    default boolean applies(ResourceKey resource) {
+    default boolean applies(final ResourceKey resource) {
         return true;
     }
 }

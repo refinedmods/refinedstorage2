@@ -12,7 +12,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 public class LootTableProviderImpl extends LootTableProvider {
     public LootTableProviderImpl(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider) {
         super(output, Set.of(), List.of(new SubProviderEntry(
-            BlockDropProvider::new,
+            BlockDropsProvider::new,
             LootContextParamSets.BLOCK
         )), provider);
     }

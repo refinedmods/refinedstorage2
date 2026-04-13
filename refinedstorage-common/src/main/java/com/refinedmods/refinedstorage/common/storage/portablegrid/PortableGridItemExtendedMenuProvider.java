@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -17,6 +16,7 @@ import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 class PortableGridItemExtendedMenuProvider implements ExtendedMenuProvider<PortableGridData> {
     private final Component name;

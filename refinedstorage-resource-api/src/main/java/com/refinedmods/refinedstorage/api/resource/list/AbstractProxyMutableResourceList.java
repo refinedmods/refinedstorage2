@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is a utility class to easily decorate a {@link MutableResourceListImpl}.

@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotRefer
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -15,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 class SecurityCardExtendedMenuProvider extends AbstractSecurityCardExtendedMenuProvider<PlayerBoundSecurityCardData> {
     @Nullable

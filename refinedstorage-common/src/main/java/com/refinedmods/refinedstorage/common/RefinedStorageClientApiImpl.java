@@ -21,20 +21,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public class RefinedStorageClientApiImpl implements RefinedStorageClientApi {
     private final Map<Class<?>, ResourceRendering> resourceRenderingMap = new HashMap<>();
-    private final Map<Item, ResourceLocation> diskModelsByItem = new HashMap<>();
-    private final Set<ResourceLocation> diskModels = new HashSet<>();
+    private final Map<Item, Identifier> diskModelsByItem = new HashMap<>();
+    private final Set<Identifier> diskModels = new HashSet<>();
     private final GridInsertionHintsImpl gridInsertionHints = new GridInsertionHintsImpl(
         new ItemGridInsertionHint(),
         new SingleItemGridInsertionHint()
@@ -75,18 +75,18 @@ public class RefinedStorageClientApiImpl implements RefinedStorageClientApi {
     }
 
     @Override
-    public void registerDiskModel(final Item item, final ResourceLocation model) {
+    public void registerDiskModel(final Item item, final Identifier model) {
         diskModelsByItem.put(item, model);
         diskModels.add(model);
     }
 
     @Override
-    public Set<ResourceLocation> getDiskModels() {
+    public Set<Identifier> getDiskModels() {
         return diskModels;
     }
 
     @Override
-    public Map<Item, ResourceLocation> getDiskModelsByItem() {
+    public Map<Item, Identifier> getDiskModelsByItem() {
         return Collections.unmodifiableMap(diskModelsByItem);
     }
 

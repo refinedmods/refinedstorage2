@@ -1,13 +1,10 @@
 package com.refinedmods.refinedstorage.common.content;
 
-import com.refinedmods.refinedstorage.common.storage.portablegrid.PortableGridLootItemFunction;
-import com.refinedmods.refinedstorage.common.storage.storageblock.StorageBlockLootItemFunction;
-import com.refinedmods.refinedstorage.common.support.energy.EnergyLootItemFunction;
-
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,36 +12,36 @@ public final class LootFunctions {
     public static final LootFunctions INSTANCE = new LootFunctions();
 
     @Nullable
-    private Supplier<LootItemFunctionType<StorageBlockLootItemFunction>> storageBlock;
+    private Supplier<MapCodec<? extends LootItemFunction>> storageBlock;
     @Nullable
-    private Supplier<LootItemFunctionType<EnergyLootItemFunction>> energy;
+    private Supplier<MapCodec<? extends LootItemFunction>> energy;
     @Nullable
-    private Supplier<LootItemFunctionType<PortableGridLootItemFunction>> portableGrid;
+    private Supplier<MapCodec<? extends LootItemFunction>> portableGrid;
 
     private LootFunctions() {
     }
 
-    public LootItemFunctionType<StorageBlockLootItemFunction> getStorageBlock() {
+    public MapCodec<? extends LootItemFunction> getStorageBlock() {
         return requireNonNull(storageBlock).get();
     }
 
-    public void setStorageBlock(final Supplier<LootItemFunctionType<StorageBlockLootItemFunction>> supplier) {
+    public void setStorageBlock(final Supplier<MapCodec<? extends LootItemFunction>> supplier) {
         this.storageBlock = supplier;
     }
 
-    public LootItemFunctionType<EnergyLootItemFunction> getEnergy() {
+    public MapCodec<? extends LootItemFunction> getEnergy() {
         return requireNonNull(energy).get();
     }
 
-    public void setEnergy(final Supplier<LootItemFunctionType<EnergyLootItemFunction>> supplier) {
+    public void setEnergy(final Supplier<MapCodec<? extends LootItemFunction>> supplier) {
         this.energy = supplier;
     }
 
-    public LootItemFunctionType<PortableGridLootItemFunction> getPortableGrid() {
+    public MapCodec<? extends LootItemFunction> getPortableGrid() {
         return requireNonNull(portableGrid).get();
     }
 
-    public void setPortableGrid(final Supplier<LootItemFunctionType<PortableGridLootItemFunction>> supplier) {
+    public void setPortableGrid(final Supplier<MapCodec<? extends LootItemFunction>> supplier) {
         this.portableGrid = supplier;
     }
 }

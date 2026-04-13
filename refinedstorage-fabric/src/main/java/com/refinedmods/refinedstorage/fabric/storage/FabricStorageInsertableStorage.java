@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.storage;
 
 import com.refinedmods.refinedstorage.api.core.Action;
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.InsertableStorage;
@@ -16,14 +15,15 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 public class FabricStorageInsertableStorage<T> implements InsertableStorage {
     private final BlockApiCache<Storage<T>, Direction> cache;
-    private final Function<ResourceKey, @NullableType T> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Direction direction;
 
     public FabricStorageInsertableStorage(final BlockApiLookup<Storage<T>, Direction> lookup,
-                                          final Function<ResourceKey, @NullableType T> toPlatformMapper,
+                                          final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                           final ServerLevel serverLevel,
                                           final BlockPos pos,
                                           final Direction direction) {

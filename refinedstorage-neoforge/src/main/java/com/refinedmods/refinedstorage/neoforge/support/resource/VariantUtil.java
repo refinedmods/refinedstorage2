@@ -1,49 +1,58 @@
 package com.refinedmods.refinedstorage.neoforge.support.resource;
 
-import com.refinedmods.refinedstorage.api.core.Action;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.util.Objects;
-
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Optional;
 
 public final class VariantUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VariantUtil.class);
-
     private VariantUtil() {
     }
 
-    public static boolean isSame(final FluidResource resource, final FluidStack stack) {
-        return resource.fluid() == stack.getFluid() && Objects.equals(
-            resource.components(),
-            stack.getComponents().asPatch()
-        );
+    public static FluidResource ofPlatform(final net.neoforged.neoforge.transfer.fluid.FluidResource fluidResource) {
+        return new FluidResource(fluidResource.getFluid(), fluidResource.getComponentsPatch());
     }
 
-    public static FluidResource ofFluidStack(final FluidStack fluidStack) {
-        return new FluidResource(fluidStack.getFluid(), fluidStack.getComponents().asPatch());
+    public static ItemResource ofPlatform(final net.neoforged.neoforge.transfer.item.ItemResource itemResource) {
+        return new ItemResource(itemResource.getItem(), itemResource.getComponentsPatch());
     }
 
-    public static FluidStack toFluidStack(final FluidResource fluidResource, final long amount) {
-        if (amount > Integer.MAX_VALUE) {
-            LOGGER.warn("Truncating too large amount for {} to fit into FluidStack {}", fluidResource, amount);
+    public static Optional<net.neoforged.neoforge.transfer.fluid.FluidResource> optionalFluidToPlatform(
+        final ResourceKey resource
+    ) {
+        if (!(resource instanceof FluidResource fluidResource)) {
+            return Optional.empty();
         }
-        return new FluidStack(
-            BuiltInRegistries.FLUID.wrapAsHolder(fluidResource.fluid()),
-            (int) amount,
+        return Optional.of(net.neoforged.neoforge.transfer.fluid.FluidResource.of(
+            fluidResource.fluid(),
+            fluidResource.components()
+        ));
+    }
+
+    public static Optional<net.neoforged.neoforge.transfer.item.ItemResource> optionalItemToPlatform(
+        final ResourceKey resource
+    ) {
+        if (!(resource instanceof ItemResource itemResource)) {
+            return Optional.empty();
+        }
+        return Optional.of(net.neoforged.neoforge.transfer.item.ItemResource.of(
+            itemResource.item(),
+            itemResource.components()
+        ));
+    }
+
+    public static net.neoforged.neoforge.transfer.fluid.FluidResource toPlatform(final FluidResource fluidResource) {
+        return net.neoforged.neoforge.transfer.fluid.FluidResource.of(
+            fluidResource.fluid(),
             fluidResource.components()
         );
     }
 
-    public static Action toAction(final IFluidHandler.FluidAction action) {
-        return action == IFluidHandler.FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE;
-    }
-
-    public static IFluidHandler.FluidAction toFluidAction(final Action action) {
-        return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
+    public static net.neoforged.neoforge.transfer.item.ItemResource toPlatform(final ItemResource itemResource) {
+        return net.neoforged.neoforge.transfer.item.ItemResource.of(
+            itemResource.item(),
+            itemResource.components()
+        );
     }
 }

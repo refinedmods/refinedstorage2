@@ -12,12 +12,12 @@ import java.util.Set;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -37,7 +37,7 @@ class ProcessingMatrixInputClientTooltipComponent implements ClientTooltipCompon
     private int currentCycle = 0;
 
     ProcessingMatrixInputClientTooltipComponent(final PlatformResourceKey resource,
-                                                final Set<ResourceLocation> allowedAlternativeIds) {
+                                                final Set<Identifier> allowedAlternativeIds) {
         this.allowedAlternatives = resource.getTags()
             .stream()
             .filter(tag -> allowedAlternativeIds.contains(tag.key().location()))
@@ -52,7 +52,8 @@ class ProcessingMatrixInputClientTooltipComponent implements ClientTooltipCompon
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
         final long now = System.currentTimeMillis();
         if (cycleStart == 0) {
             cycleStart = now;
@@ -62,7 +63,7 @@ class ProcessingMatrixInputClientTooltipComponent implements ClientTooltipCompon
             cycleStart = now;
         }
 
-        graphics.drawString(font, ALLOWED_ALTERNATIVES, x, y, 0x00FFFFFF);
+        graphics.text(font, ALLOWED_ALTERNATIVES, x, y, 0xFFFFFFFF);
 
         for (int i = 0; i < allowedAlternatives.size(); i++) {
             final ResourceTag alternative = allowedAlternatives.get(i);
@@ -73,18 +74,18 @@ class ProcessingMatrixInputClientTooltipComponent implements ClientTooltipCompon
                 resource.getClass()
             );
             rendering.render(resource, graphics, x, y + 9 + PADDING + i * 18);
-            graphics.drawString(
+            graphics.text(
                 font,
                 names.get(i),
                 x + 18 + PADDING,
                 y + 9 + PADDING + i * 18 + (18 / 2) - (9 / 2),
-                11184810
+                0xFFAAAAAA
             );
         }
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return height;
     }
 

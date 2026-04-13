@@ -4,11 +4,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.util.Mth;
-
-import static java.util.Objects.requireNonNullElse;
+import org.jspecify.annotations.Nullable;
 
 public class DoubleAmountOperations implements AmountOperations<Double> {
     public static final AmountOperations<Double> INSTANCE = new DoubleAmountOperations();
@@ -53,17 +51,11 @@ public class DoubleAmountOperations implements AmountOperations<Double> {
                                final int delta,
                                @Nullable final Double minAmount,
                                @Nullable final Double maxAmount) {
+        final double correctedMinAmount = minAmount == null ? Double.MIN_VALUE : minAmount;
+        final double correctedMaxAmount = maxAmount == null ? Double.MAX_VALUE : maxAmount;
         if (current == null) {
-            return Mth.clamp(
-                delta,
-                requireNonNullElse(minAmount, Double.MIN_VALUE),
-                requireNonNullElse(maxAmount, Double.MAX_VALUE)
-            );
+            return Mth.clamp(delta, correctedMinAmount, correctedMaxAmount);
         }
-        return Mth.clamp(
-            current + delta,
-            requireNonNullElse(minAmount, Double.MIN_VALUE),
-            requireNonNullElse(maxAmount, Double.MAX_VALUE)
-        );
+        return Mth.clamp(current + delta, correctedMinAmount, correctedMaxAmount);
     }
 }

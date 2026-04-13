@@ -3,10 +3,8 @@ package com.refinedmods.refinedstorage.common.support.tooltip;
 import java.util.List;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
-import org.joml.Matrix4f;
 
 public class CompositeClientTooltipComponent implements ClientTooltipComponent {
     private final List<ClientTooltipComponent> children;
@@ -16,8 +14,8 @@ public class CompositeClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public int getHeight() {
-        return children.stream().mapToInt(ClientTooltipComponent::getHeight).sum();
+    public int getHeight(final Font font) {
+        return children.stream().mapToInt(c -> c.getHeight(font)).sum();
     }
 
     @Override
@@ -26,24 +24,21 @@ public class CompositeClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
         int yy = y;
         for (final ClientTooltipComponent child : children) {
-            child.renderImage(font, x, yy, graphics);
-            yy += child.getHeight();
+            child.extractImage(font, x, yy, w, h, graphics);
+            yy += child.getHeight(font);
         }
     }
 
     @Override
-    public void renderText(final Font font,
-                           final int x,
-                           final int y,
-                           final Matrix4f matrix,
-                           final MultiBufferSource.BufferSource buffer) {
+    public void extractText(final GuiGraphicsExtractor graphics, final Font font, final int x, final int y) {
         int yy = y;
         for (final ClientTooltipComponent child : children) {
-            child.renderText(font, x, yy, matrix, buffer);
-            yy += child.getHeight();
+            child.extractText(graphics, font, x, yy);
+            yy += child.getHeight(font);
         }
     }
 }

@@ -2,18 +2,20 @@ package com.refinedmods.refinedstorage.common.support.widget;
 
 import java.util.function.Supplier;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class SearchIconWidget extends AbstractWidget {
-    public static final ResourceLocation SEARCH = createIdentifier("search");
+    public static final Identifier SEARCH = createIdentifier("search");
     public static final int SEARCH_SIZE = 12;
 
     private final Supplier<Component> messageSupplier;
@@ -29,8 +31,8 @@ public class SearchIconWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) {
             editBox.setFocused(true);
             return true;
         }
@@ -38,11 +40,11 @@ public class SearchIconWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(final GuiGraphics graphics,
-                                final int mouseX,
-                                final int mouseY,
-                                final float partialTicks) {
-        graphics.blitSprite(SEARCH, getX(), getY(), SEARCH_SIZE, SEARCH_SIZE);
+    protected void extractWidgetRenderState(final GuiGraphicsExtractor graphics,
+                                            final int mouseX,
+                                            final int mouseY,
+                                            final float partialTicks) {
+        graphics.blitSprite(GUI_TEXTURED, SEARCH, getX(), getY(), SEARCH_SIZE, SEARCH_SIZE);
         if (isHovered) {
             setTooltip(Tooltip.create(messageSupplier.get()));
         } else {

@@ -10,7 +10,8 @@ import com.refinedmods.refinedstorage.api.storage.external.ExternalStorageProvid
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageRepository;
 
 import java.util.function.LongSupplier;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractNetworkNode implements StorageProvider {
     private final long energyUsage;

@@ -10,7 +10,8 @@ import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public final class StorageConfigurationContainerImpl implements StorageConfigurationContainer {
     private static final String TAG_INSERT_PRIORITY = "pri";
@@ -37,32 +38,20 @@ public final class StorageConfigurationContainerImpl implements StorageConfigura
         this.redstoneModeConsumer = redstoneModeConsumer;
     }
 
-    public void load(final CompoundTag tag) {
-        if (tag.contains(TAG_INSERT_PRIORITY)) {
-            config.setInsertPriority(tag.getInt(TAG_INSERT_PRIORITY));
-        }
-        if (tag.contains(TAG_EXTRACT_PRIORITY)) {
-            config.setExtractPriority(tag.getInt(TAG_EXTRACT_PRIORITY));
-        } else {
-            config.setExtractPriority(config.getInsertPriority()); // bit of compat
-        }
-        if (tag.contains(TAG_FILTER_MODE)) {
-            config.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            config.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-        }
-        if (tag.contains(TAG_VOID_EXCESS)) {
-            config.setVoidExcess(tag.getBoolean(TAG_VOID_EXCESS));
-        }
+    public void read(final ValueInput input) {
+        input.getInt(TAG_INSERT_PRIORITY).ifPresent(config::setInsertPriority);
+        input.getInt(TAG_EXTRACT_PRIORITY).ifPresent(config::setExtractPriority);
+        input.getInt(TAG_FILTER_MODE).map(FilterModeSettings::getFilterMode).ifPresent(config::setFilterMode);
+        input.getInt(TAG_ACCESS_MODE).map(AccessModeSettings::getAccessMode).ifPresent(config::setAccessMode);
+        config.setVoidExcess(input.getBooleanOr(TAG_VOID_EXCESS, false));
     }
 
-    public void save(final CompoundTag tag) {
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(config.getFilterMode()));
-        tag.putInt(TAG_INSERT_PRIORITY, config.getInsertPriority());
-        tag.putInt(TAG_EXTRACT_PRIORITY, config.getExtractPriority());
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(config.getAccessMode()));
-        tag.putBoolean(TAG_VOID_EXCESS, config.isVoidExcess());
+    public void store(final ValueOutput output) {
+        output.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(config.getFilterMode()));
+        output.putInt(TAG_INSERT_PRIORITY, config.getInsertPriority());
+        output.putInt(TAG_EXTRACT_PRIORITY, config.getExtractPriority());
+        output.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(config.getAccessMode()));
+        output.putBoolean(TAG_VOID_EXCESS, config.isVoidExcess());
     }
 
     @Override

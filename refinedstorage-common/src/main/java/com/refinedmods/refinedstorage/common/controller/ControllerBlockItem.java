@@ -10,7 +10,10 @@ import com.refinedmods.refinedstorage.common.content.BlockEntities;
 
 import java.util.Optional;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
@@ -24,14 +27,13 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 public class ControllerBlockItem extends AbstractEnergyBlockItem {
     private final Block block;
 
-    ControllerBlockItem(final Block block) {
-        super(block, new Item.Properties().stacksTo(1), RefinedStorageApi.INSTANCE.getEnergyItemHelper());
+    ControllerBlockItem(final Identifier id, final Block block) {
+        super(block, new Item.Properties()
+                .stacksTo(1)
+                .setId(ResourceKey.create(Registries.ITEM, id))
+                .overrideDescription(block.getDescriptionId()),
+            RefinedStorageApi.INSTANCE.getEnergyItemHelper());
         this.block = block;
-    }
-
-    @Override
-    public Component getDescription() {
-        return block.getName();
     }
 
     @Override

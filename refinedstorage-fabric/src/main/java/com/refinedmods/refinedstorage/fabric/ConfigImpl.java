@@ -17,7 +17,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "CanBeFinal"})
 @Config(name = IdentifierUtil.MOD_ID)
@@ -25,8 +25,6 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     private ScreenSize screenSize = ScreenSize.STRETCH;
 
     private boolean smoothScrolling = true;
-
-    private boolean tenthAnniversaryCape = false;
 
     private boolean autocraftingNotification = true;
 
@@ -157,17 +155,6 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     @Override
     public void setScreenSize(final ScreenSize screenSize) {
         this.screenSize = screenSize;
-        AutoConfig.getConfigHolder(ConfigImpl.class).save();
-    }
-
-    @Override
-    public boolean isTenthAnniversaryCape() {
-        return tenthAnniversaryCape;
-    }
-
-    @Override
-    public void setTenthAnniversaryCape(final boolean enabled) {
-        this.tenthAnniversaryCape = enabled;
         AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 
@@ -421,15 +408,15 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
         }
 
         @Override
-        public Optional<ResourceLocation> getSynchronizer() {
+        public Optional<Identifier> getSynchronizer() {
             if (synchronizer.trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(synchronizer).map(ResourceLocation::tryParse);
+            return Optional.of(synchronizer).map(Identifier::tryParse);
         }
 
         @Override
-        public void setSynchronizer(final ResourceLocation synchronizerId) {
+        public void setSynchronizer(final Identifier synchronizerId) {
             this.synchronizer = synchronizerId.toString();
             save();
         }
@@ -474,15 +461,15 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
         }
 
         @Override
-        public Optional<ResourceLocation> getResourceType() {
+        public Optional<Identifier> getResourceType() {
             if (resourceType.trim().isBlank()) {
                 return Optional.empty();
             }
-            return Optional.of(resourceType).map(ResourceLocation::tryParse);
+            return Optional.of(resourceType).map(Identifier::tryParse);
         }
 
         @Override
-        public void setResourceType(final ResourceLocation resourceType) {
+        public void setResourceType(final Identifier resourceType) {
             this.resourceType = resourceType.toString();
             save();
         }

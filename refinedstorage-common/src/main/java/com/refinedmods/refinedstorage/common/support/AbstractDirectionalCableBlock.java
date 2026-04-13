@@ -1,21 +1,23 @@
 package com.refinedmods.refinedstorage.common.support;
 
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.networking.CableConnections;
 import com.refinedmods.refinedstorage.common.support.direction.DefaultDirectionType;
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,14 +30,16 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDirectionalCableBlock extends AbstractDirectionalBlock<Direction>
     implements SimpleWaterloggedBlock {
     private final ConcurrentHashMap<DirectionalCacheShapeCacheKey, VoxelShape> shapeCache;
 
-    protected AbstractDirectionalCableBlock(final ConcurrentHashMap<DirectionalCacheShapeCacheKey, VoxelShape>
+    protected AbstractDirectionalCableBlock(final Identifier id,
+                                            final ConcurrentHashMap<DirectionalCacheShapeCacheKey, VoxelShape>
                                                 shapeCache) {
-        super(BlockConstants.CABLE_PROPERTIES);
+        super(BlockProperties.cable(id));
         this.shapeCache = shapeCache;
     }
 
@@ -50,7 +54,7 @@ public abstract class AbstractDirectionalCableBlock extends AbstractDirectionalB
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
+    protected boolean propagatesSkylightDown(final BlockState state) {
         return !state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
@@ -73,12 +77,11 @@ public abstract class AbstractDirectionalCableBlock extends AbstractDirectionalB
     }
 
     @Override
-    protected BlockState updateShape(final BlockState state,
-                                     final Direction direction,
-                                     final BlockState neighborState,
-                                     final LevelAccessor level,
+    protected BlockState updateShape(final BlockState state, final LevelReader level, final ScheduledTickAccess ticks,
                                      final BlockPos pos,
-                                     final BlockPos neighborPos) {
+                                     final Direction directionToNeighbour, final BlockPos neighbourPos,
+                                     final BlockState neighbourState,
+                                     final RandomSource random) {
         final BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof AbstractCableLikeBlockEntity<?> cable) {
             cable.updateConnections();
@@ -89,7 +92,7 @@ public abstract class AbstractDirectionalCableBlock extends AbstractDirectionalB
                 Platform.INSTANCE.requestModelDataUpdateOnClient(blockEntity, false);
             }
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
     @Override

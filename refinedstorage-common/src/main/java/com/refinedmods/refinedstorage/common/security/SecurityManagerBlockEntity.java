@@ -10,30 +10,29 @@ import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkN
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
-import com.refinedmods.refinedstorage.common.support.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage.common.support.FilteredContainer;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeContainerProviderImpl;
-import com.refinedmods.refinedstorage.common.util.ContainerUtil;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public class SecurityManagerBlockEntity
     extends AbstractBaseNetworkNodeContainerBlockEntity<SecurityDecisionProviderProxyNetworkNode>
-    implements BlockEntityWithDrops, NetworkNodeMenuProvider {
+    implements NetworkNodeMenuProvider {
     static final int CARD_AMOUNT = 18;
 
     private static final String TAG_SECURITY_CARDS = "sc";
@@ -42,11 +41,23 @@ public class SecurityManagerBlockEntity
     private final FilteredContainer securityCards = new FilteredContainer(
         CARD_AMOUNT,
         SecurityManagerBlockEntity::isValidSecurityCard
-    );
+    ) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            invalidate();
+        }
+    };
     private final FilteredContainer fallbackSecurityCard = new FilteredContainer(
         1,
         SecurityManagerBlockEntity::isValidFallbackSecurityCard
-    );
+    ) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            invalidate();
+        }
+    };
 
     private final SecurityDecisionProviderImpl securityDecisionProvider = new SecurityDecisionProviderImpl();
 
@@ -59,8 +70,6 @@ public class SecurityManagerBlockEntity
                 Platform.INSTANCE.getConfig().getSecurityManager().getEnergyUsage()
             )
         );
-        securityCards.addListener(card -> invalidate());
-        fallbackSecurityCard.addListener(card -> invalidate());
         mainNetworkNode.setDelegate(securityDecisionProvider);
     }
 
@@ -69,7 +78,7 @@ public class SecurityManagerBlockEntity
         return new NetworkNodeContainerProviderImpl() {
             @Override
             public boolean canBuild(final ServerPlayer player) {
-                return super.canBuild(player) || isPlacedBy(player.getGameProfile().getId());
+                return super.canBuild(player) || isPlacedBy(player.getGameProfile().id());
             }
         };
     }
@@ -116,31 +125,38 @@ public class SecurityManagerBlockEntity
     }
 
     @Override
-    public void loadAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        if (tag.contains(TAG_SECURITY_CARDS)) {
-            ContainerUtil.read(tag.getCompound(TAG_SECURITY_CARDS), securityCards, provider);
+    public void loadAdditional(final ValueInput input) {
+        input.read(TAG_SECURITY_CARDS, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(securityCards.getItems()));
+        input.read(TAG_FALLBACK_SECURITY_CARD, ItemContainerContents.CODEC)
+            .ifPresent(contents -> contents.copyInto(fallbackSecurityCard.getItems()));
+        final boolean wasPlacedDismantled = level != null && !level.isClientSide();
+        if (wasPlacedDismantled) {
+            invalidate();
         }
-        if (tag.contains(TAG_FALLBACK_SECURITY_CARD)) {
-            ContainerUtil.read(tag.getCompound(TAG_FALLBACK_SECURITY_CARD), fallbackSecurityCard, provider);
-        }
-        super.loadAdditional(tag, provider);
+        super.loadAdditional(input);
     }
 
     @Override
-    public void saveAdditional(final CompoundTag tag, final HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        tag.put(TAG_SECURITY_CARDS, ContainerUtil.write(securityCards, provider));
-        tag.put(TAG_FALLBACK_SECURITY_CARD, ContainerUtil.write(fallbackSecurityCard, provider));
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(TAG_SECURITY_CARDS, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(securityCards.getItems()));
+        output.store(TAG_FALLBACK_SECURITY_CARD, ItemContainerContents.CODEC,
+            ItemContainerContents.fromItems(fallbackSecurityCard.getItems()));
     }
 
     @Override
-    public final NonNullList<ItemStack> getDrops() {
-        final NonNullList<ItemStack> drops = NonNullList.create();
-        for (int i = 0; i < securityCards.getContainerSize(); ++i) {
-            drops.add(securityCards.getItem(i));
+    public void preRemoveSideEffects(final BlockPos pos, final BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level != null) {
+            final NonNullList<ItemStack> drops = NonNullList.create();
+            for (int i = 0; i < securityCards.getContainerSize(); ++i) {
+                drops.add(securityCards.getItem(i));
+            }
+            drops.add(fallbackSecurityCard.getItem(0));
+            Containers.dropContents(level, pos, drops);
         }
-        drops.add(fallbackSecurityCard.getItem(0));
-        return drops;
     }
 
     FilteredContainer getSecurityCards() {
@@ -176,6 +192,6 @@ public class SecurityManagerBlockEntity
     public boolean canOpen(final ServerPlayer player) {
         final boolean isAllowedViaSecuritySystem = NetworkNodeMenuProvider.super.canOpen(player)
             && SecurityHelper.isAllowed(player, BuiltinPermission.SECURITY, containers.getContainers());
-        return isAllowedViaSecuritySystem || isPlacedBy(player.getGameProfile().getId());
+        return isAllowedViaSecuritySystem || isPlacedBy(player.getGameProfile().id());
     }
 }

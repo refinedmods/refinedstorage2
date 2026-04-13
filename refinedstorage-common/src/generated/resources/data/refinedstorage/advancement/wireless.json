@@ -1,0 +1,35 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "wireless_grid_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "refinedstorage:wireless_grid"
+          },
+          {
+            "items": "#refinedstorage:wireless_transmitters"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.wireless.description"
+    },
+    "icon": {
+      "id": "refinedstorage:wireless_grid"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.wireless"
+    }
+  },
+  "requirements": [
+    [
+      "wireless_grid_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

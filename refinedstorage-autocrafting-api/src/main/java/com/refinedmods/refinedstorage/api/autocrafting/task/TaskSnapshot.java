@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public record TaskSnapshot(
     TaskId id,
@@ -59,8 +60,7 @@ public record TaskSnapshot(
         long iterationsToSendToSink,
         long iterationsReceived,
         boolean interceptedAnythingSinceLastStep,
-        @Nullable
-        ExternalPatternSink.Result lastSinkResult,
+        ExternalPatternSink.@Nullable Result lastSinkResult,
         @Nullable
         ExternalPatternSinkKey lastSinkResultKey
     ) {

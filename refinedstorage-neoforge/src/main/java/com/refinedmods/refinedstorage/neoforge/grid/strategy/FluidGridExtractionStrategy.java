@@ -11,36 +11,37 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
-
-import javax.annotation.Nullable;
+import com.refinedmods.refinedstorage.neoforge.support.resource.SimpleItemStackResourceHandler;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.item.CarriedSlotWrapper;
+import net.neoforged.neoforge.transfer.item.PlayerInventoryWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
-import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toFluidAction;
-import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toFluidStack;
+import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toPlatform;
 
 public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET);
+    private static final net.neoforged.neoforge.transfer.item.ItemResource PLATFORM_BUCKET_ITEM_RESOURCE =
+        net.neoforged.neoforge.transfer.item.ItemResource.of(Items.BUCKET);
 
-    private final AbstractContainerMenu menu;
     private final GridOperations gridOperations;
-    private final PlayerMainInvWrapper playerInventoryStorage;
+    private final ResourceHandler<net.neoforged.neoforge.transfer.item.ItemResource> playerInventory;
+    private final ResourceHandler<net.neoforged.neoforge.transfer.item.ItemResource> playerCursor;
     private final Storage itemStorage;
 
-    public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
-                                       final ServerPlayer player,
+    public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu, final ServerPlayer player,
                                        final Grid grid) {
-        this.menu = containerMenu;
         this.gridOperations = grid.createOperations(ResourceTypes.FLUID, player);
-        this.playerInventoryStorage = new PlayerMainInvWrapper(player.getInventory());
+        this.playerInventory = PlayerInventoryWrapper.of(player);
+        this.playerCursor = CarriedSlotWrapper.of(containerMenu);
         this.itemStorage = grid.getItemStorage();
     }
 
@@ -55,123 +56,155 @@ public class FluidGridExtractionStrategy implements GridExtractionStrategy {
             if (containerOnCursor) {
                 extractWithContainerOnCursor(fluidResource, extractMode);
             } else if (bucketInInventory) {
-                extract(fluidResource, extractMode, cursor, true);
+                extractWithBucketInInventory(fluidResource, extractMode, cursor);
             } else if (bucketInStorage) {
-                extract(fluidResource, extractMode, cursor, false);
+                extractWithBucketInStorage(fluidResource, extractMode, cursor);
             }
             return true;
         }
         return false;
-    }
-
-    @Nullable
-    private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
-        return stack.getCapability(Capabilities.FluidHandler.ITEM);
     }
 
     private void extractWithContainerOnCursor(final FluidResource fluidResource,
                                               final GridExtractMode mode) {
-        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
-            if (!(resource instanceof FluidResource fluidResource2)) {
-                return 0;
+        try (Transaction tx = Transaction.openRoot()) {
+            final ItemStack stack = extractContainerFromCursor(tx);
+            if (stack.isEmpty()) {
+                return;
             }
-            final IFluidHandlerItem destination = getFluidStorage(menu.getCarried());
-            if (destination == null) {
-                return 0;
+            final SimpleItemStackResourceHandler interceptingHandler = SimpleItemStackResourceHandler.forStack(stack);
+            final ItemAccess access = ItemAccess.forHandlerIndex(interceptingHandler, 0);
+            final ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> dest =
+                interceptingHandler.getStack().getCapability(Capabilities.Fluid.ITEM, access);
+            if (dest == null) {
+                return;
             }
-            final int inserted = destination.fill(toFluidStack(fluidResource2, amount), toFluidAction(action));
-            if (inserted > 0 && action == Action.EXECUTE) {
-                menu.setCarried(destination.getContainer());
-            }
-            return inserted;
-        });
-    }
-
-    private void extract(final FluidResource fluidResource,
-                         final GridExtractMode mode,
-                         final boolean cursor,
-                         final boolean bucketFromInventory) {
-        final IFluidHandlerItem destination = getFluidStorage(BUCKET_ITEM_RESOURCE.toItemStack());
-        if (destination == null) {
-            return; // shouldn't happen
-        }
-        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
-            if (!(resource instanceof FluidResource fluidResource2)) {
-                return 0;
-            }
-            final int inserted = destination.fill(toFluidStack(fluidResource2, amount), toFluidAction(action));
-            if (action == Action.EXECUTE) {
-                extractSourceBucket(bucketFromInventory, source);
-                if (!insertResultingBucket(cursor, destination)) {
-                    insertSourceBucket(bucketFromInventory, source);
+            gridOperations.extract(fluidResource, mode, (resource2, amount, action, source) -> {
+                if (!(resource2 instanceof FluidResource fluidResource2)) {
                     return 0;
                 }
+                try (Transaction innerTx = Transaction.open(tx)) {
+                    final long inserted = dest.insert(toPlatform(fluidResource2), (int) amount, innerTx);
+                    final boolean couldInsertContainer = insertResultingContainerIntoInventory(
+                        interceptingHandler,
+                        true,
+                        innerTx
+                    );
+                    if (!couldInsertContainer) {
+                        return 0;
+                    }
+                    if (action == Action.EXECUTE) {
+                        innerTx.commit();
+                        tx.commit();
+                    }
+                    return inserted;
+                }
+            });
+        }
+    }
+
+    private ItemStack extractContainerFromCursor(final Transaction tx) {
+        final var result = ResourceHandlerUtil.extractFirst(playerCursor, r -> true, 1, tx);
+        if (result == null || result.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        return result.resource().toStack();
+    }
+
+    private void extractWithBucketInStorage(final FluidResource fluidResource,
+                                            final GridExtractMode mode,
+                                            final boolean cursor) {
+        final SimpleItemStackResourceHandler interceptingHandler = SimpleItemStackResourceHandler.forEmptyBucket();
+        final ItemAccess access = ItemAccess.forHandlerIndex(interceptingHandler, 0);
+        final ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> destination =
+            interceptingHandler.getStack().getCapability(Capabilities.Fluid.ITEM, access);
+        if (destination == null) {
+            return;
+        }
+        gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
+            if (!(resource instanceof FluidResource fluidResource2)) {
+                return 0;
             }
-            return inserted;
+            try (Transaction tx = Transaction.openRoot()) {
+                final long inserted = destination.insert(toPlatform(fluidResource2), (int) amount, tx);
+                final boolean couldInsertBucket =
+                    insertResultingContainerIntoInventory(interceptingHandler, cursor, tx);
+                if (!couldInsertBucket) {
+                    return 0;
+                }
+                if (action == Action.EXECUTE) {
+                    itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
+                    tx.commit();
+                }
+                return inserted;
+            }
         });
     }
 
-    private void extractSourceBucket(final boolean bucketFromInventory, final Actor actor) {
-        if (bucketFromInventory) {
-            extractBucket(playerInventoryStorage, Action.EXECUTE);
-        } else {
-            itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
+    private void extractWithBucketInInventory(final FluidResource fluidResource,
+                                              final GridExtractMode mode,
+                                              final boolean cursor) {
+        try (Transaction tx = Transaction.openRoot()) {
+            playerInventory.extract(PLATFORM_BUCKET_ITEM_RESOURCE, 1, tx);
+            final SimpleItemStackResourceHandler interceptingHandler = SimpleItemStackResourceHandler.forEmptyBucket();
+            final ItemAccess access = ItemAccess.forHandlerIndex(interceptingHandler, 0);
+            final ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> dest =
+                interceptingHandler.getStack().getCapability(Capabilities.Fluid.ITEM, access);
+            if (dest == null) {
+                return;
+            }
+            gridOperations.extract(fluidResource, mode, (resource, amount, action, source) -> {
+                if (!(resource instanceof FluidResource fluidResource2)) {
+                    return 0;
+                }
+                try (Transaction innerTx = Transaction.open(tx)) {
+                    final long inserted = dest.insert(toPlatform(fluidResource2), (int) amount, innerTx);
+                    final boolean couldInsertBucket = insertResultingContainerIntoInventory(
+                        interceptingHandler,
+                        cursor,
+                        innerTx
+                    );
+                    if (!couldInsertBucket) {
+                        return 0;
+                    }
+                    if (action == Action.EXECUTE) {
+                        innerTx.commit();
+                        tx.commit();
+                    }
+                    return inserted;
+                }
+            });
         }
     }
 
-    private void insertSourceBucket(final boolean bucketFromInventory, final Actor actor) {
-        if (bucketFromInventory) {
-            insertBucket(playerInventoryStorage);
-        } else {
-            itemStorage.insert(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
-        }
-    }
-
-    private boolean insertResultingBucket(final boolean cursor, final IFluidHandlerItem destination) {
-        if (cursor) {
-            menu.setCarried(destination.getContainer());
-            return true;
-        } else {
-            final ItemStack remainder = ItemHandlerHelper.insertItem(
-                playerInventoryStorage,
-                destination.getContainer(),
-                false
-            );
-            return remainder.isEmpty();
-        }
+    private boolean insertResultingContainerIntoInventory(final SimpleItemStackResourceHandler interceptingHandler,
+                                                          final boolean cursor,
+                                                          final Transaction innerTx) {
+        final ResourceHandler<net.neoforged.neoforge.transfer.item.ItemResource> relevantStorage = cursor
+            ? playerCursor
+            : playerInventory;
+        final net.neoforged.neoforge.transfer.item.ItemResource platformResource =
+            net.neoforged.neoforge.transfer.item.ItemResource.of(interceptingHandler.getStack());
+        return relevantStorage.insert(platformResource, 1, innerTx) != 0;
     }
 
     private boolean isFluidContainerOnCursor() {
-        return getFluidStorage(menu.getCarried()) != null;
+        final net.neoforged.neoforge.transfer.item.ItemResource platformResource =
+            ResourceHandlerUtil.findExtractableResource(playerCursor, r -> true, null);
+        if (platformResource == null) {
+            return false;
+        }
+        final ItemStack stack = platformResource.toStack();
+        return stack.getCapability(Capabilities.Fluid.ITEM, ItemAccess.forStack(stack)) != null;
+    }
+
+    private boolean hasBucketInInventory() {
+        try (Transaction tx = Transaction.openRoot()) {
+            return playerInventory.extract(PLATFORM_BUCKET_ITEM_RESOURCE, 1, tx) == 1;
+        }
     }
 
     private boolean hasBucketInStorage() {
         return itemStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, Actor.EMPTY) == 1;
-    }
-
-    private boolean hasBucketInInventory() {
-        return extractBucket(playerInventoryStorage, Action.SIMULATE);
-    }
-
-    private boolean extractBucket(final IItemHandler source, final Action action) {
-        final ItemStack toExtractStack = BUCKET_ITEM_RESOURCE.toItemStack();
-        for (int slot = 0; slot < source.getSlots(); ++slot) {
-            final boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);
-            if (!relevant) {
-                continue;
-            }
-            if (source.extractItem(slot, 1, action == Action.SIMULATE).getCount() == 1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void insertBucket(final IItemHandler destination) {
-        ItemHandlerHelper.insertItem(destination, BUCKET_ITEM_RESOURCE.toItemStack(), false);
-    }
-
-    private boolean isSame(final ItemStack a, final ItemStack b) {
-        return ItemStack.isSameItemSameComponents(a, b);
     }
 }

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.core.CoreValidations;
 import java.util.UUID;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a unique pattern, with an ID.
@@ -20,10 +21,10 @@ public record Pattern(UUID id, PatternLayout layout) {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         return obj instanceof Pattern(UUID uuid, PatternLayout patternLayout)
-                && uuid.equals(id)
-                && patternLayout.equals(layout);
+            && uuid.equals(id)
+            && patternLayout.equals(layout);
     }
 
     @Override

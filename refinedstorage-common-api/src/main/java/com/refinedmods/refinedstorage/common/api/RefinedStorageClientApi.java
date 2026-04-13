@@ -9,16 +9,16 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRender
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.11")
 public interface RefinedStorageClientApi {
@@ -41,9 +41,9 @@ public interface RefinedStorageClientApi {
 
     GridInsertionHints getGridInsertionHints();
 
-    void registerDiskModel(Item item, ResourceLocation model);
+    void registerDiskModel(Item item, Identifier model);
 
-    Set<ResourceLocation> getDiskModels();
+    Set<Identifier> getDiskModels();
 
-    Map<Item, ResourceLocation> getDiskModelsByItem();
+    Map<Item, Identifier> getDiskModelsByItem();
 }

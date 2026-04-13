@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage.common.storage.diskdrive;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.BlockEntityProvider;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.storage.DiskContainerBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirectionType;
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirection;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirectionType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -23,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
-public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
+public class DiskDriveBlock extends AbstractDirectionalBlock<OrientedDirection> implements EntityBlock {
     private static final Component HELP = createTranslation("item", "disk_drive.help");
     private static final DiskContainerBlockEntityTicker<StorageNetworkNode, AbstractDiskDriveBlockEntity> TICKER =
         new DiskContainerBlockEntityTicker<>(BlockEntities.INSTANCE::getDiskDrive);
@@ -31,13 +32,13 @@ public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implem
     private final BlockEntityProvider<AbstractDiskDriveBlockEntity> blockEntityProvider;
 
     public DiskDriveBlock(final BlockEntityProvider<AbstractDiskDriveBlockEntity> blockEntityProvider) {
-        super(BlockConstants.PROPERTIES);
+        super(BlockProperties.stone(ContentIds.DISK_DRIVE));
         this.blockEntityProvider = blockEntityProvider;
     }
 
     @Override
-    protected DirectionType<BiDirection> getDirectionType() {
-        return BiDirectionType.INSTANCE;
+    protected DirectionType<OrientedDirection> getDirectionType() {
+        return OrientedDirectionType.INSTANCE;
     }
 
     @Override
@@ -53,6 +54,6 @@ public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implem
     }
 
     public BlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(ContentIds.DISK_DRIVE, this, HELP);
     }
 }

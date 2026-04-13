@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:root",
+  "criteria": {
+    "detector_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:detectors"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.detecting.description"
+    },
+    "icon": {
+      "id": "refinedstorage:detector"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.detecting"
+    }
+  },
+  "requirements": [
+    [
+      "detector_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

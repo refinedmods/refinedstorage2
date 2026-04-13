@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage.common.networking;
 
 import com.refinedmods.refinedstorage.common.content.BlockColorMap;
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.support.AbstractActiveColoredDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
@@ -13,12 +13,11 @@ import com.refinedmods.refinedstorage.common.support.direction.DefaultDirectionT
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -30,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -47,8 +47,11 @@ public class WirelessTransmitterBlock
     private static final VoxelShape SHAPE_NORTH = box(6.0D, 6.0D, 0.0D, 10.0D, 10.0D, 10.0D);
     private static final VoxelShape SHAPE_SOUTH = box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 16.0D);
 
-    public WirelessTransmitterBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.PROPERTIES, color, name);
+    private final Identifier id;
+
+    public WirelessTransmitterBlock(final Identifier id, final DyeColor color, final MutableComponent name) {
+        super(BlockProperties.stone(id), color, name);
+        this.id = id;
     }
 
     @Override
@@ -96,6 +99,6 @@ public class WirelessTransmitterBlock
 
     @Override
     public BaseBlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(id, this, HELP);
     }
 }

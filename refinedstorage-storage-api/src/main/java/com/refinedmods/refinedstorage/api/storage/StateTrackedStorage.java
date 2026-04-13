@@ -9,7 +9,8 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorage;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 public class StateTrackedStorage implements TrackedStorage, LimitedStorage {
     private static final double NEAR_CAPACITY_THRESHOLD = .75;

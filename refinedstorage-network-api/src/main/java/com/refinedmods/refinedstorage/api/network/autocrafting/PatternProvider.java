@@ -17,7 +17,7 @@ public interface PatternProvider extends ExternalPatternSink, StepBehavior {
 
     void onRemovedFromContainer(ParentContainer parentContainer);
 
-    default boolean contains(AutocraftingNetworkComponent component) {
+    default boolean contains(final AutocraftingNetworkComponent component) {
         return false;
     }
 

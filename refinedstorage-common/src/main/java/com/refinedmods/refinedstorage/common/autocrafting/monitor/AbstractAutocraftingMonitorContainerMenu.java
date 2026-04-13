@@ -12,12 +12,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractAutocraftingMonitorContainerMenu extends AbstractBaseContainerMenu
     implements TaskStatusListener, AutocraftingMonitorWatcher, AutocraftingTaskButton.StateProvider {

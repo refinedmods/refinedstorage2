@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "#refinedstorage:controllers",
+    "E": "refinedstorage:quartz_enriched_iron",
+    "G": "#refinedstorage:grids"
+  },
+  "pattern": [
+    "EGE",
+    "ECE",
+    "EGE"
+  ],
+  "result": {
+    "id": "refinedstorage:portable_grid"
+  }
+}

@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage.fabric.importer;
 
-import com.refinedmods.refinedstorage.api.core.NullableType;
 import com.refinedmods.refinedstorage.api.network.impl.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -15,16 +14,17 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 public class FabricStorageImporterTransferStrategyFactory<P> implements ImporterTransferStrategyFactory {
     private final BlockApiLookup<Storage<P>, Direction> lookup;
     private final Function<P, ResourceKey> fromPlatformMapper;
-    private final Function<ResourceKey, @NullableType P> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable P> toPlatformMapper;
     private final long singleAmount;
 
     public FabricStorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
                                                         final Function<P, ResourceKey> fromPlatformMapper,
-                                                        final Function<ResourceKey, @NullableType P> toPlatformMapper,
+                                                        final Function<ResourceKey, @Nullable P> toPlatformMapper,
                                                         final long singleAmount) {
         this.lookup = lookup;
         this.fromPlatformMapper = fromPlatformMapper;

@@ -4,14 +4,14 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 class Alternative {
     private static final long EXPAND_COLLAPSE_DELAY = 10;
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final String translationKey;
     private final List<PlatformResourceKey> resources;
     private final List<AlternativeSlot> mainSlots = new ArrayList<>();
@@ -22,7 +22,7 @@ class Alternative {
     @Nullable
     private ExpandCollapse expandCollapse;
 
-    Alternative(final ResourceLocation id, final String translationKey, final List<PlatformResourceKey> resources) {
+    Alternative(final Identifier id, final String translationKey, final List<PlatformResourceKey> resources) {
         this.id = id;
         this.translationKey = translationKey;
         this.resources = resources;
@@ -36,7 +36,7 @@ class Alternative {
         return overflowSlots;
     }
 
-    ResourceLocation getId() {
+    Identifier getId() {
         return id;
     }
 

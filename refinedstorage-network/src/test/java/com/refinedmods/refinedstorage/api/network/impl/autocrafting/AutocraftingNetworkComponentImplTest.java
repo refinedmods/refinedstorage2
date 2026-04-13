@@ -63,13 +63,13 @@ class AutocraftingNetworkComponentImplTest {
 
         final PatternProviderNetworkNode provider1 = new PatternProviderNetworkNode(0, 5);
         final Pattern pattern1 = patternABuilder.build();
-        provider1.setPattern(1, pattern1);
+        provider1.tryUpdatePattern(1, pattern1);
 
         final PatternProviderNetworkNode provider2 = new PatternProviderNetworkNode(0, 5);
         final Pattern pattern2 = patternABuilder.build();
         final Pattern pattern3 = patternBBuilder.build();
-        provider2.setPattern(1, pattern2);
-        provider2.setPattern(2, pattern3);
+        provider2.tryUpdatePattern(1, pattern2);
+        provider2.tryUpdatePattern(2, pattern3);
 
         // Act
         sut.onContainerAdded(() -> provider1);
@@ -97,13 +97,13 @@ class AutocraftingNetworkComponentImplTest {
 
         final PatternProviderNetworkNode provider1 = new PatternProviderNetworkNode(0, 5);
         final Pattern pattern1 = patternABuilder.build();
-        provider1.setPattern(1, pattern1);
+        provider1.tryUpdatePattern(1, pattern1);
 
         final PatternProviderNetworkNode provider2 = new PatternProviderNetworkNode(0, 5);
         final Pattern pattern2 = patternABuilder.build();
         final Pattern pattern3 = patternBBuilder.build();
-        provider2.setPattern(1, pattern2);
-        provider2.setPattern(2, pattern3);
+        provider2.tryUpdatePattern(1, pattern2);
+        provider2.tryUpdatePattern(2, pattern3);
 
         sut.onContainerAdded(() -> provider1);
         sut.onContainerAdded(() -> provider1);
@@ -145,7 +145,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -166,7 +166,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -206,7 +206,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -227,7 +227,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -266,7 +266,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 64, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 4).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 4).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -284,7 +284,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 64, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 4).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 4).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -312,7 +312,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -331,7 +331,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -372,7 +372,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
@@ -395,7 +395,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act & assert
@@ -428,7 +428,7 @@ class AutocraftingNetworkComponentImplTest {
     void shouldNotEnsureTaskWhenWeDontHaveEnoughResources() {
         // Arrange
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act
@@ -446,7 +446,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act
@@ -464,7 +464,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 20, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 1).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 1).output(B, 1).build());
         sut.onContainerAdded(() -> provider);
 
         // Act
@@ -482,7 +482,7 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -504,13 +504,13 @@ class AutocraftingNetworkComponentImplTest {
         final PatternProviderNetworkNode provider1 = new PatternProviderNetworkNode(0, 5);
         provider1.setActive(true);
         provider1.setNetwork(network);
-        provider1.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider1.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         sut.onContainerAdded(() -> provider1);
 
         final PatternProviderNetworkNode provider2 = new PatternProviderNetworkNode(0, 5);
         provider2.setActive(true);
         provider2.setNetwork(network);
-        provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
+        provider2.tryUpdatePattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
         final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -557,13 +557,13 @@ class AutocraftingNetworkComponentImplTest {
         final PatternProviderNetworkNode provider1 = new PatternProviderNetworkNode(0, 5);
         provider1.setActive(true);
         provider1.setNetwork(network);
-        provider1.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider1.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         sut.onContainerAdded(() -> provider1);
 
         final PatternProviderNetworkNode provider2 = new PatternProviderNetworkNode(0, 5);
         provider2.setActive(true);
         provider2.setNetwork(network);
-        provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
+        provider2.tryUpdatePattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
         final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);
@@ -607,7 +607,7 @@ class AutocraftingNetworkComponentImplTest {
     void shouldNotStartTaskWhenThereAreMissingIngredients() {
         // Arrange
         final PatternProviderNetworkNode provider = new PatternProviderNetworkNode(0, 5);
-        provider.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         final NetworkNodeContainer container = () -> provider;
         sut.onContainerAdded(container);
 
@@ -626,15 +626,15 @@ class AutocraftingNetworkComponentImplTest {
         rootStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
         final PatternProviderNetworkNode provider1 = new PatternProviderNetworkNode(0, 5);
-        provider1.setPattern(1, pattern().ingredient(A, 3).output(B, 1).build());
+        provider1.tryUpdatePattern(1, pattern().ingredient(A, 3).output(B, 1).build());
         sut.onContainerAdded(() -> provider1);
 
         final PatternProviderNetworkNode provider2 = new PatternProviderNetworkNode(0, 5);
-        provider2.setPattern(1, pattern().ingredient(A, 3).output(C, 1).build());
+        provider2.tryUpdatePattern(1, pattern().ingredient(A, 3).output(C, 1).build());
         sut.onContainerAdded(() -> provider2);
 
         final PatternProviderNetworkNode provider3 = new PatternProviderNetworkNode(0, 5);
-        provider3.setPattern(1, pattern().ingredient(A, 3).output(D, 1).build());
+        provider3.tryUpdatePattern(1, pattern().ingredient(A, 3).output(D, 1).build());
         sut.onContainerAdded(() -> provider3);
 
         final Optional<TaskId> taskId1 = sut.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE);

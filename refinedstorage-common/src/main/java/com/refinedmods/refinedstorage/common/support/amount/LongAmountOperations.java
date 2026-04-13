@@ -1,11 +1,9 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
-import com.refinedmods.refinedstorage.common.util.MathUtil;
-
 import java.util.Optional;
-import javax.annotation.Nullable;
 
-import static java.util.Objects.requireNonNullElse;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.Nullable;
 
 public class LongAmountOperations implements AmountOperations<Long> {
     public static final AmountOperations<Long> INSTANCE = new LongAmountOperations();
@@ -41,17 +39,11 @@ public class LongAmountOperations implements AmountOperations<Long> {
                              final int delta,
                              @Nullable final Long minAmount,
                              @Nullable final Long maxAmount) {
+        final long correctedMinAmount = minAmount == null ? Long.MIN_VALUE : minAmount;
+        final long correctedMaxAmount = maxAmount == null ? Long.MAX_VALUE : maxAmount;
         if (current == null) {
-            return MathUtil.clamp(
-                delta,
-                requireNonNullElse(minAmount, Long.MIN_VALUE),
-                requireNonNullElse(maxAmount, Long.MAX_VALUE)
-            );
+            return Mth.clamp(delta, correctedMinAmount, correctedMaxAmount);
         }
-        return MathUtil.clamp(
-            current + delta,
-            requireNonNullElse(minAmount, Long.MIN_VALUE),
-            requireNonNullElse(maxAmount, Long.MAX_VALUE)
-        );
+        return Mth.clamp(current + delta, correctedMinAmount, correctedMaxAmount);
     }
 }

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 
@@ -19,7 +19,7 @@ public class ResourceClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(final Font font) {
         return 18;
     }
 
@@ -29,19 +29,20 @@ public class ResourceClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(final Font font, final int x, final int y, final GuiGraphics graphics) {
+    public void extractImage(final Font font, final int x, final int y, final int w, final int h,
+                             final GuiGraphicsExtractor graphics) {
         RefinedStorageClientApi.INSTANCE.getResourceRendering(resourceAmount.resource().getClass()).render(
             resourceAmount.resource(),
             graphics,
             x,
             y
         );
-        graphics.drawString(
+        graphics.text(
             font,
             name,
             x + 16 + 4,
             y + 4,
-            0xAAAAAA
+            0xFFAAAAAA
         );
     }
 

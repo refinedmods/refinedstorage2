@@ -29,7 +29,7 @@ record NetworkReceiverKey(GlobalPos pos) {
             return Component.literal("The Nether");
         }
         return Component.translatable(
-            "dimension.%s.%s".formatted(dimension.location().getNamespace(), dimension.location().getPath())
+            "dimension.%s.%s".formatted(dimension.identifier().getNamespace(), dimension.identifier().getPath())
         );
     }
 }

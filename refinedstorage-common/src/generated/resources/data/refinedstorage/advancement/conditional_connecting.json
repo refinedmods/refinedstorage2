@@ -1,0 +1,32 @@
+{
+  "parent": "refinedstorage:connecting",
+  "criteria": {
+    "relay_in_inventory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#refinedstorage:relays"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.refinedstorage.conditional_connecting.description"
+    },
+    "icon": {
+      "id": "refinedstorage:relay"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage.conditional_connecting"
+    }
+  },
+  "requirements": [
+    [
+      "relay_in_inventory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

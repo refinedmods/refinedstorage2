@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "refinedstorage:block/network_receiver/cyan"
+  }
+}

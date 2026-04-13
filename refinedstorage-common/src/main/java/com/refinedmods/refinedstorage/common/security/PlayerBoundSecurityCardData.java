@@ -32,7 +32,7 @@ public record PlayerBoundSecurityCardData(SecurityCardData securityCardData,
         }
 
         static Player of(final net.minecraft.world.entity.player.Player player) {
-            return new Player(player.getUUID(), player.getGameProfile().getName());
+            return new Player(player.getUUID(), player.getGameProfile().name());
         }
     }
 }

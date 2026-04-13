@@ -48,10 +48,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         );
         addSlots(
             playerInventory.player,
-            new FilteredContainer(
-                AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS,
-                StorageContainerItem.stackValidator()
-            ),
+            new FilteredContainer(AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS, StorageContainerItem.VALIDATOR),
             ResourceContainerImpl.createForFilter(resourceContainerData)
         );
         this.stillValid = p -> true;

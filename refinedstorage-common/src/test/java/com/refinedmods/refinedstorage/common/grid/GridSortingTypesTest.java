@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage.common.SetupMinecraft;
+import com.refinedmods.refinedstorage.common.MinecraftRegistriesTest;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.grid.view.AbstractItemGridResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
@@ -19,15 +19,15 @@ import java.util.function.Function;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(SetupMinecraft.class)
+@MinecraftRegistriesTest
 class GridSortingTypesTest {
     private static final ResourceRepositoryMapper<GridResource> MAPPER =
         new AbstractItemGridResourceRepositoryMapper() {
@@ -70,7 +70,7 @@ class GridSortingTypesTest {
             .addResource(gold, 2)
             .build();
 
-        final Function<ResourceKey, TrackedResource> trackedResourceProvider =
+        final Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider =
             resource -> resource == dirt ? new TrackedResource("Raoul", 3)
                 : (resource == stone ? new TrackedResource("Raoul2", 2) : null);
 
@@ -127,7 +127,7 @@ class GridSortingTypesTest {
             .addResource(gold, 2)
             .build();
 
-        final Function<ResourceKey, TrackedResource> trackedResourceProvider =
+        final Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider =
             resource -> resource == dirt ? new TrackedResource("Raoul", 3)
                 : (resource == stone ? new TrackedResource("Raoul2", 2) : null);
 

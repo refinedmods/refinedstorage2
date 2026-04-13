@@ -8,7 +8,8 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 

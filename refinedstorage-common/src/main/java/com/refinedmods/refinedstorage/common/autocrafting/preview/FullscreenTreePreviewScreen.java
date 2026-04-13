@@ -2,12 +2,13 @@ package com.refinedmods.refinedstorage.common.autocrafting.preview;
 
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 class FullscreenTreePreviewScreen extends Screen {
@@ -26,35 +27,34 @@ class FullscreenTreePreviewScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        this.treePreviewWidget = new TreePreviewWidget(this, 0, 0, width, height);
+        this.treePreviewWidget = new TreePreviewWidget(0, 0, width, height);
         this.treePreviewWidget.update(treePreview);
     }
 
     @Override
-    public void renderBackground(final GuiGraphics graphics, final int mouseX, final int mouseY,
-                                 final float partialTick) {
+    public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
+                                  final float partialTicks) {
         if (treePreviewWidget == null) {
             return;
         }
-        treePreviewWidget.renderWidget(graphics, mouseX, mouseY, partialTick);
+        treePreviewWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (key == GLFW.GLFW_KEY_ESCAPE) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (event.key() == GLFW.GLFW_KEY_ESCAPE) {
             Minecraft.getInstance().setScreen(parent);
             return true;
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double dragX,
-                                final double dragY) {
-        if (treePreviewWidget == null) {
-            return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    public boolean mouseDragged(final MouseButtonEvent event, final double dx, final double dy) {
+        if (treePreviewWidget != null) {
+            return treePreviewWidget.mouseDragged(event, dx, dy);
         }
-        return treePreviewWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override

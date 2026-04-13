@@ -6,196 +6,214 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Brightness;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
+import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 
 public final class NetworkDebugRenderer {
+    private static final int FULL_BRIGHT = Brightness.FULL_BRIGHT.pack();
+    @SuppressWarnings("deprecation")
+    private static final SpriteId BASE_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS,
+        Identifier.parse("white_concrete"));
+    private static final float MAX = 1.01F;
+    private static final float MIN = -0.01F;
+
     private NetworkDebugRenderer() {
     }
 
     @SubscribeEvent
     public static void renderDebugOverlay(final AddSectionGeometryEvent e) {
+        final TextureAtlasSprite dummySprite = Minecraft.getInstance().getAtlasManager().get(BASE_SPRITE);
         final BlockPos regionOrigin = e.getSectionOrigin().immutable();
         e.addRenderer(ctx -> {
-            final var buf = ctx.getOrCreateChunkBuffer(RenderType.translucent());
+            final VertexConsumer buf = ctx.getOrCreateChunkBuffer(ChunkSectionLayer.TRANSLUCENT);
+            final PoseStack poseStack = new PoseStack();
             BlockPos.betweenClosed(regionOrigin, regionOrigin.offset(16, 16, 16))
-                .forEach(pos -> renderAt(ctx, pos, regionOrigin, buf));
+                .forEach(pos -> renderAt(ctx.getRegion().getBlockEntity(pos), pos, regionOrigin, buf,
+                    dummySprite.getU0(), dummySprite.getV1(), poseStack));
         });
     }
 
-    private static void renderAt(final AddSectionGeometryEvent.SectionRenderingContext ctx, final BlockPos pos,
-                                 final BlockPos regionOrigin, final VertexConsumer buf) {
-        final BlockEntity blockEntity = ctx.getRegion().getBlockEntity(pos);
+    private static void renderAt(@Nullable final BlockEntity blockEntity, final BlockPos pos,
+                                 final BlockPos regionOrigin, final VertexConsumer buf, final float u, final float v,
+                                 final PoseStack poseStack) {
         if (!(blockEntity instanceof AbstractBaseNetworkNodeContainerBlockEntity<?> container)) {
             return;
         }
 
-        ctx.getPoseStack().pushPose();
-        ctx.getPoseStack().translate((float) pos.getX() - regionOrigin.getX(),
-            (float) pos.getY() - regionOrigin.getY(), (float) pos.getZ() - regionOrigin.getZ());
+        poseStack.pushPose();
+        poseStack.translate(
+            (float) pos.getX() - regionOrigin.getX(),
+            (float) pos.getY() - regionOrigin.getY(),
+            (float) pos.getZ() - regionOrigin.getZ()
+        );
 
         final int color = getColorFromId(container.getDebugNetworkId());
-        final var mat = ctx.getPoseStack().last().pose();
+        final Matrix4f mat = poseStack.last().pose();
 
-        final float max = 1.01F;
-        final float min = -0.01F;
+        buf.addVertex(mat, MIN, MAX, MIN)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MAX, MAX)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MAX, MAX)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MAX, MIN)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
 
-        buf.addVertex(mat, min, max, min)
-            .setUv(-100, -100)
+        buf.addVertex(mat, MIN, MAX, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, max, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MAX, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, max, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MIN, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, max, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
+            .setLight(FULL_BRIGHT);
 
-        buf.addVertex(mat, min, max, min)
-            .setUv(-100, -100)
+        buf.addVertex(mat, MAX, MAX, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, max, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MAX, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, min, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MIN, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
+            .setLight(FULL_BRIGHT);
 
-        buf.addVertex(mat, max, max, max)
-            .setUv(-100, -100)
+        buf.addVertex(mat, MIN, MAX, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, max, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MAX, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, min, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
+            .setLight(FULL_BRIGHT);
 
-        buf.addVertex(mat, min, max, max)
-            .setUv(-100, -100)
+        buf.addVertex(mat, MAX, MIN, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, max, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MIN, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, min)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MAX, MIN)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, max)
-            .setUv(-100, -100)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MAX, MAX)
+            .setUv(u, v)
             .setNormal(0, 0, 0)
             .setColor(color)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MIN, MIN)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MAX, MIN, MAX)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MAX)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
+        buf.addVertex(mat, MIN, MIN, MIN)
+            .setUv(u, v)
+            .setNormal(0, 0, 0)
+            .setColor(color)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(FULL_BRIGHT);
 
-        buf.addVertex(mat, max, min, max)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, min, min)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, max, min)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, max, max)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, min, min)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, max, min, max)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, max)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-        buf.addVertex(mat, min, min, min)
-            .setUv(-100, -100)
-            .setNormal(0, 0, 0)
-            .setColor(color)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT);
-
-        ctx.getPoseStack().popPose();
+        poseStack.popPose();
     }
 
     private static int getColorFromId(final int id) {

@@ -1,23 +1,22 @@
 package com.refinedmods.refinedstorage.common.storagemonitor;
 
-import com.refinedmods.refinedstorage.common.content.BlockConstants;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
+import com.refinedmods.refinedstorage.common.content.BlockProperties;
+import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.support.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.NetworkNodeBlockItem;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirection;
-import com.refinedmods.refinedstorage.common.support.direction.BiDirectionType;
 import com.refinedmods.refinedstorage.common.support.direction.DirectionType;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirection;
+import com.refinedmods.refinedstorage.common.support.direction.OrientedDirectionType;
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeBlockEntityTicker;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -30,21 +29,22 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
-public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
+public class StorageMonitorBlock extends AbstractDirectionalBlock<OrientedDirection> implements EntityBlock {
     private static final Component HELP = createTranslation("item", "storage_monitor.help");
     private static final AbstractBlockEntityTicker<StorageMonitorBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getStorageMonitor);
 
     public StorageMonitorBlock() {
-        super(BlockConstants.PROPERTIES);
+        super(BlockProperties.stone(ContentIds.STORAGE_MONITOR));
     }
 
     @Override
-    protected DirectionType<BiDirection> getDirectionType() {
-        return BiDirectionType.INSTANCE;
+    protected DirectionType<OrientedDirection> getDirectionType() {
+        return OrientedDirectionType.INSTANCE;
     }
 
     @Nullable
@@ -61,15 +61,15 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack,
-                                              final BlockState state,
-                                              final Level level,
-                                              final BlockPos pos,
-                                              final Player player,
-                                              final InteractionHand hand,
-                                              final BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(final ItemStack stack,
+                                          final BlockState state,
+                                          final Level level,
+                                          final BlockPos pos,
+                                          final Player player,
+                                          final InteractionHand hand,
+                                          final BlockHitResult hitResult) {
         if (player.isCrouching()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (!level.isClientSide()) {
             final BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -77,7 +77,7 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
                 storageMonitor.insert(player, hand);
             }
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
         if (!(level.getBlockEntity(pos) instanceof StorageMonitorBlockEntity storageMonitor)) {
             return;
         }
-        final BiDirection direction = getDirection(state);
+        final OrientedDirection direction = getDirection(state);
         if (direction == null) {
             return;
         }
@@ -114,6 +114,6 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<BiDirection> i
     }
 
     public BlockItem createBlockItem() {
-        return new NetworkNodeBlockItem(this, HELP);
+        return new NetworkNodeBlockItem(ContentIds.STORAGE_MONITOR, this, HELP);
     }
 }

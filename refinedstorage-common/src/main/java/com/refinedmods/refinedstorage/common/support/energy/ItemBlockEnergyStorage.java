@@ -6,10 +6,11 @@ import com.refinedmods.refinedstorage.api.network.impl.energy.AbstractListeningE
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ItemBlockEnergyStorage extends AbstractListeningEnergyStorage {
     private static final String TAG_STORED = "stored";
@@ -23,9 +24,10 @@ public class ItemBlockEnergyStorage extends AbstractListeningEnergyStorage {
         super(energyStorage);
         this.stack = stack;
         this.blockEntityType = blockEntityType;
-        final CustomData customData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-        if (customData != null) {
-            readFromTag(energyStorage, customData.copyTag());
+        final TypedEntityData<BlockEntityType<?>> blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (blockEntityData != null) {
+            blockEntityData.copyTagWithoutId().getLong(TAG_STORED)
+                .ifPresent(stored -> energyStorage.receive(stored, Action.EXECUTE));
         }
     }
 
@@ -35,18 +37,17 @@ public class ItemBlockEnergyStorage extends AbstractListeningEnergyStorage {
 
     @Override
     protected void onStoredChanged(final long stored) {
-        final CustomData customData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-        final CompoundTag tag = customData == null ? new CompoundTag() : customData.copyTag();
-        writeToTag(tag, stored);
-        BlockItem.setBlockEntityData(stack, blockEntityType, tag);
-    }
-
-    public static void writeToTag(final CompoundTag tag, final long stored) {
+        final TypedEntityData<BlockEntityType<?>> blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        final CompoundTag tag = blockEntityData == null ? new CompoundTag() : blockEntityData.copyTagWithoutId();
         tag.putLong(TAG_STORED, stored);
+        stack.set(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(blockEntityType, tag));
     }
 
-    public static void readFromTag(final EnergyStorage energyStorage, final CompoundTag tag) {
-        final long stored = tag.getLong(TAG_STORED);
-        energyStorage.receive(stored, Action.EXECUTE);
+    public static void store(final ValueOutput output, final long stored) {
+        output.putLong(TAG_STORED, stored);
+    }
+
+    public static void read(final EnergyStorage energyStorage, final ValueInput input) {
+        input.getLong(TAG_STORED).ifPresent(stored -> energyStorage.receive(stored, Action.EXECUTE));
     }
 }

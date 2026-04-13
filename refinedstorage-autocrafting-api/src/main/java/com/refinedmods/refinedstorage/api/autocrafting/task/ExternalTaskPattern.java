@@ -11,8 +11,8 @@ import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +28,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
     private long iterationsReceived;
     private boolean interceptedAnythingSinceLastStep;
     private boolean interceptedAnIterationAtLeastOnceSinceLastStep;
-    @Nullable
-    private ExternalPatternSink.Result lastSinkResult;
+    private ExternalPatternSink.@Nullable Result lastSinkResult;
     @Nullable
     private ExternalPatternSinkKey lastSinkResultKey;
     private int currentSinkIndex;

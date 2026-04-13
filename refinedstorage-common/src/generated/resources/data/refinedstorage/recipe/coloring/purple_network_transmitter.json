@@ -2,15 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "refinedstorage:network_transmitters"
-    },
-    {
-      "tag": "c:dyes/purple"
-    }
+    "#refinedstorage:network_transmitters",
+    "#c:dyes/purple"
   ],
   "result": {
-    "count": 1,
     "id": "refinedstorage:purple_network_transmitter"
   }
 }

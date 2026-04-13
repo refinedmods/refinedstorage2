@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage.common.util;
 
-import javax.annotation.Nullable;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 public final class PlatformUtil {
     private PlatformUtil() {
