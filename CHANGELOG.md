@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   For keybindings on Mac, CMD is now always used instead of CTRL.
+
 ## [3.0.0-beta.1] - 2026-04-13
 
 ### Added

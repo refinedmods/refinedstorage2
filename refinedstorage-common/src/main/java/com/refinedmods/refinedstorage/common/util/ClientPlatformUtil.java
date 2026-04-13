@@ -13,6 +13,8 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import java.util.List;
 import java.util.UUID;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.math.OctahedralGroup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -27,10 +29,12 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 public final class ClientPlatformUtil {
     private static final SystemToast.SystemToastId MESSAGE_TOAST_ID = new SystemToast.SystemToastId();
@@ -140,5 +144,18 @@ public final class ClientPlatformUtil {
     @Nullable
     public static Player getClientPlayer() {
         return Minecraft.getInstance().player;
+    }
+
+    public static boolean isCommand() {
+        return Util.getPlatform() == Util.OS.OSX;
+    }
+
+    public static boolean isCommandOrControlDown() {
+        if (isCommand()) {
+            final Window window = Minecraft.getInstance().getWindow();
+            return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SUPER)
+                || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SUPER);
+        }
+        return Minecraft.getInstance().hasControlDown();
     }
 }

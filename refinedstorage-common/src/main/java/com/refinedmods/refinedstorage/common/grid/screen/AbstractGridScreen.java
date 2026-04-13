@@ -555,7 +555,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private boolean canExtract(@Nullable final GridResource resource, final ItemStack carriedStack) {
         return resource != null
             && resource.canExtract(carriedStack, getMenu().getRepository())
-            && !minecraft.hasControlDown();
+            && !ClientPlatformUtil.isCommandOrControlDown();
     }
 
     private boolean canInsert(final int mouseX,
@@ -653,11 +653,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Nullable
     private GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
         final boolean shift = minecraft.hasShiftDown();
-        final boolean ctrl = minecraft.hasControlDown();
-        if (shift && ctrl) {
+        final boolean ctrlOrCmd = ClientPlatformUtil.isCommandOrControlDown();
+        if (shift && ctrlOrCmd) {
             return null;
         }
-        return getScrollModeWhenScrollingOnGridArea(up, shift, ctrl);
+        return getScrollModeWhenScrollingOnGridArea(up, shift, ctrlOrCmd);
     }
 
     @Nullable
