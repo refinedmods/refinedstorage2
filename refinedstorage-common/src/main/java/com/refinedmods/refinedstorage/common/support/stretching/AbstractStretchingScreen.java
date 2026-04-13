@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -183,12 +184,12 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
         final boolean didScrollbar = scrollbar != null
             && !minecraft.hasShiftDown()
-            && !minecraft.hasControlDown()
-            && scrollbar.mouseScrolled(x, y, z, delta);
-        return didScrollbar || super.mouseScrolled(x, y, z, delta);
+            && !ClientPlatformUtil.isCommandOrControlDown()
+            && scrollbar.mouseScrolled(x, y, scrollX, scrollY);
+        return didScrollbar || super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private int calculateVisibleRows() {

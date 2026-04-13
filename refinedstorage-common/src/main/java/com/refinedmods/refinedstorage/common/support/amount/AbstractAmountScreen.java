@@ -257,13 +257,13 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
-        if (delta > 0) {
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        if (scrollY > 0) {
             changeAmount(1);
         } else {
             changeAmount(-1);
         }
-        return super.mouseScrolled(x, y, z, delta);
+        return super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     @Override

@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.2] - 2026-04-13
+
+### Fixed
+
+-   For keybindings on Mac, CMD is now always used instead of CTRL.
+-   Missing translation key for Refined Storage controls.
+-   Missing background sprite on bulk autocrafting request buttons.
+-   Grid scrolling between grid and inventory always going to inventory.
+-   Warning on startup about missing particle texture on item models.
+
 ## [3.0.0-beta.1] - 2026-04-13
 
 ### Added
@@ -1116,7 +1126,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.1...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.2...HEAD
+
+[3.0.0-beta.2]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.1...v3.0.0-beta.2
 
 [3.0.0-beta.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...v3.0.0-beta.1
 

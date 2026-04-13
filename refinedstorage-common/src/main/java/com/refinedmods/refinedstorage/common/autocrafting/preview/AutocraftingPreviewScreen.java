@@ -817,30 +817,31 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
-        final boolean didPreviewItemsScrollbar = didScrollPreviewItemsScrollbar(x, y, z, delta);
-        final boolean didTreePreview = didScrollTreePreview(x, y, z, delta);
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        final boolean didPreviewItemsScrollbar = didScrollPreviewItemsScrollbar(x, y, scrollX, scrollY);
+        final boolean didTreePreview = didScrollTreePreview(x, y, scrollX, scrollY);
         if (didPreviewItemsScrollbar || didTreePreview) {
             return true;
         }
         final boolean didRequestButtonsScrollbar = requestButtonsScrollbar != null
             && isHoveringOverRequestButtons(x, y)
-            && requestButtonsScrollbar.mouseScrolled(x, y, z, delta);
-        return didRequestButtonsScrollbar || super.mouseScrolled(x, y, z, delta);
+            && requestButtonsScrollbar.mouseScrolled(x, y, scrollX, scrollY);
+        return didRequestButtonsScrollbar || super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
-    private boolean didScrollTreePreview(final double x, final double y, final double z, final double delta) {
+    private boolean didScrollTreePreview(final double x, final double y, final double scrollX, final double scrollY) {
         return tree != null
             && tree.visible
             && isHoveringOverPreviewArea(x, y)
-            && tree.mouseScrolled(x, y, z, delta);
+            && tree.mouseScrolled(x, y, scrollX, scrollY);
     }
 
-    private boolean didScrollPreviewItemsScrollbar(final double x, final double y, final double z, final double delta) {
+    private boolean didScrollPreviewItemsScrollbar(final double x, final double y,
+                                                   final double scrollX, final double scrollY) {
         return scrollbar != null
             && scrollbar.visible
             && isHoveringOverPreviewArea(x, y)
-            && scrollbar.mouseScrolled(x, y, z, delta);
+            && scrollbar.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private boolean isHoveringOverPreviewArea(final double x, final double y) {
