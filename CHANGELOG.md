@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   For keybindings on Mac, CMD is now always used instead of CTRL.
 -   Missing translation key for Refined Storage controls.
+-   Missing background sprite on bulk autocrafting request buttons.
 
 ## [3.0.0-beta.1] - 2026-04-13
 
