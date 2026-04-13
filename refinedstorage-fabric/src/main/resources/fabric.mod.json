@@ -37,9 +37,9 @@
     "refinedstorage.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.6",
-    "fabric-api": ">=0.101.0",
-    "minecraft": "~26.1.2",
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "minecraft": "~26.1",
     "java": ">=25",
     "cloth-config2": "*",
     "team_reborn_energy": "*"

@@ -106,10 +106,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
             }
         });
         // TODO: fix fabric startup warnings
-        // TODO: Fix version info files
-        // TODO: does the tag translation system work?
         // TODO: Multicraft buttons don't render bg
-        // TODO: Check usages of CTRL (should be CMD)
         // TODO: scrolling in grid is going wrong direction always down! :)
         registerKeyMappings();
         registerResourceRendering();
