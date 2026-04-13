@@ -8,6 +8,7 @@ Before creating an issue on our issue tracker, ensure that your version is still
 |===
 |Minecraft version|Refined Storage version range|State|New features|Bugfixes
 
+|Minecraft 26.1.x|v3.0.x|Maintained|✔️|✔️
 |Minecraft 1.21.x|v2.0.x|Maintained|✔️|✔️
 |Minecraft 1.20.x|v1.12.x - v1.13.x|Unmaintained|❌|❌
 |Minecraft 1.19.x|v1.11.x|Unmaintained|❌|❌
