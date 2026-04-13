@@ -97,7 +97,7 @@ Refined Storage 2 xref:../addons/community-addons.adoc[already has a few communi
 - The xref:../viewing-resources/crafting-grid.adoc[*Crafting Grid*] adds:
 * A clear-to-player-inventory button.
 * A keybinding to clear to inventory (NeoForge only).
-* A shortcut (CTRL+SHIFT on result slot) to filter the Grid by crafting matrix contents.
+* A shortcut (CTRL/CMD+SHIFT on result slot) to filter the Grid by crafting matrix contents.
 * image:../../assets/news/whats-new-in-refined-storage-2/crafting-grid-highlight.png[Crafting Grid highlighting items from the crafting matrix]
 * A config option to clear items from the matrix to the player or network inventory when closing the screen.
 * image:../../assets/news/whats-new-in-refined-storage-2/grid-moving.png[Screenshot showing ability to move items out of the crafting matrix]

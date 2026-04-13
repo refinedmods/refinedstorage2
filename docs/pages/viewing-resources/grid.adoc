@@ -23,7 +23,7 @@ You can insert and extract resources in the storage network within the {doctitle
 | Right-clicking with a resource in hand in the {doctitle} | Inserts a single resource into the {doctitle}.
 | Right-clicking with a resource container in hand in the {doctitle} | Empties the resource container into the {doctitle}.
 | SHIFT clicking a resource in the player inventory | Inserts the resource into the {doctitle}.
-| CTRL + clicking with an empty hand in the {doctitle} | Forces the autocrafting request window to open *even if the resource is available*.
+| CTRL/CMD + clicking with an empty hand in the {doctitle} | Forces the autocrafting request window to open *even if the resource is available*.
 | Right click on search bar | Clears the search query.
 | Tab | Selects the search bar when the {doctitle} isn't in autoselected mode.
 |===
@@ -36,14 +36,14 @@ You can insert and extract resources in the storage network within the {doctitle
 
 | Scrolling up + SHIFT in the {doctitle} | Inserts a single resource into the {doctitle}.
 | Scrolling down + SHIFT in the {doctitle} | Extracts a single resource from the {doctitle}.
-| Scrolling down + CTRL in the {doctitle} | Extracts a resource from the {doctitle} on the player's hand.
+| Scrolling down + CTRL/CMD in the {doctitle} | Extracts a resource from the {doctitle} on the player's hand.
 | Scrolling up + SHIFT in the player inventory | Inserts a single resource into the {doctitle}.
 | Scrolling down + SHIFT in the player inventory | Extracts a single resource from the {doctitle}.
 |===
 
 == Autocrafting
 
-Autocraftable resources can be crafted by clicking the resource, or by using CTRL + click if the resource is already available. This opens the autocrafting preview.
+Autocraftable resources can be crafted by clicking the resource, or by using CTRL/CMD + click if the resource is already available. This opens the autocrafting preview.
 
 In the preview, you can:
 
