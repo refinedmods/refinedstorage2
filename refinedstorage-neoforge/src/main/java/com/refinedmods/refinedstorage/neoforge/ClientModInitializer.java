@@ -127,7 +127,6 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(final RegisterKeyMappingsEvent e) {
-        // TODO: translations.
         final KeyMapping.Category category = new KeyMapping.Category(createIdentifier("keymappings"));
         e.registerCategory(category);
 
