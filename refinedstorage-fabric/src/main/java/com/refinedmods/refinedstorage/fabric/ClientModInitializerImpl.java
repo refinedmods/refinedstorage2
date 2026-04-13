@@ -105,7 +105,6 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
                 MenuScreens.register(type, factory::create);
             }
         });
-        // TODO: fix fabric startup warnings
         registerKeyMappings();
         registerResourceRendering();
         registerAlternativeGridHints();

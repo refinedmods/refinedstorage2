@@ -1,6 +1,7 @@
 {
   "parent": "block/block",
   "textures": {
+    "particle": "refinedstorage:block/cable/part_border",
     "border": "refinedstorage:block/cable/part_border"
   },
   "elements": [

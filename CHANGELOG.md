@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Missing translation key for Refined Storage controls.
 -   Missing background sprite on bulk autocrafting request buttons.
 -   Grid scrolling between grid and inventory always going to inventory.
+-   Warning on startup about missing particle texture on item models.
 
 ## [3.0.0-beta.1] - 2026-04-13
 
