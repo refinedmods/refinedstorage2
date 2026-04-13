@@ -34,7 +34,7 @@ Once your patterns are ready, insert them into a xref:../autocrafting/autocrafte
 
 With the patterns in place, you can request the resource from any xref:../viewing-resources/grid.adoc[].
 
-Click the resource (or CTRL + click if it's already available) to open the autocrafting preview. From there, you can:
+Click the resource (or CTRL/CMD + click if it's already available) to open the autocrafting preview. From there, you can:
 
 - Set the desired amount
 - View a live simulation
