@@ -56,12 +56,20 @@ public class SearchFieldWidget extends EditBox {
         if (havingControl && shouldMoveControlToParent(event.key(), canLoseFocus)) {
             return false;
         }
+        if (historyRelatedKeyPressed(event.key())) {
+            return false;
+        }
         if (Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
             toggleFocus();
         }
         // Call the parent to process more special characters.
         super.keyPressed(event);
         return havingControl;
+    }
+
+    private boolean historyRelatedKeyPressed(final int keyCode) {
+        return keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
+            || keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
     }
 
     private boolean shouldMoveControlToParent(final int keyCode, final boolean canLoseFocus) {
