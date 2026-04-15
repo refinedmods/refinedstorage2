@@ -2,7 +2,7 @@ name: Publish release
 on:
   pull_request:
     branches:
-      - main
+      - support/2.x
     types:
       - closed
 jobs:
