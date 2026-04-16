@@ -567,8 +567,10 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     private static class ControllerEntryImpl implements ControllerEntry {
+        @ConfigEntry.BoundedDiscrete(min = 1L, max = Long.MAX_VALUE)
         private long energyCapacity = DefaultEnergyUsage.CONTROLLER_CAPACITY;
 
+        @Override
         public long getEnergyCapacity() {
             return energyCapacity;
         }
@@ -721,6 +723,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     private static class WirelessGridEntryImpl implements WirelessGridEntry {
+        @ConfigEntry.BoundedDiscrete(min = 1L, max = Long.MAX_VALUE)
         private long energyCapacity = DefaultEnergyUsage.WIRELESS_GRID_CAPACITY;
 
         private long openEnergyUsage = DefaultEnergyUsage.WIRELESS_GRID_OPEN;
@@ -767,6 +770,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     private static class PortableGridEntryImpl implements PortableGridEntry {
+        @ConfigEntry.BoundedDiscrete(min = 1L, max = Long.MAX_VALUE)
         private long energyCapacity = DefaultEnergyUsage.PORTABLE_GRID_CAPACITY;
 
         private long openEnergyUsage = DefaultEnergyUsage.PORTABLE_GRID_OPEN;
@@ -868,6 +872,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     private static class WirelessAutocraftingMonitorEntryImpl implements WirelessAutocraftingMonitorEntry {
+        @ConfigEntry.BoundedDiscrete(min = 1L, max = Long.MAX_VALUE)
         private long energyCapacity = DefaultEnergyUsage.WIRELESS_AUTOCRAFTING_MONITOR_CAPACITY;
 
         private long openEnergyUsage = DefaultEnergyUsage.WIRELESS_AUTOCRAFTING_MONITOR_OPEN;

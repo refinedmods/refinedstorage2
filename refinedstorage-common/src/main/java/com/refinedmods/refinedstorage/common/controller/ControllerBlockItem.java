@@ -63,7 +63,7 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
 
     public EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
-            Platform.INSTANCE.getConfig().getController().getEnergyCapacity()
+            Math.clamp(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), 1, Long.MAX_VALUE)
         );
         return RefinedStorageApi.INSTANCE.asBlockItemEnergyStorage(
             energyStorage,

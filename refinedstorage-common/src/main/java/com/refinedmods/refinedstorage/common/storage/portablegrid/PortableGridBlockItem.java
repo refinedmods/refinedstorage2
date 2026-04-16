@@ -111,7 +111,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
 
     public static EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
-            Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()
+            Math.clamp(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(), 1, Long.MAX_VALUE)
         );
         return RefinedStorageApi.INSTANCE.asBlockItemEnergyStorage(
             energyStorage,

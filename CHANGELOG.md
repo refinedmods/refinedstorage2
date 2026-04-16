@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   For keybindings on Mac, CMD is now always used instead of CTRL.
 -   Grid scrolling between grid and inventory always going to inventory.
 -   The mouse cursor can now go out of the scrollbar bounds while scrolling.
+-   You can no longer change the energy capacity to be zero.
 
 ## [2.0.2] - 2026-04-17
 

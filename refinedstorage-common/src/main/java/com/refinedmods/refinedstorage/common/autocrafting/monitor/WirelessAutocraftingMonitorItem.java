@@ -34,7 +34,8 @@ public class WirelessAutocraftingMonitorItem extends AbstractNetworkEnergyItem {
 
     public EnergyStorage createEnergyStorage(final ItemStack stack) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
-            Platform.INSTANCE.getConfig().getWirelessAutocraftingMonitor().getEnergyCapacity()
+            Math.clamp(Platform.INSTANCE.getConfig().getWirelessAutocraftingMonitor().getEnergyCapacity(), 1,
+                Long.MAX_VALUE)
         );
         return RefinedStorageApi.INSTANCE.asItemEnergyStorage(energyStorage, stack);
     }
