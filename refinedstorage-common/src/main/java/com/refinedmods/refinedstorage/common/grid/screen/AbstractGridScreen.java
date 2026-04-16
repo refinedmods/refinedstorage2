@@ -534,6 +534,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (mouseClicked(e, resource, carriedStack)) {
             return true;
         }
+        if (searchField != null && searchField.mouseClicked(e, doubleClick)) {
+            return true;
+        }
         return super.mouseClicked(e, doubleClick);
     }
 

@@ -35,13 +35,11 @@ public class SearchFieldWidget extends EditBox {
             && mouseX < getX() + width
             && mouseY >= getY()
             && mouseY < getY() + height;
+        setFocused(clickedWidget);
         if (clickedWidget && event.button() == 1) {
             setValue("");
-            setFocused(true);
         } else if (wasFocused != isFocused()) {
             saveHistory();
-        } else if (!clickedWidget) {
-            setFocused(false);
         }
         return result;
     }

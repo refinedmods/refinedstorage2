@@ -9,7 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
--   Fixed Autocrafter renaming not working
+-   Fixed Autocrafter renaming not working.
+-   Fixed search bar not being able to lose focus.
 
 ## [3.0.0-beta.2] - 2026-04-13
 
