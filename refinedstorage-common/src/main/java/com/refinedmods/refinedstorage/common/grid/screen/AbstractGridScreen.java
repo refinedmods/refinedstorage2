@@ -534,6 +534,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (mouseClicked(e, resource, carriedStack)) {
             return true;
         }
+        if (searchField != null && searchField.mouseClicked(e, doubleClick)) {
+            return true;
+        }
         return super.mouseClicked(e, doubleClick);
     }
 
@@ -605,7 +608,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
-        final boolean up = scrollX < 0;
+        // On Mac, when holding shift, the vertical scroll becomes a horizontal scroll.
+        final double scroll = scrollX != 0 ? scrollX : scrollY;
+        final boolean up = scroll < 0;
         if (isOverStorageArea((int) x, (int) y)) {
             final GridResource resource = getCurrentGridResource();
             if (resource != null) {

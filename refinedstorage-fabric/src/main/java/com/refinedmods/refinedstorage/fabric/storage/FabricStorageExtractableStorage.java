@@ -54,12 +54,11 @@ public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
         if (platformResource == null) {
             return 0L;
         }
-        return doExtract(platformResource, amount, action, storage);
+        return extract(platformResource, amount, action, storage);
     }
 
     @SuppressWarnings("deprecation")
-    private long doExtract(final P platformResource, final long amount, final Action action,
-                           final Storage<P> storage) {
+    private long extract(final P platformResource, final long amount, final Action action, final Storage<P> storage) {
         final TransactionContext potentialOpenTransactionFromEarlierInTheStack = Transaction.getCurrentUnsafe();
         try (Transaction tx = Transaction.openNested(potentialOpenTransactionFromEarlierInTheStack)) {
             final long extract = storage.extract(platformResource, amount, tx);

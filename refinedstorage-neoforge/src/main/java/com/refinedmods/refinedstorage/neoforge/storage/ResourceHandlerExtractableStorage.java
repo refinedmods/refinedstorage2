@@ -8,9 +8,11 @@ import com.refinedmods.refinedstorage.api.storage.ExtractableStorage;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.google.common.primitives.Ints;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.resource.Resource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 public class ResourceHandlerExtractableStorage<T extends Resource> implements ExtractableStorage {
     private final ResourceHandlerProvider<T> provider;
@@ -41,9 +43,12 @@ public class ResourceHandlerExtractableStorage<T extends Resource> implements Ex
             .orElse(0L);
     }
 
+    @SuppressWarnings("deprecation")
     private long extract(final long amount, final Action action, final ResourceHandler<T> handler, final T resource) {
-        try (Transaction tx = Transaction.openRoot()) {
-            final int extracted = handler.extract(resource, (int) amount, tx);
+        final TransactionContext potentialOpenTransactionFromEarlierInTheStack =
+            Transaction.getCurrentOpenedTransaction();
+        try (Transaction tx = Transaction.open(potentialOpenTransactionFromEarlierInTheStack)) {
+            final int extracted = handler.extract(resource, Ints.saturatedCast(amount), tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
             }
