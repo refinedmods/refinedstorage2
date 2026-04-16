@@ -406,4 +406,11 @@ public final class PlatformImpl extends AbstractPlatform {
     public void setClientRecipeProvider(final RecipeProvider recipeProvider) {
         this.clientRecipeProvider = recipeProvider;
     }
+
+    @Override
+    public void resetSlots(final AbstractContainerMenu containerMenu) {
+        containerMenu.slots.clear();
+        containerMenu.lastSlots.clear();
+        containerMenu.remoteSlots.clear();
+    }
 }
