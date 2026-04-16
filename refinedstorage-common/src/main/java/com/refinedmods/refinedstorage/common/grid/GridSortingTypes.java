@@ -12,12 +12,7 @@ import org.jspecify.annotations.Nullable;
 public enum GridSortingTypes {
     QUANTITY(trp -> view -> Comparator.comparingLong(value -> value.getAmount(view))),
     NAME(trp -> view -> Comparator.comparing(GridResource::getName)),
-    ID(trp -> view -> (a, b) -> {
-        if (a instanceof GridResource aa && b instanceof GridResource bb) {
-            return Integer.compare(aa.getRegistryId(), bb.getRegistryId());
-        }
-        return 0;
-    }),
+    ID(trp -> view -> Comparator.comparingInt(GridResource::getRegistryId)),
     LAST_MODIFIED(trp -> view -> (a, b) -> {
         final long lastModifiedA = extractTime(trp.getTrackedResource(a));
         final long lastModifiedB = extractTime(trp.getTrackedResource(b));

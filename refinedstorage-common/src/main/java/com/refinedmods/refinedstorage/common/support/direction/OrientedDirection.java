@@ -22,13 +22,11 @@ public enum OrientedDirection implements StringRepresentable {
     DOWN_SOUTH(new Vector3f(-90, 0, 180), Direction.DOWN),
     DOWN_WEST(new Vector3f(-90, 0, 90), Direction.DOWN);
 
-    private final Vector3f vec;
     private final String name;
     private final Quaternionf quaternion;
     private final Direction direction;
 
     OrientedDirection(final Vector3f vec, final Direction direction) {
-        this.vec = vec;
         this.name = name().toLowerCase(Locale.ROOT);
         this.quaternion = new Quaternionf().rotateXYZ(
             vec.x() * Mth.DEG_TO_RAD,
@@ -103,10 +101,6 @@ public enum OrientedDirection implements StringRepresentable {
             case DOWN_SOUTH -> DOWN_WEST;
             case DOWN_WEST -> NORTH;
         };
-    }
-
-    public Vector3f getVec() {
-        return vec;
     }
 
     @Override

@@ -83,11 +83,9 @@ public class Lexer {
     }
 
     private void scanString() {
-        position.advance();
-
-        while (isNotEof() && current() != '"') {
+        do {
             position.advance();
-        }
+        } while (isNotEof() && current() != '"');
 
         if (!isNotEof()) {
             throw new LexerException(position.createRange(), "Unexpected end of string");

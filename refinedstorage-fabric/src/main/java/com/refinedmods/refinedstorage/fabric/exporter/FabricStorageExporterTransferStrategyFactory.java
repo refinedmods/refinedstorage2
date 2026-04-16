@@ -25,12 +25,12 @@ import static com.refinedmods.refinedstorage.api.network.impl.node.exporter.Miss
 
 public class FabricStorageExporterTransferStrategyFactory<T> implements ExporterTransferStrategyFactory {
     private final Class<? extends ResourceKey> resourceType;
-    private final BlockApiLookup<Storage<T>, Direction> lookup;
+    private final BlockApiLookup<Storage<T>, @Nullable Direction> lookup;
     private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final long singleAmount;
 
     public FabricStorageExporterTransferStrategyFactory(final Class<? extends ResourceKey> resourceType,
-                                                        final BlockApiLookup<Storage<T>, Direction> lookup,
+                                                        final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
                                                         final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                                         final long singleAmount) {
         this.resourceType = resourceType;

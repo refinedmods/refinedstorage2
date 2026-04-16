@@ -33,6 +33,7 @@ import net.minecraft.world.item.crafting.RecipeAccess;
 import net.minecraft.world.item.crafting.RecipePropertySet;
 import net.minecraft.world.item.crafting.SelectableRecipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
@@ -126,9 +127,10 @@ public class PatternGridContainerMenu extends AbstractGridContainerMenu {
         this.processingOutput = grid.getProcessingOutput();
         this.smithingTableMatrix = grid.getSmithingTableMatrix();
         this.smithingTableResult = grid.getSmithingTableResult();
-        this.smithingBaseItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_BASE);
-        this.smithingTemplateItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_TEMPLATE);
-        this.smithingAdditionItemTest = player.level().recipeAccess().propertySet(RecipePropertySet.SMITHING_ADDITION);
+        final Level level = playerInventory.player.level();
+        this.smithingBaseItemTest = level.recipeAccess().propertySet(RecipePropertySet.SMITHING_BASE);
+        this.smithingTemplateItemTest = level.recipeAccess().propertySet(RecipePropertySet.SMITHING_TEMPLATE);
+        this.smithingAdditionItemTest = level.recipeAccess().propertySet(RecipePropertySet.SMITHING_ADDITION);
         this.patternGrid = grid;
         resized(0, 0, 0);
         registerProperty(new ServerProperty<>(

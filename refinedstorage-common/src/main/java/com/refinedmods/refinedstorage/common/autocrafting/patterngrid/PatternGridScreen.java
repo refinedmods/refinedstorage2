@@ -204,9 +204,10 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
             final Set<Identifier> allowedAlternatives = getMenu().getAllowedAlternatives(
                 matrixSlot.getContainerSlot()
             );
-            if (matrixSlot.getResource() != null && !allowedAlternatives.isEmpty()) {
+            final PlatformResourceKey matrixSlotResource = matrixSlot.getResource();
+            if (matrixSlotResource != null && !allowedAlternatives.isEmpty()) {
                 final Pair<PlatformResourceKey, Set<Identifier>> cacheKey = Pair.of(
-                    matrixSlot.getResource(),
+                    matrixSlotResource,
                     allowedAlternatives
                 );
                 final ProcessingMatrixInputClientTooltipComponent cached = processingMatrixInputTooltipCache

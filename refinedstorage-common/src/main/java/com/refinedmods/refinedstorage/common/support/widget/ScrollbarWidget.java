@@ -147,6 +147,7 @@ public class ScrollbarWidget extends AbstractWidget {
     @Override
     public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
         if (enabled) {
+            // TODO: Clamp
             final int scrollDirection = Math.max(Math.min(-(int) scrollY, 1), -1);
             if (smoothScrolling) {
                 startScrollAnimation(scrollDirection);
@@ -184,6 +185,7 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     public void setOffset(final double offset) {
+        // TODO: Clamp
         this.offset = Math.min(Math.max(0, offset), maxOffset);
         if (listener != null) {
             listener.accept(this.offset);

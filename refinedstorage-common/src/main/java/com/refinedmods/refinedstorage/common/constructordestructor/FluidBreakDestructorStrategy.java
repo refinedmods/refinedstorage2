@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.DestructorStrategy;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import net.minecraft.core.BlockPos;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
+import org.jspecify.annotations.Nullable;
 
 class FluidBreakDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
@@ -34,7 +36,7 @@ class FluidBreakDestructorStrategy implements DestructorStrategy {
     @Override
     public boolean apply(final Filter filter,
                          final Actor actor,
-                         final Supplier<Network> networkProvider,
+                         final Supplier<@Nullable Network> networkProvider,
                          final Player player) {
         if (!level.isLoaded(pos)) {
             return false;
@@ -53,13 +55,15 @@ class FluidBreakDestructorStrategy implements DestructorStrategy {
     }
 
     private boolean tryInsert(final Actor actor,
-                              final Supplier<Network> networkSupplier,
+                              final Supplier<@Nullable Network> networkProvider,
                               final Player actingPlayer,
                               final BlockState blockState,
                               final LiquidBlock liquidBlock,
                               final FluidResource fluidResource) {
         final long amount = Platform.INSTANCE.getBucketAmount();
-        final long inserted = getRootStorage(networkSupplier).insert(fluidResource, amount, Action.SIMULATE, actor);
+        final long inserted = getRootStorage(networkProvider)
+            .map(rootStorage -> rootStorage.insert(fluidResource, amount, Action.SIMULATE, actor))
+            .orElse(0L);
         if (inserted != amount) {
             return false;
         }
@@ -68,11 +72,13 @@ class FluidBreakDestructorStrategy implements DestructorStrategy {
             sound -> level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F)
         );
         level.gameEvent(actingPlayer, GameEvent.FLUID_PICKUP, pos);
-        getRootStorage(networkSupplier).insert(fluidResource, amount, Action.EXECUTE, actor);
+        getRootStorage(networkProvider)
+            .ifPresent(rootStorage -> rootStorage.insert(fluidResource, amount, Action.EXECUTE, actor));
         return true;
     }
 
-    private RootStorage getRootStorage(final Supplier<Network> networkSupplier) {
-        return networkSupplier.get().getComponent(StorageNetworkComponent.class);
+    private static Optional<RootStorage> getRootStorage(final Supplier<@Nullable Network> networkProvider) {
+        return Optional.ofNullable(networkProvider.get())
+            .map(network -> network.getComponent(StorageNetworkComponent.class));
     }
 }

@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractControllerBlock<I extends BlockItem>
     extends AbstractBaseBlock
@@ -68,6 +69,7 @@ public abstract class AbstractControllerBlock<I extends BlockItem>
     }
 
     @Override
+    @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> blockEntityType) {

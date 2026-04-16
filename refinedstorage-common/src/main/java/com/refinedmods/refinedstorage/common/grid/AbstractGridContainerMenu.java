@@ -250,12 +250,11 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     private ResourceRepositoryFilter<GridResource> createResourceTypeFilter() {
-        return (v, resource) -> resource instanceof GridResource platformResource
-            && Platform.INSTANCE.getConfig().getGrid().getResourceType().flatMap(resourceTypeId ->
+        return (v, resource) -> Platform.INSTANCE.getConfig().getGrid().getResourceType().flatMap(resourceTypeId ->
             RefinedStorageApi.INSTANCE
                 .getResourceTypeRegistry()
                 .get(resourceTypeId)
-                .map(platformResource::belongsToResourceType)
+                .map(resource::belongsToResourceType)
         ).orElse(true);
     }
 

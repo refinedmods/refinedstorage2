@@ -18,11 +18,11 @@ import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 
 public class FabricStorageInsertableStorage<T> implements InsertableStorage {
-    private final BlockApiCache<Storage<T>, Direction> cache;
+    private final BlockApiCache<Storage<T>, @Nullable Direction> cache;
     private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Direction direction;
 
-    public FabricStorageInsertableStorage(final BlockApiLookup<Storage<T>, Direction> lookup,
+    public FabricStorageInsertableStorage(final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
                                           final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                           final ServerLevel serverLevel,
                                           final BlockPos pos,

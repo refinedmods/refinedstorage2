@@ -75,10 +75,10 @@ final class AutocrafterTestPlots {
     static ItemStack createProcessingPattern(final List<ProcessingPatternState.ProcessingIngredient> ingredients,
                                              final List<ResourceAmount> outputs) {
         final List<Optional<ProcessingPatternState.ProcessingIngredient>> optionalIngredients = ingredients.stream()
-            .map(Optional::ofNullable)
+            .map(Optional::of)
             .toList();
         final List<Optional<ResourceAmount>> optionalOutputs = outputs.stream()
-            .map(Optional::ofNullable)
+            .map(Optional::of)
             .toList();
         final ItemStack pattern = PatternGridBlockEntity.createPatternStack(PatternType.PROCESSING);
         pattern.set(
