@@ -13,8 +13,8 @@ public class TextMarquee {
     private final boolean small;
 
     private Component text;
-    private int offset;
-    private int stateTicks;
+    private float offset;
+    private float tickAccumulator;
     private State state = State.MOVING_LEFT;
 
     public TextMarquee(final Component text,
@@ -37,17 +37,17 @@ public class TextMarquee {
         return Math.min(maxWidth, font.width(text));
     }
 
-    public void render(final GuiGraphics graphics, final int x, final int y, final Font font, final boolean hovering) {
+    public void render(final GuiGraphics graphics, final int x, final int y, final Font font, final boolean hovering, final float partialTicks) {
         if (!hovering) {
             offset = 0;
             state = State.MOVING_LEFT;
-            stateTicks = 0;
+            tickAccumulator = 0;
         }
         final int width = (int) (font.width(text) * (small ? SmallText.correctScale(SmallText.DEFAULT_SCALE) : 1F));
         if (width > maxWidth) {
             final int overflow = width - maxWidth;
             if (hovering) {
-                updateMarquee(overflow);
+                updateMarquee(overflow, partialTicks);
             }
             graphics.enableScissor(x, y, x + maxWidth, y + font.lineHeight);
             if (small) {
@@ -55,14 +55,14 @@ public class TextMarquee {
                     graphics,
                     font,
                     text.getVisualOrderText(),
-                    x + offset,
+                    x + (int) offset,
                     y,
                     color,
                     dropShadow,
                     SmallText.DEFAULT_SCALE
                 );
             } else {
-                graphics.drawString(font, text, x + offset, y, color, dropShadow);
+                graphics.drawString(font, text, x + (int) offset, y, color, dropShadow);
             }
             graphics.disableScissor();
         } else {
@@ -83,12 +83,13 @@ public class TextMarquee {
         }
     }
 
-    private void updateMarquee(final int overflow) {
-        stateTicks++;
-        if (stateTicks % state.ticks == 0) {
-            offset = state.updateOffset(offset);
-            state = state.nextState(offset, overflow);
-            stateTicks = 0;
+    private void updateMarquee(final int overflow, final float partialTicks) {
+        tickAccumulator += partialTicks;
+        offset = state.updateOffset(offset, partialTicks);
+        if (state.isTransition(offset, overflow, tickAccumulator)) {
+            state = state.nextState(offset);
+            tickAccumulator = 0;
+            offset = state == State.MOVING_RIGHT ? -overflow : (state == State.MOVING_LEFT ? 0 : offset);
         }
     }
 
@@ -101,28 +102,35 @@ public class TextMarquee {
     }
 
     enum State {
-        MOVING_LEFT(2),
-        MOVING_RIGHT(2),
-        PAUSE(30);
+        MOVING_LEFT(1.5F),
+        MOVING_RIGHT(1.5F),
+        PAUSE(30F);
 
-        private final int ticks;
+        private final float value;
 
-        State(final int ticks) {
-            this.ticks = ticks;
+        State(final float value) {
+            this.value = value;
         }
 
-        int updateOffset(final int currentOffset) {
+        float updateOffset(final float currentOffset, final float partialTicks) {
             return switch (this) {
-                case MOVING_LEFT -> currentOffset - 1;
-                case MOVING_RIGHT -> currentOffset + 1;
+                case MOVING_LEFT -> currentOffset - value * partialTicks;
+                case MOVING_RIGHT -> currentOffset + value * partialTicks;
                 case PAUSE -> currentOffset;
             };
         }
 
-        State nextState(final int currentOffset, final int overflow) {
+        boolean isTransition(final float currentOffset, final int overflow, final float accumulator) {
             return switch (this) {
-                case MOVING_LEFT -> currentOffset > -overflow ? MOVING_LEFT : PAUSE;
-                case MOVING_RIGHT -> currentOffset < 0 ? MOVING_RIGHT : PAUSE;
+                case MOVING_LEFT -> currentOffset <= -overflow;
+                case MOVING_RIGHT -> currentOffset >= 0;
+                case PAUSE -> accumulator >= value;
+            };
+        }
+
+        State nextState(final float currentOffset) {
+            return switch (this) {
+                case MOVING_LEFT, MOVING_RIGHT -> PAUSE;
                 case PAUSE -> currentOffset < 0 ? MOVING_RIGHT : MOVING_LEFT;
             };
         }

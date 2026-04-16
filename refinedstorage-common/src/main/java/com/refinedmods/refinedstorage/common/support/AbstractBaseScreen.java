@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -119,7 +120,8 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             mouseX,
             mouseY
         );
-        titleMarquee.render(graphics, leftPos + titleLabelX, topPos + titleLabelY, font, hoveringOverTitle);
+        titleMarquee.render(graphics, leftPos + titleLabelX, topPos + titleLabelY, font, hoveringOverTitle,
+            Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
         graphics.pose().pushPose();
         graphics.pose().translate(leftPos, topPos, 0.0F);
         renderPlayerInventoryTitle(graphics);
