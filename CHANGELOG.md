@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Grid scrolling between grid and inventory always going to inventory.
 -   The mouse cursor can now go out of the scrollbar bounds while scrolling.
 -   You can no longer change the energy capacity to be zero.
+-   Fixed stonecutter patterns not respecting output larger than one.
 
 ## [2.0.2] - 2026-04-17
 

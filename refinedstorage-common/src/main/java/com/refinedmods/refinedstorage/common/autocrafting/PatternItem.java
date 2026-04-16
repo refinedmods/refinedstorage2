@@ -175,6 +175,9 @@ public class PatternItem extends Item implements PatternProviderItem {
                 .map(ItemResource::toItemStack);
             case STONECUTTER -> getCachedStonecutterPattern(state, stack, level)
                 .map(PatternResolver.ResolvedStonecutterPattern::output)
+                .map(ResourceAmount::resource)
+                .filter(ItemResource.class::isInstance)
+                .map(ItemResource.class::cast)
                 .map(ItemResource::toItemStack);
             case SMITHING_TABLE -> getCachedSmithingTablePattern(state, stack, level)
                 .map(PatternResolver.ResolvedSmithingTablePattern::output)
