@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.energy;
 
 import com.refinedmods.refinedstorage.api.core.Action;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 
@@ -16,7 +17,10 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createSt
 
 public class EnergyItemHelperImpl implements EnergyItemHelper {
     @Override
-    public void addTooltip(final ItemStack stack, final List<Component> lines) {
+    public void addTooltip(ItemStack stack, List<Component> lines) {
+        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            return;
+        }
         RefinedStorageApi.INSTANCE.getEnergyStorage(stack).ifPresent(energyStorage -> {
             final long stored = energyStorage.getStored();
             final long capacity = energyStorage.getCapacity();
@@ -27,6 +31,9 @@ public class EnergyItemHelperImpl implements EnergyItemHelper {
 
     @Override
     public boolean isBarVisible(final ItemStack stack) {
+        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            return false;
+        }
         return RefinedStorageApi.INSTANCE.getEnergyStorage(stack).isPresent();
     }
 

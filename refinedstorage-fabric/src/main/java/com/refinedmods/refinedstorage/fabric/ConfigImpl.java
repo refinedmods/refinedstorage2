@@ -24,6 +24,8 @@ import net.minecraft.resources.ResourceLocation;
 public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.common.Config {
     private ScreenSize screenSize = ScreenSize.STRETCH;
 
+    private boolean requireEnergy = true;
+
     private boolean smoothScrolling = true;
 
     private boolean tenthAnniversaryCape = false;
@@ -158,6 +160,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     public void setScreenSize(final ScreenSize screenSize) {
         this.screenSize = screenSize;
         AutoConfig.getConfigHolder(ConfigImpl.class).save();
+    }
+
+    @Override
+    public boolean isRequireEnergy() {
+        return requireEnergy;
     }
 
     @Override

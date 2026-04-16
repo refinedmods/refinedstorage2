@@ -8,13 +8,17 @@ import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.support.energy.AbstractEnergyBlockItem;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 
+import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockItem extends AbstractEnergyBlockItem {
+    private static final MutableComponent NOT_NEEDED =
+        createTranslation("item", "controller.not_needed_because_energy_is_not_required")
+            .withStyle(ChatFormatting.RED);
+
     private final Block block;
 
     ControllerBlockItem(final Block block) {
@@ -37,6 +45,15 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
     @Override
     public Component getName(final ItemStack stack) {
         return block.getName();
+    }
+
+    @Override
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final List<Component> lines,
+                                final TooltipFlag flag) {
+        super.appendHoverText(stack, context, lines, flag);
+        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            lines.add(NOT_NEEDED);
+        }
     }
 
     @Override

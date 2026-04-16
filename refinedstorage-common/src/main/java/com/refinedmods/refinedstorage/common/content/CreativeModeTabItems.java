@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.content;
 
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
@@ -20,10 +21,13 @@ public final class CreativeModeTabItems {
     }
 
     private static void appendBlocks(final Consumer<ItemStack> consumer) {
+        final boolean requireEnergy = Platform.INSTANCE.getConfig().isRequireEnergy();
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getController());
-        consumer.accept(Items.INSTANCE.getControllers().getFirst().get().createAtEnergyCapacity());
-        appendDefaultBlockColor(consumer, Blocks.INSTANCE.getCreativeController());
+        if (requireEnergy) {
+            consumer.accept(Items.INSTANCE.getControllers().getFirst().get().createAtEnergyCapacity());
+            appendDefaultBlockColor(consumer, Blocks.INSTANCE.getCreativeController());
+        }
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getCable());
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getImporter());
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getExporter());
@@ -36,8 +40,10 @@ public final class CreativeModeTabItems {
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getCraftingGrid());
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getPatternGrid());
         itemConsumer.accept(Items.INSTANCE.getPortableGrid());
-        consumer.accept(Items.INSTANCE.getPortableGrid().createAtEnergyCapacity());
-        itemConsumer.accept(Items.INSTANCE.getCreativePortableGrid());
+        if (requireEnergy) {
+            consumer.accept(Items.INSTANCE.getPortableGrid().createAtEnergyCapacity());
+            itemConsumer.accept(Items.INSTANCE.getCreativePortableGrid());
+        }
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getDetector());
         itemConsumer.accept(Blocks.INSTANCE.getInterface());
         Arrays.stream(ItemStorageVariant.values()).forEach(variant -> itemConsumer.accept(
@@ -64,11 +70,13 @@ public final class CreativeModeTabItems {
 
     public static void appendColoredVariants(final Consumer<ItemStack> consumer) {
         appendColoredBlocks(consumer, Blocks.INSTANCE.getController());
-        final var controllers = Items.INSTANCE.getControllers();
-        for (int i = 1; i < controllers.size(); ++i) {
-            consumer.accept(controllers.get(i).get().createAtEnergyCapacity());
+        if (Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            final var controllers = Items.INSTANCE.getControllers();
+            for (int i = 1; i < controllers.size(); ++i) {
+                consumer.accept(controllers.get(i).get().createAtEnergyCapacity());
+            }
+            appendColoredBlocks(consumer, Blocks.INSTANCE.getCreativeController());
         }
-        appendColoredBlocks(consumer, Blocks.INSTANCE.getCreativeController());
         appendColoredBlocks(consumer, Blocks.INSTANCE.getCable());
         appendColoredBlocks(consumer, Blocks.INSTANCE.getImporter());
         appendColoredBlocks(consumer, Blocks.INSTANCE.getExporter());
@@ -99,7 +107,9 @@ public final class CreativeModeTabItems {
     }
 
     private static void appendItems(final Consumer<ItemStack> consumer) {
+        final boolean requireEnergy = Platform.INSTANCE.getConfig().isRequireEnergy();
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
+
         itemConsumer.accept(Items.INSTANCE.getQuartzEnrichedIron());
         itemConsumer.accept(Items.INSTANCE.getQuartzEnrichedCopper());
         itemConsumer.accept(Items.INSTANCE.getSilicon());
@@ -140,15 +150,19 @@ public final class CreativeModeTabItems {
         itemConsumer.accept(Items.INSTANCE.getCreativeRangeUpgrade());
         itemConsumer.accept(Items.INSTANCE.getAutocraftingUpgrade());
         itemConsumer.accept(Items.INSTANCE.getWirelessGrid());
-        consumer.accept(Items.INSTANCE.getWirelessGrid().createAtEnergyCapacity());
-        itemConsumer.accept(Items.INSTANCE.getCreativeWirelessGrid());
+        if (requireEnergy) {
+            consumer.accept(Items.INSTANCE.getWirelessGrid().createAtEnergyCapacity());
+            itemConsumer.accept(Items.INSTANCE.getCreativeWirelessGrid());
+        }
         itemConsumer.accept(Items.INSTANCE.getConfigurationCard());
         itemConsumer.accept(Items.INSTANCE.getNetworkCard());
         itemConsumer.accept(Items.INSTANCE.getSecurityCard());
         itemConsumer.accept(Items.INSTANCE.getFallbackSecurityCard());
         itemConsumer.accept(Items.INSTANCE.getPattern());
         itemConsumer.accept(Items.INSTANCE.getWirelessAutocraftingMonitor());
-        consumer.accept(Items.INSTANCE.getWirelessAutocraftingMonitor().createAtEnergyCapacity());
-        itemConsumer.accept(Items.INSTANCE.getCreativeWirelessAutocraftingMonitor());
+        if (requireEnergy) {
+            consumer.accept(Items.INSTANCE.getWirelessAutocraftingMonitor().createAtEnergyCapacity());
+            itemConsumer.accept(Items.INSTANCE.getCreativeWirelessAutocraftingMonitor());
+        }
     }
 }

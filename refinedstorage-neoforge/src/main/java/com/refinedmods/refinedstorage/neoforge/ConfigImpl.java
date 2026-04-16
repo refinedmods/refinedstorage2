@@ -27,6 +27,7 @@ public class ConfigImpl implements Config {
     private final ModConfigSpec spec;
 
     private final ModConfigSpec.EnumValue<ScreenSize> screenSize;
+    private final ModConfigSpec.BooleanValue requireEnergy;
     private final ModConfigSpec.BooleanValue smoothScrolling;
     private final ModConfigSpec.BooleanValue debug;
     private final ModConfigSpec.BooleanValue tenthAnniversaryCape;
@@ -70,6 +71,9 @@ public class ConfigImpl implements Config {
         screenSize = builder
             .translation(translationKey("screenSize"))
             .defineEnum("screenSize", ScreenSize.STRETCH);
+        requireEnergy = builder
+            .translation(translationKey("requireEnergy"))
+            .define("requireEnergy", true);
         smoothScrolling = builder
             .translation(translationKey("smoothScrolling"))
             .define("smoothScrolling", true);
@@ -198,6 +202,11 @@ public class ConfigImpl implements Config {
             this.tenthAnniversaryCape.set(enabled);
             ConfigImpl.this.spec.save();
         }
+    }
+
+    @Override
+    public boolean isRequireEnergy() {
+        return requireEnergy.get();
     }
 
     @Override

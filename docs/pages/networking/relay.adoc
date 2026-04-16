@@ -16,6 +16,8 @@ link:https://www.youtube.com/watch?v=fRGH4ZUAnhQ[Check out this video explaining
 
 When pass-through mode is off, the {doctitle} can be configured to pass energy from the input sides to the output side.
 
+> If Refined Storage is configured to not require energy, you cannot set the passthrough mode to pass energy. The option will be hidden in that case.
+
 == Pass security
 
 Security settings can also be passed through when pass-through mode is off.

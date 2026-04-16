@@ -56,7 +56,9 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
 
     public static PortableGridBlockItemRenderInfo getRenderInfo(final ItemStack stack, final Level level) {
         final boolean creative = isCreative(stack);
-        final boolean hasEnergy = creative || createEnergyStorage(stack).getStored() > 0;
+        final boolean hasEnergy = creative
+            || !Platform.INSTANCE.getConfig().isRequireEnergy()
+            || createEnergyStorage(stack).getStored() > 0;
         final ItemStack diskStack = getDisk(stack, level.registryAccess());
         final boolean active = hasEnergy && !diskStack.isEmpty();
         final Disk disk = new Disk(

@@ -18,6 +18,8 @@ public interface Config {
 
     void setScreenSize(ScreenSize size);
 
+    boolean isRequireEnergy();
+
     boolean isTenthAnniversaryCape();
 
     void setTenthAnniversaryCape(boolean enabled);

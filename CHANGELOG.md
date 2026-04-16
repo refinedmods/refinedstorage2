@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   You can now configure Refined Storage to not require energy. Controllers are not necessary in this case. Creative variants of items will be hidden and items will function without energy.
+
 ### Fixed
 
 -   For keybindings on Mac, CMD is now always used instead of CTRL.
