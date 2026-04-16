@@ -134,4 +134,6 @@ public interface Platform {
     void setTenthAnniversaryCape(Player player, boolean enabled);
 
     boolean isTenthAnniversaryCapeAvailable();
+
+    void resetSlots(AbstractContainerMenu containerMenu);
 }

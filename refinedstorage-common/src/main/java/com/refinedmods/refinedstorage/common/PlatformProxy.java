@@ -260,6 +260,11 @@ public class PlatformProxy implements Platform {
         return ensureLoaded().isTenthAnniversaryCapeAvailable();
     }
 
+    @Override
+    public void resetSlots(final AbstractContainerMenu containerMenu) {
+        ensureLoaded().resetSlots(containerMenu);
+    }
+
     private Platform ensureLoaded() {
         if (platform == null) {
             throw new IllegalStateException("Platform not loaded yet");
