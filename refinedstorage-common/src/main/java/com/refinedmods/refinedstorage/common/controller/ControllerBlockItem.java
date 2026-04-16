@@ -9,15 +9,21 @@ import com.refinedmods.refinedstorage.common.api.support.energy.AbstractEnergyBl
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +31,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockItem extends AbstractEnergyBlockItem {
+    private static final MutableComponent NOT_NEEDED =
+        createTranslation("item", "controller.not_needed_because_energy_is_not_required")
+            .withStyle(ChatFormatting.RED);
+
     private final Block block;
 
     ControllerBlockItem(final Identifier id, final Block block) {
@@ -39,6 +49,15 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
     @Override
     public Component getName(final ItemStack stack) {
         return block.getName();
+    }
+
+    @Override
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display,
+                                final Consumer<Component> builder, final TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, builder, flag);
+        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            builder.accept(NOT_NEEDED);
+        }
     }
 
     @Override

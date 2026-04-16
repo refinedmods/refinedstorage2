@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
 
@@ -18,15 +19,20 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     private static final int DISK_SLOT_HEIGHT = 26;
 
     private static final Identifier TEXTURE = createIdentifier("textures/gui/portable_grid.png");
+    private static final Identifier NO_ENERGY_TEXTURE = createIdentifier("textures/gui/grid.png");
 
     @Nullable
     private ProgressWidget progressWidget;
+    private final Identifier texture;
 
     public PortableGridScreen(final AbstractPortableGridContainerMenu menu,
                               final Inventory inventory,
                               final Component title) {
         super(menu, inventory, title, 99, 193, 176);
         this.inventoryLabelY = 75;
+        this.texture = Platform.INSTANCE.getConfig().isRequireEnergy()
+            ? TEXTURE
+            : NO_ENERGY_TEXTURE;
     }
 
     @Override
@@ -55,6 +61,9 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
             DISK_SLOT_WIDTH,
             DISK_SLOT_HEIGHT
         ));
+        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            return;
+        }
         final int progressX = 172;
         final int progressY = imageHeight - 10 - 70;
         if (progressWidget == null) {
@@ -79,12 +88,12 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
-        graphics.blit(GUI_TEXTURED, getTexture(), x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0,
+        graphics.blit(GUI_TEXTURED, TEXTURE, x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0,
             DISK_SLOT_WIDTH, DISK_SLOT_HEIGHT, 256, 256);
     }
 
     @Override
     protected Identifier getTexture() {
-        return TEXTURE;
+        return texture;
     }
 }

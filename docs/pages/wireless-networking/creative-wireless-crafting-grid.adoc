@@ -6,3 +6,5 @@ The {doctitle} is a xref:wireless-crafting-grid.adoc[] that does not consume ene
 It can only be obtained in creative mode.
 
 > The {doctitle} is part of xref:../addons/quartz-arsenal.adoc[].
+
+> If Refined Storage is configured to not require energy, this item is not available.

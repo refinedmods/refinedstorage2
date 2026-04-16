@@ -6,6 +6,9 @@ The {doctitle} powers the storage network.
 
 Each network requires at least one {doctitle} to stay active. Multiple {doctitle}s can be used to meet higher energy demands.
 
+> You only need a {doctitle} if Refined Storage is configured to require energy.
+If Refined Storage is configured to not require energy, networks function without it.
+
 == Generating energy
 
 The {doctitle} does not generate energy on its own. It must be powered by an external energy source from another mod.
