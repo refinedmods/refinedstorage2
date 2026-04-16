@@ -8,9 +8,10 @@ import java.util.function.Supplier;
 
 import net.minecraft.world.entity.player.Player;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.10")
 @FunctionalInterface
 public interface DestructorStrategy {
-    boolean apply(Filter filter, Actor actor, Supplier<Network> networkProvider, Player player);
+    boolean apply(Filter filter, Actor actor, Supplier<@Nullable Network> networkProvider, Player player);
 }

@@ -14,19 +14,16 @@ import org.jspecify.annotations.Nullable;
 
 public final class StaticResourceHandlerProvider<T extends Resource> implements ResourceHandlerProvider<T> {
     private final ResourceHandler<T> handler;
-    private final Optional<ResourceHandler<T>> handlerView;
     private final Function<T, ResourceKey> mapper;
 
-    public StaticResourceHandlerProvider(final ResourceHandler<T> handler,
-                                         final Function<T, ResourceKey> mapper) {
+    public StaticResourceHandlerProvider(final ResourceHandler<T> handler, final Function<T, ResourceKey> mapper) {
         this.handler = handler;
-        this.handlerView = Optional.of(handler);
         this.mapper = mapper;
     }
 
     @Override
     public Optional<ResourceHandler<T>> resolve() {
-        return handlerView;
+        return Optional.of(handler);
     }
 
     @Override

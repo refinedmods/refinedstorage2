@@ -106,7 +106,7 @@ class TreePreviewWidget extends AbstractWidget {
         final double scaleY = this.height / bounds.getHeight();
         final double scale = Math.min(scaleX, scaleY);
         if (scale < 1.0) {
-            this.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, scale));
+            this.zoom = Math.clamp(scale, MIN_ZOOM, MAX_ZOOM);
             this.targetZoom = this.zoom;
         } else {
             this.zoom = 1.0;
@@ -316,7 +316,7 @@ class TreePreviewWidget extends AbstractWidget {
         if (scrollY != 0.0) {
             final double prevZoom = targetZoom;
             int index = getClosestZoomLevelIndex(targetZoom);
-            index = Math.max(0, Math.min(ZOOM_LEVELS.length - 1, index + (scrollY > 0 ? 1 : -1)));
+            index = Math.clamp((long) index + (scrollY > 0 ? 1 : -1), 0, ZOOM_LEVELS.length - 1);
             targetZoom = ZOOM_LEVELS[index];
             zoomInTheDirectionOfTheMouseCursor(mouseX, mouseY, prevZoom);
         }

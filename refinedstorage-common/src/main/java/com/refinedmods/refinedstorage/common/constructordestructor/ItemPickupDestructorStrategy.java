@@ -18,6 +18,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 class ItemPickupDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
@@ -31,12 +32,16 @@ class ItemPickupDestructorStrategy implements DestructorStrategy {
     @Override
     public boolean apply(final Filter filter,
                          final Actor actor,
-                         final Supplier<Network> networkProvider,
+                         final Supplier<@Nullable Network> networkProvider,
                          final Player player) {
         if (!level.isLoaded(pos)) {
             return false;
         }
-        final RootStorage rootStorage = networkProvider.get().getComponent(StorageNetworkComponent.class);
+        final Network network = networkProvider.get();
+        if (network == null) {
+            return false;
+        }
+        final RootStorage rootStorage = network.getComponent(StorageNetworkComponent.class);
         final List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos));
         for (final ItemEntity itemEntity : items) {
             tryInsert(filter, actor, rootStorage, itemEntity);

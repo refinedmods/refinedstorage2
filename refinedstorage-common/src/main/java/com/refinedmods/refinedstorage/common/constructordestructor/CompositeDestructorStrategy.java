@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 class CompositeDestructorStrategy implements DestructorStrategy {
     private final List<DestructorStrategy> strategies;
@@ -21,7 +22,7 @@ class CompositeDestructorStrategy implements DestructorStrategy {
     @Override
     public boolean apply(final Filter filter,
                          final Actor actor,
-                         final Supplier<Network> networkProvider,
+                         final Supplier<@Nullable Network> networkProvider,
                          final Player player) {
         for (final DestructorStrategy strategy : strategies) {
             if (strategy.apply(filter, actor, networkProvider, player)) {

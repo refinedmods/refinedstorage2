@@ -25,13 +25,13 @@ import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
 class FabricStorageExternalStorageProvider<P> implements ExternalStorageProvider {
-    private final BlockApiCache<Storage<P>, Direction> cache;
+    private final BlockApiCache<Storage<P>, @Nullable Direction> cache;
     private final Function<P, ResourceKey> fromPlatformMapper;
     private final FabricStorageExtractableStorage<P> extractTarget;
     private final FabricStorageInsertableStorage<P> insertTarget;
     private final Direction direction;
 
-    FabricStorageExternalStorageProvider(final BlockApiLookup<Storage<P>, Direction> lookup,
+    FabricStorageExternalStorageProvider(final BlockApiLookup<Storage<P>, @Nullable Direction> lookup,
                                          final Function<P, ResourceKey> fromPlatformMapper,
                                          final Function<ResourceKey, @Nullable P> toPlatformMapper,
                                          final ServerLevel serverLevel,

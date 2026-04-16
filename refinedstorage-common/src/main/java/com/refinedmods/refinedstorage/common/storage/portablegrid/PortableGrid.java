@@ -105,7 +105,7 @@ class PortableGrid implements Grid {
 
     @Override
     public boolean isGridActive() {
-        return energyStorage.getStored() > 0 && storage != null;
+        return storage != null && (energyStorage.getStored() > 0 || !Platform.INSTANCE.getConfig().isRequireEnergy());
     }
 
     @Override

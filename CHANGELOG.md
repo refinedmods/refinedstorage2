@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.4] - 2026-04-16
+
+### Added
+
+-   You can now configure Refined Storage to not require energy. Controllers are not necessary in this case. Creative variants of items will be hidden and items will function without energy.
+
+### Fixed
+
+-   The mouse cursor can now go out of the scrollbar bounds while scrolling.
+-   You can no longer change the energy capacity to be zero.
+-   Fixed stonecutter patterns not respecting output larger than one.
+-   Fixed title marquee effect when hovering being FPS dependant.
+
 ## [3.0.0-beta.3] - 2026-04-16
 
 ### Fixed
@@ -1134,7 +1147,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.4...HEAD
+
+[3.0.0-beta.4]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.3...v3.0.0-beta.4
 
 [3.0.0-beta.3]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.2...v3.0.0-beta.3
 

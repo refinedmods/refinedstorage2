@@ -5,3 +5,5 @@
 The {doctitle} is a xref:wireless-grid.adoc[] that does not consume energy.
 
 It can only be obtained in creative mode.
+
+> If Refined Storage is configured to not require energy, this item is not available.

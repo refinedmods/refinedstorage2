@@ -2,20 +2,23 @@
 
 == Core concepts
 
-Refined Storage is a storage mod that lets you build a **storage network** using different devices. These devices store, organize, and manage your items and fluids.
+Refined Storage is a storage mod that lets you build a **storage network** using different devices.
+These devices store, organize, and manage your items and fluids.
 
 In this guide, you will:
 
-- Craft a xref:storage/disk-drive.adoc[], which holds item or fluid storage disks. These disks provide storage for your network.
+- Craft a xref:storage/disk-drive.adoc[], which holds item or fluid storage disks.
+These disks provide storage for your network.
 - Craft a xref:viewing-resources/grid.adoc[], which lets you view, insert, and extract items from your storage.
 - Connect these devices to form a **storage network**.
-- Power your storage network using a xref:networking/controller.adoc[]. This block provides energy, which is required for the network to function.
+- Power your storage network using a xref:networking/controller.adoc[].
+This block provides energy, which is required for the network to function.
 
 == Terminology
 
 Here are some key terms to understand before you start:
 
-[cols="1,3", options="header"]
+[cols="1,3",options="header"]
 |===
 | Term | Description
 | **Storage network** | A system of connected devices that store and manage items or fluids. Requires power from a xref:networking/controller.adoc[].
@@ -41,10 +44,13 @@ You may also want to check out the xref:how-to-install.adoc#_optional_dependenci
 
 === Crafting the Controller
 
+> You only need to create a xref:networking/controller.adoc[] if Refined Storage is configured to require energy.
+If Refined Storage is configured to not require energy, networks function without it.
+
 The xref:networking/controller.adoc[] is the **power source** for your storage network.
 
 1. Craft a xref:networking/controller.adoc[].
-2. Place it down and **connect it to an energy source**.
+2. Place it down and **connect it to an energy source from another mod**.
 
 Once powered, your storage network is ready to be expanded.
 
@@ -55,20 +61,24 @@ To store and retrieve items, you need:
 - A xref:storage/disk-drive.adoc[] to hold storage disks.
 - A xref:storage/1k-storage-disk.adoc[] to store items.
 
-For simplicity, we'll use a **1K Storage Disk**, which can hold **1,000 items**. Higher-tier disks offer more storage.
+For simplicity, we'll use a **1K Storage Disk**, which can hold **1,000 items**.
+Higher-tier disks offer more storage.
 
 **Steps:**
 
 1. Craft a xref:storage/disk-drive.adoc[].
 2. Craft a xref:storage/1k-storage-disk.adoc[] and place it inside the Disk Drive.
 3. Craft a xref:viewing-resources/grid.adoc[] to access your items.
-4. Connect the Disk Drive and Grid to the Controller using xref:networking/cable.adoc[]. If placed directly next to each other, cables are not needed.
+4. Connect the Disk Drive and Grid to the Controller using xref:networking/cable.adoc[].
+If placed directly next to each other, cables are not needed.
 
-> Instead of xref:storage/index.adoc#_storage_disks[storage disks], you can also use xref:storage/index.adoc#_storage_blocks[storage blocks]. These function similarly but are placed as physical blocks in the world and don't need a xref:storage/disk-drive.adoc[].
+> Instead of xref:storage/index.adoc#_storage_disks[storage disks], you can also use xref:storage/index.adoc#_storage_blocks[storage blocks].
+These function similarly but are placed as physical blocks in the world and don't need a xref:storage/disk-drive.adoc[].
 
 === Viewing your storage
 
-Now, open the xref:viewing-resources/grid.adoc[]. You can:
+Now, open the xref:viewing-resources/grid.adoc[].
+You can:
 
 - **Insert** items to store them on your storage disks.
 - **Extract** items whenever you need them.

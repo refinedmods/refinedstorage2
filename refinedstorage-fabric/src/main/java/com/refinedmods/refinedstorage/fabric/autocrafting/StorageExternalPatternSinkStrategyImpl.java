@@ -19,12 +19,12 @@ import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 
 class StorageExternalPatternSinkStrategyImpl<T> implements StorageExternalPatternSinkStrategy {
-    private final BlockApiCache<Storage<T>, Direction> cache;
+    private final BlockApiCache<Storage<T>, @Nullable Direction> cache;
     private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Direction direction;
 
     StorageExternalPatternSinkStrategyImpl(
-        final BlockApiLookup<Storage<T>, Direction> lookup,
+        final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
         final Function<ResourceKey, @Nullable T> toPlatformMapper,
         final ServerLevel serverLevel,
         final BlockPos pos,

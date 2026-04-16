@@ -51,9 +51,7 @@ final class DiskInterfaceTestPlots {
         if (resources.length > 0) {
             final PlayerActor actor = new PlayerActor(helper.makeMockPlayer(GameType.SURVIVAL));
             for (final ResourceAmount resource : resources) {
-                if (resource != null) {
-                    storage.insert(resource.resource(), resource.amount(), Action.EXECUTE, actor);
-                }
+                storage.insert(resource.resource(), resource.amount(), Action.EXECUTE, actor);
             }
         }
 

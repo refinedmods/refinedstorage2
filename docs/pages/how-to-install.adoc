@@ -52,7 +52,9 @@ These mods help view recipes for items and blocks:
 
 === Energy generation
 
-Storage networks require energy. Install a mod that generates energy or customize your modpack to allow creative energy options provided by Refined Storage.
+You can configure whether Refined Storage uses energy.
+
+By default, energy is enabled. If you keep this setting, you'll need another mod that can generate power to run your Refined Storage system.
 
 === Other integrations
 

@@ -29,7 +29,7 @@ public class RefinedStorageFabricApiImpl implements RefinedStorageFabricApi {
     }
 
     @Override
-    public BlockApiLookup<NetworkNodeContainerProvider, Direction> getNetworkNodeContainerProviderLookup() {
+    public BlockApiLookup<NetworkNodeContainerProvider, @Nullable Direction> getNetworkNodeContainerProviderLookup() {
         return networkNodeContainerProvider;
     }
 

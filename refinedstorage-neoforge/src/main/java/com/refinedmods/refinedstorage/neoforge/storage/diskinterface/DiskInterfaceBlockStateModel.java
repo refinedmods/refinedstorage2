@@ -56,7 +56,7 @@ class DiskInterfaceBlockStateModel implements BlockStateModel {
             return;
         }
         final OrientedDirection direction = state.getValue(property);
-        final Disk[] disks = level.getModelData(pos).get(ForgeDiskInterfaceBlockEntity.DISKS_PROPERTY);
+        final var disks = level.getModelData(pos).get(ForgeDiskInterfaceBlockEntity.DISKS_PROPERTY);
         if (disks == null) {
             parts.addAll(modelBaker.compute(new DiskInterfaceOperationKey(active, color, direction, NO_DISKS)));
             return;

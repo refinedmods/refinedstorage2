@@ -55,24 +55,47 @@ public class Lexer {
         }
 
         if (isNotEof() && current() == '.') {
-            position.advance();
-
-            if (!isNotEof()) {
-                throw new LexerException(position.createRange(), "Unexpected end of number");
-            }
-
-            if (!Character.isDigit(current())) {
-                throw new LexerException(position.createRange(), "Invalid floating point number");
-            }
-
-            while (isNotEof() && Character.isDigit(current())) {
-                position.advance();
-            }
-
-            addToken(TokenType.FLOATING_NUMBER);
+            scanFloatingPointNumber();
         } else {
+            if (scanNumberWithImmediateProceedingIdentifier()) {
+                addToken(TokenType.IDENTIFIER);
+                return;
+            }
             addToken(TokenType.INTEGER_NUMBER);
         }
+    }
+
+    private void scanFloatingPointNumber() {
+        position.advance();
+
+        if (!isNotEof()) {
+            throw new LexerException(position.createRange(), "Unexpected end of number");
+        }
+
+        if (!Character.isDigit(current())) {
+            throw new LexerException(position.createRange(), "Invalid floating point number");
+        }
+
+        while (isNotEof() && Character.isDigit(current())) {
+            position.advance();
+        }
+
+        if (scanNumberWithImmediateProceedingIdentifier()) {
+            addToken(TokenType.IDENTIFIER);
+            return;
+        }
+
+        addToken(TokenType.FLOATING_NUMBER);
+    }
+
+    private boolean scanNumberWithImmediateProceedingIdentifier() {
+        if (isNotEof() && isValidIdentifier(current())) {
+            while (isNotEof() && isValidIdentifier(current())) {
+                position.advance();
+            }
+            return true;
+        }
+        return false;
     }
 
     private void scanIdentifier() {
@@ -83,11 +106,9 @@ public class Lexer {
     }
 
     private void scanString() {
-        position.advance();
-
-        while (isNotEof() && current() != '"') {
+        do {
             position.advance();
-        }
+        } while (isNotEof() && current() != '"');
 
         if (!isNotEof()) {
             throw new LexerException(position.createRange(), "Unexpected end of string");

@@ -49,6 +49,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
+import static java.util.Objects.requireNonNull;
 import static net.minecraft.world.item.Items.AIR;
 
 public final class GameTestUtil {
@@ -77,7 +78,7 @@ public final class GameTestUtil {
         return () -> {
             final Network network = getNetwork(helper, networkPos);
             helper.assertTrue(network != null, "Network is not available");
-            networkConsumer.accept(network);
+            networkConsumer.accept(requireNonNull(network));
         };
     }
 
@@ -421,10 +422,8 @@ public final class GameTestUtil {
     public static Runnable startAutocraftingTask(final GameTestHelper helper,
                                                  final BlockPos pos,
                                                  final ResourceAmount resource) {
-        return networkIsAvailable(helper, pos, network -> {
-            network.getComponent(AutocraftingNetworkComponent.class).startTask(
-                resource.resource(), resource.amount(), Actor.EMPTY, false, CancellationToken.NONE);
-        });
+        return networkIsAvailable(helper, pos, network -> network.getComponent(AutocraftingNetworkComponent.class)
+            .startTask(resource.resource(), resource.amount(), Actor.EMPTY, false, CancellationToken.NONE));
     }
 
     public static void tickFurnace(final GameTestHelper helper,

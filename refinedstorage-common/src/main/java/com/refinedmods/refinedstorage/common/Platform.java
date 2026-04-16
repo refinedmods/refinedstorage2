@@ -127,4 +127,6 @@ public interface Platform {
     RecipeProvider getClientRecipeProvider(Level level);
 
     void setClientRecipeProvider(RecipeProvider recipeProvider);
+
+    void resetSlots(AbstractContainerMenu containerMenu);
 }

@@ -18,11 +18,11 @@ import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 
 public class FabricStorageExtractableStorage<P> implements ExtractableStorage {
-    private final BlockApiCache<Storage<P>, Direction> cache;
+    private final BlockApiCache<Storage<P>, @Nullable Direction> cache;
     private final Function<ResourceKey, @Nullable P> toPlatformMapper;
     private final Direction direction;
 
-    public FabricStorageExtractableStorage(final BlockApiLookup<Storage<P>, Direction> lookup,
+    public FabricStorageExtractableStorage(final BlockApiLookup<Storage<P>, @Nullable Direction> lookup,
                                            final Function<ResourceKey, @Nullable P> toPlatformMapper,
                                            final ServerLevel serverLevel,
                                            final BlockPos pos,

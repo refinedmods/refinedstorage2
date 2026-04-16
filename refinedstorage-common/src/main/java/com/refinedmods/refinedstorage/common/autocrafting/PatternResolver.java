@@ -178,7 +178,7 @@ public class PatternResolver {
                 return Optional.of(new ResolvedStonecutterPattern(
                     patternState.id(),
                     state.input(),
-                    ItemResource.ofItemStack(output)
+                    new ResourceAmount(ItemResource.ofItemStack(output), output.getCount())
                 ));
             }
         }
@@ -242,12 +242,12 @@ public class PatternResolver {
     }
 
     public record ResolvedStonecutterPattern(ItemResource input,
-                                             ItemResource output,
+                                             ResourceAmount output,
                                              Pattern pattern) {
-        ResolvedStonecutterPattern(final UUID id, final ItemResource input, final ItemResource output) {
+        ResolvedStonecutterPattern(final UUID id, final ItemResource input, final ResourceAmount output) {
             this(input, output, new Pattern(id, PatternLayout.internal(
                 List.of(new Ingredient(1, List.of(input))),
-                List.of(new ResourceAmount(output, 1)),
+                List.of(output),
                 List.of()
             )));
         }

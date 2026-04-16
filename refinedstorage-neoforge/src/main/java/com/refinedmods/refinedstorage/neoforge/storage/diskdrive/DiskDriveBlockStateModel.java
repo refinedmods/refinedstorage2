@@ -47,7 +47,7 @@ class DiskDriveBlockStateModel implements BlockStateModel {
             return;
         }
         final OrientedDirection direction = state.getValue(property);
-        final Disk[] disks = level.getModelData(pos).get(ForgeDiskDriveBlockEntity.DISKS_PROPERTY);
+        final var disks = level.getModelData(pos).get(ForgeDiskDriveBlockEntity.DISKS_PROPERTY);
         if (disks == null) {
             parts.addAll(modelBaker.compute(new DiskDriveOperationKey(direction, NO_DISKS)));
             return;

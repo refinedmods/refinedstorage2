@@ -51,7 +51,9 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            new EnergyStorageImpl(Platform.INSTANCE.getConfig().getController().getEnergyCapacity()),
+            new EnergyStorageImpl(
+                Math.clamp(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), 1, Long.MAX_VALUE)
+            ),
             blockEntity
         );
     }

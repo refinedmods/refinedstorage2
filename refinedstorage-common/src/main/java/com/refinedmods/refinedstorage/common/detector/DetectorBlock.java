@@ -36,6 +36,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
@@ -139,6 +140,7 @@ public class DetectorBlock extends AbstractDirectionalBlock<Direction>
     }
 
     @Override
+    @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> blockEntityType) {

@@ -38,9 +38,9 @@ import net.minecraft.world.entity.player.Inventory;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage.common.autocrafting.monitor.AutocraftingMonitorScreen.darkenARGB;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static com.refinedmods.refinedstorage.common.util.MathUtil.darkenARGB;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class AutocraftingPreviewScreen extends AbstractAmountScreen<AutocraftingPreviewContainerMenu, Double>

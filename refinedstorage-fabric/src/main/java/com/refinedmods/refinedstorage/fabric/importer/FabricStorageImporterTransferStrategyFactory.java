@@ -17,12 +17,12 @@ import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 
 public class FabricStorageImporterTransferStrategyFactory<P> implements ImporterTransferStrategyFactory {
-    private final BlockApiLookup<Storage<P>, Direction> lookup;
+    private final BlockApiLookup<Storage<P>, @Nullable Direction> lookup;
     private final Function<P, ResourceKey> fromPlatformMapper;
     private final Function<ResourceKey, @Nullable P> toPlatformMapper;
     private final long singleAmount;
 
-    public FabricStorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
+    public FabricStorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, @Nullable Direction> lookup,
                                                         final Function<P, ResourceKey> fromPlatformMapper,
                                                         final Function<ResourceKey, @Nullable P> toPlatformMapper,
                                                         final long singleAmount) {

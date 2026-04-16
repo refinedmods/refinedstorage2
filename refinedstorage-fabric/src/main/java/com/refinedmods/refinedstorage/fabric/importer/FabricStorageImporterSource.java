@@ -24,13 +24,13 @@ import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 
 class FabricStorageImporterSource<T> implements ImporterSource {
-    private final BlockApiCache<Storage<T>, Direction> cache;
+    private final BlockApiCache<Storage<T>, @Nullable Direction> cache;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final FabricStorageInsertableStorage<T> insertTarget;
     private final FabricStorageExtractableStorage<T> extractTarget;
     private final Direction direction;
 
-    FabricStorageImporterSource(final BlockApiLookup<Storage<T>, Direction> lookup,
+    FabricStorageImporterSource(final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
                                 final Function<T, ResourceKey> fromPlatformMapper,
                                 final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                 final ServerLevel serverLevel,

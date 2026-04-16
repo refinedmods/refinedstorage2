@@ -54,6 +54,7 @@ public class StorageMonitorBlock extends AbstractDirectionalBlock<OrientedDirect
     }
 
     @Override
+    @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> type) {

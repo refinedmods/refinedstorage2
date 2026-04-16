@@ -15,11 +15,11 @@ import org.jspecify.annotations.Nullable;
 
 public class StorageExternalPatternSinkStrategyFactoryImpl<T>
     implements StorageExternalPatternSinkStrategyFactory {
-    private final BlockApiLookup<Storage<T>, Direction> lookup;
+    private final BlockApiLookup<Storage<T>, @Nullable Direction> lookup;
     private final Function<ResourceKey, @Nullable T> toPlatformMapper;
 
     public StorageExternalPatternSinkStrategyFactoryImpl(
-        final BlockApiLookup<Storage<T>, Direction> lookup,
+        final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
         final Function<ResourceKey, @Nullable T> toPlatformMapper
     ) {
         this.lookup = lookup;

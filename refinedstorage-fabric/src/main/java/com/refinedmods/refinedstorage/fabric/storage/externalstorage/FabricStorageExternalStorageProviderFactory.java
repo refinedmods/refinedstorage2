@@ -15,11 +15,11 @@ import org.jspecify.annotations.Nullable;
 
 public class FabricStorageExternalStorageProviderFactory<T>
     implements ExternalStorageProviderFactory {
-    private final BlockApiLookup<Storage<T>, Direction> lookup;
+    private final BlockApiLookup<Storage<T>, @Nullable Direction> lookup;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final Function<ResourceKey, @Nullable T> toPlatformMapper;
 
-    public FabricStorageExternalStorageProviderFactory(final BlockApiLookup<Storage<T>, Direction> lookup,
+    public FabricStorageExternalStorageProviderFactory(final BlockApiLookup<Storage<T>, @Nullable Direction> lookup,
                                                        final Function<T, ResourceKey> fromPlatformMapper,
                                                        final Function<ResourceKey, @Nullable T> toPlatformMapper) {
         this.lookup = lookup;

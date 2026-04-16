@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 class BlockBreakDestructorStrategy implements DestructorStrategy {
     private final ServerLevel level;
@@ -44,7 +45,7 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
     @Override
     public boolean apply(final Filter filter,
                          final Actor actor,
-                         final Supplier<Network> networkProvider,
+                         final Supplier<@Nullable Network> networkProvider,
                          final Player player) {
         if (!level.isLoaded(pos)) {
             return false;
@@ -74,8 +75,13 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
         return true;
     }
 
-    private static RootStorage getRootStorage(final Supplier<Network> network) {
-        return network.get().getComponent(StorageNetworkComponent.class);
+    @Nullable
+    private static RootStorage getRootStorage(final Supplier<@Nullable Network> networkProvider) {
+        final Network network = networkProvider.get();
+        if (network == null) {
+            return null;
+        }
+        return network.getComponent(StorageNetworkComponent.class);
     }
 
     private static boolean isFastExit(final BlockState blockState) {
@@ -106,9 +112,12 @@ class BlockBreakDestructorStrategy implements DestructorStrategy {
     private boolean insertDrops(
         final Actor actor,
         final List<ItemStack> drops,
-        final RootStorage storage,
+        @Nullable final RootStorage storage,
         final Action action
     ) {
+        if (storage == null) {
+            return false;
+        }
         for (final ItemStack drop : drops) {
             final ItemResource resource = ItemResource.ofItemStack(drop);
             final boolean didNotInsertCompletely =
