@@ -241,6 +241,23 @@ class LexerTest {
     }
 
     @Test
+    void testIntegerNumberWithIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123 test");
+
+        // Assert
+        assertThat(tokens).hasSize(2);
+
+        final Token numberToken = tokens.getFirst();
+        assertToken(numberToken, "123", TokenType.INTEGER_NUMBER);
+        assertPosition(numberToken.position(), SOURCE_NAME, 1, 1, 1, 3);
+
+        final Token identifierToken = tokens.get(1);
+        assertToken(identifierToken, "test", TokenType.IDENTIFIER);
+        assertPosition(identifierToken.position(), SOURCE_NAME, 1, 5, 1, 8);
+    }
+
+    @Test
     void testFloatingNumber() {
         // Act
         final List<Token> tokens = getTokens("123.45");
@@ -251,6 +268,23 @@ class LexerTest {
         final Token token = tokens.getFirst();
         assertToken(token, "123.45", TokenType.FLOATING_NUMBER);
         assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 6);
+    }
+
+    @Test
+    void testFloatingNumberWithIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123.4 test");
+
+        // Assert
+        assertThat(tokens).hasSize(2);
+
+        final Token numberToken = tokens.getFirst();
+        assertToken(numberToken, "123.4", TokenType.FLOATING_NUMBER);
+        assertPosition(numberToken.position(), SOURCE_NAME, 1, 1, 1, 5);
+
+        final Token identifierToken = tokens.get(1);
+        assertToken(identifierToken, "test", TokenType.IDENTIFIER);
+        assertPosition(identifierToken.position(), SOURCE_NAME, 1, 7, 1, 10);
     }
 
     @Test
@@ -272,6 +306,68 @@ class LexerTest {
         assertThat(e.getMessage()).isEqualTo("Invalid floating point number");
         assertRange(e.getRange(), 1, 1, 1, 4);
     }
+
+    @Test
+    void testIntegerNumberWithImmediateProceedingIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123test");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "123test", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 7);
+    }
+
+    @Test
+    void testFloatingNumberWithImmediateProceedingIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123.4test");
+
+        // Assert
+        assertThat(tokens).hasSize(1);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "123.4test", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 9);
+    }
+
+
+    @Test
+    void testIntegerNumberWithImmediateProceedingIdentifierAndAnotherIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123test bla");
+
+        // Assert
+        assertThat(tokens).hasSize(2);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "123test", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 7);
+
+        final Token otherToken = tokens.get(1);
+        assertToken(otherToken, "bla", TokenType.IDENTIFIER);
+        assertPosition(otherToken.position(), SOURCE_NAME, 1, 9, 1, 11);
+    }
+
+    @Test
+    void testFloatingNumberWithImmediateProceedingIdentifierAndAnotherIdentifier() {
+        // Act
+        final List<Token> tokens = getTokens("123.4test bla");
+
+        // Assert
+        assertThat(tokens).hasSize(2);
+
+        final Token token = tokens.getFirst();
+        assertToken(token, "123.4test", TokenType.IDENTIFIER);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 9);
+
+        final Token otherToken = tokens.get(1);
+        assertToken(otherToken, "bla", TokenType.IDENTIFIER);
+        assertPosition(otherToken.position(), SOURCE_NAME, 1, 11, 1, 13);
+    }
+
 
     @Test
     void testTokenMappings() {
