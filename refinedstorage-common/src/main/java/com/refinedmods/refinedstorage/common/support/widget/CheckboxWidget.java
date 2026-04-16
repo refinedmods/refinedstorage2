@@ -121,7 +121,7 @@ public class CheckboxWidget extends AbstractButton {
         graphics.blitSprite(GUI_TEXTURED, sprite, getX(), getY(), size.widthHeight, size.widthHeight, color);
         final int textX = getX() + size.widthHeight + CHECKBOX_TEXT_SPACING;
         final int textY = (getY() + (height >> 1)) - (9 >> 1);
-        marquee.render(graphics, textX, textY, minecraft.font, isHovered);
+        marquee.render(graphics, textX, textY, minecraft.font, isHovered, partialTicks);
     }
 
     @FunctionalInterface
