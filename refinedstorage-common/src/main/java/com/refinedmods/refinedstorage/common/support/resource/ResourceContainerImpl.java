@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerContents;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
-import com.refinedmods.refinedstorage.common.util.MathUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -129,7 +128,7 @@ public class ResourceContainerImpl implements ResourceContainer {
         if (slot == null) {
             return;
         }
-        final long newAmount = MathUtil.clamp(amount, 0, getMaxAmount(slot.resource()));
+        final long newAmount = Math.clamp(amount, 0, getMaxAmount(slot.resource()));
         if (newAmount == 0) {
             removeSilently(index);
         } else {

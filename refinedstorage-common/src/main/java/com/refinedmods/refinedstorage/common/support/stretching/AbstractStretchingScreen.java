@@ -195,8 +195,8 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     private int calculateVisibleRows() {
         final int screenSpaceAvailable = height - TOP_HEIGHT - getBottomHeight();
         final int maxRows = getMaxRows();
-        // TODO: Clamp?
-        return Math.max(MIN_ROWS, Math.min((screenSpaceAvailable / ROW_SIZE) - ROW_PADDING, maxRows));
+        final int wantedRows = (screenSpaceAvailable / ROW_SIZE) - ROW_PADDING;
+        return Math.clamp(wantedRows, MIN_ROWS, maxRows);
     }
 
     protected final boolean isInStretchedArea(final int y) {
