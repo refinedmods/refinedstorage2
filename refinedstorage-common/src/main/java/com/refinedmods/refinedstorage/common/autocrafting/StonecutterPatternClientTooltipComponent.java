@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage.common.autocrafting;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
+import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import net.minecraft.ChatFormatting;
@@ -25,7 +27,7 @@ class StonecutterPatternClientTooltipComponent implements ClientTooltipComponent
 
     private final Component outputText;
     private final ItemResource input;
-    private final ItemResource output;
+    private final ResourceAmount output;
 
     StonecutterPatternClientTooltipComponent(final PatternResolver.ResolvedStonecutterPattern pattern) {
         this.outputText = getOutputText(pattern.output());
@@ -37,7 +39,8 @@ class StonecutterPatternClientTooltipComponent implements ClientTooltipComponent
     public void extractImage(final Font font, final int x, final int y, final int w, final int h,
                              final GuiGraphicsExtractor graphics) {
         graphics.text(font, outputText, x, y, 0xFFAAAAAA);
-        graphics.blitSprite(GUI_TEXTURED, SLOT, x, y + 9 + 2, 18, 18);
+        final int slotY = y + 9 + 2;
+        graphics.blitSprite(GUI_TEXTURED, SLOT, x, slotY, 18, 18);
         final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(ItemResource.class);
         rendering.render(input, graphics, x + 1, y + 9 + 2 + 1);
         graphics.blitSprite(
@@ -48,26 +51,31 @@ class StonecutterPatternClientTooltipComponent implements ClientTooltipComponent
             LIGHT_ARROW_WIDTH,
             LIGHT_ARROW_HEIGHT
         );
+        final int slotX = x + 18 + ARROW_SPACING + LIGHT_ARROW_WIDTH + ARROW_SPACING;
         graphics.blitSprite(
             GUI_TEXTURED,
             STONECUTTER_RECIPE_SELECTED_SPRITE,
-            x + 18 + ARROW_SPACING + LIGHT_ARROW_WIDTH + ARROW_SPACING,
-            y + 9 + 2,
+            slotX,
+            slotY,
             16,
             18
         );
         rendering.render(
-            output,
+            output.resource(),
             graphics,
-            x + 18 + ARROW_SPACING + LIGHT_ARROW_WIDTH + ARROW_SPACING,
-            y + 9 + 2 + 1
+            slotX,
+            slotY + 1
         );
+        ResourceSlotRendering.renderAmount(graphics, slotX - 1, slotY + 1, output.amount(), rendering);
     }
 
-    private static Component getOutputText(final ItemResource output) {
-        final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(ItemResource.class);
-        return Component.literal("1x ")
-            .append(rendering.getDisplayName(output))
+    private static Component getOutputText(final ResourceAmount resourceAmount) {
+        final ResourceRendering rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(
+            resourceAmount.resource().getClass()
+        );
+        final String displayAmount = rendering.formatAmount(resourceAmount.amount());
+        return Component.literal(String.format("%sx ", displayAmount))
+            .append(rendering.getDisplayName(resourceAmount.resource()))
             .withStyle(ChatFormatting.GRAY);
     }
 
