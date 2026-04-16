@@ -108,7 +108,9 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
             return CreativeEnergyStorage.INSTANCE;
         }
         return new BlockEntityEnergyStorage(
-            new EnergyStorageImpl(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity()),
+            new EnergyStorageImpl(
+                Math.clamp(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(), 1, Long.MAX_VALUE)
+            ),
             blockEntity
         );
     }

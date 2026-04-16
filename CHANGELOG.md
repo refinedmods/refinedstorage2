@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   The mouse cursor can now go out of the scrollbar bounds while scrolling.
+-   You can no longer change the energy capacity to be zero.
 
 ## [3.0.0-beta.3] - 2026-04-16
 
