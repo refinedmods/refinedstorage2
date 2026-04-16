@@ -51,6 +51,7 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display,
                                 final Consumer<Component> builder, final TooltipFlag flag) {
         super.appendHoverText(stack, context, display, builder, flag);

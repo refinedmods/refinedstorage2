@@ -316,7 +316,7 @@ class TreePreviewWidget extends AbstractWidget {
         if (scrollY != 0.0) {
             final double prevZoom = targetZoom;
             int index = getClosestZoomLevelIndex(targetZoom);
-            index = Math.clamp(index + (scrollY > 0 ? 1 : -1), 0, ZOOM_LEVELS.length - 1);
+            index = Math.clamp((long) index + (scrollY > 0 ? 1 : -1), 0, ZOOM_LEVELS.length - 1);
             targetZoom = ZOOM_LEVELS[index];
             zoomInTheDirectionOfTheMouseCursor(mouseX, mouseY, prevZoom);
         }
