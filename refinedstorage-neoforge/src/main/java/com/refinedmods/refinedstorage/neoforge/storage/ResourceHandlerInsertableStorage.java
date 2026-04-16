@@ -8,9 +8,11 @@ import com.refinedmods.refinedstorage.api.storage.InsertableStorage;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.google.common.primitives.Ints;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.resource.Resource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 public class ResourceHandlerInsertableStorage<T extends Resource> implements InsertableStorage {
     private final ResourceHandlerProvider<T> provider;
@@ -41,9 +43,12 @@ public class ResourceHandlerInsertableStorage<T extends Resource> implements Ins
             .orElse(0L);
     }
 
+    @SuppressWarnings("deprecation")
     private long insert(final long amount, final Action action, final ResourceHandler<T> handler, final T resource) {
-        try (Transaction tx = Transaction.openRoot()) {
-            final int inserted = handler.insert(resource, (int) amount, tx);
+        final TransactionContext potentialOpenTransactionFromEarlierInTheStack =
+            Transaction.getCurrentOpenedTransaction();
+        try (Transaction tx = Transaction.open(potentialOpenTransactionFromEarlierInTheStack)) {
+            final int inserted = handler.insert(resource, Ints.saturatedCast(amount), tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
             }

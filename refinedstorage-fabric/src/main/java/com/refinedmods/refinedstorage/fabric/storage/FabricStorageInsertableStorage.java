@@ -54,11 +54,11 @@ public class FabricStorageInsertableStorage<T> implements InsertableStorage {
         if (platformResource == null) {
             return 0;
         }
-        return doInsert(platformResource, amount, action, storage);
+        return insert(platformResource, amount, action, storage);
     }
 
     @SuppressWarnings("deprecation")
-    private long doInsert(final T platformResource, final long amount, final Action action, final Storage<T> storage) {
+    private long insert(final T platformResource, final long amount, final Action action, final Storage<T> storage) {
         final TransactionContext potentialOpenTransactionFromEarlierInTheStack = Transaction.getCurrentUnsafe();
         try (Transaction tx = Transaction.openNested(potentialOpenTransactionFromEarlierInTheStack)) {
             final long inserted = storage.insert(platformResource, amount, tx);
