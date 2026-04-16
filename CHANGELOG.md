@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Fixed Autocrafter renaming not working.
 -   Fixed search bar not being able to lose focus.
 -   Fixed not being able to extract resources used in External Storage from the Grid.
+-   The mouse cursor can now go out of the scrollbar bounds while scrolling.
 
 ## [3.0.0-beta.2] - 2026-04-13
 

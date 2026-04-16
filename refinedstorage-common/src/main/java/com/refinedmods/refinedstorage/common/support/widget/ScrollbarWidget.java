@@ -106,9 +106,7 @@ public class ScrollbarWidget extends AbstractWidget {
 
     @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        final boolean inBounds = mouseX >= getX()
-            && mouseY >= getY()
-            && mouseX <= getX() + width
+        final boolean inBounds = mouseY >= getY()
             && mouseY <= getY() + height;
         if (clicked && inBounds) {
             updateOffset(mouseY);
