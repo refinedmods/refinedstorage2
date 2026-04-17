@@ -1,14 +1,76 @@
 name: Build
 on:
-  push:
-    branches:
-      - develop
-      - main
-  pull_request:
-    types: [ opened, synchronize, reopened ]
+  workflow_call:
+    inputs:
+      version:
+        required: false
+        type: string
+      mutation-testing:
+        required: false
+        type: boolean
+        default: true
+      sonarqube:
+        required: false
+        type: boolean
+        default: ${{ !github.event.pull_request.head.repo.fork }}
+      gametests:
+        required: false
+        type: boolean
+        default: false
 jobs:
   build:
-    uses: refinedmods/refinedarchitect/.github/workflows/build.yml@v1.4.1
-    with:
-      gametests: true
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set version number
+        if: ${{ inputs.version != '' }}
+        run: |
+          echo "RELEASE_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup Java
+        uses: ./.github/actions/setup-java
+      # https://docs.sonarqube.org/latest/analysis/github-integration/
+      - name: Cache SonarQube packages
+        if: ${{ inputs.sonarqube == true }}
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Build and test
+        run: ./gradlew build codeCoverageReportAggregate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Gametests
+        if: ${{ inputs.gametests == true }}
+        run: ./gradlew runGameTestServer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Analyze
+        if: ${{ inputs.sonarqube == true }}
+        run: ./gradlew assemble sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Publish test report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+      - name: Publish Checkstyle report
+        uses: Juuxel/publish-checkstyle-report@v1
+        if: ${{ failure() }}
+        with:
+          reports: |
+            **/build/reports/checkstyle/*.xml
+      - name: Mutation testing
+        if: ${{ inputs.mutation-testing == true }}
+        run: ./gradlew pitest
+      - name: Upload build artifacts
+        if: ${{ runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: '**/build/libs/'

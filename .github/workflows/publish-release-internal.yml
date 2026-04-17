@@ -1,0 +1,16 @@
+name: Publish release
+on:
+  pull_request:
+    branches:
+      - support/2.x
+    types:
+      - closed
+jobs:
+  publish-release:
+    uses: ./.github/workflows/publish-release.yml
+    secrets: inherit
+    with:
+      project-name: 'Refined Storage'
+      gametests: true
+      curseforge: true
+      modrinth: true
