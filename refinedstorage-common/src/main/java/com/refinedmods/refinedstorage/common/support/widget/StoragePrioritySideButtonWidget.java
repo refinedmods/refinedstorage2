@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static net.minecraft.client.gui.screens.Screen.hasAltDown;
-import static net.minecraft.client.gui.screens.Screen.hasControlDown;
 
 public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");

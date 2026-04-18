@@ -17,7 +17,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createSt
 
 public class EnergyItemHelperImpl implements EnergyItemHelper {
     @Override
-    public void addTooltip(ItemStack stack, List<Component> lines) {
+    public void addTooltip(final ItemStack stack, final List<Component> lines) {
         if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
             return;
         }
