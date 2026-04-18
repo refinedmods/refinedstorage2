@@ -21,6 +21,14 @@ final class ExporterTestPlots {
                             final Block block,
                             final Direction direction,
                             final TriConsumer<AbstractExporterBlockEntity, BlockPos, GameTestSequence> consumer) {
+        preparePlot(helper, block, direction, false, consumer);
+    }
+
+    static void preparePlot(final GameTestHelper helper,
+                            final Block block,
+                            final Direction direction,
+                            final boolean addAutocrafter,
+                            final TriConsumer<AbstractExporterBlockEntity, BlockPos, GameTestSequence> consumer) {
         helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
         helper.setBlock(ZERO.above().above(), MOD_BLOCKS.getItemStorageBlock(ItemStorageVariant.ONE_K));
         helper.setBlock(
@@ -30,6 +38,9 @@ final class ExporterTestPlots {
         final BlockPos exporterPos = ZERO.above().above().above();
         helper.setBlock(exporterPos, MOD_BLOCKS.getExporter().getDefault().rotated(direction));
         helper.setBlock(exporterPos.east(), block);
+        if (addAutocrafter) {
+            helper.setBlock(exporterPos.west(), MOD_BLOCKS.getAutocrafter().getDefault());
+        }
         consumer.accept(
             helper.getBlockEntity(exporterPos, AbstractExporterBlockEntity.class),
             exporterPos,
