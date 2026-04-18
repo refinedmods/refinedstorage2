@@ -37,7 +37,8 @@ public class TextMarquee {
         return Math.min(maxWidth, font.width(text));
     }
 
-    public void render(final GuiGraphics graphics, final int x, final int y, final Font font, final boolean hovering, final float partialTicks) {
+    public void render(final GuiGraphics graphics, final int x, final int y, final Font font, final boolean hovering,
+                       final float partialTicks) {
         if (!hovering) {
             offset = 0;
             state = State.MOVING_LEFT;
