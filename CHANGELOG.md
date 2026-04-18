@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   You can no longer change the energy capacity to be zero.
 -   Fixed stonecutter patterns not respecting output larger than one.
 -   Fixed title marquee effect when hovering being FPS dependant.
+-   Fixed importing too many fluids at once with a Stack Upgrade and an Importer on NeoForge.
 
 ## [2.0.2] - 2026-04-17
 
