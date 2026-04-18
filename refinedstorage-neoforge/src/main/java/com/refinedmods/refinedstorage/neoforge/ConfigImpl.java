@@ -27,6 +27,7 @@ public class ConfigImpl implements Config {
     private final ModConfigSpec spec;
 
     private final ModConfigSpec.EnumValue<ScreenSize> screenSize;
+    private final ModConfigSpec.BooleanValue requireEnergy;
     private final ModConfigSpec.BooleanValue smoothScrolling;
     private final ModConfigSpec.BooleanValue debug;
     private final ModConfigSpec.BooleanValue tenthAnniversaryCape;
@@ -70,6 +71,9 @@ public class ConfigImpl implements Config {
         screenSize = builder
             .translation(translationKey("screenSize"))
             .defineEnum("screenSize", ScreenSize.STRETCH);
+        requireEnergy = builder
+            .translation(translationKey("requireEnergy"))
+            .define("requireEnergy", true);
         smoothScrolling = builder
             .translation(translationKey("smoothScrolling"))
             .define("smoothScrolling", true);
@@ -198,6 +202,11 @@ public class ConfigImpl implements Config {
             this.tenthAnniversaryCape.set(enabled);
             ConfigImpl.this.spec.save();
         }
+    }
+
+    @Override
+    public boolean isRequireEnergy() {
+        return requireEnergy.get();
     }
 
     @Override
@@ -402,7 +411,7 @@ public class ConfigImpl implements Config {
             builder.translation(translationKey("controller")).push("controller");
             energyCapacity = builder
                 .translation(translationKey("controller." + ENERGY_CAPACITY))
-                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.CONTROLLER_CAPACITY, 1, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -903,7 +912,7 @@ public class ConfigImpl implements Config {
             builder.translation(translationKey("wirelessGrid")).push("wirelessGrid");
             energyCapacity = builder
                 .translation(translationKey("wirelessGrid." + ENERGY_CAPACITY))
-                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_GRID_CAPACITY, 1, Long.MAX_VALUE);
             openEnergyUsage = builder
                 .translation(translationKey("wirelessGrid.openEnergyUsage"))
                 .defineInRange(OPEN_ENERGY_USAGE, DefaultEnergyUsage.WIRELESS_GRID_OPEN, 0, Long.MAX_VALUE);
@@ -973,7 +982,7 @@ public class ConfigImpl implements Config {
             builder.translation(translationKey("portableGrid")).push("portableGrid");
             energyCapacity = builder
                 .translation(translationKey("portableGrid." + ENERGY_CAPACITY))
-                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.PORTABLE_GRID_CAPACITY, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.PORTABLE_GRID_CAPACITY, 1, Long.MAX_VALUE);
             openEnergyUsage = builder
                 .translation(translationKey("portableGrid.openEnergyUsage"))
                 .defineInRange(OPEN_ENERGY_USAGE, DefaultEnergyUsage.PORTABLE_GRID_OPEN, 0, Long.MAX_VALUE);
@@ -1120,7 +1129,7 @@ public class ConfigImpl implements Config {
             builder.translation(translationKey("wirelessAutocraftingMonitor")).push("wirelessAutocraftingMonitor");
             energyCapacity = builder
                 .translation(translationKey("wirelessAutocraftingMonitor." + ENERGY_CAPACITY))
-                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_AUTOCRAFTING_MONITOR_CAPACITY, 0,
+                .defineInRange(ENERGY_CAPACITY, DefaultEnergyUsage.WIRELESS_AUTOCRAFTING_MONITOR_CAPACITY, 1,
                     Long.MAX_VALUE);
             openEnergyUsage = builder
                 .translation(translationKey("wirelessAutocraftingMonitor.openEnergyUsage"))

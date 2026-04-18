@@ -28,6 +28,7 @@ import com.refinedmods.refinedstorage.common.support.widget.History;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchIconWidget;
 import com.refinedmods.refinedstorage.common.support.widget.TextMarquee;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighterColors;
 
@@ -596,7 +597,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     private boolean canExtract(@Nullable final GridResource resource, final ItemStack carriedStack) {
-        return resource != null && resource.canExtract(carriedStack, getMenu().getRepository()) && !hasControlDown();
+        return resource != null
+            && resource.canExtract(carriedStack, getMenu().getRepository())
+            && !ClientPlatformUtil.isCommandOrControlDown();
     }
 
     private boolean canInsert(final int mouseX,
@@ -645,9 +648,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
-        final boolean up = delta > 0;
-
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        // On Mac, when holding shift, the vertical scroll becomes a horizontal scroll.
+        final double scroll = scrollX != 0 ? scrollX : scrollY;
+        final boolean up = scroll < 0;
         if (isOverStorageArea((int) x, (int) y)) {
             final GridResource resource = getCurrentGridResource();
             if (resource != null) {
@@ -656,8 +660,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         } else if (hoveredSlot != null && hoveredSlot.hasItem() && !(hoveredSlot instanceof DisabledSlot)) {
             mouseScrolledInInventory(up, hoveredSlot);
         }
-
-        return super.mouseScrolled(x, y, z, delta);
+        return super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private void mouseScrolledInInventory(final boolean up, final Slot slot) {
@@ -692,13 +695,13 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Nullable
-    private static GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
-        final boolean shift = Screen.hasShiftDown();
-        final boolean ctrl = Screen.hasControlDown();
-        if (shift && ctrl) {
+    private GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
+        final boolean shift = hasShiftDown();
+        final boolean ctrlOrCmd = ClientPlatformUtil.isCommandOrControlDown();
+        if (shift && ctrlOrCmd) {
             return null;
         }
-        return getScrollModeWhenScrollingOnGridArea(up, shift, ctrl);
+        return getScrollModeWhenScrollingOnGridArea(up, shift, ctrlOrCmd);
     }
 
     @Nullable

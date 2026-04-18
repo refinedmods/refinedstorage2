@@ -262,9 +262,9 @@ public class PatternGridScreen extends AbstractGridScreen<PatternGridContainerMe
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
-        return (renderer != null && renderer.mouseScrolled(x, y, z, delta))
-            || super.mouseScrolled(x, y, z, delta);
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
+        return (renderer != null && renderer.mouseScrolled(x, y, scrollX, scrollY))
+            || super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     @Override

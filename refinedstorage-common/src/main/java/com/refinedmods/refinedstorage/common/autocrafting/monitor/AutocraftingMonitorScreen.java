@@ -366,15 +366,15 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
         final boolean didTaskItemsScrollbar = taskItemsScrollbar != null
             && isHoveringOverItems(x, y)
-            && taskItemsScrollbar.mouseScrolled(x, y, z, delta);
+            && taskItemsScrollbar.mouseScrolled(x, y, scrollX, scrollY);
         final boolean didTaskButtonsScrollbar = !didTaskItemsScrollbar
             && taskButtonsScrollbar != null
             && isHoveringOverTaskButtons(x, y)
-            && taskButtonsScrollbar.mouseScrolled(x, y, z, delta);
-        return didTaskItemsScrollbar || didTaskButtonsScrollbar || super.mouseScrolled(x, y, z, delta);
+            && taskButtonsScrollbar.mouseScrolled(x, y, scrollX, scrollY);
+        return didTaskItemsScrollbar || didTaskButtonsScrollbar || super.mouseScrolled(x, y, scrollX, scrollY);
     }
 
     private boolean isHoveringOverItems(final double x, final double y) {

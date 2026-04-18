@@ -409,4 +409,11 @@ public final class PlatformImpl extends AbstractPlatform {
     public boolean isTenthAnniversaryCapeAvailable() {
         return true;
     }
+
+    @Override
+    public void resetSlots(final AbstractContainerMenu containerMenu) {
+        containerMenu.slots.clear();
+        containerMenu.lastSlots.clear();
+        containerMenu.remoteSlots.clear();
+    }
 }

@@ -119,7 +119,7 @@ public class CheckboxWidget extends AbstractButton {
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         final int textX = getX() + size.widthHeight + CHECKBOX_TEXT_SPACING;
         final int textY = (getY() + (height >> 1)) - (9 >> 1);
-        marquee.render(graphics, textX, textY, font, isHovered);
+        marquee.render(graphics, textX, textY, font, isHovered, partialTicks);
     }
 
     @FunctionalInterface

@@ -62,7 +62,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     }
 
     protected void resetSlots() {
-        slots.clear();
+        Platform.INSTANCE.resetSlots(this);
     }
 
     protected final void addPlayerInventory(final Inventory inventory,

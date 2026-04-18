@@ -102,9 +102,7 @@ public class ScrollbarWidget extends AbstractWidget {
 
     @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        final boolean inBounds = mouseX >= getX()
-            && mouseY >= getY()
-            && mouseX <= getX() + width
+        final boolean inBounds = mouseY >= getY()
             && mouseY <= getY() + height;
         if (clicked && inBounds) {
             updateOffset(mouseY);
@@ -138,9 +136,9 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double z, final double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double scrollX, final double scrollY) {
         if (enabled) {
-            final int scrollDirection = Math.max(Math.min(-(int) delta, 1), -1);
+            final int scrollDirection = Math.max(Math.min(-(int) scrollY, 1), -1);
             if (smoothScrolling) {
                 startScrollAnimation(scrollDirection);
             } else {

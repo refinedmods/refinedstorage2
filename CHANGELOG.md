@@ -7,6 +7,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-04-18
+
+### Added
+
+-   You can now configure Refined Storage to not require energy. Controllers are not necessary in this case. Creative variants of items will be hidden and items will function without energy.
+
+### Fixed
+
+-   For keybindings on Mac, CMD is now always used instead of CTRL.
+-   Grid scrolling between grid and inventory always going to inventory.
+-   The mouse cursor can now go out of the scrollbar bounds while scrolling.
+-   You can no longer change the energy capacity to be zero.
+-   Fixed stonecutter patterns not respecting output larger than one.
+-   Fixed title marquee effect when hovering being FPS dependant.
+-   Fixed importing too many fluids at once with a Stack Upgrade and an Importer on NeoForge.
+
 ## [2.0.2] - 2026-04-17
 
 ### Fixed

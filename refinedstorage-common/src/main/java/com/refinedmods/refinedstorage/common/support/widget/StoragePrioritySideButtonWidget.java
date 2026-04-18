@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.support.widget;
 
 import com.refinedmods.refinedstorage.common.support.amount.PriorityScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,6 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static net.minecraft.client.gui.screens.Screen.hasAltDown;
-import static net.minecraft.client.gui.screens.Screen.hasControlDown;
 
 public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent TITLE = createTranslation("gui", "priority");
@@ -27,6 +27,26 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent INSERT_TITLE = createTranslation("gui", "insert_priority");
     private static final MutableComponent EXTRACT_TITLE = createTranslation("gui", "extract_priority");
     private static final Component HELP = createTranslation("gui", "priority.storage_help");
+    private static final Component INSERT_EXTRACT_PRIORITY_HELP = createTranslation("gui",
+        "priority.storage_help.click_to_modify_insert_extract_priority");
+    private static final Component CTRL_INSERT_PRIORITY_HELP = createTranslation("gui",
+        "priority.storage_help.ctrl_click_to_modify_insert_priority");
+    private static final Component CMD_INSERT_PRIORITY_HELP = createTranslation("gui",
+        "priority.storage_help.cmd_click_to_modify_insert_priority");
+    private static final Component EXTRACT_PRIORITY_HELP = createTranslation("gui",
+        "priority.storage_help.alt_click_to_modify_extract_priority");
+    private static final Component HELP_COMPLETE = HELP.copy().append(" ")
+        .append(INSERT_EXTRACT_PRIORITY_HELP)
+        .append(" ")
+        .append(CTRL_INSERT_PRIORITY_HELP)
+        .append(" ")
+        .append(EXTRACT_PRIORITY_HELP);
+    private static final Component HELP_COMPLETE_CMD = HELP.copy().append(" ")
+        .append(INSERT_EXTRACT_PRIORITY_HELP)
+        .append(" ")
+        .append(CMD_INSERT_PRIORITY_HELP)
+        .append(" ")
+        .append(EXTRACT_PRIORITY_HELP);
     private static final ResourceLocation SPRITE = createIdentifier("widget/side_button/priority");
 
     private final ClientProperty<Integer> insertProperty;
@@ -99,7 +119,7 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static boolean isModifyingInsert() {
-        return hasControlDown();
+        return ClientPlatformUtil.isCommandOrControlDown();
     }
 
     private static boolean isModifyingExtract() {
@@ -108,6 +128,6 @@ public class StoragePrioritySideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected Component getHelpText() {
-        return HELP;
+        return ClientPlatformUtil.isCommand() ? HELP_COMPLETE_CMD : HELP_COMPLETE;
     }
 }

@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage.api.network.impl.node.importer.ImporterTra
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeState;
-import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.importer.ImporterTransferQuotaProvider;
 import com.refinedmods.refinedstorage.neoforge.storage.CapabilityCacheImpl;
 
@@ -24,9 +23,7 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
             pos,
             direction
         ));
-        final int singleAmount = upgradeState.has(Items.INSTANCE.getStackUpgrade())
-            ? FluidType.BUCKET_VOLUME * 64
-            : FluidType.BUCKET_VOLUME;
+        final int singleAmount = FluidType.BUCKET_VOLUME;
         final ImporterTransferQuotaProvider transferQuotaProvider = new ImporterTransferQuotaProvider(
             singleAmount,
             upgradeState,

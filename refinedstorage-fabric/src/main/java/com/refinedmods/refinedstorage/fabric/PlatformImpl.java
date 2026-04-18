@@ -491,4 +491,11 @@ public final class PlatformImpl extends AbstractPlatform {
             Files.move(tempFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
         }
     }
+
+    @Override
+    public void resetSlots(final AbstractContainerMenu containerMenu) {
+        containerMenu.slots.clear();
+        containerMenu.lastSlots.clear();
+        containerMenu.remoteSlots.clear();
+    }
 }

@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage.common.autocrafting.patterngrid;
 
+import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.autocrafting.VanillaConstants;
+import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
@@ -125,11 +128,15 @@ class StonecutterPatternGridRenderer implements PatternGridRenderer {
                 buttonSprite = VanillaConstants.STONECUTTER_RECIPE_SPRITE;
             }
             graphics.blitSprite(buttonSprite, xx, yy, 16, 18);
+            final ItemStack output =
+                recipe.value().getResultItem(requireNonNull(ClientPlatformUtil.getClientLevel()).registryAccess());
             graphics.renderItem(
-                recipe.value().getResultItem(requireNonNull(ClientPlatformUtil.getClientLevel()).registryAccess()),
+                output,
                 xx,
                 yy + 1
             );
+            ResourceSlotRendering.renderAmount(graphics, xx - 1, yy + 1, output.getCount(),
+                RefinedStorageClientApi.INSTANCE.getResourceRendering(ItemResource.class));
         }
         graphics.disableScissor();
     }

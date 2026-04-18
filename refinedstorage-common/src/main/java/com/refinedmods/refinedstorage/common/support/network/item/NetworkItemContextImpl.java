@@ -67,10 +67,14 @@ class NetworkItemContextImpl implements NetworkItemContext {
 
     @Override
     public boolean isActive() {
-        return slotReference.resolve(player)
-            .flatMap(Platform.INSTANCE::getEnergyStorage)
-            .map(energyStorage -> energyStorage.getStored() > 0)
-            .orElse(true);
+        return slotReference.resolve(player).map(stack -> {
+            if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+                return true;
+            }
+            return Platform.INSTANCE.getEnergyStorage(stack)
+                .map(energyStorage -> energyStorage.getStored() > 0)
+                .orElse(false);
+        }).orElse(false);
     }
 
     @Override

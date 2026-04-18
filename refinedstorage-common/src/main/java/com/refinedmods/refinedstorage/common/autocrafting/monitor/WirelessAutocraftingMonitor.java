@@ -35,9 +35,10 @@ class WirelessAutocraftingMonitor implements AutocraftingMonitor {
 
     @Override
     public boolean isAutocraftingMonitorActive() {
-        final boolean networkActive = context.resolveNetwork().map(
-            network -> network.getComponent(EnergyNetworkComponent.class).getStored() > 0
-        ).orElse(false);
+        final boolean networkActive = context.resolveNetwork()
+            .map(network -> !Platform.INSTANCE.getConfig().isRequireEnergy()
+                || network.getComponent(EnergyNetworkComponent.class).getStored() > 0)
+            .orElse(false);
         return networkActive && context.isActive();
     }
 

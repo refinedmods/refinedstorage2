@@ -12,8 +12,8 @@ Additional controls xref:grid.adoc#_controls[on top of the existing Grid control
 |===
 | Action | Description
 
-| **CTRL + X** | Clears the crafting matrix into the storage network. A separate keybinding allows clearing to the player inventory.
-| **CTRL + SHIFT on the crafting result slot** | Filters the {doctitle} view based on the items in the crafting matrix.
+| **CTRL/CMD + X** | Clears the crafting matrix into the storage network. A separate keybinding allows clearing to the player inventory.
+| **CTRL/CMD + SHIFT on the crafting result slot** | Filters the {doctitle} view based on the items in the crafting matrix.
 |===
 
 == Crafting inventory restocking

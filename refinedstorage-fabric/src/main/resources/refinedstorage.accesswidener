@@ -9,3 +9,5 @@ accessible method net/minecraft/client/gui/GuiGraphics renderTooltipInternal (Ln
 accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
 mutable field net/minecraft/world/inventory/Slot y I
 accessible method net/minecraft/client/gui/GuiGraphics renderItem (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V
+accessible field net/minecraft/world/inventory/AbstractContainerMenu lastSlots Lnet/minecraft/core/NonNullList;
+accessible field net/minecraft/world/inventory/AbstractContainerMenu remoteSlots Lnet/minecraft/core/NonNullList;

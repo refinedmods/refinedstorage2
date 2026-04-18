@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.storage.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.storage.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.storage.StoragePropertyTypes;
@@ -69,9 +70,12 @@ public class RelayScreen extends AbstractFilterScreen<RelayContainerMenu>
     }
 
     private void addPassButtons(final boolean visible) {
-        passEnergyButton = new RelayPassEnergySideButtonWidget(getMenu().getProperty(RelayPropertyTypes.PASS_ENERGY));
-        passEnergyButton.visible = visible;
-        addSideButton(passEnergyButton);
+        if (Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            passEnergyButton = new RelayPassEnergySideButtonWidget(
+                getMenu().getProperty(RelayPropertyTypes.PASS_ENERGY));
+            passEnergyButton.visible = visible;
+            addSideButton(passEnergyButton);
+        }
 
         passSecurityButton = new RelayPassSecuritySideButtonWidget(
             getMenu().getProperty(RelayPropertyTypes.PASS_SECURITY)
