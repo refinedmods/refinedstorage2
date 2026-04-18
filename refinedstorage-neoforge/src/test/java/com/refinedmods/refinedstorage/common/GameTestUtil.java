@@ -48,6 +48,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
@@ -89,11 +90,18 @@ public final class GameTestUtil {
     public static void checkBlockEntityActiveness(final GameTestHelper helper,
                                                   final BlockPos pos,
                                                   final boolean expectedActive) {
+        checkBlockEntityActiveness(helper, pos, expectedActive, AbstractActiveColoredDirectionalBlock.ACTIVE);
+    }
+
+    public static void checkBlockEntityActiveness(final GameTestHelper helper,
+                                                  final BlockPos pos,
+                                                  final boolean expectedActive,
+                                                  final BooleanProperty booleanProperty) {
         final var blockEntity = helper.getBlockEntity(
             pos,
             AbstractBaseNetworkNodeContainerBlockEntity.class
         );
-        final boolean actualActive = blockEntity.getBlockState().getValue(AbstractActiveColoredDirectionalBlock.ACTIVE);
+        final boolean actualActive = blockEntity.getBlockState().getValue(booleanProperty);
         helper.assertTrue(actualActive == expectedActive, "Activeness of Block Entity should be " + expectedActive
             + " but is " + actualActive);
     }
