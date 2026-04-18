@@ -134,7 +134,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         );
     }
 
-    FilteredContainer getPatternContainer() {
+    public FilteredContainer getPatternContainer() {
         return patternContainer;
     }
 

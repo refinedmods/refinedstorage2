@@ -15,7 +15,11 @@ import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternType;
 import com.refinedmods.refinedstorage.common.content.Blocks;
+import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.iface.ExportedResourcesContainer;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
@@ -417,6 +421,14 @@ public final class GameTestUtil {
                 "Resource " + resource.resource() + " with amount " + resource.amount() + " could not be extracted "
             );
         }
+    }
+
+    public static ItemStack createCraftingPattern(final List<Item> items,
+                                                  final List<Integer> itemIndices) {
+        final ItemStack pattern = PatternGridBlockEntity.createPatternStack(PatternType.CRAFTING);
+        pattern.set(DataComponents.INSTANCE.getCraftingPatternState(),
+            new CraftingPatternState(false, createCraftingMatrix(items, itemIndices)));
+        return pattern;
     }
 
     public static Runnable startAutocraftingTask(final GameTestHelper helper,
