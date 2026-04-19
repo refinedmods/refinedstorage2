@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 
 public enum GridSortingTypes {
     QUANTITY(trp -> view -> Comparator.comparingLong(value -> value.getAmount(view))),
-    NAME(trp -> view -> Comparator.comparing(GridResource::getName)),
+    NAME(trp -> view -> Comparator.comparing(GridResource::getHoverName)),
     ID(trp -> view -> Comparator.comparingInt(GridResource::getRegistryId)),
     LAST_MODIFIED(trp -> view -> (a, b) -> {
         final long lastModifiedA = extractTime(trp.getTrackedResource(a));

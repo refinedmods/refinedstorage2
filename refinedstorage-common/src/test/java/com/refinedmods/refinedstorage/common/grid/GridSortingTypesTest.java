@@ -51,7 +51,7 @@ class GridSortingTypesTest {
     void setUp() {
         builder = new ResourceRepositoryBuilderImpl<>(
             MAPPER,
-            view -> Comparator.comparing(GridResource::getName),
+            view -> Comparator.comparing(GridResource::getHoverName),
             view -> Comparator.comparingLong(resource -> resource.getAmount(view))
         );
         dirt = new ItemResource(Items.DIRT, DataComponentPatch.EMPTY);
@@ -85,28 +85,28 @@ class GridSortingTypesTest {
         // Assert
         switch (sortingType) {
             case QUANTITY -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Stone",
                     "Gold Ingot",
                     "Dirt"
                 );
             case NAME -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Dirt",
                     "Gold Ingot",
                     "Stone"
                 );
             case ID -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(resource -> resource.getSearchableNames().getLast())
                 .containsExactly(
                     "Stone",
                     "Dirt",
                     "Gold Ingot"
                 );
             case LAST_MODIFIED -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Gold Ingot",
                     "Stone",
@@ -142,28 +142,28 @@ class GridSortingTypesTest {
         // Assert
         switch (sortingType) {
             case QUANTITY -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Dirt",
                     "Gold Ingot",
                     "Stone"
                 );
             case NAME -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Stone",
                     "Gold Ingot",
                     "Dirt"
                 );
             case ID -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Gold Ingot",
                     "Dirt",
                     "Stone"
                 );
             case LAST_MODIFIED -> assertThat(repository.getViewList())
-                .extracting(GridResource::getName)
+                .extracting(GridResource::getHoverName)
                 .containsExactly(
                     "Dirt",
                     "Stone",

@@ -31,7 +31,9 @@ public interface GridResource {
 
     long getAmount(ResourceRepository<GridResource> repository);
 
-    String getName();
+    List<String> getSearchableNames();
+
+    String getHoverName();
 
     Set<String> getAttribute(GridResourceAttributeKey key);
 

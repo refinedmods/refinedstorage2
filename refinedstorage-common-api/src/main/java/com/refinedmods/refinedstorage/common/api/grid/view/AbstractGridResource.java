@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -14,14 +15,14 @@ import org.jspecify.annotations.Nullable;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.0")
 public abstract class AbstractGridResource<T extends PlatformResourceKey> implements GridResource {
     protected final T resource;
-    private final String name;
+    private final List<String> names;
     private final Function<GridResourceAttributeKey, Set<String>> attributes;
 
     protected AbstractGridResource(final T resource,
-                                   final String name,
+                                   final List<String> names,
                                    final Function<GridResourceAttributeKey, Set<String>> attributes) {
         this.resource = resource;
-        this.name = name;
+        this.names = names;
         this.attributes = attributes;
     }
 
@@ -39,8 +40,13 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
     }
 
     @Override
-    public String getName() {
-        return name;
+    public List<String> getSearchableNames() {
+        return names;
+    }
+
+    @Override
+    public String getHoverName() {
+        return names.getLast();
     }
 
     @Override
@@ -63,7 +69,7 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
     public String toString() {
         return "AbstractGridResource{"
             + "resource=" + resource
-            + ", name='" + name + '\''
+            + ", valid names='" + getSearchableNames() + '\''
             + ", attributes=" + attributes
             + '}';
     }
