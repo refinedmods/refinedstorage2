@@ -65,7 +65,7 @@ public final class GameTestUtil {
     }
 
     @Nullable
-    private static Network getNetwork(final GameTestHelper helper, final BlockPos pos) {
+    public static Network getNetwork(final GameTestHelper helper, final BlockPos pos) {
         try {
             final var be = helper.getBlockEntity(pos, AbstractNetworkNodeContainerBlockEntity.class);
             final var field = AbstractNetworkNodeContainerBlockEntity.class.getDeclaredField("mainNetworkNode");
