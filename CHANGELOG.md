@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Adapt to breaking changes in NeoForge. v26.1.2.22 is now required.
 -   Creative variants of energy items not being active.
+-   Wrong autocrafter rotation for up/down direction.
 
 ## [3.0.0-beta.4] - 2026-04-16
 

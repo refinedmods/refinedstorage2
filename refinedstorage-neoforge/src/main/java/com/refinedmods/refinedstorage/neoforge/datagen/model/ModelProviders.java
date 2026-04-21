@@ -1023,8 +1023,8 @@ public class ModelProviders extends ModelProvider {
 
     private Quadrant getAutocrafterXRot(final Direction direction) {
         return switch (direction) {
-            case DOWN -> Quadrant.R0;
-            case UP -> Quadrant.R180;
+            case DOWN -> Quadrant.R180;
+            case UP -> Quadrant.R0;
             case NORTH, SOUTH, WEST, EAST -> Quadrant.R90;
         };
     }
