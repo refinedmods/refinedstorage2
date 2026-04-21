@@ -15,7 +15,11 @@ import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternGridBlockEntity;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternType;
 import com.refinedmods.refinedstorage.common.content.Blocks;
+import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.iface.ExportedResourcesContainer;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
@@ -44,6 +48,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
@@ -60,7 +65,7 @@ public final class GameTestUtil {
     }
 
     @Nullable
-    private static Network getNetwork(final GameTestHelper helper, final BlockPos pos) {
+    public static Network getNetwork(final GameTestHelper helper, final BlockPos pos) {
         try {
             final var be = helper.getBlockEntity(pos, AbstractNetworkNodeContainerBlockEntity.class);
             final var field = AbstractNetworkNodeContainerBlockEntity.class.getDeclaredField("mainNetworkNode");
@@ -85,11 +90,18 @@ public final class GameTestUtil {
     public static void checkBlockEntityActiveness(final GameTestHelper helper,
                                                   final BlockPos pos,
                                                   final boolean expectedActive) {
+        checkBlockEntityActiveness(helper, pos, expectedActive, AbstractActiveColoredDirectionalBlock.ACTIVE);
+    }
+
+    public static void checkBlockEntityActiveness(final GameTestHelper helper,
+                                                  final BlockPos pos,
+                                                  final boolean expectedActive,
+                                                  final BooleanProperty booleanProperty) {
         final var blockEntity = helper.getBlockEntity(
             pos,
             AbstractBaseNetworkNodeContainerBlockEntity.class
         );
-        final boolean actualActive = blockEntity.getBlockState().getValue(AbstractActiveColoredDirectionalBlock.ACTIVE);
+        final boolean actualActive = blockEntity.getBlockState().getValue(booleanProperty);
         helper.assertTrue(actualActive == expectedActive, "Activeness of Block Entity should be " + expectedActive
             + " but is " + actualActive);
     }
@@ -417,6 +429,14 @@ public final class GameTestUtil {
                 "Resource " + resource.resource() + " with amount " + resource.amount() + " could not be extracted "
             );
         }
+    }
+
+    public static ItemStack createCraftingPattern(final List<Item> items,
+                                                  final List<Integer> itemIndices) {
+        final ItemStack pattern = PatternGridBlockEntity.createPatternStack(PatternType.CRAFTING);
+        pattern.set(DataComponents.INSTANCE.getCraftingPatternState(),
+            new CraftingPatternState(false, createCraftingMatrix(items, itemIndices)));
+        return pattern;
     }
 
     public static Runnable startAutocraftingTask(final GameTestHelper helper,

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemPlayerValidator;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemTargetBlockEntity;
@@ -68,12 +69,12 @@ class NetworkItemContextImpl implements NetworkItemContext {
     @Override
     public boolean isActive() {
         return slotReference.resolve(player).map(stack -> {
-            if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+            if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
                 return true;
             }
             return Platform.INSTANCE.getEnergyStorage(stack)
                 .map(energyStorage -> energyStorage.getStored() > 0)
-                .orElse(false);
+                .orElse(true);
         }).orElse(false);
     }
 

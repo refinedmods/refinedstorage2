@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "refinedstorage:full_blocks_connection_should_connect_default_blocks_to_any_colored_cable",
+  "structure": "refinedstorage:empty_15x15",
+  "environment": "minecraft:default",
+  "max_ticks": 400
+}

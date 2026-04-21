@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.5] - 2026-04-21
+
+### Fixed
+
+-   Adapt to breaking changes in NeoForge. v26.1.2.22 is now required.
+-   Creative variants of energy items not being active.
+-   Wrong autocrafter rotation for up/down direction.
+
 ## [3.0.0-beta.4] - 2026-04-16
 
 ### Added
@@ -1147,7 +1155,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.4...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.5...HEAD
+
+[3.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.4...v3.0.0-beta.5
 
 [3.0.0-beta.4]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.3...v3.0.0-beta.4
 

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.exporter;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterBlockEntity;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeItem;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.containerContainsExactly;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.createCraftingPattern;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.interfaceContainsExactly;
@@ -25,6 +27,8 @@ import static com.refinedmods.refinedstorage.common.GameTestUtil.storageContains
 import static com.refinedmods.refinedstorage.common.exporter.ExporterTestPlots.preparePlot;
 import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.DIRT;
+import static net.minecraft.world.item.Items.OAK_LOG;
+import static net.minecraft.world.item.Items.OAK_PLANKS;
 import static net.minecraft.world.item.Items.STONE;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
@@ -175,6 +179,50 @@ public final class ExporterTest {
                     pos,
                     new ResourceAmount(asResource(DIRT), 10),
                     new ResourceAmount(asResource(STONE), 15)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldExportItemWithAutocraftingUpgrade(final GameTestHelper helper) {
+        preparePlot(helper, Blocks.CHEST, Direction.EAST, true, (exporter, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> {
+                insert(helper, network, OAK_LOG, 65);
+                insert(helper, network, STONE, 1);
+            }));
+
+            // Act
+            exporter.setFilters(List.of(asResource(OAK_PLANKS)));
+            exporter.addUpgrade(MOD_ITEMS.getAutocraftingUpgrade().getDefaultInstance());
+
+            helper.getBlockEntity(pos.west(), AutocrafterBlockEntity.class).getPatternContainer().setItem(0,
+                createCraftingPattern(List.of(OAK_LOG), List.of(0)));
+
+            // Assert
+            sequence
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    pos.east(),
+                    new ResourceAmount(asResource(OAK_PLANKS), 4)
+                ))
+                .thenExecute(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(OAK_LOG), 64),
+                    new ResourceAmount(asResource(STONE), 1)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    pos.east(),
+                    new ResourceAmount(asResource(OAK_PLANKS), 8)
+                ))
+                .thenExecute(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(OAK_LOG), 63),
+                    new ResourceAmount(asResource(STONE), 1)
                 ))
                 .thenSucceed();
         });

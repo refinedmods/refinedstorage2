@@ -71,7 +71,7 @@ import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -219,7 +219,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean canBreakBlock(final Level level, final BlockPos pos, final BlockState state, final Player player) {
-        final BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(level, pos, state, player);
+        final BreakBlockEvent e = new BreakBlockEvent(level, pos, state, player);
         return !NeoForge.EVENT_BUS.post(e).isCanceled();
     }
 

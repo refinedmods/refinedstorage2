@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 
 import java.util.Collections;
@@ -36,7 +37,7 @@ class WirelessAutocraftingMonitor implements AutocraftingMonitor {
     @Override
     public boolean isAutocraftingMonitorActive() {
         final boolean networkActive = context.resolveNetwork()
-            .map(network -> !Platform.INSTANCE.getConfig().isRequireEnergy()
+            .map(network -> !RefinedStorageApi.INSTANCE.isEnergyRequired()
                 || network.getComponent(EnergyNetworkComponent.class).getStored() > 0)
             .orElse(false);
         return networkActive && context.isActive();

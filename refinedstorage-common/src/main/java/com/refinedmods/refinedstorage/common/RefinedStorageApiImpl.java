@@ -650,4 +650,9 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     public StreamCodec<RegistryFriendlyByteBuf, StorageBlockData> getStorageBlockDataStreamCodec() {
         return StorageBlockCodecs.STREAM_CODEC;
     }
+
+    @Override
+    public boolean isEnergyRequired() {
+        return Platform.INSTANCE.getConfig().isRequireEnergy();
+    }
 }

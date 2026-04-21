@@ -8,6 +8,9 @@ import com.refinedmods.refinedstorage.common.detector.DetectorTest;
 import com.refinedmods.refinedstorage.common.exporter.ExporterTest;
 import com.refinedmods.refinedstorage.common.iface.InterfaceTest;
 import com.refinedmods.refinedstorage.common.importer.ImporterTest;
+import com.refinedmods.refinedstorage.common.networking.CableLikePartsConnectionTest;
+import com.refinedmods.refinedstorage.common.networking.FullBlocksConnectionTest;
+import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterReceiverTest;
 import com.refinedmods.refinedstorage.common.networking.RelayTest;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.FluidDiskDriveTest;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.ItemDiskDriveTest;
@@ -50,6 +53,9 @@ public class RegisterTests {
         ExporterTest.class,
         InterfaceTest.class,
         ImporterTest.class,
+        NetworkTransmitterReceiverTest.class,
+        CableLikePartsConnectionTest.class,
+        FullBlocksConnectionTest.class,
         RelayTest.class,
         FluidDiskDriveTest.class,
         ItemDiskDriveTest.class,

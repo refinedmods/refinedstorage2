@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
 
@@ -30,7 +30,7 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
                               final Component title) {
         super(menu, inventory, title, 99, 193, 176);
         this.inventoryLabelY = 75;
-        this.texture = Platform.INSTANCE.getConfig().isRequireEnergy()
+        this.texture = RefinedStorageApi.INSTANCE.isEnergyRequired()
             ? ENERGY_AND_DISK_SLOT_TEXTURE
             : NO_ENERGY_TEXTURE;
     }
@@ -61,7 +61,7 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
             DISK_SLOT_WIDTH,
             DISK_SLOT_HEIGHT
         ));
-        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+        if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             return;
         }
         final int progressX = 172;
