@@ -160,7 +160,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -711,8 +711,11 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void registerSecurityBlockBreakEvent(final BlockEvent.BreakEvent e) {
+    public void registerSecurityBlockBreakEvent(final BreakBlockEvent e) {
         if (!(e.getLevel() instanceof Level level)) {
+            return;
+        }
+        if (level.isClientSide()) {
             return;
         }
         final NetworkNodeContainerProvider provider = Platform.INSTANCE.getContainerProvider(level, e.getPos(), null);

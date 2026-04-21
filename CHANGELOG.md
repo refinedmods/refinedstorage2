@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Adapt to breaking changes in NeoForge. v26.1.2.22 is now required.
+
 ## [3.0.0-beta.4] - 2026-04-16
 
 ### Added
