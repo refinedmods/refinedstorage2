@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
-import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
 import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
 
@@ -18,7 +18,8 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     private static final int DISK_SLOT_WIDTH = 30;
     private static final int DISK_SLOT_HEIGHT = 26;
 
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/portable_grid.png");
+    private static final ResourceLocation ENERGY_AND_DISK_SLOT_TEXTURE =
+        createIdentifier("textures/gui/portable_grid.png");
     private static final ResourceLocation NO_ENERGY_TEXTURE = createIdentifier("textures/gui/grid.png");
 
     @Nullable
@@ -32,8 +33,8 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
         this.inventoryLabelY = 75;
         this.imageWidth = 193;
         this.imageHeight = 176;
-        this.texture = Platform.INSTANCE.getConfig().isRequireEnergy()
-            ? TEXTURE
+        this.texture = RefinedStorageApi.INSTANCE.isEnergyRequired()
+            ? ENERGY_AND_DISK_SLOT_TEXTURE
             : NO_ENERGY_TEXTURE;
     }
 
@@ -64,7 +65,7 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
             DISK_SLOT_WIDTH,
             DISK_SLOT_HEIGHT
         ));
-        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+        if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             return;
         }
         final int progressX = 172;
@@ -90,7 +91,8 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
         super.renderBg(graphics, delta, mouseX, mouseY);
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
-        graphics.blit(TEXTURE, x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0, DISK_SLOT_WIDTH, DISK_SLOT_HEIGHT);
+        graphics.blit(ENERGY_AND_DISK_SLOT_TEXTURE, x - DISK_SLOT_WIDTH + 3, y + 3, 226, 0, DISK_SLOT_WIDTH,
+            DISK_SLOT_HEIGHT);
     }
 
     @Override

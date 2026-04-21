@@ -233,4 +233,6 @@ public interface RefinedStorageApi {
                                                           MenuType<?> menuType);
 
     StreamCodec<RegistryFriendlyByteBuf, StorageBlockData> getStorageBlockDataStreamCodec();
+
+    boolean isEnergyRequired();
 }
