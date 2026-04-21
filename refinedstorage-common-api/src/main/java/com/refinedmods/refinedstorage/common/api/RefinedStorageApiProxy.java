@@ -452,6 +452,11 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
         return ensureLoaded().getStorageBlockDataStreamCodec();
     }
 
+    @Override
+    public boolean isEnergyRequired() {
+        return ensureLoaded().isEnergyRequired();
+    }
+
     private RefinedStorageApi ensureLoaded() {
         if (delegate == null) {
             throw new IllegalStateException("API not loaded yet");

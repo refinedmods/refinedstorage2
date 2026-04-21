@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.content;
 
-import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
@@ -21,7 +21,7 @@ public final class CreativeModeTabItems {
     }
 
     private static void appendBlocks(final Consumer<ItemStack> consumer) {
-        final boolean requireEnergy = Platform.INSTANCE.getConfig().isRequireEnergy();
+        final boolean requireEnergy = RefinedStorageApi.INSTANCE.isEnergyRequired();
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getController());
         if (requireEnergy) {
@@ -70,7 +70,7 @@ public final class CreativeModeTabItems {
 
     public static void appendColoredVariants(final Consumer<ItemStack> consumer) {
         appendColoredBlocks(consumer, Blocks.INSTANCE.getController());
-        if (Platform.INSTANCE.getConfig().isRequireEnergy()) {
+        if (RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             final var controllers = Items.INSTANCE.getControllers();
             for (int i = 1; i < controllers.size(); ++i) {
                 consumer.accept(controllers.get(i).get().createAtEnergyCapacity());
@@ -107,7 +107,7 @@ public final class CreativeModeTabItems {
     }
 
     private static void appendItems(final Consumer<ItemStack> consumer) {
-        final boolean requireEnergy = Platform.INSTANCE.getConfig().isRequireEnergy();
+        final boolean requireEnergy = RefinedStorageApi.INSTANCE.isEnergyRequired();
         final Consumer<ItemLike> itemConsumer = item -> consumer.accept(new ItemStack(item));
 
         itemConsumer.accept(Items.INSTANCE.getQuartzEnrichedIron());

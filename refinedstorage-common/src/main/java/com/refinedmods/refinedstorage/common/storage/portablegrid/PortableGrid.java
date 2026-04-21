@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage.api.storage.StorageState;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
@@ -105,7 +106,7 @@ class PortableGrid implements Grid {
 
     @Override
     public boolean isGridActive() {
-        return storage != null && (energyStorage.getStored() > 0 || !Platform.INSTANCE.getConfig().isRequireEnergy());
+        return storage != null && (energyStorage.getStored() > 0 || !RefinedStorageApi.INSTANCE.isEnergyRequired());
     }
 
     @Override
