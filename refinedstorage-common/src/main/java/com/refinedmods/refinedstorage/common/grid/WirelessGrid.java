@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
@@ -82,7 +83,7 @@ class WirelessGrid implements Grid {
     @Override
     public boolean isGridActive() {
         final boolean networkActive = context.resolveNetwork()
-            .map(network -> !Platform.INSTANCE.getConfig().isRequireEnergy()
+            .map(network -> !RefinedStorageApi.INSTANCE.isEnergyRequired()
                 || network.getComponent(EnergyNetworkComponent.class).getStored() > 0)
             .orElse(false);
         return networkActive && context.isActive();

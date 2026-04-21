@@ -51,7 +51,7 @@ public class ControllerBlockItem extends AbstractEnergyBlockItem {
     public void appendHoverText(final ItemStack stack, final TooltipContext context, final List<Component> lines,
                                 final TooltipFlag flag) {
         super.appendHoverText(stack, context, lines, flag);
-        if (!Platform.INSTANCE.getConfig().isRequireEnergy()) {
+        if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             lines.add(NOT_NEEDED);
         }
     }

@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.4] - 2026-04-21
+
+### Fixed
+
+-   Creative variants of energy items not being active.
+
 ## [2.0.3] - 2026-04-18
 
 ### Added
