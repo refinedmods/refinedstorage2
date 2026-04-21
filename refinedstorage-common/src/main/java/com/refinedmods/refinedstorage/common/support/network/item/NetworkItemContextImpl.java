@@ -73,7 +73,7 @@ class NetworkItemContextImpl implements NetworkItemContext {
             }
             return Platform.INSTANCE.getEnergyStorage(stack)
                 .map(energyStorage -> energyStorage.getStored() > 0)
-                .orElse(false);
+                .orElse(true);
         }).orElse(false);
     }
 
