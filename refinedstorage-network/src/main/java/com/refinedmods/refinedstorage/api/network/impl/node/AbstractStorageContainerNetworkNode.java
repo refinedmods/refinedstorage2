@@ -49,7 +49,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         for (int i = 0; i < storages.length; ++i) {
             changes.addAll(tryUpdateStorage(i));
         }
-        LOGGER.info("Set provider for storage container network node, got {} changes", changes.size());
+        LOGGER.debug("Set provider for storage container network node, got {} changes", changes.size());
         // If we are already initialized, update all the storages to keep the exposed storages in sync.
         // If we are not initialized, update nothing as we have to wait for an activeness update.
         if (activeStorages > 0) {
@@ -62,7 +62,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         for (int i = 0; i < storages.length; ++i) {
             final Set<StorageChange> storageChanges = tryUpdateStorage(i);
             if (!storageChanges.isEmpty()) {
-                LOGGER.info("Detected storage change at index {}, got {} changes", i, storageChanges.size());
+                LOGGER.debug("Detected storage change at index {}, got {} changes", i, storageChanges.size());
             }
             storageChanges.forEach(this::onStorageChange);
         }
@@ -97,7 +97,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
     }
 
     protected void onStorageChange(final StorageChange change) {
-        LOGGER.info("Detected storage change: {}", change);
+        LOGGER.debug("Detected storage change: {}", change);
     }
 
     private void updateActiveStorageCount() {
