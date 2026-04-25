@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.common.support.RecipeMapRecipeProvider;
@@ -17,6 +18,7 @@ import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyItemContextItemAccess;
 import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnergyHandlerAdapter;
 import com.refinedmods.refinedstorage.neoforge.support.render.FluidStackFluidRenderer;
 import com.refinedmods.refinedstorage.neoforge.support.resource.SimpleItemStackResourceHandler;
@@ -298,8 +300,9 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return Optional.ofNullable(stack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(stack)))
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack, final EnergyItemContext context) {
+        return Optional.ofNullable(stack.getCapability(Capabilities.Energy.ITEM,
+                new EnergyItemContextItemAccess(context)))
             .filter(EnergyStorageEnergyHandlerAdapter.class::isInstance)
             .map(EnergyStorageEnergyHandlerAdapter.class::cast)
             .map(EnergyStorageEnergyHandlerAdapter::getEnergyStorage);

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage.common.grid;
 
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -15,19 +15,20 @@ import org.jspecify.annotations.Nullable;
 class WirelessGridExtendedMenuProvider implements ExtendedMenuProvider<WirelessGridData> {
     private final Component name;
     private final Grid grid;
-    private final SlotReference slotReference;
+    private final PlayerSlotReference playerSlotReference;
 
-    WirelessGridExtendedMenuProvider(final Component name, final Grid grid, final SlotReference slotReference) {
+    WirelessGridExtendedMenuProvider(final Component name, final Grid grid,
+                                     final PlayerSlotReference playerSlotReference) {
         this.name = name;
         this.grid = grid;
-        this.slotReference = slotReference;
+        this.playerSlotReference = playerSlotReference;
     }
 
     @Override
     public WirelessGridData getMenuData() {
         return new WirelessGridData(
             GridData.of(grid),
-            slotReference
+            playerSlotReference
         );
     }
 
@@ -44,6 +45,6 @@ class WirelessGridExtendedMenuProvider implements ExtendedMenuProvider<WirelessG
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new WirelessGridContainerMenu(syncId, inventory, grid, slotReference);
+        return new WirelessGridContainerMenu(syncId, inventory, grid, playerSlotReference);
     }
 }

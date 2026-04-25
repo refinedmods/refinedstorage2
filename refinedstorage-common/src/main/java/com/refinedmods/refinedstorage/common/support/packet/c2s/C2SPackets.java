@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
@@ -87,8 +87,8 @@ public final class C2SPackets {
         Platform.INSTANCE.sendPacketToServer(new SingleAmountChangePacket(amount));
     }
 
-    public static void sendUseSlotReferencedItem(final SlotReference slotReference) {
-        Platform.INSTANCE.sendPacketToServer(new UseSlotReferencedItemPacket(slotReference));
+    public static void sendUseSlotReferencedItem(final PlayerSlotReference playerSlotReference) {
+        Platform.INSTANCE.sendPacketToServer(new UseSlotReferencedItemPacket(playerSlotReference));
     }
 
     public static void sendSecurityCardPermission(final PlatformPermission permission, final boolean allowed) {

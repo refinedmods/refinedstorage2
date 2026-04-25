@@ -12,8 +12,9 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageContainerItem;
 import com.refinedmods.refinedstorage.common.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.support.energy.AbstractEnergyBlockItem;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceHandlerItem;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.UsablePlayerSlotReferencedItem;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
@@ -21,6 +22,7 @@ import com.refinedmods.refinedstorage.common.storage.Disk;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 import com.refinedmods.refinedstorage.common.support.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.energy.ItemBlockEnergyStorage;
+import com.refinedmods.refinedstorage.common.support.slotreference.PlayerSlotReferenceEnergyItemContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -51,7 +53,7 @@ import org.jspecify.annotations.Nullable;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static java.util.Objects.requireNonNullElse;
 
-public class PortableGridBlockItem extends AbstractEnergyBlockItem implements SlotReferenceHandlerItem {
+public class PortableGridBlockItem extends AbstractEnergyBlockItem implements UsablePlayerSlotReferencedItem {
     private static final Component HELP = createTranslation("item", "portable_grid.help");
 
     private final PortableGridType type;
@@ -71,7 +73,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
         final boolean creative = isCreative(stack);
         final boolean hasEnergy = creative
             || !RefinedStorageApi.INSTANCE.isEnergyRequired()
-            || createEnergyStorage(stack).getStored() > 0;
+            || getStored(stack) > 0;
         final ItemStack diskStack = getDisk(stack);
         final boolean active = hasEnergy && !diskStack.isEmpty();
         final Disk disk = new Disk(
@@ -79,6 +81,11 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
             getState(diskStack, active)
         );
         return new PortableGridBlockItemRenderInfo(active, disk);
+    }
+
+    private static long getStored(final ItemStack stack) {
+        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY)
+            .map(EnergyStorage::getStored).orElse(0L);
     }
 
     private static boolean isCreative(final ItemStack stack) {
@@ -112,20 +119,21 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
                                  final HolderLookup.Provider registries) {
         final TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
         AbstractPortableGridBlockEntity.writeDiskInventory(output, diskInventory);
-        ItemBlockEnergyStorage.store(output, createEnergyStorage(stack).getStored());
+        ItemBlockEnergyStorage.store(output, getStored(stack));
         setBlockEntityData(stack, isCreative(stack)
             ? BlockEntities.INSTANCE.getCreativePortableGrid()
             : BlockEntities.INSTANCE.getPortableGrid(), output);
     }
 
-    public static EnergyStorage createEnergyStorage(final ItemStack stack) {
+    public static EnergyStorage createEnergyStorage(final ItemStack stack, final EnergyItemContext context) {
         final EnergyStorage energyStorage = new EnergyStorageImpl(
             Math.clamp(Platform.INSTANCE.getConfig().getPortableGrid().getEnergyCapacity(), 1, Long.MAX_VALUE)
         );
-        return RefinedStorageApi.INSTANCE.asBlockItemEnergyStorage(
+        return RefinedStorageApi.INSTANCE.createBlockItemEnergyStorage(
             energyStorage,
             stack,
-            BlockEntities.INSTANCE.getPortableGrid()
+            BlockEntities.INSTANCE.getPortableGrid(),
+            context
         );
     }
 
@@ -139,9 +147,10 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
             return super.useOn(context);
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            final SlotReference slotReference = RefinedStorageApi.INSTANCE.createInventorySlotReference(player,
-                context.getHand());
-            slotReference.resolve(player).ifPresent(s -> use(serverPlayer, s, slotReference));
+            final PlayerSlotReference playerSlotReference = RefinedStorageApi.INSTANCE
+                .createPlayerInventorySlotReference(player, context.getHand());
+            final ItemStack stack = playerSlotReference.get(player);
+            use(serverPlayer, stack, playerSlotReference);
         }
         return InteractionResult.CONSUME;
     }
@@ -150,15 +159,17 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer && level.getServer() != null) {
-            final SlotReference slotReference = RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand);
-            slotReference.resolve(player).ifPresent(s -> use(serverPlayer, s, slotReference));
+            final PlayerSlotReference playerSlotReference = RefinedStorageApi.INSTANCE
+                .createPlayerInventorySlotReference(player, hand);
+            use(serverPlayer, stack, playerSlotReference);
         }
         return InteractionResult.CONSUME.heldItemTransformedTo(stack);
     }
 
     @Override
-    public void use(final ServerPlayer player, final ItemStack stack, final SlotReference slotReference) {
-        final PortableGridEnergyStorage energyStorage = createEnergyStorageInternal(stack);
+    public void use(final ServerPlayer player, final ItemStack stack, final PlayerSlotReference playerSlotReference) {
+        final PortableGridEnergyStorage energyStorage = createEnergyStorageInternal(stack,
+            new PlayerSlotReferenceEnergyItemContext(player, playerSlotReference));
         final Level level = player.level();
         final DiskInventoryListener listener = new DiskInventoryListener(stack, level.registryAccess());
         final DiskInventory diskInventory = createDiskInventory(stack, listener, level.registryAccess());
@@ -174,15 +185,16 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Sl
             portableGrid,
             energyStorage,
             diskInventory,
-            slotReference
+            playerSlotReference
         ));
     }
 
-    private PortableGridEnergyStorage createEnergyStorageInternal(final ItemStack stack) {
+    private PortableGridEnergyStorage createEnergyStorageInternal(final ItemStack stack,
+                                                                  final EnergyItemContext context) {
         if (type == PortableGridType.CREATIVE) {
             return new PortableGridEnergyStorage(CreativeEnergyStorage.INSTANCE);
         }
-        return new PortableGridEnergyStorage(createEnergyStorage(stack));
+        return new PortableGridEnergyStorage(createEnergyStorage(stack, context));
     }
 
     private DiskInventory createDiskInventory(final ItemStack stack,

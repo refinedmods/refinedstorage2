@@ -9,6 +9,6 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
 @FunctionalInterface
-public interface SlotReferenceProvider {
-    List<SlotReference> find(Player player, Set<Item> validItems);
+public interface PlayerSlotReferenceProvider {
+    List<PlayerSlotReference> find(Player player, Set<Item> validItems);
 }

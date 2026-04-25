@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.security;
 
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 
 import java.util.Set;
@@ -18,22 +18,22 @@ import org.jspecify.annotations.Nullable;
 class FallbackSecurityCardExtendedMenuProvider extends AbstractSecurityCardExtendedMenuProvider<SecurityCardData> {
     @Nullable
     private final Component name;
-    private final SlotReference slotReference;
+    private final PlayerSlotReference playerSlotReference;
 
     FallbackSecurityCardExtendedMenuProvider(
         @Nullable final Component name,
-        final SlotReference slotReference,
+        final PlayerSlotReference playerSlotReference,
         final SecurityPolicy securityPolicy,
         final Set<PlatformPermission> dirtyPermissions
     ) {
         super(securityPolicy, dirtyPermissions);
         this.name = name;
-        this.slotReference = slotReference;
+        this.playerSlotReference = playerSlotReference;
     }
 
     @Override
     public SecurityCardData getMenuData() {
-        return new SecurityCardData(slotReference, getDataPermissions());
+        return new SecurityCardData(playerSlotReference, getDataPermissions());
     }
 
     @Override
@@ -49,6 +49,6 @@ class FallbackSecurityCardExtendedMenuProvider extends AbstractSecurityCardExten
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new FallbackSecurityCardContainerMenu(syncId, inventory, slotReference);
+        return new FallbackSecurityCardContainerMenu(syncId, inventory, playerSlotReference);
     }
 }

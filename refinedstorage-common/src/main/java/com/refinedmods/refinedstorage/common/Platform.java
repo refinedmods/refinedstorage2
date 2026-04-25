@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.common.support.RecipeProvider;
@@ -106,7 +107,7 @@ public interface Platform {
         List<Component> components
     );
 
-    Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+    Optional<EnergyStorage> getEnergyStorage(ItemStack stack, EnergyItemContext context);
 
     <T extends CustomPacketPayload> void sendPacketToServer(T packet);
 

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.grid.GridData;
 import com.refinedmods.refinedstorage.common.grid.PortableGridData;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
@@ -23,20 +23,20 @@ class PortableGridItemExtendedMenuProvider implements ExtendedMenuProvider<Porta
     private final Grid grid;
     private final EnergyStorage energyStorage;
     private final DiskInventory diskInventory;
-    private final SlotReference slotReference;
+    private final PlayerSlotReference playerSlotReference;
 
     PortableGridItemExtendedMenuProvider(
         final Component name,
         final Grid grid,
         final EnergyStorage energyStorage,
         final DiskInventory diskInventory,
-        final SlotReference slotReference
+        final PlayerSlotReference playerSlotReference
     ) {
         this.name = name;
         this.grid = grid;
         this.energyStorage = energyStorage;
         this.diskInventory = diskInventory;
-        this.slotReference = slotReference;
+        this.playerSlotReference = playerSlotReference;
     }
 
     @Override
@@ -45,7 +45,7 @@ class PortableGridItemExtendedMenuProvider implements ExtendedMenuProvider<Porta
             GridData.of(grid),
             energyStorage.getStored(),
             energyStorage.getCapacity(),
-            Optional.of(slotReference)
+            Optional.of(playerSlotReference)
         );
     }
 
@@ -62,6 +62,7 @@ class PortableGridItemExtendedMenuProvider implements ExtendedMenuProvider<Porta
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new PortableGridItemContainerMenu(syncId, inventory, diskInventory, grid, energyStorage, slotReference);
+        return new PortableGridItemContainerMenu(syncId, inventory, diskInventory, grid, energyStorage,
+            playerSlotReference);
     }
 }

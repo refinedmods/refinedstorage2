@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.Menus;
 import com.refinedmods.refinedstorage.common.grid.PortableGridData;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
@@ -23,7 +23,7 @@ public class PortableGridItemContainerMenu extends AbstractPortableGridContainer
                                   final DiskInventory diskInventory,
                                   final Grid grid,
                                   final EnergyStorage energyStorage,
-                                  final SlotReference slotReference) {
+                                  final PlayerSlotReference playerSlotReference) {
         super(
             Menus.INSTANCE.getPortableGridItem(),
             syncId,
@@ -32,7 +32,7 @@ public class PortableGridItemContainerMenu extends AbstractPortableGridContainer
             grid,
             energyStorage
         );
-        this.disabledSlot = slotReference;
+        this.disabledSlot = playerSlotReference;
         resized(0, 0, 0);
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.slotreference;
 
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +14,24 @@ import net.minecraft.world.item.Item;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
-public class CompositeSlotReferenceProvider implements SlotReferenceProvider {
-    private final List<SlotReferenceProvider> providers = new ArrayList<>(List.of(
-        new InventorySlotReferenceProvider()
+public class CompositePlayerSlotReferenceProvider implements PlayerSlotReferenceProvider {
+    private final List<PlayerSlotReferenceProvider> providers = new ArrayList<>(List.of(
+        new InventoryPlayerSlotReferenceProvider()
     ));
 
-    public void addProvider(final SlotReferenceProvider provider) {
+    public void addProvider(final PlayerSlotReferenceProvider provider) {
         providers.add(provider);
     }
 
     @Override
-    public List<SlotReference> find(final Player player, final Set<Item> validItems) {
+    public List<PlayerSlotReference> find(final Player player, final Set<Item> validItems) {
         return providers.stream().flatMap(p -> p.find(player, validItems).stream()).toList();
     }
 
-    public Optional<SlotReference> findForUse(final Player player,
-                                              final Item referenceItem,
-                                              final Set<Item> validItems) {
-        final List<SlotReference> foundReferences = find(player, validItems);
+    public Optional<PlayerSlotReference> findForUse(final Player player,
+                                                    final Item referenceItem,
+                                                    final Set<Item> validItems) {
+        final List<PlayerSlotReference> foundReferences = find(player, validItems);
         if (foundReferences.size() > 1) {
             player.sendSystemMessage(createTranslation(
                 "item",

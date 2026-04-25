@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
@@ -75,7 +75,7 @@ public class SecurityCardItem extends AbstractSecurityCardItem<PlayerBoundSecuri
     @Override
     AbstractSecurityCardExtendedMenuProvider<PlayerBoundSecurityCardData> createMenuProvider(
         final MinecraftServer server,
-        final SlotReference slotReference,
+        final PlayerSlotReference playerSlotReference,
         final SecurityPolicy policy,
         final Set<PlatformPermission> dirtyPermissions,
         final ItemStack stack
@@ -83,7 +83,7 @@ public class SecurityCardItem extends AbstractSecurityCardItem<PlayerBoundSecuri
         return new SecurityCardExtendedMenuProvider(
             stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME),
             server,
-            slotReference,
+            playerSlotReference,
             policy,
             dirtyPermissions,
             requireNonNull(stack.get(DataComponents.INSTANCE.getSecurityCardBoundPlayer()))
