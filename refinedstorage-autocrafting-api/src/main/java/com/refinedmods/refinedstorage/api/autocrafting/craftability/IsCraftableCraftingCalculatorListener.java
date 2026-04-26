@@ -72,7 +72,7 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
             LOGGER.debug("Found the maximum amount of {} in {} tries", low, calculationCount);
             return low;
         } catch (final CalculationException e) {
-            LOGGER.error("Error while calculating max amount for {}", resource, e);
+            LOGGER.debug("Error while calculating max amount for {}", resource, e);
             return 0;
         }
     }
