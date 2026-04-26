@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
+import com.refinedmods.refinedstorage.common.controller.ControllerBlockItem;
 import com.refinedmods.refinedstorage.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage.common.security.FallbackSecurityCardItem;
 import com.refinedmods.refinedstorage.common.security.SecurityCardItem;
@@ -113,6 +114,7 @@ import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.ForgeExte
 import com.refinedmods.refinedstorage.neoforge.storage.externalstorage.ResourceHandlerPlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.ForgePortableGridBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnergyHandlerAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.energy.ItemAccessEnergyItemContext;
 import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractResourceHandler;
 import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerResourceHandlerAdapter;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
@@ -583,23 +585,25 @@ public class ModInitializer extends AbstractModInitializer {
         event.registerItem(
             Capabilities.Energy.ITEM,
             (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(
-                Items.INSTANCE.getWirelessGrid().createEnergyStorage(stack)),
+                WirelessGridItem.createEnergyStorage(stack, new ItemAccessEnergyItemContext(ctx))),
             Items.INSTANCE.getWirelessGrid()
         );
         Items.INSTANCE.getControllers().forEach(controllerItem -> event.registerItem(
             Capabilities.Energy.ITEM,
-            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(controllerItem.get().createEnergyStorage(stack)),
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(ControllerBlockItem.createEnergyStorage(stack,
+                new ItemAccessEnergyItemContext(ctx))),
             controllerItem.get()
         ));
         event.registerItem(
             Capabilities.Energy.ITEM,
-            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(PortableGridBlockItem.createEnergyStorage(stack)),
+            (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(
+                PortableGridBlockItem.createEnergyStorage(stack, new ItemAccessEnergyItemContext(ctx))),
             Items.INSTANCE.getPortableGrid()
         );
         event.registerItem(
             Capabilities.Energy.ITEM,
             (stack, ctx) -> new EnergyStorageEnergyHandlerAdapter(
-                Items.INSTANCE.getWirelessAutocraftingMonitor().createEnergyStorage(stack)
+                WirelessAutocraftingMonitorItem.createEnergyStorage(stack, new ItemAccessEnergyItemContext(ctx))
             ),
             Items.INSTANCE.getWirelessAutocraftingMonitor()
         );

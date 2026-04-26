@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
+import com.refinedmods.refinedstorage.common.controller.ControllerBlockItem;
 import com.refinedmods.refinedstorage.common.grid.WirelessGridItem;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage.common.security.FallbackSecurityCardItem;
@@ -111,6 +112,7 @@ import com.refinedmods.refinedstorage.fabric.storage.diskinterface.FabricDiskInt
 import com.refinedmods.refinedstorage.fabric.storage.externalstorage.FabricExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage.fabric.storage.externalstorage.FabricStorageExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.fabric.storage.portablegrid.FabricPortableGridBlockEntity;
+import com.refinedmods.refinedstorage.fabric.support.energy.ContainerItemContextEnergyItemContext;
 import com.refinedmods.refinedstorage.fabric.support.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage.fabric.support.resource.ResourceContainerFluidStorageAdapter;
 import com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil;
@@ -943,26 +945,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerEnergyItemProviders() {
         EnergyStorage.ITEM.registerForItems(
-            (stack, context) ->
-                new EnergyStorageAdapter(Items.INSTANCE.getWirelessGrid().createEnergyStorage(stack), context),
-            Items.INSTANCE.getWirelessGrid()
-        );
+            (stack, context) -> new EnergyStorageAdapter(WirelessGridItem.createEnergyStorage(stack,
+                new ContainerItemContextEnergyItemContext(context))), Items.INSTANCE.getWirelessGrid());
         Items.INSTANCE.getControllers().forEach(controller -> EnergyStorage.ITEM.registerForItems(
-            (stack, context) ->
-                new EnergyStorageAdapter(controller.get().createEnergyStorage(stack), context),
-            controller.get()
-        ));
-        EnergyStorage.ITEM.registerForItems(
-            (stack, context)
-                -> new EnergyStorageAdapter(PortableGridBlockItem.createEnergyStorage(stack), context),
-            Items.INSTANCE.getPortableGrid()
-        );
-        EnergyStorage.ITEM.registerForItems(
-            (stack, context) ->
-                new EnergyStorageAdapter(Items.INSTANCE.getWirelessAutocraftingMonitor().createEnergyStorage(stack),
-                    context),
-            Items.INSTANCE.getWirelessAutocraftingMonitor()
-        );
+            (stack, context) -> new EnergyStorageAdapter(ControllerBlockItem.createEnergyStorage(
+                stack, new ContainerItemContextEnergyItemContext(context))), controller.get()));
+        EnergyStorage.ITEM.registerForItems((stack, context) -> new EnergyStorageAdapter(
+                PortableGridBlockItem.createEnergyStorage(stack, new ContainerItemContextEnergyItemContext(context))),
+            Items.INSTANCE.getPortableGrid());
+        EnergyStorage.ITEM.registerForItems((stack, context) -> new EnergyStorageAdapter(
+            WirelessAutocraftingMonitorItem.createEnergyStorage(stack,
+                new ContainerItemContextEnergyItemContext(context))), Items.INSTANCE.getWirelessAutocraftingMonitor());
     }
 
     private void registerTickHandler() {

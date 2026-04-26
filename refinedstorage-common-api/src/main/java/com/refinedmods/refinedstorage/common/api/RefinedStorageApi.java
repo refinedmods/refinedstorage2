@@ -32,6 +32,7 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.storage.externalstorage.ExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorInsertionStrategy;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -42,9 +43,8 @@ import com.refinedmods.refinedstorage.common.api.support.resource.RecipeModIngre
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerInsertStrategy;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceFactory;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
 
@@ -180,27 +180,27 @@ public interface RefinedStorageApi {
 
     WirelessTransmitterRangeModifier getWirelessTransmitterRangeModifier();
 
-    Optional<EnergyStorage> getEnergyStorage(ItemStack stack);
+    Optional<EnergyStorage> getEnergyStorage(ItemStack stack, EnergyItemContext context);
 
     EnergyItemHelper getEnergyItemHelper();
 
-    EnergyStorage asItemEnergyStorage(EnergyStorage energyStorage, ItemStack stack);
+    EnergyStorage createItemEnergyStorage(EnergyStorage energyStorage, ItemStack stack, EnergyItemContext context);
 
-    EnergyStorage asBlockItemEnergyStorage(
-        EnergyStorage energyStorage,
-        ItemStack stack,
-        BlockEntityType<?> blockEntityType
-    );
+    EnergyStorage createBlockItemEnergyStorage(EnergyStorage energyStorage,
+                                               ItemStack stack,
+                                               BlockEntityType<?> blockEntityType,
+                                               EnergyItemContext context);
 
     NetworkItemHelper getNetworkItemHelper();
 
-    PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry();
+    PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf,
+        ? extends PlayerSlotReference>> getPlayerSlotReferenceFactories();
 
-    void addSlotReferenceProvider(SlotReferenceProvider slotReferenceProvider);
+    void addPlayerSlotReferenceProvider(PlayerSlotReferenceProvider playerSlotReferenceProvider);
 
-    SlotReference createInventorySlotReference(Player player, InteractionHand hand);
+    PlayerSlotReference createPlayerInventorySlotReference(Player player, InteractionHand hand);
 
-    void useSlotReferencedItem(Player player, Item... items);
+    void usePlayerSlotReferencedItem(Player player, Item... items);
 
     PlatformRegistry<PlatformPermission> getPermissionRegistry();
 

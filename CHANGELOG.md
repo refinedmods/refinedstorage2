@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Not being able to charge energy items.
+
 ## [3.0.0-beta.5] - 2026-04-21
 
 ### Fixed

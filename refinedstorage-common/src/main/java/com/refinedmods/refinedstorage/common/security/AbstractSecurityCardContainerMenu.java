@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage.common.security;
 
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
@@ -24,14 +24,14 @@ public abstract class AbstractSecurityCardContainerMenu extends AbstractBaseCont
                                                 final SecurityCardData securityCardData) {
         super(menuType, syncId);
         this.playerInventory = playerInventory;
-        this.disabledSlot = securityCardData.slotReference();
+        this.disabledSlot = securityCardData.playerSlotReference();
         this.permissions = securityCardData.permissions();
     }
 
     protected AbstractSecurityCardContainerMenu(final MenuType<?> menuType,
                                                 final int syncId,
                                                 final Inventory playerInventory,
-                                                final SlotReference disabledSlot) {
+                                                final PlayerSlotReference disabledSlot) {
         super(menuType, syncId);
         this.playerInventory = playerInventory;
         this.disabledSlot = disabledSlot;
@@ -53,7 +53,8 @@ public abstract class AbstractSecurityCardContainerMenu extends AbstractBaseCont
         if (disabledSlot == null) {
             return;
         }
-        disabledSlot.resolve(playerInventory.player).ifPresent(stack -> setPermission(stack, permission, allowed));
+        final ItemStack stack = disabledSlot.get(playerInventory.player);
+        setPermission(stack, permission, allowed);
     }
 
     private void setPermission(final ItemStack stack, final PlatformPermission permission, final boolean allowed) {
@@ -66,7 +67,8 @@ public abstract class AbstractSecurityCardContainerMenu extends AbstractBaseCont
         if (disabledSlot == null) {
             return;
         }
-        disabledSlot.resolve(playerInventory.player).ifPresent(stack -> resetPermissionServer(stack, permission));
+        final ItemStack stack = disabledSlot.get(playerInventory.player);
+        resetPermissionServer(stack, permission);
     }
 
     private void resetPermissionServer(final ItemStack stack, final PlatformPermission permission) {

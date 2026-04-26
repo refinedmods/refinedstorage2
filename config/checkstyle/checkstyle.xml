@@ -104,7 +104,9 @@
         <module name="AbstractClassName"/>
         <module name="ConstantName"/>
         <module name="IllegalIdentifierName"/>
-        <module name="AnonInnerLength"/>
+        <module name="AnonInnerLength">
+            <property name="max" value="25"/>
+        </module>
         <module name="MethodCount"/>
         <module name="MethodLength">
             <property name="max" value="200"/>

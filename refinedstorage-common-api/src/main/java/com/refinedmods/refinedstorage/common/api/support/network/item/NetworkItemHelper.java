@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.api.support.network.item;
 
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -21,7 +21,7 @@ public interface NetworkItemHelper {
 
     Optional<TooltipComponent> getTooltipImage(ItemStack stack);
 
-    NetworkItemContext createContext(ItemStack stack, ServerPlayer player, SlotReference slotReference);
+    NetworkItemContext createContext(ItemStack stack, ServerPlayer player, PlayerSlotReference playerSlotReference);
 
     boolean isBound(ItemStack stack);
 }

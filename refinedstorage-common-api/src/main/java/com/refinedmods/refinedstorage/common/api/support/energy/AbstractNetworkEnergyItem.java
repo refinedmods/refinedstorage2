@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage.common.api.support.energy;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemHelper;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceHandlerItem;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.UsablePlayerSlotReferencedItem;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -25,7 +25,7 @@ import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.1")
-public abstract class AbstractNetworkEnergyItem extends AbstractEnergyItem implements SlotReferenceHandlerItem {
+public abstract class AbstractNetworkEnergyItem extends AbstractEnergyItem implements UsablePlayerSlotReferencedItem {
     protected final NetworkItemHelper helper;
 
     protected AbstractNetworkEnergyItem(final Properties properties,
@@ -59,25 +59,27 @@ public abstract class AbstractNetworkEnergyItem extends AbstractEnergyItem imple
     @Override
     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         if (player instanceof ServerPlayer serverPlayer && level.getServer() != null) {
-            final SlotReference slotReference = RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand);
-            slotReference.resolve(player).ifPresent(s -> use(serverPlayer, s, slotReference));
+            final PlayerSlotReference playerSlotReference = RefinedStorageApi.INSTANCE
+                .createPlayerInventorySlotReference(player, hand);
+            final ItemStack stack = playerSlotReference.get(player);
+            use(serverPlayer, stack, playerSlotReference);
         }
         return InteractionResult.CONSUME;
     }
 
     @Override
-    public void use(final ServerPlayer player, final ItemStack stack, final SlotReference slotReference) {
+    public void use(final ServerPlayer player, final ItemStack stack, final PlayerSlotReference playerSlotReference) {
         final NetworkItemContext context = RefinedStorageApi.INSTANCE.getNetworkItemHelper().createContext(
             stack,
             player,
-            slotReference
+            playerSlotReference
         );
-        use(stack.get(DataComponents.CUSTOM_NAME), player, slotReference, context);
+        use(stack.get(DataComponents.CUSTOM_NAME), player, playerSlotReference, context);
     }
 
     protected abstract void use(@Nullable Component name,
                                 ServerPlayer player,
-                                SlotReference slotReference,
+                                PlayerSlotReference playerSlotReference,
                                 NetworkItemContext context);
 
     public boolean isBound(final ItemStack stack) {

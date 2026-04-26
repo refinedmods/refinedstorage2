@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.support.containermenu;
 
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
@@ -36,9 +36,9 @@ public abstract class AbstractSingleAmountContainerMenu extends AbstractResource
                                                 final Player player,
                                                 final ResourceContainer resourceContainer,
                                                 final Component filterHelpText,
-                                                @Nullable final SlotReference disabledSlotReference) {
+                                                @Nullable final PlayerSlotReference disabledPlayerSlotReference) {
         super(type, syncId, player);
-        this.disabledSlot = disabledSlotReference;
+        this.disabledSlot = disabledPlayerSlotReference;
         this.filterHelpText = filterHelpText;
         this.resourceContainer = resourceContainer;
         addSlots(player);

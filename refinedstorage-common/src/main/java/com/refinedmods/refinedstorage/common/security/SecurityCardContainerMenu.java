@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.security;
 
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.Menus;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
@@ -32,7 +32,8 @@ public class SecurityCardContainerMenu extends AbstractSecurityCardContainerMenu
         this.players = playerBoundSecurityCardData.players();
     }
 
-    SecurityCardContainerMenu(final int syncId, final Inventory playerInventory, final SlotReference disabledSlot) {
+    SecurityCardContainerMenu(final int syncId, final Inventory playerInventory,
+                              final PlayerSlotReference disabledSlot) {
         super(Menus.INSTANCE.getSecurityCard(), syncId, playerInventory, disabledSlot);
         this.boundTo = new PlayerBoundSecurityCardData.Player(UUID.randomUUID(), "");
         this.players = new ArrayList<>();
@@ -50,7 +51,8 @@ public class SecurityCardContainerMenu extends AbstractSecurityCardContainerMenu
         if (disabledSlot == null) {
             return;
         }
-        disabledSlot.resolve(playerInventory.player).ifPresent(stack -> setBoundPlayer(server, playerId, stack));
+        final ItemStack stack = disabledSlot.get(playerInventory.player);
+        setBoundPlayer(server, playerId, stack);
     }
 
     private void setBoundPlayer(final MinecraftServer server, final UUID playerId, final ItemStack stack) {

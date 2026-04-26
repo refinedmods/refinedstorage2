@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeMapping;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
@@ -62,7 +62,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 createResourceFilterContainer(stack, initialState),
                 initialState.amount(),
                 newAmount -> setAmount(stack, newAmount),
-                RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand)
+                RefinedStorageApi.INSTANCE.createPlayerInventorySlotReference(player, hand)
             ));
         }
         return InteractionResult.SUCCESS;
@@ -151,12 +151,12 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                                             ResourceContainer resourceContainer,
                                             double amount,
                                             Consumer<Double> amountAcceptor,
-                                            SlotReference slotReference)
+                                            PlayerSlotReference playerSlotReference)
         implements ExtendedMenuProvider<SingleAmountData> {
         @Override
         public SingleAmountData getMenuData() {
             return new SingleAmountData(
-                Optional.of(slotReference),
+                Optional.of(playerSlotReference),
                 amount,
                 ResourceContainerData.of(resourceContainer)
             );
@@ -179,7 +179,7 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 player,
                 resourceContainer,
                 amountAcceptor,
-                slotReference
+                playerSlotReference
             );
         }
     }

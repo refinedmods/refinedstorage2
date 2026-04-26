@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage.common.support.slotreference;
 
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +11,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class InventorySlotReferenceProvider implements SlotReferenceProvider {
+public class InventoryPlayerSlotReferenceProvider implements PlayerSlotReferenceProvider {
     @Override
-    public List<SlotReference> find(final Player player, final Set<Item> validItems) {
-        final List<SlotReference> result = new ArrayList<>();
+    public List<PlayerSlotReference> find(final Player player, final Set<Item> validItems) {
+        final List<PlayerSlotReference> result = new ArrayList<>();
         for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
             final ItemStack slot = player.getInventory().getItem(i);
             if (!validItems.contains(slot.getItem())) {
                 continue;
             }
-            result.add(new InventorySlotReference(i));
+            result.add(new InventoryPlayerSlotReference(i));
         }
         return result;
     }

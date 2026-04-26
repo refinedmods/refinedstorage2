@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.security.SecurityPolicyContainerItem;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
 import java.util.HashSet;
@@ -80,7 +80,7 @@ abstract class AbstractSecurityCardItem<T> extends Item implements SecurityPolic
             final Set<PlatformPermission> dirtyPermissions = getDirtyPermissions(stack);
             Platform.INSTANCE.getMenuOpener().openMenu(player, createMenuProvider(
                 player.level().getServer(),
-                RefinedStorageApi.INSTANCE.createInventorySlotReference(player, hand),
+                RefinedStorageApi.INSTANCE.createPlayerInventorySlotReference(player, hand),
                 policy,
                 dirtyPermissions,
                 stack
@@ -95,7 +95,7 @@ abstract class AbstractSecurityCardItem<T> extends Item implements SecurityPolic
 
     abstract AbstractSecurityCardExtendedMenuProvider<T> createMenuProvider(
         MinecraftServer server,
-        SlotReference slotReference,
+        PlayerSlotReference playerSlotReference,
         SecurityPolicy policy,
         Set<PlatformPermission> dirtyPermissions,
         ItemStack stack

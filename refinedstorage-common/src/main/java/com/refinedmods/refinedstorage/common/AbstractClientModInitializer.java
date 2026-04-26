@@ -155,7 +155,7 @@ public abstract class AbstractClientModInitializer {
         }
         final KeyMapping openWirelessGrid = KeyMappings.INSTANCE.getOpenWirelessGrid();
         while (openWirelessGrid != null && openWirelessGrid.consumeClick()) {
-            RefinedStorageApi.INSTANCE.useSlotReferencedItem(
+            RefinedStorageApi.INSTANCE.usePlayerSlotReferencedItem(
                 player,
                 Items.INSTANCE.getWirelessGrid(),
                 Items.INSTANCE.getCreativeWirelessGrid()
@@ -163,7 +163,7 @@ public abstract class AbstractClientModInitializer {
         }
         final KeyMapping openPortableGrid = KeyMappings.INSTANCE.getOpenPortableGrid();
         while (openPortableGrid != null && openPortableGrid.consumeClick()) {
-            RefinedStorageApi.INSTANCE.useSlotReferencedItem(
+            RefinedStorageApi.INSTANCE.usePlayerSlotReferencedItem(
                 player,
                 Items.INSTANCE.getPortableGrid(),
                 Items.INSTANCE.getCreativePortableGrid()
@@ -171,7 +171,7 @@ public abstract class AbstractClientModInitializer {
         }
         final KeyMapping openWirelessAutocraftingMonitor = KeyMappings.INSTANCE.getOpenWirelessAutocraftingMonitor();
         while (openWirelessAutocraftingMonitor != null && openWirelessAutocraftingMonitor.consumeClick()) {
-            RefinedStorageApi.INSTANCE.useSlotReferencedItem(
+            RefinedStorageApi.INSTANCE.usePlayerSlotReferencedItem(
                 player,
                 Items.INSTANCE.getWirelessAutocraftingMonitor(),
                 Items.INSTANCE.getCreativeWirelessAutocraftingMonitor()
