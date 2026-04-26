@@ -118,7 +118,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Us
                                  final DiskInventory diskInventory,
                                  final HolderLookup.Provider registries) {
         final TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
-        AbstractPortableGridBlockEntity.writeDiskInventory(output, diskInventory);
+        AbstractPortableGridBlockEntity.storeDiskInventory(output, diskInventory);
         ItemBlockEnergyStorage.store(output, getStored(stack));
         setBlockEntityData(stack, isCreative(stack)
             ? BlockEntities.INSTANCE.getCreativePortableGrid()
@@ -171,11 +171,11 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Us
         final PortableGridEnergyStorage energyStorage = createEnergyStorageInternal(stack,
             new PlayerSlotReferenceEnergyItemContext(player, playerSlotReference));
         final Level level = player.level();
-        final DiskInventoryListener listener = new DiskInventoryListener(stack, level.registryAccess());
+        final DiskInventoryListener listener = new DiskInventoryListener(player, playerSlotReference,
+            level.registryAccess());
         final DiskInventory diskInventory = createDiskInventory(stack, listener, level.registryAccess());
         diskInventory.setStorageRepository(RefinedStorageApi.INSTANCE.getStorageRepository(level));
-        final PortableGrid portableGrid = new PortableGrid(energyStorage, diskInventory, () -> {
-        });
+        final PortableGrid portableGrid = new PortableGrid(energyStorage, diskInventory);
         listener.portableGrid = portableGrid;
         energyStorage.portableGrid = portableGrid;
         portableGrid.updateStorage();
@@ -216,13 +216,17 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Us
     }
 
     private static class DiskInventoryListener implements Consumer<DiskInventory> {
-        private final ItemStack portableGridStack;
+        private final Player player;
+        private final PlayerSlotReference playerSlotReference;
         private final HolderLookup.Provider registries;
         @Nullable
         private PortableGrid portableGrid;
 
-        private DiskInventoryListener(final ItemStack portableGridStack, final HolderLookup.Provider registries) {
-            this.portableGridStack = portableGridStack;
+        private DiskInventoryListener(final Player player,
+                                      final PlayerSlotReference playerSlotReference,
+                                      final HolderLookup.Provider registries) {
+            this.player = player;
+            this.playerSlotReference = playerSlotReference;
             this.registries = registries;
         }
 
@@ -232,7 +236,7 @@ public class PortableGridBlockItem extends AbstractEnergyBlockItem implements Us
             if (stillLoading) {
                 return;
             }
-            setDiskInventory(portableGridStack, inventory, registries);
+            setDiskInventory(playerSlotReference.get(player), inventory, registries);
             final boolean wasActive = portableGrid.isGridActive();
             portableGrid.updateStorage();
             final boolean isActive = portableGrid.isGridActive();
