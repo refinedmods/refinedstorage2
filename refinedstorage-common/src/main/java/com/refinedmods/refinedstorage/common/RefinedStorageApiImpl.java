@@ -37,6 +37,7 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.storage.externalstorage.ExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorInsertionStrategy;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -47,9 +48,8 @@ import com.refinedmods.refinedstorage.common.api.support.resource.RecipeModIngre
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerInsertStrategy;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceFactory;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage.common.autocrafting.CompositePatternProviderExternalPatternSinkFactory;
@@ -83,8 +83,8 @@ import com.refinedmods.refinedstorage.common.support.registry.PlatformRegistryIm
 import com.refinedmods.refinedstorage.common.support.resource.CompositeRecipeModIngredientConverter;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResourceFactory;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResourceFactory;
-import com.refinedmods.refinedstorage.common.support.slotreference.CompositeSlotReferenceProvider;
-import com.refinedmods.refinedstorage.common.support.slotreference.InventorySlotReference;
+import com.refinedmods.refinedstorage.common.support.slotreference.CompositePlayerSlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.support.slotreference.InventoryPlayerSlotReference;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage.common.util.ServerListener;
@@ -176,8 +176,10 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
         new CompositeWirelessTransmitterRangeModifier();
     private final EnergyItemHelper energyItemHelper = new EnergyItemHelperImpl();
     private final NetworkItemHelper networkItemHelper = new NetworkItemHelperImpl();
-    private final PlatformRegistry<SlotReferenceFactory> slotReferenceFactoryRegistry = new PlatformRegistryImpl<>();
-    private final CompositeSlotReferenceProvider slotReferenceProvider = new CompositeSlotReferenceProvider();
+    private final PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends PlayerSlotReference>>
+        playerSlotReferenceFactories = new PlatformRegistryImpl<>();
+    private final CompositePlayerSlotReferenceProvider playerSlotReferenceProvider =
+        new CompositePlayerSlotReferenceProvider();
     private final PlatformRegistry<PlatformPermission> permissionRegistry = new PlatformRegistryImpl<>();
     private final List<ResourceContainerInsertStrategy> resourceExtractStrategies = new ArrayList<>();
     private final WeakHashMap<Level, Map<UUID, Pattern>> patternCache = new WeakHashMap<>();
@@ -491,8 +493,8 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     }
 
     @Override
-    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return Platform.INSTANCE.getEnergyStorage(stack);
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack, final EnergyItemContext context) {
+        return Platform.INSTANCE.getEnergyStorage(stack, context);
     }
 
     @Override
@@ -501,16 +503,16 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     }
 
     @Override
-    public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage,
-                                             final ItemStack stack) {
-        return new ItemEnergyStorage(stack, energyStorage);
+    public EnergyStorage createItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack,
+                                                 final EnergyItemContext context) {
+        return new ItemEnergyStorage(stack, energyStorage, context);
     }
 
     @Override
-    public EnergyStorage asBlockItemEnergyStorage(final EnergyStorage energyStorage,
-                                                  final ItemStack stack,
-                                                  final BlockEntityType<?> blockEntityType) {
-        return new ItemBlockEnergyStorage(energyStorage, stack, blockEntityType);
+    public EnergyStorage createBlockItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack,
+                                                      final BlockEntityType<?> blockEntityType,
+                                                      final EnergyItemContext context) {
+        return new ItemBlockEnergyStorage(energyStorage, stack, blockEntityType, context);
     }
 
     @Override
@@ -519,24 +521,26 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     }
 
     @Override
-    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
-        return slotReferenceFactoryRegistry;
+    public PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf,
+        ? extends PlayerSlotReference>> getPlayerSlotReferenceFactories() {
+        return playerSlotReferenceFactories;
     }
 
     @Override
-    public void addSlotReferenceProvider(final SlotReferenceProvider provider) {
-        slotReferenceProvider.addProvider(provider);
+    public void addPlayerSlotReferenceProvider(final PlayerSlotReferenceProvider provider) {
+        playerSlotReferenceProvider.addProvider(provider);
     }
 
     @Override
-    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
-        return InventorySlotReference.of(player, hand);
+    public PlayerSlotReference createPlayerInventorySlotReference(final Player player, final InteractionHand hand) {
+        return InventoryPlayerSlotReference.of(player, hand);
     }
 
     @Override
-    public void useSlotReferencedItem(final Player player, final Item... items) {
+    public void usePlayerSlotReferencedItem(final Player player, final Item... items) {
         final Set<Item> validItems = new HashSet<>(Arrays.asList(items));
-        slotReferenceProvider.findForUse(player, items[0], validItems).ifPresent(C2SPackets::sendUseSlotReferencedItem);
+        playerSlotReferenceProvider.findForUse(player, items[0], validItems)
+            .ifPresent(C2SPackets::sendUseSlotReferencedItem);
     }
 
     @Override

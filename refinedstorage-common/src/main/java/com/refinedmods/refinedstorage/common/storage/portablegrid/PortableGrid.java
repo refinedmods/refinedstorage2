@@ -41,13 +41,17 @@ class PortableGrid implements Grid {
     private final EnergyStorage energyStorage;
     private final DiskInventory diskInventory;
     private final GridWatcherManager watchers = new GridWatcherManagerImpl();
-    private final StateTrackedStorage.Listener diskListener;
+    private final StateTrackedStorage.@Nullable Listener diskListener;
     @Nullable
     private PortableGridStorage storage;
 
+    PortableGrid(final EnergyStorage energyStorage, final DiskInventory diskInventory) {
+        this(energyStorage, diskInventory, null);
+    }
+
     PortableGrid(final EnergyStorage energyStorage,
                  final DiskInventory diskInventory,
-                 final StateTrackedStorage.Listener diskListener) {
+                 final StateTrackedStorage.@Nullable Listener diskListener) {
         this.energyStorage = energyStorage;
         this.diskInventory = diskInventory;
         this.diskListener = diskListener;
@@ -57,12 +61,10 @@ class PortableGrid implements Grid {
         if (storage != null) {
             watchers.detachAll(storage.getRootStorage());
         }
-
         this.storage = diskInventory.resolve(0)
             .map(diskStorage -> new StateTrackedStorage(diskStorage, diskListener))
             .map(PortableGridStorage::new)
             .orElse(null);
-
         watchers.attachAll(getRootStorage());
     }
 

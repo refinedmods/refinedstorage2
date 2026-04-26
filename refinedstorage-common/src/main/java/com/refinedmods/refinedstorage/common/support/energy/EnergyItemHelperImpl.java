@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.common.support.energy;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 
 import java.util.function.Consumer;
@@ -20,7 +21,7 @@ public class EnergyItemHelperImpl implements EnergyItemHelper {
         if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             return;
         }
-        RefinedStorageApi.INSTANCE.getEnergyStorage(stack).ifPresent(energyStorage -> {
+        RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY).ifPresent(energyStorage -> {
             final long stored = energyStorage.getStored();
             final long capacity = energyStorage.getCapacity();
             final double pct = stored / (double) capacity;
@@ -33,32 +34,35 @@ public class EnergyItemHelperImpl implements EnergyItemHelper {
         if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             return false;
         }
-        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack).isPresent();
+        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY).isPresent();
     }
 
     @Override
     public int getBarWidth(final ItemStack stack) {
-        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack).map(energyStorage -> (int) Math.round(
-            (energyStorage.getStored() / (double) energyStorage.getCapacity()) * 13D
-        )).orElse(0);
+        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY)
+            .map(energyStorage -> (int) Math.round(
+                (energyStorage.getStored() / (double) energyStorage.getCapacity()) * 13D
+            )).orElse(0);
     }
 
     @Override
     public int getBarColor(final ItemStack stack) {
-        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack).map(energyStorage -> Mth.hsvToRgb(
-            Math.max(0.0F, (float) energyStorage.getStored() / (float) energyStorage.getCapacity()) / 3.0F,
-            1.0F,
-            1.0F
-        )).orElse(0);
+        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY)
+            .map(energyStorage -> Mth.hsvToRgb(
+                Math.max(0.0F, (float) energyStorage.getStored() / (float) energyStorage.getCapacity()) / 3.0F,
+                1.0F,
+                1.0F
+            )).orElse(0);
     }
 
     @Override
     public ItemStack createAtEnergyCapacity(final Item item) {
         final ItemStack stack = item.getDefaultInstance();
-        RefinedStorageApi.INSTANCE.getEnergyStorage(stack).ifPresent(energyStorage -> energyStorage.receive(
+        final SimpleEnergyItemContext context = new SimpleEnergyItemContext(stack);
+        RefinedStorageApi.INSTANCE.getEnergyStorage(stack, context).ifPresent(energyStorage -> energyStorage.receive(
             energyStorage.getCapacity(),
             Action.EXECUTE
         ));
-        return stack;
+        return context.copyStack();
     }
 }

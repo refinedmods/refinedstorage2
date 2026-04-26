@@ -6,6 +6,6 @@ import org.apiguardian.api.API;
 
 @FunctionalInterface
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.3")
-public interface SlotReferenceHandlerItem {
-    void use(ServerPlayer player, ItemStack stack, SlotReference slotReference);
+public interface UsablePlayerSlotReferencedItem {
+    void use(ServerPlayer player, ItemStack stack, PlayerSlotReference playerSlotReference);
 }

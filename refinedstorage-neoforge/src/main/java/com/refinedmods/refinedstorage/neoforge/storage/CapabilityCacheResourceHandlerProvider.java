@@ -76,7 +76,9 @@ public final class CapabilityCacheResourceHandlerProvider<T extends Resource> im
                     final T resourceAtIndex = handler.getResource(index);
                     if (!resourceAtIndex.isEmpty()) {
                         final long amount = handler.getAmountAsLong(index++);
-                        return new ResourceAmount(mapper.apply(resourceAtIndex), amount);
+                        if (amount > 0) {
+                            return new ResourceAmount(mapper.apply(resourceAtIndex), amount);
+                        }
                     }
                 }
                 return endOfData();

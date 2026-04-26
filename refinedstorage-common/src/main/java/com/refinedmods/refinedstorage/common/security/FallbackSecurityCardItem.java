@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 
 import java.util.Optional;
@@ -33,14 +33,14 @@ public class FallbackSecurityCardItem extends AbstractSecurityCardItem<SecurityC
     @Override
     AbstractSecurityCardExtendedMenuProvider<SecurityCardData> createMenuProvider(
         final MinecraftServer server,
-        final SlotReference slotReference,
+        final PlayerSlotReference playerSlotReference,
         final SecurityPolicy policy,
         final Set<PlatformPermission> dirtyPermissions,
         final ItemStack stack
     ) {
         return new FallbackSecurityCardExtendedMenuProvider(
             stack.get(DataComponents.CUSTOM_NAME),
-            slotReference,
+            playerSlotReference,
             policy,
             dirtyPermissions
         );

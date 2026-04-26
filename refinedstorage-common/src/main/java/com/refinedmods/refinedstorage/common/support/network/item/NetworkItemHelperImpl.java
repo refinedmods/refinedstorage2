@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.common.api.support.HelpTooltipComponent;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemHelper;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemTargetBlockEntity;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 
 import java.util.Optional;
@@ -70,11 +70,11 @@ public class NetworkItemHelperImpl implements NetworkItemHelper {
     @Override
     public NetworkItemContext createContext(final ItemStack stack,
                                             final ServerPlayer player,
-                                            final SlotReference slotReference) {
+                                            final PlayerSlotReference playerSlotReference) {
         final Optional<GlobalPos> location = getNetworkLocation(stack);
         return new NetworkItemContextImpl(
             player,
-            slotReference,
+            playerSlotReference,
             location.orElse(null)
         );
     }

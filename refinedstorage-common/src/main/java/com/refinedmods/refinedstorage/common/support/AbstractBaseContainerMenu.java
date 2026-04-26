@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage.common.support;
 
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.DisabledSlot;
 import com.refinedmods.refinedstorage.common.support.containermenu.FilterSlot;
@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     protected final TransferManager transferManager;
     @Nullable
-    protected SlotReference disabledSlot;
+    protected PlayerSlotReference disabledSlot;
     private final Map<PropertyType<?>, Property<?>> propertyMap = new HashMap<>();
 
     protected AbstractBaseContainerMenu(@Nullable final MenuType<?> type, final int syncId) {
@@ -81,7 +81,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
                 final int slotX = inventoryX + x * 18;
                 final int slotY = inventoryY + y * 18;
                 final boolean disabled = disabledSlot != null
-                    && disabledSlot.isDisabledSlot(id);
+                    && disabledSlot.isDisabled(id);
                 final Slot slot = disabled
                     ? new DisabledSlot(inventory, id, slotX, slotY)
                     : new PlayerInventorySlot(inventory, id, slotX, slotY, listener);
@@ -95,7 +95,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
             final int x = inventoryX + i * 18;
             final int y = inventoryY + 4 + (3 * 18);
             final boolean disabled = disabledSlot != null
-                && disabledSlot.isDisabledSlot(id);
+                && disabledSlot.isDisabled(id);
             final Slot slot = disabled
                 ? new DisabledSlot(inventory, id, x, y)
                 : new PlayerInventorySlot(inventory, id, x, y, listener);
@@ -143,7 +143,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     private boolean isSwappingDisabledSlotWithNumberKeys(final int buttonNum, final ContainerInput input) {
         return disabledSlot != null
             && input == ContainerInput.SWAP
-            && disabledSlot.isDisabledSlot(buttonNum);
+            && disabledSlot.isDisabled(buttonNum);
     }
 
     public void handleFilterSlotChange(final int slotIndex, final ItemStack stack) {

@@ -92,7 +92,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
             .ifPresent(contents -> contents.copyInto(diskInventory.getItems()));
     }
 
-    static void writeDiskInventory(final ValueOutput output, final DiskInventory diskInventory) {
+    static void storeDiskInventory(final ValueOutput output, final DiskInventory diskInventory) {
         output.store(TAG_DISK_INVENTORY, ItemContainerContents.CODEC,
             ItemContainerContents.fromItems(diskInventory.getItems()));
     }
@@ -200,7 +200,7 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
     @Override
     protected void saveAdditional(final ValueOutput output) {
         super.saveAdditional(output);
-        writeDiskInventory(output, diskInventory);
+        storeDiskInventory(output, diskInventory);
         ItemBlockEnergyStorage.store(output, energyStorage.getStored());
         writeConfiguration(output);
     }

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.common.support.RecipeMapRecipeProvider;
@@ -18,6 +19,7 @@ import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridInsertionStra
 import com.refinedmods.refinedstorage.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.MenuOpenerImpl;
+import com.refinedmods.refinedstorage.fabric.support.energy.EnergyItemContextContainerItemContext;
 import com.refinedmods.refinedstorage.fabric.support.energy.EnergyStorageAdapter;
 import com.refinedmods.refinedstorage.fabric.support.render.FluidVariantFluidRenderer;
 import com.refinedmods.refinedstorage.fabric.support.resource.SimpleSingleStackStorage;
@@ -38,11 +40,9 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -335,12 +335,9 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        final ConstantContainerItemContext ctx = new ConstantContainerItemContext(
-            ItemVariant.of(stack),
-            stack.getCount()
-        );
-        return Optional.ofNullable(team.reborn.energy.api.EnergyStorage.ITEM.find(stack, ctx))
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack, final EnergyItemContext context) {
+        return Optional.ofNullable(team.reborn.energy.api.EnergyStorage.ITEM.find(stack,
+                new EnergyItemContextContainerItemContext(context)))
             .filter(EnergyStorageAdapter.class::isInstance)
             .map(EnergyStorageAdapter.class::cast)
             .map(EnergyStorageAdapter::getEnergyStorage);

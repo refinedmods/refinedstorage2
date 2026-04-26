@@ -144,7 +144,7 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResourceFacto
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
-import com.refinedmods.refinedstorage.common.support.slotreference.InventorySlotReferenceFactory;
+import com.refinedmods.refinedstorage.common.support.slotreference.InventoryPlayerSlotReference;
 import com.refinedmods.refinedstorage.common.upgrade.FortuneUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.RangeUpgradeItem;
 import com.refinedmods.refinedstorage.common.upgrade.RegulatorUpgradeContainerMenu;
@@ -988,9 +988,9 @@ public abstract class AbstractModInitializer {
     }
 
     protected final void registerInventorySlotReference() {
-        RefinedStorageApi.INSTANCE.getSlotReferenceFactoryRegistry().register(
+        RefinedStorageApi.INSTANCE.getPlayerSlotReferenceFactories().register(
             createIdentifier("inventory"),
-            InventorySlotReferenceFactory.INSTANCE
+            InventoryPlayerSlotReference.STREAM_CODEC
         );
     }
 

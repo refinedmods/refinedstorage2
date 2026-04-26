@@ -32,6 +32,7 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.storage.externalstorage.ExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.storagemonitor.StorageMonitorInsertionStrategy;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemHelper;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -42,9 +43,8 @@ import com.refinedmods.refinedstorage.common.api.support.resource.RecipeModIngre
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainerInsertStrategy;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceFactory;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceFactory;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReferenceProvider;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
 
@@ -332,8 +332,8 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
-    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack) {
-        return ensureLoaded().getEnergyStorage(stack);
+    public Optional<EnergyStorage> getEnergyStorage(final ItemStack stack, final EnergyItemContext context) {
+        return ensureLoaded().getEnergyStorage(stack, context);
     }
 
     @Override
@@ -342,15 +342,16 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
-    public EnergyStorage asItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack) {
-        return ensureLoaded().asItemEnergyStorage(energyStorage, stack);
+    public EnergyStorage createItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack,
+                                                 final EnergyItemContext context) {
+        return ensureLoaded().createItemEnergyStorage(energyStorage, stack, context);
     }
 
     @Override
-    public EnergyStorage asBlockItemEnergyStorage(final EnergyStorage energyStorage,
-                                                  final ItemStack stack,
-                                                  final BlockEntityType<?> blockEntityType) {
-        return ensureLoaded().asBlockItemEnergyStorage(energyStorage, stack, blockEntityType);
+    public EnergyStorage createBlockItemEnergyStorage(final EnergyStorage energyStorage, final ItemStack stack,
+                                                      final BlockEntityType<?> blockEntityType,
+                                                      final EnergyItemContext context) {
+        return ensureLoaded().createBlockItemEnergyStorage(energyStorage, stack, blockEntityType, context);
     }
 
     @Override
@@ -359,23 +360,24 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
-    public PlatformRegistry<SlotReferenceFactory> getSlotReferenceFactoryRegistry() {
-        return ensureLoaded().getSlotReferenceFactoryRegistry();
+    public PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf,
+        ? extends PlayerSlotReference>> getPlayerSlotReferenceFactories() {
+        return ensureLoaded().getPlayerSlotReferenceFactories();
     }
 
     @Override
-    public void addSlotReferenceProvider(final SlotReferenceProvider slotReferenceProvider) {
-        ensureLoaded().addSlotReferenceProvider(slotReferenceProvider);
+    public void addPlayerSlotReferenceProvider(final PlayerSlotReferenceProvider playerSlotReferenceProvider) {
+        ensureLoaded().addPlayerSlotReferenceProvider(playerSlotReferenceProvider);
     }
 
     @Override
-    public SlotReference createInventorySlotReference(final Player player, final InteractionHand hand) {
-        return ensureLoaded().createInventorySlotReference(player, hand);
+    public PlayerSlotReference createPlayerInventorySlotReference(final Player player, final InteractionHand hand) {
+        return ensureLoaded().createPlayerInventorySlotReference(player, hand);
     }
 
     @Override
-    public void useSlotReferencedItem(final Player player, final Item... items) {
-        ensureLoaded().useSlotReferencedItem(player, items);
+    public void usePlayerSlotReferencedItem(final Player player, final Item... items) {
+        ensureLoaded().usePlayerSlotReferencedItem(player, items);
     }
 
     @Override

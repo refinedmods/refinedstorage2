@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.controller;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -20,7 +21,7 @@ public class ControllerEnergyLevelItemModelProperty implements RangeSelectItemMo
     @Override
     public float get(final ItemStack stack, @Nullable final ClientLevel clientLevel,
                      @Nullable final ItemOwner itemOwner, final int i) {
-        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack).map(energyStorage -> {
+        return RefinedStorageApi.INSTANCE.getEnergyStorage(stack, EnergyItemContext.READONLY).map(energyStorage -> {
             if (energyStorage.getStored() == 0) {
                 return 1F;
             }

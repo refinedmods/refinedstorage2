@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.6] - 2026-04-26
+
+### Fixed
+
+-   Not being able to charge energy items.
+
 ## [3.0.0-beta.5] - 2026-04-21
 
 ### Fixed
@@ -1155,7 +1161,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.5...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.6...HEAD
+
+[3.0.0-beta.6]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.5...v3.0.0-beta.6
 
 [3.0.0-beta.5]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.4...v3.0.0-beta.5
 

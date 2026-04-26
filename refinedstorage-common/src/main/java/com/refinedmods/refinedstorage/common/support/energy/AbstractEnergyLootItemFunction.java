@@ -16,9 +16,11 @@ public abstract class AbstractEnergyLootItemFunction implements LootItemFunction
         final BlockEntity blockEntity = lootContext.getParameter(LootContextParams.BLOCK_ENTITY);
         if (blockEntity instanceof TransferableBlockEntityEnergy transferableBlockEntityEnergy) {
             final long stored = transferableBlockEntityEnergy.getEnergyStorage().getStored();
-            RefinedStorageApi.INSTANCE.getEnergyStorage(stack).ifPresent(
+            final SimpleEnergyItemContext context = new SimpleEnergyItemContext(stack);
+            RefinedStorageApi.INSTANCE.getEnergyStorage(stack, context).ifPresent(
                 energyStorage -> energyStorage.receive(stored, Action.EXECUTE)
             );
+            return context.copyStack();
         }
         return stack;
     }

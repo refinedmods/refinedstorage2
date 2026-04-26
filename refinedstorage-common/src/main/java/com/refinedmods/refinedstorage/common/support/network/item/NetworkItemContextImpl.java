@@ -8,26 +8,29 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemPlayerValidator;
 import com.refinedmods.refinedstorage.common.api.support.network.item.NetworkItemTargetBlockEntity;
-import com.refinedmods.refinedstorage.common.api.support.slotreference.SlotReference;
+import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
+import com.refinedmods.refinedstorage.common.support.slotreference.PlayerSlotReferenceEnergyItemContext;
 
 import java.util.Optional;
 
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 class NetworkItemContextImpl implements NetworkItemContext {
     private final Player player;
     private final NetworkItemPlayerValidator.PlayerCoordinates coordinates;
-    private final SlotReference slotReference;
+    private final PlayerSlotReference playerSlotReference;
+    private final PlayerSlotReferenceEnergyItemContext energyItemContext;
     @Nullable
     private final GlobalPos networkLocation;
 
     @SuppressWarnings("resource")
     NetworkItemContextImpl(
         final Player player,
-        final SlotReference slotReference,
+        final PlayerSlotReference playerSlotReference,
         @Nullable final GlobalPos networkLocation
     ) {
         this.player = player;
@@ -40,7 +43,8 @@ class NetworkItemContextImpl implements NetworkItemContext {
             player.level().dimension(),
             new Vec3(player.position().x, player.position().y, player.position().z)
         );
-        this.slotReference = slotReference;
+        this.playerSlotReference = playerSlotReference;
+        this.energyItemContext = new PlayerSlotReferenceEnergyItemContext(player, playerSlotReference);
         this.networkLocation = networkLocation;
     }
 
@@ -68,19 +72,19 @@ class NetworkItemContextImpl implements NetworkItemContext {
 
     @Override
     public boolean isActive() {
-        return slotReference.resolve(player).map(stack -> {
-            if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
-                return true;
-            }
-            return Platform.INSTANCE.getEnergyStorage(stack)
-                .map(energyStorage -> energyStorage.getStored() > 0)
-                .orElse(true);
-        }).orElse(false);
+        final ItemStack stack = playerSlotReference.get(player);
+        if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
+            return true;
+        }
+        return Platform.INSTANCE.getEnergyStorage(stack, energyItemContext)
+            .map(energyStorage -> energyStorage.getStored() > 0)
+            .orElse(true);
     }
 
     @Override
     public void drainEnergy(final long amount) {
-        slotReference.resolve(player).flatMap(Platform.INSTANCE::getEnergyStorage).ifPresent(
+        final ItemStack stack = playerSlotReference.get(player);
+        Platform.INSTANCE.getEnergyStorage(stack, energyItemContext).ifPresent(
             energyStorage -> energyStorage.extract(amount, Action.EXECUTE)
         );
     }
