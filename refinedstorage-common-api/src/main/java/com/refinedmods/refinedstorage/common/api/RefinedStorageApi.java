@@ -95,6 +95,10 @@ public interface RefinedStorageApi {
 
     Collection<ExternalStorageProviderFactory> getExternalStorageProviderFactories();
 
+    void addExternalStorageProviderBlockFactory(ExternalStorageProviderFactory factory, Identifier blockId);
+
+    PlatformRegistry<ExternalStorageProviderFactory> getExternalStorageProviderBlocks();
+
     Collection<DestructorStrategyFactory> getDestructorStrategyFactories();
 
     void addDestructorStrategyFactory(DestructorStrategyFactory factory);

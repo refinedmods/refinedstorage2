@@ -153,6 +153,8 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
         new PlatformRegistryImpl<>();
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
     private final List<ExternalStorageProviderFactory> externalStorageProviderFactories = new ArrayList<>();
+    private final PlatformRegistry<ExternalStorageProviderFactory> customExternalStorageProviderBlocks =
+        new PlatformRegistryImpl<>();
     private final Queue<DestructorStrategyFactory> destructorStrategyFactories = new PriorityQueue<>(
         Comparator.comparingInt(DestructorStrategyFactory::getPriority)
     );
@@ -235,6 +237,17 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     @Override
     public Collection<ExternalStorageProviderFactory> getExternalStorageProviderFactories() {
         return externalStorageProviderFactories;
+    }
+
+    @Override
+    public void addExternalStorageProviderBlockFactory(final ExternalStorageProviderFactory factory,
+                                                       final Identifier blockId) {
+        customExternalStorageProviderBlocks.register(blockId, factory);
+    }
+
+    @Override
+    public PlatformRegistry<ExternalStorageProviderFactory> getExternalStorageProviderBlocks() {
+        return customExternalStorageProviderBlocks;
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
-import com.refinedmods.refinedstorage.common.iface.InterfaceBlock;
-import com.refinedmods.refinedstorage.common.iface.InterfaceProxyExternalStorageProvider;
 import com.refinedmods.refinedstorage.common.storage.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage.common.support.AbstractCableLikeBlockEntity;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
@@ -22,9 +20,11 @@ import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -100,15 +100,17 @@ public abstract class AbstractExternalStorageBlockEntity
         }
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
-        if (serverLevel.getBlockState(sourcePosition).getBlock() instanceof InterfaceBlock) {
-            mainNetworkNode.initialize(new InterfaceProxyExternalStorageProvider(serverLevel, sourcePosition));
-        } else {
-            mainNetworkNode.initialize(new CompositeExternalStorageProvider(RefinedStorageApi.INSTANCE
+        final Identifier target =
+            BuiltInRegistries.BLOCK.getKey(serverLevel.getBlockState(sourcePosition).getBlock());
+
+        RefinedStorageApi.INSTANCE.getExternalStorageProviderBlocks()
+            .get(target).ifPresentOrElse(
+                provider -> mainNetworkNode.initialize(provider.create(serverLevel, sourcePosition, incomingDirection)),
+                () -> mainNetworkNode.initialize(new CompositeExternalStorageProvider(RefinedStorageApi.INSTANCE
                 .getExternalStorageProviderFactories()
                 .stream()
                 .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection))
-                .toList()));
-        }
+                .toList())));
     }
 
     @Override
