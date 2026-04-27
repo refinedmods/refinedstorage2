@@ -29,21 +29,12 @@ public class DoubleAmountOperations implements AmountOperations<Double> {
     }
 
     @Override
-    public Optional<Double> parse(final String value) {
+    public ParsedValue<Double> parse(final String value) {
         try {
-            return Optional.of(Double.parseDouble(value));
+            return new ParsedValue<>(Double.parseDouble(value));
         } catch (final NumberFormatException e) {
-            return Optional.empty();
+            return ParsedValue.invalid();
         }
-    }
-
-    @Override
-    public Optional<Double> validate(final Double amount,
-                                     @Nullable final Double minAmount,
-                                     @Nullable final Double maxAmount) {
-        final boolean minBoundOk = minAmount == null || amount >= minAmount;
-        final boolean maxBoundOk = maxAmount == null || amount <= maxAmount;
-        return minBoundOk && maxBoundOk ? Optional.of(amount) : Optional.empty();
     }
 
     @Override

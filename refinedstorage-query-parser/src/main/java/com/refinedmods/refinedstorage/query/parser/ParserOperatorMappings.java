@@ -10,6 +10,14 @@ public class ParserOperatorMappings {
         .addBinaryOperator("||", new Operator(0, Associativity.LEFT))
         .addBinaryOperator("&&", new Operator(1, Associativity.LEFT));
 
+    public static final ParserOperatorMappings ARITHMETIC_MAPPINGS = new ParserOperatorMappings()
+            .addBinaryOperator("+", new Operator(0, Associativity.LEFT))
+            .addBinaryOperator("-", new Operator(0, Associativity.LEFT))
+            .addBinaryOperator("*", new Operator(1, Associativity.LEFT))
+            .addBinaryOperator("/", new Operator(1, Associativity.LEFT))
+            .addBinaryOperator("%", new Operator(1, Associativity.LEFT))
+            .addBinaryOperator("^", new Operator(2, Associativity.RIGHT));
+
     private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
 
     public ParserOperatorMappings addBinaryOperator(final String content, final Operator operator) {

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
 import com.refinedmods.refinedstorage.common.support.Sprites;
 import com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen;
 import com.refinedmods.refinedstorage.common.support.amount.AmountScreenConfiguration;
-import com.refinedmods.refinedstorage.common.support.amount.DoubleAmountOperations;
+import com.refinedmods.refinedstorage.common.support.amount.ExpressionAmountOperations;
 import com.refinedmods.refinedstorage.common.support.containermenu.ResourceSlot;
 import com.refinedmods.refinedstorage.common.support.widget.CheckboxWidget;
 import com.refinedmods.refinedstorage.common.support.widget.CustomButton;
@@ -102,10 +102,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .withMaxAmount(slot.getMaxAmountWhenModifying())
                 .withResetAmount(1D)
                 .build(),
-            DoubleAmountOperations.INSTANCE,
-            193,
-            226
-        );
+            ExpressionAmountOperations.INSTANCE, 193, 226);
         this.slot = slot;
         this.initialAllowedAlternativeIds = allowedAlternativeIds;
     }

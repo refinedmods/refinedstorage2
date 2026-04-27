@@ -21,6 +21,20 @@ public class LexerTokenMappings {
         .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
         .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE));
 
+    public static final LexerTokenMappings ARITHMETIC_MAPPINGS = new LexerTokenMappings()
+            .addMapping(new LexerTokenMapping("+", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("-", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("*", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("/", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("%", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("^", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
+            .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE))
+            .addMapping(new LexerTokenMapping("[", TokenType.PAREN_OPEN))
+            .addMapping(new LexerTokenMapping("]", TokenType.PAREN_CLOSE))
+            .addMapping(new LexerTokenMapping("{", TokenType.PAREN_OPEN))
+            .addMapping(new LexerTokenMapping("}", TokenType.PAREN_CLOSE));
+
     private final Set<LexerTokenMapping> mappings = new TreeSet<>((a, b) -> {
         final int cmp = Integer.compare(b.value().length(), a.value().length());
         if (cmp == 0) {
