@@ -65,6 +65,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Correct the torch model for detectors.
+-   Reduce performance overhead of the autocrafting preview calculation.
 
 ## [2.0.1] - 2026-02-11
 
