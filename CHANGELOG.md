@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.5] - 2026-04-30
+
 ### Fixed
 
 -   Locking out of the Autocrafting Monitor while certain processing tasks are running.
