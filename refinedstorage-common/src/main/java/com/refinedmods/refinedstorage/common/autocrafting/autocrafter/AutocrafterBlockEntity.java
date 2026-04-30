@@ -536,6 +536,10 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
             connectedMachine.getBlockPos(),
             fakePlayer
         );
+        if (connectedMachineStack.isEmpty()) {
+            invalidateSinkKey();
+            return;
+        }
         sinkKey = new InWorldExternalPatternSinkKey(getName().getString(), connectedMachineStack);
     }
 

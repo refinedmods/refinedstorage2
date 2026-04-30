@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.7] - 2026-04-30
+
+### Fixed
+
+-   Locking out of the Autocrafting Monitor while certain processing tasks are running.
+
 ## [3.0.0-beta.6] - 2026-04-26
 
 ### Fixed
@@ -1161,7 +1167,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.6...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.7...HEAD
+
+[3.0.0-beta.7]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.6...v3.0.0-beta.7
 
 [3.0.0-beta.6]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.5...v3.0.0-beta.6
 

@@ -85,8 +85,7 @@ public final class AutocraftingMonitorStreamCodecs {
             buf.writeLong(item.crafting());
         }
 
-        private void encodeSinkKey(final RegistryFriendlyByteBuf buf,
-                                   @Nullable final ExternalPatternSinkKey sinkKey) {
+        private void encodeSinkKey(final RegistryFriendlyByteBuf buf, @Nullable final ExternalPatternSinkKey sinkKey) {
             if (sinkKey instanceof InWorldExternalPatternSinkKey(String name, ItemStack stack)) {
                 buf.writeBoolean(true);
                 buf.writeUtf(name);

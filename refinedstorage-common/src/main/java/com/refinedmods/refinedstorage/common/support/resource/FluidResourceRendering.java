@@ -15,12 +15,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.network.chat.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FluidResourceRendering implements ResourceRendering {
     private static final DecimalFormat FORMATTER = new DecimalFormat(
         "#,###.###",
         DecimalFormatSymbols.getInstance(Locale.US)
     );
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FluidResourceRendering.class);
 
     private final long bucketAmount;
 
@@ -46,7 +50,12 @@ public class FluidResourceRendering implements ResourceRendering {
         if (!(resource instanceof FluidResource fluidResource)) {
             return Collections.emptyList();
         }
-        return Platform.INSTANCE.getFluidRenderer().getTooltip(fluidResource);
+        try {
+            return Platform.INSTANCE.getFluidRenderer().getTooltip(fluidResource);
+        } catch (final Throwable t) {
+            LOGGER.warn("Failed to get tooltip for fluid {}", resource, t);
+            return Collections.emptyList();
+        }
     }
 
     @Override
