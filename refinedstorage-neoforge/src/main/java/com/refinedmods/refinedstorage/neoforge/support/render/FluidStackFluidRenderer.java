@@ -114,7 +114,7 @@ public class FluidStackFluidRenderer implements FluidRenderer {
     public List<Component> getTooltip(final FluidResource resource) {
         final Minecraft minecraft = Minecraft.getInstance();
         return getStack(resource).getTooltipLines(
-            Item.TooltipContext.EMPTY,
+            Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
             ClientPlatformUtil.getClientPlayer(),
             minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
         );

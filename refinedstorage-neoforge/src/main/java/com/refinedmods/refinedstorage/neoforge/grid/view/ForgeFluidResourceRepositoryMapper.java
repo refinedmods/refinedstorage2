@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.neoforge.grid.view;
 
 import com.refinedmods.refinedstorage.common.grid.view.AbstractFluidGridResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,8 @@ public class ForgeFluidResourceRepositoryMapper extends AbstractFluidGridResourc
     protected String getTooltip(final FluidResource resource) {
         try {
             return toStack(resource)
-                .getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.ADVANCED)
+                .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
+                    null, TooltipFlag.ADVANCED)
                 .stream()
                 .map(Component::getString)
                 .collect(Collectors.joining("\n"));
