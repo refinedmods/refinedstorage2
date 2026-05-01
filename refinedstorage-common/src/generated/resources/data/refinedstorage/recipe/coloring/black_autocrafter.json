@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafters"
-    },
-    {
-      "tag": "c:dyes/black"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:black_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/black"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:autocrafters"
+  },
+  "result": "refinedstorage:black_autocrafter"
 }

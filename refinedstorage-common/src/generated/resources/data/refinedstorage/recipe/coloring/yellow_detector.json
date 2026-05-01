@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:yellow_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/yellow"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:detectors"
+  },
+  "result": "refinedstorage:yellow_detector"
 }

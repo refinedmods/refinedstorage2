@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:exporters"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:yellow_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/yellow"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:exporters"
+  },
+  "result": "refinedstorage:yellow_exporter"
 }

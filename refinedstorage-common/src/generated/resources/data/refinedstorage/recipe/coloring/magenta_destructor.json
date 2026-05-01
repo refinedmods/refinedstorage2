@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:destructors"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:magenta_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/magenta"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:destructors"
+  },
+  "result": "refinedstorage:magenta_destructor"
 }

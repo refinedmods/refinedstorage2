@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:blue_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/blue"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:detectors"
+  },
+  "result": "refinedstorage:blue_detector"
 }

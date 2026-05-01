@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:security_managers"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:cyan_security_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/cyan"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:security_managers"
+  },
+  "result": "refinedstorage:cyan_security_manager"
 }

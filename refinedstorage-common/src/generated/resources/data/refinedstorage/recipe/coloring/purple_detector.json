@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/purple"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:purple_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/purple"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:detectors"
+  },
+  "result": "refinedstorage:purple_detector"
 }
