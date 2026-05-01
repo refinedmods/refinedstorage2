@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Contents of network devices being dropped and configuration being cleared after recoloring it.
+
 ## [3.0.0-beta.7] - 2026-04-30
 
 ### Fixed

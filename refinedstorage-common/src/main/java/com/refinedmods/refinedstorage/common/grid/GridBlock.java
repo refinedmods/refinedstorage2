@@ -61,4 +61,9 @@ public class GridBlock extends AbstractGridBlock<GridBlock, BaseBlockItem>
     public BaseBlockItem createBlockItem() {
         return new NetworkNodeBlockItem(id, this, HELP);
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof GridBlock;
+    }
 }

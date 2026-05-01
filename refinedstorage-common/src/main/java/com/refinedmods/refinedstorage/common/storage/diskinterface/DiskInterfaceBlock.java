@@ -82,4 +82,9 @@ public class DiskInterfaceBlock
     public boolean canAlwaysConnect() {
         return true;
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof DiskInterfaceBlock;
+    }
 }

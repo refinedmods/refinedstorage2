@@ -81,4 +81,9 @@ public class NetworkReceiverBlock extends AbstractColoredBlock<NetworkReceiverBl
     public boolean canAlwaysConnect() {
         return true;
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof NetworkReceiverBlock;
+    }
 }
