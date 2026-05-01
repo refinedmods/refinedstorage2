@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:constructors",
-    "#c:dyes/brown"
-  ],
-  "result": {
-    "id": "refinedstorage:brown_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#refinedstorage:constructors",
+  "result": "refinedstorage:brown_constructor"
 }

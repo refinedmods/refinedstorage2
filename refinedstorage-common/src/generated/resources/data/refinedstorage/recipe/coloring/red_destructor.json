@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/red"
-  ],
-  "result": {
-    "id": "refinedstorage:red_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:red_destructor"
 }

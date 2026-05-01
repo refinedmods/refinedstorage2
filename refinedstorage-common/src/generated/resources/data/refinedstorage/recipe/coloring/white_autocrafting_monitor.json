@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafting_monitors",
-    "#c:dyes/white"
-  ],
-  "result": {
-    "id": "refinedstorage:white_autocrafting_monitor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "white",
+  "ingredient": "#refinedstorage:autocrafting_monitors",
+  "result": "refinedstorage:white_autocrafting_monitor"
 }

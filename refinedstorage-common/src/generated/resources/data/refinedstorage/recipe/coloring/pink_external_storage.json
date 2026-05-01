@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:external_storages",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_external_storage"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:external_storages",
+  "result": "refinedstorage:pink_external_storage"
 }

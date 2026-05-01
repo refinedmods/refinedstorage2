@@ -134,6 +134,7 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
+import com.refinedmods.refinedstorage.common.support.RecoloringRecipe;
 import com.refinedmods.refinedstorage.common.support.SimpleItem;
 import com.refinedmods.refinedstorage.common.support.SimpleStoneBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
@@ -905,6 +906,13 @@ public abstract class AbstractModInitializer {
             () -> new RecipeSerializer<>(
                 StorageContainerUpgradeRecipe.CODEC,
                 StorageContainerUpgradeRecipe.STREAM_CODEC
+            )
+        ));
+        RecipeSerializers.INSTANCE.setRecoloring(callback.register(
+            createIdentifier("recoloring"),
+            () -> new RecipeSerializer<>(
+                RecoloringRecipe.CODEC,
+                RecoloringRecipe.STREAM_CODEC
             )
         ));
     }

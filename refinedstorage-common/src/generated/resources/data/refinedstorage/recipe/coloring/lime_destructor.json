@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:lime_destructor"
 }

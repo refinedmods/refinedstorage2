@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:detectors",
-    "#c:dyes/brown"
-  ],
-  "result": {
-    "id": "refinedstorage:brown_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#refinedstorage:detectors",
+  "result": "refinedstorage:brown_detector"
 }

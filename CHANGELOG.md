@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Contents of network devices being dropped and configuration being cleared after recoloring it.
+-   Recoloring recipes not accounting for existing dismantled device configuration.
 
 ## [3.0.0-beta.7] - 2026-04-30
 

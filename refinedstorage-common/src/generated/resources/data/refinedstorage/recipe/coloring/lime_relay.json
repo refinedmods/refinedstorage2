@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:relays",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_relay"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:relays",
+  "result": "refinedstorage:lime_relay"
 }

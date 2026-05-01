@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:crafting_grids",
-    "#c:dyes/white"
-  ],
-  "result": {
-    "id": "refinedstorage:white_crafting_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "white",
+  "ingredient": "#refinedstorage:crafting_grids",
+  "result": "refinedstorage:white_crafting_grid"
 }

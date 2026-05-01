@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:exporters",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:exporters",
+  "result": "refinedstorage:orange_exporter"
 }

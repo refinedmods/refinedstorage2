@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:crafting_grids",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_crafting_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:crafting_grids",
+  "result": "refinedstorage:orange_crafting_grid"
 }

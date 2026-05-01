@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:cables",
-    "#c:dyes/brown"
-  ],
-  "result": {
-    "id": "refinedstorage:brown_cable"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#refinedstorage:cables",
+  "result": "refinedstorage:brown_cable"
 }

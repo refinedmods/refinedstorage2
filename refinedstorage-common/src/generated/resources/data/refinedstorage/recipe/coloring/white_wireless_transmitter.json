@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:wireless_transmitters",
-    "#c:dyes/white"
-  ],
-  "result": {
-    "id": "refinedstorage:white_wireless_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "white",
+  "ingredient": "#refinedstorage:wireless_transmitters",
+  "result": "refinedstorage:white_wireless_transmitter"
 }

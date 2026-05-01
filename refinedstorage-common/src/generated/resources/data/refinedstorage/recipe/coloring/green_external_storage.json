@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:external_storages",
-    "#c:dyes/green"
-  ],
-  "result": {
-    "id": "refinedstorage:green_external_storage"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#refinedstorage:external_storages",
+  "result": "refinedstorage:green_external_storage"
 }

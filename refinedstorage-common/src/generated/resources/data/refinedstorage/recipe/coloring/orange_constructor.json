@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:constructors",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:constructors",
+  "result": "refinedstorage:orange_constructor"
 }

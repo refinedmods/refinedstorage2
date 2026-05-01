@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:detectors",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:detectors",
+  "result": "refinedstorage:orange_detector"
 }

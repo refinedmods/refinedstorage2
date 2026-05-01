@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:wireless_transmitters",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_wireless_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:wireless_transmitters",
+  "result": "refinedstorage:lime_wireless_transmitter"
 }

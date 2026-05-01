@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:pattern_grids",
-    "#c:dyes/green"
-  ],
-  "result": {
-    "id": "refinedstorage:green_pattern_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#refinedstorage:pattern_grids",
+  "result": "refinedstorage:green_pattern_grid"
 }

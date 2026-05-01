@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:importers",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:importers",
+  "result": "refinedstorage:lime_importer"
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:disk_interfaces",
-    "#c:dyes/brown"
-  ],
-  "result": {
-    "id": "refinedstorage:brown_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#refinedstorage:disk_interfaces",
+  "result": "refinedstorage:brown_disk_interface"
 }
