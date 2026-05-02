@@ -45,18 +45,15 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
         try {
             long low = 1;
             long high = 1;
-            int calculationCount = 1;
             while (isCraftable(calculator, resource, high, cancellationToken)) {
                 low = high;
                 high = high * 2;
-                calculationCount++;
             }
             if (low == high) {
                 return 0;
             }
             while (low < high) {
                 final long amount = low + (high - low + 1) / 2;
-                calculationCount++;
                 if (isCraftable(calculator, resource, amount, cancellationToken)) {
                     low = amount;
                 } else {
