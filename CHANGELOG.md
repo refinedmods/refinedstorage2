@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Recoloring recipes not accounting for existing dismantled device configuration.
+-   Shift clicking upgrades into a network device also adding the upgrade to the filters.
 
 ## [2.0.5] - 2026-04-30
 
