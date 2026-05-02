@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:controllers",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_controller"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:controllers",
+  "result": "refinedstorage:pink_controller"
 }

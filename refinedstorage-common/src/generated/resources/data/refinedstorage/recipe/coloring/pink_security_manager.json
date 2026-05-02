@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:security_managers",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_security_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:security_managers",
+  "result": "refinedstorage:pink_security_manager"
 }

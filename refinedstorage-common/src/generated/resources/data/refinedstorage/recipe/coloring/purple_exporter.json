@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:exporters",
-    "#c:dyes/purple"
-  ],
-  "result": {
-    "id": "refinedstorage:purple_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "purple",
+  "ingredient": "#refinedstorage:exporters",
+  "result": "refinedstorage:purple_exporter"
 }

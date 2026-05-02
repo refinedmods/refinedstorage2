@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:pattern_grids",
-    "#c:dyes/cyan"
-  ],
-  "result": {
-    "id": "refinedstorage:cyan_pattern_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#refinedstorage:pattern_grids",
+  "result": "refinedstorage:cyan_pattern_grid"
 }

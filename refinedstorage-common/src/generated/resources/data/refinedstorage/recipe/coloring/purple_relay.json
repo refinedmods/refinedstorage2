@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:relays",
-    "#c:dyes/purple"
-  ],
-  "result": {
-    "id": "refinedstorage:purple_relay"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "purple",
+  "ingredient": "#refinedstorage:relays",
+  "result": "refinedstorage:purple_relay"
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:network_receivers",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_network_receiver"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:network_receivers",
+  "result": "refinedstorage:pink_network_receiver"
 }

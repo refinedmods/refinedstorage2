@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:constructors",
-    "#c:dyes/red"
-  ],
-  "result": {
-    "id": "refinedstorage:red_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#refinedstorage:constructors",
+  "result": "refinedstorage:red_constructor"
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:orange_destructor"
 }

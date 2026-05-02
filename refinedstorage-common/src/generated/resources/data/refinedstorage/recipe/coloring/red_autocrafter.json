@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafters",
-    "#c:dyes/red"
-  ],
-  "result": {
-    "id": "refinedstorage:red_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#refinedstorage:autocrafters",
+  "result": "refinedstorage:red_autocrafter"
 }

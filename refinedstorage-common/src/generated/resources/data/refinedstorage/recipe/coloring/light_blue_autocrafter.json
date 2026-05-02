@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafters",
-    "#c:dyes/light_blue"
-  ],
-  "result": {
-    "id": "refinedstorage:autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#refinedstorage:autocrafters",
+  "result": "refinedstorage:autocrafter"
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:cables",
-    "#c:dyes/light_blue"
-  ],
-  "result": {
-    "id": "refinedstorage:light_blue_cable"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#refinedstorage:cables",
+  "result": "refinedstorage:light_blue_cable"
 }

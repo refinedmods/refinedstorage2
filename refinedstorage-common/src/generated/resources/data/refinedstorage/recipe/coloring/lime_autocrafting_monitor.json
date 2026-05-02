@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafting_monitors",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_autocrafting_monitor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:autocrafting_monitors",
+  "result": "refinedstorage:lime_autocrafting_monitor"
 }

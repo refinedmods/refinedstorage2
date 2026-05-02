@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:constructors",
-    "#c:dyes/green"
-  ],
-  "result": {
-    "id": "refinedstorage:green_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#refinedstorage:constructors",
+  "result": "refinedstorage:green_constructor"
 }

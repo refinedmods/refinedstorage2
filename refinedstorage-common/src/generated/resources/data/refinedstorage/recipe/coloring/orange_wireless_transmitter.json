@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:wireless_transmitters",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_wireless_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:wireless_transmitters",
+  "result": "refinedstorage:orange_wireless_transmitter"
 }

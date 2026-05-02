@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:pink_destructor"
 }

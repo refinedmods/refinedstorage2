@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:controllers",
-    "#c:dyes/brown"
-  ],
-  "result": {
-    "id": "refinedstorage:brown_controller"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "brown",
+  "ingredient": "#refinedstorage:controllers",
+  "result": "refinedstorage:brown_controller"
 }

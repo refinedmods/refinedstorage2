@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:importers",
-    "#c:dyes/black"
-  ],
-  "result": {
-    "id": "refinedstorage:black_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "black",
+  "ingredient": "#refinedstorage:importers",
+  "result": "refinedstorage:black_importer"
 }

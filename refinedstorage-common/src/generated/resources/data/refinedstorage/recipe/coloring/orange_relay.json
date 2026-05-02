@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:relays",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_relay"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:relays",
+  "result": "refinedstorage:orange_relay"
 }

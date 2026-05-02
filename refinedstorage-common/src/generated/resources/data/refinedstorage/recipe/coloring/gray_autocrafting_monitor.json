@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafting_monitors",
-    "#c:dyes/gray"
-  ],
-  "result": {
-    "id": "refinedstorage:gray_autocrafting_monitor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#refinedstorage:autocrafting_monitors",
+  "result": "refinedstorage:gray_autocrafting_monitor"
 }

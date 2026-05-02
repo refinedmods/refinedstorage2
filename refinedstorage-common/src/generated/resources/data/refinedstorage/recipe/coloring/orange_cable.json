@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:cables",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_cable"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:cables",
+  "result": "refinedstorage:orange_cable"
 }

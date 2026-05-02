@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:detectors",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:detectors",
+  "result": "refinedstorage:pink_detector"
 }

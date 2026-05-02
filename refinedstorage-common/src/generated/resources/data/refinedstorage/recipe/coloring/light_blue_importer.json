@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:importers",
-    "#c:dyes/light_blue"
-  ],
-  "result": {
-    "id": "refinedstorage:light_blue_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#refinedstorage:importers",
+  "result": "refinedstorage:light_blue_importer"
 }
