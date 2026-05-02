@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Contents of network devices being dropped and configuration being cleared after recoloring it.
 -   Recoloring recipes not accounting for existing dismantled device configuration.
+-   Shift clicking upgrades into a network device also adding the upgrade to the filters.
 
 ## [3.0.0-beta.7] - 2026-04-30
 
