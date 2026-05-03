@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafter_managers",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_autocrafter_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:autocrafter_managers",
+  "result": "refinedstorage:pink_autocrafter_manager"
 }

@@ -77,4 +77,9 @@ public class AutocrafterBlock extends AbstractActiveColoredDirectionalBlock<Dire
     public BaseBlockItem createBlockItem() {
         return new NetworkNodeBlockItem(id, this, HELP);
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof AutocrafterBlock;
+    }
 }

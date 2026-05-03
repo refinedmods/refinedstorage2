@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:importers",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_importer"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:importers",
+  "result": "refinedstorage:pink_importer"
 }

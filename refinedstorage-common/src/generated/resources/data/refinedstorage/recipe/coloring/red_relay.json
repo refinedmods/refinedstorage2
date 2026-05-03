@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:relays",
-    "#c:dyes/red"
-  ],
-  "result": {
-    "id": "refinedstorage:red_relay"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#refinedstorage:relays",
+  "result": "refinedstorage:red_relay"
 }

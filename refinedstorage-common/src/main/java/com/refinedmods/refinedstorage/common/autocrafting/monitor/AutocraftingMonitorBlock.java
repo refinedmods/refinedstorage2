@@ -76,4 +76,9 @@ public class AutocraftingMonitorBlock
                                                                   final BlockEntityType<T> type) {
         return TICKER.get(level, type);
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof AutocraftingMonitorBlock;
+    }
 }

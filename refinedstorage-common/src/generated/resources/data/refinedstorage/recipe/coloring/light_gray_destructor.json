@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/light_gray"
-  ],
-  "result": {
-    "id": "refinedstorage:light_gray_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:light_gray_destructor"
 }

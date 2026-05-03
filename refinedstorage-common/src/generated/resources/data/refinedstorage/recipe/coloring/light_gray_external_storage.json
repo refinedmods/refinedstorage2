@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:external_storages",
-    "#c:dyes/light_gray"
-  ],
-  "result": {
-    "id": "refinedstorage:light_gray_external_storage"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#refinedstorage:external_storages",
+  "result": "refinedstorage:light_gray_external_storage"
 }

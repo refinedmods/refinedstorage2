@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:network_transmitters",
-    "#c:dyes/blue"
-  ],
-  "result": {
-    "id": "refinedstorage:blue_network_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#refinedstorage:network_transmitters",
+  "result": "refinedstorage:blue_network_transmitter"
 }

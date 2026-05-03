@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:grids",
-    "#c:dyes/magenta"
-  ],
-  "result": {
-    "id": "refinedstorage:magenta_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#refinedstorage:grids",
+  "result": "refinedstorage:magenta_grid"
 }

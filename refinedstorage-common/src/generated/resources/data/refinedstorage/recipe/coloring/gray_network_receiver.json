@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:network_receivers",
-    "#c:dyes/gray"
-  ],
-  "result": {
-    "id": "refinedstorage:gray_network_receiver"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#refinedstorage:network_receivers",
+  "result": "refinedstorage:gray_network_receiver"
 }

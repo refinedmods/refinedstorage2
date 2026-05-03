@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:network_transmitters",
-    "#c:dyes/light_gray"
-  ],
-  "result": {
-    "id": "refinedstorage:light_gray_network_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#refinedstorage:network_transmitters",
+  "result": "refinedstorage:light_gray_network_transmitter"
 }

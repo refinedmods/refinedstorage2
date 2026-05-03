@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafter_managers",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_autocrafter_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:autocrafter_managers",
+  "result": "refinedstorage:orange_autocrafter_manager"
 }

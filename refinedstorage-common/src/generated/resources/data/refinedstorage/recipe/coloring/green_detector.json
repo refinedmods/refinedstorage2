@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:detectors",
-    "#c:dyes/green"
-  ],
-  "result": {
-    "id": "refinedstorage:green_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "green",
+  "ingredient": "#refinedstorage:detectors",
+  "result": "refinedstorage:green_detector"
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:cables",
-    "#c:dyes/gray"
-  ],
-  "result": {
-    "id": "refinedstorage:cable"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#refinedstorage:cables",
+  "result": "refinedstorage:cable"
 }

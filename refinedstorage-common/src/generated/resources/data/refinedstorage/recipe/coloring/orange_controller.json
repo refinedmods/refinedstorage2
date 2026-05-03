@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:controllers",
-    "#c:dyes/orange"
-  ],
-  "result": {
-    "id": "refinedstorage:orange_controller"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "orange",
+  "ingredient": "#refinedstorage:controllers",
+  "result": "refinedstorage:orange_controller"
 }

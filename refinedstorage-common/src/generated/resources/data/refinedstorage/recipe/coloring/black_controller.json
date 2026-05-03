@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:controllers",
-    "#c:dyes/black"
-  ],
-  "result": {
-    "id": "refinedstorage:black_controller"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "black",
+  "ingredient": "#refinedstorage:controllers",
+  "result": "refinedstorage:black_controller"
 }

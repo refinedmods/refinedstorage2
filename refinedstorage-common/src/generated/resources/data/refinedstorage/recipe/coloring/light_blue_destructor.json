@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:destructors",
-    "#c:dyes/light_blue"
-  ],
-  "result": {
-    "id": "refinedstorage:light_blue_destructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_blue",
+  "ingredient": "#refinedstorage:destructors",
+  "result": "refinedstorage:light_blue_destructor"
 }

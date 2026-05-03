@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:security_managers",
-    "#c:dyes/red"
-  ],
-  "result": {
-    "id": "refinedstorage:red_security_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "red",
+  "ingredient": "#refinedstorage:security_managers",
+  "result": "refinedstorage:red_security_manager"
 }

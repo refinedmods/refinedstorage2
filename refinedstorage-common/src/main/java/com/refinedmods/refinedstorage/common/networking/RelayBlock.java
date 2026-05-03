@@ -71,4 +71,9 @@ public class RelayBlock extends AbstractActiveColoredDirectionalBlock<Direction,
     public BlockColorMap<RelayBlock, BaseBlockItem> getBlockColorMap() {
         return Blocks.INSTANCE.getRelay();
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof RelayBlock;
+    }
 }

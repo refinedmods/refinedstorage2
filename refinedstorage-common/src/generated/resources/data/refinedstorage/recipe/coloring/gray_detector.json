@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:detectors",
-    "#c:dyes/gray"
-  ],
-  "result": {
-    "id": "refinedstorage:gray_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#refinedstorage:detectors",
+  "result": "refinedstorage:gray_detector"
 }

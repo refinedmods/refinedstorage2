@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:constructors",
-    "#c:dyes/pink"
-  ],
-  "result": {
-    "id": "refinedstorage:pink_constructor"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "pink",
+  "ingredient": "#refinedstorage:constructors",
+  "result": "refinedstorage:pink_constructor"
 }

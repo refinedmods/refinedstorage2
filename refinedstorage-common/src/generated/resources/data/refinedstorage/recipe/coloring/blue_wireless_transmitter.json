@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:wireless_transmitters",
-    "#c:dyes/blue"
-  ],
-  "result": {
-    "id": "refinedstorage:blue_wireless_transmitter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#refinedstorage:wireless_transmitters",
+  "result": "refinedstorage:blue_wireless_transmitter"
 }

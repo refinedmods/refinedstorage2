@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.content;
 
 import com.refinedmods.refinedstorage.common.storage.StorageContainerUpgradeRecipe;
+import com.refinedmods.refinedstorage.common.support.RecoloringRecipe;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeWithEnchantedBookRecipe;
 
 import java.util.function.Supplier;
@@ -17,6 +18,8 @@ public final class RecipeSerializers {
     private Supplier<RecipeSerializer<UpgradeWithEnchantedBookRecipe>> upgradeWithEnchantedBook;
     @Nullable
     private Supplier<RecipeSerializer<StorageContainerUpgradeRecipe>> storageContainerUpgrade;
+    @Nullable
+    private Supplier<RecipeSerializer<RecoloringRecipe>> recoloring;
 
     private RecipeSerializers() {
     }
@@ -39,5 +42,15 @@ public final class RecipeSerializers {
         final Supplier<RecipeSerializer<StorageContainerUpgradeRecipe>> storageContainerUpgrade
     ) {
         this.storageContainerUpgrade = storageContainerUpgrade;
+    }
+
+    public RecipeSerializer<RecoloringRecipe> getRecoloring() {
+        return requireNonNull(recoloring).get();
+    }
+
+    public void setRecoloring(
+        final Supplier<RecipeSerializer<RecoloringRecipe>> recoloring
+    ) {
+        this.recoloring = recoloring;
     }
 }

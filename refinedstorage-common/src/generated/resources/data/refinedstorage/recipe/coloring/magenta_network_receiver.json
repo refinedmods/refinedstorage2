@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:network_receivers",
-    "#c:dyes/magenta"
-  ],
-  "result": {
-    "id": "refinedstorage:magenta_network_receiver"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#refinedstorage:network_receivers",
+  "result": "refinedstorage:magenta_network_receiver"
 }

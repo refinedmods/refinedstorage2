@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:crafting_grids",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_crafting_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:crafting_grids",
+  "result": "refinedstorage:lime_crafting_grid"
 }

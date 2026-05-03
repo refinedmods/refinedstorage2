@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafter_managers",
-    "#c:dyes/blue"
-  ],
-  "result": {
-    "id": "refinedstorage:blue_autocrafter_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "blue",
+  "ingredient": "#refinedstorage:autocrafter_managers",
+  "result": "refinedstorage:blue_autocrafter_manager"
 }

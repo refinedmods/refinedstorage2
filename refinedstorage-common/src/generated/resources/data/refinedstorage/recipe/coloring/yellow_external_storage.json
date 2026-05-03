@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:external_storages",
-    "#c:dyes/yellow"
-  ],
-  "result": {
-    "id": "refinedstorage:yellow_external_storage"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "yellow",
+  "ingredient": "#refinedstorage:external_storages",
+  "result": "refinedstorage:yellow_external_storage"
 }

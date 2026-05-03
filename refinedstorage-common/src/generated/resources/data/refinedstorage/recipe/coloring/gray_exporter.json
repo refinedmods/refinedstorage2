@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:exporters",
-    "#c:dyes/gray"
-  ],
-  "result": {
-    "id": "refinedstorage:exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "gray",
+  "ingredient": "#refinedstorage:exporters",
+  "result": "refinedstorage:exporter"
 }

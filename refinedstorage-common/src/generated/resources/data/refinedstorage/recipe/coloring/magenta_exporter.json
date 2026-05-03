@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:exporters",
-    "#c:dyes/magenta"
-  ],
-  "result": {
-    "id": "refinedstorage:magenta_exporter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "magenta",
+  "ingredient": "#refinedstorage:exporters",
+  "result": "refinedstorage:magenta_exporter"
 }

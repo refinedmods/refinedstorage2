@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafter_managers",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_autocrafter_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:autocrafter_managers",
+  "result": "refinedstorage:lime_autocrafter_manager"
 }

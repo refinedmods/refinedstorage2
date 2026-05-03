@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:security_managers",
-    "#c:dyes/lime"
-  ],
-  "result": {
-    "id": "refinedstorage:lime_security_manager"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "lime",
+  "ingredient": "#refinedstorage:security_managers",
+  "result": "refinedstorage:lime_security_manager"
 }

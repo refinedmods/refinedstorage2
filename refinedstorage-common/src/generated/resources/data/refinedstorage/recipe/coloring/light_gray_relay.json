@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:relays",
-    "#c:dyes/light_gray"
-  ],
-  "result": {
-    "id": "refinedstorage:light_gray_relay"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "light_gray",
+  "ingredient": "#refinedstorage:relays",
+  "result": "refinedstorage:light_gray_relay"
 }

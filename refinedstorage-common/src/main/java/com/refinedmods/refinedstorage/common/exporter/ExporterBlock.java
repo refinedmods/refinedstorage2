@@ -100,4 +100,9 @@ public class ExporterBlock extends AbstractDirectionalCableBlock
     public BaseBlockItem createBlockItem() {
         return new NetworkNodeBlockItem(id, this, HELP);
     }
+
+    @Override
+    protected boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+        return oldState.getBlock() instanceof ExporterBlock;
+    }
 }

@@ -1,11 +1,6 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    "#refinedstorage:autocrafters",
-    "#c:dyes/cyan"
-  ],
-  "result": {
-    "id": "refinedstorage:cyan_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "color": "cyan",
+  "ingredient": "#refinedstorage:autocrafters",
+  "result": "refinedstorage:cyan_autocrafter"
 }
