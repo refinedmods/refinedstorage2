@@ -63,6 +63,9 @@ public class ResourceContainerResourceHandlerAdapter
                       final int amount, final TransactionContext transaction) {
         Objects.checkIndex(index, size());
         TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+        if (amount == 0) {
+            return 0;
+        }
         final FluidResource fluidResource = ofPlatform(resource);
         final long insertedSimulated = container.insert(fluidResource, amount, Action.SIMULATE);
         if (insertedSimulated > 0) {
@@ -76,6 +79,9 @@ public class ResourceContainerResourceHandlerAdapter
                        final int amount, final TransactionContext transaction) {
         Objects.checkIndex(index, size());
         TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+        if (amount == 0) {
+            return 0;
+        }
         final FluidResource fluidResource = ofPlatform(resource);
         final long extractedSimulated = container.extract(fluidResource, amount, Action.SIMULATE);
         if (extractedSimulated > 0) {
