@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage.common.support.energy.EnergyContainerMenu;
 import com.refinedmods.refinedstorage.common.support.energy.EnergyInfo;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.world.Container;

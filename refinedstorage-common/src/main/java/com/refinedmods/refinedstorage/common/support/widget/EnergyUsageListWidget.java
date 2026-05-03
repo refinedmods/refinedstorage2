@@ -81,7 +81,7 @@ public class EnergyUsageListWidget extends AbstractWidget {
 
             if (!entry.icon().isEmpty()) {
                 graphics.pose().pushMatrix();
-                graphics.pose().translate(x + PADDING, rowY + (ROW_HEIGHT - ICON_SIZE) / 2);
+                graphics.pose().translate(x + PADDING, rowY + (float) (ROW_HEIGHT - ICON_SIZE) / 2);
                 graphics.item(entry.icon(), 0, 0);
                 graphics.pose().popMatrix();
             }
