@@ -80,6 +80,11 @@ public class InWorldNetworkNodeContainerImpl implements InWorldNetworkNodeContai
     }
 
     @Override
+    public BlockEntity getBlockEntity() {
+        return blockEntity;
+    }
+
+    @Override
     public int getPriority() {
         return priority;
     }

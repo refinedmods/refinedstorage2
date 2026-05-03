@@ -1,10 +1,14 @@
 package com.refinedmods.refinedstorage.common.controller;
 
+import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.energy.TransferableBlockEntityEnergy;
+import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
@@ -15,12 +19,16 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +36,10 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<ControllerNetworkNode>
     implements NetworkNodeExtendedMenuProvider<ControllerData>, TransferableBlockEntityEnergy {
@@ -110,7 +122,7 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
 
     @Override
     public ControllerData getMenuData() {
-        return new ControllerData(getActualStored(), getActualCapacity());
+        return new ControllerData(getActualStored(), getActualCapacity(), getNodeEnergyBreakdown());
     }
 
     @Override
@@ -124,6 +136,53 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
 
     long getActualCapacity() {
         return mainNetworkNode.getActualCapacity();
+    }
+
+    public record NodeEnergyEntry(String name, long usage, int count, ItemStack icon, String translatedName) {}
+
+    public List<NodeEnergyEntry> getNodeEnergyBreakdown() {
+        final Network network = mainNetworkNode.getNetwork();
+        if (network == null) {
+            return List.of();
+        }
+
+        record Aggregate(long[] usage, int[] count, ItemStack icon, String translatedName) {}
+        final Map<String, Aggregate> aggregates = new LinkedHashMap<>();
+
+        network.getComponent(GraphNetworkComponent.class)
+                .getContainers()
+                .stream()
+                .filter(InWorldNetworkNodeContainer.class::isInstance)
+                .map(InWorldNetworkNodeContainer.class::cast)
+                .forEach(c -> {
+                    if (!(c.getNode() instanceof AbstractNetworkNode node)) return;
+                    final long usage = node.getEnergyUsage();
+                    if (usage <= 0) return;
+
+                    final BlockEntity be = c.getBlockEntity();
+                    final var key = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
+                    final String name = key != null ? key.getPath() : "unknown";
+
+                    aggregates.compute(name, (k, existing) -> {
+                        if (existing != null) {
+                            existing.usage()[0] += usage;
+                            existing.count()[0]++;
+                            return existing;
+                        }
+                        final BlockState state = be.getBlockState();
+                        final Item item = state.getBlock().asItem();
+                        final ItemStack icon = item != Items.AIR ? new ItemStack(item) : ItemStack.EMPTY;
+                        final String translatedName = state.getBlock().getName().getString();
+                        return new Aggregate(new long[]{usage}, new int[]{1}, icon, translatedName);
+                    });
+                });
+
+        return aggregates.entrySet().stream()
+                .map(e -> {
+                    final Aggregate a = e.getValue();
+                    return new NodeEnergyEntry(e.getKey(), a.usage()[0], a.count()[0], a.icon(), a.translatedName());
+                })
+                .toList();
     }
 
     @Override

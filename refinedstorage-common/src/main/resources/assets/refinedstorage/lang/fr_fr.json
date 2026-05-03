@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Ressources manquantes",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "L'artisanat automatique a été lancée",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Impossible de fabriquer automatiquement, des ressources manques",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Alimente le réseau de stockage en énergie. Plusieurs sont autorisés dans un seul réseau de stockage.",
   "item.refinedstorage.creative_controller.help": "Alimente le réseau de stockage avec une source d'énergie infinie. ",
   "item.refinedstorage.disk_drive.help": "Accepte des disques de stockage pour fournir de l'espace de stockage au réseau.",

@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "リソースが足りません",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "オートクラフトが開始されました",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "オートクラフトできませんでした。リソースが足りません",
+  "gui.refinedstorage.controller.total_usage": "合計: %s FE/t",
   "item.refinedstorage.controller.help": "ストレージネットワークにエネルギーを供給します。1つのストレージネットワークに複数個取り付けることができます。",
   "item.refinedstorage.creative_controller.help": "ストレージネットワークに無限のエネルギーを供給します。",
   "item.refinedstorage.disk_drive.help": "ストレージディスクを取り込むことで、ストレージネットワーク上にストレージスペースを作成します。",

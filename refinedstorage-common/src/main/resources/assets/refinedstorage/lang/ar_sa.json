@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "الموارد مفقودة",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "تم بدء الصناعة التلقائية",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "تعذرت الصناعة التلقائية، الموارد مفقودة",
+  "gui.refinedstorage.controller.total_usage": "FE/t %s :المجموع",
   "item.refinedstorage.controller.help": "يوفر شبكة التخزين بالطاقة. يسمح بالعديد في شبكة تخزين واحدة.",
   "item.refinedstorage.creative_controller.help": "يوفر شبكة التخزين مع مصدر لا نهائي للطاقة.",
   "item.refinedstorage.disk_drive.help": "يقبل أقراص التخزين لتوفير مساحة تخزين لشبكة التخزين.",

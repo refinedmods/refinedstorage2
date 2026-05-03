@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Menyediakan energi ke jaringan penyimpanan. dapat digunakan beberapa kali dalam satu jaringan penyimpanan.",
   "item.refinedstorage.creative_controller.help": "Menyediakan energi tidak terbatas ke jaringan penyimpanan.",
   "item.refinedstorage.disk_drive.help": "Menerima cakram penyimpanan untuk menyediakan ruang penyimpanan kedalam jaringan penyimpanan.",

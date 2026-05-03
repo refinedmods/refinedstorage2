@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
 
@@ -20,6 +21,8 @@ public interface InWorldNetworkNodeContainer extends NetworkNodeContainer, Conne
     BlockPos getLocalPosition();
 
     String getName();
+
+    BlockEntity getBlockEntity();
 
     interface Builder {
         Builder name(String name);

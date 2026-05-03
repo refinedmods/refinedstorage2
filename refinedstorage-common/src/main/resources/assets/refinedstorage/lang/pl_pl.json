@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Zapewnia sieć magazynowania w energie. Sieć może mieć ich kilka.",
   "item.refinedstorage.creative_controller.help": "Zapewnia sieć magazynowania w nieskończoną energię.",
   "item.refinedstorage.disk_drive.help": "Akceptuje dyski do zapewnienia przestrzeni dyskowej dla sieci magazynowania.",

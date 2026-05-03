@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Förser nätverket med energi. Kan ha flera i samma nätverk.",
   "item.refinedstorage.creative_controller.help": "Förser nätverket med obegränsad energi.",
   "item.refinedstorage.disk_drive.help": "Accepterar lagringsdiskar för att förse nätverket med lagringsutrymme.",

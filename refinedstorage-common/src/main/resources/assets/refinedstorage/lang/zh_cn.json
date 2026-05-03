@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "缺少资源",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "自动合成已开始",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "无法自动合成，缺少资源",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "为存储网络提供能量。一个存储网络中允许包含多个。",
   "item.refinedstorage.creative_controller.help": "为存储网络提供无限能源。",
   "item.refinedstorage.disk_drive.help": "接受存储磁盘，为存储网络提供存储空间。",

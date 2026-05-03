@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage.common.support.containermenu.ServerPropert
 import com.refinedmods.refinedstorage.common.support.energy.EnergyContainerMenu;
 import com.refinedmods.refinedstorage.common.support.energy.EnergyInfo;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.world.Container;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 public class ControllerContainerMenu extends AbstractBaseContainerMenu implements EnergyContainerMenu {
     private final EnergyInfo energyInfo;
     private final Predicate<Player> stillValid;
+    private final List<ControllerBlockEntity.NodeEnergyEntry> nodeUsages;
 
     public ControllerContainerMenu(final int syncId,
                                    final Inventory playerInventory,
@@ -29,6 +32,7 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
             controllerData.stored(),
             controllerData.capacity()
         );
+        this.nodeUsages = controllerData.nodeUsages();
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         this.stillValid = p -> true;
     }
@@ -43,6 +47,7 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
             controller::getActualStored,
             controller::getActualCapacity
         );
+        this.nodeUsages = controller.getNodeEnergyBreakdown();
         addPlayerInventory(playerInventory, 8, 107);
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
@@ -66,5 +71,9 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
     @Override
     public EnergyInfo getEnergyInfo() {
         return energyInfo;
+    }
+
+    public List<ControllerBlockEntity.NodeEnergyEntry> getNodeUsages() {
+        return nodeUsages;
     }
 }

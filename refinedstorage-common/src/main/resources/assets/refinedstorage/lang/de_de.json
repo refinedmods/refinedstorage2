@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Ressource fehlt",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting wurde gestartet",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Autoherstellung fehlgeschlagen, fehlende Ressourcen",
+  "gui.refinedstorage.controller.total_usage": "Gesamt: %s FE/t",
   "item.refinedstorage.controller.help": "Stellt das Speichernetzwerk mit Energie zur Verfügung. Mehrere sind in einem einzigen Speichernetzwerk erlaubt.",
   "item.refinedstorage.creative_controller.help": "Stellt dem Speichernetzwerk eine unendliche Energiequelle zur Verfügung.",
   "item.refinedstorage.disk_drive.help": "Akzeptiert Speicherzellen, um dem Speichernetz Speicherplatz zur Verfügung zu stellen.",

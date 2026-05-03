@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Resource missing",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Autocrafting was started",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Could not autocraft, missing resources",
+  "gui.refinedstorage.controller.total_usage": "I alt: %s FE/t",
   "item.refinedstorage.controller.help": "Provides the storage network with energy. Multiple are allowed in a single storage network.",
   "item.refinedstorage.creative_controller.help": "Provides the storage network with an infinite source of energy.",
   "item.refinedstorage.disk_drive.help": "Accepts storage disks to provide the storage network with storage space.",

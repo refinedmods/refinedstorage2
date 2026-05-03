@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Ресурс отсутствует",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Автокрафт начался",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Не удалось начать автокрафт, не хватает ресурсов",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Обеспечивает сеть хранения энергией. Допустимо несколько в одной сети хранения.",
   "item.refinedstorage.creative_controller.help": "Обеспечивает сеть хранения бесконечным источником энергии.",
   "item.refinedstorage.disk_drive.help": "Принимает диски хранения, чтобы предоставить хранилище для сети хранения.",

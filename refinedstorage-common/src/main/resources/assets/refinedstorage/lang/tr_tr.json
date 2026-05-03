@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Kaynak eksik",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Otomatik üretim başlatıldı",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Otomatik üretim yapılamadı, kaynaklar eksik",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Depolama ağına enerji sağlar. Tek bir depolama ağında birden fazlasına izin verilir.",
   "item.refinedstorage.creative_controller.help": "Depolama ağına sonsuz enerji sağlar.",
   "item.refinedstorage.disk_drive.help": "Depolama ağına, depolama alanı sağlamak için depolama disklerini kabul eder.",

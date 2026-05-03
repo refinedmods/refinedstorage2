@@ -298,6 +298,7 @@
   "gui.refinedstorage.exporting_indicator.resource_missing": "Recurso em falta",
   "gui.refinedstorage.exporting_indicator.autocrafting_was_started": "Fabricação-automática foi iniciada",
   "gui.refinedstorage.exporting_indicator.autocrafting_missing_resources": "Falha na Fabricação-automática, recursos em falta",
+  "gui.refinedstorage.controller.total_usage": "Total: %s FE/t",
   "item.refinedstorage.controller.help": "Fornece energia à rede de armazenamento. Múltiplos são permitidos em uma única rede de armazenamento.",
   "item.refinedstorage.creative_controller.help": "Fornece energia infinita à rede de armazenamento.",
   "item.refinedstorage.disk_drive.help": "Aceita discos de armazenamento para fornecer espaço de armazenamento à rede.",
