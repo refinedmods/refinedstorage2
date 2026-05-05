@@ -90,8 +90,17 @@ public class TextMarquee {
         if (state.isTransition(offset, overflow, tickAccumulator)) {
             state = state.nextState(offset);
             tickAccumulator = 0;
-            offset = state == State.MOVING_RIGHT ? -overflow : (state == State.MOVING_LEFT ? 0 : offset);
+            offset = getUpdatedOffset(overflow);
         }
+    }
+
+    private float getUpdatedOffset(final int overflow) {
+        if (state == State.MOVING_RIGHT) {
+            return -overflow;
+        } else if (state == State.MOVING_LEFT) {
+            return 0;
+        }
+        return offset;
     }
 
     public Component getText() {
