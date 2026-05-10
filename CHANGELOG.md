@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.6] - 2026-05-10
+
 ### Fixed
 
 -   Recoloring recipes not accounting for existing dismantled device configuration.
