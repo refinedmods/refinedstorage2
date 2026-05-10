@@ -919,14 +919,14 @@ class PatternProviderNetworkNodeTest {
             final PatternBuilder patternBuilder = pattern(PatternType.EXTERNAL).ingredient(A, 1).output(B, 1);
 
             sut.tryUpdatePattern(1, patternBuilder.build());
-            final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
+            final var sink = PatternProviderExternalPatternSinkImpl.lockAfterAccept();
             sut.setSink(sink);
-            sut.setListener(() -> sink.setLocked(false));
+            sut.setListener(sink::unlock);
 
             sut2.tryUpdatePattern(1, patternBuilder.build());
-            final PatternProviderExternalPatternSinkImpl sink2 = new PatternProviderExternalPatternSinkImpl();
+            final var sink2 = PatternProviderExternalPatternSinkImpl.lockAfterAccept();
             sut2.setSink(sink2);
-            sut2.setListener(() -> sink2.setLocked(false));
+            sut2.setListener(sink2::unlock);
 
             assertThat(autocrafting.startTask(B, 4, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
             assertThat(sut.getTasks()).hasSize(1);
@@ -947,9 +947,8 @@ class PatternProviderNetworkNodeTest {
             assertThat(sink2.getAll()).isEmpty();
 
             sut.doWork();
-            assertThat(sink.isLocked()).isFalse();
+            assertThat(sink.isLocked()).isTrue();
             assertThat(sink2.isLocked()).isFalse();
-            sink.setLocked(true);
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst()))
                 .usingRecursiveFieldByFieldElementComparator()
@@ -964,8 +963,7 @@ class PatternProviderNetworkNodeTest {
 
             sut.doWork();
             assertThat(sink.isLocked()).isTrue();
-            assertThat(sink2.isLocked()).isFalse();
-            sink2.setLocked(true);
+            assertThat(sink2.isLocked()).isTrue();
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst()))
                 .usingRecursiveFieldByFieldElementComparator()
@@ -999,9 +997,8 @@ class PatternProviderNetworkNodeTest {
 
             storage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
             sut.doWork();
-            assertThat(sink.isLocked()).isFalse();
+            assertThat(sink.isLocked()).isTrue();
             assertThat(sink2.isLocked()).isTrue();
-            sink.setLocked(true);
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst()))
                 .usingRecursiveFieldByFieldElementComparator()
@@ -1019,23 +1016,46 @@ class PatternProviderNetworkNodeTest {
 
             storage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
             sut.doWork();
-            assertThat(sink.isLocked()).isFalse();
+            assertThat(sink.isLocked()).isTrue();
             assertThat(sink2.isLocked()).isTrue();
-            // The external step is currently stranded on sink2 which is currently locked, so nothing will have happened
-            // Give it one more work cycle to do something
-            assertThat(copyInternalStorage(sut.getTasks().getFirst()))
-                .usingRecursiveFieldByFieldElementComparator()
-                .containsExactly(new ResourceAmount(A, 1));
-
-            sut.doWork();
-            assertThat(sink.isLocked()).isFalse();
-            assertThat(sink2.isLocked()).isTrue();
-            sink.setLocked(true);
             assertThat(sut.getTasks()).hasSize(1);
             assertThat(copyInternalStorage(sut.getTasks().getFirst())).isEmpty();
             assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount(A, 6),
                 new ResourceAmount(B, 2)
+            );
+            assertThat(sink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount(A, 2)
+            );
+            assertThat(sink2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount(A, 2)
+            );
+
+            storage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
+            sut.doWork();
+            assertThat(sink.isLocked()).isFalse();
+            assertThat(sink2.isLocked()).isTrue();
+            assertThat(sut.getTasks()).hasSize(1);
+            assertThat(copyInternalStorage(sut.getTasks().getFirst())).isEmpty();
+            assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A, 6),
+                new ResourceAmount(B, 3)
+            );
+            assertThat(sink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount(A, 2)
+            );
+            assertThat(sink2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount(A, 2)
+            );
+
+            storage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
+            sut.doWork();
+            assertThat(sink.isLocked()).isFalse();
+            assertThat(sink2.isLocked()).isFalse();
+            assertThat(sut.getTasks()).isEmpty();
+            assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount(A, 6),
+                new ResourceAmount(B, 4)
             );
             assertThat(sink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount(A, 2)

@@ -23,10 +23,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.requireNonNull;
 
 public class PatternProviderNetworkNode extends SimpleNetworkNode implements PatternProvider, TaskListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(PatternProviderNetworkNode.class);
@@ -39,7 +42,7 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     @Nullable
     private PatternProviderExternalPatternSink sink;
     @Nullable
-    private ExternalPatternSinkKeyProvider sinkKeyProvider;
+    private Supplier<ExternalPatternSinkKey> sinkKeyProvider;
     private StepBehavior stepBehavior = StepBehavior.DEFAULT;
     @Nullable
     private PatternProviderListener listener;
@@ -151,12 +154,12 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     }
 
     @Override
-    public void receivedExternalIteration(final Pattern pattern) {
+    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkKey sinkKey) {
         if (network == null) {
             return;
         }
         final AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
-        final PatternProvider provider = autocrafting.getProviderByPattern(pattern);
+        final PatternProvider provider = autocrafting.getProviderBySinkKey(sinkKey);
         if (provider == null) {
             return;
         }
@@ -164,9 +167,9 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Pattern pattern,
-                                             final Collection<ResourceAmount> resources,
-                                             final Action action) {
+    public ExternalPatternSink.Result insertAll(final Pattern pattern,
+                                                final Collection<ResourceAmount> resources,
+                                                final Action action) {
         if (sink == null) {
             return ExternalPatternSink.Result.SKIPPED;
         }
@@ -186,10 +189,9 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
         tasks.step(network, stepBehavior, this);
     }
 
-    @Nullable
     @Override
     public ExternalPatternSinkKey getKey() {
-        return sinkKeyProvider != null ? sinkKeyProvider.getKey() : null;
+        return requireNonNull(sinkKeyProvider).get();
     }
 
     public int getPriority() {
@@ -209,8 +211,8 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
         this.stepBehavior = stepBehavior;
     }
 
-    public void setSinkKeyProvider(final ExternalPatternSinkKeyProvider provider) {
-        this.sinkKeyProvider = provider;
+    public void setSinkKeyProvider(final Supplier<ExternalPatternSinkKey> sinkKeyProvider) {
+        this.sinkKeyProvider = sinkKeyProvider;
     }
 
     public void setListener(final PatternProviderListener listener) {

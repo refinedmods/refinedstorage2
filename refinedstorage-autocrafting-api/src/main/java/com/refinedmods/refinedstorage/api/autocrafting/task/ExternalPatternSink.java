@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import java.util.Collection;
 
 import org.apiguardian.api.API;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Gives the ability to a {@link Task} to dump inputs of an external {@link Pattern} into the external target.
@@ -15,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.4.12")
 public interface ExternalPatternSink {
     /**
-     * Accepts the given resources into the external target.
+     * Inserts the given resources into the external target.
      * All resources MUST be able to be inserted for this method to return {@link Result#ACCEPTED},
      * otherwise, it must return {@link Result#REJECTED}.
      * If the sink is locked, it must return {@link Result#LOCKED}.
@@ -26,14 +25,27 @@ public interface ExternalPatternSink {
      * @param action    the action
      * @return the result
      */
-    Result accept(Pattern pattern, Collection<ResourceAmount> resources, Action action);
+    Result insertAll(Pattern pattern, Collection<ResourceAmount> resources, Action action);
 
     /**
+     * Returns a unique key for this sink. This is used to unlock sinks that became locked after inserting an
+     * external iteration.
+     * The object identity of {@link ExternalPatternSinkKey} must remain stable across the lifecycle of the
+     * {@link ExternalPatternSink}.
+     *
      * @return the key for this sink
      */
-    @Nullable
-    default ExternalPatternSinkKey getKey() {
-        return null;
+    ExternalPatternSinkKey getKey();
+
+    /**
+     * If this sink acts as a proxy for another sink, the key of the other sink should be returned here.
+     * This is used so that the correct sink can be notified (and potentially be unlocked)
+     * when an external iteration is received.
+     *
+     * @return the key of the sink this sink is proxying for, or the same key as {@link #getKey()} if it is not a proxy
+     */
+    default ExternalPatternSinkKey unwrapKey(final Pattern pattern) {
+        return getKey();
     }
 
     enum Result {

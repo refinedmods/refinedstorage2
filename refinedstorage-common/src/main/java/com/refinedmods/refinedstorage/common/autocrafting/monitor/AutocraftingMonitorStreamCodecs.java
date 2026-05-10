@@ -5,11 +5,12 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkK
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.InWorldExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
@@ -68,7 +69,8 @@ public final class AutocraftingMonitorStreamCodecs {
         @Nullable
         private ExternalPatternSinkKey decodeSinkKey(final RegistryFriendlyByteBuf buf) {
             if (buf.readBoolean()) {
-                return new InWorldExternalPatternSinkKey(buf.readUtf(), ItemStack.STREAM_CODEC.decode(buf));
+                return new AutocrafterExternalPatternSinkKey(buf.readUUID(), buf.readUtf(),
+                    ItemStack.STREAM_CODEC.decode(buf));
             }
             return null;
         }
@@ -86,8 +88,10 @@ public final class AutocraftingMonitorStreamCodecs {
         }
 
         private void encodeSinkKey(final RegistryFriendlyByteBuf buf, @Nullable final ExternalPatternSinkKey sinkKey) {
-            if (sinkKey instanceof InWorldExternalPatternSinkKey(String name, ItemStack stack)) {
+            if (sinkKey instanceof AutocrafterExternalPatternSinkKey(UUID id, String name, ItemStack stack)
+                && name != null && stack != null) {
                 buf.writeBoolean(true);
+                buf.writeUUID(id);
                 buf.writeUtf(name);
                 ItemStack.STREAM_CODEC.encode(buf, stack);
             } else {

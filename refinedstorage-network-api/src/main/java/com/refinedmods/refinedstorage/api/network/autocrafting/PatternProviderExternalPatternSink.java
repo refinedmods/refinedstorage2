@@ -13,8 +13,6 @@ import org.apiguardian.api.API;
 public interface PatternProviderExternalPatternSink {
     ExternalPatternSink.Result accept(Collection<ResourceAmount> resources, Action action);
 
-    // TODO: remove. No longer relevant with neoforge's mixed tx inserts? Reinvestigate GH-952
-
     /**
      * Used to determine the ordering of sinks when inserting multiple resource types.
      *

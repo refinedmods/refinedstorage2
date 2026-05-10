@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.storage.AccessModeSettings;
@@ -23,12 +24,15 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerI
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -51,6 +55,7 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     private static final String TAG_ACCESS_MODE = "am";
     private static final String TAG_INSERT_PRIORITY = "pri";
     private static final String TAG_EXTRACT_PRIORITY = "epri";
+    private static final String TAG_ID = "auid";
 
     private final FilterWithFuzzyMode filter;
     private final RelayOutputNetworkNode outputNode;
@@ -60,6 +65,8 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int insertPriority = 0;
     private int extractPriority = 0;
+    @Nullable
+    private AutocrafterExternalPatternSinkKey sinkKey;
 
     public RelayBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getRelay(), pos, state, new RelayInputNetworkNode(
@@ -68,6 +75,7 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
         this.outputNode = new RelayOutputNetworkNode(
             Platform.INSTANCE.getConfig().getRelay().getOutputNetworkEnergyUsage()
         );
+        outputNode.setSinkKeyProvider(() -> requireNonNull(sinkKey));
         this.mainNetworkNode.setOutputNode(outputNode);
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
@@ -239,6 +247,27 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new RelayContainerMenu(syncId, player, this, filter.getFilterContainer());
+    }
+
+    @Override
+    protected void initialize(final ServerLevel level, final Direction direction) {
+        super.initialize(level, direction);
+        this.sinkKey = AutocrafterExternalPatternSinkKey.create(sinkKey != null ? sinkKey.id() : UUID.randomUUID());
+    }
+
+    @Override
+    public void saveAdditional(final ValueOutput output) {
+        super.saveAdditional(output);
+        if (sinkKey != null) {
+            output.store(TAG_ID, UUIDUtil.CODEC, sinkKey.id());
+        }
+    }
+
+    @Override
+    public void loadAdditional(final ValueInput input) {
+        final UUID id = input.read(TAG_ID, UUIDUtil.CODEC).orElseGet(UUID::randomUUID);
+        sinkKey = AutocrafterExternalPatternSinkKey.create(id);
+        super.loadAdditional(input);
     }
 
     @Override

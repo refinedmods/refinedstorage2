@@ -12,7 +12,16 @@ import java.util.Collection;
 
 public class PatternProviderExternalPatternSinkImpl implements PatternProviderExternalPatternSink {
     private final Storage storage = new StorageImpl();
+    private final boolean lockAfterAccept;
     private boolean locked;
+
+    public PatternProviderExternalPatternSinkImpl() {
+        this(false);
+    }
+
+    private PatternProviderExternalPatternSinkImpl(final boolean lockAfterAccept) {
+        this.lockAfterAccept = lockAfterAccept;
+    }
 
     @Override
     public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
@@ -22,12 +31,15 @@ public class PatternProviderExternalPatternSinkImpl implements PatternProviderEx
         if (action == Action.EXECUTE) {
             resources.forEach(resource ->
                 storage.insert(resource.resource(), resource.amount(), Action.EXECUTE, Actor.EMPTY));
+            if (lockAfterAccept) {
+                locked = true;
+            }
         }
         return ExternalPatternSink.Result.ACCEPTED;
     }
 
-    public void setLocked(final boolean locked) {
-        this.locked = locked;
+    public void unlock() {
+        locked = false;
     }
 
     public boolean isLocked() {
@@ -36,5 +48,9 @@ public class PatternProviderExternalPatternSinkImpl implements PatternProviderEx
 
     public Collection<ResourceAmount> getAll() {
         return storage.getAll();
+    }
+
+    public static PatternProviderExternalPatternSinkImpl lockAfterAccept() {
+        return new PatternProviderExternalPatternSinkImpl(true);
     }
 }

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -29,9 +30,12 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 public class RelayOutputNetworkNode extends AbstractNetworkNode
     implements EnergyProvider, SecurityDecisionProvider, StorageProvider, PatternProvider {
@@ -43,6 +47,8 @@ public class RelayOutputNetworkNode extends AbstractNetworkNode
     private EnergyNetworkComponent energyDelegate;
     @Nullable
     private SecurityNetworkComponent securityDelegate;
+    @Nullable
+    private Supplier<ExternalPatternSinkKey> sinkKeyProvider;
 
     public RelayOutputNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
@@ -208,8 +214,21 @@ public class RelayOutputNetworkNode extends AbstractNetworkNode
     }
 
     @Override
-    public Result accept(final Pattern pattern, final Collection<ResourceAmount> resources, final Action action) {
-        return patternProvider.accept(pattern, resources, action);
+    public Result insertAll(final Pattern pattern, final Collection<ResourceAmount> resources, final Action action) {
+        return patternProvider.insertAll(pattern, resources, action);
+    }
+
+    @Override
+    public ExternalPatternSinkKey getKey() {
+        return patternProvider.getKey();
+    }
+
+    Supplier<ExternalPatternSinkKey> getSinkKeyProvider() {
+        return requireNonNull(sinkKeyProvider);
+    }
+
+    public void setSinkKeyProvider(final Supplier<ExternalPatternSinkKey> sinkKeyProvider) {
+        this.sinkKeyProvider = sinkKeyProvider;
     }
 
     @Override
