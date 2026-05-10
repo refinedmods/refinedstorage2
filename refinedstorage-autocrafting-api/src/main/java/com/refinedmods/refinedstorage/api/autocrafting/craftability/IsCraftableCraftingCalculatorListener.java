@@ -43,36 +43,25 @@ public class IsCraftableCraftingCalculatorListener implements CraftingCalculator
                                              final ResourceKey resource,
                                              final CancellationToken cancellationToken) {
         try {
-            LOGGER.debug("Finding max amount for {} starting from 1", resource);
             long low = 1;
             long high = 1;
-            int calculationCount = 1;
             while (isCraftable(calculator, resource, high, cancellationToken)) {
                 low = high;
                 high = high * 2;
-                LOGGER.debug("Finding low and high for the craftable amount, currently between {} and {}", low, high);
-                calculationCount++;
             }
             if (low == high) {
                 return 0;
             }
-            LOGGER.debug("Our craftable amount is between {} and {}", low, high);
             while (low < high) {
                 final long amount = low + (high - low + 1) / 2;
-                LOGGER.debug("Trying {} (between {} and {})", amount, low, high);
-                calculationCount++;
                 if (isCraftable(calculator, resource, amount, cancellationToken)) {
-                    LOGGER.debug("{} was craftable, increasing our low amount", amount);
                     low = amount;
                 } else {
-                    LOGGER.debug("{} is not craftable, decreasing our high amount", amount);
                     high = amount - 1;
                 }
             }
-            LOGGER.debug("Found the maximum amount of {} in {} tries", low, calculationCount);
             return low;
         } catch (final CalculationException e) {
-            LOGGER.debug("Error while calculating max amount for {}", resource, e);
             return 0;
         }
     }

@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafters"
-    },
-    {
-      "tag": "c:dyes/yellow"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:yellow_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/yellow"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:autocrafters"
+  },
+  "result": "refinedstorage:yellow_autocrafter"
 }

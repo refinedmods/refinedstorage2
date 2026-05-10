@@ -58,25 +58,26 @@ public class TransferManager {
 
     private boolean transfer(final Slot slot, final List<TransferDestination> destinations) {
         final ItemStack initial = slot.getItem().copy();
-        final ItemStack remainder = doTransfer(initial, destinations);
+        final ItemStack remainder = transfer(initial, destinations);
         slot.set(remainder);
         slot.setChanged();
         return initial.getCount() != remainder.getCount();
     }
 
-    private ItemStack doTransfer(final ItemStack initial, final List<TransferDestination> destinations) {
-        ItemStack remainder = initial;
+    private ItemStack transfer(final ItemStack stack, final List<TransferDestination> destinations) {
         for (final TransferDestination destination : destinations) {
-            final ItemStack destinationRemainder = destination.transfer(remainder);
-            if (destinationRemainder == null) {
-                break;
+            final ItemStack remainder = destination.transfer(stack);
+            final boolean mustStop = remainder == null;
+            if (mustStop) {
+                return stack;
             }
-            remainder = destinationRemainder;
-            if (remainder.isEmpty()) {
-                return ItemStack.EMPTY;
+            final boolean didNotTransferAnything = ItemStack.matches(stack, remainder);
+            if (didNotTransferAnything) {
+                continue;
             }
+            return remainder;
         }
-        return remainder;
+        return stack;
     }
 
     public void clear() {

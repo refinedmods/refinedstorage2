@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:disk_interfaces"
-    },
-    {
-      "tag": "c:dyes/lime"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:lime_disk_interface"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/lime"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:disk_interfaces"
+  },
+  "result": "refinedstorage:lime_disk_interface"
 }

@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:crafting_grids"
-    },
-    {
-      "tag": "c:dyes/purple"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:purple_crafting_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/purple"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:crafting_grids"
+  },
+  "result": "refinedstorage:purple_crafting_grid"
 }

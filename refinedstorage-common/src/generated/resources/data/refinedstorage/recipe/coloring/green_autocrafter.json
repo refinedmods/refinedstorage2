@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:autocrafters"
-    },
-    {
-      "tag": "c:dyes/green"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:green_autocrafter"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/green"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:autocrafters"
+  },
+  "result": "refinedstorage:green_autocrafter"
 }

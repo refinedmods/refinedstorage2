@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:detectors"
-    },
-    {
-      "tag": "c:dyes/magenta"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:magenta_detector"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/magenta"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:detectors"
+  },
+  "result": "refinedstorage:magenta_detector"
 }

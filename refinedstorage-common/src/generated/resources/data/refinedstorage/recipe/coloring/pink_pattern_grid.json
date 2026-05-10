@@ -1,16 +1,10 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "refinedstorage:pattern_grids"
-    },
-    {
-      "tag": "c:dyes/pink"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "refinedstorage:pink_pattern_grid"
-  }
+  "type": "refinedstorage:recoloring",
+  "dye": {
+    "tag": "c:dyes/pink"
+  },
+  "ingredient": {
+    "tag": "refinedstorage:pattern_grids"
+  },
+  "result": "refinedstorage:pink_pattern_grid"
 }

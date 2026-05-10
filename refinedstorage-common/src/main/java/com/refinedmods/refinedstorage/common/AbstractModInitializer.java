@@ -56,6 +56,7 @@ import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.content.LootFunctions;
 import com.refinedmods.refinedstorage.common.content.MenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Menus;
+import com.refinedmods.refinedstorage.common.content.RecipeSerializers;
 import com.refinedmods.refinedstorage.common.content.RegistryCallback;
 import com.refinedmods.refinedstorage.common.content.Sounds;
 import com.refinedmods.refinedstorage.common.controller.ControllerBlockEntity;
@@ -134,6 +135,7 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
+import com.refinedmods.refinedstorage.common.support.RecoloringRecipeSerializer;
 import com.refinedmods.refinedstorage.common.support.SimpleBlock;
 import com.refinedmods.refinedstorage.common.support.SimpleItem;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
@@ -915,6 +917,9 @@ public abstract class AbstractModInitializer {
                     FluidStorageVariant.values(), to, Blocks.INSTANCE::getFluidStorageBlock
                 )
             )
+        );
+        RecipeSerializers.INSTANCE.setRecoloring(
+            callback.register(createIdentifier("recoloring"), RecoloringRecipeSerializer::new)
         );
     }
 
