@@ -45,19 +45,17 @@ class ExternalTaskPattern extends AbstractTaskPattern {
     }
 
     ExternalTaskPattern(final TaskSnapshot.PatternSnapshot snapshot) {
-        super(snapshot.pattern(), new TaskPlan.PatternPlan(
-            snapshot.root(),
-            requireNonNull(snapshot.externalPattern()).originalIterationsToSendToSink(),
-            snapshot.ingredients()
-        ));
-        this.expectedOutputs = snapshot.externalPattern().copyExpectedOutputs();
-        this.simulatedIterationInputs = snapshot.externalPattern().simulatedIterationInputs();
-        this.originalIterationsToSendToSink = snapshot.externalPattern().originalIterationsToSendToSink();
-        this.iterationsToSendToSink = snapshot.externalPattern().iterationsToSendToSink();
-        this.iterationsReceived = snapshot.externalPattern().iterationsReceived();
-        this.interceptedAnythingSinceLastStep = snapshot.externalPattern().interceptedAnythingSinceLastStep();
-        this.lastSinkResult = snapshot.externalPattern().lastSinkResult();
-        this.lastSinkResultKey = snapshot.externalPattern().lastSinkResultKey();
+        super(snapshot.pattern(), new TaskPlan.PatternPlan(snapshot.root(),
+            requireNonNull(snapshot.externalPattern()).originalIterationsToSendToSink(), snapshot.ingredients()));
+        final TaskSnapshot.ExternalPatternSnapshot externalPattern = snapshot.externalPattern();
+        this.expectedOutputs = externalPattern.copyExpectedOutputs();
+        this.simulatedIterationInputs = externalPattern.simulatedIterationInputs();
+        this.originalIterationsToSendToSink = externalPattern.originalIterationsToSendToSink();
+        this.iterationsToSendToSink = externalPattern.iterationsToSendToSink();
+        this.iterationsReceived = externalPattern.iterationsReceived();
+        this.interceptedAnythingSinceLastStep = externalPattern.interceptedAnythingSinceLastStep();
+        this.lastSinkResult = externalPattern.lastSinkResult();
+        this.lastSinkResultKey = externalPattern.lastSinkResultKey();
     }
 
     @Override

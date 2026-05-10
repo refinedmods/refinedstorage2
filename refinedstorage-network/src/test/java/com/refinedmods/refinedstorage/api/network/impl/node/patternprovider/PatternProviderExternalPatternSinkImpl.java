@@ -12,14 +12,26 @@ import java.util.Collection;
 
 public class PatternProviderExternalPatternSinkImpl implements PatternProviderExternalPatternSink {
     private final Storage storage = new StorageImpl();
+    private boolean locked;
 
     @Override
     public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+        if (locked) {
+            return ExternalPatternSink.Result.LOCKED;
+        }
         if (action == Action.EXECUTE) {
             resources.forEach(resource ->
                 storage.insert(resource.resource(), resource.amount(), Action.EXECUTE, Actor.EMPTY));
         }
         return ExternalPatternSink.Result.ACCEPTED;
+    }
+
+    public void setLocked(final boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isLocked() {
+        return locked;
     }
 
     public Collection<ResourceAmount> getAll() {
