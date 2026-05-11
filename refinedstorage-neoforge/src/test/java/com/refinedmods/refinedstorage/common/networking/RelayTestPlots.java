@@ -25,6 +25,8 @@ final class RelayTestPlots {
         final BlockPos relayPos = ZERO.above().above().above();
         helper.setBlock(relayPos, MOD_BLOCKS.getRelay().getDefault().rotated(Direction.UP));
 
+        helper.setBlock(relayPos.below().west(), MOD_BLOCKS.getAutocrafter().getDefault().rotated(Direction.UP));
+
         final BlockPos subnetworkPos = relayPos.above();
         helper.setBlock(subnetworkPos, MOD_BLOCKS.getGrid().getDefault());
 

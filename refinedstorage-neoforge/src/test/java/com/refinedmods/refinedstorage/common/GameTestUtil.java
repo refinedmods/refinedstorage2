@@ -443,7 +443,21 @@ public final class GameTestUtil {
                                                  final BlockPos pos,
                                                  final ResourceAmount resource) {
         return networkIsAvailable(helper, pos, network -> network.getComponent(AutocraftingNetworkComponent.class)
-            .startTask(resource.resource(), resource.amount(), Actor.EMPTY, false, CancellationToken.NONE));
+            .startTask(resource.resource(), resource.amount(), Actor.EMPTY, false, CancellationToken.NONE)
+            .orElseThrow(() -> helper.assertionException("Couldn't find/start autocrafting task requesting "
+                + resource.amount() + " of " + resource.resource())));
+    }
+
+    public static Runnable hasAutocraftingPattern(final GameTestHelper helper,
+                                                  final BlockPos pos,
+                                                  final ResourceKey resource) {
+        return networkIsAvailable(helper, pos, network -> {
+            final boolean hasPattern = !network.getComponent(AutocraftingNetworkComponent.class)
+                .getPatternsByOutput(resource)
+                .isEmpty();
+
+            helper.assertTrue(hasPattern, "Expected autocrafting pattern for " + resource);
+        });
     }
 
     public static void tickFurnace(final GameTestHelper helper,
@@ -485,8 +499,8 @@ public final class GameTestUtil {
     public static CraftingInput.Positioned createCraftingMatrix(final List<Item> items,
                                                                 final List<Integer> itemIndices) {
         final List<ItemStack> craftingMatrix = new ArrayList<>(Collections.nCopies(9, AIR.getDefaultInstance()));
-        for (final Integer index : itemIndices) {
-            craftingMatrix.set(index, items.get(index).getDefaultInstance());
+        for (int i = 0; i < itemIndices.size(); ++i) {
+            craftingMatrix.set(itemIndices.get(i), items.get(i).getDefaultInstance());
         }
         return CraftingInput.ofPositioned(3, 3, craftingMatrix);
     }

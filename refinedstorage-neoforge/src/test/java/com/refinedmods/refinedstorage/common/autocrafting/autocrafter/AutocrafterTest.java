@@ -23,7 +23,6 @@ import static com.refinedmods.refinedstorage.common.autocrafting.autocrafter.Aut
 import static com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterTestPlots.createSmithingTablePattern;
 import static com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterTestPlots.createStoneCutterPattern;
 import static com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterTestPlots.preparePlot;
-import static net.minecraft.world.item.Items.AIR;
 import static net.minecraft.world.item.Items.COAL;
 import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.IRON_INGOT;
@@ -176,11 +175,8 @@ public final class AutocrafterTest {
                 )),
                 List.of(new ResourceAmount(asResource(IRON_INGOT), 1))));
             autocrafter.getPatternContainer().setItem(1,
-                createCraftingPattern(List.of(
-                    IRON_INGOT, IRON_INGOT, IRON_INGOT,
-                    AIR, STICK, AIR,
-                    AIR, STICK, AIR
-                ), List.of(0, 1, 2, 4, 7)));
+                createCraftingPattern(List.of(IRON_INGOT, IRON_INGOT, IRON_INGOT, STICK, STICK),
+                    List.of(0, 1, 2, 4, 7)));
 
             // Assert
             sequence
