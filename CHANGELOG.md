@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fuzzy crafting recipes in patterns causing a wrong expansion.
+
 ## [3.0.0-beta.8] - 2026-05-03
 
 ### Fixed

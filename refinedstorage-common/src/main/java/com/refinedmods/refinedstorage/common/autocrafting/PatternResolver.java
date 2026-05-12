@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -91,15 +93,12 @@ public class PatternResolver {
     @SuppressWarnings("deprecation")
     private List<ResourceKey> getFuzzyInput(final CraftingRecipe recipe, final CraftingPatternState state,
                                             final int index, final ItemStack input) {
-        final int width = state.input().input().width();
-        final List<net.minecraft.world.item.crafting.Ingredient> ingredients = recipe.placementInfo()
-            .ingredients();
-        final boolean mirror = isMirror(ingredients, state.input().input(), width);
-        final int col = index % width;
-        final int row = index / width;
-        final int ingredientIndex = mirror
-            ? (width - 1 - col) + row * width
-            : index;
+        final PlacementInfo placementInfo = recipe.placementInfo();
+        final List<net.minecraft.world.item.crafting.Ingredient> ingredients = placementInfo.ingredients();
+        final IntList slotsToIngredientIndex = placementInfo.slotsToIngredientIndex();
+        final int ingredientIndex = index >= 0 && index < slotsToIngredientIndex.size()
+            ? slotsToIngredientIndex.getInt(index)
+            : -1;
         if (ingredientIndex >= 0 && ingredientIndex < ingredients.size()) {
             return ingredients.get(ingredientIndex).items()
                 .map(Holder::value)
@@ -108,28 +107,6 @@ public class PatternResolver {
                 .toList();
         }
         return List.of(ItemResource.ofItemStack(input));
-    }
-
-    private boolean isMirror(final List<net.minecraft.world.item.crafting.Ingredient> ingredients,
-                             final CraftingInput craftingInput,
-                             final int width) {
-        for (int i = 0; i < craftingInput.size(); i++) {
-            final ItemStack input = craftingInput.getItem(i);
-            if (input.isEmpty()) {
-                continue;
-            }
-            final int row = i / width;
-            final int col = i % width;
-            final int idx = row * width + col;
-            if (idx < ingredients.size() && ingredients.get(idx).test(input)) {
-                return false;
-            }
-            final int mirroredIdx = row * width + (width - 1 - col);
-            if (mirroredIdx < ingredients.size() && ingredients.get(mirroredIdx).test(input)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private ResourceAmount getOutput(final CraftingRecipe recipe, final CraftingInput craftingInput) {
