@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-05-14
+
+### Fixed
+
+-   Fuzzy crafting recipes in patterns causing a wrong expansion.
+
 ## [3.0.0-beta.8] - 2026-05-03
 
 ### Fixed
@@ -76,6 +82,47 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Correct the torch model for detectors.
+
+## [2.0.6] - 2026-05-10
+
+### Fixed
+
+-   Recoloring recipes not accounting for existing dismantled device configuration.
+-   Shift clicking upgrades into a network device also adding the upgrade to the filters.
+
+## [2.0.5] - 2026-04-30
+
+### Fixed
+
+-   Locking out of the Autocrafting Monitor while certain processing tasks are running.
+
+## [2.0.4] - 2026-04-21
+
+### Fixed
+
+-   Creative variants of energy items not being active.
+
+## [2.0.3] - 2026-04-18
+
+### Added
+
+-   You can now configure Refined Storage to not require energy. Controllers are not necessary in this case. Creative variants of items will be hidden and items will function without energy.
+
+### Fixed
+
+-   For keybindings on Mac, CMD is now always used instead of CTRL.
+-   Grid scrolling between grid and inventory always going to inventory.
+-   The mouse cursor can now go out of the scrollbar bounds while scrolling.
+-   You can no longer change the energy capacity to be zero.
+-   Fixed stonecutter patterns not respecting output larger than one.
+-   Fixed title marquee effect when hovering being FPS dependant.
+-   Fixed importing too many fluids at once with a Stack Upgrade and an Importer on NeoForge.
+
+## [2.0.2] - 2026-04-17
+
+### Fixed
+
+-   Fixed Autocrafter renaming not working.
 
 ## [2.0.1] - 2026-02-11
 
@@ -1176,7 +1223,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...HEAD
+
+[3.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...v3.0.0
 
 [3.0.0-beta.8]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.7...v3.0.0-beta.8
 
@@ -1193,6 +1242,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [3.0.0-beta.2]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.1...v3.0.0-beta.2
 
 [3.0.0-beta.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...v3.0.0-beta.1
+
+[2.0.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.5...v2.0.6
+
+[2.0.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.4...v2.0.5
+
+[2.0.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.3...v2.0.4
+
+[2.0.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.2...v2.0.3
+
+[2.0.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...v2.0.2
 
 [2.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0...v2.0.1
 

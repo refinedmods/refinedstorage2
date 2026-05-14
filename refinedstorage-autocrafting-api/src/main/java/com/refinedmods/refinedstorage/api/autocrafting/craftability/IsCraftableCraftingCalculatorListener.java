@@ -9,14 +9,9 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalcu
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CraftingCalculatorListener;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static java.util.Objects.requireNonNull;
 
 public class IsCraftableCraftingCalculatorListener implements CraftingCalculatorListener<Boolean> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IsCraftableCraftingCalculatorListener.class);
-
     private boolean missingResources;
 
     private IsCraftableCraftingCalculatorListener() {
