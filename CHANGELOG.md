@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-05-14
+
 ### Fixed
 
 -   Fuzzy crafting recipes in patterns causing a wrong expansion.
@@ -1221,7 +1223,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...HEAD
+
+[3.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...v3.0.0
 
 [3.0.0-beta.8]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.7...v3.0.0-beta.8
 
