@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Grid tooltip search not taking into account player sensitive tooltip information.
+-   The slot limit for an item in the processing pattern configuration being calculated in a stack insensitive way.
 
 ## [2.0.6] - 2026-05-10
 

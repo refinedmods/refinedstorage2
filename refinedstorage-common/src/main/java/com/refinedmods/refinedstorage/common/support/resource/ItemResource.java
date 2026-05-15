@@ -58,7 +58,7 @@ public final class ItemResource
 
     @Override
     public long getProcessingPatternLimit() {
-        return item.getDefaultMaxStackSize();
+        return toItemStack().getMaxStackSize();
     }
 
     @Override
