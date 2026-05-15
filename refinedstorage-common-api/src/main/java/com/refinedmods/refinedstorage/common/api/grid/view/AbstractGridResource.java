@@ -77,7 +77,8 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
     public String toString() {
         return "AbstractGridResource{"
             + "resource=" + resource
-            + ", names='" + searchableNames + '\''
+            + ", sortName='" + sortName + '\''
+            + ", searchableNames=" + searchableNames
             + ", attributes=" + attributes
             + '}';
     }
