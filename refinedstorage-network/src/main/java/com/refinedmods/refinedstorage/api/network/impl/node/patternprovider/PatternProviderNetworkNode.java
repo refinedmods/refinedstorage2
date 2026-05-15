@@ -173,7 +173,7 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
         if (sink == null) {
             return ExternalPatternSink.Result.SKIPPED;
         }
-        return sink.accept(resources, action);
+        return sink.insertAll(resources, action);
     }
 
     public List<Task> getTasks() {

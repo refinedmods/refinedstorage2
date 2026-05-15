@@ -384,7 +384,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
         this.sinkKey = createSinkKey(sinkKey != null ? sinkKey.id() : UUID.randomUUID());
-        this.sink = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
+        this.sink = Platform.INSTANCE.getPatternProviderExternalPatternSinkFactory()
             .create(level, sourcePosition, incomingDirection);
     }
 
@@ -549,10 +549,10 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+    public ExternalPatternSink.Result insertAll(final Collection<ResourceAmount> resources, final Action action) {
         final AutocrafterBlockEntity root = getChainingRoot();
         if (root != this) {
-            return root.accept(resources, action);
+            return root.insertAll(resources, action);
         }
         if (sink == null) {
             return ExternalPatternSink.Result.SKIPPED;
@@ -560,7 +560,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         if (locked) {
             return ExternalPatternSink.Result.LOCKED;
         }
-        final ExternalPatternSink.Result result = sink.accept(resources, action);
+        final ExternalPatternSink.Result result = sink.insertAll(resources, action);
         updateLockedAfterAccept(action, result);
         return result;
     }

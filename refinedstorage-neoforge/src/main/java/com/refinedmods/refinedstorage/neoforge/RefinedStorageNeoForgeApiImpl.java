@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.neoforge;
 
-import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatternSinkStrategyFactory;
@@ -19,15 +20,6 @@ public class RefinedStorageNeoForgeApiImpl implements RefinedStorageNeoForgeApi 
         NetworkNodeContainerProvider.class,
         Direction.class
     );
-    private final ResourceHandlerPatternProviderExternalPatternSinkFactory
-        resourceHandlerPatternProviderExternalPatternSinkFactory =
-        new ResourceHandlerPatternProviderExternalPatternSinkFactory();
-
-    public RefinedStorageNeoForgeApiImpl(final RefinedStorageApi refinedStorageApi) {
-        refinedStorageApi.addPatternProviderExternalPatternSinkFactory(
-            resourceHandlerPatternProviderExternalPatternSinkFactory
-        );
-    }
 
     @Override
     public BlockCapability<NetworkNodeContainerProvider,
@@ -37,7 +29,10 @@ public class RefinedStorageNeoForgeApiImpl implements RefinedStorageNeoForgeApi 
 
     @Override
     public void addResourceHandlerExternalPatternSinkStrategyFactory(
-        final ResourceHandlerExternalPatternSinkStrategyFactory factory) {
-        resourceHandlerPatternProviderExternalPatternSinkFactory.addFactory(factory);
+        final Class<? extends ResourceKey> resourceType,
+        final ResourceHandlerExternalPatternSinkStrategyFactory factory
+    ) {
+        ((ResourceHandlerPatternProviderExternalPatternSinkFactory)
+            Platform.INSTANCE.getPatternProviderExternalPatternSinkFactory()).addFactory(resourceType, factory);
     }
 }

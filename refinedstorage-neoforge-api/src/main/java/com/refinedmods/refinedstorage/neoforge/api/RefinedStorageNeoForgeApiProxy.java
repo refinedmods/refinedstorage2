@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.neoforge.api;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
 import net.minecraft.core.Direction;
@@ -25,8 +26,10 @@ public class RefinedStorageNeoForgeApiProxy implements RefinedStorageNeoForgeApi
 
     @Override
     public void addResourceHandlerExternalPatternSinkStrategyFactory(
-        final ResourceHandlerExternalPatternSinkStrategyFactory factory) {
-        ensureLoaded().addResourceHandlerExternalPatternSinkStrategyFactory(factory);
+        final Class<? extends ResourceKey> resourceType,
+        final ResourceHandlerExternalPatternSinkStrategyFactory factory
+    ) {
+        ensureLoaded().addResourceHandlerExternalPatternSinkStrategyFactory(resourceType, factory);
     }
 
     private RefinedStorageNeoForgeApi ensureLoaded() {

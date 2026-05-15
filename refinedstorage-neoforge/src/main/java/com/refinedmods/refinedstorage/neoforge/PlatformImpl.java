@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
+import com.refinedmods.refinedstorage.neoforge.autocrafting.ResourceHandlerPatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.MenuOpenerImpl;
@@ -92,6 +94,8 @@ public final class PlatformImpl extends AbstractPlatform {
     private final ConfigImpl config = new ConfigImpl();
     @Nullable
     private RecipeProvider clientRecipeProvider;
+    private final PatternProviderExternalPatternSinkFactory patternProviderExternalPatternSinkFactory =
+        new ResourceHandlerPatternProviderExternalPatternSinkFactory();
 
     public PlatformImpl(final ModContainer modContainer) {
         super(new MenuOpenerImpl(), new FluidStackFluidRenderer(), ItemGridInsertionStrategy::new);
@@ -415,5 +419,10 @@ public final class PlatformImpl extends AbstractPlatform {
         containerMenu.slots.clear();
         containerMenu.lastSlots.clear();
         containerMenu.remoteSlots.clear();
+    }
+
+    @Override
+    public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
+        return patternProviderExternalPatternSinkFactory;
     }
 }

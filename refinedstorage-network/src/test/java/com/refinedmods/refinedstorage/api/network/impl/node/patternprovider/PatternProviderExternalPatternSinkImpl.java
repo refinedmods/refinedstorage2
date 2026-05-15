@@ -24,7 +24,7 @@ public class PatternProviderExternalPatternSinkImpl implements PatternProviderEx
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+    public ExternalPatternSink.Result insertAll(final Collection<ResourceAmount> resources, final Action action) {
         if (locked) {
             return ExternalPatternSink.Result.LOCKED;
         }

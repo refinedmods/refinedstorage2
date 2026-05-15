@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Locking mode always locking/unlocking the first autocrafter when load balancing.
+-   Processing patterns not inserting interleaved ingredient types in the correct order.
 
 ## [3.0.0] - 2026-05-14
 

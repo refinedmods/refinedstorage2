@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatternSinkStrategy;
 import com.refinedmods.refinedstorage.neoforge.storage.ResourceHandlerProvider;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -27,26 +26,19 @@ class ResourceHandlerExternalPatternSinkStrategyImpl<T extends Resource>
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final net.neoforged.neoforge.transfer.transaction.Transaction tx,
-                                             final Collection<ResourceAmount> resources) {
-        boolean anyResourceWasApplicable = false;
-        for (final ResourceAmount resourceAmount : resources) {
-            final T platformResource = toPlatformMapper.apply(resourceAmount.resource()).orElse(null);
-            if (platformResource == null) {
-                continue;
-            }
-            anyResourceWasApplicable = true;
-            final ResourceHandler<T> handler = provider.resolve().orElse(null);
-            if (handler == null) {
-                return ExternalPatternSink.Result.SKIPPED;
-            }
-            if (handler.insert(platformResource, (int) resourceAmount.amount(), tx) != resourceAmount.amount()) {
-                return ExternalPatternSink.Result.REJECTED;
-            }
+    public ExternalPatternSink.Result insert(final net.neoforged.neoforge.transfer.transaction.Transaction tx,
+                                             final ResourceAmount resourceAmount) {
+        final T platformResource = toPlatformMapper.apply(resourceAmount.resource()).orElse(null);
+        if (platformResource == null) {
+            return ExternalPatternSink.Result.SKIPPED;
         }
-        return anyResourceWasApplicable
+        final ResourceHandler<T> handler = provider.resolve().orElse(null);
+        if (handler == null) {
+            return ExternalPatternSink.Result.SKIPPED;
+        }
+        return handler.insert(platformResource, (int) resourceAmount.amount(), tx) == resourceAmount.amount()
             ? ExternalPatternSink.Result.ACCEPTED
-            : ExternalPatternSink.Result.SKIPPED;
+            : ExternalPatternSink.Result.REJECTED;
     }
 
     @Override
@@ -60,10 +52,5 @@ class ResourceHandlerExternalPatternSinkStrategyImpl<T extends Resource>
             }
             return true;
         }).orElse(true);
-    }
-
-    @Override
-    public boolean applies(final ResourceKey resource) {
-        return toPlatformMapper.apply(resource).isPresent();
     }
 }

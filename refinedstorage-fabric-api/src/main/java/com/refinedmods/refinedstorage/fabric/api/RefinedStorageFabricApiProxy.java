@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.api;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -30,8 +31,8 @@ public class RefinedStorageFabricApiProxy implements RefinedStorageFabricApi {
     }
 
     @Override
-    public void addStorageExternalPatternSinkStrategyFactory(
-        final StorageExternalPatternSinkStrategyFactory factory) {
-        ensureLoaded().addStorageExternalPatternSinkStrategyFactory(factory);
+    public void addStorageExternalPatternSinkStrategyFactory(final Class<? extends ResourceKey> resourceType,
+                                                             final StorageExternalPatternSinkStrategyFactory factory) {
+        ensureLoaded().addStorageExternalPatternSinkStrategyFactory(resourceType, factory);
     }
 }

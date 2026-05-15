@@ -225,8 +225,7 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformProxy.loadPlatform(new PlatformImpl(modContainer));
         initializePlatformApi();
         ((RefinedStorageNeoForgeApiProxy) RefinedStorageNeoForgeApi.INSTANCE).setDelegate(
-            new RefinedStorageNeoForgeApiImpl(RefinedStorageApi.INSTANCE)
-        );
+            new RefinedStorageNeoForgeApiImpl());
         registerGridResourceRepositoryMappers();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
@@ -352,6 +351,7 @@ public class ModInitializer extends AbstractModInitializer {
 
     private void registerExternalPatternSinkStrategyFactories() {
         RefinedStorageNeoForgeApi.INSTANCE.addResourceHandlerExternalPatternSinkStrategyFactory(
+            ItemResource.class,
             new ResourceHandlerExternalPatternSinkStrategyFactoryImpl<>(
                 VariantUtil::optionalItemToPlatform,
                 VariantUtil::ofPlatform,
@@ -359,6 +359,7 @@ public class ModInitializer extends AbstractModInitializer {
             )
         );
         RefinedStorageNeoForgeApi.INSTANCE.addResourceHandlerExternalPatternSinkStrategyFactory(
+            FluidResource.class,
             new ResourceHandlerExternalPatternSinkStrategyFactoryImpl<>(
                 VariantUtil::optionalFluidToPlatform,
                 VariantUtil::ofPlatform,
