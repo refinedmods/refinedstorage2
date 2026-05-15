@@ -22,7 +22,7 @@
         <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
     <module name="FileLength">
-        <property name="max" value="1600"/>
+        <property name="max" value="2000"/>
     </module>
     <module name="NewlineAtEndOfFile"/>
     <module name="JavadocPackage"/>

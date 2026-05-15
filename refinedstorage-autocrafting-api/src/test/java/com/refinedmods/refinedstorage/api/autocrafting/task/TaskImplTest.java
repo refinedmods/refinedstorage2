@@ -587,7 +587,7 @@ class TaskImplTest {
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(IRON_ORE, 1)
         );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, listener);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
@@ -600,7 +600,7 @@ class TaskImplTest {
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(IRON_ORE, 2)
         );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, listener);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
@@ -612,7 +612,7 @@ class TaskImplTest {
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(IRON_ORE, 3)
         );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, listener);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
@@ -624,7 +624,7 @@ class TaskImplTest {
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount(IRON_ORE, 3)
         );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         storage.removeListener(task);
         task = new TaskImpl(((TaskImpl) task).createSnapshot());
@@ -639,7 +639,7 @@ class TaskImplTest {
                 new ResourceAmount(IRON_INGOT, 1),
                 new ResourceAmount(STICKS, 2)
             );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, listener);
         assertThat(task.getState()).isEqualTo(TaskState.RUNNING);
@@ -650,7 +650,10 @@ class TaskImplTest {
                 new ResourceAmount(IRON_INGOT, 1),
                 new ResourceAmount(STICKS, 2)
             );
-        verify(listener, times(1)).receivedExternalIteration(IRON_INGOT_PATTERN);
+        verify(listener, times(1)).receivedExternalIteration(
+            IRON_INGOT_PATTERN,
+            new ExternalPatternSinkProviderImpl.ExternalPatternSinkKeyImpl(IRON_INGOT_PATTERN)
+        );
         clearInvocations(listener);
 
         storage.insert(IRON_INGOT, 5, Action.EXECUTE, Actor.EMPTY);
@@ -666,7 +669,7 @@ class TaskImplTest {
                 new ResourceAmount(IRON_INGOT, 3),
                 new ResourceAmount(STICKS, 2)
             );
-        verify(listener, never()).receivedExternalIteration(any());
+        verify(listener, never()).receivedExternalIteration(any(), any());
 
         task.step(storage, sinkProvider, StepBehavior.DEFAULT, listener);
         assertThat(task.getState()).isEqualTo(TaskState.COMPLETED);
@@ -676,7 +679,10 @@ class TaskImplTest {
             new ResourceAmount(STONE, 2)
         );
         assertThat(copyInternalStorage(task)).isEmpty();
-        verify(listener, times(1)).receivedExternalIteration(IRON_INGOT_PATTERN);
+        verify(listener, times(1)).receivedExternalIteration(
+            IRON_INGOT_PATTERN,
+            new ExternalPatternSinkProviderImpl.ExternalPatternSinkKeyImpl(IRON_INGOT_PATTERN)
+        );
         clearInvocations(listener);
     }
 
@@ -953,9 +959,22 @@ class TaskImplTest {
         );
         final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
         final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
-        sinkProvider.put(IRON_INGOT_PATTERN, (pattern, resources, action) -> action == Action.EXECUTE
-            ? ExternalPatternSink.Result.REJECTED
-            : ExternalPatternSink.Result.ACCEPTED);
+        final ExternalPatternSinkKey sinkKey = new ExternalPatternSinkKey() {
+        };
+        sinkProvider.put(IRON_INGOT_PATTERN, new ExternalPatternSink() {
+            @Override
+            public Result insertAll(final Pattern pattern, final Collection<ResourceAmount> resources,
+                                    final Action action) {
+                return action == Action.EXECUTE
+                    ? ExternalPatternSink.Result.REJECTED
+                    : ExternalPatternSink.Result.ACCEPTED;
+            }
+
+            @Override
+            public ExternalPatternSinkKey getKey() {
+                return sinkKey;
+            }
+        });
         final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 1);
 
         assertThat(storage.getAll()).isEmpty();

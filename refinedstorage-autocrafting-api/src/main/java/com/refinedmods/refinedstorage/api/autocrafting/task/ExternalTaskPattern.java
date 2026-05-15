@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
@@ -24,6 +26,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
     private final MutableResourceList expectedOutputs;
     private final ResourceList simulatedIterationInputs;
     private final long originalIterationsToSendToSink;
+    private final Deque<ExternalPatternSinkKey> pendingSinks;
     private long iterationsToSendToSink;
     private long iterationsReceived;
     private boolean interceptedAnythingSinceLastStep;
@@ -42,22 +45,22 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         );
         this.iterationsToSendToSink = plan.iterations();
         this.simulatedIterationInputs = calculateIterationInputs(Action.SIMULATE);
+        this.pendingSinks = new ArrayDeque<>();
     }
 
     ExternalTaskPattern(final TaskSnapshot.PatternSnapshot snapshot) {
-        super(snapshot.pattern(), new TaskPlan.PatternPlan(
-            snapshot.root(),
-            requireNonNull(snapshot.externalPattern()).originalIterationsToSendToSink(),
-            snapshot.ingredients()
-        ));
-        this.expectedOutputs = snapshot.externalPattern().copyExpectedOutputs();
-        this.simulatedIterationInputs = snapshot.externalPattern().simulatedIterationInputs();
-        this.originalIterationsToSendToSink = snapshot.externalPattern().originalIterationsToSendToSink();
-        this.iterationsToSendToSink = snapshot.externalPattern().iterationsToSendToSink();
-        this.iterationsReceived = snapshot.externalPattern().iterationsReceived();
-        this.interceptedAnythingSinceLastStep = snapshot.externalPattern().interceptedAnythingSinceLastStep();
-        this.lastSinkResult = snapshot.externalPattern().lastSinkResult();
-        this.lastSinkResultKey = snapshot.externalPattern().lastSinkResultKey();
+        super(snapshot.pattern(), new TaskPlan.PatternPlan(snapshot.root(),
+            requireNonNull(snapshot.externalPattern()).originalIterationsToSendToSink(), snapshot.ingredients()));
+        final TaskSnapshot.ExternalPatternSnapshot externalPattern = snapshot.externalPattern();
+        this.expectedOutputs = externalPattern.copyExpectedOutputs();
+        this.simulatedIterationInputs = externalPattern.simulatedIterationInputs();
+        this.originalIterationsToSendToSink = externalPattern.originalIterationsToSendToSink();
+        this.iterationsToSendToSink = externalPattern.iterationsToSendToSink();
+        this.iterationsReceived = externalPattern.iterationsReceived();
+        this.interceptedAnythingSinceLastStep = externalPattern.interceptedAnythingSinceLastStep();
+        this.lastSinkResult = externalPattern.lastSinkResult();
+        this.lastSinkResultKey = externalPattern.lastSinkResultKey();
+        this.pendingSinks = externalPattern.pendingSinks();
     }
 
     @Override
@@ -67,7 +70,10 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                            final TaskListener listener) {
         if (interceptedAnIterationAtLeastOnceSinceLastStep) {
             interceptedAnIterationAtLeastOnceSinceLastStep = false;
-            listener.receivedExternalIteration(pattern);
+            if (!pendingSinks.isEmpty()) {
+                final ExternalPatternSinkKey sinkKey = pendingSinks.remove();
+                listener.receivedExternalIteration(pattern, sinkKey);
+            }
         }
         if (expectedOutputs.isEmpty()) {
             return PatternStepResult.COMPLETED;
@@ -206,9 +212,11 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         // across the sink and the internal storage.
         // The end result is that we lie, do as if the insertion was successful,
         // and potentially void the extracted resources from the internal storage.
-        if (sink.accept(pattern, iterationInputs.copyState(), Action.EXECUTE) != ExternalPatternSink.Result.ACCEPTED) {
+        if (sink.insertAll(pattern, iterationInputs.copyState(), Action.EXECUTE)
+            != ExternalPatternSink.Result.ACCEPTED) {
             LOGGER.warn("Sink {} did not accept all inputs for pattern {}", sink, pattern);
         }
+        pendingSinks.add(sink.unwrapKey(pattern));
         return true;
     }
 
@@ -220,7 +228,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         }
         while (currentSinkIndex < sinks.size()) {
             final ExternalPatternSink sink = sinks.get(currentSinkIndex);
-            final ExternalPatternSink.Result simulatedResult = sink.accept(
+            final ExternalPatternSink.Result simulatedResult = sink.insertAll(
                 pattern,
                 iterationInputsSimulated.copyState(),
                 Action.SIMULATE
@@ -251,7 +259,8 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                 iterationsReceived,
                 interceptedAnythingSinceLastStep,
                 lastSinkResult,
-                lastSinkResultKey
+                lastSinkResultKey,
+                pendingSinks
             )
         );
     }

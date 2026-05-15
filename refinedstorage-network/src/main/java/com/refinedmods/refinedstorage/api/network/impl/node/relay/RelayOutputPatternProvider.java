@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -152,11 +153,11 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     @Override
-    public void receivedExternalIteration(final Pattern pattern) {
+    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkKey sinkKey) {
         if (delegate == null) {
             return;
         }
-        final PatternProvider patternProvider = delegate.getProviderByPattern(pattern);
+        final PatternProvider patternProvider = delegate.getProviderBySinkKey(sinkKey);
         if (patternProvider == null) {
             return;
         }
@@ -182,9 +183,9 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Pattern pattern,
-                                             final Collection<ResourceAmount> resources,
-                                             final Action action) {
+    public ExternalPatternSink.Result insertAll(final Pattern pattern,
+                                                final Collection<ResourceAmount> resources,
+                                                final Action action) {
         if (delegate == null) {
             return ExternalPatternSink.Result.SKIPPED;
         }
@@ -192,7 +193,24 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
         if (patternProvider == null) {
             return ExternalPatternSink.Result.SKIPPED;
         }
-        return patternProvider.accept(pattern, resources, action);
+        return patternProvider.insertAll(pattern, resources, action);
+    }
+
+    @Override
+    public ExternalPatternSinkKey getKey() {
+        return outputNode.getSinkKeyProvider().get();
+    }
+
+    @Override
+    public ExternalPatternSinkKey unwrapKey(final Pattern pattern) {
+        if (delegate == null) {
+            return PatternProvider.super.unwrapKey(pattern);
+        }
+        final PatternProvider patternProvider = delegate.getProviderByPattern(pattern);
+        if (patternProvider == null) {
+            return PatternProvider.super.unwrapKey(pattern);
+        }
+        return patternProvider.getKey();
     }
 
     void detachAll(final Network network) {

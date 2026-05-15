@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -331,11 +332,17 @@ class RelayAutocraftingNetworkNodeTest {
     ) {
         // Act
         final RelayOutputNetworkNode cycleOutput = new RelayOutputNetworkNode(0);
+        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
+        };
+        cycleOutput.setSinkKeyProvider(() -> key);
         cycleOutput.setAutocraftingDelegate(inputAlternativeAutocrafting);
         cycleOutput.setNetwork(inputNetwork);
         inputNetwork.addContainer(() -> cycleOutput);
 
         final RelayOutputNetworkNode cycleOutputAlternative = new RelayOutputNetworkNode(0);
+        final ExternalPatternSinkKey cycleOutputAlternativeKey = new ExternalPatternSinkKey() {
+        };
+        cycleOutputAlternative.setSinkKeyProvider(() -> cycleOutputAlternativeKey);
         cycleOutputAlternative.setAutocraftingDelegate(inputAutocrafting);
         cycleOutputAlternative.setNetwork(inputAlternativeNetwork);
         inputAlternativeNetwork.addContainer(() -> cycleOutputAlternative);
@@ -359,7 +366,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setActive(true);
         input.setOutputNode(output);
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
@@ -392,7 +399,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setActive(true);
         input.setOutputNode(output);
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
@@ -414,6 +421,14 @@ class RelayAutocraftingNetworkNodeTest {
         assertThat(outputAutocrafting.getStatuses()).hasSize(1);
     }
 
+    private static PatternProviderNetworkNode createPatternProvider() {
+        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(0, 1);
+        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
+        };
+        node.setSinkKeyProvider(() -> key);
+        return node;
+    }
+
     @Test
     void shouldCancelTask(
         @InjectNetworkAutocraftingComponent(networkId = "input") final AutocraftingNetworkComponent inputAutocrafting,
@@ -424,7 +439,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setActive(true);
         input.setOutputNode(output);
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
@@ -466,7 +481,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setActive(true);
         input.setOutputNode(output);
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
@@ -502,7 +517,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setActive(true);
         input.setOutputNode(output);
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern()
             .ingredient(A, 1)
             .output(B, 1)
@@ -552,7 +567,7 @@ class RelayAutocraftingNetworkNodeTest {
         input.setOutputNode(output);
         inputStorage.addSource(new StorageImpl());
 
-        final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
         patternProvider.tryUpdatePattern(0, pattern(PatternType.EXTERNAL)
             .ingredient(A, 1)
             .output(B, 1)
@@ -629,7 +644,7 @@ class RelayAutocraftingNetworkNodeTest {
             input.setOutputNode(output);
             inputStorage.addSource(new StorageImpl());
 
-            final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+            final PatternProviderNetworkNode patternProvider = createPatternProvider();
             patternProvider.tryUpdatePattern(0, pattern(PatternType.EXTERNAL)
                 .ingredient(A, 1)
                 .output(B, 1)
@@ -704,7 +719,7 @@ class RelayAutocraftingNetworkNodeTest {
             outputStorage.addSource(new StorageImpl());
             outputStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-            final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+            final PatternProviderNetworkNode patternProvider = createPatternProvider();
             patternProvider.tryUpdatePattern(0, pattern().ingredient(A, 1).output(B, 1).build());
             inputAutocrafting.onContainerAdded(() -> patternProvider);
 
@@ -759,7 +774,7 @@ class RelayAutocraftingNetworkNodeTest {
             outputStorage.addSource(new StorageImpl());
             outputStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
 
-            final PatternProviderNetworkNode patternProvider = new PatternProviderNetworkNode(0, 1);
+            final PatternProviderNetworkNode patternProvider = createPatternProvider();
             patternProvider.tryUpdatePattern(0, pattern().ingredient(A, 1).output(B, 1).build());
             inputAutocrafting.onContainerAdded(() -> patternProvider);
 

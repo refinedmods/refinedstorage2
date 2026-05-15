@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Locking mode always locking/unlocking the first autocrafter when load balancing.
+
 ## [3.0.0] - 2026-05-14
 
 ### Fixed
