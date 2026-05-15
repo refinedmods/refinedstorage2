@@ -1,6 +1,6 @@
 {
   "type": "minecraft:function",
-  "function": "refinedstorage:relay_should_pass_through",
+  "function": "refinedstorage:relay_should_pass_through_autocrafting_sub_network",
   "structure": "refinedstorage:empty_15x15",
   "environment": "minecraft:default",
   "max_ticks": 400
