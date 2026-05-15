@@ -57,8 +57,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
     private String getTooltip(final ItemStack itemStack) {
         try {
             return itemStack
-                .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()), null,
-                    TooltipFlag.ADVANCED)
+                .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
+                    ClientPlatformUtil.getClientPlayer(), TooltipFlag.ADVANCED)
                 .stream()
                 .map(Component::getString)
                 .collect(Collectors.joining("\n"));

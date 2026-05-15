@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Locking mode always locking/unlocking the first autocrafter when load balancing.
 -   Processing patterns not inserting interleaved ingredient types in the correct order.
 -   Grid search only matching original item names and not renamed items.
+-   Grid tooltip search not taking into account player sensitive tooltip information.
 
 ## [3.0.0] - 2026-05-14
 
