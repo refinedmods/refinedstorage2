@@ -580,14 +580,14 @@ public final class RelayTest {
                     new ResourceAmount(asResource(OAK_PLANKS), 4)))
                 .thenWaitUntil(storageContainsExactly(
                     helper,
-                    pos,
-                    new ResourceAmount(asResource(OAK_LOG), 10),
-                    new ResourceAmount(asResource(STONE), 15)
+                    subnetworkPos,
+                    new ResourceAmount(asResource(OAK_PLANKS), 4)
                 ))
                 .thenWaitUntil(storageContainsExactly(
                     helper,
-                    subnetworkPos,
-                    new ResourceAmount(asResource(OAK_PLANKS), 4)
+                    pos,
+                    new ResourceAmount(asResource(OAK_LOG), 10),
+                    new ResourceAmount(asResource(STONE), 15)
                 ))
                 .thenSucceed();
         });
