@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+-   The slot limit for a fluid in the processing pattern configuration has been increased to maximum 64 buckets.
+
 ### Fixed
 
 -   Grid tooltip search not taking into account player sensitive tooltip information.
