@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Processing patterns not inserting interleaved ingredient types in the correct order.
 -   Grid search only matching original item names and not renamed items.
 -   Grid tooltip search not taking into account player sensitive tooltip information.
+-   The slot limit for an item in the processing pattern configuration being calculated in a stack insensitive way.
 
 ## [3.0.0] - 2026-05-14
 
