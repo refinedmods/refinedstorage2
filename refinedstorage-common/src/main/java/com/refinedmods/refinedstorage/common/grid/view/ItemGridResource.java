@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.common.support.tooltip.MouseClientTooltipComponent;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,12 +46,20 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
 
     public ItemGridResource(final ItemResource resource,
                             final ItemStack itemStack,
-                            final String name,
+                            final String customName,
+                            final String originalName,
                             final Function<GridResourceAttributeKey, Set<String>> attributes) {
-        super(resource, name, attributes);
+        super(resource, customName, createSearchableNames(customName, originalName), attributes);
         this.id = Item.getId(resource.item());
         this.itemStack = itemStack;
         this.itemResource = resource;
+    }
+
+    private static Set<String> createSearchableNames(final String customName, final String originalName) {
+        final Set<String> names = new HashSet<>();
+        names.add(customName);
+        names.add(originalName);
+        return names;
     }
 
     public ItemStack getItemStack() {

@@ -52,7 +52,7 @@ class GridQueryParserImplTest {
         },
         MutableResourceListImpl.create(),
         new HashSet<>(),
-        v -> Comparator.comparing(GridResource::getName),
+        v -> Comparator.comparing(GridResource::getSortName),
         v -> Comparator.comparingLong(resource -> resource.getAmount(v))
     );
 
@@ -69,13 +69,24 @@ class GridQueryParserImplTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt"})
-    void testNameQuery(final String query) throws GridQueryParserException {
+    void testSortNameQuery(final String query) throws GridQueryParserException {
         // Act
         final var predicate = sut.parse(query);
 
         // Assert
         assertThat(predicate.test(repository, new R("Dirt"))).isTrue();
         assertThat(predicate.test(repository, new R("Glass"))).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt", "Grass", "grass", "Gr"})
+    void testSearchableNamesQuery(final String query) throws GridQueryParserException {
+        // Act
+        final var predicate = sut.parse(query);
+
+        // Assert
+        assertThat(predicate.test(repository, new R("Doesn'tMatter", Set.of("Dirt", "Grass")))).isTrue();
+        assertThat(predicate.test(repository, new R("Glass", Set.of("Glass", "Clear")))).isFalse();
     }
 
     @ParameterizedTest
@@ -287,28 +298,39 @@ class GridQueryParserImplTest {
     }
 
     private static class R implements GridResource {
-        private final String name;
+        private final String sortName;
+        private final Set<String> searchableNames;
         private final long amount;
         private final Map<GridResourceAttributeKey, Set<String>> attributes;
 
-        R(final String name) {
-            this(name, 1);
+        R(final String sortName) {
+            this(sortName, 1);
         }
 
-        R(final String name, final long amount) {
-            this.name = name;
+        R(final String sortName, final Set<String> searchableNames) {
+            this(sortName, searchableNames, 1);
+        }
+
+        R(final String sortName, final long amount) {
+            this(sortName, Set.of(sortName), amount);
+        }
+
+        R(final String sortName, final Set<String> searchableNames, final long amount) {
+            this.sortName = sortName;
+            this.searchableNames = searchableNames;
             this.amount = amount;
             this.attributes = Map.of();
         }
 
         R(
-            final String name,
+            final String sortName,
             final long amount,
             final String modId,
             final String modName,
             final Set<String> tags
         ) {
-            this.name = name;
+            this.sortName = sortName;
+            this.searchableNames = Set.of(sortName);
             this.amount = amount;
             this.attributes = Map.of(
                 GridResourceAttributeKeys.MOD_ID, Set.of(modId),
@@ -331,8 +353,13 @@ class GridQueryParserImplTest {
         }
 
         @Override
-        public String getName() {
-            return name;
+        public String getSortName() {
+            return sortName;
+        }
+
+        @Override
+        public Set<String> getSearchableNames() {
+            return searchableNames;
         }
 
         @Override

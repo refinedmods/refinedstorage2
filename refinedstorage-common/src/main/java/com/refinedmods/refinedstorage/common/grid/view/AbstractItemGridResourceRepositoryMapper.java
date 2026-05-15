@@ -35,7 +35,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         final ItemResource itemResource = (ItemResource) resource;
         final Item item = itemResource.item();
         final ItemStack itemStack = itemResource.toItemStack();
-        final String name = item.getName(itemStack).getString();
+        final String originalName = item.getName(itemStack).getString();
+        final String customName = itemStack.getHoverName().getString();
         final String modId = getModId(itemStack);
         final String modName = getModName(modId).orElse("");
         final Map<GridResourceAttributeKey, Supplier<Set<String>>> attributes = Map.of(
@@ -47,7 +48,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         return new ItemGridResource(
             itemResource,
             itemStack,
-            name,
+            customName,
+            originalName,
             k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
     }
