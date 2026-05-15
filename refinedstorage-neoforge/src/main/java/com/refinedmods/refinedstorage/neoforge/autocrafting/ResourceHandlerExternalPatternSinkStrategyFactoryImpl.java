@@ -18,6 +18,7 @@ import org.jspecify.annotations.Nullable;
 
 public class ResourceHandlerExternalPatternSinkStrategyFactoryImpl<T extends Resource>
     implements ResourceHandlerExternalPatternSinkStrategyFactory {
+    // TODO: remove optional boxing
     private final Function<ResourceKey, Optional<T>> toPlatformMapper;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability;

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
@@ -251,6 +252,11 @@ public class PlatformProxy implements Platform {
     @Override
     public void resetSlots(final AbstractContainerMenu containerMenu) {
         ensureLoaded().resetSlots(containerMenu);
+    }
+
+    @Override
+    public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
+        return ensureLoaded().getPatternProviderExternalPatternSinkFactory();
     }
 
     private Platform ensureLoaded() {

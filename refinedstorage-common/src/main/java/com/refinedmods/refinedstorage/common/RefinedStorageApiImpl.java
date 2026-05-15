@@ -13,7 +13,6 @@ import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
-import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderItem;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.ConstructorStrategyFactory;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.DestructorStrategyFactory;
@@ -52,7 +51,6 @@ import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlo
 import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReferenceProvider;
 import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage.common.api.wirelesstransmitter.WirelessTransmitterRangeModifier;
-import com.refinedmods.refinedstorage.common.autocrafting.CompositePatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.grid.NoopGridSynchronizer;
 import com.refinedmods.refinedstorage.common.grid.strategy.CompositeGridExtractionStrategy;
@@ -183,8 +181,6 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     private final PlatformRegistry<PlatformPermission> permissionRegistry = new PlatformRegistryImpl<>();
     private final List<ResourceContainerInsertStrategy> resourceExtractStrategies = new ArrayList<>();
     private final WeakHashMap<Level, Map<UUID, Pattern>> patternCache = new WeakHashMap<>();
-    private final CompositePatternProviderExternalPatternSinkFactory patternProviderExternalPatternSinkFactory =
-        new CompositePatternProviderExternalPatternSinkFactory();
 
     public RefinedStorageApiImpl() {
         gridSynchronizerRegistry.register(createIdentifier("off"), NoopGridSynchronizer.INSTANCE);
@@ -275,17 +271,6 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     @Override
     public StorageMonitorInsertionStrategy getStorageMonitorInsertionStrategy() {
         return storageMonitorInsertionStrategy;
-    }
-
-    @Override
-    public void addPatternProviderExternalPatternSinkFactory(
-        final PatternProviderExternalPatternSinkFactory factory) {
-        patternProviderExternalPatternSinkFactory.addFactory(factory);
-    }
-
-    @Override
-    public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
-        return patternProviderExternalPatternSinkFactory;
     }
 
     @Override

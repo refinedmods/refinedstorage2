@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.api;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -13,5 +14,8 @@ public interface RefinedStorageFabricApi {
 
     BlockApiLookup<NetworkNodeContainerProvider, @Nullable Direction> getNetworkNodeContainerProviderLookup();
 
-    void addStorageExternalPatternSinkStrategyFactory(StorageExternalPatternSinkStrategyFactory factory);
+    void addStorageExternalPatternSinkStrategyFactory(
+        Class<? extends ResourceKey> resourceType,
+        StorageExternalPatternSinkStrategyFactory factory
+    );
 }
