@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeState;
 import com.refinedmods.refinedstorage.common.importer.ImporterTransferQuotaProvider;
 import com.refinedmods.refinedstorage.neoforge.storage.CapabilityCacheResourceHandlerProvider;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.minecraft.core.BlockPos;
@@ -22,12 +21,12 @@ import org.jspecify.annotations.Nullable;
 public class ResourceHandlerImporterTransferStrategyFactory<T extends Resource>
     implements ImporterTransferStrategyFactory {
     private final long singleAmount;
-    private final Function<ResourceKey, Optional<T>> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability;
 
     public ResourceHandlerImporterTransferStrategyFactory(final long singleAmount,
-                                                          final Function<ResourceKey, Optional<T>> toPlatformMapper,
+                                                          final Function<ResourceKey, @Nullable T> toPlatformMapper,
                                                           final Function<T, ResourceKey> fromPlatformMapper,
                                                           final BlockCapability<ResourceHandler<T>, @Nullable Direction>
                                                               capability) {

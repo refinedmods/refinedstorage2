@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.storage.external.ExternalStorageProvid
 import com.refinedmods.refinedstorage.common.api.storage.externalstorage.ExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage.neoforge.storage.CapabilityCacheResourceHandlerProvider;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.minecraft.core.BlockPos;
@@ -18,12 +17,12 @@ import org.jspecify.annotations.Nullable;
 
 public class ResourceHandlerPlatformExternalStorageProviderFactory<T extends Resource>
     implements ExternalStorageProviderFactory {
-    private final Function<ResourceKey, Optional<T>> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability;
 
     public ResourceHandlerPlatformExternalStorageProviderFactory(
-        final Function<ResourceKey, Optional<T>> toPlatformMapper,
+        final Function<ResourceKey, @Nullable T> toPlatformMapper,
         final Function<T, ResourceKey> fromPlatformMapper,
         final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability
     ) {

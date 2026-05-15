@@ -6,20 +6,20 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatternSinkStrategy;
 import com.refinedmods.refinedstorage.neoforge.storage.ResourceHandlerProvider;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.resource.Resource;
+import org.jspecify.annotations.Nullable;
 
 class ResourceHandlerExternalPatternSinkStrategyImpl<T extends Resource>
     implements ResourceHandlerExternalPatternSinkStrategy {
     private final ResourceHandlerProvider<T> provider;
-    private final Function<ResourceKey, Optional<T>> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
 
     ResourceHandlerExternalPatternSinkStrategyImpl(
         final ResourceHandlerProvider<T> provider,
-        final Function<ResourceKey, Optional<T>> toPlatformMapper
+        final Function<ResourceKey, @Nullable T> toPlatformMapper
     ) {
         this.provider = provider;
         this.toPlatformMapper = toPlatformMapper;
@@ -28,7 +28,7 @@ class ResourceHandlerExternalPatternSinkStrategyImpl<T extends Resource>
     @Override
     public ExternalPatternSink.Result insert(final net.neoforged.neoforge.transfer.transaction.Transaction tx,
                                              final ResourceAmount resourceAmount) {
-        final T platformResource = toPlatformMapper.apply(resourceAmount.resource()).orElse(null);
+        final T platformResource = toPlatformMapper.apply(resourceAmount.resource());
         if (platformResource == null) {
             return ExternalPatternSink.Result.SKIPPED;
         }

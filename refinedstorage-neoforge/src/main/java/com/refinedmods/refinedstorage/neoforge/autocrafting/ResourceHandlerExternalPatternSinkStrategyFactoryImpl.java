@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatter
 import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatternSinkStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.storage.CapabilityCacheResourceHandlerProvider;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.minecraft.core.BlockPos;
@@ -18,13 +17,12 @@ import org.jspecify.annotations.Nullable;
 
 public class ResourceHandlerExternalPatternSinkStrategyFactoryImpl<T extends Resource>
     implements ResourceHandlerExternalPatternSinkStrategyFactory {
-    // TODO: remove optional boxing
-    private final Function<ResourceKey, Optional<T>> toPlatformMapper;
+    private final Function<ResourceKey, @Nullable T> toPlatformMapper;
     private final Function<T, ResourceKey> fromPlatformMapper;
     private final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability;
 
     public ResourceHandlerExternalPatternSinkStrategyFactoryImpl(
-        final Function<ResourceKey, Optional<T>> toPlatformMapper,
+        final Function<ResourceKey, @Nullable T> toPlatformMapper,
         final Function<T, ResourceKey> fromPlatformMapper,
         final BlockCapability<ResourceHandler<T>, @Nullable Direction> capability
     ) {

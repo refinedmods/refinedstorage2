@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 public final class VariantUtil {
     private VariantUtil() {
@@ -18,28 +18,28 @@ public final class VariantUtil {
         return new ItemResource(itemResource.getItem(), itemResource.getComponentsPatch());
     }
 
-    public static Optional<net.neoforged.neoforge.transfer.fluid.FluidResource> optionalFluidToPlatform(
+    public static net.neoforged.neoforge.transfer.fluid.@Nullable FluidResource optionalFluidToPlatform(
         final ResourceKey resource
     ) {
         if (!(resource instanceof FluidResource fluidResource)) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(net.neoforged.neoforge.transfer.fluid.FluidResource.of(
+        return net.neoforged.neoforge.transfer.fluid.FluidResource.of(
             fluidResource.fluid(),
             fluidResource.components()
-        ));
+        );
     }
 
-    public static Optional<net.neoforged.neoforge.transfer.item.ItemResource> optionalItemToPlatform(
+    public static net.neoforged.neoforge.transfer.item.@Nullable ItemResource optionalItemToPlatform(
         final ResourceKey resource
     ) {
         if (!(resource instanceof ItemResource itemResource)) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(net.neoforged.neoforge.transfer.item.ItemResource.of(
+        return net.neoforged.neoforge.transfer.item.ItemResource.of(
             itemResource.item(),
             itemResource.components()
-        ));
+        );
     }
 
     public static net.neoforged.neoforge.transfer.fluid.FluidResource toPlatform(final FluidResource fluidResource) {
