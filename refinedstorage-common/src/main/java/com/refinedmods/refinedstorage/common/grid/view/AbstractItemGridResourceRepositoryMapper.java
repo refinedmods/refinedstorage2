@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -54,7 +55,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
     private String getTooltip(final ItemStack itemStack) {
         try {
             return itemStack
-                .getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.ADVANCED)
+                .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
+                    ClientPlatformUtil.getClientPlayer(), TooltipFlag.ADVANCED)
                 .stream()
                 .map(Component::getString)
                 .collect(Collectors.joining("\n"));
