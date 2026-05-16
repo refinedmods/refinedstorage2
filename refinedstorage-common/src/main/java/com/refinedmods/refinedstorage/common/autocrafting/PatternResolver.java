@@ -51,7 +51,7 @@ public class PatternResolver {
         return Platform.INSTANCE.getClientRecipeProvider(level)
             .getRecipesFor(RecipeType.CRAFTING, craftingInput, level)
             .map(RecipeHolder::value)
-            .map(recipe -> toCraftingPattern(recipe, craftingInput, state, patternState))
+            .flatMap(recipe -> toCraftingPattern(recipe, craftingInput, state, patternState).stream())
             .findFirst();
     }
 
@@ -65,14 +65,15 @@ public class PatternResolver {
         return craftingMatrix;
     }
 
-    private ResolvedCraftingPattern toCraftingPattern(final CraftingRecipe recipe,
-                                                      final CraftingInput craftingInput,
-                                                      final CraftingPatternState state,
-                                                      final PatternState patternState) {
-        final List<List<ResourceKey>> inputs = getInputs(recipe, state);
-        final ResourceAmount output = getOutput(recipe, craftingInput);
-        final List<ResourceAmount> byproducts = getByproducts(recipe, craftingInput);
-        return new ResolvedCraftingPattern(patternState.id(), inputs, output, byproducts);
+    private Optional<ResolvedCraftingPattern> toCraftingPattern(final CraftingRecipe recipe,
+                                                                final CraftingInput craftingInput,
+                                                                final CraftingPatternState state,
+                                                                final PatternState patternState) {
+        return getOutput(recipe, craftingInput).map(output -> {
+            final List<List<ResourceKey>> inputs = getInputs(recipe, state);
+            final List<ResourceAmount> byproducts = getByproducts(recipe, craftingInput);
+            return new ResolvedCraftingPattern(patternState.id(), inputs, output, byproducts);
+        });
     }
 
     private List<List<ResourceKey>> getInputs(final CraftingRecipe recipe, final CraftingPatternState state) {
@@ -109,9 +110,12 @@ public class PatternResolver {
         return List.of(ItemResource.ofItemStack(input));
     }
 
-    private ResourceAmount getOutput(final CraftingRecipe recipe, final CraftingInput craftingInput) {
+    private Optional<ResourceAmount> getOutput(final CraftingRecipe recipe, final CraftingInput craftingInput) {
         final ItemStack outputStack = recipe.assemble(craftingInput);
-        return new ResourceAmount(ItemResource.ofItemStack(outputStack), outputStack.getCount());
+        if (outputStack.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new ResourceAmount(ItemResource.ofItemStack(outputStack), outputStack.getCount()));
     }
 
     private List<ResourceAmount> getByproducts(final CraftingRecipe recipe, final CraftingInput craftingInput) {
