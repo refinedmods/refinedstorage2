@@ -86,7 +86,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         return PatternStepResult.RUNNING;
     }
 
-    private PatternStepResult idleOrRunning(final ExternalPatternSink.@Nullable Result previousSinkResult) {
+    private PatternStepResult idleOrRunning(@Nullable final ExternalPatternSink.Result previousSinkResult) {
         if (interceptedAnythingSinceLastStep) {
             interceptedAnythingSinceLastStep = false;
             return PatternStepResult.RUNNING;

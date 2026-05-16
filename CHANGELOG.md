@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
 -   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
 -   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
+-   Wireless Grid reporting duplicate amount of resources.
 
 ## [2.0.6] - 2026-05-10
 

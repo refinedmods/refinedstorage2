@@ -45,18 +45,28 @@ class NetworkItemContextImpl implements NetworkItemContext {
     }
 
     @Override
-    public Optional<Network> resolveNetwork() {
+    public Optional<Network> resolveNetwork(final boolean force) {
         if (networkLocation == null) {
             return Optional.empty();
         }
         return Optional.ofNullable(player.getServer())
             .map(server -> server.getLevel(networkLocation.dimension()))
-            .filter(level -> level.isLoaded(networkLocation.pos()))
+            .filter(level -> {
+                if (force) {
+                    return true;
+                }
+                return level.isLoaded(networkLocation.pos());
+            })
             .map(level -> level.getBlockEntity(networkLocation.pos()))
             .filter(NetworkItemTargetBlockEntity.class::isInstance)
             .map(NetworkItemTargetBlockEntity.class::cast)
             .map(NetworkItemTargetBlockEntity::getNetworkForItem)
-            .filter(this::isValid);
+            .filter(network -> {
+                if (force) {
+                    return true;
+                }
+                return isValid(network);
+            });
     }
 
     private boolean isValid(final Network network) {
