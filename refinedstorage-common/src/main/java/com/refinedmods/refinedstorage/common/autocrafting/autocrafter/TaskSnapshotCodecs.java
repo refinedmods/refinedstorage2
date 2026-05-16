@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.util.StringRepresentable;
@@ -206,7 +207,7 @@ final class TaskSnapshotCodecs {
                 .toList()
         );
 
-    private static final Codec<TaskSnapshot> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    private static final Codec<TaskSnapshot> CODEC = RecordCodecBuilder.<TaskSnapshot>create(instance -> instance.group(
         UUIDUtil.CODEC.fieldOf("id").xmap(TaskId::new, TaskId::id).forGetter(TaskSnapshot::id),
         ResourceCodecs.NATIVE_CODEC.fieldOf("resource").forGetter(TaskSnapshot::resource),
         Codec.LONG.fieldOf("amount").forGetter(TaskSnapshot::amount),
@@ -225,7 +226,20 @@ final class TaskSnapshotCodecs {
             SerializableTaskState::fromTaskState
         ).forGetter(TaskSnapshot::state),
         Codec.BOOL.fieldOf("cancelled").forGetter(TaskSnapshot::cancelled)
-    ).apply(instance, TaskSnapshot::new));
+    ).apply(instance, TaskSnapshot::new)).validate(snapshot -> {
+        // "pendingSinks" has been added as a required key in b4d23f9a
+        // Older worlds having running autocrafting tasks will not have this "pendingSinks" key
+        // and the PatternSnapshot's "externalPattern" will fail to deserialize.
+        // This means that the task will have a pattern with no internal and no external pattern.
+        // This throws an NPE at runtime, so we need to catch this gracefully and void the task here.
+        // If the NPE is unhandled, the entire autocrafter will fail to deserialize and patterns will be lost.
+        if (snapshot.patterns().values().stream()
+            .anyMatch(pattern -> pattern.externalPattern() == null && pattern.internalPattern() == null)) {
+            return DataResult.error(
+                () -> "Each pattern snapshot must have either an internal or external pattern snapshot");
+        }
+        return DataResult.success(snapshot);
+    });
 
     public static final ErrorHandlingListCodec<TaskSnapshot> LIST_CODEC = new ErrorHandlingListCodec<>(
         CODEC,
