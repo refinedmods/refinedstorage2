@@ -115,11 +115,11 @@ class ExternalTaskPattern extends AbstractTaskPattern {
     }
 
     private long trySatisfy(final ResourceKey resource, final long amount) {
-        final long needed = expectedOutputs.get(resource);
-        if (needed == 0) {
+        final long claimable = getClaimable(resource);
+        if (claimable == 0) {
             return 0;
         }
-        final long correctedAmount = Math.min(needed, amount);
+        final long correctedAmount = Math.min(claimable, amount);
         expectedOutputs.remove(resource, correctedAmount);
         final boolean receivedAtLeastOneIteration = updateIterationsReceived();
         if (receivedAtLeastOneIteration) {
@@ -127,6 +127,29 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         }
         interceptedAnythingSinceLastStep = true;
         return correctedAmount;
+    }
+
+    private long getClaimable(final ResourceKey resource) {
+        final long needed = expectedOutputs.get(resource);
+        if (needed == 0) {
+            return 0;
+        }
+        // Only claim what this task has actually dispatched. Without this cap, when multiple tasks share
+        // the same pattern, a greedy task will eat outputs produced by another task's iterations, hit
+        // expectedOutputs == 0 early, and finishing the task before sending its remaining inputs
+        // which then get returned to storage unprocessed, starving the other task.
+        final long pending = iterationsToSendToSink * getOutputAmountPerIteration(resource);
+        return needed - pending;
+    }
+
+    private long getOutputAmountPerIteration(final ResourceKey resource) {
+        long amount = 0;
+        for (final ResourceAmount output : pattern.layout().outputs()) {
+            if (output.resource().equals(resource)) {
+                amount += output.amount();
+            }
+        }
+        return amount;
     }
 
     private boolean updateIterationsReceived() {
