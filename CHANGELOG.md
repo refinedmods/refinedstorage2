@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-05-16
+
 ### Changed
 
 -   The slot limit for a fluid in the processing pattern configuration has been increased to maximum 64 buckets.
@@ -1240,7 +1242,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.1...HEAD
+
+[3.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...v3.0.1
 
 [3.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...v3.0.0
 
