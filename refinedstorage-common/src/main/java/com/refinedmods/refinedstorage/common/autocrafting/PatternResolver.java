@@ -129,7 +129,8 @@ public class PatternResolver {
     }
 
 
-    private Optional<ResourceAmount> getOutput(final Level level, final CraftingRecipe recipe, final CraftingInput craftingInput) {
+    private Optional<ResourceAmount> getOutput(final Level level, final CraftingRecipe recipe,
+                                               final CraftingInput craftingInput) {
         final ItemStack outputStack = recipe.assemble(craftingInput, level.registryAccess());
         if (outputStack.isEmpty()) {
             return Optional.empty();

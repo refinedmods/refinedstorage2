@@ -33,6 +33,15 @@ public interface GridResource {
 
     String getName();
 
+    default String getSortName() {
+        return getName();
+    }
+
+    @Nullable
+    default Set<String> getSearchableNames() {
+        return null;
+    }
+
     Set<String> getAttribute(GridResourceAttributeKey key);
 
     boolean isAutocraftable(ResourceRepository<GridResource> repository);
