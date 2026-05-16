@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternInventory;
+import com.refinedmods.refinedstorage.common.autocrafting.PatternSlot;
 import com.refinedmods.refinedstorage.common.content.Menus;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.RedstoneMode;
@@ -105,16 +106,17 @@ public class AutocrafterManagerContainerMenu extends AbstractBaseContainerMenu i
 
     private void addServerSideSlots(final List<AutocrafterManagerBlockEntity.Group> serverGroups) {
         for (final AutocrafterManagerBlockEntity.Group group : serverGroups) {
-            addServerSideSlots(group);
+            addServerSideSlots(group, playerInventory.player.level());
         }
         addPlayerInventory(playerInventory, 0, 0);
     }
 
-    private void addServerSideSlots(final AutocrafterManagerBlockEntity.Group group) {
+    private void addServerSideSlots(final AutocrafterManagerBlockEntity.Group group,
+                                    final Level level) {
         for (final AutocrafterManagerBlockEntity.SubGroup subGroup : group.subGroups()) {
             final Container container = subGroup.container();
             for (int i = 0; i < container.getContainerSize(); i++) {
-                addSlot(new Slot(container, i, 0, 0));
+                addSlot(new PatternSlot(container, i, 0, 0, level));
             }
         }
     }

@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
@@ -56,6 +57,7 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     private final ExecutorService executorService;
     private final Set<PatternProvider> providers = new HashSet<>();
     private final Map<Pattern, PatternProvider> providerByPattern = new HashMap<>();
+    private final Map<ExternalPatternSinkKey, PatternProvider> providerBySinkKey = new HashMap<>();
     private final Map<PatternLayout, List<ExternalPatternSink>> sinksByPatternLayout = new HashMap<>();
     private final Map<TaskId, PatternProvider> providerByTaskId = new HashMap<>();
     private final Set<PatternListener> patternListeners = new HashSet<>();
@@ -73,6 +75,9 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (container.getNode() instanceof PatternProvider provider) {
             provider.onAddedIntoContainer(this);
             providers.add(provider);
+            final ExternalPatternSinkKey sinkKey = CoreValidations.validateNotNull(provider.getKey(),
+                "Provider's sink key may not be null");
+            providerBySinkKey.put(sinkKey, provider);
         }
     }
 
@@ -81,6 +86,9 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
         if (container.getNode() instanceof PatternProvider provider) {
             provider.onRemovedFromContainer(this);
             providers.remove(provider);
+            final ExternalPatternSinkKey sinkKey = CoreValidations.validateNotNull(provider.getKey(),
+                "Provider's sink key may not be null");
+            providerBySinkKey.remove(sinkKey);
         }
     }
 
@@ -98,6 +106,12 @@ public class AutocraftingNetworkComponentImpl implements AutocraftingNetworkComp
     @Override
     public PatternProvider getProviderByPattern(final Pattern pattern) {
         return providerByPattern.get(pattern);
+    }
+
+    @Override
+    @Nullable
+    public PatternProvider getProviderBySinkKey(final ExternalPatternSinkKey sinkKey) {
+        return providerBySinkKey.get(sinkKey);
     }
 
     @Override

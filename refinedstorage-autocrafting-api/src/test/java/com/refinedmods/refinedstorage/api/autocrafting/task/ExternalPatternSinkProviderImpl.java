@@ -53,32 +53,31 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
 
     static class ExternalPatternSinkImpl implements ExternalPatternSink {
         private final Storage storage;
-        private final Pattern pattern;
         @Nullable
         private final Result fixedResult;
+        private final ExternalPatternSinkKey key;
 
         private ExternalPatternSinkImpl(final Storage storage,
                                         final Pattern pattern,
                                         @Nullable final Result fixedResult) {
             this.storage = storage;
-            this.pattern = pattern;
             this.fixedResult = fixedResult;
+            this.key = new ExternalPatternSinkKeyImpl(pattern);
         }
 
         Collection<ResourceAmount> getAll() {
             return storage.getAll();
         }
 
-        @Nullable
         @Override
         public ExternalPatternSinkKey getKey() {
-            return new ExternalPatternSinkKeyImpl(pattern);
+            return key;
         }
 
         @Override
-        public Result accept(final Pattern p,
-                             final Collection<ResourceAmount> resources,
-                             final Action action) {
+        public Result insertAll(final Pattern p,
+                                final Collection<ResourceAmount> resources,
+                                final Action action) {
             if (fixedResult != null) {
                 return fixedResult;
             }
@@ -123,6 +122,6 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
         }
     }
 
-    private record ExternalPatternSinkKeyImpl(Pattern pattern) implements ExternalPatternSinkKey {
+    record ExternalPatternSinkKeyImpl(Pattern pattern) implements ExternalPatternSinkKey {
     }
 }

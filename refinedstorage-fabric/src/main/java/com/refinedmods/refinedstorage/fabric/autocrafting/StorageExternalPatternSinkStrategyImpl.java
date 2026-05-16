@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.fabric.api.StorageExternalPatternSinkStrategy;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -36,30 +35,18 @@ class StorageExternalPatternSinkStrategyImpl<T> implements StorageExternalPatter
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Transaction tx, final Collection<ResourceAmount> resources) {
-        boolean anyResourceWasApplicable = false;
-        for (final ResourceAmount resourceAmount : resources) {
-            final T platformResource = toPlatformMapper.apply(resourceAmount.resource());
-            if (platformResource == null) {
-                continue;
-            }
-            anyResourceWasApplicable = true;
-            final Storage<T> storage = cache.find(direction);
-            if (storage == null) {
-                return ExternalPatternSink.Result.SKIPPED;
-            }
-            if (storage.insert(platformResource, resourceAmount.amount(), tx) != resourceAmount.amount()) {
-                return ExternalPatternSink.Result.REJECTED;
-            }
+    public ExternalPatternSink.Result insert(final Transaction tx, final ResourceAmount resourceAmount) {
+        final T platformResource = toPlatformMapper.apply(resourceAmount.resource());
+        if (platformResource == null) {
+            return ExternalPatternSink.Result.SKIPPED;
         }
-        return anyResourceWasApplicable
+        final Storage<T> handler = cache.find(direction);
+        if (handler == null) {
+            return ExternalPatternSink.Result.SKIPPED;
+        }
+        return handler.insert(platformResource, (int) resourceAmount.amount(), tx) == resourceAmount.amount()
             ? ExternalPatternSink.Result.ACCEPTED
-            : ExternalPatternSink.Result.SKIPPED;
-    }
-
-    @Override
-    public boolean applies(final ResourceKey resource) {
-        return toPlatformMapper.apply(resource) != null;
+            : ExternalPatternSink.Result.REJECTED;
     }
 
     @Override

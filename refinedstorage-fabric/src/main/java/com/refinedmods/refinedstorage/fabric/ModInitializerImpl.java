@@ -205,7 +205,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PlatformProxy.loadPlatform(new PlatformImpl());
         initializePlatformApi();
         ((RefinedStorageFabricApiProxy) RefinedStorageFabricApi.INSTANCE).setDelegate(
-            new RefinedStorageFabricApiImpl(RefinedStorageApi.INSTANCE)
+            new RefinedStorageFabricApiImpl()
         );
         registerGridResourceRepositoryMappers();
         registerAdditionalGridInsertionStrategyFactories();
@@ -325,6 +325,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerExternalPatternSinkStrategyFactories() {
         RefinedStorageFabricApi.INSTANCE.addStorageExternalPatternSinkStrategyFactory(
+            ItemResource.class,
             new StorageExternalPatternSinkStrategyFactoryImpl<>(
                 ItemStorage.SIDED,
                 resource -> resource instanceof ItemResource itemResource
@@ -332,6 +333,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             )
         );
         RefinedStorageFabricApi.INSTANCE.addStorageExternalPatternSinkStrategyFactory(
+            FluidResource.class,
             new StorageExternalPatternSinkStrategyFactoryImpl<>(
                 FluidStorage.SIDED,
                 resource -> resource instanceof FluidResource fluidResource

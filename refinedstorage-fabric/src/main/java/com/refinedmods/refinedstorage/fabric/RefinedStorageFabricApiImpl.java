@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.fabric;
 
-import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.api.StorageExternalPatternSinkStrategyFactory;
@@ -19,14 +20,6 @@ public class RefinedStorageFabricApiImpl implements RefinedStorageFabricApi {
             NetworkNodeContainerProvider.class,
             Direction.class
         );
-    private final StoragePatternProviderExternalPatternSinkFactory
-        storagePatternProviderExternalPatternSinkFactory = new StoragePatternProviderExternalPatternSinkFactory();
-
-    public RefinedStorageFabricApiImpl(final RefinedStorageApi refinedStorageApi) {
-        refinedStorageApi.addPatternProviderExternalPatternSinkFactory(
-            storagePatternProviderExternalPatternSinkFactory
-        );
-    }
 
     @Override
     public BlockApiLookup<NetworkNodeContainerProvider, @Nullable Direction> getNetworkNodeContainerProviderLookup() {
@@ -34,9 +27,9 @@ public class RefinedStorageFabricApiImpl implements RefinedStorageFabricApi {
     }
 
     @Override
-    public void addStorageExternalPatternSinkStrategyFactory(
-        final StorageExternalPatternSinkStrategyFactory factory
-    ) {
-        storagePatternProviderExternalPatternSinkFactory.addFactory(factory);
+    public void addStorageExternalPatternSinkStrategyFactory(final Class<? extends ResourceKey> resourceType,
+                                                             final StorageExternalPatternSinkStrategyFactory factory) {
+        ((StoragePatternProviderExternalPatternSinkFactory)
+            Platform.INSTANCE.getPatternProviderExternalPatternSinkFactory()).addFactory(resourceType, factory);
     }
 }

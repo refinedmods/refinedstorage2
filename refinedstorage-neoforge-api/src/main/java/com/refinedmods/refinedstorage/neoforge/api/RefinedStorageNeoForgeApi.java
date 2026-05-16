@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.neoforge.api;
 
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 
 import net.minecraft.core.Direction;
@@ -14,6 +15,7 @@ public interface RefinedStorageNeoForgeApi {
     BlockCapability<NetworkNodeContainerProvider, @Nullable Direction> getNetworkNodeContainerProviderCapability();
 
     void addResourceHandlerExternalPatternSinkStrategyFactory(
+        Class<? extends ResourceKey> resourceType,
         ResourceHandlerExternalPatternSinkStrategyFactory factory
     );
 }

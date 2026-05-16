@@ -178,7 +178,14 @@ public class GridQueryParser {
     }
 
     private static ResourceRepositoryFilter<GridResource> parseLiteral(final LiteralNode node) {
-        return (repository, resource) -> normalize(resource.getName()).contains(normalize(node.token().content()));
+        return (repository, resource) -> {
+            for (final String name : resource.getSearchableNames()) {
+                if (normalize(name).contains(normalize(node.token().content()))) {
+                    return true;
+                }
+            }
+            return false;
+        };
     }
 
     private static ResourceRepositoryFilter<GridResource> and(

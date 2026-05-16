@@ -20,8 +20,10 @@ import static com.refinedmods.refinedstorage.common.GameTestUtil.createStacks;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.extract;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.interfaceContainsExactly;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.networkIsAvailable;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.prepareChest;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.prepareInterface;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.removeItemFromChest;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.storageContainsExactly;
 import static com.refinedmods.refinedstorage.common.storage.externalstorage.ExternalStorageTestPlots.preparePlot;
@@ -46,6 +48,33 @@ public final class ItemExternalStorageTest {
                 pos.east(),
                 DIRT.getDefaultInstance().copyWithCount(10),
                 COBBLESTONE.getDefaultInstance().copyWithCount(3)
+            );
+
+            // Assert
+            sequence
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(DIRT), 10),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldExposeInterface(final GameTestHelper helper) {
+        preparePlot(helper, Direction.EAST, (externalStorage, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> insert(helper, network, STONE, 2)));
+
+            // Act
+            prepareInterface(
+                helper,
+                pos.east(),
+                new ResourceAmount(asResource(DIRT), 10),
+                new ResourceAmount(asResource(COBBLESTONE), 3)
             );
 
             // Assert
@@ -372,6 +401,47 @@ public final class ItemExternalStorageTest {
                 ))
                 .thenExecute(networkIsAvailable(helper, pos, network -> extract(helper, network, DIRT, 5)))
                 .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    pos.east(),
+                    new ResourceAmount(asResource(DIRT), 5),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(DIRT), 5),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldExtractInterface(final GameTestHelper helper) {
+        preparePlot(helper, Direction.EAST, (externalStorage, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> insert(helper, network, STONE, 2)));
+
+            // Act
+            prepareInterface(
+                helper,
+                pos.east(),
+                new ResourceAmount(asResource(DIRT), 10),
+                new ResourceAmount(asResource(COBBLESTONE), 3)
+            );
+
+            // Assert
+            sequence
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(DIRT), 10),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenExecute(networkIsAvailable(helper, pos, network -> extract(helper, network, DIRT, 5)))
+                .thenWaitUntil(interfaceContainsExactly(
                     helper,
                     pos.east(),
                     new ResourceAmount(asResource(DIRT), 5),

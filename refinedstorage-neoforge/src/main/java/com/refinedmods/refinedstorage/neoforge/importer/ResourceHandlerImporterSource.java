@@ -9,10 +9,10 @@ import com.refinedmods.refinedstorage.neoforge.storage.ResourceHandlerInsertable
 import com.refinedmods.refinedstorage.neoforge.storage.ResourceHandlerProvider;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.neoforged.neoforge.transfer.resource.Resource;
+import org.jspecify.annotations.Nullable;
 
 class ResourceHandlerImporterSource<T extends Resource> implements ImporterSource {
     private final ResourceHandlerProvider<T> provider;
@@ -20,7 +20,7 @@ class ResourceHandlerImporterSource<T extends Resource> implements ImporterSourc
     private final ResourceHandlerExtractableStorage<T> extractTarget;
 
     ResourceHandlerImporterSource(final ResourceHandlerProvider<T> provider,
-                                  final Function<ResourceKey, Optional<T>> mapper) {
+                                  final Function<ResourceKey, @Nullable T> mapper) {
         this.provider = provider;
         this.insertTarget = new ResourceHandlerInsertableStorage<>(provider, mapper);
         this.extractTarget = new ResourceHandlerExtractableStorage<>(provider, mapper);

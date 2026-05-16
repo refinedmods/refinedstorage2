@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
+import com.refinedmods.refinedstorage.fabric.autocrafting.StoragePatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.ContainerTransferDestination;
@@ -96,6 +98,8 @@ import static java.util.Objects.requireNonNull;
 public final class PlatformImpl extends AbstractPlatform {
     @Nullable
     private RecipeProvider clientRecipeProvider;
+    private final StoragePatternProviderExternalPatternSinkFactory storagePatternProviderExternalPatternSinkFactory =
+        new StoragePatternProviderExternalPatternSinkFactory();
 
     public PlatformImpl() {
         super(new MenuOpenerImpl(), new FluidVariantFluidRenderer(), ItemGridInsertionStrategy::new);
@@ -445,5 +449,10 @@ public final class PlatformImpl extends AbstractPlatform {
         containerMenu.slots.clear();
         containerMenu.lastSlots.clear();
         containerMenu.remoteSlots.clear();
+    }
+
+    @Override
+    public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
+        return storagePatternProviderExternalPatternSinkFactory;
     }
 }

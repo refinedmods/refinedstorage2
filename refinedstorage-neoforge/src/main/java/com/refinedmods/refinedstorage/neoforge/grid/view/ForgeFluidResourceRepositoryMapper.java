@@ -28,7 +28,7 @@ public class ForgeFluidResourceRepositoryMapper extends AbstractFluidGridResourc
         try {
             return toStack(resource)
                 .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
-                    null, TooltipFlag.ADVANCED)
+                    ClientPlatformUtil.getClientPlayer(), TooltipFlag.ADVANCED)
                 .stream()
                 .map(Component::getString)
                 .collect(Collectors.joining("\n"));

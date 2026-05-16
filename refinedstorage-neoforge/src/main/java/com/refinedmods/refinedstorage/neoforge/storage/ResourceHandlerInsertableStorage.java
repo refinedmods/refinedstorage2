@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.InsertableStorage;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import com.google.common.primitives.Ints;
@@ -13,20 +12,25 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.resource.Resource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jspecify.annotations.Nullable;
 
 public class ResourceHandlerInsertableStorage<T extends Resource> implements InsertableStorage {
     private final ResourceHandlerProvider<T> provider;
-    private final Function<ResourceKey, Optional<T>> mapper;
+    private final Function<ResourceKey, @Nullable T> mapper;
 
     public ResourceHandlerInsertableStorage(final ResourceHandlerProvider<T> provider,
-                                            final Function<ResourceKey, Optional<T>> mapper) {
+                                            final Function<ResourceKey, @Nullable T> mapper) {
         this.provider = provider;
         this.mapper = mapper;
     }
 
     public long getAmount(final ResourceKey resource) {
-        return mapper.apply(resource).flatMap(platformResource -> provider.resolve()
-                .map(handler -> getAmount(platformResource, handler)))
+        final T platformResource = mapper.apply(resource);
+        if (platformResource == null) {
+            return 0L;
+        }
+        return provider.resolve()
+            .map(handler -> getAmount(platformResource, handler))
             .orElse(0L);
     }
 
@@ -38,8 +42,12 @@ public class ResourceHandlerInsertableStorage<T extends Resource> implements Ins
 
     @Override
     public long insert(final ResourceKey resource, final long amount, final Action action, final Actor actor) {
-        return mapper.apply(resource).flatMap(platformResource -> provider.resolve()
-                .map(handler -> insert(amount, action, handler, platformResource)))
+        final T platformResource = mapper.apply(resource);
+        if (platformResource == null) {
+            return 0L;
+        }
+        return provider.resolve()
+            .map(handler -> insert(amount, action, handler, platformResource))
             .orElse(0L);
     }
 

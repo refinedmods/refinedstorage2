@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage.common.autocrafting.autocrafter;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskImpl;
@@ -12,7 +11,6 @@ import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderExternalPatternSink;
-import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.ExternalPatternSinkKeyProvider;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderListener;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -34,10 +32,12 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamEncoder;
@@ -59,10 +59,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock.tryExtractDirection;
+import static java.util.Objects.requireNonNull;
 
 public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<PatternProviderNetworkNode>
-    implements ExtendedMenuProvider<AutocrafterData>, StepBehavior,
-    ExternalPatternSinkKeyProvider, PatternProviderExternalPatternSink, PatternProviderListener {
+    implements ExtendedMenuProvider<AutocrafterData>, StepBehavior, PatternProviderExternalPatternSink,
+    PatternProviderListener {
     static final int PATTERNS = 9;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutocrafterBlockEntity.class);
@@ -76,6 +77,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
     private static final String TAG_VISIBLE_TO_THE_AUTOCRAFTER_MANAGER = "vaum";
     private static final String TAG_LOCKED = "locked";
     private static final String TAG_WAS_POWERED = "wp";
+    private static final String TAG_ID = "auid";
 
     private final PatternInventory patternContainer = new PatternInventory(PATTERNS, this::getLevel) {
         @Override
@@ -97,7 +99,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
     @Nullable
     private PlatformPatternProviderExternalPatternSink sink;
     @Nullable
-    private ExternalPatternSinkKey sinkKey;
+    private AutocrafterExternalPatternSinkKey sinkKey;
     private boolean wasPowered;
     private boolean locked;
 
@@ -118,7 +120,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         }, this::setChanged);
         this.patternContainer.setListener(this::onPatternChanged);
         this.mainNetworkNode.setStepBehavior(this);
-        this.mainNetworkNode.setSinkKeyProvider(this);
+        this.mainNetworkNode.setSinkKeyProvider(() -> requireNonNull(sinkKey));
         this.mainNetworkNode.setSink(this);
         this.mainNetworkNode.setListener(this);
         this.mainNetworkNode.onAddedIntoContainer(new AutocrafterParentContainer(this));
@@ -247,6 +249,9 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         output.store(TAG_TASKS, TaskSnapshotCodecs.LIST_CODEC, collectTaskSnapshots());
         output.putBoolean(TAG_LOCKED, locked);
         output.putBoolean(TAG_WAS_POWERED, wasPowered);
+        if (sinkKey != null) {
+            output.store(TAG_ID, UUIDUtil.CODEC, sinkKey.id());
+        }
     }
 
     private List<TaskSnapshot> collectTaskSnapshots() {
@@ -285,6 +290,8 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         if (level != null && !level.isClientSide()) {
             onPatternChanged();
         }
+        final UUID id = input.read(TAG_ID, UUIDUtil.CODEC).orElseGet(UUID::randomUUID);
+        sinkKey = createSinkKey(id);
         super.loadAdditional(input);
     }
 
@@ -376,8 +383,8 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         super.initialize(level, direction);
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.relative(direction);
-        invalidateSinkKey();
-        this.sink = RefinedStorageApi.INSTANCE.getPatternProviderExternalPatternSinkFactory()
+        this.sinkKey = createSinkKey(sinkKey != null ? sinkKey.id() : UUID.randomUUID());
+        this.sink = Platform.INSTANCE.getPatternProviderExternalPatternSinkFactory()
             .create(level, sourcePosition, incomingDirection);
     }
 
@@ -503,29 +510,28 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         return AbstractDirectionalBlock.didDirectionChange(oldBlockState, newBlockState);
     }
 
-    @Override
-    @Nullable
-    public ExternalPatternSinkKey getKey() {
-        if (sinkKey == null) {
-            tryUpdateSinkKey();
-        }
-        return sinkKey;
-    }
-
-    private void tryUpdateSinkKey() {
+    private AutocrafterExternalPatternSinkKey createSinkKey(final UUID id) {
         if (!(level instanceof ServerLevel serverLevel)) {
-            return;
+            return AutocrafterExternalPatternSinkKey.create(id);
         }
         final Direction direction = tryExtractDirection(getBlockState());
         if (direction == null) {
-            return;
+            return AutocrafterExternalPatternSinkKey.create(id);
         }
         final AutocrafterBlockEntity root = getChainingRoot();
         final BlockEntity connectedMachine = root.getConnectedMachine();
         if (connectedMachine == null) {
-            invalidateSinkKey();
-            return;
+            return AutocrafterExternalPatternSinkKey.create(id);
         }
+        return createConnectedMachineSinkKey(id, serverLevel, connectedMachine, direction);
+    }
+
+    private AutocrafterExternalPatternSinkKey createConnectedMachineSinkKey(
+        final UUID id,
+        final ServerLevel serverLevel,
+        final BlockEntity connectedMachine,
+        final Direction direction
+    ) {
         final BlockState connectedMachineState = connectedMachine.getBlockState();
         final Player fakePlayer = getFakePlayer(serverLevel);
         final ItemStack connectedMachineStack = Platform.INSTANCE.getBlockAsItemStack(
@@ -537,21 +543,16 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
             fakePlayer
         );
         if (connectedMachineStack.isEmpty()) {
-            invalidateSinkKey();
-            return;
+            return AutocrafterExternalPatternSinkKey.create(id);
         }
-        sinkKey = new InWorldExternalPatternSinkKey(getName().getString(), connectedMachineStack);
-    }
-
-    private void invalidateSinkKey() {
-        sinkKey = null;
+        return new AutocrafterExternalPatternSinkKey(id, getName().getString(), connectedMachineStack);
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+    public ExternalPatternSink.Result insertAll(final Collection<ResourceAmount> resources, final Action action) {
         final AutocrafterBlockEntity root = getChainingRoot();
         if (root != this) {
-            return root.accept(resources, action);
+            return root.insertAll(resources, action);
         }
         if (sink == null) {
             return ExternalPatternSink.Result.SKIPPED;
@@ -559,7 +560,7 @@ public class AutocrafterBlockEntity extends AbstractBaseNetworkNodeContainerBloc
         if (locked) {
             return ExternalPatternSink.Result.LOCKED;
         }
-        final ExternalPatternSink.Result result = sink.accept(resources, action);
+        final ExternalPatternSink.Result result = sink.insertAll(resources, action);
         updateLockedAfterAccept(action, result);
         return result;
     }

@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-05-16
+
+### Changed
+
+-   The slot limit for a fluid in the processing pattern configuration has been increased to maximum 64 buckets.
+
+### Fixed
+
+-   Locking mode always locking/unlocking the first autocrafter when load balancing.
+-   Processing patterns not inserting interleaved ingredient types in the correct order.
+-   Grid search only matching original item names and not renamed items.
+-   Grid tooltip search not taking into account player sensitive tooltip information.
+-   The slot limit for an item in the processing pattern configuration being calculated in a stack insensitive way.
+-   Crash when a crafting pattern's recipe returns an empty output.
+-   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
+-   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
+-   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
+-   Because of all these autocrafting fixes, we had to break compatibility with processing autocrafting tasks that were still running from v3.0.0. If you load your world with this version (v3.0.1), and the world still contains running tasks that contain a processing pattern, that task will be voided.
+
 ## [3.0.0] - 2026-05-14
 
 ### Fixed
@@ -1223,7 +1242,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.1...HEAD
+
+[3.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...v3.0.1
 
 [3.0.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.8...v3.0.0
 

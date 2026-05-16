@@ -248,6 +248,16 @@ public abstract class AbstractBaseNetworkNodeContainerBlockEntity<T extends Abst
     }
 
     @Override
+    public void setChanged() {
+        // Override to bypass BlockEntity#setChanged: we don't need to call Level#updateNeighbourForOutputSignal
+        // as we do not use any redstone related block state properties and do not need the performance hit
+        // of looking them up.
+        if (level != null) {
+            level.blockEntityChanged(worldPosition);
+        }
+    }
+
+    @Override
     protected void applyImplicitComponents(final DataComponentGetter components) {
         super.applyImplicitComponents(components);
         this.customName = components.get(DataComponents.CUSTOM_NAME);

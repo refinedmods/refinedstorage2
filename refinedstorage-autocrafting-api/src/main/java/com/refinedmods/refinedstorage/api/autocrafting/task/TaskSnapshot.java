@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,8 @@ public record TaskSnapshot(
         boolean interceptedAnythingSinceLastStep,
         ExternalPatternSink.@Nullable Result lastSinkResult,
         @Nullable
-        ExternalPatternSinkKey lastSinkResultKey
+        ExternalPatternSinkKey lastSinkResultKey,
+        Deque<ExternalPatternSinkKey> pendingSinks
     ) {
         MutableResourceList copyExpectedOutputs() {
             final MutableResourceList copy = MutableResourceListImpl.create();

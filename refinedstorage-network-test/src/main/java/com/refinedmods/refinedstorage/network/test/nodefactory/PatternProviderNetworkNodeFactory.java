@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.network.test.nodefactory;
 
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
 
@@ -11,6 +12,10 @@ public class PatternProviderNetworkNodeFactory extends AbstractNetworkNodeFactor
     @Override
     protected AbstractNetworkNode innerCreate(final Map<String, Object> properties) {
         final int size = (int) properties.getOrDefault(PROPERTY_SIZE, 9);
-        return new PatternProviderNetworkNode(getEnergyUsage(properties), size);
+        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(getEnergyUsage(properties), size);
+        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
+        };
+        node.setSinkKeyProvider(() -> key);
+        return node;
     }
 }

@@ -8,28 +8,30 @@ import com.refinedmods.refinedstorage.common.api.autocrafting.PlatformPatternPro
 import com.refinedmods.refinedstorage.neoforge.api.ResourceHandlerExternalPatternSinkStrategy;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 class ResourceHandlerPatternProviderExternalPatternSink implements PlatformPatternProviderExternalPatternSink {
-    private final Set<ResourceHandlerExternalPatternSinkStrategy> strategies;
+    private final Map<Class<? extends ResourceKey>, ResourceHandlerExternalPatternSinkStrategy> strategies;
 
     ResourceHandlerPatternProviderExternalPatternSink(
-        final Set<ResourceHandlerExternalPatternSinkStrategy> strategies
+        final Map<Class<? extends ResourceKey>, ResourceHandlerExternalPatternSinkStrategy> strategies
     ) {
         this.strategies = strategies;
     }
 
     @Override
-    public ExternalPatternSink.Result accept(final Collection<ResourceAmount> resources, final Action action) {
+    public ExternalPatternSink.Result insertAll(final Collection<ResourceAmount> resources, final Action action) {
         ExternalPatternSink.Result result = ExternalPatternSink.Result.SKIPPED;
         try (Transaction tx = Transaction.openRoot()) {
-            final Set<ResourceHandlerExternalPatternSinkStrategy> sortedStrategies = getSortedStrategies(resources);
-            for (final ResourceHandlerExternalPatternSinkStrategy strategy : sortedStrategies) {
-                final ExternalPatternSink.Result strategyResult = strategy.accept(tx, resources);
+            for (final ResourceAmount resourceAmount : resources) {
+                final Class<? extends ResourceKey> resourceType = resourceAmount.resource().getClass();
+                final ResourceHandlerExternalPatternSinkStrategy strategy = strategies.get(resourceType);
+                if (strategy == null) {
+                    continue;
+                }
+                final ExternalPatternSink.Result strategyResult = strategy.insert(tx, resourceAmount);
                 if (strategyResult == ExternalPatternSink.Result.REJECTED) {
                     return strategyResult;
                 }
@@ -40,17 +42,6 @@ class ResourceHandlerPatternProviderExternalPatternSink implements PlatformPatte
             }
         }
         return result;
-    }
-
-    private Set<ResourceHandlerExternalPatternSinkStrategy> getSortedStrategies(
-        final Collection<ResourceAmount> resources
-    ) {
-        final Set<ResourceKey> order = resources.stream()
-            .map(ResourceAmount::resource)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-        return order.stream()
-            .flatMap(resource -> strategies.stream().filter(s -> s.applies(resource)))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private ExternalPatternSink.Result and(final ExternalPatternSink.Result a,
@@ -66,7 +57,7 @@ class ResourceHandlerPatternProviderExternalPatternSink implements PlatformPatte
 
     @Override
     public boolean isEmpty() {
-        for (final ResourceHandlerExternalPatternSinkStrategy strategy : strategies) {
+        for (final ResourceHandlerExternalPatternSinkStrategy strategy : strategies.values()) {
             if (!strategy.isEmpty()) {
                 return false;
             }

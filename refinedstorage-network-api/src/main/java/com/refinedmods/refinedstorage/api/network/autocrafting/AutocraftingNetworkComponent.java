@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusProvider;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkProvider;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -32,6 +33,9 @@ public interface AutocraftingNetworkComponent
 
     @Nullable
     PatternProvider getProviderByPattern(Pattern pattern);
+
+    @Nullable
+    PatternProvider getProviderBySinkKey(ExternalPatternSinkKey sinkKey);
 
     EnsureResult ensureTask(ResourceKey resource, long amount, Actor actor, CancellationToken cancellationToken);
 
