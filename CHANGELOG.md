@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
 -   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
 -   Wireless Grid reporting duplicate amount of resources.
+-   Grid updates are now throttled to 4 times per second per resource type to prevent client performance issues. Throttled updates will be queued and synced every second.
 
 ## [2.0.6] - 2026-05-10
 
