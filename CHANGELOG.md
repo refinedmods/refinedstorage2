@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Wireless Grid reporting duplicate amount of resources.
+
 ## [3.0.1] - 2026-05-16
 
 ### Changed
