@@ -78,11 +78,12 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         if (expectedOutputs.isEmpty()) {
             return PatternStepResult.COMPLETED;
         }
+        final ExternalPatternSink.Result previousSinkResult = lastSinkResult;
         if (iterationsToSendToSink == 0) {
-            return idleOrRunning();
+            return idleOrRunning(previousSinkResult);
         }
         if (!acceptsIterationInputs(internalStorage, sinkProvider)) {
-            return idleOrRunning();
+            return idleOrRunning(previousSinkResult);
         }
         LOGGER.debug("Stepped {} with {} iterations remaining", pattern, iterationsToSendToSink);
         iterationsToSendToSink--;
@@ -90,9 +91,12 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         return PatternStepResult.RUNNING;
     }
 
-    private PatternStepResult idleOrRunning() {
+    private PatternStepResult idleOrRunning(final ExternalPatternSink.@Nullable Result previousSinkResult) {
         if (interceptedAnythingSinceLastStep) {
             interceptedAnythingSinceLastStep = false;
+            return PatternStepResult.RUNNING;
+        }
+        if (previousSinkResult != lastSinkResult) {
             return PatternStepResult.RUNNING;
         }
         return PatternStepResult.IDLE;

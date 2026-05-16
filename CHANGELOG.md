@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Crash when a crafting pattern's recipe returns an empty output.
 -   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
 -   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
+-   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
 
 ## [3.0.0] - 2026-05-14
 
