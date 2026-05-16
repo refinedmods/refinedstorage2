@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The slot limit for an item in the processing pattern configuration being calculated in a stack insensitive way.
 -   Crash when a crafting pattern's recipe returns an empty output.
 -   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
+-   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
 
 ## [3.0.0] - 2026-05-14
 
