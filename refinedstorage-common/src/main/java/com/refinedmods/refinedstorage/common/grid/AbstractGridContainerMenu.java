@@ -94,6 +94,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
     private boolean resourceTypeWarningVisible;
+    @Nullable
+    private PendingGridUpdates pendingUpdates;
 
     protected AbstractGridContainerMenu(
         final MenuType<? extends AbstractGridContainerMenu> menuType,
@@ -140,14 +142,17 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     ) {
         super(menuType, syncId, playerInventory.player);
 
+        final ServerPlayer serverPlayer = (ServerPlayer) playerInventory.player;
+
         this.repository = createRepositoryBuilder(this).build();
 
         this.playerInventory = playerInventory;
         this.grid = grid;
         this.grid.addWatcher(this, PlayerActor.class);
+        this.pendingUpdates = new PendingGridUpdates(serverPlayer);
 
         this.synchronizer = NoopGridSynchronizer.INSTANCE;
-        initStrategies((ServerPlayer) playerInventory.player);
+        initStrategies(serverPlayer);
     }
 
     private static ResourceRepositoryBuilder<GridResource> createRepositoryBuilder(
@@ -315,16 +320,17 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         final long change,
         @Nullable final TrackedResource trackedResource
     ) {
-        if (!(resource instanceof PlatformResourceKey platformResource)) {
-            return;
+        if (pendingUpdates != null) {
+            pendingUpdates.onChanged(resource, change, trackedResource);
         }
-        LOGGER.debug("{} received a change of {} for {}", this, change, resource);
-        S2CPackets.sendGridUpdate(
-            (ServerPlayer) playerInventory.player,
-            platformResource,
-            change,
-            trackedResource
-        );
+    }
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (pendingUpdates != null) {
+            pendingUpdates.tryFlush();
+        }
     }
 
     @Override
