@@ -990,6 +990,43 @@ class TaskImplTest {
     }
 
     @Test
+    void shouldReportChangeWhenExternalSinkResultTransitions() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(STICKS, 2 * 2),
+            new ResourceAmount(IRON_ORE, 3 * 2)
+        );
+        final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        sinkProvider.put(IRON_INGOT_PATTERN);
+        final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 2);
+
+        // Act & assert
+        // Sink accepts: step makes progress and reports a change.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink becomes full (REJECTED): result changed from ACCEPTED, step must report it so the monitor refreshes.
+        sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.REJECTED);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink stays REJECTED: no change to report.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+
+        // Sink becomes unavailable (SKIPPED): result changed from REJECTED, step must report it.
+        sinkProvider.remove(IRON_INGOT_PATTERN);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink stays unavailable: no change to report.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+
+        // Sink comes back and accepts: result changed from SKIPPED, step must report it.
+        sinkProvider.put(IRON_INGOT_PATTERN);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+    }
+
+    @Test
     void shouldNotCompleteTaskWithExternalPatternIfSinkDoesNotAcceptResourcesOnlyWhenExecuting() {
         // Arrange
         final RootStorage storage = storage(
