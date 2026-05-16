@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
 -   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
 -   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
+-   Because of all these autocrafting fixes, we had to break compatibility with processing autocrafting tasks that were still running from v3.0.0. If you load your world with this version (v3.0.1), and the world still contains running tasks that contain a processing pattern, that task will be voided.
 
 ## [3.0.0] - 2026-05-14
 
