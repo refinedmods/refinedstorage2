@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreviewNode;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.core.Action;
@@ -72,9 +72,6 @@ class AutocraftingNetworkComponentImplTest {
         provider2.tryUpdatePattern(1, pattern2);
         provider2.tryUpdatePattern(2, pattern3);
 
-        final ExternalPatternSinkKey randomKey = new ExternalPatternSinkKey() {
-        };
-
         // Act
         sut.onContainerAdded(() -> provider1);
         sut.onContainerAdded(() -> provider1);
@@ -86,9 +83,9 @@ class AutocraftingNetworkComponentImplTest {
         assertThat(sut.getProviderByPattern(pattern2)).isEqualTo(provider2);
         assertThat(sut.getProviderByPattern(pattern3)).isEqualTo(provider2);
         assertThat(sut.getProviderByPattern(patternABuilder.build())).isNull();
-        assertThat(sut.getProviderBySinkKey(provider1.getKey())).isEqualTo(provider1);
-        assertThat(sut.getProviderBySinkKey(provider2.getKey())).isEqualTo(provider2);
-        assertThat(sut.getProviderBySinkKey(randomKey)).isNull();
+        assertThat(sut.getProviderById(provider1.getId())).isEqualTo(provider1);
+        assertThat(sut.getProviderById(provider2.getId())).isEqualTo(provider2);
+        assertThat(sut.getProviderById(ExternalPatternSinkId.create())).isNull();
         assertThat(sut.getSinksByPatternLayout(pattern1.layout())).containsExactlyInAnyOrder(provider1, provider2);
         assertThat(sut.getSinksByPatternLayout(pattern2.layout())).containsExactlyInAnyOrder(provider1, provider2);
         assertThat(sut.getSinksByPatternLayout(pattern3.layout())).containsExactly(provider2);
@@ -122,8 +119,8 @@ class AutocraftingNetworkComponentImplTest {
         assertThat(sut.getProviderByPattern(pattern1)).isNull();
         assertThat(sut.getProviderByPattern(pattern2)).isEqualTo(provider2);
         assertThat(sut.getProviderByPattern(pattern3)).isEqualTo(provider2);
-        assertThat(sut.getProviderBySinkKey(provider1.getKey())).isNull();
-        assertThat(sut.getProviderBySinkKey(provider2.getKey())).isEqualTo(provider2);
+        assertThat(sut.getProviderById(provider1.getId())).isNull();
+        assertThat(sut.getProviderById(provider2.getId())).isEqualTo(provider2);
         assertThat(sut.getSinksByPatternLayout(pattern1.layout())).containsExactly(provider2);
         assertThat(sut.getSinksByPatternLayout(pattern2.layout())).containsExactly(provider2);
         assertThat(sut.getSinksByPatternLayout(pattern3.layout())).containsExactly(provider2);
@@ -133,8 +130,8 @@ class AutocraftingNetworkComponentImplTest {
         assertThat(sut.getProviderByPattern(pattern1)).isNull();
         assertThat(sut.getProviderByPattern(pattern2)).isNull();
         assertThat(sut.getProviderByPattern(pattern3)).isNull();
-        assertThat(sut.getProviderBySinkKey(provider1.getKey())).isNull();
-        assertThat(sut.getProviderBySinkKey(provider2.getKey())).isNull();
+        assertThat(sut.getProviderById(provider1.getId())).isNull();
+        assertThat(sut.getProviderById(provider2.getId())).isNull();
         assertThat(sut.getSinksByPatternLayout(pattern1.layout())).isEmpty();
         assertThat(sut.getSinksByPatternLayout(pattern2.layout())).isEmpty();
         assertThat(sut.getSinksByPatternLayout(pattern3.layout())).isEmpty();
@@ -144,8 +141,8 @@ class AutocraftingNetworkComponentImplTest {
         assertThat(sut.getProviderByPattern(pattern1)).isNull();
         assertThat(sut.getProviderByPattern(pattern2)).isNull();
         assertThat(sut.getProviderByPattern(pattern3)).isNull();
-        assertThat(sut.getProviderBySinkKey(provider1.getKey())).isNull();
-        assertThat(sut.getProviderBySinkKey(provider2.getKey())).isNull();
+        assertThat(sut.getProviderById(provider1.getId())).isNull();
+        assertThat(sut.getProviderById(provider2.getId())).isNull();
         assertThat(sut.getSinksByPatternLayout(pattern1.layout())).isEmpty();
         assertThat(sut.getSinksByPatternLayout(pattern2.layout())).isEmpty();
         assertThat(sut.getSinksByPatternLayout(pattern3.layout())).isEmpty();
@@ -563,9 +560,7 @@ class AutocraftingNetworkComponentImplTest {
 
     private static PatternProviderNetworkNode createPatternProvider() {
         final PatternProviderNetworkNode node = new PatternProviderNetworkNode(0, 5);
-        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
-        };
-        node.setSinkKeyProvider(() -> key);
+        node.setId(ExternalPatternSinkId.create());
         return node;
     }
 

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import java.util.Collection;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Gives the ability to a {@link Task} to dump inputs of an external {@link Pattern} into the external target.
@@ -28,25 +29,30 @@ public interface ExternalPatternSink {
     Result insertAll(Pattern pattern, Collection<ResourceAmount> resources, Action action);
 
     /**
-     * Returns a unique key for this sink. This is used to unlock sinks that became locked after inserting an
+     * Returns a unique ID for this sink. This is used to unlock sinks that became locked after inserting an
      * external iteration.
-     * The object identity of {@link ExternalPatternSinkKey} must remain stable across the lifecycle of the
-     * {@link ExternalPatternSink}.
+     * The ID must remain stable across the lifecycle of the {@link ExternalPatternSink}.
      *
-     * @return the key for this sink
+     * @return the ID for this sink
      */
-    ExternalPatternSinkKey getKey();
+    ExternalPatternSinkId getId();
 
     /**
-     * If this sink acts as a proxy for another sink, the key of the other sink should be returned here.
+     * If this sink acts as a proxy for another sink, the ID of the other sink should be returned here.
      * This is used so that the correct sink can be notified (and potentially be unlocked)
      * when an external iteration is received.
      *
-     * @return the key of the sink this sink is proxying for, or the same key as {@link #getKey()} if it is not a proxy
+     * @return the ID of the sink this sink is proxying for, or the same ID as {@link #getId()} if it is not a proxy
      */
-    default ExternalPatternSinkKey unwrapKey(final Pattern pattern) {
-        return getKey();
+    default ExternalPatternSinkId unwrapId(final Pattern pattern) {
+        return getId();
     }
+
+    /**
+     * @return optional details that belong to this sink
+     */
+    @Nullable
+    ExternalPatternSinkDetails getDetails();
 
     enum Result {
         ACCEPTED,

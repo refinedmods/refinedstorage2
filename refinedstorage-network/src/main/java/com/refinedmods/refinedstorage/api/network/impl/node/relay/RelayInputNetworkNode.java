@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -101,6 +102,12 @@ public class RelayInputNetworkNode extends AbstractNetworkNode {
     public void setFilterNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         if (outputNode != null) {
             outputNode.setFilterNormalizer(normalizer);
+        }
+    }
+
+    public void setId(final ExternalPatternSinkId id) {
+        if (outputNode != null) {
+            outputNode.setId(id);
         }
     }
 

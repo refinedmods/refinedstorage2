@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
@@ -148,17 +148,13 @@ class RelaySecurityNetworkNodeTest {
 
         // Act
         final RelayOutputNetworkNode cycleOutput = new RelayOutputNetworkNode(0);
-        final ExternalPatternSinkKey cycleOutputKey = new ExternalPatternSinkKey() {
-        };
-        cycleOutput.setSinkKeyProvider(() -> cycleOutputKey);
+        cycleOutput.setId(ExternalPatternSinkId.create());
         cycleOutput.setSecurityDelegate(inputAlternativeSecurity);
         cycleOutput.setNetwork(inputNetwork);
         inputNetwork.addContainer(() -> cycleOutput);
 
         final RelayOutputNetworkNode cycleOutputAlternative = new RelayOutputNetworkNode(0);
-        final ExternalPatternSinkKey cycleOutputAlternativeKey = new ExternalPatternSinkKey() {
-        };
-        cycleOutputAlternative.setSinkKeyProvider(() -> cycleOutputAlternativeKey);
+        cycleOutputAlternative.setId(ExternalPatternSinkId.create());
         cycleOutputAlternative.setSecurityDelegate(inputSecurity);
         cycleOutputAlternative.setNetwork(inputAlternativeNetwork);
         inputAlternativeNetwork.addContainer(() -> cycleOutputAlternative);

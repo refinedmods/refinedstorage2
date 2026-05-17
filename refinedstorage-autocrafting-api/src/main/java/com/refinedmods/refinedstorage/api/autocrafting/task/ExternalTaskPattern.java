@@ -26,14 +26,14 @@ class ExternalTaskPattern extends AbstractTaskPattern {
     private final MutableResourceList expectedOutputs;
     private final ResourceList simulatedIterationInputs;
     private final long originalIterationsToSendToSink;
-    private final Deque<ExternalPatternSinkKey> pendingSinks;
+    private final Deque<ExternalPatternSinkId> pendingSinkIds;
     private long iterationsToSendToSink;
     private long iterationsReceived;
     private boolean interceptedAnythingSinceLastStep;
     private boolean interceptedAnIterationAtLeastOnceSinceLastStep;
     private ExternalPatternSink.@Nullable Result lastSinkResult;
     @Nullable
-    private ExternalPatternSinkKey lastSinkResultKey;
+    private ExternalPatternSinkDetails lastSinkDetails;
     private int currentSinkIndex;
 
     ExternalTaskPattern(final Pattern pattern, final TaskPlan.PatternPlan plan) {
@@ -45,7 +45,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         );
         this.iterationsToSendToSink = plan.iterations();
         this.simulatedIterationInputs = calculateIterationInputs(Action.SIMULATE);
-        this.pendingSinks = new ArrayDeque<>();
+        this.pendingSinkIds = new ArrayDeque<>();
     }
 
     ExternalTaskPattern(final TaskSnapshot.PatternSnapshot snapshot) {
@@ -59,8 +59,8 @@ class ExternalTaskPattern extends AbstractTaskPattern {
         this.iterationsReceived = externalPattern.iterationsReceived();
         this.interceptedAnythingSinceLastStep = externalPattern.interceptedAnythingSinceLastStep();
         this.lastSinkResult = externalPattern.lastSinkResult();
-        this.lastSinkResultKey = externalPattern.lastSinkResultKey();
-        this.pendingSinks = externalPattern.pendingSinks();
+        this.lastSinkDetails = externalPattern.lastSinkDetails();
+        this.pendingSinkIds = externalPattern.pendingSinkIds();
     }
 
     @Override
@@ -70,9 +70,9 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                            final TaskListener listener) {
         if (interceptedAnIterationAtLeastOnceSinceLastStep) {
             interceptedAnIterationAtLeastOnceSinceLastStep = false;
-            if (!pendingSinks.isEmpty()) {
-                final ExternalPatternSinkKey sinkKey = pendingSinks.remove();
-                listener.receivedExternalIteration(pattern, sinkKey);
+            if (!pendingSinkIds.isEmpty()) {
+                final ExternalPatternSinkId sinkId = pendingSinkIds.remove();
+                listener.receivedExternalIteration(pattern, sinkId);
             }
         }
         if (expectedOutputs.isEmpty()) {
@@ -187,7 +187,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                 builder.processing(
                     input,
                     simulatedIterationInputs.get(input) * iterationsProcessing,
-                    lastSinkResultKey
+                    lastSinkDetails
                 );
             }
         }
@@ -243,7 +243,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
             != ExternalPatternSink.Result.ACCEPTED) {
             LOGGER.warn("Sink {} did not accept all inputs for pattern {}", sink, pattern);
         }
-        pendingSinks.add(sink.unwrapKey(pattern));
+        pendingSinkIds.add(sink.unwrapId(pattern));
         return true;
     }
 
@@ -261,7 +261,7 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                 Action.SIMULATE
             );
             lastSinkResult = simulatedResult;
-            lastSinkResultKey = sink.getKey();
+            lastSinkDetails = sink.getDetails();
             currentSinkIndex++;
             if (simulatedResult != ExternalPatternSink.Result.ACCEPTED) {
                 continue;
@@ -286,8 +286,8 @@ class ExternalTaskPattern extends AbstractTaskPattern {
                 iterationsReceived,
                 interceptedAnythingSinceLastStep,
                 lastSinkResult,
-                lastSinkResultKey,
-                pendingSinks
+                lastSinkDetails,
+                pendingSinkIds
             )
         );
     }

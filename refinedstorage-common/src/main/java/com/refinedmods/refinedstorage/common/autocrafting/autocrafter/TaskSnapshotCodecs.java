@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternLayout;
 import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskSnapshot;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -74,19 +75,11 @@ final class TaskSnapshotCodecs {
                 .forGetter(TaskSnapshot.InternalPatternSnapshot::iterationsRemaining)
         ).apply(instance, TaskSnapshot.InternalPatternSnapshot::new));
 
-    private static final Codec<AutocrafterExternalPatternSinkKey> EXTERNAL_PATTERN_SINK_KEY_CODEC =
+    private static final Codec<AutocrafterExternalPatternSinkDetails> SINK_DETAILS_CODEC =
         RecordCodecBuilder.create(instance -> instance.group(
-            UUIDUtil.CODEC.fieldOf("id")
-                .forGetter(AutocrafterExternalPatternSinkKey::id),
-            Codec.STRING.optionalFieldOf("name")
-                .forGetter(n -> n.name() != null ? Optional.of(n.name()) : Optional.empty()),
-            ItemStack.CODEC.optionalFieldOf("stack")
-                .forGetter(n -> n.stack() != null ? Optional.of(n.stack()) : Optional.empty())
-        ).apply(instance, (id, optionalName, optionalStack) -> {
-            final String name = optionalName.orElse(null);
-            final ItemStack stack = optionalStack.orElse(null);
-            return new AutocrafterExternalPatternSinkKey(id, name, stack);
-        }));
+            Codec.STRING.fieldOf("name").forGetter(AutocrafterExternalPatternSinkDetails::name),
+            ItemStack.CODEC.fieldOf("stack").forGetter(AutocrafterExternalPatternSinkDetails::stack)
+        ).apply(instance, AutocrafterExternalPatternSinkDetails::new));
 
     private static final Codec<TaskSnapshot.ExternalPatternSnapshot> EXTERNAL_PATTERN_CODEC =
         RecordCodecBuilder.create(instance -> instance.group(
@@ -107,13 +100,12 @@ final class TaskSnapshotCodecs {
                     result -> result.map(SerializableExternalPatternSinkResult::toResult),
                     result -> result.map(SerializableExternalPatternSinkResult::fromResult)
                 ).forGetter(ts -> Optional.ofNullable(ts.lastSinkResult())),
-            EXTERNAL_PATTERN_SINK_KEY_CODEC.optionalFieldOf("lastSinkResultKey")
-                .forGetter(ts -> ts.lastSinkResultKey() instanceof AutocrafterExternalPatternSinkKey key
-                    ? Optional.of(key)
+            SINK_DETAILS_CODEC.optionalFieldOf("lastSinkDetails")
+                .forGetter(ts -> ts.lastSinkDetails() instanceof AutocrafterExternalPatternSinkDetails details
+                    ? Optional.of(details)
                     : Optional.empty()),
-            EXTERNAL_PATTERN_SINK_KEY_CODEC.listOf().fieldOf("pendingSinks").forGetter(ts -> ts.pendingSinks().stream()
-                .filter(AutocrafterExternalPatternSinkKey.class::isInstance)
-                .map(AutocrafterExternalPatternSinkKey.class::cast)
+            UUIDUtil.CODEC.listOf().fieldOf("pendingSinkIds").forGetter(ts -> ts.pendingSinkIds().stream()
+                .map(ExternalPatternSinkId::id)
                 .toList())
         ).apply(instance, (expectedOutputs, simulatedIterationInputs, originalIterationsToSendToSink,
                            iterationsToSendToSink, iterationsReceived, interceptedAnythingSinceLastStep,
@@ -127,7 +119,7 @@ final class TaskSnapshotCodecs {
                 interceptedAnythingSinceLastStep,
                 lastSinkResult.orElse(null),
                 lastSinkResultKey.orElse(null),
-                new ArrayDeque<>(pendingSinks)
+                new ArrayDeque<>(pendingSinks.stream().map(ExternalPatternSinkId::new).toList())
             )));
 
     private static final Codec<IngredientPossibilityEntry> INGREDIENT_POSSIBILITY_ENTRY_CODEC =
@@ -227,8 +219,8 @@ final class TaskSnapshotCodecs {
         ).forGetter(TaskSnapshot::state),
         Codec.BOOL.fieldOf("cancelled").forGetter(TaskSnapshot::cancelled)
     ).apply(instance, TaskSnapshot::new)).validate(snapshot -> {
-        // "pendingSinks" has been added as a required key in b4d23f9a
-        // Older worlds having running autocrafting tasks will not have this "pendingSinks" key
+        // "pendingSinkIds" has been added as a required key in b4d23f9a
+        // Older worlds having running autocrafting tasks will not have this "pendingSinkIds" key
         // and the PatternSnapshot's "externalPattern" will fail to deserialize.
         // This means that the task will have a pattern with no internal and no external pattern.
         // This throws an NPE at runtime, so we need to catch this gracefully and void the task here.

@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage.api.network.impl.node.patternprovider;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkDetails;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -42,7 +43,9 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     @Nullable
     private PatternProviderExternalPatternSink sink;
     @Nullable
-    private Supplier<ExternalPatternSinkKey> sinkKeyProvider;
+    private ExternalPatternSinkId id;
+    @Nullable
+    private Supplier<@Nullable ExternalPatternSinkDetails> detailsProvider;
     private StepBehavior stepBehavior = StepBehavior.DEFAULT;
     @Nullable
     private PatternProviderListener listener;
@@ -154,12 +157,12 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     }
 
     @Override
-    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkKey sinkKey) {
+    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkId sinkId) {
         if (network == null) {
             return;
         }
         final AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
-        final PatternProvider provider = autocrafting.getProviderBySinkKey(sinkKey);
+        final PatternProvider provider = autocrafting.getProviderById(sinkId);
         if (provider == null) {
             return;
         }
@@ -176,6 +179,25 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
         return sink.insertAll(resources, action);
     }
 
+    @Override
+    public ExternalPatternSinkId getId() {
+        return requireNonNull(id);
+    }
+
+    @Override
+    @Nullable
+    public ExternalPatternSinkDetails getDetails() {
+        return detailsProvider != null ? detailsProvider.get() : null;
+    }
+
+    public void setId(final ExternalPatternSinkId id) {
+        this.id = id;
+    }
+
+    public void setDetailsProvider(final Supplier<@Nullable ExternalPatternSinkDetails> detailsProvider) {
+        this.detailsProvider = detailsProvider;
+    }
+
     public List<Task> getTasks() {
         return tasks.getAll();
     }
@@ -187,11 +209,6 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
             return;
         }
         tasks.step(network, stepBehavior, this);
-    }
-
-    @Override
-    public ExternalPatternSinkKey getKey() {
-        return requireNonNull(sinkKeyProvider).get();
     }
 
     public int getPriority() {
@@ -209,10 +226,6 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
 
     public void setStepBehavior(final StepBehavior stepBehavior) {
         this.stepBehavior = stepBehavior;
-    }
-
-    public void setSinkKeyProvider(final Supplier<ExternalPatternSinkKey> sinkKeyProvider) {
-        this.sinkKeyProvider = sinkKeyProvider;
     }
 
     public void setListener(final PatternProviderListener listener) {

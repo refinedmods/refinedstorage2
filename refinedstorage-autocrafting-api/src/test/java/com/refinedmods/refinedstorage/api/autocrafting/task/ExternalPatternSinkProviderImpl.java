@@ -38,8 +38,8 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
         sinks.remove(pattern.layout());
     }
 
-    static ExternalPatternSinkKey sinkKey(final Pattern pattern) {
-        return new ExternalPatternSinkKeyImpl(pattern);
+    static ExternalPatternSinkDetails details(final Pattern pattern) {
+        return new ExternalPatternSinkDetailsImpl(pattern);
     }
 
     @Override
@@ -55,14 +55,15 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
         private final Storage storage;
         @Nullable
         private final Result fixedResult;
-        private final ExternalPatternSinkKey key;
+        private final ExternalPatternSinkId id = ExternalPatternSinkId.create();
+        private final ExternalPatternSinkDetails details;
 
         private ExternalPatternSinkImpl(final Storage storage,
                                         final Pattern pattern,
                                         @Nullable final Result fixedResult) {
             this.storage = storage;
             this.fixedResult = fixedResult;
-            this.key = new ExternalPatternSinkKeyImpl(pattern);
+            this.details = new ExternalPatternSinkDetailsImpl(pattern);
         }
 
         Collection<ResourceAmount> getAll() {
@@ -70,8 +71,8 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
         }
 
         @Override
-        public ExternalPatternSinkKey getKey() {
-            return key;
+        public ExternalPatternSinkDetails getDetails() {
+            return details;
         }
 
         @Override
@@ -85,6 +86,11 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
                 return accept(resources);
             }
             return acceptsSimulated(resources);
+        }
+
+        @Override
+        public ExternalPatternSinkId getId() {
+            return id;
         }
 
         private Result accept(final Collection<ResourceAmount> resources) {
@@ -122,6 +128,6 @@ class ExternalPatternSinkProviderImpl implements ExternalPatternSinkProvider {
         }
     }
 
-    record ExternalPatternSinkKeyImpl(Pattern pattern) implements ExternalPatternSinkKey {
+    record ExternalPatternSinkDetailsImpl(Pattern pattern) implements ExternalPatternSinkDetails {
     }
 }
