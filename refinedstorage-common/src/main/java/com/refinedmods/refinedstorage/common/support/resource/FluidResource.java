@@ -44,7 +44,7 @@ public final class FluidResource
 
     @Override
     public long getProcessingPatternLimit() {
-        return Platform.INSTANCE.getBucketAmount() * 16;
+        return Platform.INSTANCE.getBucketAmount() * 64;
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage.api.storage.root.RootStorageImpl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
@@ -899,6 +900,44 @@ class TaskImplTest {
     }
 
     @Test
+    void shouldNotStealOutputsFromOtherTaskUsingSameExternalPattern() {
+        // Arrange
+        final RootStorage storage = new RootStorageImpl(
+            MutableResourceListImpl.create(),
+            new LinkedHashSet<>()
+        );
+        storage.addSource(new StorageImpl());
+        storage.insert(IRON_ORE, 6, Action.EXECUTE, Actor.EMPTY);
+        final PatternRepository patterns = patterns(IRON_INGOT_PATTERN);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        sinkProvider.put(IRON_INGOT_PATTERN);
+        final Task task1 = getRunningTask(storage, patterns, sinkProvider, IRON_INGOT, 3);
+        final Task task2 = getRunningTask(storage, patterns, sinkProvider, IRON_INGOT, 3);
+
+        // task1 dispatches only 1 of its 3 iterations.
+        task1.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        // task2 dispatches all 3 of its iterations.
+        task2.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        task2.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        task2.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+
+        // The sink yields 4 iron ingots back into storage:
+        // 1 produced by task1's single iteration and 3 produced by task2's three iterations.
+        storage.insert(IRON_INGOT, 4, Action.EXECUTE, Actor.EMPTY);
+
+        // Act
+        task1.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+        task2.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY);
+
+        // Assert: task2 has dispatched all of its iterations, so it should have received
+        // all 3 of its expected outputs and completed. Without the fix, task1 (registered
+        // first) greedily claims 3 of the 4 ingots even though it only dispatched 1
+        // iteration, leaving task2 short by 2 ingots and unable to complete.
+        assertThat(task1.getState()).isEqualTo(TaskState.RUNNING);
+        assertThat(task2.getState()).isEqualTo(TaskState.COMPLETED);
+    }
+
+    @Test
     void shouldNotCompleteTaskWithExternalPatternIfSinkDoesNotAcceptResources() {
         // Arrange
         final RootStorage storage = storage(
@@ -942,6 +981,43 @@ class TaskImplTest {
         assertThat(ironOreSink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount(IRON_ORE, 1)
         );
+    }
+
+    @Test
+    void shouldReportChangeWhenExternalSinkResultTransitions() {
+        // Arrange
+        final RootStorage storage = storage(
+            new ResourceAmount(STICKS, 2 * 2),
+            new ResourceAmount(IRON_ORE, 3 * 2)
+        );
+        final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
+        final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
+        sinkProvider.put(IRON_INGOT_PATTERN);
+        final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 2);
+
+        // Act & assert
+        // Sink accepts: step makes progress and reports a change.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink becomes full (REJECTED): result changed from ACCEPTED, step must report it so the monitor refreshes.
+        sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.REJECTED);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink stays REJECTED: no change to report.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+
+        // Sink becomes unavailable (SKIPPED): result changed from REJECTED, step must report it.
+        sinkProvider.remove(IRON_INGOT_PATTERN);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
+
+        // Sink stays unavailable: no change to report.
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isFalse();
+
+        // Sink comes back and accepts: result changed from SKIPPED, step must report it.
+        sinkProvider.put(IRON_INGOT_PATTERN);
+        assertThat(task.step(storage, sinkProvider, StepBehavior.DEFAULT, TaskListener.EMPTY)).isTrue();
     }
 
     @Test

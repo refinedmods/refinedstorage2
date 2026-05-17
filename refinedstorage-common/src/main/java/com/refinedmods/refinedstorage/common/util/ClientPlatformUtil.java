@@ -19,6 +19,7 @@ import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.lwjgl.glfw.GLFW;
 
@@ -33,6 +34,11 @@ public final class ClientPlatformUtil {
     @Nullable
     public static Level getClientLevel() { // avoids classloading issues
         return Minecraft.getInstance().level;
+    }
+
+    @Nullable
+    public static Player getClientPlayer() { // avoids classloading issues
+        return Minecraft.getInstance().player;
     }
 
     public static void addMessageToast(final Component title, final Component message) {

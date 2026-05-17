@@ -14,15 +14,23 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.3.0")
 public abstract class AbstractGridResource<T extends PlatformResourceKey> implements GridResource {
     protected final T resource;
-    private final String name;
+    private final String sortName;
+    private final Set<String> searchableNames;
     private final Function<GridResourceAttributeKey, Set<String>> attributes;
 
     protected AbstractGridResource(final T resource,
-                                   final String name,
+                                   final String sortName,
+                                   final Set<String> searchableNames,
                                    final Function<GridResourceAttributeKey, Set<String>> attributes) {
         this.resource = resource;
-        this.name = name;
+        this.sortName = sortName;
+        this.searchableNames = searchableNames;
         this.attributes = attributes;
+    }
+
+    protected AbstractGridResource(final T resource, final String sortName,
+                                final Function<GridResourceAttributeKey, Set<String>> attributes) {
+        this(resource, sortName, Set.of(sortName), attributes);
     }
 
     @Override
@@ -38,7 +46,12 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
 
     @Override
     public String getName() {
-        return name;
+        return sortName;
+    }
+
+    @Override
+    public Set<String> getSearchableNames() {
+        return searchableNames;
     }
 
     @Override
@@ -61,7 +74,8 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
     public String toString() {
         return "AbstractGridResource{"
             + "resource=" + resource
-            + ", name='" + name + '\''
+            + ", sortName='" + sortName + '\''
+            + ", searchableNames=" + searchableNames
             + ", attributes=" + attributes
             + '}';
     }

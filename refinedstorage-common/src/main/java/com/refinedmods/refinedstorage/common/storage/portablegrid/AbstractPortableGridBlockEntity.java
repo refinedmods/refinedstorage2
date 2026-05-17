@@ -275,6 +275,16 @@ public abstract class AbstractPortableGridBlockEntity extends BlockEntity
         return PortableGridData.STREAM_CODEC;
     }
 
+    @Override
+    public void setChanged() {
+        // Override to bypass BlockEntity#setChanged: we don't need to call Level#updateNeighbourForOutputSignal
+        // as we do not use any redstone related block state properties and do not need the performance hit
+        // of looking them up.
+        if (level != null) {
+            level.blockEntityChanged(worldPosition);
+        }
+    }
+
     DiskInventory getDiskInventory() {
         return diskInventory;
     }

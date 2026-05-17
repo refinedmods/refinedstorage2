@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,7 +35,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         final ItemResource itemResource = (ItemResource) resource;
         final Item item = itemResource.item();
         final ItemStack itemStack = itemResource.toItemStack();
-        final String name = item.getName(itemStack).getString();
+        final String customName = itemStack.getHoverName().getString();
+        final String originalName = item.getName(itemStack).getString();
         final String modId = getModId(itemStack);
         final String modName = getModName(modId).orElse("");
         final Map<GridResourceAttributeKey, Supplier<Set<String>>> attributes = Map.of(
@@ -46,7 +48,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         return new ItemGridResource(
             itemResource,
             itemStack,
-            name,
+            customName,
+            originalName,
             k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
     }
@@ -54,7 +57,8 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
     private String getTooltip(final ItemStack itemStack) {
         try {
             return itemStack
-                .getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.ADVANCED)
+                .getTooltipLines(Item.TooltipContext.of(ClientPlatformUtil.getClientLevel()),
+                    ClientPlatformUtil.getClientPlayer(), TooltipFlag.ADVANCED)
                 .stream()
                 .map(Component::getString)
                 .collect(Collectors.joining("\n"));
