@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.7] - 2026-05-17
+
 ### Changed
 
 -   The slot limit for a fluid in the processing pattern configuration has been increased to maximum 64 buckets.
