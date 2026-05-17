@@ -182,6 +182,14 @@ public abstract class AbstractExternalStorageBlockEntity
         mainNetworkNode.getStorageConfiguration().setVoidExcess(voidExcess);
     }
 
+    void setInsertPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setInsertPriority(priority);
+    }
+
+    void setExtractPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setExtractPriority(priority);
+    }
+
     @Override
     public ResourceContainerData getMenuData() {
         return ResourceContainerData.of(filter.getFilterContainer());

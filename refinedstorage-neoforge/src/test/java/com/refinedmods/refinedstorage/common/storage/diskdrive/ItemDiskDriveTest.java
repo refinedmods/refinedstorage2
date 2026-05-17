@@ -7,18 +7,23 @@ import com.refinedmods.refinedstorage.common.MinecraftIntegrationTest;
 
 import java.util.Set;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.diskDriveStorageContainsExactly;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.diskDriveStorageIsEmpty;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.extract;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.insert;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.networkIsAvailable;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.storageContainsExactly;
+import static com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveTestPlots.prepareDiskDrive;
 import static com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveTestPlots.preparePlot;
 import static net.minecraft.world.item.Items.DIAMOND_CHESTPLATE;
 import static net.minecraft.world.item.Items.DIRT;
+import static net.minecraft.world.item.Items.OAK_LOG;
 import static net.minecraft.world.item.Items.STONE;
 
 public final class ItemDiskDriveTest {
@@ -176,6 +181,73 @@ public final class ItemDiskDriveTest {
     }
 
     @MinecraftIntegrationTest
+    public static void shouldRespectInsertPriority(final GameTestHelper helper) {
+        preparePlot(helper, true, (diskDrive, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network -> insert(helper, network, STONE, 2)));
+
+            final BlockPos pos2 = pos.west();
+            final AbstractDiskDriveBlockEntity diskDrive2 = prepareDiskDrive(helper, true, pos2);
+
+            // Act
+            diskDrive.setInsertPriority(2);
+
+            // Assert
+            sequence
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2)
+                ))
+                .thenWaitUntil(diskDriveStorageIsEmpty(helper, pos2))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2)
+                ))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 62);
+                    insert(helper, network, DIRT, 12);
+                }))
+                .thenWaitUntil(diskDriveStorageIsEmpty(helper, pos2))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 64),
+                    new ResourceAmount(asResource(DIRT), 12)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 64),
+                    new ResourceAmount(asResource(DIRT), 12)
+                ))
+                .thenExecute(() -> diskDrive2.setInsertPriority(3))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 10);
+                }))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos2,
+                    new ResourceAmount(asResource(STONE), 10)
+                ))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 64),
+                    new ResourceAmount(asResource(DIRT), 12)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 74),
+                    new ResourceAmount(asResource(DIRT), 12)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
     public static void shouldExtract(final GameTestHelper helper) {
         preparePlot(helper, true, (diskDrive, pos, sequence) -> {
             // Arrange
@@ -291,6 +363,117 @@ public final class ItemDiskDriveTest {
                     helper,
                     pos,
                     new ResourceAmount(asResource(STONE), 1024)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldRespectExtractPriority(final GameTestHelper helper) {
+        preparePlot(helper, true, (diskDrive, pos, sequence) -> {
+            // Arrange
+            final BlockPos pos2 = pos.east();
+            final var diskDrive2 = prepareDiskDrive(helper, true, pos2);
+
+            sequence
+                .thenExecute(() -> {
+                    diskDrive.setInsertPriority(2);
+                    diskDrive2.setInsertPriority(1);
+                })
+                .thenWaitUntil(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 10);
+                    insert(helper, network, DIRT, 10);
+                }))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 10),
+                    new ResourceAmount(asResource(DIRT), 10)
+                ))
+                .thenWaitUntil(diskDriveStorageIsEmpty(helper, pos2))
+
+                .thenExecute(() -> {
+                    diskDrive.setInsertPriority(1);
+                    diskDrive2.setInsertPriority(2);
+                })
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 20);
+                    insert(helper, network, DIRT, 4);
+                    insert(helper, network, OAK_LOG, 10);
+                }))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 10),
+                    new ResourceAmount(asResource(DIRT), 10)
+                ))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos2,
+                    new ResourceAmount(asResource(STONE), 20),
+                    new ResourceAmount(asResource(DIRT), 4),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 30),
+                    new ResourceAmount(asResource(DIRT), 14),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
+                ));
+
+            // Assert
+            sequence
+                .thenExecute(() -> {
+                    diskDrive.setInsertPriority(0);
+                    diskDrive2.setInsertPriority(0);
+                    diskDrive.setExtractPriority(2);
+                    diskDrive2.setExtractPriority(1);
+                })
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    extract(helper, network, STONE, 15);
+                    extract(helper, network, DIRT, 2);
+                }))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(DIRT), 8)
+                ))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos2,
+                    new ResourceAmount(asResource(STONE), 15),
+                    new ResourceAmount(asResource(DIRT), 4),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 15),
+                    new ResourceAmount(asResource(DIRT), 12),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
+                ))
+                .thenExecute(() -> diskDrive2.setExtractPriority(3))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    extract(helper, network, DIRT, 4);
+                }))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(DIRT), 8)
+                ))
+                .thenWaitUntil(diskDriveStorageContainsExactly(
+                    helper,
+                    pos2,
+                    new ResourceAmount(asResource(STONE), 15),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
+                ))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 15),
+                    new ResourceAmount(asResource(DIRT), 8),
+                    new ResourceAmount(asResource(OAK_LOG), 10)
                 ))
                 .thenSucceed();
         });
