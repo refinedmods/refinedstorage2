@@ -122,6 +122,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Correct the torch model for detectors.
 
+## [2.0.8] - 2026-05-17
+
+### Fixed
+
+-   Autocrafting reporting it has more resources than available when using a processing pattern combined with allowed alternatives.
+
+## [2.0.7] - 2026-05-17
+
+### Changed
+
+-   The slot limit for a fluid in the processing pattern configuration has been increased to maximum 64 buckets.
+
+### Fixed
+
+-   Grid search only matching original item names and not renamed items.
+-   Grid tooltip search not taking into account player sensitive tooltip information.
+-   The slot limit for an item in the processing pattern configuration being calculated in a stack insensitive way.
+-   Crash when a crafting pattern's recipe returns an empty output.
+-   Autocrafting tasks getting stuck when multiple tasks using the same pattern were crafting through the same external machine at the same time.
+-   Ability to insert non-pattern items into Autocrafters via the Autocrafter Manager.
+-   Autocrafting Monitor not notified (without reopening) when an external machine became full or unavailable.
+-   Wireless Grid reporting duplicate amount of resources.
+-   Grid updates are now throttled to 4 times per second per resource type to prevent client performance issues. Throttled updates will be queued and synced every second.
+
 ## [2.0.6] - 2026-05-10
 
 ### Fixed
@@ -1289,6 +1313,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [3.0.0-beta.2]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0-beta.1...v3.0.0-beta.2
 
 [3.0.0-beta.1]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.1...v3.0.0-beta.1
+
+[2.0.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.7...v2.0.8
+
+[2.0.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.6...v2.0.7
 
 [2.0.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.5...v2.0.6
 
