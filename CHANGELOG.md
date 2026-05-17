@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-05-17
+
+### Fixed
+
+-   Wireless Grid reporting duplicate amount of resources.
+-   Grid updates are now throttled to 4 times per second per resource type to prevent client performance issues. Throttled updates will be queued and synced every second.
+
 ## [3.0.1] - 2026-05-16
 
 ### Changed
@@ -1242,7 +1249,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.2...HEAD
+
+[3.0.2]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.1...v3.0.2
 
 [3.0.1]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.0...v3.0.1
 

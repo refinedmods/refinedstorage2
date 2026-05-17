@@ -20,8 +20,12 @@ class WirelessAutocraftingMonitor implements AutocraftingMonitor {
         this.context = context;
     }
 
+    private Optional<AutocraftingNetworkComponent> getAutocrafting(final boolean force) {
+        return context.resolveNetwork(force).map(network -> network.getComponent(AutocraftingNetworkComponent.class));
+    }
+
     private Optional<AutocraftingNetworkComponent> getAutocrafting() {
-        return context.resolveNetwork().map(network -> network.getComponent(AutocraftingNetworkComponent.class));
+        return getAutocrafting(false);
     }
 
     @Override
@@ -55,7 +59,7 @@ class WirelessAutocraftingMonitor implements AutocraftingMonitor {
 
     @Override
     public void removeListener(final TaskStatusListener listener) {
-        getAutocrafting().ifPresent(autocrafting -> autocrafting.removeListener(listener));
+        getAutocrafting(true).ifPresent(autocrafting -> autocrafting.removeListener(listener));
     }
 
     @Override
