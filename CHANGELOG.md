@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.8] - 2026-05-17
+
+### Fixed
+
+-   Autocrafting reporting it has more resources than available when using a processing pattern combined with allowed alternatives.
+
 ## [2.0.7] - 2026-05-17
 
 ### Changed
