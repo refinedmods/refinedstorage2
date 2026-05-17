@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage.api.network.impl.node.relay;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkDetails;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
 
 import org.jspecify.annotations.Nullable;
 
+import static java.util.Objects.requireNonNull;
+
 class RelayOutputPatternProvider implements PatternProvider, PatternListener, TaskListener {
     private final RelayOutputNetworkNode outputNode;
     private final Filter filter = new Filter();
@@ -38,6 +41,8 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     @Nullable
     private AutocraftingNetworkComponent delegate;
     private StepBehavior stepBehavior = StepBehavior.DEFAULT;
+    @Nullable
+    private ExternalPatternSinkId id;
 
     RelayOutputPatternProvider(final RelayOutputNetworkNode outputNode) {
         this.outputNode = outputNode;
@@ -153,15 +158,15 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     @Override
-    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkKey sinkKey) {
+    public void receivedExternalIteration(final Pattern pattern, final ExternalPatternSinkId sinkId) {
         if (delegate == null) {
             return;
         }
-        final PatternProvider patternProvider = delegate.getProviderBySinkKey(sinkKey);
-        if (patternProvider == null) {
+        final PatternProvider provider = delegate.getProviderById(sinkId);
+        if (provider == null) {
             return;
         }
-        patternProvider.receivedExternalIteration();
+        provider.receivedExternalIteration();
     }
 
     @Override
@@ -197,20 +202,30 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     @Override
-    public ExternalPatternSinkKey getKey() {
-        return outputNode.getSinkKeyProvider().get();
+    public ExternalPatternSinkId getId() {
+        return requireNonNull(id);
     }
 
     @Override
-    public ExternalPatternSinkKey unwrapKey(final Pattern pattern) {
+    public ExternalPatternSinkId unwrapId(final Pattern pattern) {
         if (delegate == null) {
-            return PatternProvider.super.unwrapKey(pattern);
+            return PatternProvider.super.unwrapId(pattern);
         }
-        final PatternProvider patternProvider = delegate.getProviderByPattern(pattern);
-        if (patternProvider == null) {
-            return PatternProvider.super.unwrapKey(pattern);
+        final PatternProvider provider = delegate.getProviderByPattern(pattern);
+        if (provider == null) {
+            return PatternProvider.super.unwrapId(pattern);
         }
-        return patternProvider.getKey();
+        return provider.getId();
+    }
+
+    @Override
+    @Nullable
+    public ExternalPatternSinkDetails getDetails() {
+        return null;
+    }
+
+    public void setId(final ExternalPatternSinkId id) {
+        this.id = id;
     }
 
     void detachAll(final Network network) {

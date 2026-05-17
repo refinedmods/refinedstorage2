@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage.api.autocrafting.AutocraftingUtil.patterns;
@@ -54,7 +55,7 @@ import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.S
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.STONE_BRICKS;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.X;
 import static com.refinedmods.refinedstorage.api.autocrafting.ResourceFixtures.Y;
-import static com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkProviderImpl.sinkKey;
+import static com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkProviderImpl.details;
 import static com.refinedmods.refinedstorage.api.autocrafting.task.TaskPlanCraftingCalculatorListener.calculatePlan;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -653,7 +654,7 @@ class TaskImplTest {
             );
         verify(listener, times(1)).receivedExternalIteration(
             IRON_INGOT_PATTERN,
-            new ExternalPatternSinkProviderImpl.ExternalPatternSinkKeyImpl(IRON_INGOT_PATTERN)
+            ironOreSink.getId()
         );
         clearInvocations(listener);
 
@@ -682,7 +683,7 @@ class TaskImplTest {
         assertThat(copyInternalStorage(task)).isEmpty();
         verify(listener, times(1)).receivedExternalIteration(
             IRON_INGOT_PATTERN,
-            new ExternalPatternSinkProviderImpl.ExternalPatternSinkKeyImpl(IRON_INGOT_PATTERN)
+            ironOreSink.getId()
         );
         clearInvocations(listener);
     }
@@ -1035,8 +1036,7 @@ class TaskImplTest {
         );
         final PatternRepository patterns = patterns(IRON_INGOT_PATTERN, IRON_PICKAXE_PATTERN);
         final ExternalPatternSinkProviderImpl sinkProvider = new ExternalPatternSinkProviderImpl();
-        final ExternalPatternSinkKey sinkKey = new ExternalPatternSinkKey() {
-        };
+        final ExternalPatternSinkId id = ExternalPatternSinkId.create();
         sinkProvider.put(IRON_INGOT_PATTERN, new ExternalPatternSink() {
             @Override
             public Result insertAll(final Pattern pattern, final Collection<ResourceAmount> resources,
@@ -1047,8 +1047,14 @@ class TaskImplTest {
             }
 
             @Override
-            public ExternalPatternSinkKey getKey() {
-                return sinkKey;
+            public ExternalPatternSinkId getId() {
+                return id;
+            }
+
+            @Override
+            @Nullable
+            public ExternalPatternSinkDetails getDetails() {
+                return null;
             }
         });
         final Task task = getRunningTask(storage, patterns, sinkProvider, IRON_PICKAXE, 1);
@@ -1295,7 +1301,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 2)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .crafting(STICKS, 4)
                 .stored(OAK_PLANKS, 4)
                 .stored(IRON_ORE, 2)
@@ -1316,7 +1322,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
                 .scheduled(IRON_INGOT, 1)
-                .processing(IRON_ORE, 2, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 2, details(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
                 .stored(IRON_ORE, 1)
                 .stored(STICKS, 4)
@@ -1337,7 +1343,7 @@ class TaskImplTest {
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
-                .processing(IRON_ORE, 3, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 3, details(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 4)
                 .build(0.6666666666666666));
@@ -1356,7 +1362,7 @@ class TaskImplTest {
         assertThat(task.getStatus()).usingRecursiveComparison(STATUS_CONFIG).isEqualTo(
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_PICKAXE, 1, 0)
                 .crafting(IRON_PICKAXE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .stored(OAK_PLANKS, 2)
                 .stored(STICKS, 4)
                 .stored(IRON_INGOT, 2)
@@ -1451,7 +1457,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .build(0));
 
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.REJECTED);
@@ -1460,7 +1466,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .rejected(IRON_INGOT)
                 .build(0));
     }
@@ -1480,7 +1486,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .build(0));
 
         sinkProvider.remove(IRON_INGOT_PATTERN);
@@ -1489,7 +1495,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .noneFound(IRON_INGOT)
                 .build(0));
     }
@@ -1509,7 +1515,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .build(0));
 
         sinkProvider.put(IRON_INGOT_PATTERN, ExternalPatternSink.Result.LOCKED);
@@ -1518,7 +1524,7 @@ class TaskImplTest {
             new TestTaskStatusBuilder(task.getId(), TaskState.RUNNING, IRON_INGOT, 2, 0)
                 .scheduled(IRON_INGOT, 1)
                 .stored(IRON_ORE, 1)
-                .processing(IRON_ORE, 1, sinkKey(IRON_INGOT_PATTERN))
+                .processing(IRON_ORE, 1, details(IRON_INGOT_PATTERN))
                 .locked(IRON_INGOT)
                 .build(0));
     }

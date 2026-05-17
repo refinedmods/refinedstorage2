@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.3] - 2026-05-17
+
+### Fixed
+
+-   World hanging on load on Fabric.
+-   Because of all these autocrafting fixes, we had to break compatibility with processing autocrafting tasks that were still running from v3.0.0, v3.0.1 and v3.0.2. If you load your world with this version (v3.0.3), and the world still contains running tasks that contain a processing pattern, that task will be voided.
+
 ## [3.0.2] - 2026-05-17
 
 ### Fixed
@@ -1249,7 +1256,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.2...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.3...HEAD
+
+[3.0.3]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.2...v3.0.3
 
 [3.0.2]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.1...v3.0.2
 

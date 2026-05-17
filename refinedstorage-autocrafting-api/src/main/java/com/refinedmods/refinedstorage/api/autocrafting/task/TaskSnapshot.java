@@ -63,8 +63,8 @@ public record TaskSnapshot(
         boolean interceptedAnythingSinceLastStep,
         ExternalPatternSink.@Nullable Result lastSinkResult,
         @Nullable
-        ExternalPatternSinkKey lastSinkResultKey,
-        Deque<ExternalPatternSinkKey> pendingSinks
+        ExternalPatternSinkDetails lastSinkDetails,
+        Deque<ExternalPatternSinkId> pendingSinkIds
     ) {
         MutableResourceList copyExpectedOutputs() {
             final MutableResourceList copy = MutableResourceListImpl.create();

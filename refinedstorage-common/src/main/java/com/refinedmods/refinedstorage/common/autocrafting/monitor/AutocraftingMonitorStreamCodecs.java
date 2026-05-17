@@ -1,16 +1,15 @@
 package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkDetails;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkDetails;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
@@ -57,7 +56,7 @@ public final class AutocraftingMonitorStreamCodecs {
             return new TaskStatus.Item(
                 ResourceCodecs.STREAM_CODEC.decode(buf),
                 TYPE_STREAM_CODEC.decode(buf),
-                decodeSinkKey(buf),
+                decodeDetails(buf),
                 buf.readLong(),
                 buf.readLong(),
                 buf.readLong(),
@@ -67,10 +66,9 @@ public final class AutocraftingMonitorStreamCodecs {
         }
 
         @Nullable
-        private ExternalPatternSinkKey decodeSinkKey(final RegistryFriendlyByteBuf buf) {
+        private ExternalPatternSinkDetails decodeDetails(final RegistryFriendlyByteBuf buf) {
             if (buf.readBoolean()) {
-                return new AutocrafterExternalPatternSinkKey(buf.readUUID(), buf.readUtf(),
-                    ItemStack.STREAM_CODEC.decode(buf));
+                return new AutocrafterExternalPatternSinkDetails(buf.readUtf(), ItemStack.STREAM_CODEC.decode(buf));
             }
             return null;
         }
@@ -79,7 +77,7 @@ public final class AutocraftingMonitorStreamCodecs {
         public void encode(final RegistryFriendlyByteBuf buf, final TaskStatus.Item item) {
             ResourceCodecs.STREAM_CODEC.encode(buf, (PlatformResourceKey) item.resource());
             TYPE_STREAM_CODEC.encode(buf, item.type());
-            encodeSinkKey(buf, item.sinkKey());
+            encodeDetails(buf, item.details());
             buf.writeLong(item.stored());
             buf.writeLong(item.extracting());
             buf.writeLong(item.processing());
@@ -87,11 +85,10 @@ public final class AutocraftingMonitorStreamCodecs {
             buf.writeLong(item.crafting());
         }
 
-        private void encodeSinkKey(final RegistryFriendlyByteBuf buf, @Nullable final ExternalPatternSinkKey sinkKey) {
-            if (sinkKey instanceof AutocrafterExternalPatternSinkKey(UUID id, String name, ItemStack stack)
-                && name != null && stack != null) {
+        private void encodeDetails(final RegistryFriendlyByteBuf buf,
+                                   @Nullable final ExternalPatternSinkDetails details) {
+            if (details instanceof AutocrafterExternalPatternSinkDetails(String name, ItemStack stack)) {
                 buf.writeBoolean(true);
-                buf.writeUUID(id);
                 buf.writeUtf(name);
                 ItemStack.STREAM_CODEC.encode(buf, stack);
             } else {

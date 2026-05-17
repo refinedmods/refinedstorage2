@@ -39,9 +39,9 @@ public class TestTaskStatusBuilder {
 
     public TestTaskStatusBuilder processing(final ResourceKey resource,
                                             final long processing,
-                                            @Nullable final ExternalPatternSinkKey sinkKey) {
+                                            @Nullable final ExternalPatternSinkDetails details) {
         get(resource).processing += processing;
-        get(resource).sinkKey = sinkKey;
+        get(resource).details = details;
         return this;
     }
 
@@ -78,7 +78,7 @@ public class TestTaskStatusBuilder {
         final List<TaskStatus.Item> mappedItems = items.entrySet().stream().map(entry -> new TaskStatus.Item(
             entry.getKey(),
             entry.getValue().type,
-            entry.getValue().sinkKey,
+            entry.getValue().details,
             entry.getValue().stored,
             entry.getValue().extracting,
             entry.getValue().processing,
@@ -94,7 +94,7 @@ public class TestTaskStatusBuilder {
         private long extracting;
         private long processing;
         @Nullable
-        private ExternalPatternSinkKey sinkKey;
+        private ExternalPatternSinkDetails details;
         private long scheduled;
         private long crafting;
 
