@@ -93,7 +93,7 @@ public record ProcessingPatternState(
                     .flatMap(resource -> resource.getTags().stream()
                         .filter(tag -> allowedAlternativeIds.contains(tag.key().location()))
                         .flatMap(tag -> tag.resources().stream()))
-            ).toList();
+            ).distinct().toList();
         }
     }
 }
