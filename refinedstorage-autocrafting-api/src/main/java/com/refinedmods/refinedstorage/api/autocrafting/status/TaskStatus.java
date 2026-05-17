@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.api.autocrafting.status;
 
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkDetails;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -18,7 +18,7 @@ public record TaskStatus(TaskInfo info, TaskState state, double percentageComple
     public record Item(
         ResourceKey resource,
         ItemType type,
-        @Nullable ExternalPatternSinkKey sinkKey,
+        @Nullable ExternalPatternSinkDetails details,
         long stored,
         long extracting,
         long processing,

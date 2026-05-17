@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternType;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskState;
@@ -332,17 +332,13 @@ class RelayAutocraftingNetworkNodeTest {
     ) {
         // Act
         final RelayOutputNetworkNode cycleOutput = new RelayOutputNetworkNode(0);
-        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
-        };
-        cycleOutput.setSinkKeyProvider(() -> key);
+        cycleOutput.setId(ExternalPatternSinkId.create());
         cycleOutput.setAutocraftingDelegate(inputAlternativeAutocrafting);
         cycleOutput.setNetwork(inputNetwork);
         inputNetwork.addContainer(() -> cycleOutput);
 
         final RelayOutputNetworkNode cycleOutputAlternative = new RelayOutputNetworkNode(0);
-        final ExternalPatternSinkKey cycleOutputAlternativeKey = new ExternalPatternSinkKey() {
-        };
-        cycleOutputAlternative.setSinkKeyProvider(() -> cycleOutputAlternativeKey);
+        cycleOutputAlternative.setId(ExternalPatternSinkId.create());
         cycleOutputAlternative.setAutocraftingDelegate(inputAutocrafting);
         cycleOutputAlternative.setNetwork(inputAlternativeNetwork);
         inputAlternativeNetwork.addContainer(() -> cycleOutputAlternative);
@@ -423,9 +419,7 @@ class RelayAutocraftingNetworkNodeTest {
 
     private static PatternProviderNetworkNode createPatternProvider() {
         final PatternProviderNetworkNode node = new PatternProviderNetworkNode(0, 1);
-        final ExternalPatternSinkKey key = new ExternalPatternSinkKey() {
-        };
-        node.setSinkKeyProvider(() -> key);
+        node.setId(ExternalPatternSinkId.create());
         return node;
     }
 

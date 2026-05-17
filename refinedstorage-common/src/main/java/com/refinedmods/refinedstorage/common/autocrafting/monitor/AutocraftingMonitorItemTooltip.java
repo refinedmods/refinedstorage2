@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.autocrafting.monitor;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
-import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkKey;
+import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkDetails;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -61,8 +61,7 @@ class AutocraftingMonitorItemTooltip implements ClientTooltipComponent {
             );
             yy += 9 + SPACING;
         }
-        if (item.sinkKey() instanceof AutocrafterExternalPatternSinkKey(_, String name, ItemStack stack)
-            && name != null && stack != null) {
+        if (item.details() instanceof AutocrafterExternalPatternSinkDetails(String name, ItemStack stack)) {
             graphics.item(stack, x, yy);
             graphics.text(font, name, x + 18 + SPACING, yy + 4, 0xFFAAAAAA);
         }
@@ -72,23 +71,21 @@ class AutocraftingMonitorItemTooltip implements ClientTooltipComponent {
     public int getHeight(final Font font) {
         return font.lineHeight + SPACING
             + (item.type() != TaskStatus.ItemType.NORMAL ? font.lineHeight + SPACING : 0)
-            + (item.sinkKey() != null ? 18 : 0);
+            + (item.details() != null ? 18 : 0);
     }
 
     @Override
     public int getWidth(final Font font) {
         final int resourceWidth = font.width(rendering.getDisplayName(item.resource()));
         final int errorWidth = item.type() != TaskStatus.ItemType.NORMAL ? font.width(getErrorTooltip(item.type())) : 0;
-        final int sinkWidth = item.sinkKey() instanceof AutocrafterExternalPatternSinkKey key ? getWidth(font, key) : 0;
+        final int sinkWidth = item.details() instanceof AutocrafterExternalPatternSinkDetails details
+            ? getWidth(font, details)
+            : 0;
         return Math.max(resourceWidth, Math.max(errorWidth, sinkWidth));
     }
 
-    private static int getWidth(final Font font, final AutocrafterExternalPatternSinkKey key) {
-        final String name = key.name();
-        if (name == null) {
-            return 0;
-        }
-        return 18 + SPACING + font.width(name);
+    private static int getWidth(final Font font, final AutocrafterExternalPatternSinkDetails details) {
+        return 18 + SPACING + font.width(details.name());
     }
 
     private Component getErrorTooltip(final TaskStatus.ItemType type) {

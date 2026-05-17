@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayComponentType;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayInputNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayOutputNetworkNode;
@@ -9,7 +10,6 @@ import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
-import com.refinedmods.refinedstorage.common.autocrafting.autocrafter.AutocrafterExternalPatternSinkKey;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.storage.AccessModeSettings;
@@ -66,7 +66,7 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     private int insertPriority = 0;
     private int extractPriority = 0;
     @Nullable
-    private AutocrafterExternalPatternSinkKey sinkKey;
+    private ExternalPatternSinkId id;
 
     public RelayBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getRelay(), pos, state, new RelayInputNetworkNode(
@@ -75,7 +75,6 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
         this.outputNode = new RelayOutputNetworkNode(
             Platform.INSTANCE.getConfig().getRelay().getOutputNetworkEnergyUsage()
         );
-        outputNode.setSinkKeyProvider(() -> requireNonNull(sinkKey));
         this.mainNetworkNode.setOutputNode(outputNode);
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(),
@@ -252,21 +251,24 @@ public class RelayBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntit
     @Override
     protected void initialize(final ServerLevel level, final Direction direction) {
         super.initialize(level, direction);
-        this.sinkKey = AutocrafterExternalPatternSinkKey.create(sinkKey != null ? sinkKey.id() : UUID.randomUUID());
+        if (id == null) {
+            this.id = ExternalPatternSinkId.create();
+            this.mainNetworkNode.setId(id);
+        }
     }
 
     @Override
     public void saveAdditional(final ValueOutput output) {
         super.saveAdditional(output);
-        if (sinkKey != null) {
-            output.store(TAG_ID, UUIDUtil.CODEC, sinkKey.id());
+        if (id != null) {
+            output.store(TAG_ID, UUIDUtil.CODEC, id.id());
         }
     }
 
     @Override
     public void loadAdditional(final ValueInput input) {
-        final UUID id = input.read(TAG_ID, UUIDUtil.CODEC).orElseGet(UUID::randomUUID);
-        sinkKey = AutocrafterExternalPatternSinkKey.create(id);
+        this.id = new ExternalPatternSinkId(input.read(TAG_ID, UUIDUtil.CODEC).orElseGet(UUID::randomUUID));
+        this.mainNetworkNode.setId(id);
         super.loadAdditional(input);
     }
 
