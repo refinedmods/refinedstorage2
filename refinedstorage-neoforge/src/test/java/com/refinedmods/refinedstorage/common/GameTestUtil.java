@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage.api.storage.Actor;
+import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.common.api.support.network.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
@@ -23,6 +24,9 @@ import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.iface.ExportedResourcesContainer;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage.common.storage.DiskInventory;
+import com.refinedmods.refinedstorage.common.storage.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage.common.storage.storageblock.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage.common.support.AbstractActiveColoredDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
@@ -312,6 +316,11 @@ public final class GameTestUtil {
         };
     }
 
+    public static Runnable containerIsEmpty(final GameTestHelper helper,
+                                            final BlockPos pos) {
+        return containerContainsExactly(helper, pos);
+    }
+
     public static Runnable storageContainsExactly(final GameTestHelper helper,
                                                   final BlockPos networkPos,
                                                   final ResourceAmount... expected) {
@@ -326,8 +335,63 @@ public final class GameTestUtil {
                                           final BlockPos networkPos) {
         return networkIsAvailable(helper, networkPos, network -> {
             final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-            helper.assertTrue(storage.getStored() == 0, "Storage is not empty");
+            final List<TrackedResourceAmount> resources = storage.getResources(Actor.class);
+
+            helper.assertTrue(
+                storage.getStored() == 0,
+                "Storage is not empty. Stored amount: " + storage.getStored()
+                    + ", contents: " + resources
+            );
         });
+    }
+
+    public static Runnable diskDriveStorageContainsExactly(final GameTestHelper helper,
+                                                           final BlockPos pos,
+                                                           final ResourceAmount... expected) {
+        final ResourceList expectedList = toResourceList(expected);
+        return networkIsAvailable(helper, pos, network -> {
+            final var diskDrive = helper.getBlockEntity(pos, AbstractDiskDriveBlockEntity.class);
+            final DiskInventory diskInventory = (DiskInventory) diskDrive.getDiskInventory();
+            final MutableResourceList given = MutableResourceListImpl.create();
+
+            for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
+                diskInventory.resolve(i).ifPresent(storage -> {
+                    for (final ResourceAmount resource : storage.getAll()) {
+                        given.add(resource);
+                    }
+                });
+            }
+
+            listContainsExactly(given, expectedList, helper);
+        });
+    }
+
+    public static Runnable diskDriveStorageIsEmpty(final GameTestHelper helper,
+                                                   final BlockPos pos) {
+        return diskDriveStorageContainsExactly(helper, pos);
+    }
+
+    public static Runnable storageBlockStorageContainsExactly(final GameTestHelper helper,
+                                                           final BlockPos pos,
+                                                           final ResourceAmount... expected) {
+        final ResourceList expectedList = toResourceList(expected);
+        return networkIsAvailable(helper, pos, network -> {
+            final var storageBlock = helper.getBlockEntity(pos, StorageBlockBlockEntity.class);
+            final MutableResourceList given = MutableResourceListImpl.create();
+
+            storageBlock.resolve(0).ifPresent(storage -> {
+                for (final ResourceAmount resource : storage.getAll()) {
+                    given.add(resource);
+                }
+            });
+
+            listContainsExactly(given, expectedList, helper);
+        });
+    }
+
+    public static Runnable storageBlockStorageIsEmpty(final GameTestHelper helper,
+                                                   final BlockPos pos) {
+        return storageBlockStorageContainsExactly(helper, pos);
     }
 
     private static ResourceList toResourceList(final ResourceAmount... resources) {
@@ -342,7 +406,8 @@ public final class GameTestUtil {
         return list;
     }
 
-    private static void listContainsExactly(final ResourceList given, final ResourceList expected,
+    private static void listContainsExactly(final ResourceList given,
+                                            final ResourceList expected,
                                             final GameTestHelper helper) {
         for (final ResourceAmount expectedItem : expected.copyState()) {
             final long givenAmount = given.get(expectedItem.resource());
