@@ -24,10 +24,21 @@ final class DiskDriveTestPlots {
                             final TriConsumer<AbstractDiskDriveBlockEntity, BlockPos, GameTestSequence> consumer) {
         helper.setBlock(ZERO.above(), MOD_BLOCKS.getCreativeController().getDefault());
         final BlockPos storagePos = ZERO.above().above();
-        helper.setBlock(storagePos, MOD_BLOCKS.getDiskDrive());
+        final AbstractDiskDriveBlockEntity blockEntity = prepareDiskDrive(helper, itemStorage, storagePos);
 
-        final AbstractDiskDriveBlockEntity diskDriveBlockEntity =
-            helper.getBlockEntity(storagePos, AbstractDiskDriveBlockEntity.class);
+        consumer.accept(
+            blockEntity,
+            storagePos,
+            helper.startSequence()
+        );
+    }
+
+    static AbstractDiskDriveBlockEntity prepareDiskDrive(final GameTestHelper helper,
+                                                         final boolean itemStorage,
+                                                         final BlockPos pos) {
+        helper.setBlock(pos, MOD_BLOCKS.getDiskDrive());
+
+        final var blockEntity = helper.getBlockEntity(pos, AbstractDiskDriveBlockEntity.class);
         final ItemStack storageDisk;
         if (itemStorage) {
             storageDisk = new ItemStack(MOD_ITEMS.getItemStorageDisk(ItemStorageVariant.ONE_K), 1);
@@ -35,13 +46,9 @@ final class DiskDriveTestPlots {
             storageDisk = MOD_ITEMS.getFluidStorageDisk(FluidStorageVariant.SIXTY_FOUR_B).getDefaultInstance();
         }
         storageDisk.inventoryTick(helper.getLevel(), helper.makeMockPlayer(GameType.SURVIVAL), EquipmentSlot.BODY);
-        diskDriveBlockEntity.getDiskInventory().setItem(0, storageDisk);
-        diskDriveBlockEntity.setChanged();
+        blockEntity.getDiskInventory().setItem(0, storageDisk);
+        blockEntity.getDiskInventory().setChanged();
 
-        consumer.accept(
-            diskDriveBlockEntity,
-            storagePos,
-            helper.startSequence()
-        );
+        return blockEntity;
     }
 }

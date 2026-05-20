@@ -173,6 +173,14 @@ public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlo
         mainNetworkNode.getStorageConfiguration().setVoidExcess(voidExcess);
     }
 
+    public void setInsertPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setInsertPriority(priority);
+    }
+
+    public void setExtractPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setExtractPriority(priority);
+    }
+
     @Override
     @Nullable
     public UUID getStorageId() {

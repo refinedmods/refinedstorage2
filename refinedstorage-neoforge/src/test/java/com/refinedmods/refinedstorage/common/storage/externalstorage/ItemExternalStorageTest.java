@@ -8,14 +8,17 @@ import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 
 import java.util.Set;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
+import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_BLOCKS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.addItemToChest;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.containerContainsExactly;
+import static com.refinedmods.refinedstorage.common.GameTestUtil.containerIsEmpty;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.createStacks;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.extract;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.getItemAsDamaged;
@@ -371,6 +374,91 @@ public final class ItemExternalStorageTest {
                     pos,
                     new ResourceAmount(asResource(COBBLESTONE), 3),
                     new ResourceAmount(asResource(DIRT), 10)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldRespectInsertPriority(final GameTestHelper helper) {
+        preparePlot(helper, Direction.EAST, (externalStorage, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
+                insert(helper, network, STONE, 2)));
+
+            final BlockPos pos2 = pos.west();
+            helper.setBlock(pos2, MOD_BLOCKS.getExternalStorage().getDefault().rotated(Direction.NORTH));
+            final var externalStorage2 = helper.getBlockEntity(pos2, AbstractExternalStorageBlockEntity.class);
+
+            // Act
+            final BlockPos chestPos1 = pos.east();
+            prepareChest(
+                helper,
+                chestPos1,
+                COBBLESTONE.getDefaultInstance().copyWithCount(3)
+            );
+            final BlockPos chestPos2 = pos2.north();
+            prepareChest(
+                helper,
+                chestPos2
+            );
+
+            // Assert
+            sequence
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenExecute(() -> externalStorage.setInsertPriority(2))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(containerIsEmpty(helper, chestPos2))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 32);
+                    insert(helper, network, DIRT, 12);
+                }))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 34),
+                    new ResourceAmount(asResource(DIRT), 12),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(STONE), 32),
+                    new ResourceAmount(asResource(DIRT), 12),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(containerIsEmpty(helper, chestPos2))
+                .thenExecute(() -> externalStorage2.setInsertPriority(3))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    insert(helper, network, STONE, 10);
+                }))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 44),
+                    new ResourceAmount(asResource(DIRT), 12),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(STONE), 32),
+                    new ResourceAmount(asResource(DIRT), 12),
+                    new ResourceAmount(asResource(COBBLESTONE), 3)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos2,
+                    new ResourceAmount(asResource(STONE), 10)
                 ))
                 .thenSucceed();
         });
@@ -756,6 +844,103 @@ public final class ItemExternalStorageTest {
                     helper,
                     pos,
                     new ResourceAmount(asResource(STONE), 64 * 27)
+                ))
+                .thenSucceed();
+        });
+    }
+
+    @MinecraftIntegrationTest
+    public static void shouldRespectExtractPriority(final GameTestHelper helper) {
+        preparePlot(helper, Direction.EAST, (externalStorage, pos, sequence) -> {
+            // Arrange
+            sequence.thenWaitUntil(networkIsAvailable(helper, pos, network ->
+                insert(helper, network, STONE, 2)));
+
+            final BlockPos pos2 = pos.west();
+            helper.setBlock(pos2, MOD_BLOCKS.getExternalStorage().getDefault().rotated(Direction.NORTH));
+            final var externalStorage2 = helper.getBlockEntity(pos2, AbstractExternalStorageBlockEntity.class);
+
+            // Act
+            final BlockPos chestPos1 = pos.east();
+            prepareChest(
+                helper,
+                chestPos1,
+                COBBLESTONE.getDefaultInstance().copyWithCount(6),
+                DIRT.getDefaultInstance().copyWithCount(10)
+            );
+            final BlockPos chestPos2 = pos2.north();
+            prepareChest(
+                helper,
+                chestPos2,
+                COBBLESTONE.getDefaultInstance().copyWithCount(3),
+                DIRT.getDefaultInstance().copyWithCount(5)
+            );
+
+            externalStorage.setExtractPriority(2);
+
+            // Assert
+            sequence
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(COBBLESTONE), 9),
+                    new ResourceAmount(asResource(DIRT), 15)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(COBBLESTONE), 6),
+                    new ResourceAmount(asResource(DIRT), 10)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos2,
+                    new ResourceAmount(asResource(COBBLESTONE), 3),
+                    new ResourceAmount(asResource(DIRT), 5)
+                ))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    extract(helper, network, COBBLESTONE, 8);
+                    extract(helper, network, DIRT, 5);
+                }))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(COBBLESTONE), 1),
+                    new ResourceAmount(asResource(DIRT), 10)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(DIRT), 5)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos2,
+                    new ResourceAmount(asResource(COBBLESTONE), 1),
+                    new ResourceAmount(asResource(DIRT), 5)
+                ))
+                .thenExecute(() -> externalStorage2.setExtractPriority(3))
+                .thenExecute(networkIsAvailable(helper, pos, network -> {
+                    extract(helper, network, DIRT, 5);
+                }))
+                .thenWaitUntil(storageContainsExactly(
+                    helper,
+                    pos,
+                    new ResourceAmount(asResource(STONE), 2),
+                    new ResourceAmount(asResource(COBBLESTONE), 1),
+                    new ResourceAmount(asResource(DIRT), 5)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos1,
+                    new ResourceAmount(asResource(DIRT), 5)
+                ))
+                .thenWaitUntil(containerContainsExactly(
+                    helper,
+                    chestPos2,
+                    new ResourceAmount(asResource(COBBLESTONE), 1)
                 ))
                 .thenSucceed();
         });

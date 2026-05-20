@@ -8,6 +8,8 @@ The {doctitle} is an upgrade for the xref:../input-and-output/exporter.adoc[] an
 
 Before inserting the {doctitle} into a device, configure the resource and amount to be stocked by using the {doctitle} in your hand.
 
+To reset the configuration, press SHIFT and use the {doctitle}.
+
 == Usage in an Exporter
 
 When used in an xref:../input-and-output/exporter.adoc[], the {doctitle} ensures the connected inventory does not exceed the specified amount, only inserting more when necessary.

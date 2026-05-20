@@ -6,6 +6,8 @@ When a xref:security-manager.adoc[] is added to a storage network, access is loc
 
 To define permissions for players that do not have a matching xref:security-card.adoc[], use a {doctitle}.
 
+To reset all permissions, press SHIFT and use the {doctitle}.
+
 == Size
 
 include::../../partials/size.adoc[]

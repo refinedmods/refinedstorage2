@@ -65,6 +65,14 @@ public abstract class AbstractDiskDriveBlockEntity extends AbstractDiskContainer
         mainNetworkNode.getStorageConfiguration().setVoidExcess(voidExcess);
     }
 
+    void setInsertPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setInsertPriority(priority);
+    }
+
+    void setExtractPriority(final int priority) {
+        mainNetworkNode.getStorageConfiguration().setExtractPriority(priority);
+    }
+
     @Override
     protected void setNormalizer(final UnaryOperator<ResourceKey> normalizer) {
         mainNetworkNode.getStorageConfiguration().setNormalizer(normalizer);

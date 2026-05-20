@@ -368,6 +368,7 @@
   "item.refinedstorage.fortune_upgrade.3": "Fortune III Upgrade",
   "item.refinedstorage.fortune_upgrade.help": "Yields more resources when breaking a block. Acts like the Fortune enchantment on a pickaxe.",
   "item.refinedstorage.regulator_upgrade": "Regulator Upgrade",
+  "item.refinedstorage.regulator_upgrade.cleared_configuration": "Cleared configuration.",
   "item.refinedstorage.regulator_upgrade.help": "In an Exporter, will only export if the amount in the target is less than configured in the upgrade. In an Importer, will only import if the amount in the target is more than configured in the upgrade. Use item to configure.",
   "item.refinedstorage.range_upgrade": "Range Upgrade",
   "item.refinedstorage.range_upgrade.help": "Increases the range of the Wireless Transmitter.",
