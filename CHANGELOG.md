@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.5] - 2026-05-20
+
 ### Added
 
 -   You can now clear the configuration of a Regulator Upgrade by using the item while crouching.
@@ -1294,7 +1296,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.4...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.5...HEAD
+
+[3.0.5]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.4...v3.0.5
 
 [3.0.4]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.3...v3.0.4
 
