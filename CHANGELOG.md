@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   You can now clear the configuration of a Regulator Upgrade by using the item while crouching.
+
 ### Fixed
 
 -   Security Manager not initializing correctly.

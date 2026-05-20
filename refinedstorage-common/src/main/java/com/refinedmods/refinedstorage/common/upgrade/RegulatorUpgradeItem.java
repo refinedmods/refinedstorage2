@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.common.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
+import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.support.containermenu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
@@ -52,6 +53,9 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     @Override
     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
+        if (player.isCrouching()) {
+            return clearConfiguration(player, stack);
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             final RegulatorUpgradeState initialState = stack.getOrDefault(
                 DataComponents.INSTANCE.getRegulatorUpgradeState(),
@@ -65,7 +69,15 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
                 RefinedStorageApi.INSTANCE.createPlayerInventorySlotReference(player, hand)
             ));
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
+    }
+
+    private InteractionResult clearConfiguration(final Player player, final ItemStack stack) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.sendSystemMessage(createTranslation("item", "regulator_upgrade.cleared_configuration"));
+        }
+        return InteractionResult.CONSUME
+            .heldItemTransformedTo(new ItemStack(Items.INSTANCE.getRegulatorUpgrade(), stack.getCount()));
     }
 
     private ResourceContainer createResourceFilterContainer(final ItemStack stack,
