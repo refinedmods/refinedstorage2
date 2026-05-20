@@ -16,8 +16,10 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 import com.refinedmods.refinedstorage.common.support.network.NetworkNodeContainerProviderImpl;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,6 +47,7 @@ public class SecurityManagerBlockEntity
         @Override
         public void setChanged() {
             super.setChanged();
+            SecurityManagerBlockEntity.this.setChanged();
             invalidate();
         }
     };
@@ -55,6 +58,7 @@ public class SecurityManagerBlockEntity
         @Override
         public void setChanged() {
             super.setChanged();
+            SecurityManagerBlockEntity.this.setChanged();
             invalidate();
         }
     };
@@ -91,10 +95,13 @@ public class SecurityManagerBlockEntity
             .build();
     }
 
+    @Override
+    protected void initialize(final ServerLevel level, final Direction direction) {
+        super.initialize(level, direction);
+        invalidate();
+    }
+
     private void invalidate() {
-        if (level != null) {
-            setChanged();
-        }
         securityDecisionProvider.clearPolicies();
         long energyUsage = Platform.INSTANCE.getConfig().getSecurityManager().getEnergyUsage();
         for (int i = 0; i < securityCards.getContainerSize(); ++i) {

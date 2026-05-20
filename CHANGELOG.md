@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Security Manager not initializing correctly.
+
 ## [3.0.4] - 2026-05-17
 
 ### Fixed
