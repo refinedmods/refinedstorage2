@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   You can now clear the configuration of a Regulator Upgrade by using the item while crouching.
 
+### Fixed
+
+-   Search box highlight marking text as invalid when the cursor is positioned within the text.
+
 ## [2.0.8] - 2026-05-17
 
 ### Fixed
