@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.Style;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     private final Set<Consumer<String>> listeners = new HashSet<>();
@@ -31,39 +31,45 @@ class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
                         final SyntaxHighlighter syntaxHighlighter,
                         final History history) {
         super(textRenderer, x, y, width, history);
-        addFormatter((text, firstCharacterIndex) -> format(syntaxHighlighter, text));
+        addFormatter((text, offset) -> format(syntaxHighlighter, text, offset).getVisualOrderText());
         setResponder(text -> listeners.forEach(l -> l.accept(text)));
     }
 
-    private FormattedCharSequence format(final SyntaxHighlighter syntaxHighlighter, final String text) {
+    private Component format(final SyntaxHighlighter syntaxHighlighter, final String text, final int offset) {
+        final String actualText = getValue();
+        final int startIndex = offset;
+        final int endIndex = Math.min(actualText.length(), offset + text.length());
         if (!valid) {
             return invalidText(text);
         }
-        final Lexer lexer = createLexer(text);
+        final Lexer lexer = createLexer(actualText);
         try {
             lexer.scan();
         } catch (LexerException e) {
             return invalidText(text);
         }
-        final List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
-        return convertCharactersToOrderedText(characters);
-    }
-
-    private FormattedCharSequence invalidText(final String text) {
-        return FormattedCharSequence.forward(text, Style.EMPTY.applyFormat(ChatFormatting.RED));
-    }
-
-    private FormattedCharSequence convertCharactersToOrderedText(final List<SyntaxHighlightedCharacter> characters) {
-        FormattedCharSequence orderedText = FormattedCharSequence.EMPTY;
-        for (final SyntaxHighlightedCharacter character : characters) {
-            orderedText = FormattedCharSequence.composite(orderedText, convertCharacterToOrderedText(character));
+        final List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(actualText, lexer.getTokens());
+        if (startIndex == 0 && endIndex == actualText.length()) {
+            return toComponent(characters);
         }
-        return orderedText;
+        return toComponent(characters.subList(startIndex, endIndex));
     }
 
-    private FormattedCharSequence convertCharacterToOrderedText(final SyntaxHighlightedCharacter character) {
+    private Component invalidText(final String text) {
+        return Component.literal(text).withStyle(ChatFormatting.RED);
+    }
+
+    private MutableComponent toComponent(final List<SyntaxHighlightedCharacter> characters) {
+        final MutableComponent finalComponent = Component.empty().copy();
+        for (final SyntaxHighlightedCharacter character : characters) {
+            finalComponent.append(toComponent(character));
+        }
+        return finalComponent;
+    }
+
+    private Component toComponent(final SyntaxHighlightedCharacter character) {
         final ChatFormatting color = ChatFormatting.getByName(character.getColor());
-        return FormattedCharSequence.forward(character.getCharacter(), Style.EMPTY.withColor(color));
+        return Component.literal(character.getCharacter()).withStyle(color == null ? ChatFormatting.WHITE : color);
     }
 
     private Lexer createLexer(final String text) {

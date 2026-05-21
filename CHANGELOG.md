@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Search box highlight marking text as invalid when the cursor is positioned within the text.
+
 ## [3.0.5] - 2026-05-20
 
 ### Added
