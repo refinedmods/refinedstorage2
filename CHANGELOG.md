@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Search box highlight marking text as invalid when the cursor is positioned within the text.
+-   Autocrafting tasks started from a subnetwork not completing when the processing output is imported into the main network, through a Relay that shares both autocrafting and storage.
 
 ## [3.0.5] - 2026-05-20
 

@@ -619,6 +619,47 @@ class RelayAutocraftingNetworkNodeTest {
         );
     }
 
+    @Test
+    void shouldDetectExternalPatternOutputDeliveredIntoMainNetworkStorage(
+        @InjectNetworkAutocraftingComponent(networkId = "input") final AutocraftingNetworkComponent inputAutocrafting,
+        @InjectNetworkAutocraftingComponent(networkId = "output") final AutocraftingNetworkComponent outputAutocrafting,
+        @InjectNetworkStorageComponent(networkId = "input") final StorageNetworkComponent inputStorage
+    ) {
+        // Arrange
+        input.setActive(true);
+        input.setOutputNode(output);
+        inputStorage.addSource(new StorageImpl());
+
+        final PatternProviderNetworkNode patternProvider = createPatternProvider();
+        patternProvider.tryUpdatePattern(0, pattern(PatternType.EXTERNAL)
+            .ingredient(A, 1)
+            .output(B, 1)
+            .build());
+        final PatternProviderExternalPatternSinkImpl sink = new PatternProviderExternalPatternSinkImpl();
+        patternProvider.setSink(sink);
+        inputAutocrafting.onContainerAdded(() -> patternProvider);
+
+        inputStorage.insert(A, 1, Action.EXECUTE, Actor.EMPTY);
+
+        input.setComponentTypes(Set.of(RelayComponentType.AUTOCRAFTING, RelayComponentType.STORAGE));
+
+        assertThat(outputAutocrafting.startTask(B, 1, Actor.EMPTY, false, CancellationToken.NONE)).isPresent();
+
+        output.doWork();
+        output.doWork();
+        assertThat(output.getTasks()).hasSize(1);
+        assertThat(sink.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount(A, 1)
+        );
+
+        // Act
+        inputStorage.insert(B, 1, Action.EXECUTE, Actor.EMPTY);
+        output.doWork();
+
+        // Assert
+        assertThat(output.getTasks()).isEmpty();
+    }
+
     @Nested
     @SetupNetwork(id = "output2")
     class NetworkChangeTest {
