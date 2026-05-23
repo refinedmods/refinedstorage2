@@ -54,11 +54,9 @@ public class TaskContainer {
         parents.add(parent);
     }
 
-    public void add(final Task task, @Nullable final Network network) {
+    public void add(final Task task, final List<StorageNetworkComponent> storages) {
         tasks.add(task);
-        if (network != null) {
-            attach(task, network.getComponent(StorageNetworkComponent.class));
-        }
+        storages.forEach(storage -> attach(task, storage));
     }
 
     public void cancel(final TaskId id) {
@@ -71,13 +69,11 @@ public class TaskContainer {
         throw new IllegalArgumentException("Task %s not found".formatted(id));
     }
 
-    public void attachAll(final Network network) {
-        final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+    public void attachAll(final StorageNetworkComponent storage) {
         tasks.forEach(task -> attach(task, storage));
     }
 
-    public void detachAll(final Network network) {
-        final StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+    public void detachAll(final StorageNetworkComponent storage) {
         tasks.forEach(task -> detach(task, storage));
     }
 
