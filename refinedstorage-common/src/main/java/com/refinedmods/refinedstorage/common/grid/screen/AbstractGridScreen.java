@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -232,7 +231,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     private int getPinRows() {
-        int pins = getMenu().getPinnedResources().size() + 1;
+        int pins = getMenu().getPins().size() + 1;
         if (draggedPinnedResourceInsertionIndex >= 0) {
             pins++;
         }
@@ -418,7 +417,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final int normalizedIdx = draggedPinnedResourceInsertionIndex >= 0 && idx > draggedPinnedResourceInsertionIndex
             ? idx - 1
             : idx;
-        final int totalPins = getMenu().getPinnedResources().size();
+        final int totalPins = getMenu().getPins().size();
         if (normalizedIdx == totalPins) {
             final float time = ticks + partialTicks;
             final float alpha = 0.4F + 0.1F * (float) Math.sin(time * 0.2F);
@@ -431,7 +430,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (normalizedIdx >= totalPins) {
             return;
         }
-        final GridResource resource = getMenu().getPinnedResources().get(normalizedIdx);
+        final GridResource resource = getMenu().getPins().get(normalizedIdx);
         renderResourceWithAmount(graphics, slotX, slotY, resource);
         if (hovering) {
             currentPinSlotIndex = normalizedIdx;
@@ -651,11 +650,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (currentPinSlotIndex < 0) {
             return null;
         }
-        final List<GridResource> pinnedResources = menu.getPinnedResources();
-        if (currentPinSlotIndex >= pinnedResources.size()) {
+        final List<GridResource> pins = menu.getPins();
+        if (currentPinSlotIndex >= pins.size()) {
             return null;
         }
-        return pinnedResources.get(currentPinSlotIndex);
+        return pins.get(currentPinSlotIndex);
     }
 
     @Override
@@ -686,7 +685,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                 return true;
             }
         } else if (draggedPinnedResource != null) {
-            if (!isOverPinArea((int) e.x(), (int) e.y()) || getMenu().containsPinnedResource(draggedPinnedResource)) {
+            if (!isOverPinArea((int) e.x(), (int) e.y()) || getMenu().hasPin(draggedPinnedResource)) {
                 draggedPinnedResourceInsertionIndex = -1;
                 return true;
             }
@@ -695,7 +694,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             final int column = relativeMouseX / ROW_SIZE;
             final int row = relativeMouseY / ROW_SIZE;
             final int insertIndex = row * COLUMNS + column;
-            draggedPinnedResourceInsertionIndex = Math.clamp(insertIndex, 0, getMenu().getPinnedResources().size());
+            draggedPinnedResourceInsertionIndex = Math.clamp(insertIndex, 0, getMenu().getPins().size());
         }
         return super.mouseDragged(e, dx, dy);
     }
@@ -706,7 +705,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             draggedPinnedResource = inGrid;
             return true;
         } else if (currentPinSlotIndex >= 0) {
-            draggedPinnedResource = getMenu().removePinnedResource(currentPinSlotIndex);
+            draggedPinnedResource = getMenu().removePin(currentPinSlotIndex);
             updateScrollbar();
             return true;
         }
@@ -717,7 +716,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     public boolean mouseReleased(final MouseButtonEvent e) {
         if (draggedPinnedResource != null) {
             if (draggedPinnedResourceInsertionIndex >= 0) {
-                getMenu().addPinnedResource(draggedPinnedResourceInsertionIndex, draggedPinnedResource);
+                getMenu().addPin(draggedPinnedResourceInsertionIndex, draggedPinnedResource);
                 updateScrollbar();
             }
             draggedPinnedResource = null;

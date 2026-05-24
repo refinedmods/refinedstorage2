@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStrategy;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
@@ -26,6 +28,10 @@ import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
 public interface GridResource {
+    Codec<GridResource> CODEC = RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry()
+        .codec()
+        .dispatch(GridResource::getType, GridResourceType::getMapCodec);
+
     @Nullable
     TrackedResource getTrackedResource(Function<ResourceKey, @Nullable TrackedResource> trackedResourceProvider);
 
@@ -54,7 +60,9 @@ public interface GridResource {
 
     String getAmountInTooltip(ResourceRepository<GridResource> repository);
 
-    boolean belongsToResourceType(ResourceType resourceType);
+    boolean is(ResourceType resourceType);
+
+    boolean is(GridResource other);
 
     List<Component> getTooltip();
 
@@ -65,9 +73,7 @@ public interface GridResource {
     List<ClientTooltipComponent> getExtractionHints(ItemStack carriedStack,
                                                     ResourceRepository<GridResource> repository);
 
-    default boolean is(final GridResource other) {
-        return false;
-    }
+    GridResourceType getType();
 
     @Nullable
     ResourceAmount getAutocraftingRequest();

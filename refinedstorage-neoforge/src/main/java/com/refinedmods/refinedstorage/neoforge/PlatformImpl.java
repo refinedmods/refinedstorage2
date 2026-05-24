@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -18,6 +19,8 @@ import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.autocrafting.ResourceHandlerPatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeFluidGridResourceType;
+import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeItemGridResourceType;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.neoforge.support.containermenu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyItemContextItemAccess;
@@ -25,6 +28,7 @@ import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnerg
 import com.refinedmods.refinedstorage.neoforge.support.render.FluidStackFluidRenderer;
 import com.refinedmods.refinedstorage.neoforge.support.resource.SimpleItemStackResourceHandler;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +72,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -424,5 +429,20 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
         return patternProviderExternalPatternSinkFactory;
+    }
+
+    @Override
+    public GridResourceType getItemGridResourceType() {
+        return ForgeItemGridResourceType.INSTANCE;
+    }
+
+    @Override
+    public GridResourceType getFluidGridResourceType() {
+        return ForgeFluidGridResourceType.INSTANCE;
+    }
+
+    @Override
+    public Path getGameDirectory() {
+        return FMLPaths.GAMEDIR.get();
     }
 }

@@ -3,12 +3,14 @@ package com.refinedmods.refinedstorage.common.grid.view;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
+import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
@@ -95,6 +97,11 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
         );
     }
 
+    @Override
+    public GridResourceType getType() {
+        return Platform.INSTANCE.getItemGridResourceType();
+    }
+
     @Nullable
     @Override
     public ResourceAmount getAutocraftingRequest() {
@@ -140,11 +147,6 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     }
 
     @Override
-    public boolean belongsToResourceType(final ResourceType resourceType) {
-        return resourceType == ResourceTypes.ITEM;
-    }
-
-    @Override
     public List<Component> getTooltip() {
         final Minecraft minecraft = Minecraft.getInstance();
         try {
@@ -158,6 +160,11 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     @Override
     public Optional<TooltipComponent> getTooltipImage() {
         return itemStack.getTooltipImage();
+    }
+
+    @Override
+    public boolean is(final ResourceType resourceType) {
+        return resourceType == ResourceTypes.ITEM;
     }
 
     @Override

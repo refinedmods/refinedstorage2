@@ -73,6 +73,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
+    private static final PinManager PINS = new PinManager();
 
     private static String lastSearchQuery = "";
 
@@ -81,7 +82,6 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private final ResourceRepository<GridResource> repository;
     private final PatternRepository playerInventoryPatterns = new PatternRepositoryImpl();
     private final Map<ResourceKey, TrackedResource> trackedResources = new HashMap<>();
-    private final PinnedResources pinnedResources = new PinnedResources();
     @Nullable
     private Grid grid;
     @Nullable
@@ -261,7 +261,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
             RefinedStorageApi.INSTANCE
                 .getResourceTypeRegistry()
                 .get(resourceTypeId)
-                .map(resource::belongsToResourceType)
+                .map(resource::is)
         ).orElse(true);
     }
 
@@ -308,20 +308,20 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return repository;
     }
 
-    public List<GridResource> getPinnedResources() {
-        return pinnedResources.getAll();
+    public List<GridResource> getPins() {
+        return PINS.getAll();
     }
 
-    public void addPinnedResource(final int index, final GridResource gridResource) {
-        pinnedResources.add(index, gridResource);
+    public void addPin(final int index, final GridResource gridResource) {
+        PINS.add(index, gridResource);
     }
 
-    public boolean containsPinnedResource(final GridResource gridResource) {
-        return pinnedResources.contains(gridResource);
+    public boolean hasPin(final GridResource gridResource) {
+        return PINS.contains(gridResource);
     }
 
-    public GridResource removePinnedResource(final int index) {
-        return pinnedResources.remove(index);
+    public GridResource removePin(final int index) {
+        return PINS.remove(index);
     }
 
     @Override

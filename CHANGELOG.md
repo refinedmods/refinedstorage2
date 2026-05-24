@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   You can now pin resources to the top of the Grid. Drag and drop to pin. Drag outside the pinned area to unpin.
+
 ### Fixed
 
 -   Search box highlight marking text as invalid when the cursor is positioned within the text.
