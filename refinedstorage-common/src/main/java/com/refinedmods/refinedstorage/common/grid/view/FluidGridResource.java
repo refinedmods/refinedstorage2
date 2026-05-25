@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
@@ -37,6 +38,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     private final int id;
     private final ResourceRendering rendering;
+    private final FluidResource fluidResource;
 
     public FluidGridResource(final FluidResource resource,
                              final String name,
@@ -44,6 +46,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
         super(resource, name, attributes);
         this.id = BuiltInRegistries.FLUID.getId(resource.fluid());
         this.rendering = RefinedStorageClientApi.INSTANCE.getResourceRendering(FluidResource.class);
+        this.fluidResource = resource;
     }
 
     @Override
@@ -61,6 +64,11 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
                 result.container(),
                 null
             )).stream().toList();
+    }
+
+    @Override
+    public GridResourceType getType() {
+        return Platform.INSTANCE.getFluidGridResourceType();
     }
 
     @Nullable
@@ -118,11 +126,6 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     }
 
     @Override
-    public boolean belongsToResourceType(final ResourceType resourceType) {
-        return resourceType == ResourceTypes.FLUID;
-    }
-
-    @Override
     public List<Component> getTooltip() {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(resource);
     }
@@ -130,5 +133,22 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     @Override
     public Optional<TooltipComponent> getTooltipImage() {
         return Optional.empty();
+    }
+
+    public FluidResource getFluidResource() {
+        return fluidResource;
+    }
+
+    @Override
+    public boolean is(final ResourceType resourceType) {
+        return resourceType == ResourceTypes.FLUID;
+    }
+
+    @Override
+    public boolean is(final GridResource other) {
+        if (other instanceof FluidGridResource otherFluid) {
+            return this.fluidResource.equals(otherFluid.fluidResource);
+        }
+        return false;
     }
 }

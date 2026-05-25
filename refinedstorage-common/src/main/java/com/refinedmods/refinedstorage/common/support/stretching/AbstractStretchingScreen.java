@@ -128,13 +128,14 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
 
     private void renderRows(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final int x,
                             final int y) {
+        final int topOffset = getTopOffset();
         graphics.enableScissor(
             x + 7,
-            y + TOP_HEIGHT + 1,
+            y + TOP_HEIGHT + topOffset,
             x + 7 + (ROW_SIZE * COLUMNS),
             y + TOP_HEIGHT + 1 + (ROW_SIZE * visibleRows) - 2
         );
-        renderRows(graphics, x, y, TOP_HEIGHT, visibleRows, mouseX, mouseY);
+        renderRows(graphics, x, y, TOP_HEIGHT + topOffset, visibleRows, mouseX, mouseY);
         graphics.disableScissor();
     }
 
@@ -200,7 +201,8 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     protected final boolean isInStretchedArea(final int y) {
-        return y >= TOP_HEIGHT && y < TOP_HEIGHT + (ROW_SIZE * visibleRows);
+        final int topOffset = getTopOffset();
+        return y >= (TOP_HEIGHT + topOffset) && y < TOP_HEIGHT + (ROW_SIZE * visibleRows);
     }
 
     private int getMaxRows() {
@@ -217,8 +219,9 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         if (scrollbar == null) {
             return;
         }
-        scrollbar.setEnabled(totalRows > visibleRows);
-        final int rowsExcludingVisibleOnes = totalRows - visibleRows;
+        final int actualVisibleRows = modifyVisibleRows(visibleRows);
+        scrollbar.setEnabled(totalRows > actualVisibleRows);
+        final int rowsExcludingVisibleOnes = totalRows - actualVisibleRows;
         final int maxOffset = scrollbar.isSmoothScrolling()
             ? ((rowsExcludingVisibleOnes * ROW_SIZE) + getScrollPanePadding())
             : rowsExcludingVisibleOnes;
@@ -228,6 +231,14 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     protected abstract int getBottomHeight();
 
     protected abstract int getBottomV();
+
+    protected int getTopOffset() {
+        return 0;
+    }
+
+    protected int modifyVisibleRows(final int rows) {
+        return rows;
+    }
 
     protected int getScrollPanePadding() {
         return 0;

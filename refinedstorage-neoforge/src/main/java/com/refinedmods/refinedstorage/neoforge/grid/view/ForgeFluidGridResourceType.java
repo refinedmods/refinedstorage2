@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.neoforge.grid.view;
 
-import com.refinedmods.refinedstorage.common.grid.view.AbstractFluidGridResourceRepositoryMapper;
+import com.refinedmods.refinedstorage.common.grid.view.AbstractFluidGridResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
@@ -18,10 +18,15 @@ import net.neoforged.neoforge.fluids.FluidType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ForgeFluidResourceRepositoryMapper extends AbstractFluidGridResourceRepositoryMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForgeFluidResourceRepositoryMapper.class);
+public class ForgeFluidGridResourceType extends AbstractFluidGridResourceType {
+    public static final ForgeFluidGridResourceType INSTANCE = new ForgeFluidGridResourceType();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForgeFluidGridResourceType.class);
 
     private final Map<FluidResource, FluidStack> stackCache = new HashMap<>();
+
+    private ForgeFluidGridResourceType() {
+    }
 
     @Override
     protected String getTooltip(final FluidResource resource) {

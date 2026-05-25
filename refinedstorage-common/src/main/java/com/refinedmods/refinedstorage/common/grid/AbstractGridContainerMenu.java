@@ -48,6 +48,7 @@ import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -72,6 +73,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
+    private static final PinManager PINS = new PinManager();
 
     private static String lastSearchQuery = "";
 
@@ -259,7 +261,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
             RefinedStorageApi.INSTANCE
                 .getResourceTypeRegistry()
                 .get(resourceTypeId)
-                .map(resource::belongsToResourceType)
+                .map(resource::is)
         ).orElse(true);
     }
 
@@ -304,6 +306,22 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     public ResourceRepository<GridResource> getRepository() {
         return repository;
+    }
+
+    public List<GridResource> getPins() {
+        return PINS.getAll();
+    }
+
+    public void addPin(final int index, final GridResource gridResource) {
+        PINS.add(index, gridResource);
+    }
+
+    public boolean hasPin(final GridResource gridResource) {
+        return PINS.contains(gridResource);
+    }
+
+    public GridResource removePin(final int index) {
+        return PINS.remove(index);
     }
 
     @Override

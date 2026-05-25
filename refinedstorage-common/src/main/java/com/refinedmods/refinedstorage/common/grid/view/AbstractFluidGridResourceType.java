@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage.common.grid.view;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
 import java.util.Collections;
@@ -14,11 +14,17 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
 
-public abstract class AbstractFluidGridResourceRepositoryMapper implements ResourceRepositoryMapper<GridResource> {
+public abstract class AbstractFluidGridResourceType implements GridResourceType {
+    @Override
+    public MapCodec<GridResource> getMapCodec() {
+        return GridResourceCodecs.FLUID;
+    }
+
     @Override
     public GridResource apply(final ResourceKey resource) {
         final FluidResource fluidResource = (FluidResource) resource;
@@ -36,6 +42,11 @@ public abstract class AbstractFluidGridResourceRepositoryMapper implements Resou
             name,
             k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
+    }
+
+    @Override
+    public Class<? extends ResourceKey> getResourceKeyClass() {
+        return FluidResource.class;
     }
 
     private Set<String> getTags(final Fluid fluid) {

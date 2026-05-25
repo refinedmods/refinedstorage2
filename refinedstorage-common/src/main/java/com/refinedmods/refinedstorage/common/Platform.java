@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage.common.support.render.FluidRenderer;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -133,4 +135,10 @@ public interface Platform {
     void resetSlots(AbstractContainerMenu containerMenu);
 
     PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory();
+
+    GridResourceType getItemGridResourceType();
+
+    GridResourceType getFluidGridResourceType();
+
+    Path getGameDirectory();
 }

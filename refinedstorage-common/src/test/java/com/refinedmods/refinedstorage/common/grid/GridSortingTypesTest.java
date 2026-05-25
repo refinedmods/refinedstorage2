@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.MinecraftRegistriesTest;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
-import com.refinedmods.refinedstorage.common.grid.view.AbstractItemGridResourceRepositoryMapper;
+import com.refinedmods.refinedstorage.common.grid.view.AbstractItemGridResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.Comparator;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @MinecraftRegistriesTest
 class GridSortingTypesTest {
     private static final ResourceRepositoryMapper<GridResource> MAPPER =
-        new AbstractItemGridResourceRepositoryMapper() {
+        new AbstractItemGridResourceType() {
             @Override
             public String getModId(final ItemStack itemStack) {
                 return "";

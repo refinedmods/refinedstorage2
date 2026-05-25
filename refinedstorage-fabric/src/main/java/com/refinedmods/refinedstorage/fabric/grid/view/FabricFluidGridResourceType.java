@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.fabric.grid.view;
 
-import com.refinedmods.refinedstorage.common.grid.view.AbstractFluidGridResourceRepositoryMapper;
+import com.refinedmods.refinedstorage.common.grid.view.AbstractFluidGridResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 
 import java.util.stream.Collectors;
@@ -14,7 +14,12 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil.toFluidVariant;
 
-public class FabricFluidGridResourceRepositoryMapper extends AbstractFluidGridResourceRepositoryMapper {
+public class FabricFluidGridResourceType extends AbstractFluidGridResourceType {
+    public static final FabricFluidGridResourceType INSTANCE = new FabricFluidGridResourceType();
+
+    private FabricFluidGridResourceType() {
+    }
+
     @Override
     protected String getTooltip(final FluidResource resource) {
         return FluidVariantRendering
