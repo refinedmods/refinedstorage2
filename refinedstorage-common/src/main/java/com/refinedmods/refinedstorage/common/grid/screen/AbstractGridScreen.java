@@ -417,23 +417,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void renderPinnedResource(final GuiGraphicsExtractor graphics, final int idx, final int slotX,
                                       final int slotY, final boolean hovering, final float partialTicks) {
+        renderSlotBackground(graphics, slotX, slotY, false, 0x4000D9FF);
         if (idx == draggedPinnedResourceInsertionIndex && draggedPinnedResource != null) {
-            renderSlotBackground(graphics, slotX, slotY, false, 0xFF00D9FF);
-            draggedPinnedResource.render(graphics, slotX, slotY);
+            renderDraggedPinInsertHint(graphics, slotX, slotY);
             return;
         }
-        renderSlotBackground(graphics, slotX, slotY, false, 0x4000D9FF);
         final int normalizedIdx = draggedPinnedResourceInsertionIndex >= 0 && idx > draggedPinnedResourceInsertionIndex
             ? idx - 1
             : idx;
         final int totalPins = getMenu().getPins().size();
         if (normalizedIdx == totalPins) {
-            final float time = ticks + partialTicks;
-            final float alpha = 0.4F + 0.1F * (float) Math.sin(time * 0.2F);
-            graphics.blitSprite(GUI_TEXTURED, PIN_SPRITE, slotX, slotY, 16, 16, alpha);
-            if (hovering) {
-                setDeferredTooltip(List.of(HelpClientTooltipComponent.createAlwaysDisplayed(PIN_HELP)));
-            }
+            renderPinIcon(graphics, slotX, slotY, hovering, partialTicks);
             return;
         }
         if (normalizedIdx >= totalPins) {
@@ -443,6 +437,24 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         renderResourceWithAmount(graphics, slotX, slotY, resource);
         if (hovering) {
             currentPinSlotIndex = normalizedIdx;
+        }
+    }
+
+    private void renderDraggedPinInsertHint(final GuiGraphicsExtractor graphics, final int slotX, final int slotY) {
+        if (draggedPinnedResource == null) {
+            return;
+        }
+        draggedPinnedResource.render(graphics, slotX, slotY);
+        graphics.fill(slotX, slotY, slotX + 16, slotY + 16, 0x80555555);
+    }
+
+    private void renderPinIcon(final GuiGraphicsExtractor graphics, final int slotX, final int slotY,
+                               final boolean hovering, final float partialTicks) {
+        final float time = ticks + partialTicks;
+        final float alpha = 0.4F + 0.1F * (float) Math.sin(time * 0.2F);
+        graphics.blitSprite(GUI_TEXTURED, PIN_SPRITE, slotX, slotY, 16, 16, alpha);
+        if (hovering) {
+            setDeferredTooltip(List.of(HelpClientTooltipComponent.createAlwaysDisplayed(PIN_HELP)));
         }
     }
 
