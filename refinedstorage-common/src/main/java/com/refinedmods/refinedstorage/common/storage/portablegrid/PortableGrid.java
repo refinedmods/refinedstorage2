@@ -59,13 +59,13 @@ class PortableGrid implements Grid {
 
     void updateStorage() {
         if (storage != null) {
-            watchers.detachAll(storage.getRootStorage());
+            watchers.detachAll(storage.getRootStorage(), null);
         }
         this.storage = diskInventory.resolve(0)
             .map(diskStorage -> new StateTrackedStorage(diskStorage, diskListener))
             .map(PortableGridStorage::new)
             .orElse(null);
-        watchers.attachAll(getRootStorage());
+        watchers.attachAll(getRootStorage(), null);
     }
 
     void activeChanged(final boolean active) {
@@ -85,12 +85,12 @@ class PortableGrid implements Grid {
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         energyStorage.extract(Platform.INSTANCE.getConfig().getPortableGrid().getOpenEnergyUsage(), Action.EXECUTE);
-        watchers.addWatcher(watcher, actorType, getRootStorage());
+        watchers.addWatcher(watcher, actorType, getRootStorage(), null);
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        watchers.removeWatcher(watcher, getRootStorage());
+        watchers.removeWatcher(watcher, getRootStorage(), null);
     }
 
     @Nullable

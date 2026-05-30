@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.node.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 
@@ -10,7 +11,7 @@ import org.jspecify.annotations.Nullable;
  * A grid listener.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface GridWatcher {
+public interface GridWatcher extends TaskStatusListener {
     /**
      * Called when the activeness state of the grid has changed.
      *
