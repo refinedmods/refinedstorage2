@@ -14,9 +14,7 @@ import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttribute
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
-import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.common.support.tooltip.MouseClientTooltipComponent;
 
 import java.util.List;
@@ -137,11 +135,6 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     public FluidResource getFluidResource() {
         return fluidResource;
-    }
-
-    @Override
-    public boolean is(final ResourceType resourceType) {
-        return resourceType == ResourceTypes.FLUID;
     }
 
     @Override

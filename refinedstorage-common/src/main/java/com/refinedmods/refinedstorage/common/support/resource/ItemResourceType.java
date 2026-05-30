@@ -9,17 +9,9 @@ import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
-
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 class ItemResourceType implements ResourceType {
-    private static final MutableComponent TITLE = createTranslation("misc", "resource_type.item");
-    private static final Identifier SPRITE = createIdentifier("widget/side_button/resource_type/item");
-
     @Override
     public long normalizeAmount(final double amount) {
         return (long) amount;
@@ -57,16 +49,6 @@ class ItemResourceType implements ResourceType {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public StreamCodec<RegistryFriendlyByteBuf, PlatformResourceKey> getStreamCodec() {
         return (StreamCodec) ResourceCodecs.ITEM_STREAM_CODEC;
-    }
-
-    @Override
-    public MutableComponent getTitle() {
-        return TITLE;
-    }
-
-    @Override
-    public Identifier getSprite() {
-        return SPRITE;
     }
 
     @Override
