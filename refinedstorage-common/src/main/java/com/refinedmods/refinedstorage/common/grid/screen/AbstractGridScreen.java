@@ -688,7 +688,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                 return true;
             }
             final int relativeMouseX = (int) e.x() - leftPos - 7;
-            final int relativeMouseY = (int) e.y() - topPos - 17 + getScrollbarOffset();
+            final int relativeMouseY = (int) e.y() - topPos - 17;
             final int column = relativeMouseX / ROW_SIZE;
             final int row = relativeMouseY / ROW_SIZE;
             final int insertIndex = row * COLUMNS + column;
