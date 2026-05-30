@@ -678,12 +678,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     public boolean mouseDragged(final MouseButtonEvent e, final double dx, final double dy) {
-        if (e.button() == 0
-            && draggedPinnedResource == null
-            && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
-            if (startDraggingPinnedResource()) {
-                return true;
-            }
+        final boolean canDrag = Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD;
+        final boolean nothingOnCursor = getMenu().getCarried().isEmpty() && draggedPinnedResource == null;
+        if (e.button() == 0 && nothingOnCursor && canDrag && startDraggingPinnedResource()) {
+            return true;
         } else if (draggedPinnedResource != null) {
             if (!isOverPinArea((int) e.x(), (int) e.y()) || getMenu().hasPin(draggedPinnedResource)) {
                 draggedPinnedResourceInsertionIndex = -1;
