@@ -79,6 +79,10 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         );
     }
 
+    protected final int getVisibleRows() {
+        return visibleRows;
+    }
+
     protected final int getScrollbarOffset() {
         if (scrollbar == null) {
             return 0;
