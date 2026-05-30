@@ -78,7 +78,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         .append("\n")
         .append(createTranslation("gui", "grid.search_help.tooltip_search").withStyle(ChatFormatting.GRAY));
     private static final Component PIN_HELP = createTranslation("gui", "grid.pin_help");
-    private static final double DRAG_THRESHOLD = 0.5;
+    private static final double DRAG_THRESHOLD = 0.35;
 
     protected final int bottomHeight;
 
