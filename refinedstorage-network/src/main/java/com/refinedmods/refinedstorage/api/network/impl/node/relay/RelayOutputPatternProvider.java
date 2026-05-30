@@ -16,11 +16,13 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.ParentContainer;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternListener;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TaskContainer;
+import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     private final TaskContainer tasks = new TaskContainer(this);
     @Nullable
     private AutocraftingNetworkComponent delegate;
+    @Nullable
+    private StorageNetworkComponent storageDelegate;
     private StepBehavior stepBehavior = StepBehavior.DEFAULT;
     @Nullable
     private ExternalPatternSinkId id;
@@ -83,6 +87,16 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
         }
     }
 
+    public void setStorageDelegate(final @Nullable StorageNetworkComponent newDelegate) {
+        if (this.storageDelegate != null) {
+            tasks.detachAll(this.storageDelegate);
+        }
+        this.storageDelegate = newDelegate;
+        if (newDelegate != null) {
+            tasks.attachAll(newDelegate);
+        }
+    }
+
     boolean hasDelegate() {
         return delegate != null;
     }
@@ -121,7 +135,15 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
 
     @Override
     public void addTask(final Task task) {
-        tasks.add(task, outputNode.getNetwork());
+        final List<StorageNetworkComponent> relevantStorages = new ArrayList<>();
+        final Network outputNetwork = outputNode.getNetwork();
+        if (outputNetwork != null) {
+            relevantStorages.add(outputNetwork.getComponent(StorageNetworkComponent.class));
+        }
+        if (storageDelegate != null) {
+            relevantStorages.add(storageDelegate);
+        }
+        tasks.add(task, relevantStorages);
         parents.forEach(parent -> parent.taskAdded(this, task));
     }
 
@@ -229,10 +251,10 @@ class RelayOutputPatternProvider implements PatternProvider, PatternListener, Ta
     }
 
     void detachAll(final Network network) {
-        tasks.detachAll(network);
+        tasks.detachAll(network.getComponent(StorageNetworkComponent.class));
     }
 
     void attachAll(final Network network) {
-        tasks.attachAll(network);
+        tasks.attachAll(network.getComponent(StorageNetworkComponent.class));
     }
 }

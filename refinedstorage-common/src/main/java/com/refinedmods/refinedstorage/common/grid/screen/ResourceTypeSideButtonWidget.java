@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid.screen;
 
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.support.widget.AbstractSideButtonWidget;
 
@@ -18,7 +18,7 @@ class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
     private static final MutableComponent EMPTY_WARNING = createTranslation("gui", "grid.resource_type.empty_warning");
     private static final List<MutableComponent> SUBTEXT_ALL =
         List.of(createTranslation("gui", "grid.resource_type.all").withStyle(ChatFormatting.GRAY));
-    private static final Identifier ALL = createIdentifier("widget/side_button/resource_type/all");
+    private static final Identifier ALL = createIdentifier("widget/side_button/grid/resource_type/all");
 
     private final AbstractGridContainerMenu menu;
 
@@ -33,7 +33,7 @@ class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected Identifier getSprite() {
-        final ResourceType resourceType = menu.getResourceType();
+        final GridResourceType resourceType = menu.getResourceType();
         if (resourceType == null) {
             return ALL;
         }
@@ -47,7 +47,7 @@ class ResourceTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected List<MutableComponent> getSubText() {
-        final ResourceType resourceType = menu.getResourceType();
+        final GridResourceType resourceType = menu.getResourceType();
         if (resourceType == null) {
             return SUBTEXT_ALL;
         }

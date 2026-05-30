@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage.common.support.render.FluidRenderer;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -257,6 +259,21 @@ public class PlatformProxy implements Platform {
     @Override
     public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
         return ensureLoaded().getPatternProviderExternalPatternSinkFactory();
+    }
+
+    @Override
+    public GridResourceType getItemGridResourceType() {
+        return ensureLoaded().getItemGridResourceType();
+    }
+
+    @Override
+    public GridResourceType getFluidGridResourceType() {
+        return ensureLoaded().getFluidGridResourceType();
+    }
+
+    @Override
+    public Path getGameDirectory() {
+        return ensureLoaded().getGameDirectory();
     }
 
     private Platform ensureLoaded() {

@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TaskContainer;
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
@@ -80,11 +81,11 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     @Override
     public void setNetwork(@Nullable final Network network) {
         if (this.network != null) {
-            tasks.detachAll(this.network);
+            tasks.detachAll(this.network.getComponent(StorageNetworkComponent.class));
         }
         super.setNetwork(network);
         if (network != null) {
-            tasks.attachAll(network);
+            tasks.attachAll(network.getComponent(StorageNetworkComponent.class));
         }
     }
 
@@ -130,7 +131,7 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
 
     @Override
     public void addTask(final Task task) {
-        tasks.add(task, network);
+        tasks.add(task, network != null ? List.of(network.getComponent(StorageNetworkComponent.class)) : List.of());
         parents.forEach(parent -> parent.taskAdded(this, task));
     }
 

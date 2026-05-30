@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-05-30
+
+### Added
+
+-   You can now pin resources to the top of the Grid. Drag and drop to pin. Drag outside the pinned area to unpin.
+
+### Fixed
+
+-   Search box highlight marking text as invalid when the cursor is positioned within the text.
+-   Autocrafting tasks started from a subnetwork not completing when the processing output is imported into the main network, through a Relay that shares both autocrafting and storage.
+
 ## [3.0.5] - 2026-05-20
 
 ### Added
@@ -1296,7 +1307,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.5...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.1.0...HEAD
+
+[3.1.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.5...v3.1.0
 
 [3.0.5]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.4...v3.0.5
 

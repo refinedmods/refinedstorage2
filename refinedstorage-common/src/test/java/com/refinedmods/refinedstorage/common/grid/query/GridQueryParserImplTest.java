@@ -13,8 +13,8 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridExtractionStr
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
@@ -407,7 +407,7 @@ class GridQueryParserImplTest {
         }
 
         @Override
-        public boolean belongsToResourceType(final ResourceType resourceType) {
+        public boolean is(final GridResource other) {
             return false;
         }
 
@@ -430,6 +430,11 @@ class GridQueryParserImplTest {
         public List<ClientTooltipComponent> getExtractionHints(final ItemStack carriedStack,
                                                                final ResourceRepository<GridResource> repository) {
             return List.of();
+        }
+
+        @Override
+        public GridResourceType getType() {
+            throw new UnsupportedOperationException();
         }
 
         @Override

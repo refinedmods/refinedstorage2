@@ -101,8 +101,8 @@ import com.refinedmods.refinedstorage.fabric.grid.strategy.FluidGridExtractionSt
 import com.refinedmods.refinedstorage.fabric.grid.strategy.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridExtractionStrategy;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridScrollingStrategy;
-import com.refinedmods.refinedstorage.fabric.grid.view.FabricFluidGridResourceRepositoryMapper;
-import com.refinedmods.refinedstorage.fabric.grid.view.FabricItemGridResourceRepositoryMapper;
+import com.refinedmods.refinedstorage.fabric.grid.view.FabricFluidGridResourceType;
+import com.refinedmods.refinedstorage.fabric.grid.view.FabricItemGridResourceType;
 import com.refinedmods.refinedstorage.fabric.importer.FabricImporterBlockEntity;
 import com.refinedmods.refinedstorage.fabric.importer.FabricStorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.fabric.networking.FabricCableBlockEntity;
@@ -207,7 +207,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ((RefinedStorageFabricApiProxy) RefinedStorageFabricApi.INSTANCE).setDelegate(
             new RefinedStorageFabricApiImpl()
         );
-        registerGridResourceRepositoryMappers();
+        registerGridResourceTypes();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -234,15 +234,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         LOGGER.debug("Refined Storage has loaded.");
     }
 
-    private void registerGridResourceRepositoryMappers() {
-        RefinedStorageApi.INSTANCE.addGridResourceRepositoryMapper(
-            ItemResource.class,
-            new FabricItemGridResourceRepositoryMapper()
-        );
-        RefinedStorageApi.INSTANCE.addGridResourceRepositoryMapper(
-            FluidResource.class,
-            new FabricFluidGridResourceRepositoryMapper()
-        );
+    private void registerGridResourceTypes() {
+        RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry()
+            .register(createIdentifier("item"), FabricItemGridResourceType.INSTANCE);
+        RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry()
+            .register(createIdentifier("fluid"), FabricFluidGridResourceType.INSTANCE);
     }
 
     private void registerAdditionalGridInsertionStrategyFactories() {

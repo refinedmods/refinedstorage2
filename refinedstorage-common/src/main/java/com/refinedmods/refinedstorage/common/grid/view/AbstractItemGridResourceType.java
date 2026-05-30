@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage.common.grid.view;
 
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
-import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
@@ -17,9 +17,12 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +30,18 @@ import net.minecraft.world.item.TooltipFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractItemGridResourceRepositoryMapper implements ResourceRepositoryMapper<GridResource> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractItemGridResourceRepositoryMapper.class);
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+
+public abstract class AbstractItemGridResourceType implements GridResourceType {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractItemGridResourceType.class);
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/grid/resource_type/item");
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.resource_type.item");
+
+    @Override
+    public MapCodec<GridResource> getMapCodec() {
+        return GridResourceCodecs.ITEM;
+    }
 
     @Override
     public GridResource apply(final ResourceKey resource) {
@@ -52,6 +65,11 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
             originalName,
             k -> attributes.getOrDefault(k, Collections::emptySet).get()
         );
+    }
+
+    @Override
+    public Class<? extends ResourceKey> getResourceType() {
+        return ItemResource.class;
     }
 
     private String getTooltip(final ItemStack itemStack) {
@@ -86,6 +104,16 @@ public abstract class AbstractItemGridResourceRepositoryMapper implements Resour
         } else {
             return itemTags.collect(Collectors.toSet());
         }
+    }
+
+    @Override
+    public MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    public Identifier getSprite() {
+        return SPRITE;
     }
 
     public abstract String getModId(ItemStack itemStack);

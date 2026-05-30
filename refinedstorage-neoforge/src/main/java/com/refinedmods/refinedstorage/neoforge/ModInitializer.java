@@ -103,8 +103,8 @@ import com.refinedmods.refinedstorage.neoforge.grid.strategy.FluidGridExtraction
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridExtractionStrategy;
 import com.refinedmods.refinedstorage.neoforge.grid.strategy.ItemGridScrollingStrategy;
-import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeFluidResourceRepositoryMapper;
-import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeItemResourceRepositoryMapper;
+import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeFluidGridResourceType;
+import com.refinedmods.refinedstorage.neoforge.grid.view.ForgeItemGridResourceType;
 import com.refinedmods.refinedstorage.neoforge.importer.ForgeImporterBlockEntity;
 import com.refinedmods.refinedstorage.neoforge.importer.ResourceHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage.neoforge.networking.ForgeCableBlockEntity;
@@ -226,7 +226,7 @@ public class ModInitializer extends AbstractModInitializer {
         initializePlatformApi();
         ((RefinedStorageNeoForgeApiProxy) RefinedStorageNeoForgeApi.INSTANCE).setDelegate(
             new RefinedStorageNeoForgeApiImpl());
-        registerGridResourceRepositoryMappers();
+        registerGridResourceTypes();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -264,15 +264,11 @@ public class ModInitializer extends AbstractModInitializer {
         NeoForge.EVENT_BUS.addListener(this::registerSecurityBlockBreakEvent);
     }
 
-    private void registerGridResourceRepositoryMappers() {
-        RefinedStorageApi.INSTANCE.addGridResourceRepositoryMapper(
-            ItemResource.class,
-            new ForgeItemResourceRepositoryMapper()
-        );
-        RefinedStorageApi.INSTANCE.addGridResourceRepositoryMapper(
-            FluidResource.class,
-            new ForgeFluidResourceRepositoryMapper()
-        );
+    private void registerGridResourceTypes() {
+        RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry()
+            .register(createIdentifier("item"), ForgeItemGridResourceType.INSTANCE);
+        RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry()
+            .register(createIdentifier("fluid"), ForgeFluidGridResourceType.INSTANCE);
     }
 
     private void registerAdditionalGridInsertionStrategyFactories() {

@@ -30,10 +30,10 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridExtractionStr
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridInsertionStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage.common.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.autocrafting.PendingAutocraftingRequests;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException;
@@ -42,12 +42,12 @@ import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridInsertionSt
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridScrollingStrategy;
 import com.refinedmods.refinedstorage.common.support.containermenu.AbstractResourceContainerMenu;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
-import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -72,6 +72,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
+    private static final PinManager PINS = new PinManager();
 
     private static String lastSearchQuery = "";
 
@@ -90,7 +91,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private GridScrollingStrategy scrollingStrategy;
     private GridSynchronizer synchronizer;
     @Nullable
-    private ResourceType resourceTypeFilter;
+    private GridResourceType resourceTypeFilter;
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
     private boolean resourceTypeWarningVisible;
@@ -257,9 +258,9 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private ResourceRepositoryFilter<GridResource> createResourceTypeFilter() {
         return (v, resource) -> Platform.INSTANCE.getConfig().getGrid().getResourceType().flatMap(resourceTypeId ->
             RefinedStorageApi.INSTANCE
-                .getResourceTypeRegistry()
+                .getGridResourceTypeRegistry()
                 .get(resourceTypeId)
-                .map(resource::belongsToResourceType)
+                .map(resourceType -> resourceType == resource.getType())
         ).orElse(true);
     }
 
@@ -304,6 +305,26 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     public ResourceRepository<GridResource> getRepository() {
         return repository;
+    }
+
+    public List<GridResource> getPins() {
+        return PINS.getAll();
+    }
+
+    public boolean hasPins() {
+        return !PINS.getAll().isEmpty();
+    }
+
+    public void addPin(final int index, final GridResource gridResource) {
+        PINS.add(index, gridResource);
+    }
+
+    public boolean hasPin(final GridResource gridResource) {
+        return PINS.contains(gridResource);
+    }
+
+    public GridResource removePin(final int index) {
+        return PINS.remove(index);
     }
 
     @Override
@@ -373,12 +394,12 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Nullable
-    private ResourceType loadResourceType() {
+    private GridResourceType loadResourceType() {
         return Platform.INSTANCE
             .getConfig()
             .getGrid()
             .getResourceType()
-            .flatMap(id -> RefinedStorageApi.INSTANCE.getResourceTypeRegistry().get(id))
+            .flatMap(id -> RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry().get(id))
             .orElse(null);
     }
 
@@ -387,7 +408,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     @Nullable
-    public ResourceType getResourceType() {
+    public GridResourceType getResourceType() {
         return resourceTypeFilter;
     }
 
@@ -404,10 +425,10 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     public void toggleResourceType() {
-        final PlatformRegistry<ResourceType> registry = RefinedStorageApi.INSTANCE.getResourceTypeRegistry();
+        final PlatformRegistry<GridResourceType> registry = RefinedStorageApi.INSTANCE.getGridResourceTypeRegistry();
         final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
-        final ResourceType newResourceType = resourceTypeFilter == null
-            ? ResourceTypes.ITEM
+        final GridResourceType newResourceType = resourceTypeFilter == null
+            ? Platform.INSTANCE.getItemGridResourceType()
             : registry.nextOrNullIfLast(resourceTypeFilter);
         if (newResourceType == null) {
             config.clearResourceType();
@@ -563,7 +584,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     }
 
     private void updateResourceTypeWarning() {
-        final ResourceType resourceType = getResourceType();
+        final GridResourceType resourceType = getResourceType();
         if (resourceType == null) {
             resourceTypeWarningVisible = false;
             return;
@@ -571,7 +592,6 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         resourceTypeWarningVisible = repository.copyBackingList()
             .getAll()
             .stream()
-            .noneMatch(resource -> resource instanceof PlatformResourceKey platformResource
-                && platformResource.getResourceType().equals(resourceType));
+            .noneMatch(resource -> resourceType.getResourceType().equals(resource.getClass()));
     }
 }

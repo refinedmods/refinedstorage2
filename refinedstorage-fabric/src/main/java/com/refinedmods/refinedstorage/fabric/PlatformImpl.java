@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.AbstractPlatform;
 import com.refinedmods.refinedstorage.common.Config;
 import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderExternalPatternSinkFactory;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.energy.EnergyItemContext;
 import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
 import com.refinedmods.refinedstorage.common.api.support.resource.FluidOperationResult;
@@ -18,6 +19,8 @@ import com.refinedmods.refinedstorage.common.util.CustomBlockPlaceContext;
 import com.refinedmods.refinedstorage.fabric.api.RefinedStorageFabricApi;
 import com.refinedmods.refinedstorage.fabric.autocrafting.StoragePatternProviderExternalPatternSinkFactory;
 import com.refinedmods.refinedstorage.fabric.grid.strategy.ItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage.fabric.grid.view.FabricFluidGridResourceType;
+import com.refinedmods.refinedstorage.fabric.grid.view.FabricItemGridResourceType;
 import com.refinedmods.refinedstorage.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage.fabric.support.containermenu.MenuOpenerImpl;
@@ -27,6 +30,7 @@ import com.refinedmods.refinedstorage.fabric.support.render.FluidVariantFluidRen
 import com.refinedmods.refinedstorage.fabric.support.resource.SimpleSingleStackStorage;
 import com.refinedmods.refinedstorage.fabric.support.resource.VariantUtil;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +49,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -454,5 +459,20 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public PatternProviderExternalPatternSinkFactory getPatternProviderExternalPatternSinkFactory() {
         return storagePatternProviderExternalPatternSinkFactory;
+    }
+
+    @Override
+    public GridResourceType getItemGridResourceType() {
+        return FabricItemGridResourceType.INSTANCE;
+    }
+
+    @Override
+    public GridResourceType getFluidGridResourceType() {
+        return FabricFluidGridResourceType.INSTANCE;
+    }
+
+    @Override
+    public Path getGameDirectory() {
+        return FabricLoader.getInstance().getGameDir();
     }
 }

@@ -3,47 +3,51 @@ package com.refinedmods.refinedstorage.common.grid.view;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
+import com.refinedmods.refinedstorage.common.api.support.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
 public class GridResourceRepositoryMapper implements ResourceRepositoryMapper<GridResource> {
-    private final Map<Class<? extends ResourceKey>, ResourceRepositoryMapper<GridResource>> strategies =
-        new HashMap<>();
+    private final PlatformRegistry<GridResourceType> registry;
     @Nullable
-    private ResourceRepositoryMapper<GridResource> itemFactory;
+    private Map<Class<? extends ResourceKey>, GridResourceType> lazyStrategies;
     @Nullable
-    private ResourceRepositoryMapper<GridResource> fluidFactory;
+    private GridResourceType lazyItemFactory;
+    @Nullable
+    private GridResourceType lazyFluidFactory;
 
-    public void addFactory(final Class<? extends ResourceKey> resourceClass,
-                           final ResourceRepositoryMapper<GridResource> factory) {
-        if (resourceClass == ItemResource.class) {
-            this.itemFactory = factory;
-        } else if (resourceClass == FluidResource.class) {
-            this.fluidFactory = factory;
-        } else {
-            this.strategies.put(resourceClass, factory);
-        }
+    public GridResourceRepositoryMapper(final PlatformRegistry<GridResourceType> registry) {
+        this.registry = registry;
+    }
+
+    private void initializeStrategies() {
+        lazyStrategies = registry.getAll().stream()
+            .collect(Collectors.toMap(GridResourceType::getResourceType, strategy -> strategy));
+        lazyItemFactory = lazyStrategies.get(ItemResource.class);
+        lazyFluidFactory = lazyStrategies.get(FluidResource.class);
     }
 
     @Override
     public GridResource apply(final ResourceKey resource) {
-        final Class<? extends ResourceKey> resourceClass = resource.getClass();
-        if (resourceClass == ItemResource.class && itemFactory != null) {
-            return itemFactory.apply(resource);
-        } else if (resourceClass == FluidResource.class && fluidFactory != null) {
-            return fluidFactory.apply(resource);
+        if (lazyStrategies == null) {
+            initializeStrategies();
         }
-        final ResourceRepositoryMapper<GridResource> factory = requireNonNull(
-            strategies.get(resourceClass),
-            "No factory for " + resourceClass
-        );
+        final Class<? extends ResourceKey> resourceClass = resource.getClass();
+        if (resourceClass == ItemResource.class && lazyItemFactory != null) {
+            return lazyItemFactory.apply(resource);
+        } else if (resourceClass == FluidResource.class && lazyFluidFactory != null) {
+            return lazyFluidFactory.apply(resource);
+        }
+        final GridResourceType factory = requireNonNull(lazyStrategies.get(resourceClass),
+            "No factory for " + resourceClass);
         return factory.apply(resource);
     }
 }

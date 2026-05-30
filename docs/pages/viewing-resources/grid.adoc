@@ -126,6 +126,12 @@ include::../../partials/size.adoc[]
 By default, the tooltips for resources in a {doctitle} are a little bit bigger to display the total amount and the last modified information.
 This can be turned off by using the `detailedTooltip` config option.
 
+=== Pins
+
+You can pin resources to always be visible on top of the {doctitle}.
+
+Drag and drop to the top area to pin. Drag outside the pinned area to unpin.
+
 === Other configuration
 
 By default, the {doctitle} uses a small font size to display resource amounts.
