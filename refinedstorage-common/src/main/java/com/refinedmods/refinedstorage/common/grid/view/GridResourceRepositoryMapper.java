@@ -30,7 +30,7 @@ public class GridResourceRepositoryMapper implements ResourceRepositoryMapper<Gr
 
     private void initializeStrategies() {
         lazyStrategies = registry.getAll().stream()
-            .collect(Collectors.toMap(GridResourceType::getResourceKeyClass, strategy -> strategy));
+            .collect(Collectors.toMap(GridResourceType::getResourceType, strategy -> strategy));
         lazyItemFactory = lazyStrategies.get(ItemResource.class);
         lazyFluidFactory = lazyStrategies.get(FluidResource.class);
     }

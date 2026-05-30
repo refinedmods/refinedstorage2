@@ -11,9 +11,7 @@ import com.refinedmods.refinedstorage.common.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
-import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.common.support.tooltip.MouseClientTooltipComponent;
 
 import java.util.Collections;
@@ -160,11 +158,6 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     @Override
     public Optional<TooltipComponent> getTooltipImage() {
         return itemStack.getTooltipImage();
-    }
-
-    @Override
-    public boolean is(final ResourceType resourceType) {
-        return resourceType == ResourceTypes.ITEM;
     }
 
     @Override

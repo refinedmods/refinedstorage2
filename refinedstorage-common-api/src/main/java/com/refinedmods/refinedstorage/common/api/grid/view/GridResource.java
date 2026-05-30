@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridExtractionStrategy;
 import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStrategy;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +58,6 @@ public interface GridResource {
     String getDisplayedAmount(ResourceRepository<GridResource> repository);
 
     String getAmountInTooltip(ResourceRepository<GridResource> repository);
-
-    boolean is(ResourceType resourceType);
 
     boolean is(GridResource other);
 

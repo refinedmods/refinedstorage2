@@ -21,6 +21,8 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +30,13 @@ import net.minecraft.world.item.TooltipFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+
 public abstract class AbstractItemGridResourceType implements GridResourceType {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractItemGridResourceType.class);
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/grid/resource_type/item");
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.resource_type.item");
 
     @Override
     public MapCodec<GridResource> getMapCodec() {
@@ -61,7 +68,7 @@ public abstract class AbstractItemGridResourceType implements GridResourceType {
     }
 
     @Override
-    public Class<? extends ResourceKey> getResourceKeyClass() {
+    public Class<? extends ResourceKey> getResourceType() {
         return ItemResource.class;
     }
 
@@ -97,6 +104,16 @@ public abstract class AbstractItemGridResourceType implements GridResourceType {
         } else {
             return itemTags.collect(Collectors.toSet());
         }
+    }
+
+    @Override
+    public MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    public Identifier getSprite() {
+        return SPRITE;
     }
 
     public abstract String getModId(ItemStack itemStack);

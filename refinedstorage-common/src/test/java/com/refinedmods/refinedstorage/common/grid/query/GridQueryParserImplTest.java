@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
@@ -405,11 +404,6 @@ class GridQueryParserImplTest {
         @Override
         public String getAmountInTooltip(final ResourceRepository<GridResource> repository) {
             return "";
-        }
-
-        @Override
-        public boolean is(final ResourceType resourceType) {
-            return false;
         }
 
         @Override

@@ -17,9 +17,17 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
 
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+
 public abstract class AbstractFluidGridResourceType implements GridResourceType {
+    private static final Identifier SPRITE = createIdentifier("widget/side_button/grid/resource_type/fluid");
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.resource_type.fluid");
+
     @Override
     public MapCodec<GridResource> getMapCodec() {
         return GridResourceCodecs.FLUID;
@@ -45,8 +53,18 @@ public abstract class AbstractFluidGridResourceType implements GridResourceType 
     }
 
     @Override
-    public Class<? extends ResourceKey> getResourceKeyClass() {
+    public Class<? extends ResourceKey> getResourceType() {
         return FluidResource.class;
+    }
+
+    @Override
+    public MutableComponent getTitle() {
+        return TITLE;
+    }
+
+    @Override
+    public Identifier getSprite() {
+        return SPRITE;
     }
 
     private Set<String> getTags(final Fluid fluid) {
