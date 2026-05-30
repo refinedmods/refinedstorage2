@@ -78,7 +78,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         .append("\n")
         .append(createTranslation("gui", "grid.search_help.tooltip_search").withStyle(ChatFormatting.GRAY));
     private static final Component PIN_HELP = createTranslation("gui", "grid.pin_help");
-    private static final double DRAG_THRESHOLD = 0.5;
+    private static final double DRAG_THRESHOLD = 0.35;
 
     protected final int bottomHeight;
 
@@ -90,6 +90,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private int totalRows;
     private int currentGridSlotIndex;
+
+    private int pinRows;
     private int currentPinSlotIndex;
     private int ticks;
 
@@ -110,6 +112,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     @Override
     protected void init(final int rows) {
         LOGGER.debug("Initializing grid screen - this shouldn't happen too much!");
+
+        this.pinRows = calculatePinRows(rows);
 
         if (searchField == null) {
             searchField = new GridSearchBoxWidget(
@@ -194,7 +198,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return relativeMouseX >= 7
             && relativeMouseX <= 168
             && relativeMouseY >= TOP_HEIGHT
-            && relativeMouseY <= TOP_HEIGHT + (getPinRows() * ROW_SIZE);
+            && relativeMouseY <= TOP_HEIGHT + (pinRows * ROW_SIZE);
     }
 
     private boolean isOverStorageArea(final int mouseX, final int mouseY) {
@@ -230,7 +234,16 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return 73;
     }
 
-    private int getPinRows() {
+    private int calculatePinRows(final int visibleRows) {
+        if (!getMenu().hasPins()) {
+            return draggedPinnedResource != null ? 1 : 0;
+        }
+        final int wanted = calculateWantedPinRows();
+        final int rowsAvailableForPins = visibleRows - 1;
+        return Math.min(wanted, rowsAvailableForPins);
+    }
+
+    private int calculateWantedPinRows() {
         int pins = getMenu().getPins().size() + 1;
         if (draggedPinnedResourceInsertionIndex >= 0) {
             pins++;
@@ -240,12 +253,12 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     protected int getTopOffset() {
-        return getPinRows() * ROW_SIZE;
+        return pinRows * ROW_SIZE;
     }
 
     @Override
     protected int modifyVisibleRows(final int rows) {
-        return rows - getPinRows();
+        return rows - pinRows;
     }
 
     @Override
@@ -257,11 +270,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void renderPinRows(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
                                final float partialTicks) {
-        final int rows = getPinRows();
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
         currentPinSlotIndex = -1;
-        for (int row = 0; row < rows; ++row) {
+        for (int row = 0; row < pinRows; ++row) {
             renderPinRow(graphics, mouseX, mouseY, x, y, row, partialTicks);
         }
     }
@@ -408,23 +420,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void renderPinnedResource(final GuiGraphicsExtractor graphics, final int idx, final int slotX,
                                       final int slotY, final boolean hovering, final float partialTicks) {
+        renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
         if (idx == draggedPinnedResourceInsertionIndex && draggedPinnedResource != null) {
-            renderSlotBackground(graphics, slotX, slotY, false, 0xFF00D9FF);
-            draggedPinnedResource.render(graphics, slotX, slotY);
+            renderDraggedPinInsertHint(graphics, slotX, slotY);
             return;
         }
-        renderSlotBackground(graphics, slotX, slotY, false, 0x4000D9FF);
         final int normalizedIdx = draggedPinnedResourceInsertionIndex >= 0 && idx > draggedPinnedResourceInsertionIndex
             ? idx - 1
             : idx;
         final int totalPins = getMenu().getPins().size();
         if (normalizedIdx == totalPins) {
-            final float time = ticks + partialTicks;
-            final float alpha = 0.4F + 0.1F * (float) Math.sin(time * 0.2F);
-            graphics.blitSprite(GUI_TEXTURED, PIN_SPRITE, slotX, slotY, 16, 16, alpha);
-            if (hovering) {
-                setDeferredTooltip(List.of(HelpClientTooltipComponent.createAlwaysDisplayed(PIN_HELP)));
-            }
+            renderPinIcon(graphics, slotX, slotY, hovering, partialTicks);
             return;
         }
         if (normalizedIdx >= totalPins) {
@@ -434,6 +440,24 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         renderResourceWithAmount(graphics, slotX, slotY, resource);
         if (hovering) {
             currentPinSlotIndex = normalizedIdx;
+        }
+    }
+
+    private void renderDraggedPinInsertHint(final GuiGraphicsExtractor graphics, final int slotX, final int slotY) {
+        if (draggedPinnedResource == null) {
+            return;
+        }
+        draggedPinnedResource.render(graphics, slotX, slotY);
+        graphics.fill(slotX, slotY, slotX + 16, slotY + 16, 0x80555555);
+    }
+
+    private void renderPinIcon(final GuiGraphicsExtractor graphics, final int slotX, final int slotY,
+                               final boolean hovering, final float partialTicks) {
+        final float time = ticks + partialTicks;
+        final float alpha = 0.4F + 0.1F * (float) Math.sin(time * 0.2F);
+        graphics.blitSprite(GUI_TEXTURED, PIN_SPRITE, slotX, slotY, 16, 16, alpha);
+        if (hovering) {
+            setDeferredTooltip(List.of(HelpClientTooltipComponent.createAlwaysDisplayed(PIN_HELP)));
         }
     }
 
@@ -591,6 +615,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (amount > 0) {
             processedLines.addAll(resource.getExtractionHints(getMenu().getCarried(), getMenu().getRepository()));
         }
+        if (!getMenu().hasPin(resource)) {
+            processedLines.add(PinClientTooltipComponent.INSTANCE);
+        }
         graphics.tooltip(font, processedLines, mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
     }
 
@@ -678,19 +705,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     @Override
     public boolean mouseDragged(final MouseButtonEvent e, final double dx, final double dy) {
-        if (e.button() == 0
-            && draggedPinnedResource == null
-            && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
-            if (startDraggingPinnedResource()) {
-                return true;
-            }
+        final boolean canDrag = Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD;
+        final boolean nothingOnCursor = getMenu().getCarried().isEmpty() && draggedPinnedResource == null;
+        if (e.button() == 0 && nothingOnCursor && canDrag && startDraggingPinnedResource()) {
+            return true;
         } else if (draggedPinnedResource != null) {
             if (!isOverPinArea((int) e.x(), (int) e.y()) || getMenu().hasPin(draggedPinnedResource)) {
                 draggedPinnedResourceInsertionIndex = -1;
                 return true;
             }
             final int relativeMouseX = (int) e.x() - leftPos - 7;
-            final int relativeMouseY = (int) e.y() - topPos - 17 + getScrollbarOffset();
+            final int relativeMouseY = (int) e.y() - topPos - 17;
             final int column = relativeMouseX / ROW_SIZE;
             final int row = relativeMouseY / ROW_SIZE;
             final int insertIndex = row * COLUMNS + column;
@@ -703,10 +728,14 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final GridResource inGrid = getCurrentGridResource();
         if (inGrid != null) {
             draggedPinnedResource = inGrid;
+            final boolean willPinRowAppear = !getMenu().hasPins();
+            if (willPinRowAppear) {
+                onPinsUpdated();
+            }
             return true;
         } else if (currentPinSlotIndex >= 0) {
             draggedPinnedResource = getMenu().removePin(currentPinSlotIndex);
-            updateScrollbar();
+            onPinsUpdated();
             return true;
         }
         return false;
@@ -717,10 +746,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (draggedPinnedResource != null) {
             if (draggedPinnedResourceInsertionIndex >= 0) {
                 getMenu().addPin(draggedPinnedResourceInsertionIndex, draggedPinnedResource);
-                updateScrollbar();
             }
-            draggedPinnedResource = null;
-            draggedPinnedResourceInsertionIndex = -1;
+            clearDraggedPin();
+            onPinsUpdated();
             return true;
         }
         final ItemStack carriedStack = getMenu().getCarried();
@@ -748,6 +776,16 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         return resource != null
             && resource.isAutocraftable(getMenu().getRepository())
             && tryStartAutocrafting(resource);
+    }
+
+    private void clearDraggedPin() {
+        draggedPinnedResource = null;
+        draggedPinnedResourceInsertionIndex = -1;
+    }
+
+    protected void onPinsUpdated() {
+        this.pinRows = calculatePinRows(getVisibleRows());
+        updateScrollbar();
     }
 
     @Override

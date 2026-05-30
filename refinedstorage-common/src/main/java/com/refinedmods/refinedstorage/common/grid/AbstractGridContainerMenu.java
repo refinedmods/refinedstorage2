@@ -312,6 +312,10 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return PINS.getAll();
     }
 
+    public boolean hasPins() {
+        return !PINS.getAll().isEmpty();
+    }
+
     public void addPin(final int index, final GridResource gridResource) {
         PINS.add(index, gridResource);
     }
