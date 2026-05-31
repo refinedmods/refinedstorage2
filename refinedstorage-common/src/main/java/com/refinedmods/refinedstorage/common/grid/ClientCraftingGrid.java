@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -100,6 +101,11 @@ class ClientCraftingGrid implements CraftingGrid {
 
     @Override
     public Set<PlatformResourceKey> getAutocraftableResources() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
         throw new UnsupportedOperationException();
     }
 

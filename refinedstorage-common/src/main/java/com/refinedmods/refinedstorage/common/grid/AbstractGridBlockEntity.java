@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 import com.refinedmods.refinedstorage.common.support.network.ColoredConnectionStrategy;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -76,6 +77,19 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
             .filter(PlatformResourceKey.class::isInstance)
             .map(PlatformResourceKey.class::cast)
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
+        return requireNonNull(mainNetworkNode.getNetwork())
+            .getComponent(AutocraftingNetworkComponent.class)
+            .getStatuses()
+            .stream()
+            .filter(status -> status.info().resource() instanceof PlatformResourceKey)
+            .collect(Collectors.groupingBy(
+                status -> (PlatformResourceKey) status.info().resource(),
+                Collectors.mapping(status -> status.info().id(), Collectors.toSet())
+            ));
     }
 
     @Override

@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -126,6 +127,11 @@ class PortableGrid implements Grid {
     @Override
     public Set<PlatformResourceKey> getAutocraftableResources() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
+        return Collections.emptyMap();
     }
 
     @Override
