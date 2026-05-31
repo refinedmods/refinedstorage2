@@ -813,7 +813,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     private boolean tryStartAutocrafting(final GridResource resource) {
-        final ResourceAmount request = resource.getAutocraftingRequest();
+        final ResourceAmount request = resource.createAutocraftingRequest();
         if (request == null) {
             return false;
         }

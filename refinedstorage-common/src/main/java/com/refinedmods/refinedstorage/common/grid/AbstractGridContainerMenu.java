@@ -76,7 +76,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
-    private static final PinManager PINS = new PinManager(FilePinRepository.create());
+    private static final PinManager PINS = new PinManager(FilePinRepository.create(),
+        RefinedStorageApi.INSTANCE.getGridResourceRepositoryMapper());
 
     private static String lastSearchQuery = "";
 
@@ -123,6 +124,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
                 .ifPresent(trackedResource -> trackedResources.put(resource, trackedResource));
         });
         gridData.autocraftableResources().forEach(repositoryBuilder::addStickyResource);
+
+        PINS.loadAutocrafting(gridData.currentlyAutocrafting());
 
         this.repository = repositoryBuilder.build();
         this.repository.setSort(

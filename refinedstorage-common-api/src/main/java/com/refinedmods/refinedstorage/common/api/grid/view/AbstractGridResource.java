@@ -69,7 +69,7 @@ public abstract class AbstractGridResource<T extends PlatformResourceKey> implem
 
     @Nullable
     @Override
-    public PlatformResourceKey getResourceForRecipeMods() {
+    public PlatformResourceKey getAutocraftingResource() {
         return resource;
     }
 

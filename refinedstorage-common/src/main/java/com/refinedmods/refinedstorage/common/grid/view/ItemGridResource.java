@@ -102,7 +102,7 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
 
     @Nullable
     @Override
-    public ResourceAmount getAutocraftingRequest() {
+    public ResourceAmount createAutocraftingRequest() {
         return new ResourceAmount(itemResource, 1);
     }
 
