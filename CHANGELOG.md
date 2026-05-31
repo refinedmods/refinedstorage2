@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-05-31
+
+### Added
+
+-   When an autocrafting task starts, its output resource is automatically added to the Grid's pinned resources row. If the resource is already pinned, the existing pin is enhanced with autocrafting status information instead of creating a duplicate entry.
+-   While the task is running, hovering over the resource displays its crafting progress.
+-   After the task completes, the resource remains visible in the pinned row until the Grid is reopened. Temporary autocrafting pins are removed when the Grid is reopened, while manually pinned resources remain pinned.
+
 ## [3.1.0] - 2026-05-30
 
 ### Added
@@ -1307,7 +1315,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.2.0...HEAD
+
+[3.2.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.1.0...v3.2.0
 
 [3.1.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.0.5...v3.1.0
 

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
@@ -29,6 +30,7 @@ import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -59,13 +61,13 @@ class PortableGrid implements Grid {
 
     void updateStorage() {
         if (storage != null) {
-            watchers.detachAll(storage.getRootStorage());
+            watchers.detachAll(storage.getRootStorage(), null);
         }
         this.storage = diskInventory.resolve(0)
             .map(diskStorage -> new StateTrackedStorage(diskStorage, diskListener))
             .map(PortableGridStorage::new)
             .orElse(null);
-        watchers.attachAll(getRootStorage());
+        watchers.attachAll(getRootStorage(), null);
     }
 
     void activeChanged(final boolean active) {
@@ -85,12 +87,12 @@ class PortableGrid implements Grid {
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         energyStorage.extract(Platform.INSTANCE.getConfig().getPortableGrid().getOpenEnergyUsage(), Action.EXECUTE);
-        watchers.addWatcher(watcher, actorType, getRootStorage());
+        watchers.addWatcher(watcher, actorType, getRootStorage(), null);
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        watchers.removeWatcher(watcher, getRootStorage());
+        watchers.removeWatcher(watcher, getRootStorage(), null);
     }
 
     @Nullable
@@ -126,6 +128,16 @@ class PortableGrid implements Grid {
     @Override
     public Set<PlatformResourceKey> getAutocraftableResources() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public List<TaskStatus> getAutocraftingTaskStatuses(final Set<TaskId> taskIds) {
+        return Collections.emptyList();
     }
 
     @Override

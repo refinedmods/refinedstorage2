@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -252,6 +253,18 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
                             final double mouseX,
                             final double mouseY) {
         final boolean hovering = isHovering(x - leftPos, y - topPos, 73, 29, mouseX, mouseY);
+        renderItem(graphics, x, y, item, hovering);
+        if (isHovering(x - leftPos, y - topPos, 73, 29, mouseX, mouseY)
+            && isHoveringOverItems(mouseX, mouseY)) {
+            setDeferredTooltip(List.of(new AutocraftingMonitorItemTooltip(item)));
+        }
+    }
+
+    public static void renderItem(final GuiGraphicsExtractor graphics,
+                                  final int x,
+                                  final int y,
+                                  final TaskStatus.Item item,
+                                  final boolean hovering) {
         final int color = getItemColor(item, hovering);
         if (color != ITEM_COLOR) {
             graphics.fill(x, y, x + 73, y + 29, color);
@@ -265,10 +278,6 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
         );
         int yy = y + 7;
         rendering.render(item.resource(), graphics, xx, yy);
-        if (isHovering(x - leftPos, y - topPos, 73, 29, mouseX, mouseY)
-            && isHoveringOverItems(mouseX, mouseY)) {
-            setDeferredTooltip(List.of(new AutocraftingMonitorItemTooltip(item)));
-        }
         if (!SmallText.isSmall()) {
             yy -= 2;
         }
@@ -287,11 +296,11 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
         );
     }
 
-    private void renderItemText(final GuiGraphicsExtractor graphics,
-                                final TaskStatus.Item item,
-                                final ResourceRendering rendering,
-                                final int x,
-                                final int y) {
+    private static void renderItemText(final GuiGraphicsExtractor graphics,
+                                       final TaskStatus.Item item,
+                                       final ResourceRendering rendering,
+                                       final int x,
+                                       final int y) {
         int yy = y;
         if (item.extracting() > 0) {
             renderItemText(graphics, "extracting", rendering, x, yy, item.extracting());
@@ -314,15 +323,15 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
         }
     }
 
-    private void renderItemText(final GuiGraphicsExtractor graphics,
-                                final String type,
-                                final ResourceRendering rendering,
-                                final int x,
-                                final int y,
-                                final long amount) {
+    private static void renderItemText(final GuiGraphicsExtractor graphics,
+                                       final String type,
+                                       final ResourceRendering rendering,
+                                       final int x,
+                                       final int y,
+                                       final long amount) {
         SmallText.render(
             graphics,
-            font,
+            Minecraft.getInstance().font,
             createTranslation("gui", "autocrafting_monitor." + type, rendering.formatAmount(amount, true))
                 .getVisualOrderText(),
             x,

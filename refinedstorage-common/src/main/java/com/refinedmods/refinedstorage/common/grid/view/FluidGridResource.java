@@ -71,7 +71,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
 
     @Nullable
     @Override
-    public ResourceAmount getAutocraftingRequest() {
+    public ResourceAmount createAutocraftingRequest() {
         return new ResourceAmount(resource, Platform.INSTANCE.getBucketAmount());
     }
 

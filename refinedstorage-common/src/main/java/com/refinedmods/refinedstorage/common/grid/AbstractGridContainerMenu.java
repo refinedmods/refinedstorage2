@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
@@ -40,16 +41,24 @@ import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridScrollingStrategy;
+import com.refinedmods.refinedstorage.common.grid.view.pin.FilePinRepository;
+import com.refinedmods.refinedstorage.common.grid.view.pin.Pin;
+import com.refinedmods.refinedstorage.common.grid.view.pin.PinManager;
 import com.refinedmods.refinedstorage.common.support.containermenu.AbstractResourceContainerMenu;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -72,7 +81,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
-    private static final PinManager PINS = new PinManager();
+    private static final PinManager PINS = new PinManager(FilePinRepository.create(),
+        RefinedStorageApi.INSTANCE.getGridResourceRepositoryMapper());
 
     private static String lastSearchQuery = "";
 
@@ -94,6 +104,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private GridResourceType resourceTypeFilter;
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
+    private Set<TaskId> subscribedAutocraftingTaskIds = Set.of();
+    private final AutocraftingTasks autocraftingTasks = new AutocraftingTasks();
     private boolean resourceTypeWarningVisible;
     @Nullable
     private PendingGridUpdates pendingUpdates;
@@ -119,6 +131,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
                 .ifPresent(trackedResource -> trackedResources.put(resource, trackedResource));
         });
         gridData.autocraftableResources().forEach(repositoryBuilder::addStickyResource);
+
+        PINS.loadAutocrafting(gridData.currentlyAutocrafting());
 
         this.repository = repositoryBuilder.build();
         this.repository.setSort(
@@ -307,7 +321,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return repository;
     }
 
-    public List<GridResource> getPins() {
+    public List<Pin> getPins() {
         return PINS.getAll();
     }
 
@@ -323,7 +337,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return PINS.contains(gridResource);
     }
 
-    public GridResource removePin(final int index) {
+    public Pin removePin(final int index) {
         return PINS.remove(index);
     }
 
@@ -478,6 +492,77 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     @Override
     public boolean onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void taskStatusChanged(final TaskStatus status) {
+        if (player instanceof ServerPlayer serverPlayer && subscribedAutocraftingTaskIds.contains(status.info().id())) {
+            S2CPackets.sendGridAutocraftingTasksUpdate(serverPlayer, List.of(status));
+        } else {
+            autocraftingTasks.addOrUpdateStatus(status);
+        }
+    }
+
+    @Override
+    public void taskRemoved(final TaskId id) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendGridAutocraftingTaskRemoved(serverPlayer, id);
+        } else {
+            PINS.removeAutocraftingTask(id);
+            autocraftingTasks.removeStatus(id);
+        }
+    }
+
+    @Override
+    public void taskAdded(final TaskStatus status) {
+        if (player instanceof ServerPlayer serverPlayer
+            && status.info().resource() instanceof PlatformResourceKey resource) {
+            S2CPackets.sendGridAutocraftingTaskAdded(serverPlayer, resource, status.info().id());
+        }
+    }
+
+    public void taskAdded(final PlatformResourceKey resource, final TaskId taskId) {
+        PINS.addAutocraftingTask(resource, taskId);
+    }
+
+    public void setSubscribedAutocraftingTaskIds(final Set<TaskId> taskIds) {
+        LOGGER.info("Subscribed to autocrafting tasks: {}", taskIds);
+        this.subscribedAutocraftingTaskIds = taskIds;
+        if (grid != null && player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendGridAutocraftingTasksUpdate(serverPlayer, grid.getAutocraftingTaskStatuses(taskIds));
+        }
+    }
+
+    public void trySubscribeToAutocraftingTasks(@Nullable final Pin pin) {
+        final Set<TaskId> taskIds = getAutocraftingTaskIds(pin);
+        if (!taskIds.equals(subscribedAutocraftingTaskIds)) {
+            LOGGER.info("Subscribing to autocrafting tasks: {}", taskIds);
+            this.subscribedAutocraftingTaskIds = new HashSet<>(taskIds);
+            C2SPackets.sendGridAutocraftingTasksSubscription(subscribedAutocraftingTaskIds);
+        }
+    }
+
+    private static Set<TaskId> getAutocraftingTaskIds(@Nullable final Pin pin) {
+        if (pin == null) {
+            return Collections.emptySet();
+        }
+        final PlatformResourceKey resource = pin.getAutocraftingResource();
+        if (resource == null) {
+            return Collections.emptySet();
+        }
+        return PINS.getAutocraftingTasks(resource);
+    }
+
+    public boolean isAutocrafting(final ResourceKey resource) {
+        return !PINS.getAutocraftingTasks(resource).isEmpty();
+    }
+
+    public Collection<TaskStatus> getAutocraftingTaskStatuses(final PlatformResourceKey resource) {
+        return autocraftingTasks.getStatuses(resource);
+    }
+
+    public List<TaskStatus.Item> getAutocraftingTaskItems(final PlatformResourceKey resource) {
+        return autocraftingTasks.getMergedItems(resource);
     }
 
     @SuppressWarnings("resource")

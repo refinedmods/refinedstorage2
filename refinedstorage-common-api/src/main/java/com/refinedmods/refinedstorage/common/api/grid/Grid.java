@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage.common.api.grid;
 
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
 import com.refinedmods.refinedstorage.api.storage.Actor;
@@ -10,6 +12,7 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +32,10 @@ public interface Grid extends PreviewProvider {
     List<TrackedResourceAmount> getResources(Class<? extends Actor> actorType);
 
     Set<PlatformResourceKey> getAutocraftableResources();
+
+    Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting();
+
+    List<TaskStatus> getAutocraftingTaskStatuses(Set<TaskId> taskIds);
 
     GridOperations createOperations(ResourceType resourceType, ServerPlayer player);
 

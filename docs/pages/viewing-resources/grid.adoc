@@ -132,14 +132,22 @@ You can pin resources to always be visible on top of the {doctitle}.
 
 Drag and drop to the top area to pin. Drag outside the pinned area to unpin.
 
-=== Other configuration
+==== Pins and autocrafting
+
+When an autocrafting task starts, its output resource is automatically added to the pinned resources row. If the resource is already pinned, the existing pin is enhanced with autocrafting status information instead of creating a duplicate entry.
+
+While the task is running, hovering over the resource displays its crafting progress.
+
+After the task completes, the resource remains visible in the pinned row until the {doctitle} is reopened. Temporary autocrafting pins are removed when the {doctitle} is reopened, while manually pinned resources remain pinned.
+
+== Other configuration
 
 By default, the {doctitle} uses a small font size to display resource amounts.
 Use the `largeFont` config option to change this.
 
 The scrollbar uses __smooth-scrolling__, if you prefer regular scrolling you can use the `smoothScrolling` config option.
 
-== Prevent sorting while shift is down
+=== Prevent sorting while shift is down
 
 By default, the {doctitle} doesn't sort when you are inserting and extracting resources from the network.
 As soon as you stop pressing the SHIFT key, the view is sorted again.

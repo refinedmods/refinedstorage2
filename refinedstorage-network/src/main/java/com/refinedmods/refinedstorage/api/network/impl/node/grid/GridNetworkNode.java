@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusProvider;
 import com.refinedmods.refinedstorage.api.network.Network;
+import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
@@ -22,12 +24,11 @@ public class GridNetworkNode extends AbstractNetworkNode {
     }
 
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
-        watchers.addWatcher(watcher, actorType,
-            network != null ? network.getComponent(StorageNetworkComponent.class) : null);
+        watchers.addWatcher(watcher, actorType, getStorage(), getAutocrafting());
     }
 
     public void removeWatcher(final GridWatcher watcher) {
-        watchers.removeWatcher(watcher, network != null ? network.getComponent(StorageNetworkComponent.class) : null);
+        watchers.removeWatcher(watcher, getStorage(), getAutocrafting());
     }
 
     @Override
@@ -39,11 +40,21 @@ public class GridNetworkNode extends AbstractNetworkNode {
     @Override
     public void setNetwork(@Nullable final Network network) {
         if (this.network != null) {
-            watchers.detachAll(this.network.getComponent(StorageNetworkComponent.class));
+            watchers.detachAll(this.network.getComponent(StorageNetworkComponent.class), getAutocrafting());
         }
         super.setNetwork(network);
         if (this.network != null) {
-            watchers.attachAll(this.network.getComponent(StorageNetworkComponent.class));
+            watchers.attachAll(this.network.getComponent(StorageNetworkComponent.class), getAutocrafting());
         }
+    }
+
+    @Nullable
+    private StorageNetworkComponent getStorage() {
+        return network == null ? null : network.getComponent(StorageNetworkComponent.class);
+    }
+
+    @Nullable
+    private TaskStatusProvider getAutocrafting() {
+        return network == null ? null : network.getComponent(AutocraftingNetworkComponent.class);
     }
 }

@@ -439,13 +439,13 @@ class GridQueryParserImplTest {
 
         @Override
         @Nullable
-        public ResourceAmount getAutocraftingRequest() {
+        public ResourceAmount createAutocraftingRequest() {
             throw new UnsupportedOperationException();
         }
 
         @Override
         @Nullable
-        public PlatformResourceKey getResourceForRecipeMods() {
+        public PlatformResourceKey getAutocraftingResource() {
             throw new UnsupportedOperationException();
         }
     }
