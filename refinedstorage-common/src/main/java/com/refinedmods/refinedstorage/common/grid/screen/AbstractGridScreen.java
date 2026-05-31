@@ -446,6 +446,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             return;
         }
         if (normalizedIdx >= totalPins) {
+            renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
             return;
         }
         final Pin pin = getMenu().getPins().get(normalizedIdx);
