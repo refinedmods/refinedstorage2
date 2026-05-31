@@ -42,6 +42,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingRequ
 import com.refinedmods.refinedstorage.common.support.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.CraftingGridRecipeTransferPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.FilterSlotChangePacket;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.GridAutocraftingTasksSubscriptionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridScrollPacket;
@@ -80,6 +81,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicat
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskRemovedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTasksUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
@@ -870,6 +872,11 @@ public class ModInitializer extends AbstractModInitializer {
             GridAutocraftingTaskRemovedPacket.STREAM_CODEC,
             wrapHandler(GridAutocraftingTaskRemovedPacket::handle)
         );
+        registrar.playToClient(
+            GridAutocraftingTasksUpdatePacket.PACKET_TYPE,
+            GridAutocraftingTasksUpdatePacket.STREAM_CODEC,
+            wrapHandler(GridAutocraftingTasksUpdatePacket::handle)
+        );
     }
 
     private static void registerClientToServerPackets(final PayloadRegistrar registrar) {
@@ -1022,6 +1029,11 @@ public class ModInitializer extends AbstractModInitializer {
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
+        );
+        registrar.playToServer(
+            GridAutocraftingTasksSubscriptionPacket.PACKET_TYPE,
+            GridAutocraftingTasksSubscriptionPacket.STREAM_CODEC,
+            wrapHandler(GridAutocraftingTasksSubscriptionPacket::handle)
         );
     }
 

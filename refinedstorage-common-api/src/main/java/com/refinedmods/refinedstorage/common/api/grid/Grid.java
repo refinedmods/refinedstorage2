@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common.api.grid;
 
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewProvider;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
@@ -33,6 +34,8 @@ public interface Grid extends PreviewProvider {
     Set<PlatformResourceKey> getAutocraftableResources();
 
     Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting();
+
+    List<TaskStatus> getAutocraftingTaskStatuses(Set<TaskId> taskIds);
 
     GridOperations createOperations(ResourceType resourceType, ServerPlayer player);
 

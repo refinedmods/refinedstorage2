@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.grid;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -124,6 +125,15 @@ class WirelessGrid implements Grid {
                 status -> (PlatformResourceKey) status.info().resource(),
                 Collectors.mapping(status -> status.info().id(), Collectors.toSet())
             ))).orElse(Collections.emptyMap());
+    }
+
+    @Override
+    public List<TaskStatus> getAutocraftingTaskStatuses(final Set<TaskId> taskIds) {
+        return getAutocrafting().map(autocrafting -> autocrafting
+            .getStatuses()
+            .stream()
+            .filter(status -> taskIds.contains(status.info().id()))
+            .toList()).orElse(Collections.emptyList());
     }
 
     @Override

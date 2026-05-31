@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.grid;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
@@ -90,6 +91,16 @@ public abstract class AbstractGridBlockEntity extends AbstractBaseNetworkNodeCon
                 status -> (PlatformResourceKey) status.info().resource(),
                 Collectors.mapping(status -> status.info().id(), Collectors.toSet())
             ));
+    }
+
+    @Override
+    public List<TaskStatus> getAutocraftingTaskStatuses(final Set<TaskId> taskIds) {
+        return requireNonNull(mainNetworkNode.getNetwork())
+            .getComponent(AutocraftingNetworkComponent.class)
+            .getStatuses()
+            .stream()
+            .filter(status -> taskIds.contains(status.info().id()))
+            .toList();
     }
 
     @Override

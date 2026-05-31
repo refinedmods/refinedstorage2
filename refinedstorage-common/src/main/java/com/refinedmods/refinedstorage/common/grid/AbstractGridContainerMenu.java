@@ -45,15 +45,19 @@ import com.refinedmods.refinedstorage.common.grid.view.pin.FilePinRepository;
 import com.refinedmods.refinedstorage.common.grid.view.pin.Pin;
 import com.refinedmods.refinedstorage.common.grid.view.pin.PinManager;
 import com.refinedmods.refinedstorage.common.support.containermenu.AbstractResourceContainerMenu;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -99,6 +103,8 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private GridResourceType resourceTypeFilter;
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
+    private Set<TaskId> subscribedAutocraftingTaskIds = Set.of();
+    private final Map<TaskId, TaskStatus> autocraftingTaskStatuses = new HashMap<>();
     private boolean resourceTypeWarningVisible;
     @Nullable
     private PendingGridUpdates pendingUpdates;
@@ -489,7 +495,11 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     @Override
     public void taskStatusChanged(final TaskStatus status) {
-        LOGGER.info("Task {} is progressing {}", status.info().id(), status.percentageCompleted());
+        if (player instanceof ServerPlayer serverPlayer && subscribedAutocraftingTaskIds.contains(status.info().id())) {
+            S2CPackets.sendGridAutocraftingTasksUpdate(serverPlayer, List.of(status));
+        } else {
+            autocraftingTaskStatuses.put(status.info().id(), status);
+        }
     }
 
     @Override
@@ -498,6 +508,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
             S2CPackets.sendGridAutocraftingTaskRemoved(serverPlayer, id);
         } else {
             PINS.removeAutocraftingTask(id);
+            autocraftingTaskStatuses.remove(id);
         }
     }
 
@@ -511,6 +522,39 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     public void taskAdded(final PlatformResourceKey resource, final TaskId taskId) {
         PINS.addAutocraftingTask(resource, taskId);
+    }
+
+    public void setSubscribedAutocraftingTaskIds(final Set<TaskId> taskIds) {
+        LOGGER.info("Subscribed to autocrafting tasks: {}", taskIds);
+        this.subscribedAutocraftingTaskIds = taskIds;
+        if (grid != null && player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendGridAutocraftingTasksUpdate(serverPlayer, grid.getAutocraftingTaskStatuses(taskIds));
+        }
+    }
+
+    public void trySubscribeToAutocraftingTasks(@Nullable final Pin pin) {
+        final Set<TaskId> taskIds = getAutocraftingTaskIds(pin);
+        if (!taskIds.equals(subscribedAutocraftingTaskIds)) {
+            LOGGER.info("Subscribing to autocrafting tasks: {}", taskIds);
+            this.subscribedAutocraftingTaskIds = new HashSet<>(taskIds);
+            C2SPackets.sendGridAutocraftingTasksSubscription(subscribedAutocraftingTaskIds);
+        }
+    }
+
+    public Set<TaskId> getAutocraftingTaskIds(@Nullable final Pin pin) {
+        if (pin == null) {
+            return Collections.emptySet();
+        }
+        final PlatformResourceKey resource = pin.getAutocraftingResource();
+        if (resource == null) {
+            return Collections.emptySet();
+        }
+        return PINS.getAutocraftingTasks(resource);
+    }
+
+    @Nullable
+    public TaskStatus getAutocraftingTaskStatus(final TaskId taskId) {
+        return autocraftingTaskStatuses.get(taskId);
     }
 
     @SuppressWarnings("resource")

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid.screen;
 
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -35,6 +36,7 @@ import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighterColors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -171,6 +173,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     protected void containerTick() {
         super.containerTick();
         trySynchronizeToGrid();
+        trySubscribeToAutocraftingTasks();
         if (resourceTypeSideButtonWidget != null) {
             resourceTypeSideButtonWidget.setWarningVisible(getMenu().isResourceTypeWarningVisible());
         }
@@ -186,6 +189,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             return;
         }
         searchField.setValue(text);
+    }
+
+    private void trySubscribeToAutocraftingTasks() {
+        menu.trySubscribeToAutocraftingTasks(getCurrentPinnedResource());
     }
 
     private void updateScrollbar() {
@@ -583,7 +590,18 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private boolean renderOverPinAreaTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         final Pin pin = getCurrentPinnedResource();
         if (pin != null) {
-            renderGridResourceTooltip(graphics, x, y, pin.gridResource());
+            final List<TaskStatus> statuses = getMenu()
+                .getAutocraftingTaskIds(pin)
+                .stream()
+                .map(getMenu()::getAutocraftingTaskStatus)
+                .filter(Objects::nonNull)
+                .toList();
+            if (!statuses.isEmpty()) {
+                graphics.tooltip(font, List.of(new AutocraftingTaskStatusClientTooltipComponent(statuses)), x, y,
+                    DefaultTooltipPositioner.INSTANCE, null);
+            } else {
+                renderGridResourceTooltip(graphics, x, y, pin.gridResource());
+            }
             return true;
         }
         return false;

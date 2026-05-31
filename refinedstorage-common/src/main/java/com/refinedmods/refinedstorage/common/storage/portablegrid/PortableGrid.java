@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
@@ -132,6 +133,11 @@ class PortableGrid implements Grid {
     @Override
     public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public List<TaskStatus> getAutocraftingTaskStatuses(final Set<TaskId> taskIds) {
+        return Collections.emptyList();
     }
 
     @Override

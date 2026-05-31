@@ -36,6 +36,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicat
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskRemovedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTasksUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
@@ -217,6 +218,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(
             GridAutocraftingTaskRemovedPacket.PACKET_TYPE,
             wrapHandler(GridAutocraftingTaskRemovedPacket::handle)
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+            GridAutocraftingTasksUpdatePacket.PACKET_TYPE,
+            wrapHandler(GridAutocraftingTasksUpdatePacket::handle)
         );
     }
 
