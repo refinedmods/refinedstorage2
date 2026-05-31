@@ -51,6 +51,7 @@ import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListen
 import com.refinedmods.refinedstorage.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage.query.parser.ParserOperatorMappings;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,7 +105,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private boolean active;
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
     private Set<TaskId> subscribedAutocraftingTaskIds = Set.of();
-    private final Map<TaskId, TaskStatus> autocraftingTaskStatuses = new HashMap<>();
+    private final AutocraftingTasks autocraftingTasks = new AutocraftingTasks();
     private boolean resourceTypeWarningVisible;
     @Nullable
     private PendingGridUpdates pendingUpdates;
@@ -498,7 +499,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         if (player instanceof ServerPlayer serverPlayer && subscribedAutocraftingTaskIds.contains(status.info().id())) {
             S2CPackets.sendGridAutocraftingTasksUpdate(serverPlayer, List.of(status));
         } else {
-            autocraftingTaskStatuses.put(status.info().id(), status);
+            autocraftingTasks.addOrUpdateStatus(status);
         }
     }
 
@@ -508,7 +509,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
             S2CPackets.sendGridAutocraftingTaskRemoved(serverPlayer, id);
         } else {
             PINS.removeAutocraftingTask(id);
-            autocraftingTaskStatuses.remove(id);
+            autocraftingTasks.removeStatus(id);
         }
     }
 
@@ -541,7 +542,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         }
     }
 
-    public Set<TaskId> getAutocraftingTaskIds(@Nullable final Pin pin) {
+    private static Set<TaskId> getAutocraftingTaskIds(@Nullable final Pin pin) {
         if (pin == null) {
             return Collections.emptySet();
         }
@@ -552,9 +553,16 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return PINS.getAutocraftingTasks(resource);
     }
 
-    @Nullable
-    public TaskStatus getAutocraftingTaskStatus(final TaskId taskId) {
-        return autocraftingTaskStatuses.get(taskId);
+    public boolean isAutocrafting(final ResourceKey resource) {
+        return !PINS.getAutocraftingTasks(resource).isEmpty();
+    }
+
+    public Collection<TaskStatus> getAutocraftingTaskStatuses(final PlatformResourceKey resource) {
+        return autocraftingTasks.getStatuses(resource);
+    }
+
+    public List<TaskStatus.Item> getAutocraftingTaskItems(final PlatformResourceKey resource) {
+        return autocraftingTasks.getMergedItems(resource);
     }
 
     @SuppressWarnings("resource")

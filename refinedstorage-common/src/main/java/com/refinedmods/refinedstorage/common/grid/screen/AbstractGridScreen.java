@@ -12,9 +12,12 @@ import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.grid.NoopGridSynchronizer;
+import com.refinedmods.refinedstorage.common.grid.screen.autocrafting.AutocraftableClientTooltipComponent;
+import com.refinedmods.refinedstorage.common.grid.screen.autocrafting.AutocraftingTaskStatusClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage.common.grid.view.pin.Pin;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
@@ -35,8 +38,8 @@ import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighterColors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -428,8 +431,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void renderPinnedResource(final GuiGraphicsExtractor graphics, final int idx, final int slotX,
                                       final int slotY, final boolean hovering, final float partialTicks) {
-        renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
         if (idx == draggedPinInsertionIndex && draggedPin != null) {
+            renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
             renderDraggedPinInsertHint(graphics, slotX, slotY);
             return;
         }
@@ -438,16 +441,36 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             : idx;
         final int totalPins = getMenu().getPins().size();
         if (normalizedIdx == totalPins) {
+            renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
             renderPinIcon(graphics, slotX, slotY, hovering, partialTicks);
             return;
         }
         if (normalizedIdx >= totalPins) {
             return;
         }
-        final GridResource resource = getMenu().getPins().get(normalizedIdx).gridResource();
-        renderResourceWithAmount(graphics, slotX, slotY, resource);
+        final Pin pin = getMenu().getPins().get(normalizedIdx);
+        renderPinBackground(graphics, slotX, slotY, partialTicks, pin);
+        renderResourceWithAmount(graphics, slotX, slotY, pin.gridResource());
         if (hovering) {
             currentPinSlotIndex = normalizedIdx;
+        }
+    }
+
+    private void renderPinBackground(final GuiGraphicsExtractor graphics, final int slotX, final int slotY,
+                                     final float partialTicks, final Pin pin) {
+        final ResourceKey autocraftingResource = pin.gridResource().getAutocraftingResource();
+        final boolean autocraftingPin = !pin.manual();
+        final boolean tasksRunning = autocraftingResource instanceof PlatformResourceKey resourceKey
+            && getMenu().isAutocrafting(resourceKey);
+        if (autocraftingPin || tasksRunning) {
+            final int baseColorArgb = AutocraftableResourceHint.AUTOCRAFTABLE.getColor();
+            final int modifiedColorArgb = tasksRunning
+                ? ((int) ((0.375F + 0.125F * (float) Math.sin((ticks + partialTicks) * 0.3F)) * 255F) << 24)
+                  | (baseColorArgb & 0xFFFFFF)
+                : baseColorArgb;
+            renderSlotBackground(graphics, slotX, slotY, false, modifiedColorArgb);
+        } else {
+            renderSlotBackground(graphics, slotX, slotY, false, 0x80FAC0C2);
         }
     }
 
@@ -589,22 +612,21 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private boolean renderOverPinAreaTooltip(final GuiGraphicsExtractor graphics, final int x, final int y) {
         final Pin pin = getCurrentPinnedResource();
-        if (pin != null) {
-            final List<TaskStatus> statuses = getMenu()
-                .getAutocraftingTaskIds(pin)
-                .stream()
-                .map(getMenu()::getAutocraftingTaskStatus)
-                .filter(Objects::nonNull)
-                .toList();
-            if (!statuses.isEmpty()) {
-                graphics.tooltip(font, List.of(new AutocraftingTaskStatusClientTooltipComponent(statuses)), x, y,
-                    DefaultTooltipPositioner.INSTANCE, null);
-            } else {
-                renderGridResourceTooltip(graphics, x, y, pin.gridResource());
-            }
-            return true;
+        if (pin == null) {
+            return false;
         }
-        return false;
+        final PlatformResourceKey resource = pin.gridResource().getAutocraftingResource();
+        if (resource == null) {
+            return false;
+        }
+        final Collection<TaskStatus> statuses = getMenu().getAutocraftingTaskStatuses(resource);
+        if (!statuses.isEmpty()) {
+            graphics.tooltip(font, List.of(new AutocraftingTaskStatusClientTooltipComponent(statuses,
+                getMenu().getAutocraftingTaskItems(resource))), x, y, DefaultTooltipPositioner.INSTANCE, null);
+        } else {
+            renderGridResourceTooltip(graphics, x, y, pin.gridResource());
+        }
+        return true;
     }
 
     private void renderGridResourceTooltip(final GuiGraphicsExtractor graphics,
