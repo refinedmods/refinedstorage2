@@ -232,6 +232,188 @@ class PinManagerTest {
         assertThat(sut.getAutocraftingTasks(gold)).isEmpty();
     }
 
+    @Test
+    void shouldAddAutocraftingTaskAndCreateAutocraftingPin() {
+        // Arrange
+        final TaskId task = TaskId.create();
+
+        // Act
+        sut.addAutocraftingTask(dirt, task);
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(task);
+    }
+
+    @Test
+    void shouldAddAutocraftingTaskWithoutDuplicatingAutocraftingPin() {
+        // Arrange
+        final TaskId firstTask = TaskId.create();
+        final TaskId secondTask = TaskId.create();
+        sut.addAutocraftingTask(dirt, firstTask);
+
+        // Act
+        sut.addAutocraftingTask(dirt, secondTask);
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactlyInAnyOrder(firstTask, secondTask);
+    }
+
+    @Test
+    void shouldAddAutocraftingTaskWithoutCreatingPinIfManualPinExists() {
+        // Arrange
+        final TaskId task = TaskId.create();
+        sut.add(0, dirtResource);
+
+        // Act
+        sut.addAutocraftingTask(dirt, task);
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(manualPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(task);
+    }
+
+    @Test
+    void shouldAddAutocraftingTaskToResourceAlreadyTrackedByLoadAutocrafting() {
+        // Arrange
+        final TaskId firstTask = TaskId.create();
+        final TaskId secondTask = TaskId.create();
+        sut.loadAutocrafting(Map.of(dirt, Set.of(firstTask)));
+
+        // Act
+        sut.addAutocraftingTask(dirt, secondTask);
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactlyInAnyOrder(firstTask, secondTask);
+    }
+
+    @Test
+    void shouldRemoveAutocraftingTaskButKeepPinWhenLastTaskGone() {
+        // Arrange
+        final TaskId task = TaskId.create();
+        sut.addAutocraftingTask(dirt, task);
+
+        // Act
+        sut.removeAutocraftingTask(task);
+
+        // Assert: resource is untracked but the pin stays
+        assertThat(sut.getAutocraftingTasks(dirt)).isEmpty();
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+
+        // Act: a subsequent load doesn't purge it either
+        sut.loadAutocrafting(Map.of());
+        assertThat(sut.getAutocraftingTasks(dirt)).isEmpty();
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+
+        // Act: the load from earlier will purge it
+        sut.loadAutocrafting(Map.of());
+        assertThat(sut.getAutocraftingTasks(dirt)).isEmpty();
+        assertThat(sut.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldKeepAutocraftingPinWhenOtherTasksRemain() {
+        // Arrange
+        final TaskId firstTask = TaskId.create();
+        final TaskId secondTask = TaskId.create();
+        sut.addAutocraftingTask(dirt, firstTask);
+        sut.addAutocraftingTask(dirt, secondTask);
+
+        // Act
+        sut.removeAutocraftingTask(firstTask);
+
+        // Assert: pin remains, second task still tracked
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(secondTask);
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+
+        // Act: a subsequent load shouldn't purge the still-active pin
+        sut.loadAutocrafting(Map.of(dirt, Set.of(secondTask)));
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(secondTask);
+    }
+
+    @Test
+    void shouldReuseExistingAutocraftingPinWhenResourceBecomesActiveAgainViaAddAutocraftingTask() {
+        // Arrange
+        final TaskId firstTask = TaskId.create();
+        final TaskId secondTask = TaskId.create();
+        sut.addAutocraftingTask(dirt, firstTask);
+        sut.removeAutocraftingTask(firstTask);
+
+        // Act
+        sut.addAutocraftingTask(dirt, secondTask);
+
+        // Assert: pin not duplicated, new task tracked
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(secondTask);
+    }
+
+    @Test
+    void shouldReuseExistingAutocraftingPinWhenResourceBecomesActiveAgainViaLoadAutocrafting() {
+        // Arrange
+        final TaskId firstTask = TaskId.create();
+        final TaskId secondTask = TaskId.create();
+        sut.addAutocraftingTask(dirt, firstTask);
+        sut.removeAutocraftingTask(firstTask);
+
+        // Act
+        sut.loadAutocrafting(Map.of(dirt, Set.of(secondTask)));
+
+        // Assert: pin not duplicated, not purged, new task tracked
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(secondTask);
+    }
+
+    @Test
+    void shouldIgnoreRemovalOfUnknownAutocraftingTask() {
+        // Arrange
+        final TaskId task = TaskId.create();
+        sut.addAutocraftingTask(dirt, task);
+
+        // Act
+        sut.removeAutocraftingTask(TaskId.create());
+
+        // Assert
+        assertThat(sut.getAutocraftingTasks(dirt)).containsExactly(task);
+        assertThat(sut.getAll()).containsExactly(autocraftingPin(dirtResource));
+    }
+
+    @Test
+    void shouldNotPurgeManualPinWhenAutocraftingTaskIsRemoved() {
+        // Arrange
+        final TaskId task = TaskId.create();
+        sut.add(0, dirtResource);
+        sut.addAutocraftingTask(dirt, task);
+
+        // Act
+        sut.removeAutocraftingTask(task);
+        sut.loadAutocrafting(Map.of());
+
+        // Assert
+        assertThat(sut.getAll()).containsExactly(manualPin(dirtResource));
+        assertThat(sut.getAutocraftingTasks(dirt)).isEmpty();
+    }
+
+    @Test
+    void shouldRemoveTaskFromOnlyMatchingResource() {
+        // Arrange
+        final TaskId dirtTask = TaskId.create();
+        final TaskId stoneTask = TaskId.create();
+        sut.addAutocraftingTask(dirt, dirtTask);
+        sut.addAutocraftingTask(stone, stoneTask);
+
+        // Act
+        sut.removeAutocraftingTask(dirtTask);
+
+        // Assert
+        assertThat(sut.getAutocraftingTasks(dirt)).isEmpty();
+        assertThat(sut.getAutocraftingTasks(stone)).containsExactly(stoneTask);
+    }
+
     private static Pin manualPin(final GridResource gridResource) {
         return new Pin(gridResource, true);
     }

@@ -77,6 +77,8 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTree
 import com.refinedmods.refinedstorage.common.support.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicatorUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskAddedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskRemovedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
@@ -586,6 +588,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PayloadTypeRegistry.clientboundPlay().register(
             ExportingIndicatorUpdatePacket.PACKET_TYPE,
             ExportingIndicatorUpdatePacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+            GridAutocraftingTaskAddedPacket.PACKET_TYPE,
+            GridAutocraftingTaskAddedPacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+            GridAutocraftingTaskRemovedPacket.PACKET_TYPE,
+            GridAutocraftingTaskRemovedPacket.STREAM_CODEC
         );
     }
 

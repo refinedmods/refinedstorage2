@@ -142,6 +142,16 @@ public final class S2CPackets {
         Platform.INSTANCE.sendPacketToClient(player, new AutocraftingMonitorActivePacket(active));
     }
 
+    public static void sendGridAutocraftingTaskAdded(final ServerPlayer player,
+                                                     final PlatformResourceKey resource,
+                                                     final TaskId taskId) {
+        Platform.INSTANCE.sendPacketToClient(player, new GridAutocraftingTaskAddedPacket(resource, taskId));
+    }
+
+    public static void sendGridAutocraftingTaskRemoved(final ServerPlayer player, final TaskId taskId) {
+        Platform.INSTANCE.sendPacketToClient(player, new GridAutocraftingTaskRemovedPacket(taskId));
+    }
+
     public static void sendExportingIndicatorUpdate(
         final ServerPlayer player,
         final List<ExportingIndicatorUpdatePacket.UpdatedIndicator> indicators

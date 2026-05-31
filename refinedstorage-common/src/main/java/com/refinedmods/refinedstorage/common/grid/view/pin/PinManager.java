@@ -41,10 +41,21 @@ public class PinManager {
         purgeAutocraftingPins();
         final Set<ResourceKey> remainingResources = new HashSet<>(currentlyAutocrafting.keySet());
         currentlyAutocrafting.clear();
-        currentlyAutocrafting.putAll(current);
+        current.forEach((resource, taskIds) -> currentlyAutocrafting.put(resource, new HashSet<>(taskIds)));
         remainingResources.removeAll(current.keySet());
         resourcesToPurge.addAll(remainingResources);
         currentlyAutocrafting.keySet().forEach(this::tryAddAutocraftingPin);
+    }
+
+    public void addAutocraftingTask(final PlatformResourceKey resource, final TaskId taskId) {
+        currentlyAutocrafting.computeIfAbsent(resource, r -> new HashSet<>()).add(taskId);
+        tryAddAutocraftingPin(resource);
+    }
+
+    public void removeAutocraftingTask(final TaskId id) {
+        // Keep the (possibly now empty) set so the next loadAutocrafting() can detect the resource is no longer
+        // active and mark its pin for the deferred purge.
+        currentlyAutocrafting.forEach((resource, taskIds) -> taskIds.remove(id));
     }
 
     private void purgeAutocraftingPins() {

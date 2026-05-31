@@ -494,12 +494,23 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
 
     @Override
     public void taskRemoved(final TaskId id) {
-        LOGGER.info("Task {} was removed", id);
+        if (player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendGridAutocraftingTaskRemoved(serverPlayer, id);
+        } else {
+            PINS.removeAutocraftingTask(id);
+        }
     }
 
     @Override
     public void taskAdded(final TaskStatus status) {
-        LOGGER.info("Task {} was added", status.info().id());
+        if (player instanceof ServerPlayer serverPlayer
+            && status.info().resource() instanceof PlatformResourceKey resource) {
+            S2CPackets.sendGridAutocraftingTaskAdded(serverPlayer, resource, status.info().id());
+        }
+    }
+
+    public void taskAdded(final PlatformResourceKey resource, final TaskId taskId) {
+        PINS.addAutocraftingTask(resource, taskId);
     }
 
     @SuppressWarnings("resource")
