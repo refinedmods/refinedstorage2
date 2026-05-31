@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   When an autocrafting task starts, its output resource is automatically added to the Grid's pinned resources row. If the resource is already pinned, the existing pin is enhanced with autocrafting status information instead of creating a duplicate entry.
+- While the task is running, hovering over the resource displays its crafting progress.
+- After the task completes, the resource remains visible in the pinned row until the Grid is reopened. Temporary autocrafting pins are removed when the Grid is reopened, while manually pinned resources remain pinned.
+
 ## [3.1.0] - 2026-05-30
 
 ### Added

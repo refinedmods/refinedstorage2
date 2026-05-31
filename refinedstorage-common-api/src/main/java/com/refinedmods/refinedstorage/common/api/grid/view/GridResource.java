@@ -73,9 +73,8 @@ public interface GridResource {
     GridResourceType getType();
 
     @Nullable
-    ResourceAmount getAutocraftingRequest();
+    ResourceAmount createAutocraftingRequest();
 
     @Nullable
-    @API(status = API.Status.INTERNAL)
-    PlatformResourceKey getResourceForRecipeMods();
+    PlatformResourceKey getAutocraftingResource();
 }

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.grid;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
@@ -17,6 +18,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -100,6 +102,16 @@ class ClientCraftingGrid implements CraftingGrid {
 
     @Override
     public Set<PlatformResourceKey> getAutocraftableResources() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<PlatformResourceKey, Set<TaskId>> getCurrentlyAutocrafting() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TaskStatus> getAutocraftingTaskStatuses(final Set<TaskId> taskIds) {
         throw new UnsupportedOperationException();
     }
 

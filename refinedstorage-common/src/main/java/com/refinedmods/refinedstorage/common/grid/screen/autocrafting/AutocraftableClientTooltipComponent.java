@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage.common.grid.screen;
+package com.refinedmods.refinedstorage.common.grid.screen.autocrafting;
 
 import com.refinedmods.refinedstorage.common.grid.AutocraftableResourceHint;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
@@ -14,7 +14,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
-class AutocraftableClientTooltipComponent implements ClientTooltipComponent {
+public class AutocraftableClientTooltipComponent implements ClientTooltipComponent {
     private static final Identifier ICON = createIdentifier("grid/craftable");
     private static final int ICON_SIZE = 9;
     private static final int ICON_MARGIN = 4;
@@ -31,17 +31,17 @@ class AutocraftableClientTooltipComponent implements ClientTooltipComponent {
         this.text = text;
     }
 
-    static AutocraftableClientTooltipComponent autocraftable(final AutocraftableResourceHint hint) {
+    public static AutocraftableClientTooltipComponent autocraftable(final AutocraftableResourceHint hint) {
         return new AutocraftableClientTooltipComponent(hint == AutocraftableResourceHint.AUTOCRAFTABLE
             ? AUTOCRAFTABLE
             : PATTERN_IN_INVENTORY);
     }
 
-    static AutocraftableClientTooltipComponent empty() {
+    public static AutocraftableClientTooltipComponent empty() {
         return new AutocraftableClientTooltipComponent(EMPTY);
     }
 
-    static AutocraftableClientTooltipComponent existing() {
+    public static AutocraftableClientTooltipComponent existing() {
         return new AutocraftableClientTooltipComponent(ClientPlatformUtil.isCommand() ? CMD_EXISTING : EXISTING);
     }
 

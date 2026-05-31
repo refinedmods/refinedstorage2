@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage.common.support.packet.c2s.AutocraftingRequ
 import com.refinedmods.refinedstorage.common.support.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.CraftingGridRecipeTransferPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.FilterSlotChangePacket;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.GridAutocraftingTasksSubscriptionPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage.common.support.packet.c2s.GridScrollPacket;
@@ -77,6 +78,9 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.AutocraftingTree
 import com.refinedmods.refinedstorage.common.support.packet.s2c.EnergyInfoPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ExportingIndicatorUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridActivePacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskAddedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTaskRemovedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocraftingTasksUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
@@ -587,6 +591,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ExportingIndicatorUpdatePacket.PACKET_TYPE,
             ExportingIndicatorUpdatePacket.STREAM_CODEC
         );
+        PayloadTypeRegistry.clientboundPlay().register(
+            GridAutocraftingTaskAddedPacket.PACKET_TYPE,
+            GridAutocraftingTaskAddedPacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+            GridAutocraftingTaskRemovedPacket.PACKET_TYPE,
+            GridAutocraftingTaskRemovedPacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+            GridAutocraftingTasksUpdatePacket.PACKET_TYPE,
+            GridAutocraftingTasksUpdatePacket.STREAM_CODEC
+        );
     }
 
     private void registerClientToServerPackets() {
@@ -698,6 +714,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PayloadTypeRegistry.serverboundPlay().register(
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             AutocraftingMonitorCancelAllPacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.serverboundPlay().register(
+            GridAutocraftingTasksSubscriptionPacket.PACKET_TYPE,
+            GridAutocraftingTasksSubscriptionPacket.STREAM_CODEC
         );
     }
 
@@ -821,6 +841,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(
             AutocraftingMonitorCancelAllPacket.PACKET_TYPE,
             wrapHandler((packet, ctx) -> AutocraftingMonitorCancelAllPacket.handle(ctx))
+        );
+        ServerPlayNetworking.registerGlobalReceiver(
+            GridAutocraftingTasksSubscriptionPacket.PACKET_TYPE,
+            wrapHandler(GridAutocraftingTasksSubscriptionPacket::handle)
         );
     }
 

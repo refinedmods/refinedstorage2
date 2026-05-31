@@ -163,4 +163,8 @@ public final class C2SPackets {
     public static void sendAutocraftingMonitorCancelAll() {
         Platform.INSTANCE.sendPacketToServer(AutocraftingMonitorCancelAllPacket.INSTANCE);
     }
+
+    public static void sendGridAutocraftingTasksSubscription(final Set<TaskId> taskIds) {
+        Platform.INSTANCE.sendPacketToServer(new GridAutocraftingTasksSubscriptionPacket(taskIds));
+    }
 }

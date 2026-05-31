@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
@@ -10,16 +11,22 @@ import com.refinedmods.refinedstorage.common.storage.TrackedResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record GridData(boolean active, List<GridResource> resources, Set<PlatformResourceKey> autocraftableResources) {
+public record GridData(boolean active,
+                       List<GridResource> resources,
+                       Set<PlatformResourceKey> autocraftableResources,
+                       Map<PlatformResourceKey, Set<TaskId>> currentlyAutocrafting) {
     public static final StreamCodec<RegistryFriendlyByteBuf, GridData> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.BOOL, GridData::active,
         ByteBufCodecs.collection(ArrayList::new, StreamCodec.composite(
@@ -28,6 +35,11 @@ public record GridData(boolean active, List<GridResource> resources, Set<Platfor
             GridResource::new
         )), GridData::resources,
         ByteBufCodecs.collection(HashSet::new, ResourceCodecs.STREAM_CODEC), GridData::autocraftableResources,
+        ByteBufCodecs.map(
+            HashMap::new,
+            ResourceCodecs.STREAM_CODEC,
+            ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC.map(TaskId::new, TaskId::id))
+        ), GridData::currentlyAutocrafting,
         GridData::new
     );
 
@@ -35,7 +47,8 @@ public record GridData(boolean active, List<GridResource> resources, Set<Platfor
         return new GridData(
             grid.isGridActive(),
             grid.getResources(PlayerActor.class).stream().map(GridResource::of).toList(),
-            grid.getAutocraftableResources()
+            grid.getAutocraftableResources(),
+            grid.getCurrentlyAutocrafting()
         );
     }
 
