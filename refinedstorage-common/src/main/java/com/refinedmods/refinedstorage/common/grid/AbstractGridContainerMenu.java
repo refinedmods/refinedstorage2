@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.PatternRepositoryImpl;
 import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridExtractMode;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
@@ -478,6 +479,21 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     @Override
     public boolean onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void taskStatusChanged(final TaskStatus status) {
+        LOGGER.info("Task {} is progressing {}", status.info().id(), status.percentageCompleted());
+    }
+
+    @Override
+    public void taskRemoved(final TaskId id) {
+        LOGGER.info("Task {} was removed", id);
+    }
+
+    @Override
+    public void taskAdded(final TaskStatus status) {
+        LOGGER.info("Task {} was added", status.info().id());
     }
 
     @SuppressWarnings("resource")

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationT
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.grid.GridWatcherManager;
@@ -61,18 +62,26 @@ class WirelessGrid implements Grid {
     @Override
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         context.drainEnergy(Platform.INSTANCE.getConfig().getWirelessGrid().getOpenEnergyUsage());
-        final StorageNetworkComponent storage = context.resolveNetwork()
+        final Optional<Network> optionalNetwork = context.resolveNetwork();
+        final StorageNetworkComponent storage = optionalNetwork
             .map(network -> network.getComponent(StorageNetworkComponent.class))
             .orElse(null);
-        watchers.addWatcher(watcher, actorType, storage);
+        final AutocraftingNetworkComponent autocrafting = optionalNetwork
+            .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
+            .orElse(null);
+        watchers.addWatcher(watcher, actorType, storage, autocrafting);
     }
 
     @Override
     public void removeWatcher(final GridWatcher watcher) {
-        final StorageNetworkComponent storage = context.resolveNetwork(true)
+        final Optional<Network> optionalNetwork = context.resolveNetwork(true);
+        final StorageNetworkComponent storage = optionalNetwork
             .map(network -> network.getComponent(StorageNetworkComponent.class))
             .orElse(null);
-        watchers.removeWatcher(watcher, storage);
+        final AutocraftingNetworkComponent autocrafting = optionalNetwork
+            .map(network -> network.getComponent(AutocraftingNetworkComponent.class))
+            .orElse(null);
+        watchers.removeWatcher(watcher, storage, autocrafting);
     }
 
     @Override

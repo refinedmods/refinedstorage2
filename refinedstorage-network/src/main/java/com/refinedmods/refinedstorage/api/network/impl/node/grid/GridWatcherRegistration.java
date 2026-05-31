@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.grid;
 
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusProvider;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
@@ -33,11 +34,22 @@ class GridWatcherRegistration {
         }
     }
 
+    void attach(final TaskStatusProvider taskStatusProvider, final boolean replay) {
+        taskStatusProvider.addListener(watcher);
+        if (replay) {
+            taskStatusProvider.getStatuses().forEach(watcher::taskAdded);
+        }
+    }
+
     void detach(final RootStorage rootStorage) {
         if (listener == null) {
             return;
         }
         rootStorage.removeListener(listener);
         listener = null;
+    }
+
+    void detach(final TaskStatusProvider taskStatusProvider) {
+        taskStatusProvider.removeListener(watcher);
     }
 }
