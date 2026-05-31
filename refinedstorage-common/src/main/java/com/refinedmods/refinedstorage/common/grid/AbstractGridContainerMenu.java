@@ -41,6 +41,9 @@ import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage.common.grid.strategy.ClientGridScrollingStrategy;
+import com.refinedmods.refinedstorage.common.grid.view.pin.FilePinRepository;
+import com.refinedmods.refinedstorage.common.grid.view.pin.Pin;
+import com.refinedmods.refinedstorage.common.grid.view.pin.PinManager;
 import com.refinedmods.refinedstorage.common.support.containermenu.AbstractResourceContainerMenu;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
@@ -73,7 +76,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS
     );
-    private static final PinManager PINS = new PinManager();
+    private static final PinManager PINS = new PinManager(FilePinRepository.create());
 
     private static String lastSearchQuery = "";
 
@@ -308,7 +311,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return repository;
     }
 
-    public List<GridResource> getPins() {
+    public List<Pin> getPins() {
         return PINS.getAll();
     }
 
@@ -324,7 +327,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return PINS.contains(gridResource);
     }
 
-    public GridResource removePin(final int index) {
+    public Pin removePin(final int index) {
         return PINS.remove(index);
     }
 
