@@ -47,14 +47,9 @@ public final class Items {
     private final List<Supplier<BaseBlockItem>> allDestructors = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allConstructors = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allWirelessTransmitters = new ArrayList<>();
-    private final List<Supplier<BaseBlockItem>> allNetworkReceivers = new ArrayList<>();
-    private final List<Supplier<BaseBlockItem>> allNetworkTransmitters = new ArrayList<>();
-    private final List<Supplier<BaseBlockItem>> allSecurityManagers = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allRelays = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allDiskInterfaces = new ArrayList<>();
     private final List<Supplier<BaseBlockItem>> allAutocrafters = new ArrayList<>();
-    private final List<Supplier<BaseBlockItem>> allAutocrafterManagers = new ArrayList<>();
-    private final List<Supplier<BaseBlockItem>> allAutocraftingMonitors = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -418,30 +413,6 @@ public final class Items {
         this.configurationCard = supplier;
     }
 
-    public void addNetworkReceiver(final Supplier<BaseBlockItem> supplier) {
-        allNetworkReceivers.add(supplier);
-    }
-
-    public List<Supplier<BaseBlockItem>> getNetworkReceivers() {
-        return Collections.unmodifiableList(allNetworkReceivers);
-    }
-
-    public void addNetworkTransmitter(final Supplier<BaseBlockItem> supplier) {
-        allNetworkTransmitters.add(supplier);
-    }
-
-    public List<Supplier<BaseBlockItem>> getNetworkTransmitters() {
-        return Collections.unmodifiableList(allNetworkTransmitters);
-    }
-
-    public void addSecurityManager(final Supplier<BaseBlockItem> supplier) {
-        allSecurityManagers.add(supplier);
-    }
-
-    public List<Supplier<BaseBlockItem>> getSecurityManagers() {
-        return Collections.unmodifiableList(allSecurityManagers);
-    }
-
     public void addRelay(final Supplier<BaseBlockItem> supplier) {
         allRelays.add(supplier);
     }
@@ -464,22 +435,6 @@ public final class Items {
 
     public List<Supplier<BaseBlockItem>> getAutocrafters() {
         return Collections.unmodifiableList(allAutocrafters);
-    }
-
-    public void addAutocrafterManager(final Supplier<BaseBlockItem> supplier) {
-        allAutocrafterManagers.add(supplier);
-    }
-
-    public List<Supplier<BaseBlockItem>> getAutocrafterManagers() {
-        return Collections.unmodifiableList(allAutocrafterManagers);
-    }
-
-    public void addAutocraftingMonitor(final Supplier<BaseBlockItem> supplier) {
-        allAutocraftingMonitors.add(supplier);
-    }
-
-    public List<Supplier<BaseBlockItem>> getAutocraftingMonitors() {
-        return Collections.unmodifiableList(allAutocraftingMonitors);
     }
 
     public Item getNetworkCard() {

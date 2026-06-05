@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage.common.importer.AbstractImporterBlockEntit
 import com.refinedmods.refinedstorage.common.importer.ImporterBlock;
 import com.refinedmods.refinedstorage.common.networking.AbstractCableBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.CableBlock;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorBlock;
 import com.refinedmods.refinedstorage.common.networking.NetworkReceiverBlock;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlock;
 import com.refinedmods.refinedstorage.common.networking.RelayBlock;
@@ -164,6 +165,12 @@ public final class Blocks {
         AutocraftingMonitorBlock::new,
         ContentIds.AUTOCRAFTING_MONITOR,
         ContentNames.AUTOCRAFTING_MONITOR,
+        COLOR
+    );
+    private final BlockColorMap<NetworkMonitorBlock, BaseBlockItem> networkMonitor = new BlockColorMap<>(
+        NetworkMonitorBlock::new,
+        ContentIds.NETWORK_MONITOR,
+        ContentNames.NETWORK_MONITOR,
         COLOR
     );
 
@@ -424,5 +431,9 @@ public final class Blocks {
 
     public BlockColorMap<AutocraftingMonitorBlock, BaseBlockItem> getAutocraftingMonitor() {
         return autocraftingMonitor;
+    }
+
+    public BlockColorMap<NetworkMonitorBlock, BaseBlockItem> getNetworkMonitor() {
+        return networkMonitor;
     }
 }

@@ -100,6 +100,8 @@ public interface Config {
 
     WirelessAutocraftingMonitorEntry getWirelessAutocraftingMonitor();
 
+    SimpleEnergyUsageEntry getNetworkMonitor();
+
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
     }

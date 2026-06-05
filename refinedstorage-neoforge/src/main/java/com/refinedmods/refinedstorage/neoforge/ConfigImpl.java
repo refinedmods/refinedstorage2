@@ -65,6 +65,7 @@ public class ConfigImpl implements Config {
     private final AutocrafterManagerEntryImpl autocrafterManager;
     private final SimpleEnergyUsageEntry autocraftingMonitor;
     private final WirelessAutocraftingMonitorEntryImpl wirelessAutocraftingMonitor;
+    private final SimpleEnergyUsageEntry networkMonitor;
 
     public ConfigImpl() {
         screenSize = builder
@@ -131,6 +132,7 @@ public class ConfigImpl implements Config {
             DefaultEnergyUsage.AUTOCRAFTING_MONITOR
         );
         wirelessAutocraftingMonitor = new WirelessAutocraftingMonitorEntryImpl();
+        networkMonitor = new SimpleEnergyUsageEntryImpl("networkMonitor", DefaultEnergyUsage.NETWORK_MONITOR);
         spec = builder.build();
     }
 
@@ -363,6 +365,11 @@ public class ConfigImpl implements Config {
     @Override
     public WirelessAutocraftingMonitorEntry getWirelessAutocraftingMonitor() {
         return wirelessAutocraftingMonitor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkMonitor() {
+        return networkMonitor;
     }
 
     private static String translationKey(final String value) {
