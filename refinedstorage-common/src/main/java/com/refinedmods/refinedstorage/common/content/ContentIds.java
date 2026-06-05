@@ -74,6 +74,7 @@ public final class ContentIds {
     public static final Identifier CREATIVE_WIRELESS_AUTOCRAFTING_MONITOR = createIdentifier(
         "creative_wireless_autocrafting_monitor"
     );
+    public static final Identifier NETWORK_MONITOR = createIdentifier("network_monitor");
     public static final Identifier DEBUG_STICK = createIdentifier("debug_stick");
 
     private ContentIds() {

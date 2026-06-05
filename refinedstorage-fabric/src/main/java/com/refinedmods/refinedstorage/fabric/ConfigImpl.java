@@ -142,6 +142,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     );
 
     @ConfigEntry.Gui.CollapsibleObject
+    private SimpleEnergyUsageEntryImpl networkMonitor = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.NETWORK_MONITOR
+    );
+
+    @ConfigEntry.Gui.CollapsibleObject
     private WirelessAutocraftingMonitorEntryImpl wirelessAutocraftingMonitor =
         new WirelessAutocraftingMonitorEntryImpl();
 
@@ -366,6 +371,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     @Override
     public WirelessAutocraftingMonitorEntry getWirelessAutocraftingMonitor() {
         return wirelessAutocraftingMonitor;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getNetworkMonitor() {
+        return networkMonitor;
     }
 
     private static class GridEntryImpl implements GridEntry {

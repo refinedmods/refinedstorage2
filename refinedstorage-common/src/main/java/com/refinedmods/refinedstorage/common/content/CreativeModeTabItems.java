@@ -62,6 +62,7 @@ public final class CreativeModeTabItems {
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getAutocrafter());
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getAutocrafterManager());
         appendDefaultBlockColor(consumer, Blocks.INSTANCE.getAutocraftingMonitor());
+        appendDefaultBlockColor(consumer, Blocks.INSTANCE.getNetworkMonitor());
     }
 
     private static void appendDefaultBlockColor(final Consumer<ItemStack> consumer, final BlockColorMap<?, ?> map) {
@@ -96,6 +97,7 @@ public final class CreativeModeTabItems {
         appendColoredBlocks(consumer, Blocks.INSTANCE.getAutocrafter());
         appendColoredBlocks(consumer, Blocks.INSTANCE.getAutocrafterManager());
         appendColoredBlocks(consumer, Blocks.INSTANCE.getAutocraftingMonitor());
+        appendColoredBlocks(consumer, Blocks.INSTANCE.getNetworkMonitor());
     }
 
     private static void appendColoredBlocks(final Consumer<ItemStack> consumer, final BlockColorMap<?, ?> map) {

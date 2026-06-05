@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage.common.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage.common.iface.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage.common.importer.AbstractImporterBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.AbstractCableBlockEntity;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.RelayBlockEntity;
@@ -96,6 +97,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<AutocrafterManagerBlockEntity>> autocrafterManager;
     @Nullable
     private Supplier<BlockEntityType<AutocraftingMonitorBlockEntity>> autocraftingMonitor;
+    @Nullable
+    private Supplier<BlockEntityType<NetworkMonitorBlockEntity>> networkMonitor;
 
     private BlockEntities() {
     }
@@ -331,5 +334,13 @@ public final class BlockEntities {
 
     public void setAutocraftingMonitor(final Supplier<BlockEntityType<AutocraftingMonitorBlockEntity>> supplier) {
         this.autocraftingMonitor = supplier;
+    }
+
+    public BlockEntityType<NetworkMonitorBlockEntity> getNetworkMonitor() {
+        return requireNonNull(networkMonitor).get();
+    }
+
+    public void setNetworkMonitor(final Supplier<BlockEntityType<NetworkMonitorBlockEntity>> supplier) {
+        this.networkMonitor = supplier;
     }
 }

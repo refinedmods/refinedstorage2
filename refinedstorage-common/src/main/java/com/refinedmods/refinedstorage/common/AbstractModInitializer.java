@@ -85,6 +85,7 @@ import com.refinedmods.refinedstorage.common.misc.WrenchItem;
 import com.refinedmods.refinedstorage.common.networking.BaseWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage.common.networking.CreativeRangeUpgradeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage.common.networking.NetworkCardItem;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterContainerMenu;
@@ -359,6 +360,7 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getAutocrafter().registerBlocks(callback);
         Blocks.INSTANCE.getAutocrafterManager().registerBlocks(callback);
         Blocks.INSTANCE.getAutocraftingMonitor().registerBlocks(callback);
+        Blocks.INSTANCE.getNetworkMonitor().registerBlocks(callback);
     }
 
     protected final void registerItems(final RegistryCallback<Item> callback) {
@@ -376,14 +378,15 @@ public abstract class AbstractModInitializer {
         Blocks.INSTANCE.getConstructor().registerItems(callback, Items.INSTANCE::addConstructor);
         Blocks.INSTANCE.getDestructor().registerItems(callback, Items.INSTANCE::addDestructor);
         Blocks.INSTANCE.getWirelessTransmitter().registerItems(callback, Items.INSTANCE::addWirelessTransmitter);
-        Blocks.INSTANCE.getNetworkReceiver().registerItems(callback, Items.INSTANCE::addNetworkReceiver);
-        Blocks.INSTANCE.getNetworkTransmitter().registerItems(callback, Items.INSTANCE::addNetworkTransmitter);
-        Blocks.INSTANCE.getSecurityManager().registerItems(callback, Items.INSTANCE::addSecurityManager);
+        Blocks.INSTANCE.getNetworkReceiver().registerItems(callback);
+        Blocks.INSTANCE.getNetworkTransmitter().registerItems(callback);
+        Blocks.INSTANCE.getSecurityManager().registerItems(callback);
         Blocks.INSTANCE.getRelay().registerItems(callback, Items.INSTANCE::addRelay);
         Blocks.INSTANCE.getDiskInterface().registerItems(callback, Items.INSTANCE::addDiskInterface);
         Blocks.INSTANCE.getAutocrafter().registerItems(callback, Items.INSTANCE::addAutocrafter);
-        Blocks.INSTANCE.getAutocrafterManager().registerItems(callback, Items.INSTANCE::addAutocrafterManager);
-        Blocks.INSTANCE.getAutocraftingMonitor().registerItems(callback, Items.INSTANCE::addAutocraftingMonitor);
+        Blocks.INSTANCE.getAutocrafterManager().registerItems(callback);
+        Blocks.INSTANCE.getAutocraftingMonitor().registerItems(callback);
+        Blocks.INSTANCE.getNetworkMonitor().registerItems(callback);
         registerStorageItems(callback);
         registerUpgrades(callback);
     }
@@ -716,6 +719,11 @@ public abstract class AbstractModInitializer {
             ContentIds.AUTOCRAFTING_MONITOR,
             () -> typeFactory.create(AutocraftingMonitorBlockEntity::new,
                 Blocks.INSTANCE.getAutocraftingMonitor().toArray())
+        ));
+        BlockEntities.INSTANCE.setNetworkMonitor(callback.register(
+            ContentIds.NETWORK_MONITOR,
+            () -> typeFactory.create(NetworkMonitorBlockEntity::new,
+                Blocks.INSTANCE.getNetworkMonitor().toArray())
         ));
     }
 

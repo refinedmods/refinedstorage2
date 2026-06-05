@@ -53,6 +53,7 @@ public final class ContentNames {
         "item",
         "creative_wireless_autocrafting_monitor"
     );
+    public static final MutableComponent NETWORK_MONITOR = name("network_monitor");
 
     public static final String CLEAR_CRAFTING_MATRIX_TO_NETWORK_TRANSLATION_KEY =
         createTranslationKey("key", "clear_crafting_grid_matrix_to_network");
