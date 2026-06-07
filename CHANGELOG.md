@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Showing pins even if the Grid is inactive.
+
 ## [3.2.1] - 2026-06-07
 
 ### Fixed

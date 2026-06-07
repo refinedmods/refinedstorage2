@@ -295,7 +295,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final int rowY = y + TOP_HEIGHT + (row * ROW_SIZE);
         graphics.blitSprite(GUI_TEXTURED, ROW_SPRITE, rowX, rowY, 162, ROW_SIZE);
         for (int column = 0; column < COLUMNS; ++column) {
-            renderPinCell(graphics, mouseX, mouseY, row, rowX, column, rowY, partialTicks);
+            if (!getMenu().isActive()) {
+                renderDisabledSlot(graphics, rowX + 1 + (column * ROW_SIZE), rowY + 1);
+            } else {
+                renderPinCell(graphics, mouseX, mouseY, row, rowX, column, rowY, partialTicks);
+            }
         }
     }
 
