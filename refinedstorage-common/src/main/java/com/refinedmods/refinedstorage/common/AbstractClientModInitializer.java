@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common;
 
+import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
@@ -26,8 +27,10 @@ import com.refinedmods.refinedstorage.common.grid.screen.GridScreen;
 import com.refinedmods.refinedstorage.common.grid.screen.hint.FluidGridInsertionHint;
 import com.refinedmods.refinedstorage.common.iface.InterfaceScreen;
 import com.refinedmods.refinedstorage.common.importer.ImporterScreen;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorScreen;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterScreen;
 import com.refinedmods.refinedstorage.common.networking.RelayScreen;
+import com.refinedmods.refinedstorage.common.networking.SimpleNetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.networking.WirelessTransmitterScreen;
 import com.refinedmods.refinedstorage.common.security.FallbackSecurityCardScreen;
 import com.refinedmods.refinedstorage.common.security.SecurityCardScreen;
@@ -135,6 +138,7 @@ public abstract class AbstractClientModInitializer {
         registration.register(Menus.INSTANCE.getAutocrafterManager(), AutocrafterManagerScreen::new);
         registration.register(Menus.INSTANCE.getAutocraftingMonitor(), AutocraftingMonitorScreen::new);
         registration.register(Menus.INSTANCE.getWirelessAutocraftingMonitor(), AutocraftingMonitorScreen::new);
+        registration.register(Menus.INSTANCE.getNetworkMonitor(), NetworkMonitorScreen::new);
     }
 
     protected static void registerAlternativeGridHints() {
@@ -205,6 +209,13 @@ public abstract class AbstractClientModInitializer {
         }
         components.add(HelpClientTooltipComponent.create(help));
         return new CompositeClientTooltipComponent(components);
+    }
+
+    protected static void registerNetworkMonitorDetailsRenderers() {
+        RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
+            SimpleNetworkNodeDetails.class,
+            new SimpleNetworkNodeDetailsRenderer()
+        );
     }
 
     @FunctionalInterface

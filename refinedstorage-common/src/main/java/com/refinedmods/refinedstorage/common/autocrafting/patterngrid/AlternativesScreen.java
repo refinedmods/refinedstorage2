@@ -23,7 +23,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -51,16 +50,6 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     private static final MutableComponent EXPAND = createTranslation("gui", "pattern_grid.alternatives.expand");
     private static final Component SEARCH_HELP = createTranslation("gui", "pattern_grid.alternatives.search_help")
         .withStyle(ChatFormatting.GRAY);
-    private static final WidgetSprites EXPAND_SPRITES = new WidgetSprites(
-        createIdentifier("widget/expand"),
-        createIdentifier("widget/expand_disabled"),
-        createIdentifier("widget/expand_focused"),
-        createIdentifier("widget/expand_disabled")
-    );
-    private static final WidgetSprites COLLAPSE_SPRITES = new WidgetSprites(
-        createIdentifier("widget/collapse"),
-        createIdentifier("widget/collapse_focused")
-    );
 
     private static final int ALTERNATIVES_DISPLAYED = 2;
     private static final int ROWS_PER_ALTERNATIVE = 2;
@@ -192,10 +181,10 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             y + 1,
             16,
             16,
-            EXPAND_SPRITES,
+            Sprites.EXPAND,
             btn -> {
-                final boolean expanding = alternative.expandOrCollapse();
-                btn.setSprites(expanding ? COLLAPSE_SPRITES : EXPAND_SPRITES);
+                final boolean expanding = alternative.toggle();
+                btn.setSprites(expanding ? Sprites.COLLAPSE : Sprites.EXPAND);
             },
             EXPAND
         );
@@ -235,14 +224,14 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
 
             totalRows += ROWS_PER_ALTERNATIVE;
             final int overflowRows = getOverflowRows(alternative);
-            totalRows += (int) (overflowRows * alternative.getExpandPct());
+            totalRows += (int) (overflowRows * alternative.getExpandedPercentage());
             final int height = ALTERNATIVE_HEIGHT
-                + (int) (overflowRows * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandPct());
+                + (int) (overflowRows * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandedPercentage());
 
             updateAlternativeCheckbox(alternativeCheckbox, y);
             updateExpandButton(expandButton, y);
             updateAlternativeSlots(alternative.getMainSlots(), y, 0, true);
-            updateAlternativeSlots(alternative.getOverflowSlots(), y, 1, alternative.getExpandPct() > 0);
+            updateAlternativeSlots(alternative.getOverflowSlots(), y, 1, alternative.getExpandedPercentage() > 0);
 
             totalHeight += height;
             y += height;
@@ -355,7 +344,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             return 0;
         }
         final int height = ALTERNATIVE_HEIGHT
-            + (int) (getOverflowRows(alternative) * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandPct());
+            + (int) (getOverflowRows(alternative) * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandedPercentage());
         final boolean backgroundVisible = y >= startY - height && y < startY + INSET_HEIGHT;
         if (i % 2 == 0 && backgroundVisible) {
             graphics.fill(
@@ -403,7 +392,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                                               final int y,
                                               final Alternative alternative) {
         final int rows = getOverflowRows(alternative);
-        final int height = (int) (rows * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandPct());
+        final int height = (int) (rows * ALTERNATIVE_ROW_HEIGHT * alternative.getExpandedPercentage());
         if (height == 0) {
             return 0;
         }

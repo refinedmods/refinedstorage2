@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.support;
 
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.resources.Identifier;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -18,6 +19,16 @@ public final class Sprites {
     public static final Identifier CANCEL = createIdentifier("cancel");
     public static final Identifier RESET = createIdentifier("reset");
     public static final Identifier SET = createIdentifier("set");
+    public static final WidgetSprites EXPAND = new WidgetSprites(
+        createIdentifier("widget/expand"),
+        createIdentifier("widget/expand_disabled"),
+        createIdentifier("widget/expand_focused"),
+        createIdentifier("widget/expand_disabled")
+    );
+    public static final WidgetSprites COLLAPSE = new WidgetSprites(
+        createIdentifier("widget/collapse"),
+        createIdentifier("widget/collapse_focused")
+    );
 
     private Sprites() {
     }

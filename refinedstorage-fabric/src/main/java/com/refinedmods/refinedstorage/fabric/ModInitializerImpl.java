@@ -229,6 +229,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerTickHandler();
         registerWrenchingEvent();
         registerSecurityBlockBreakEvent();
+        registerNetworkMonitorDeviceTypes();
 
         final List<RefinedStoragePlugin> pluginEntrypoints = FabricLoader.getInstance()
             .getEntrypoints(PLUGIN_ENTRYPOINT_KEY, RefinedStoragePlugin.class);

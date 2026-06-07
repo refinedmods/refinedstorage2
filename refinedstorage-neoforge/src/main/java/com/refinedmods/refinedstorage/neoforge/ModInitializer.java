@@ -660,6 +660,7 @@ public class ModInitializer extends AbstractModInitializer {
     @SubscribeEvent
     public void onCommonSetup(final FMLCommonSetupEvent e) {
         registerUpgradeMappings();
+        registerNetworkMonitorDeviceTypes();
     }
 
     @SubscribeEvent

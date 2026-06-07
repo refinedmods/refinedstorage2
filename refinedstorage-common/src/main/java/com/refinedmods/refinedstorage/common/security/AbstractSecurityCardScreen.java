@@ -48,7 +48,7 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
             addWidget(permission.resetButton);
             permissions.add(permission);
         }
-        updateScrollbar(permissions.size());
+        updateScrollbarRows(permissions.size());
     }
 
     private Permission createPermission(

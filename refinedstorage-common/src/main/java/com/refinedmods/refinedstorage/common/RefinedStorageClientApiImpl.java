@@ -1,10 +1,12 @@
 package com.refinedmods.refinedstorage.common;
 
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.grid.GridInsertionHint;
 import com.refinedmods.refinedstorage.common.api.grid.GridInsertionHints;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 import com.refinedmods.refinedstorage.common.grid.screen.hint.GridInsertionHintsImpl;
 import com.refinedmods.refinedstorage.common.grid.screen.hint.ItemGridInsertionHint;
@@ -31,8 +33,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.Nullable;
 
+import static java.util.Objects.requireNonNull;
+
 public class RefinedStorageClientApiImpl implements RefinedStorageClientApi {
     private final Map<Class<?>, ResourceRendering> resourceRenderingMap = new HashMap<>();
+    private final Map<Class<? extends NetworkNodeDetails>,
+        NetworkNodeDetailsRenderer> networkNodeDetailsRendererMap = new HashMap<>();
     private final Map<Item, Identifier> diskModelsByItem = new HashMap<>();
     private final Set<Identifier> diskModels = new HashSet<>();
     private final GridInsertionHintsImpl gridInsertionHints = new GridInsertionHintsImpl(
@@ -102,6 +108,19 @@ public class RefinedStorageClientApiImpl implements RefinedStorageClientApi {
         if (resourceClass == ItemResource.class) {
             return ItemResourceRendering.INSTANCE;
         }
-        return resourceRenderingMap.get(resourceClass);
+        return requireNonNull(resourceRenderingMap.get(resourceClass));
+    }
+
+    @Override
+    public <T extends NetworkNodeDetails> void registerNetworkNodeDetailsRenderer(
+        final Class<T> detailsClass,
+        final NetworkNodeDetailsRenderer renderer) {
+        networkNodeDetailsRendererMap.put(detailsClass, renderer);
+    }
+
+    @Override
+    public <T extends NetworkNodeDetails> NetworkNodeDetailsRenderer getNetworkNodeDetailsRenderer(
+        final Class<T> detailsClass) {
+        return requireNonNull(networkNodeDetailsRendererMap.get(detailsClass));
     }
 }

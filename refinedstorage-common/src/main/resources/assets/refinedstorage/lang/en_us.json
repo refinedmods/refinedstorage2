@@ -48,6 +48,7 @@
   "gui.refinedstorage.storage.filter_mode.empty_warning": "Without any configured filters, no resources will be accepted in this storage.",
   "gui.refinedstorage.storage.filter_mode.allow.help": "Only allow resources into this storage that are configured in the filters.",
   "gui.refinedstorage.storage.filter_mode.block.help": "Disallow resources into this storage that are configured in the filters.",
+  "gui.refinedstorage.network_monitor.search_help": "Search by the name of a network device.",
   "gui.refinedstorage.grid.view_type": "View type",
   "gui.refinedstorage.grid.view_type.all": "All",
   "gui.refinedstorage.grid.view_type.autocraftable": "Autocraftable",

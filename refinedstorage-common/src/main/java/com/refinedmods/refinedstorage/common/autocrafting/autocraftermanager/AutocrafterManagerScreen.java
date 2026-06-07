@@ -113,7 +113,7 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
             .stream()
             .map(group -> group.isVisible() ? group.getVisibleRows() + 1 : 0)
             .reduce(0, Integer::sum);
-        updateScrollbar(totalRows);
+        updateScrollbarRows(totalRows);
     }
 
     @Override

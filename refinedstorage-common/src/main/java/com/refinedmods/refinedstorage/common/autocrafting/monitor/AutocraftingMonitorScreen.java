@@ -136,8 +136,8 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
             }
         });
         updateTaskButtonsScrollbar();
-        for (int i = 0; i < getMenu().getTasksView().size(); ++i) {
-            final TaskStatus.TaskInfo taskId = getMenu().getTasksView().get(i);
+        for (int i = 0; i < getMenu().getTasks().size(); ++i) {
+            final TaskStatus.TaskInfo taskId = getMenu().getTasks().get(i);
             final int buttonY = getTaskButtonY(i);
             final AutocraftingTaskButton button = new AutocraftingTaskButton(
                 getTaskButtonsInnerX(),
@@ -423,7 +423,7 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
             cancelButton.active = getMenu().isActive() && taskStatus != null;
         }
         if (cancelAllButton != null) {
-            cancelAllButton.active = getMenu().isActive() && !menu.getTasksView().isEmpty();
+            cancelAllButton.active = getMenu().isActive() && !menu.getTasks().isEmpty();
         }
         for (final AutocraftingTaskButton taskButton : taskButtons) {
             taskButton.active = taskStatus == null
@@ -436,7 +436,7 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
         if (taskButtonsScrollbar == null) {
             return;
         }
-        final int totalTaskButtons = getMenu().isActive() ? getMenu().getTasksView().size() - TASKS_VISIBLE : 0;
+        final int totalTaskButtons = getMenu().isActive() ? getMenu().getTasks().size() - TASKS_VISIBLE : 0;
         final int maxOffset = taskButtonsScrollbar.isSmoothScrolling()
             ? totalTaskButtons * TASK_BUTTON_HEIGHT
             : totalTaskButtons;
@@ -462,7 +462,7 @@ public class AutocraftingMonitorScreen extends AbstractBaseScreen<AbstractAutocr
     @Override
     public void taskAdded(final TaskStatus taskStatus) {
         updateTaskButtonsScrollbar();
-        final int buttonY = getTaskButtonY(getMenu().getTasksView().size() - 1);
+        final int buttonY = getTaskButtonY(getMenu().getTasks().size() - 1);
         final AutocraftingTaskButton button = new AutocraftingTaskButton(
             getTaskButtonsInnerX(),
             buttonY,
