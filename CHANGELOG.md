@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-06-07
+
+### Fixed
+
+-   Minor rendering fix for the new autocrafting pins in the Grid.
+
 ## [3.2.0] - 2026-05-31
 
 ### Added
@@ -1315,7 +1321,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v3.2.1...HEAD
+
+[3.2.1]: https://github.com/refinedmods/refinedstorage2/compare/v3.2.0...v3.2.1
 
 [3.2.0]: https://github.com/refinedmods/refinedstorage2/compare/v3.1.0...v3.2.0
 
