@@ -48,6 +48,9 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
+        if (player.isCrouching()) {
+            return clearConfiguration(player);
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             final RegulatorUpgradeState initialState = stack.getOrDefault(
                 DataComponents.INSTANCE.getRegulatorUpgradeState(),
@@ -62,6 +65,13 @@ public class RegulatorUpgradeItem extends AbstractUpgradeItem {
             ));
         }
         return InteractionResultHolder.success(stack);
+    }
+
+    private InteractionResultHolder<ItemStack> clearConfiguration(final Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.sendSystemMessage(createTranslation("item", "regulator_upgrade.cleared_configuration"));
+        }
+        return InteractionResultHolder.consume(getDefaultInstance());
     }
 
     private ResourceContainer createResourceFilterContainer(final ItemStack stack,

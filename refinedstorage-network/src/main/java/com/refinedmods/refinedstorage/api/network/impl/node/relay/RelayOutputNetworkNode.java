@@ -57,6 +57,7 @@ public class RelayOutputNetworkNode extends AbstractNetworkNode
 
     void setStorageDelegate(@Nullable final StorageNetworkComponent storageDelegate) {
         this.storage.setDelegate(storageDelegate);
+        this.patternProvider.setStorageDelegate(storageDelegate);
     }
 
     void setAutocraftingDelegate(@Nullable final AutocraftingNetworkComponent autocraftingDelegate) {
