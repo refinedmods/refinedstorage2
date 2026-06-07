@@ -112,6 +112,7 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         registerResourceRendering();
         registerAlternativeGridHints();
         registerItemProperties();
+        registerNetworkMonitorDetailsRenderers();
     }
 
     private void registerPacketHandlers() {

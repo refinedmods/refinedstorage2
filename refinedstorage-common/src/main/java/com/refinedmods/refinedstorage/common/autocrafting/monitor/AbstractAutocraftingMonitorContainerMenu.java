@@ -87,7 +87,7 @@ public abstract class AbstractAutocraftingMonitorContainerMenu extends AbstractB
         return status.items();
     }
 
-    List<TaskStatus.TaskInfo> getTasksView() {
+    List<TaskStatus.TaskInfo> getTasks() {
         return tasksView;
     }
 

@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -27,6 +29,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockProvider;
@@ -179,6 +182,10 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     private final NetworkItemHelper networkItemHelper = new NetworkItemHelperImpl();
     private final PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends PlayerSlotReference>>
         playerSlotReferenceFactories = new PlatformRegistryImpl<>();
+    private final Map<Class<? extends NetworkNodeDetails>,
+        StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
+        networkNodeDetailsFactories = new HashMap<>();
+    private final Map<NetworkNodeType, NetworkMonitorDeviceType> networkMonitorDeviceTypes = new HashMap<>();
     private final CompositePlayerSlotReferenceProvider playerSlotReferenceProvider =
         new CompositePlayerSlotReferenceProvider();
     private final PlatformRegistry<PlatformPermission> permissionRegistry = new PlatformRegistryImpl<>();
@@ -528,6 +535,30 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
         final Set<Item> validItems = new HashSet<>(Arrays.asList(items));
         playerSlotReferenceProvider.findForUse(player, items[0], validItems)
             .ifPresent(C2SPackets::sendUseSlotReferencedItem);
+    }
+
+    @Override
+    public void registerNetworkMonitorDeviceType(final NetworkNodeType type,
+                                                 final NetworkMonitorDeviceType deviceType) {
+        networkMonitorDeviceTypes.put(type, deviceType);
+    }
+
+    @Override
+    public NetworkMonitorDeviceType getNetworkMonitorDeviceType(final NetworkNodeType type) {
+        return requireNonNull(networkMonitorDeviceTypes.get(type));
+    }
+
+    @Override
+    public void registerNetworkNodeDetailsFactory(
+        final Class<? extends NetworkNodeDetails> detailsClass,
+        final StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory) {
+        networkNodeDetailsFactories.put(detailsClass, factory);
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
+        final Class<? extends NetworkNodeDetails> detailsClass) {
+        return requireNonNull(networkNodeDetailsFactories.get(detailsClass));
     }
 
     @Override

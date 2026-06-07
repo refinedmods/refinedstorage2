@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage.common.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage.common.grid.WirelessGridContainerMenu;
 import com.refinedmods.refinedstorage.common.iface.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage.common.importer.ImporterContainerMenu;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterContainerMenu;
 import com.refinedmods.refinedstorage.common.networking.RelayContainerMenu;
 import com.refinedmods.refinedstorage.common.networking.WirelessTransmitterContainerMenu;
@@ -103,6 +104,8 @@ public final class Menus {
     private Supplier<MenuType<AutocraftingMonitorContainerMenu>> autocraftingMonitor;
     @Nullable
     private Supplier<MenuType<WirelessAutocraftingMonitorContainerMenu>> wirelessAutocraftingMonitor;
+    @Nullable
+    private Supplier<MenuType<NetworkMonitorContainerMenu>> networkMonitor;
 
     private Menus() {
     }
@@ -359,5 +362,13 @@ public final class Menus {
         final Supplier<MenuType<WirelessAutocraftingMonitorContainerMenu>> wirelessAutocraftingMonitor
     ) {
         this.wirelessAutocraftingMonitor = wirelessAutocraftingMonitor;
+    }
+
+    public MenuType<NetworkMonitorContainerMenu> getNetworkMonitor() {
+        return requireNonNull(networkMonitor).get();
+    }
+
+    public void setNetworkMonitor(final Supplier<MenuType<NetworkMonitorContainerMenu>> networkMonitor) {
+        this.networkMonitor = networkMonitor;
     }
 }

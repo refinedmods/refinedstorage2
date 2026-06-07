@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.ConstructorStrategyFactory;
@@ -22,6 +24,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockProvider;
@@ -365,6 +368,30 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     @Override
     public void usePlayerSlotReferencedItem(final Player player, final Item... items) {
         ensureLoaded().usePlayerSlotReferencedItem(player, items);
+    }
+
+    @Override
+    public void registerNetworkMonitorDeviceType(final NetworkNodeType type,
+                                                 final NetworkMonitorDeviceType deviceType) {
+        ensureLoaded().registerNetworkMonitorDeviceType(type, deviceType);
+    }
+
+    @Override
+    public NetworkMonitorDeviceType getNetworkMonitorDeviceType(final NetworkNodeType type) {
+        return ensureLoaded().getNetworkMonitorDeviceType(type);
+    }
+
+    @Override
+    public void registerNetworkNodeDetailsFactory(
+        final Class<? extends NetworkNodeDetails> detailsClass,
+        final StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory) {
+        ensureLoaded().registerNetworkNodeDetailsFactory(detailsClass, factory);
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
+        final Class<? extends NetworkNodeDetails> detailsClass) {
+        return ensureLoaded().getNetworkNodeDetailsFactory(detailsClass);
     }
 
     @Override

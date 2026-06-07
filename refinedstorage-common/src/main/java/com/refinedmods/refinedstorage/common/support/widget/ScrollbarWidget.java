@@ -168,13 +168,10 @@ public class ScrollbarWidget extends AbstractWidget {
     }
 
     public void setMaxOffset(final double maxOffset) {
+        final double oldMaxOffset = this.maxOffset;
+        final double relativeOffset = oldMaxOffset > 0 ? offset / oldMaxOffset : 0;
         this.maxOffset = Math.max(0, maxOffset);
-        if (this.offset > this.maxOffset) {
-            this.offset = this.maxOffset;
-            if (listener != null) {
-                listener.accept(this.offset);
-            }
-        }
+        setOffset(relativeOffset * this.maxOffset);
     }
 
     public double getOffset() {

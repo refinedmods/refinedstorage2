@@ -4,12 +4,15 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetwo
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.GraphNetworkComponentImpl;
+import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeTypes;
+import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.security.SecurityNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApiProxy;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
@@ -50,6 +53,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntityTypeFactory;
 import com.refinedmods.refinedstorage.common.content.BlockProperties;
 import com.refinedmods.refinedstorage.common.content.Blocks;
 import com.refinedmods.refinedstorage.common.content.ContentIds;
+import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.DataComponents;
 import com.refinedmods.refinedstorage.common.content.ExtendedMenuTypeFactory;
 import com.refinedmods.refinedstorage.common.content.Items;
@@ -86,6 +90,8 @@ import com.refinedmods.refinedstorage.common.networking.BaseWirelessTransmitterR
 import com.refinedmods.refinedstorage.common.networking.CreativeRangeUpgradeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage.common.networking.NetworkCardItem;
 import com.refinedmods.refinedstorage.common.networking.NetworkMonitorBlockEntity;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorContainerMenu;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorData;
 import com.refinedmods.refinedstorage.common.networking.NetworkReceiverBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterContainerMenu;
@@ -166,6 +172,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -196,6 +203,7 @@ public abstract class AbstractModInitializer {
         registerWirelessTransmitterRangeModifiers();
         registerPermissions();
         registerInventorySlotReference();
+        registerNetworkNodeDetailsFactories();
     }
 
     private void registerStorageTypes() {
@@ -877,6 +885,11 @@ public abstract class AbstractModInitializer {
             () -> extendedMenuTypeFactory.create(WirelessAutocraftingMonitorContainerMenu::new,
                 AutocraftingMonitorData.STREAM_CODEC)
         ));
+        Menus.INSTANCE.setNetworkMonitor(callback.register(
+            ContentIds.NETWORK_MONITOR,
+            () -> extendedMenuTypeFactory.create((syncId, inv, data) -> new NetworkMonitorContainerMenu(syncId, data),
+                NetworkMonitorData.STREAM_CODEC)
+        ));
     }
 
     protected final void registerLootFunctions(final RegistryCallback<MapCodec<? extends LootItemFunction>> callback) {
@@ -1007,6 +1020,27 @@ public abstract class AbstractModInitializer {
         RefinedStorageApi.INSTANCE.getPlayerSlotReferenceFactories().register(
             createIdentifier("inventory"),
             InventoryPlayerSlotReference.STREAM_CODEC
+        );
+    }
+
+    protected final void registerNetworkMonitorDeviceTypes() {
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(
+            NetworkNodeTypes.IMPORTER,
+            new NetworkMonitorDeviceType(
+                ContentNames.IMPORTER,
+                Items.INSTANCE.getImporters().getFirst().get()
+            )
+        );
+    }
+
+    protected final void registerNetworkNodeDetailsFactories() {
+        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            SimpleNetworkNodeDetails.class,
+            StreamCodec.composite(
+                ByteBufCodecs.LONG, SimpleNetworkNodeDetails::getEnergyUsage,
+                ByteBufCodecs.BOOL, SimpleNetworkNodeDetails::isActive,
+                SimpleNetworkNodeDetails::new
+            )
         );
     }
 

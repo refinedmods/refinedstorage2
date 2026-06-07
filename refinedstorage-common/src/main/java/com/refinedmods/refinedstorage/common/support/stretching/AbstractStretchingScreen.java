@@ -22,8 +22,8 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
 
     private static final int INVENTORY_INCLUDING_TITLE_HEIGHT = 99;
     private static final int COLUMNS = 9;
-    private static final int MIN_ROWS = 3;
     private static final int ROW_PADDING = 3;
+    private static final int MIN_ROWS = 3;
 
     private int visibleRows;
     @Nullable
@@ -220,7 +220,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         };
     }
 
-    protected final void updateScrollbar(final int totalRows) {
+    protected final void updateScrollbarRows(final int totalRows) {
         if (scrollbar == null) {
             return;
         }
@@ -231,6 +231,13 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
             ? ((rowsExcludingVisibleOnes * ROW_SIZE) + getScrollPanePadding())
             : rowsExcludingVisibleOnes;
         scrollbar.setMaxOffset(maxOffset);
+    }
+
+    protected final void resetScrollbarPosition() {
+        if (scrollbar == null) {
+            return;
+        }
+        scrollbar.setOffset(0);
     }
 
     protected abstract int getBottomHeight();

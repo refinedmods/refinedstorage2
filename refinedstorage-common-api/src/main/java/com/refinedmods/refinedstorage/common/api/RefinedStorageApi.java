@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryMapper;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.ConstructorStrategyFactory;
@@ -22,6 +24,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockProvider;
@@ -195,6 +198,22 @@ public interface RefinedStorageApi {
     PlayerSlotReference createPlayerInventorySlotReference(Player player, InteractionHand hand);
 
     void usePlayerSlotReferencedItem(Player player, Item... items);
+
+    void registerNetworkMonitorDeviceType(
+        NetworkNodeType type,
+        NetworkMonitorDeviceType deviceType
+    );
+
+    NetworkMonitorDeviceType getNetworkMonitorDeviceType(NetworkNodeType type);
+
+    void registerNetworkNodeDetailsFactory(
+        Class<? extends NetworkNodeDetails> detailsClass,
+        StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory
+    );
+
+    StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
+        Class<? extends NetworkNodeDetails> detailsClass
+    );
 
     PlatformRegistry<PlatformPermission> getPermissionRegistry();
 

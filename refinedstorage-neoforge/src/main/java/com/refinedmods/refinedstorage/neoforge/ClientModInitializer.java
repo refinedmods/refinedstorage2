@@ -82,6 +82,7 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
         registerResourceRendering();
         registerAlternativeGridHints();
         registerDiskModels();
+        registerNetworkMonitorDetailsRenderers();
     }
 
     @SubscribeEvent

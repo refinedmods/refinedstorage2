@@ -1,9 +1,11 @@
 package com.refinedmods.refinedstorage.common.api;
 
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.grid.GridInsertionHint;
 import com.refinedmods.refinedstorage.common.api.grid.GridInsertionHints;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceRendering;
 
 import java.util.List;
@@ -36,6 +38,15 @@ public interface RefinedStorageClientApi {
     <T extends ResourceKey> void registerResourceRendering(Class<T> resourceClass, ResourceRendering rendering);
 
     <T extends ResourceKey> ResourceRendering getResourceRendering(Class<T> resourceClass);
+
+    <T extends NetworkNodeDetails> void registerNetworkNodeDetailsRenderer(
+        Class<T> detailsClass,
+        NetworkNodeDetailsRenderer renderer
+    );
+
+    <T extends NetworkNodeDetails> NetworkNodeDetailsRenderer getNetworkNodeDetailsRenderer(
+        Class<T> detailsClass
+    );
 
     void addAlternativeGridInsertionHint(GridInsertionHint hint);
 

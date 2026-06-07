@@ -137,11 +137,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             searchField.setY(topPos + 6 + 1);
         }
         getMenu().setSearchBox(searchField);
+        addWidget(searchField);
 
         getMenu().getRepository().setListener(this::updateScrollbar);
         updateScrollbar();
-
-        addWidget(searchField);
 
         if (getMenu().hasProperty(PropertyTypes.REDSTONE_MODE)) {
             addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
@@ -202,7 +201,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void updateScrollbar() {
         this.totalRows = (int) Math.ceil((float) getMenu().getRepository().getViewList().size() / (float) COLUMNS);
-        updateScrollbar(totalRows);
+        updateScrollbarRows(totalRows);
     }
 
     private boolean isOverPinArea(final int mouseX, final int mouseY) {
