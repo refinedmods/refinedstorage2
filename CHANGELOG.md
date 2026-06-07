@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Minor rendering fix for the new autocrafting pins in the Grid.
+
 ## [3.2.0] - 2026-05-31
 
 ### Added
