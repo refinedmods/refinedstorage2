@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Crash when another mod tries to extract zero amount out of an Interface, on Fabric.
+
 ## [2.0.9] - 2026-06-07
 
 ### Added
