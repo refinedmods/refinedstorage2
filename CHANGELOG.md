@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Showing pins even if the Grid is inactive.
+-   Crash when another mod tries to extract zero amount out of an Interface, on Fabric.
 
 ## [3.2.1] - 2026-06-07
 

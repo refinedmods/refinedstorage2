@@ -16,12 +16,12 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.ofPlatform;
 import static com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil.toPlatform;
 
-public class ResourceContainerResourceHandlerAdapter
+public class ResourceContainerFluidResourceHandlerAdapter
     extends SnapshotJournal<ResourceContainer>
     implements ResourceHandler<net.neoforged.neoforge.transfer.fluid.FluidResource> {
     private final ResourceContainer container;
 
-    public ResourceContainerResourceHandlerAdapter(final ResourceContainer container) {
+    public ResourceContainerFluidResourceHandlerAdapter(final ResourceContainer container) {
         this.container = container;
     }
 

@@ -120,7 +120,7 @@ import com.refinedmods.refinedstorage.neoforge.storage.portablegrid.ForgePortabl
 import com.refinedmods.refinedstorage.neoforge.support.energy.EnergyStorageEnergyHandlerAdapter;
 import com.refinedmods.refinedstorage.neoforge.support.energy.ItemAccessEnergyItemContext;
 import com.refinedmods.refinedstorage.neoforge.support.inventory.InsertExtractResourceHandler;
-import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerResourceHandlerAdapter;
+import com.refinedmods.refinedstorage.neoforge.support.resource.ResourceContainerFluidResourceHandlerAdapter;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 
 import java.util.Arrays;
@@ -571,7 +571,7 @@ public class ModInitializer extends AbstractModInitializer {
         event.registerBlockEntity(
             Capabilities.Fluid.BLOCK,
             BlockEntities.INSTANCE.getInterface(),
-            (be, side) -> new ResourceContainerResourceHandlerAdapter(be.getExportedResources())
+            (be, side) -> new ResourceContainerFluidResourceHandlerAdapter(be.getExportedResources())
         );
         event.registerBlockEntity(
             Capabilities.Energy.BLOCK,

@@ -32,6 +32,9 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
     @Override
     public long insert(final FluidVariant fluidVariant, final long maxAmount, final TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(fluidVariant, maxAmount);
+        if (maxAmount == 0) {
+            return 0;
+        }
         final FluidResource fluidResource = ofFluidVariant(fluidVariant);
         final long insertedSimulated = container.insert(fluidResource, maxAmount, Action.SIMULATE);
         if (insertedSimulated > 0) {
@@ -43,6 +46,9 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
     @Override
     public long extract(final FluidVariant fluidVariant, final long maxAmount, final TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(fluidVariant, maxAmount);
+        if (maxAmount == 0) {
+            return 0;
+        }
         final FluidResource fluidResource = ofFluidVariant(fluidVariant);
         final long extractedSimulated = container.extract(fluidResource, maxAmount, Action.SIMULATE);
         if (extractedSimulated > 0) {
@@ -86,6 +92,9 @@ public class ResourceContainerFluidStorageAdapter extends SnapshotParticipant<Re
 
         @Override
         public long extract(final FluidVariant resource, final long maxAmount, final TransactionContext transaction) {
+            if (maxAmount == 0) {
+                return 0;
+            }
             final ResourceAmount resourceAmount = container.get(index);
             if (resourceAmount == null
                 || !(resourceAmount.resource() instanceof FluidResource fluidResource)
