@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<DetectorNetworkNode>
     implements NetworkNodeExtendedMenuProvider<SingleAmountData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DetectorBlockEntity.class);
-    private static final int POWERED_CHANGE_TICK_RATE = 20;
+    private static final int POWERED_CHANGE_STABILITY_TICKS = 20;
 
     private static final String TAG_AMOUNT = "amount";
     private static final String TAG_MODE = "mode";
@@ -164,11 +164,21 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
     @Override
     public void updateActiveness(final BlockState state, @Nullable final BooleanProperty activenessProperty) {
         super.updateActiveness(state, activenessProperty);
+        if (level == null) {
+            return;
+        }
         final boolean powered = mainNetworkNode.isActive() && mainNetworkNode.isActivated();
-        final boolean needToUpdatePowered = state.getValue(DetectorBlock.POWERED) != powered;
-        if (level != null && needToUpdatePowered && poweredChangeTicks++ % POWERED_CHANGE_TICK_RATE == 0) {
-            level.setBlockAndUpdate(getBlockPos(), state.setValue(DetectorBlock.POWERED, powered));
+        if (state.getValue(DetectorBlock.POWERED) == powered) {
+            // The computed value matches the current output, so there is no pending change.
             poweredChangeTicks = 0;
+            return;
+        }
+        // Only propagate the change once it has been stable for a while. Network state is transient while nodes
+        // are still being activated by their own block entity tickers (chunk loading, network merges/splits),
+        // so committing a change immediately would emit spurious redstone pulses.
+        if (++poweredChangeTicks >= POWERED_CHANGE_STABILITY_TICKS) {
+            poweredChangeTicks = 0;
+            level.setBlockAndUpdate(getBlockPos(), state.setValue(DetectorBlock.POWERED, powered));
         }
     }
 
