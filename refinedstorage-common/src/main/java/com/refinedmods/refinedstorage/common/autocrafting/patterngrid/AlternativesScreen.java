@@ -33,7 +33,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector3f;
+import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -90,12 +90,13 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(slot.getDisplayAmount())
                 .withIncrementsTop(1, 10, 64)
-                .withIncrementsTopStartPosition(new Vector3f(49, 20, 0))
+                .withIncrementsTopStartPosition(49, 20)
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(new Vector3f(49, 71, 0))
-                .withAmountFieldPosition(new Vector3f(47, 51, 0))
-                .withActionButtonsStartPosition(new Vector3f(7, 199, 0))
-                .withHorizontalActionButtons(true)
+                .withIncrementsBottomStartPosition(49, 71)
+                .withAmountFieldPosition(47, 51)
+                .withResetButton(7, 199)
+                .withCancelButton(7, 199 + 24)
+                .withConfirmButton(width -> new Vector2i(193 - width - 7, 199 + 24))
                 .withMinAmount(() -> slot.getResource() != null
                     ? slot.getResource().getResourceType().getDisplayAmount(1)
                     : 1)
@@ -104,7 +105,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .build(),
             DoubleAmountOperations.INSTANCE,
             193,
-            226
+            250
         );
         this.slot = slot;
         this.initialAllowedAlternativeIds = allowedAlternativeIds;
@@ -313,6 +314,13 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
         if (scrollbar != null) {
             scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
+    }
+
+    @Override
+    protected void extractDefaultBackground(final GuiGraphicsExtractor graphics) {
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
+        graphics.blit(GUI_TEXTURED, getTexture(), x, y, 0, 0, imageWidth, imageHeight, 512, 512);
     }
 
     @Override

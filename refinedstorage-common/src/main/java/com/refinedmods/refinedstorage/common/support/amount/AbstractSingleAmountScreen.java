@@ -8,7 +8,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -26,10 +25,10 @@ public abstract class AbstractSingleAmountScreen<T extends AbstractSingleAmountC
                 .withInitialAmount(initialAmount)
                 .withIncrementsTop(1, 10, 64)
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsTopStartPosition(new Vector3f(40, 20, 0))
-                .withIncrementsBottomStartPosition(new Vector3f(40, 70, 0))
+                .withIncrementsTopStartPosition(40, 20)
+                .withIncrementsBottomStartPosition(40, 70)
                 .withAmountFieldWidth(59)
-                .withAmountFieldPosition(new Vector3f(45, 51, 0))
+                .withAmountFieldPosition(45, 51)
                 .withActionButtonsEnabled(false)
                 .withMinAmount(minAmount)
                 .withResetAmount(minAmount.get())
