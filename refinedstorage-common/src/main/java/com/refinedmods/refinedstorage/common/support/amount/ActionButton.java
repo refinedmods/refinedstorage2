@@ -10,6 +10,9 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
 
 public class ActionButton extends Button {
+    private static final int ICON_SPACING = 4;
+    private static final int TEXT_MARGIN = 2;
+
     @Nullable
     private ActionIcon icon;
 
@@ -29,7 +32,8 @@ public class ActionButton extends Button {
                                 final float partialTick) {
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
         if (icon != null) {
-            graphics.blitSprite(icon.getSprite(), getX() + 4, getY() + 4, ICON_SIZE, ICON_SIZE);
+            graphics.blitSprite(icon.getSprite(), getX() + ICON_SPACING, getY() + ICON_SPACING,
+                ICON_SIZE, ICON_SIZE);
         }
     }
 
@@ -38,10 +42,12 @@ public class ActionButton extends Button {
                                          final Font font,
                                          final int width,
                                          final int color) {
-        final int offset = icon != null ? (ICON_SIZE - 6) : 0;
-        final int start = offset + getX() + width;
-        final int end = offset + getX() + getWidth() - width;
-        renderScrollingString(graphics, font, getMessage(), start, getY(), end, getY() + getHeight(), color);
+        final int offset = icon != null ? (ICON_SIZE + ICON_SPACING) : 0;
+        final int left = this.getX() + TEXT_MARGIN + offset;
+        final int right = this.getX() + this.getWidth() - TEXT_MARGIN;
+        final int top = this.getY();
+        final int bottom = this.getY() + this.getHeight();
+        renderScrollingString(graphics, font, getMessage(), left, top, right, bottom, color);
     }
 
     public void setIcon(@Nullable final ActionIcon icon) {

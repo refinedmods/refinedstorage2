@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Crash when another mod tries to extract zero amount out of an Interface, on Fabric.
 -   Detector emitting an incorrect redstone signal for a brief moment on chunk load, because network storages weren't fully initialized yet. The Detector now only changes its redstone signal after the change has been stable for 1 second.
+-   Action buttons in amount screens going out of bounds in certain languages.
 
 ## [2.0.9] - 2026-06-07
 

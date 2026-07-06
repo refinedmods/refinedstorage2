@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -31,9 +30,9 @@ public class ResourceAmountScreen
                 .withInitialAmount(slot.getDisplayAmount())
                 .withIncrementsTop(1, 10, 64)
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(new Vector3f(7, 72, 0))
-                .withAmountFieldPosition(new Vector3f(9, 51, 0))
-                .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
+                .withIncrementsBottomStartPosition(7, 72)
+                .withAmountFieldPosition(9, 51)
+                .withVerticalActionButtons(114, 22)
                 .withMinAmount(() -> slot.getResource() != null
                     ? slot.getResource().getResourceType().getDisplayAmount(1)
                     : 1)

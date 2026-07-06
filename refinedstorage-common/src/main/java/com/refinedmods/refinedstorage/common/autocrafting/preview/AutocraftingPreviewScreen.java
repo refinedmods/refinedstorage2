@@ -36,7 +36,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector3f;
+import org.joml.Vector2i;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -176,20 +176,23 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(1D)
                 .withIncrementsTop(1, 10, 64)
-                .withIncrementsTopStartPosition(new Vector3f(80, 20, 0))
+                .withIncrementsTopStartPosition(80, 20)
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(new Vector3f(80, 71, 0))
-                .withAmountFieldPosition(new Vector3f(77, 51, 0))
-                .withActionButtonsStartPosition(new Vector3f(7, 222, 0))
-                .withHorizontalActionButtons(true)
+                .withIncrementsBottomStartPosition(80, 71)
+                .withAmountFieldPosition(77, 51)
+                .withConfirmButtonText(START)
+                .withResetButton(7, 222)
+                .withCancelButton(7, 246)
+                .withConfirmButton(width -> new Vector2i(254 - width - 6, 246))
                 .withMinAmount(menu::getMinAmount)
                 .withResetAmount(1D)
-                .withConfirmButtonText(START)
                 .build(),
             DoubleAmountOperations.INSTANCE
         );
         this.imageWidth = 254;
-        this.imageHeight = 249;
+        this.imageHeight = 273;
+        this.imageTextureWidth = 512;
+        this.imageTextureHeight = 512;
         this.requestsButtonsVisible = getMenu().getRequests().size() > 1;
         getMenu().setListener(this);
     }

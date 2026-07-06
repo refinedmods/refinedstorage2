@@ -57,6 +57,9 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     protected final TextMarquee titleMarquee;
 
+    protected int imageTextureWidth = 256;
+    protected int imageTextureHeight = 256;
+
     private final Inventory playerInventory;
     private final List<Rect2i> exclusionZones = new ArrayList<>();
 
@@ -105,7 +108,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     protected void renderBg(final GuiGraphics graphics, final float delta, final int mouseX, final int mouseY) {
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
-        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
+        graphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight, imageTextureWidth, imageTextureHeight);
         renderResourceSlots(graphics);
     }
 
