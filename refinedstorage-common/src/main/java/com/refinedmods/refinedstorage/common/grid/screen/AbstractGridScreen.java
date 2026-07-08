@@ -46,7 +46,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -59,7 +58,6 @@ import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
-import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslationKey;
 
 public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> extends AbstractStretchingScreen<T> {
     protected static final int CLEAR_BUTTON_SIZE = 7;
@@ -98,6 +96,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private final boolean tenthAnniversaryRibbonVisible = shouldDisplayTenthAnniversaryRibbon();
     private final Inventory playerInventory;
 
+    private final TextMarquee scrollingCraftText = createCraftTextMarquee();
+    private final TextMarquee craftText = createCraftTextMarquee();
+
     protected AbstractGridScreen(final T menu,
                                  final Inventory playerInventory,
                                  final Component title,
@@ -107,7 +108,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             60,
             16777045,
             true,
-            false
+            TextMarquee.Style.NORMAL
         ) : new TextMarquee(title, 70));
         if (shouldDisplayTenthAnniversaryRibbon()) {
             this.titleLabelY -= 1;
@@ -249,7 +250,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                               final int topHeight,
                               final int rows,
                               final int mouseX,
-                              final int mouseY) {
+                              final int mouseY,
+                              final float partialTicks) {
         currentGridSlotIndex = -1;
         for (int row = 0; row < Math.max(totalRows, rows); ++row) {
             final int rowX = x + 7;
@@ -259,7 +261,10 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             if (isOutOfFrame) {
                 continue;
             }
-            renderRow(graphics, mouseX, mouseY, rowX, rowY, row);
+            renderRow(graphics, mouseX, mouseY, rowX, rowY, row, partialTicks);
+        }
+        if (currentGridSlotIndex == -1) {
+            scrollingCraftText.resetState();
         }
     }
 
@@ -268,10 +273,11 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                            final int mouseY,
                            final int rowX,
                            final int rowY,
-                           final int row) {
+                           final int row,
+                           final float partialTicks) {
         graphics.blitSprite(ROW_SPRITE, rowX, rowY, 162, ROW_SIZE);
         for (int column = 0; column < COLUMNS; ++column) {
-            renderCell(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
+            renderCell(graphics, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column, partialTicks);
         }
     }
 
@@ -281,14 +287,15 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                             final int rowX,
                             final int rowY,
                             final int idx,
-                            final int column) {
+                            final int column,
+                            final float partialTicks) {
         final ResourceRepository<GridResource> repository = getMenu().getRepository();
         final int slotX = rowX + 1 + (column * ROW_SIZE);
         final int slotY = rowY + 1;
         if (!getMenu().isActive()) {
             renderDisabledSlot(graphics, slotX, slotY);
         } else {
-            renderSlot(graphics, mouseX, mouseY, idx, repository, slotX, slotY);
+            renderSlot(graphics, mouseX, mouseY, idx, repository, slotX, slotY, partialTicks);
         }
     }
 
@@ -314,17 +321,19 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
                             final int idx,
                             final ResourceRepository<GridResource> repository,
                             final int slotX,
-                            final int slotY) {
-        final boolean inBounds = mouseX >= slotX
+                            final int slotY,
+                            final float partialTicks) {
+        final boolean hovering = mouseX >= slotX
             && mouseY >= slotY
             && mouseX <= slotX + 16
             && mouseY <= slotY + 16;
+        final boolean interact = hovering && isOverStorageArea(mouseX, mouseY);
         GridResource resource = null;
         if (idx < repository.getViewList().size()) {
             resource = repository.getViewList().get(idx);
-            renderResourceWithAmount(graphics, slotX, slotY, resource);
+            renderResourceWithAmount(graphics, slotX, slotY, resource, partialTicks, interact);
         }
-        if (inBounds && isOverStorageArea(mouseX, mouseY)) {
+        if (interact) {
             AbstractContainerScreen.renderSlotHighlight(graphics, slotX, slotY, 0);
             if (resource != null) {
                 currentGridSlotIndex = idx;
@@ -345,7 +354,9 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private void renderResourceWithAmount(final GuiGraphics graphics,
                                           final int slotX,
                                           final int slotY,
-                                          final GridResource resource) {
+                                          final GridResource resource,
+                                          final float partialTicks,
+                                          final boolean hovering) {
         if (resource.isAutocraftable(getMenu().getRepository())) {
             renderSlotBackground(
                 graphics,
@@ -364,7 +375,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             );
         }
         resource.render(graphics, slotX, slotY);
-        renderAmount(graphics, slotX, slotY, resource);
+        renderAmount(graphics, slotX, slotY, resource, partialTicks, hovering);
     }
 
     public static void renderSlotBackground(final GuiGraphics graphics,
@@ -385,30 +396,24 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     private void renderAmount(final GuiGraphics graphics,
                               final int slotX,
                               final int slotY,
-                              final GridResource resource) {
+                              final GridResource resource,
+                              final float partialTicks,
+                              final boolean hovering) {
         final long amount = resource.getAmount(getMenu().getRepository());
-        final String text = getAmountText(resource, amount);
-        final int color = getAmountColor(resource, amount);
+        if (amount == 0 && resource.isAutocraftable(getMenu().getRepository())) {
+            final TextMarquee text = hovering ? scrollingCraftText : craftText;
+            text.updateStateAndRender(graphics, slotX, slotY, font, hovering, partialTicks);
+            return;
+        }
+        final int color = getAmountColor(amount);
         final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+        final String text = resource.getDisplayedAmount(getMenu().getRepository());
         ResourceSlotRendering.renderAmount(graphics, slotX, slotY, text, color, large);
     }
 
-    private int getAmountColor(final GridResource resource, final long amount) {
-        if (amount == 0) {
-            if (resource.isAutocraftable(getMenu().getRepository())) {
-                return 0xFFFFFF;
-            }
-            return 0xFF5555;
-        }
-        return 0xFFFFFF;
-    }
-
-    private String getAmountText(final GridResource resource, final long amount) {
-        if (amount == 0 && resource.isAutocraftable(getMenu().getRepository())) {
-            return I18n.get(createTranslationKey("gui", "grid.craft"));
-        }
-        return resource.getDisplayedAmount(getMenu().getRepository());
+    private static int getAmountColor(final long amount) {
+        return amount == 0 ? 0xFFFF5555 : 0xFFFFFFFF;
     }
 
     private void renderDisabledSlot(final GuiGraphics graphics, final int slotX, final int slotY) {
@@ -750,5 +755,17 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         }
 
         return super.keyReleased(key, scanCode, modifiers);
+    }
+
+    private static TextMarquee createCraftTextMarquee() {
+        return new TextMarquee(
+            createTranslation("gui", "grid.craft"),
+            16,
+            0xFFFFFFFF,
+            true,
+            (Minecraft.getInstance().isEnforceUnicode() || Platform.INSTANCE.getConfig().getGrid().isLargeFont())
+                ? TextMarquee.Style.NORMAL_SLOT
+                : TextMarquee.Style.SMALL_SLOT
+        );
     }
 }

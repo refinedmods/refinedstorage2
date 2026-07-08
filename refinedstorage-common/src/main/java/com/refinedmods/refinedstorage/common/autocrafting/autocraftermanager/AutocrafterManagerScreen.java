@@ -154,7 +154,8 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
                               final int topHeight,
                               final int rows,
                               final int mouseX,
-                              final int mouseY) {
+                              final int mouseY,
+                              final float partialTicks) {
         if (!menu.isActive()) {
             graphics.fill(
                 RenderType.guiOverlay(),

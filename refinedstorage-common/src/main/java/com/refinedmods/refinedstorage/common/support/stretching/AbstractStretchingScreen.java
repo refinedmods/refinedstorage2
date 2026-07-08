@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.common.util.ClientPlatformUtil;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -95,7 +96,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
         renderBackground(graphics, x, y);
-        renderRows(graphics, mouseX, mouseY, x, y);
+        renderRows(graphics, mouseX, mouseY, x, y, Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
     }
 
     private void renderBackground(final GuiGraphics graphics, final int x, final int y) {
@@ -112,14 +113,15 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         );
     }
 
-    private void renderRows(final GuiGraphics graphics, final int mouseX, final int mouseY, final int x, final int y) {
+    private void renderRows(final GuiGraphics graphics, final int mouseX, final int mouseY,
+                            final int x, final int y, final float partialTicks) {
         graphics.enableScissor(
             x + 7,
             y + TOP_HEIGHT + 1,
             x + 7 + (ROW_SIZE * COLUMNS),
             y + TOP_HEIGHT + 1 + (ROW_SIZE * visibleRows) - 2
         );
-        renderRows(graphics, x, y, TOP_HEIGHT, visibleRows, mouseX, mouseY);
+        renderRows(graphics, x, y, TOP_HEIGHT, visibleRows, mouseX, mouseY, partialTicks);
         graphics.disableScissor();
     }
 
@@ -130,7 +132,8 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         int topHeight,
         int rows,
         int mouseX,
-        int mouseY
+        int mouseY,
+        float partialTicks
     );
 
     protected abstract void renderStretchingBackground(GuiGraphics graphics, int x, int y, int rows);
