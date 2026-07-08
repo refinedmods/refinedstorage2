@@ -105,7 +105,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
         renderBackground(graphics, x, y);
-        renderRows(graphics, mouseX, mouseY, x, y);
+        renderRows(graphics, mouseX, mouseY, x, y, partialTicks);
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     }
 
     private void renderRows(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final int x,
-                            final int y) {
+                            final int y, final float partialTicks) {
         final int topOffset = getTopOffset();
         graphics.enableScissor(
             x + 7,
@@ -139,7 +139,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
             x + 7 + (ROW_SIZE * COLUMNS),
             y + TOP_HEIGHT + 1 + (ROW_SIZE * visibleRows) - 2
         );
-        renderRows(graphics, x, y, TOP_HEIGHT + topOffset, visibleRows, mouseX, mouseY);
+        renderRows(graphics, x, y, TOP_HEIGHT + topOffset, visibleRows, mouseX, mouseY, partialTicks);
         graphics.disableScissor();
     }
 
@@ -150,7 +150,8 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         int topHeight,
         int rows,
         int mouseX,
-        int mouseY
+        int mouseY,
+        float partialTicks
     );
 
     protected abstract void renderStretchingBackground(GuiGraphicsExtractor graphics, int x, int y, int rows);

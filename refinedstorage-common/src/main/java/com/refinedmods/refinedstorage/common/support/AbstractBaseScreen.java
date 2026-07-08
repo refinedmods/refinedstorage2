@@ -138,7 +138,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             mouseX,
             mouseY
         );
-        titleMarquee.render(graphics, titleLabelX, titleLabelY, font, hoveringOverTitle,
+        titleMarquee.updateStateAndRender(graphics, titleLabelX, titleLabelY, font, hoveringOverTitle,
             minecraft.getDeltaTracker().getGameTimeDeltaTicks());
         renderPlayerInventoryTitle(graphics);
     }
