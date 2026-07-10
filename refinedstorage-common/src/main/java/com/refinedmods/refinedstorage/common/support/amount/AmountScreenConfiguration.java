@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -208,8 +208,7 @@ public final class AmountScreenConfiguration<T extends Number> {
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withConfirmButton(
-            final Function<Integer, Vector2i> provider) {
+        public AmountScreenConfigurationBuilder<T> withConfirmButton(final IntFunction<Vector2i> provider) {
             final Font font = Minecraft.getInstance().font;
             final int width = font.width(confirmButtonText)
                 + ACTION_BUTTON_ICON_SPACING + ICON_SIZE + 4;
