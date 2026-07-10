@@ -265,7 +265,7 @@ public final class PlatformImpl extends AbstractPlatform {
             return false;
         }
         final net.neoforged.neoforge.transfer.fluid.FluidResource platformResource = toPlatform(fluidResource);
-        return FluidUtil.tryPlaceFluid(platformResource, player, level, pos, false);
+        return FluidUtil.tryPlaceFluid(platformResource, player, level, pos, true);
     }
 
     @Override
