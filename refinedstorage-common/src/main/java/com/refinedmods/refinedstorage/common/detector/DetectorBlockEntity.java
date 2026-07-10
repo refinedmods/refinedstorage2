@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
+import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -172,7 +173,7 @@ public class DetectorBlockEntity extends AbstractBaseNetworkNodeContainerBlockEn
             return;
         }
         final boolean powered = mainNetworkNode.isActive() && mainNetworkNode.isActivated();
-        if (state.getValue(DetectorBlock.POWERED) == powered) {
+        if (Objects.equals(state.getValue(DetectorBlock.POWERED), powered)) {
             // The computed value matches the current output, so there is no pending change.
             poweredChangeTicks = 0;
             return;
