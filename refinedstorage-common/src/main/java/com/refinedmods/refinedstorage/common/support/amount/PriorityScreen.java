@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
@@ -29,8 +28,8 @@ public class PriorityScreen extends AbstractAmountScreen<AbstractAmountScreen.De
                 .withInitialAmount(priority)
                 .withIncrementsTop(1, 5, 10)
                 .withIncrementsBottom(-1, -5, -10)
-                .withAmountFieldPosition(new Vector3f(19, 48, 0))
-                .withActionButtonsStartPosition(new Vector3f(107, 18, 0))
+                .withAmountFieldPosition(19, 48)
+                .withVerticalActionButtons(107, 18)
                 .withMinAmount(() -> Integer.MIN_VALUE)
                 .withMaxAmount(Integer.MAX_VALUE)
                 .withResetAmount(0)

@@ -48,7 +48,7 @@ class AutocraftingTaskButton extends AbstractButton {
             TASK_BUTTON_WIDTH - 16 - 4 - 4 - 4,
             0xFFFFFFFF,
             true,
-            true
+            TextMarquee.Style.SMALL
         );
         this.onPress = onPress;
         this.stateProvider = stateProvider;
@@ -66,7 +66,7 @@ class AutocraftingTaskButton extends AbstractButton {
         final int yOffset = SmallText.isSmall() ? 5 : 3;
         final int textX = getX() + 3 + 16 + 3;
         final int textY = getY() + yOffset;
-        text.render(graphics, textX, textY, Minecraft.getInstance().font, isHovered, partialTicks);
+        text.updateStateAndRender(graphics, textX, textY, Minecraft.getInstance().font, isHovered, partialTicks);
         final int ySpacing = SmallText.isSmall() ? 7 : 8;
         final long percentageCompleted = Math.round(
             stateProvider.getPercentageCompleted(task.id()) * 100

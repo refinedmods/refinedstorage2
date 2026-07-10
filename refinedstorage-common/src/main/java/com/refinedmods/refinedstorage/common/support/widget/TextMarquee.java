@@ -10,7 +10,7 @@ public class TextMarquee {
     private final int maxWidth;
     private final int color;
     private final boolean dropShadow;
-    private final boolean small;
+    private final Style style;
 
     private Component text;
     private float offset;
@@ -21,67 +21,86 @@ public class TextMarquee {
                        final int maxWidth,
                        final int color,
                        final boolean dropShadow,
-                       final boolean small) {
+                       final Style style) {
         this.text = text;
         this.maxWidth = maxWidth;
         this.color = color;
         this.dropShadow = dropShadow;
-        this.small = small;
+        this.style = style;
     }
 
     public TextMarquee(final Component text, final int maxWidth) {
-        this(text, maxWidth, -12566464, false, false);
+        this(text, maxWidth, -12566464, false, Style.NORMAL);
+    }
+
+    private int calculateWidth(final Font font) {
+        final boolean small = style == Style.SMALL || style == Style.SMALL_SLOT;
+        final float scale = small ? SmallText.correctScale(SmallText.DEFAULT_SCALE) : 1F;
+        return (int) (font.width(text) * scale);
     }
 
     public int getEffectiveWidth(final Font font) {
-        return Math.min(maxWidth, font.width(text));
+        return Math.min(maxWidth, calculateWidth(font));
     }
 
-    public void render(final GuiGraphicsExtractor graphics, final int x, final int y, final Font font,
-                       final boolean hovering, final float partialTicks) {
+    public void resetState() {
+        offset = 0;
+        state = State.MOVING_LEFT;
+        tickAccumulator = 0;
+    }
+
+    public void updateStateAndRender(final GuiGraphicsExtractor graphics, final int x, final int y, final Font font,
+                                     final boolean hovering, final float partialTicks) {
         if (!hovering) {
-            offset = 0;
-            state = State.MOVING_LEFT;
-            tickAccumulator = 0;
+            resetState();
         }
-        final int width = (int) (font.width(text) * (small ? SmallText.correctScale(SmallText.DEFAULT_SCALE) : 1F));
-        if (width > maxWidth) {
-            final int overflow = width - maxWidth;
+        final int width = calculateWidth(font);
+        int correctedOffset = 0;
+        final boolean overflow = width > maxWidth;
+        // TODO: autocraftable tooltip does not resize in small/large text.
+        if (overflow) {
+            final int overflowWidth = width - maxWidth;
             if (hovering) {
-                updateMarquee(overflow, partialTicks);
+                updateMarquee(overflowWidth, partialTicks);
             }
-            graphics.enableScissor(x, y, x + maxWidth, y + font.lineHeight);
-            if (small) {
-                SmallText.render(
-                    graphics,
-                    font,
-                    text.getVisualOrderText(),
-                    x + (int) offset,
-                    y,
-                    color,
-                    dropShadow,
-                    SmallText.DEFAULT_SCALE
-                );
-            } else {
-                graphics.text(font, text, x + (int) offset, y, color, dropShadow);
-            }
-            graphics.disableScissor();
-        } else {
-            if (small) {
-                SmallText.render(
-                    graphics,
-                    font,
-                    text.getVisualOrderText(),
-                    x,
-                    y,
-                    color,
-                    dropShadow,
-                    SmallText.DEFAULT_SCALE
-                );
-            } else {
-                graphics.text(font, text, x, y, color, dropShadow);
-            }
+            final boolean slot = style == Style.SMALL_SLOT || style == Style.NORMAL_SLOT;
+            graphics.enableScissor(x, y, x + maxWidth, y + (slot ? maxWidth : font.lineHeight));
+            correctedOffset = (int) offset;
         }
+        switch (style) {
+            case SMALL -> SmallText.render(
+                graphics,
+                font,
+                text.getVisualOrderText(),
+                x + correctedOffset,
+                y,
+                color,
+                dropShadow,
+                SmallText.DEFAULT_SCALE
+            );
+            case SMALL_SLOT -> renderSlot(graphics, x + correctedOffset, y, false, font, !overflow);
+            case NORMAL_SLOT -> renderSlot(graphics, x + correctedOffset, y, true, font, !overflow);
+            case NORMAL -> graphics.text(font, text, x + correctedOffset, y, color, dropShadow);
+        }
+        if (overflow) {
+            graphics.disableScissor();
+        }
+    }
+
+    private void renderSlot(final GuiGraphicsExtractor graphics, final int x, final int y, final boolean large,
+                            final Font font, final boolean alignRight) {
+        graphics.pose().pushMatrix();
+        // Large amounts overlap with the slot lines (see Minecraft behavior)
+        graphics.pose().translate(x + (large ? 1F : 0F), y + (large ? 1F : 0F));
+        if (!large) {
+            graphics.pose().scale(0.5F, 0.5F);
+        }
+        int offsetX = 0;
+        if (alignRight) {
+            offsetX = (large ? 16 : 30) - font.width(text);
+        }
+        graphics.text(font, text, offsetX, large ? 8 : 22, color, true);
+        graphics.pose().popMatrix();
     }
 
     private void updateMarquee(final int overflow, final float partialTicks) {
@@ -144,5 +163,12 @@ public class TextMarquee {
                 case PAUSE -> currentOffset < 0 ? MOVING_RIGHT : MOVING_LEFT;
             };
         }
+    }
+
+    public enum Style {
+        NORMAL,
+        NORMAL_SLOT,
+        SMALL,
+        SMALL_SLOT
     }
 }

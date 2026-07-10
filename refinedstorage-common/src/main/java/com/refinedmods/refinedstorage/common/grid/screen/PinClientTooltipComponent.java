@@ -31,17 +31,19 @@ class PinClientTooltipComponent implements ClientTooltipComponent {
 
     @Override
     public int getWidth(final Font font) {
-        return ICON_SIZE + ICON_MARGIN + (int) (font.width(DRAG_AND_DROP_TO_PIN) * SmallText.TOOLTIP_SCALE);
+        return ICON_SIZE
+            + ICON_MARGIN
+            + (int) (font.width(DRAG_AND_DROP_TO_PIN) * SmallText.correctScale(SmallText.TOOLTIP_SCALE));
     }
 
     @Override
     public void extractText(final GuiGraphicsExtractor graphics, final Font font, final int x, final int y) {
-        final int yOffset = SmallText.isSmall() ? 5 : 0;
+        final int yOffset = SmallText.isSmall() ? 5 : 2;
         SmallText.render(
             graphics,
             font,
             DRAG_AND_DROP_TO_PIN.getVisualOrderText(),
-            x + ICON_SIZE + ICON_MARGIN - 4,
+            x + ICON_SIZE - 3,
             y + yOffset,
             0xFFEF2E39,
             true,
@@ -52,6 +54,6 @@ class PinClientTooltipComponent implements ClientTooltipComponent {
     @Override
     public void extractImage(final Font font, final int x, final int y, final int w, final int h,
                              final GuiGraphicsExtractor graphics) {
-        graphics.blitSprite(GUI_TEXTURED, ICON, x - 2, y, ICON_SIZE, ICON_SIZE);
+        graphics.blitSprite(GUI_TEXTURED, ICON, x - 3, y, ICON_SIZE, ICON_SIZE);
     }
 }

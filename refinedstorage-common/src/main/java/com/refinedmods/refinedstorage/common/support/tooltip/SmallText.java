@@ -16,8 +16,8 @@ public final class SmallText {
         return !Minecraft.getInstance().isEnforceUnicode();
     }
 
-    public static float correctScale(final float smallScale) {
-        return isSmall() ? smallScale : 1F;
+    public static float correctScale(final float requestedScale) {
+        return isSmall() ? requestedScale : 1F;
     }
 
     public static void render(final GuiGraphicsExtractor graphics,

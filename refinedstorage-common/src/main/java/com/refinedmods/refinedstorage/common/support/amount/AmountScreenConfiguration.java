@@ -1,27 +1,37 @@
 package com.refinedmods.refinedstorage.common.support.amount;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.joml.Vector3f;
+import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
+import static com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen.CANCEL_TEXT;
+import static com.refinedmods.refinedstorage.common.support.amount.AbstractAmountScreen.RESET_TEXT;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 
 public final class AmountScreenConfiguration<T extends Number> {
+    private static final int ACTION_BUTTON_HEIGHT = 20;
+    private static final int VERTICAL_ACTION_BUTTONS_FIXED_WIDTH = 58;
+    private static final int ACTION_BUTTON_ICON_SPACING = 4 * 2;
+    private static final int ACTION_BUTTON_VERTICAL_SPACING = 4;
+
     private static final MutableComponent SET_TEXT = createTranslation("gui", "configure_amount.set");
 
     @Nullable
     private final T initialAmount;
     private final int[] incrementsTop;
-    private final Vector3f incrementsTopStartPosition;
+    private final Vector2i incrementsTopStartPosition;
     private final int[] incrementsBottom;
-    private final Vector3f incrementsBottomStartPosition;
+    private final Vector2i incrementsBottomStartPosition;
     private final int amountFieldWidth;
-    private final Vector3f amountFieldPosition;
-    private final Vector3f actionButtonsStartPosition;
-    private final boolean horizontalActionButtons;
+    private final Vector2i amountFieldPosition;
+    private final ActionButtonPositions actionButtonPositions;
     private final boolean actionButtonsEnabled;
     private final Component confirmButtonText;
     @Nullable
@@ -33,13 +43,12 @@ public final class AmountScreenConfiguration<T extends Number> {
 
     private AmountScreenConfiguration(@Nullable final T initialAmount,
                                       final int[] incrementsTop,
-                                      final Vector3f incrementsTopStartPosition,
+                                      final Vector2i incrementsTopStartPosition,
                                       final int[] incrementsBottom,
-                                      final Vector3f incrementsBottomStartPosition,
+                                      final Vector2i incrementsBottomStartPosition,
                                       final int amountFieldWidth,
-                                      final Vector3f amountFieldPosition,
-                                      final Vector3f actionButtonsStartPosition,
-                                      final boolean horizontalActionButtons,
+                                      final Vector2i amountFieldPosition,
+                                      final ActionButtonPositions actionButtonPositions,
                                       final boolean actionButtonsEnabled,
                                       final Component confirmButtonText,
                                       @Nullable final Supplier<T> minAmount,
@@ -52,8 +61,7 @@ public final class AmountScreenConfiguration<T extends Number> {
         this.incrementsBottomStartPosition = incrementsBottomStartPosition;
         this.amountFieldWidth = amountFieldWidth;
         this.amountFieldPosition = amountFieldPosition;
-        this.actionButtonsStartPosition = actionButtonsStartPosition;
-        this.horizontalActionButtons = horizontalActionButtons;
+        this.actionButtonPositions = actionButtonPositions;
         this.actionButtonsEnabled = actionButtonsEnabled;
         this.confirmButtonText = confirmButtonText;
         this.minAmount = minAmount;
@@ -70,7 +78,7 @@ public final class AmountScreenConfiguration<T extends Number> {
         return incrementsTop;
     }
 
-    public Vector3f getIncrementsTopStartPosition() {
+    public Vector2i getIncrementsTopStartPosition() {
         return incrementsTopStartPosition;
     }
 
@@ -78,7 +86,7 @@ public final class AmountScreenConfiguration<T extends Number> {
         return incrementsBottom;
     }
 
-    public Vector3f getIncrementsBottomStartPosition() {
+    public Vector2i getIncrementsBottomStartPosition() {
         return incrementsBottomStartPosition;
     }
 
@@ -86,16 +94,12 @@ public final class AmountScreenConfiguration<T extends Number> {
         return amountFieldWidth;
     }
 
-    public Vector3f getAmountFieldPosition() {
+    public Vector2i getAmountFieldPosition() {
         return amountFieldPosition;
     }
 
-    public Vector3f getActionButtonsStartPosition() {
-        return actionButtonsStartPosition;
-    }
-
-    public boolean isHorizontalActionButtons() {
-        return horizontalActionButtons;
+    public ActionButtonPositions getActionButtonPositions() {
+        return actionButtonPositions;
     }
 
     public boolean isActionButtonsEnabled() {
@@ -125,13 +129,14 @@ public final class AmountScreenConfiguration<T extends Number> {
         @Nullable
         private T initialAmount;
         private int[] incrementsTop = new int[] {};
-        private Vector3f incrementsTopStartPosition = new Vector3f(7, 20, 0);
+        private Vector2i incrementsTopStartPosition = new Vector2i(7, 20);
         private int[] incrementsBottom = new int[] {};
-        private Vector3f incrementsBottomStartPosition = new Vector3f(7, 67, 0);
+        private Vector2i incrementsBottomStartPosition = new Vector2i(7, 67);
         private int amountFieldWidth = 68;
-        private Vector3f amountFieldPosition = new Vector3f(0, 0, 0);
-        private Vector3f actionButtonsStartPosition = new Vector3f(0, 0, 0);
-        private boolean horizontalActionButtons = false;
+        private Vector2i amountFieldPosition = new Vector2i(0, 0);
+        private ActionButtonPositionAndSize cancelButton = ActionButtonPositionAndSize.ZERO;
+        private ActionButtonPositionAndSize resetButton = ActionButtonPositionAndSize.ZERO;
+        private ActionButtonPositionAndSize confirmButton = ActionButtonPositionAndSize.ZERO;
         private Component confirmButtonText = SET_TEXT;
         private boolean actionButtonsEnabled = true;
         @Nullable
@@ -158,8 +163,8 @@ public final class AmountScreenConfiguration<T extends Number> {
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withIncrementsTopStartPosition(final Vector3f newPos) {
-            this.incrementsTopStartPosition = newPos;
+        public AmountScreenConfigurationBuilder<T> withIncrementsTopStartPosition(final int x, final int y) {
+            this.incrementsTopStartPosition = new Vector2i(x, y);
             return this;
         }
 
@@ -168,8 +173,8 @@ public final class AmountScreenConfiguration<T extends Number> {
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withIncrementsBottomStartPosition(final Vector3f newPos) {
-            this.incrementsBottomStartPosition = newPos;
+        public AmountScreenConfigurationBuilder<T> withIncrementsBottomStartPosition(final int x, final int y) {
+            this.incrementsBottomStartPosition = new Vector2i(x, y);
             return this;
         }
 
@@ -178,22 +183,55 @@ public final class AmountScreenConfiguration<T extends Number> {
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withAmountFieldPosition(final Vector3f newAmountFieldPosition) {
-            this.amountFieldPosition = newAmountFieldPosition;
+        public AmountScreenConfigurationBuilder<T> withAmountFieldPosition(final int x, final int y) {
+            this.amountFieldPosition = new Vector2i(x, y);
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withActionButtonsStartPosition(
-            final Vector3f newActionButtonsStartPosition
-        ) {
-            this.actionButtonsStartPosition = newActionButtonsStartPosition;
+        public AmountScreenConfigurationBuilder<T> withCancelButton(final int x, final int y) {
+            final Font font = Minecraft.getInstance().font;
+            final int width = font.width(CANCEL_TEXT) + ACTION_BUTTON_ICON_SPACING + ICON_SIZE + 4;
+            this.cancelButton = new ActionButtonPositionAndSize(
+                new Vector2i(x, y),
+                new Vector2i(width, ACTION_BUTTON_HEIGHT)
+            );
             return this;
         }
 
-        public AmountScreenConfigurationBuilder<T> withHorizontalActionButtons(
-            final boolean newHorizontalActionButtons
-        ) {
-            this.horizontalActionButtons = newHorizontalActionButtons;
+        public AmountScreenConfigurationBuilder<T> withResetButton(final int x, final int y) {
+            final Font font = Minecraft.getInstance().font;
+            final int width = font.width(RESET_TEXT) + ACTION_BUTTON_ICON_SPACING + ICON_SIZE + 4;
+            this.resetButton = new ActionButtonPositionAndSize(
+                new Vector2i(x, y),
+                new Vector2i(width, ACTION_BUTTON_HEIGHT)
+            );
+            return this;
+        }
+
+        public AmountScreenConfigurationBuilder<T> withConfirmButton(
+            final Function<Integer, Vector2i> provider) {
+            final Font font = Minecraft.getInstance().font;
+            final int width = font.width(confirmButtonText)
+                + ACTION_BUTTON_ICON_SPACING + ICON_SIZE + 4;
+            this.confirmButton = new ActionButtonPositionAndSize(
+                provider.apply(width),
+                new Vector2i(width, ACTION_BUTTON_HEIGHT)
+            );
+            return this;
+        }
+
+        public AmountScreenConfigurationBuilder<T> withVerticalActionButtons(final int x, final int y) {
+            final Vector2i size = new Vector2i(VERTICAL_ACTION_BUTTONS_FIXED_WIDTH, ACTION_BUTTON_HEIGHT);
+            this.cancelButton = new ActionButtonPositionAndSize(new Vector2i(x, y), size);
+            this.resetButton = new ActionButtonPositionAndSize(
+                new Vector2i(x, y + ACTION_BUTTON_HEIGHT + ACTION_BUTTON_VERTICAL_SPACING),
+                size
+            );
+            this.confirmButton = new ActionButtonPositionAndSize(
+                new Vector2i(x, y + ACTION_BUTTON_HEIGHT + ACTION_BUTTON_VERTICAL_SPACING
+                    + ACTION_BUTTON_HEIGHT + ACTION_BUTTON_VERTICAL_SPACING),
+                size
+            );
             return this;
         }
 
@@ -235,8 +273,7 @@ public final class AmountScreenConfiguration<T extends Number> {
                 incrementsBottomStartPosition,
                 amountFieldWidth,
                 amountFieldPosition,
-                actionButtonsStartPosition,
-                horizontalActionButtons,
+                new ActionButtonPositions(cancelButton, resetButton, confirmButton),
                 actionButtonsEnabled,
                 confirmButtonText,
                 minAmount,
@@ -244,5 +281,15 @@ public final class AmountScreenConfiguration<T extends Number> {
                 resetAmount
             );
         }
+    }
+
+    public record ActionButtonPositions(ActionButtonPositionAndSize cancel,
+                                        ActionButtonPositionAndSize reset,
+                                        ActionButtonPositionAndSize confirm) {
+    }
+
+    public record ActionButtonPositionAndSize(Vector2i pos, Vector2i size) {
+        public static final ActionButtonPositionAndSize ZERO = new ActionButtonPositionAndSize(new Vector2i(0, 0),
+            new Vector2i(0, 0));
     }
 }

@@ -52,7 +52,7 @@ public class AutocraftableClientTooltipComponent implements ClientTooltipCompone
 
     @Override
     public int getWidth(final Font font) {
-        return ICON_SIZE + ICON_MARGIN + (int) (font.width(text) * SmallText.TOOLTIP_SCALE);
+        return ICON_SIZE + ICON_MARGIN + (int) (font.width(text) * SmallText.correctScale(SmallText.TOOLTIP_SCALE));
     }
 
     @Override
