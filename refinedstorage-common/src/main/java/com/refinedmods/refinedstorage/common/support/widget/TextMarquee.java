@@ -57,7 +57,6 @@ public class TextMarquee {
         final int width = calculateWidth(font);
         int correctedOffset = 0;
         final boolean overflow = width > maxWidth;
-        // TODO: autocraftable tooltip does not resize in small/large text.
         if (overflow) {
             final int overflowWidth = width - maxWidth;
             if (hovering) {
