@@ -7,7 +7,7 @@ body:
       value: |
         Provide a summary of the enhancement in the title above.
         
-        Please follow following guidelines before proposing an enchancement:
+        Please follow following guidelines before proposing an enhancement:
         1) Ensure that you are running on the latest version (to ensure that the enhancement does not exist yet).
         2) Ensure that your enhancement hasn't already been posted. Please look in the closed issues as well (for enhancements that have been denied).
         
