@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorageImpl;
 import com.refinedmods.refinedstorage.api.storage.composite.ParentComposite;
-import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 
 import java.util.List;
@@ -18,19 +17,6 @@ import java.util.Optional;
 class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeStorageImpl> implements CompositeStorage {
     protected ExposedStorage(final StorageConfiguration config) {
         super(config, new CompositeStorageImpl(MutableResourceListImpl.create()));
-    }
-
-    long getCapacity() {
-        final CompositeStorageImpl delegate = getUnsafeDelegate();
-        if (delegate == null) {
-            return 0;
-        }
-        return delegate.getSources()
-            .stream()
-            .filter(LimitedStorage.class::isInstance)
-            .map(LimitedStorage.class::cast)
-            .mapToLong(LimitedStorage::getCapacity)
-            .sum();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
+import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.ProviderImpl;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -12,12 +13,14 @@ import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.api.storage.StorageState;
+import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage.network.test.InjectNetwork;
 import com.refinedmods.refinedstorage.network.test.InjectNetworkStorageComponent;
 import com.refinedmods.refinedstorage.network.test.NetworkTest;
+import com.refinedmods.refinedstorage.network.test.RecordingNetworkNodeListener;
 import com.refinedmods.refinedstorage.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage.network.test.fixtures.ActorFixture;
 
@@ -725,7 +728,7 @@ class StorageNetworkNodeTest {
     ) {
         // Arrange
         final StateTrackedStorage.Listener listener = mock(StateTrackedStorage.Listener.class);
-        sut.setListener(listener);
+        sut.setStorageListener(listener);
 
         final Storage storage = new LimitedStorageImpl(100);
         provider.set(1, storage);
@@ -736,6 +739,128 @@ class StorageNetworkNodeTest {
 
         // Assert
         verify(listener, times(1)).onStorageStateChanged();
+    }
+
+    @Test
+    void shouldNotifyDetailsListenerWhenStorageCountChanges() {
+        // Arrange
+        final RecordingNetworkNodeListener detailsListener = new RecordingNetworkNodeListener();
+        sut.addListener(detailsListener);
+        provider.set(1, new StorageImpl());
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
+        assertThat(detailsListener.events).containsExactly(
+            new NetworkNodeDetailsChangedEvent(BASE_USAGE + USAGE_PER_STORAGE, sut.isActive())
+        );
+    }
+
+    @Test
+    void shouldExposeDefaultPriority() {
+        // Act
+        final PriorityProvider priority = sut.getPriority();
+
+        // Assert
+        assertThat(priority).isNotNull();
+        assertThat(priority.getInsertPriority()).isZero();
+        assertThat(priority.getExtractPriority()).isZero();
+    }
+
+    @Test
+    void shouldExposePriorityFromStorageConfiguration() {
+        // Arrange
+        sut.getStorageConfiguration().setInsertPriority(5);
+        sut.getStorageConfiguration().setExtractPriority(7);
+
+        // Act
+        final PriorityProvider priority = sut.getPriority();
+
+        // Assert
+        assertThat(priority).isNotNull();
+        assertThat(priority.getInsertPriority()).isEqualTo(5);
+        assertThat(priority.getExtractPriority()).isEqualTo(7);
+    }
+
+    @Test
+    void shouldReturnZeroCapacityAndStoredWithFilterWhenNoStoragesArePresent() {
+        // Act & assert
+        assertThat(sut.getCapacity(storage -> true)).isZero();
+        assertThat(sut.getStored(storage -> true)).isZero();
+    }
+
+    @Test
+    void shouldCalculateCapacityAndStoredWithFilterMatchingEverything() {
+        // Arrange
+        final Storage limitedStorage1 = new LimitedStorageImpl(100);
+        limitedStorage1.insert(A, 30, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, limitedStorage1);
+
+        final Storage limitedStorage2 = new LimitedStorageImpl(50);
+        limitedStorage2.insert(A, 20, Action.EXECUTE, Actor.EMPTY);
+        provider.set(2, limitedStorage2);
+
+        final Storage unlimitedStorage = new StorageImpl();
+        unlimitedStorage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        provider.set(3, unlimitedStorage);
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getCapacity(storage -> true)).isEqualTo(150);
+        assertThat(sut.getStored(storage -> true)).isEqualTo(50);
+    }
+
+    @Test
+    void shouldOnlyCalculateCapacityAndStoredForStoragesMatchingFilter() {
+        // Arrange
+        final Storage limitedStorage1 = new LimitedStorageImpl(100);
+        limitedStorage1.insert(A, 30, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, limitedStorage1);
+
+        final Storage limitedStorage2 = new LimitedStorageImpl(50);
+        limitedStorage2.insert(A, 20, Action.EXECUTE, Actor.EMPTY);
+        provider.set(2, limitedStorage2);
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getCapacity(storage -> storage == limitedStorage1)).isEqualTo(100);
+        assertThat(sut.getStored(storage -> storage == limitedStorage1)).isEqualTo(30);
+    }
+
+    @Test
+    void shouldReturnZeroCapacityAndStoredWhenFilterMatchesNothing() {
+        // Arrange
+        final Storage limitedStorage = new LimitedStorageImpl(100);
+        limitedStorage.insert(A, 30, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, limitedStorage);
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getCapacity(storage -> false)).isZero();
+        assertThat(sut.getStored(storage -> false)).isZero();
+    }
+
+    @Test
+    void shouldNotCountUnlimitedStorageInCapacityAndStoredWithFilterEvenWhenFilterMatches() {
+        // Arrange
+        final Storage unlimitedStorage = new StorageImpl();
+        unlimitedStorage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, unlimitedStorage);
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getCapacity(storage -> true)).isZero();
+        assertThat(sut.getStored(storage -> true)).isZero();
     }
 
     private void initializeAndActivate() {

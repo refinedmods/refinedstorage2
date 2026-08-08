@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.resource.filter.Filter;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.DestructorStrategy;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.Set;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ public class DestructorNetworkNode extends SimpleNetworkNode {
     private Supplier<Player> playerProvider;
 
     DestructorNetworkNode(final long energyUsage) {
-        super(energyUsage);
+        super(PlatformNetworkNodeTypes.DESTRUCTOR, energyUsage);
     }
 
     void setStrategy(@Nullable final DestructorStrategy strategy) {

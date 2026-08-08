@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.SchedulingMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.api.constructordestructor.ConstructorStrategy;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ConstructorNetworkNode extends SimpleNetworkNode {
     private SchedulingMode schedulingMode;
 
     ConstructorNetworkNode(final long energyUsage) {
-        super(energyUsage);
+        super(PlatformNetworkNodeTypes.CONSTRUCTOR, energyUsage);
     }
 
     @Override

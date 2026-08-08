@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.Exte
 import com.refinedmods.refinedstorage.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.importer.ImporterNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayInputNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayOutputNetworkNode;
@@ -47,6 +48,8 @@ class NetworkNodeFactoryTest {
     StorageTransferNetworkNode storageTransfer;
     @AddNetworkNode
     PatternProviderNetworkNode patternProvider;
+    @AddNetworkNode
+    MonitorNetworkNode monitor;
 
     @Test
     void testInitialization() {

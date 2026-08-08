@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.Exte
 import com.refinedmods.refinedstorage.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.importer.ImporterNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.patternprovider.PatternProviderNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayInputNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.relay.RelayOutputNetworkNode;
@@ -20,6 +21,7 @@ import com.refinedmods.refinedstorage.network.test.nodefactory.ExternalStorageNe
 import com.refinedmods.refinedstorage.network.test.nodefactory.GridNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.ImporterNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.InterfaceNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.MonitorNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.PatternProviderNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.RelayInputNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.RelayOutputNetworkNodeFactory;
@@ -50,5 +52,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @RegisterNetworkNode(value = RelayOutputNetworkNodeFactory.class, clazz = RelayOutputNetworkNode.class)
 @RegisterNetworkNode(value = StorageTransferNetworkNodeFactory.class, clazz = StorageTransferNetworkNode.class)
 @RegisterNetworkNode(value = PatternProviderNetworkNodeFactory.class, clazz = PatternProviderNetworkNode.class)
+@RegisterNetworkNode(value = MonitorNetworkNodeFactory.class, clazz = MonitorNetworkNode.class)
 public @interface NetworkTest {
 }

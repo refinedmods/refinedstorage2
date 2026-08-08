@@ -1,5 +1,9 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.StorageState;
@@ -17,30 +21,40 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractStorageContainerNetworkNode extends AbstractNetworkNode {
+public abstract class AbstractStorageContainerNetworkNode extends AbstractNetworkNode
+    implements NetworkNodeDetailsProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageContainerNetworkNode.class);
 
     @Nullable
     protected final StateTrackedStorage[] storages;
 
-    private long energyUsage;
+    private final NetworkNodeType type;
+    private final NetworkNodeEventManager eventManager = new NetworkNodeEventManager();
     private final long energyUsagePerStorage;
 
     @Nullable
     private Provider provider;
-    private StateTrackedStorage.@Nullable Listener listener;
+    private StateTrackedStorage.@Nullable Listener storageListener;
     private int activeStorages;
+    private long baseEnergyUsage;
 
-    protected AbstractStorageContainerNetworkNode(final long energyUsage,
+    protected AbstractStorageContainerNetworkNode(final NetworkNodeType type,
+                                                  final long baseEnergyUsage,
                                                   final long energyUsagePerStorage,
                                                   final int size) {
-        this.energyUsage = energyUsage;
+        this.type = type;
+        this.baseEnergyUsage = baseEnergyUsage;
         this.energyUsagePerStorage = energyUsagePerStorage;
         this.storages = new StateTrackedStorage[size];
     }
 
-    public void setListener(final StateTrackedStorage.Listener listener) {
-        this.listener = listener;
+    public void setStorageListener(final StateTrackedStorage.Listener storageListener) {
+        this.storageListener = storageListener;
+    }
+
+    public void setBaseEnergyUsage(final long baseEnergyUsage) {
+        this.baseEnergyUsage = baseEnergyUsage;
+        eventManager.notifyDetailsChanged(getEnergyUsage(), isActive());
     }
 
     public void setProvider(final Provider provider) {
@@ -80,7 +94,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
             return Collections.emptySet();
         }
         if (current == null) {
-            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, listener);
+            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, storageListener);
             storages[index] = tracked;
             changes.add(StorageChange.addedAt(index, tracked));
         } else if (resolved == null) {
@@ -89,7 +103,7 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
         } else {
             storages[index] = null;
             changes.add(StorageChange.removedAt(index, current));
-            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, listener);
+            final StateTrackedStorage tracked = new StateTrackedStorage(resolved, storageListener);
             storages[index] = tracked;
             changes.add(StorageChange.addedAt(index, tracked));
         }
@@ -102,15 +116,12 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
 
     private void updateActiveStorageCount() {
         this.activeStorages = (int) Arrays.stream(storages).filter(Objects::nonNull).count();
-    }
-
-    public void setEnergyUsage(final long energyUsage) {
-        this.energyUsage = energyUsage;
+        eventManager.notifyDetailsChanged(getEnergyUsage(), isActive());
     }
 
     @Override
     public long getEnergyUsage() {
-        return energyUsage + (energyUsagePerStorage * activeStorages);
+        return baseEnergyUsage + (energyUsagePerStorage * activeStorages);
     }
 
     public int getSize() {
@@ -126,6 +137,32 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
             return StorageState.INACTIVE;
         }
         return storage.getState();
+    }
+
+    @Override
+    protected void onActiveChanged(final boolean newActive) {
+        super.onActiveChanged(newActive);
+        eventManager.notifyDetailsChanged(getEnergyUsage(), newActive);
+    }
+
+    @Override
+    public NetworkNodeType getType() {
+        return type;
+    }
+
+    @Override
+    public NetworkNodeDetails createDetails() {
+        return SimpleNetworkNodeDetails.of(this);
+    }
+
+    @Override
+    public void addListener(final NetworkNodeListener listener) {
+        eventManager.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(final NetworkNodeListener listener) {
+        eventManager.removeListener(listener);
     }
 
     protected record StorageChange(int index, boolean removed, StateTrackedStorage storage) {

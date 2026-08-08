@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNodeFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,8 @@ class GraphNetworkComponentImplTest {
     @Test
     void shouldAddContainer() {
         // Arrange
-        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(0);
-        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
+        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
 
         // Act
         sut.onContainerAdded(container1);
@@ -41,8 +42,8 @@ class GraphNetworkComponentImplTest {
     @Test
     void shouldRemoveContainer() {
         // Arrange
-        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(0);
-        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
+        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         sut.onContainerAdded(container1);
         sut.onContainerAdded(container2);
 
@@ -197,7 +198,7 @@ class GraphNetworkComponentImplTest {
     @Test
     void shouldNotRetrieveContainerByIndexThatDoesNotExist() {
         // Arrange
-        sut.onContainerAdded(() -> new SimpleNetworkNode(0));
+        sut.onContainerAdded(() -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0));
 
         // Act
         final NetworkNodeContainer container = sut.getContainer("does not exist");
@@ -212,7 +213,7 @@ class GraphNetworkComponentImplTest {
         final NetworkNodeContainer container1 = new NetworkNodeContainer() {
             @Override
             public NetworkNode getNode() {
-                return new SimpleNetworkNode(0);
+                return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
             }
 
             @Override
@@ -224,7 +225,7 @@ class GraphNetworkComponentImplTest {
         final NetworkNodeContainer container2 = new NetworkNodeContainer() {
             @Override
             public NetworkNode getNode() {
-                return new SimpleNetworkNode(0);
+                return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
             }
 
             @Override
@@ -251,7 +252,7 @@ class GraphNetworkComponentImplTest {
         final NetworkNodeContainer container1 = new NetworkNodeContainer() {
             @Override
             public NetworkNode getNode() {
-                return new SimpleNetworkNode(0);
+                return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
             }
 
             @Override
@@ -263,7 +264,7 @@ class GraphNetworkComponentImplTest {
         final NetworkNodeContainer container2 = new NetworkNodeContainer() {
             @Override
             public NetworkNode getNode() {
-                return new SimpleNetworkNode(0);
+                return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
             }
 
             @Override
@@ -292,8 +293,8 @@ class GraphNetworkComponentImplTest {
         final RecordingGraphListener listener = new RecordingGraphListener();
         sut.addListener(listener);
 
-        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(0);
-        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
+        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
 
         // Act
         sut.onContainerAdded(container1);
@@ -310,8 +311,8 @@ class GraphNetworkComponentImplTest {
         final RecordingGraphListener listener = new RecordingGraphListener();
         sut.addListener(listener);
 
-        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(0);
-        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
+        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         sut.onContainerAdded(container1);
         sut.onContainerAdded(container2);
 
@@ -331,7 +332,7 @@ class GraphNetworkComponentImplTest {
         sut.addListener(listener1);
         sut.addListener(listener2);
 
-        final NetworkNodeContainer container = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
 
         // Act
         sut.onContainerAdded(container);
@@ -350,13 +351,13 @@ class GraphNetworkComponentImplTest {
         final RecordingGraphListener listener = new RecordingGraphListener();
         sut.addListener(listener);
 
-        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container1 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         sut.onContainerAdded(container1);
 
         // Act
         sut.removeListener(listener);
 
-        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(0);
+        final NetworkNodeContainer container2 = () -> new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         sut.onContainerAdded(container2);
         sut.onContainerRemoved(container1);
 
@@ -383,14 +384,14 @@ class GraphNetworkComponentImplTest {
     private static class NetworkNodeContainer1 implements NetworkNodeContainer, BothImplements {
         @Override
         public NetworkNode getNode() {
-            return new SimpleNetworkNode(0);
+            return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         }
     }
 
     private static class NetworkNodeContainer2 implements NetworkNodeContainer, BothImplements {
         @Override
         public NetworkNode getNode() {
-            return new SimpleNetworkNode(0);
+            return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
         }
     }
 

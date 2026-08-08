@@ -25,6 +25,7 @@ import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceCodecs;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
@@ -78,6 +79,7 @@ public class StorageMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
 
     public StorageMonitorBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getStorageMonitor(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.STORAGE_MONITOR,
             Platform.INSTANCE.getConfig().getStorageMonitor().getEnergyUsage()
         ));
         final ResourceContainer resourceContainer = ResourceContainerImpl.createForFilter(1);

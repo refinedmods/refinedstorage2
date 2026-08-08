@@ -16,7 +16,7 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.ParentContainer;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProvider;
 import com.refinedmods.refinedstorage.api.network.autocrafting.PatternProviderExternalPatternSink;
 import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TaskContainer;
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -33,13 +33,14 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.requireNonNull;
 
-public class PatternProviderNetworkNode extends SimpleNetworkNode implements PatternProvider, TaskListener {
+public class PatternProviderNetworkNode extends AbstractNetworkNode implements PatternProvider, TaskListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(PatternProviderNetworkNode.class);
 
     @Nullable
     private final Pattern[] patterns;
     private final Set<ParentContainer> parents = new HashSet<>();
     private final TaskContainer tasks = new TaskContainer(this);
+    private long energyUsage;
     private int priority;
     @Nullable
     private PatternProviderExternalPatternSink sink;
@@ -52,7 +53,7 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
     private PatternProviderListener listener;
 
     public PatternProviderNetworkNode(final long energyUsage, final int patterns) {
-        super(energyUsage);
+        this.energyUsage = energyUsage;
         this.patterns = new Pattern[patterns];
     }
 
@@ -105,6 +106,15 @@ public class PatternProviderNetworkNode extends SimpleNetworkNode implements Pat
                 parents.forEach(parent -> parent.add(this, pattern, priority));
             }
         }
+    }
+
+    @Override
+    public long getEnergyUsage() {
+        return energyUsage;
+    }
+
+    public void setEnergyUsage(final long energyUsage) {
+        this.energyUsage = energyUsage;
     }
 
     @Override

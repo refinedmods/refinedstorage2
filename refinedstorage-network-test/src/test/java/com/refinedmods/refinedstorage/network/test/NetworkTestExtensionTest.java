@@ -149,6 +149,16 @@ class NetworkTestExtensionTest {
     }
 
     @Test
+    void shouldInjectNetworkGraphComponent(
+        @InjectNetworkGraphComponent(networkId = "a") final GraphNetworkComponent networkGraphA,
+        @InjectNetworkGraphComponent(networkId = "b") final GraphNetworkComponent networkGraphB
+    ) {
+        // Assert
+        assertThat(networkGraphA).isSameAs(a.getComponent(GraphNetworkComponent.class));
+        assertThat(networkGraphB).isSameAs(b.getComponent(GraphNetworkComponent.class));
+    }
+
+    @Test
     void shouldInjectNetworkSecurityComponent(
         @InjectNetworkSecurityComponent(networkId = "a") final SecurityNetworkComponent networkSecurityA,
         @InjectNetworkSecurityComponent(networkId = "b") final SecurityNetworkComponent networkSecurityB

@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.network.test.fixtures.ActorFixture;
+import com.refinedmods.refinedstorage.network.test.nodefactory.StorageNetworkNodeFactory;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -123,7 +124,8 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
 
     private NetworkSide createNetworkSide(final MasterSlave side,
                                           final Supplier<Network> networkFactory) {
-        final StorageNetworkNode nodeA = new StorageNetworkNode(0, 0, 1);
+        final StorageNetworkNode nodeA = new StorageNetworkNode(StorageNetworkNodeFactory.TYPE,
+            0, 0, 1);
         final StorageImpl storage = new StorageImpl();
         storage.insert(side, 10, Action.EXECUTE, ActorFixture.INSTANCE);
         nodeA.setProvider(index -> Optional.of(storage));

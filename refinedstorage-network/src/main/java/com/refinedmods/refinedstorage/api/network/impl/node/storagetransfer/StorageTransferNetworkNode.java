@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.network.impl.node.storagetransfer;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageContainerNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -32,8 +33,9 @@ public class StorageTransferNetworkNode extends AbstractStorageContainerNetworkN
     @Nullable
     private StorageTransferListener listener;
 
-    public StorageTransferNetworkNode(final long energyUsage, final long energyUsagePerStorage, final int size) {
-        super(energyUsage, energyUsagePerStorage, size);
+    public StorageTransferNetworkNode(final NetworkNodeType type,
+                                      final long baseEnergyUsage, final long energyUsagePerStorage, final int size) {
+        super(type, baseEnergyUsage, energyUsagePerStorage, size);
     }
 
     public void setMode(final StorageTransferMode mode) {

@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNodeFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ abstract class AbstractNetworkBuilderImplTest {
     }
 
     private static NetworkNode createNode() {
-        return new SimpleNetworkNode(0);
+        return new SimpleNetworkNode(SimpleNetworkNodeFactory.TYPE, 0);
     }
 
     protected static List<NetworkNodeContainer> getAddedContainers(final Network network) {

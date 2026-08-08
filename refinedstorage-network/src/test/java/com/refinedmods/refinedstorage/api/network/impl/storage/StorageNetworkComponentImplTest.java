@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.StorageNetworkNodeFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,14 +40,14 @@ class StorageNetworkComponentImplTest {
     void setUp() {
         sut = new StorageNetworkComponentImpl(MutableResourceListImpl.create());
 
-        storage1 = new StorageNetworkNode(0, 0, 1);
+        storage1 = new StorageNetworkNode(StorageNetworkNodeFactory.TYPE, 0, 0, 1);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
         final var storage1S = new LimitedStorageImpl(100);
         storage1.setProvider(index -> Optional.of(storage1S));
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        storage2 = new StorageNetworkNode(0, 0, 1);
+        storage2 = new StorageNetworkNode(StorageNetworkNodeFactory.TYPE, 0, 0, 1);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
         final var storage2S = new LimitedStorageImpl(100);
         storage2.setProvider(index -> Optional.of(storage2S));

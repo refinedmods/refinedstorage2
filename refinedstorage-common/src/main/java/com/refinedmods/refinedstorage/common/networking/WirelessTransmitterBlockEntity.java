@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
@@ -37,6 +38,7 @@ public class WirelessTransmitterBlockEntity extends AbstractBaseNetworkNodeConta
 
     public WirelessTransmitterBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getWirelessTransmitter(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.WIRELESS_TRANSMITTER,
             Platform.INSTANCE.getConfig().getWirelessTransmitter().getEnergyUsage()
         ));
         this.upgradeContainer = new UpgradeContainer(

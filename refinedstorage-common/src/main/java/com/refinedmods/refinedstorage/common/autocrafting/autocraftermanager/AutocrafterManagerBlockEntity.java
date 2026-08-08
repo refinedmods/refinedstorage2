@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ public class AutocrafterManagerBlockEntity extends AbstractBaseNetworkNodeContai
 
     public AutocrafterManagerBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getAutocrafterManager(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.AUTOCRAFTER_MANAGER,
             Platform.INSTANCE.getConfig().getAutocrafterManager().getEnergyUsage()
         ));
     }

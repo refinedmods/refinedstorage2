@@ -61,7 +61,7 @@ public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorage
             this::setChanged,
             this::setFilters
         );
-        this.mainNetworkNode.setListener(diskStateListener);
+        this.mainNetworkNode.setStorageListener(diskStateListener);
         setNormalizer(filter.createNormalizer());
     }
 
