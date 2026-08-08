@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.NetworkImpl;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
@@ -37,6 +38,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
         InjectNetworkEnergyComponent.class,
         InjectNetworkSecurityComponent.class,
         InjectNetworkAutocraftingComponent.class,
+        InjectNetworkGraphComponent.class,
         InjectNetwork.class
     );
 
@@ -231,6 +233,9 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
                 .findAnnotation(InjectNetworkAutocraftingComponent.class)
                 .map(annotation -> (Object) getNetworkAutocrafting(annotation.networkId())))
             .or(() -> parameterContext
+                .findAnnotation(InjectNetworkGraphComponent.class)
+                .map(annotation -> (Object) getNetworkGraph(annotation.networkId())))
+            .or(() -> parameterContext
                 .findAnnotation(InjectNetwork.class)
                 .map(annotation -> networkMap.get(annotation.value())))
             .orElseThrow();
@@ -250,5 +255,9 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
 
     private AutocraftingNetworkComponent getNetworkAutocrafting(final String networkId) {
         return networkMap.get(networkId).getComponent(AutocraftingNetworkComponent.class);
+    }
+
+    private GraphNetworkComponent getNetworkGraph(final String networkId) {
+        return networkMap.get(networkId).getComponent(GraphNetworkComponent.class);
     }
 }

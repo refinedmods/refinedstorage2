@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ public class AutocraftingMonitorBlockEntity extends AbstractBaseNetworkNodeConta
 
     public AutocraftingMonitorBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getAutocraftingMonitor(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.AUTOCRAFTING_MONITOR,
             Platform.INSTANCE.getConfig().getAutocraftingMonitor().getEnergyUsage()
         ));
     }

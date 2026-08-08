@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.network.ColoredConnectionStrategy;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -18,12 +19,10 @@ import static java.util.Objects.requireNonNull;
 
 public class NetworkReceiverBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<SimpleNetworkNode> {
     public NetworkReceiverBlockEntity(final BlockPos pos, final BlockState state) {
-        super(
-            BlockEntities.INSTANCE.getNetworkReceiver(),
-            pos,
-            state,
-            new SimpleNetworkNode(Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage())
-        );
+        super(BlockEntities.INSTANCE.getNetworkReceiver(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.NETWORK_RECEIVER,
+            Platform.INSTANCE.getConfig().getNetworkReceiver().getEnergyUsage()
+        ));
     }
 
     @Override

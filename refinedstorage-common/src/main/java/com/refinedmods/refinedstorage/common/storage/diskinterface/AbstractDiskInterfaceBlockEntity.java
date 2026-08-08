@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.storage.AbstractDiskContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.FilterModeSettings;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeContainer;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 
@@ -44,13 +45,14 @@ public abstract class AbstractDiskInterfaceBlockEntity
 
     protected AbstractDiskInterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskInterface(), pos, state, new StorageTransferNetworkNode(
+            PlatformNetworkNodeTypes.DISK_INTERFACE,
             Platform.INSTANCE.getConfig().getDiskInterface().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskInterface().getEnergyUsagePerDisk(),
             AMOUNT_OF_DISKS
         ));
         this.upgradeContainer = new UpgradeContainer(UpgradeDestinations.DISK_INTERFACE, (c, upgradeEnergyUsage) -> {
             final long baseEnergyUsage = Platform.INSTANCE.getConfig().getDiskInterface().getEnergyUsage();
-            mainNetworkNode.setEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
+            mainNetworkNode.setBaseEnergyUsage(baseEnergyUsage + upgradeEnergyUsage);
         }, this::setChanged);
         this.ticker = upgradeContainer.getTicker();
         this.mainNetworkNode.setListener(this);
