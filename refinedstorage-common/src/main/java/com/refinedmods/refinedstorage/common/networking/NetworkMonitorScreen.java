@@ -32,7 +32,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createId
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
-public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonitorContainerMenu> {
+public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonitorContainerMenu>
+    implements NetworkMonitorListener {
     private static final Identifier TEXTURE = createIdentifier("textures/gui/network_monitor.png");
     private static final Identifier DEVICES = createIdentifier("network_monitor/devices");
     private static final Component SEARCH_HELP = createTranslation("gui", "network_monitor.search_help");
@@ -60,10 +61,8 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     @Override
     protected void init() {
         super.init();
-
         initDeviceGroups();
         initDetails();
-
         getExclusionZones().add(new Rect2i(
             leftPos - DEVICES_SPRITE_WIDTH,
             topPos,
@@ -71,7 +70,6 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             DEVICES_TOP_HEIGHT + (getVisibleRows() * ROW_SIZE) + DEVICES_BOTTOM_HEIGHT
         ));
         addSideButton(new RedstoneModeSideButtonWidget(getMenu().getProperty(PropertyTypes.REDSTONE_MODE)));
-
         if (searchField == null) {
             searchField = new SearchFieldWidget(
                 font,
@@ -86,7 +84,6 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         }
         addWidget(searchField);
         addSideButton(new AutoSelectedSideButtonWidget(searchField));
-
         addRenderableWidget(new SearchIconWidget(
             leftPos - DEVICES_SPRITE_WIDTH + 10,
             topPos + 5,
@@ -96,60 +93,45 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     private void initDeviceGroups() {
+        final NetworkMonitorDeviceGroupWidget previouslyExpanded = clearDeviceGroups();
+        this.deviceGroupsScrollbar = new ScrollbarWidget(leftPos - 13, getDeviceGroupWidgetY(),
+            ScrollbarWidget.Type.NORMAL, (getVisibleRows() * ROW_SIZE) - 2);
+        deviceGroupsScrollbar.setListener(this::onScrolledDeviceGroups);
+        int y = getDeviceGroupWidgetY();
+        for (int i = 0; i < getMenu().getDeviceGroups().size(); ++i) {
+            final NetworkMonitorDeviceGroup deviceGroup = getMenu().getDeviceGroups().get(i);
+            final boolean expanded = previouslyExpanded != null
+                && previouslyExpanded.getDeviceGroupId().equals(deviceGroup.id());
+            final NetworkMonitorDeviceGroupWidget deviceGroupWidget = addDeviceGroupWithoutRelayout(deviceGroup, y,
+                expanded);
+            updateDeviceGroupVisibility(deviceGroupWidget);
+            y += deviceGroupWidget.getHeight();
+        }
+        updateDeviceGroupsScrollbar();
+        loadCurrentDeviceGroupAndDevice();
+    }
+
+    private void loadCurrentDeviceGroupAndDevice() {
+        final NetworkMonitorDeviceGroup currentDeviceGroup = getMenu().getCurrentDeviceGroup();
+        final NetworkMonitorDevice currentDevice = getMenu().getCurrentDevice();
+        if (currentDeviceGroup != null && currentDevice != null) {
+            onCurrentDeviceChanged(currentDeviceGroup, currentDevice);
+        } else if (currentDeviceGroup != null) {
+            onCurrentDeviceGroupChanged(currentDeviceGroup);
+        }
+    }
+
+    @Nullable
+    private NetworkMonitorDeviceGroupWidget clearDeviceGroups() {
         final NetworkMonitorDeviceGroupWidget expanded = deviceGroupWidgets.stream()
             .filter(NetworkMonitorDeviceGroupWidget::isExpanded)
             .findFirst()
             .orElse(null);
-
         deviceGroupWidgets.clear();
-        deviceGroupsScrollbar = new ScrollbarWidget(
-            leftPos - 13,
-            getDeviceGroupWidgetY(),
-            ScrollbarWidget.Type.NORMAL,
-            (getVisibleRows() * ROW_SIZE) - 2
-        );
-        deviceGroupsScrollbar.setListener(value -> {
-            if (deviceGroupsScrollbar == null) {
-                return;
-            }
-            final int scrollOffset = deviceGroupsScrollbar.isSmoothScrolling()
-                ? (int) value
-                : (int) value * ROW_SIZE;
-            int y = getDeviceGroupWidgetY() - scrollOffset;
-            for (final NetworkMonitorDeviceGroupWidget groupWidget : deviceGroupWidgets) {
-                groupWidget.setY(y);
-                updateGroupWidgetVisibility(groupWidget);
-                y += groupWidget.getHeight();
-            }
-        });
-        int y = getDeviceGroupWidgetY();
-        for (int i = 0; i < getMenu().getDeviceGroups().size(); ++i) {
-            final NetworkMonitorDeviceGroup group = getMenu().getDeviceGroups().get(i);
-            final NetworkMonitorDeviceGroupWidget groupWidget = new NetworkMonitorDeviceGroupWidget(
-                getDeviceGroupWidgetX(),
-                y,
-                group,
-                () -> updateCurrentDeviceGroup(group),
-                () -> onDeviceGroupCollapsed(group),
-                device -> updateCurrentDevice(group, device),
-                expanded
-            );
-            updateGroupWidgetVisibility(groupWidget);
-            y += groupWidget.getHeight();
-            deviceGroupWidgets.add(addWidget(groupWidget));
-        }
-        updateDeviceGroupsScrollbar();
-
-        final NetworkMonitorDeviceGroup currentDeviceGroup = getMenu().getCurrentDeviceGroup();
-        final NetworkMonitorDevice currentDevice = getMenu().getCurrentDevice();
-        if (currentDeviceGroup != null && currentDevice != null) {
-            updateCurrentDevice(currentDeviceGroup, currentDevice);
-        } else if (currentDeviceGroup != null) {
-            updateCurrentDeviceGroup(currentDeviceGroup);
-        }
+        return expanded;
     }
 
-    private void updateGroupWidgetVisibility(final NetworkMonitorDeviceGroupWidget widget) {
+    private void updateDeviceGroupVisibility(final NetworkMonitorDeviceGroupWidget widget) {
         if (!getMenu().isActive()) {
             widget.setVisible(false);
             return;
@@ -172,8 +154,8 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         }
     }
 
-    private void updateCurrentDeviceGroup(final NetworkMonitorDeviceGroup deviceGroup) {
-        getMenu().setCurrentDeviceGroup(deviceGroup);
+    @Override
+    public void onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup deviceGroup) {
         boolean needsRelayout = false;
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             needsRelayout |= deviceGroupWidget.onCurrentDeviceGroupChanged(deviceGroup);
@@ -183,17 +165,88 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         }
     }
 
-    private void updateCurrentDevice(final NetworkMonitorDeviceGroup group, final NetworkMonitorDevice device) {
-        getMenu().setCurrentDevice(group, device);
+    @Override
+    public void onCurrentDeviceChanged(final NetworkMonitorDeviceGroup deviceGroup,
+                                       final NetworkMonitorDevice device) {
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.onCurrentDeviceChanged(device);
         }
     }
 
-    private void onDeviceGroupCollapsed(final NetworkMonitorDeviceGroup deviceGroup) {
+    @Override
+    public void onDeviceGroupAdded(final NetworkMonitorDeviceGroup deviceGroup) {
+        addDeviceGroupWithoutRelayout(deviceGroup, 0, false);
+        relayoutDeviceGroups();
+    }
+
+    private NetworkMonitorDeviceGroupWidget addDeviceGroupWithoutRelayout(final NetworkMonitorDeviceGroup deviceGroup,
+                                                                          final int y,
+                                                                          final boolean expanded) {
+        final NetworkMonitorDeviceGroupWidget widget = new NetworkMonitorDeviceGroupWidget(
+            getDeviceGroupWidgetX(),
+            y,
+            deviceGroup,
+            () -> getMenu().setCurrentDeviceGroup(deviceGroup),
+            () -> onDeviceGroupExpanded(deviceGroup),
+            device -> getMenu().setCurrentDevice(deviceGroup, device),
+            expanded
+        );
+        deviceGroupWidgets.add(addWidget(widget));
+        return widget;
+    }
+
+    @Override
+    public void onDeviceGroupRemoved(final NetworkMonitorDeviceGroup deviceGroup) {
+        final boolean needsRelayout = deviceGroupWidgets.removeIf(deviceGroupWidget -> {
+            final boolean removed = deviceGroupWidget.onDeviceGroupRemoved(deviceGroup);
+            if (removed) {
+                removeWidget(deviceGroupWidget);
+            }
+            return removed;
+        });
+        if (needsRelayout) {
+            relayoutDeviceGroups();
+        }
+    }
+
+    @Override
+    public void onDeviceAdded(final NetworkMonitorDeviceGroup deviceGroup, final NetworkMonitorDevice device) {
         boolean needsRelayout = false;
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
-            needsRelayout |= deviceGroupWidget.onDeviceGroupCollapsed(deviceGroup);
+            needsRelayout |= deviceGroupWidget.onDeviceAdded(deviceGroup, device);
+        }
+        if (needsRelayout) {
+            relayoutDeviceGroups();
+        }
+    }
+
+    @Override
+    public void onDeviceRemoved(final NetworkMonitorDeviceGroup deviceGroup, final NetworkMonitorDevice device) {
+        boolean needsRelayout = false;
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            needsRelayout |= deviceGroupWidget.onDeviceRemoved(deviceGroup, device);
+        }
+        if (needsRelayout) {
+            relayoutDeviceGroups();
+        }
+    }
+
+    @Override
+    public void onDetailsChanged(@Nullable final NetworkNodeDetails details) {
+        if (details != null) {
+            final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
+                .getNetworkNodeDetailsRenderer(details.getClass());
+            updateScrollbarRows(renderer.getRows(details));
+        } else {
+            updateScrollbarRows(0);
+        }
+        resetScrollbarPosition();
+    }
+
+    private void onDeviceGroupExpanded(final NetworkMonitorDeviceGroup deviceGroup) {
+        boolean needsRelayout = false;
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            needsRelayout |= deviceGroupWidget.onDeviceGroupExpanded(deviceGroup);
         }
         if (needsRelayout) {
             relayoutDeviceGroups();
@@ -211,7 +264,7 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         int y = getDeviceGroupWidgetY() - scrollOffset;
         for (final NetworkMonitorDeviceGroupWidget groupWidget : deviceGroupWidgets) {
             groupWidget.setY(y);
-            updateGroupWidgetVisibility(groupWidget);
+            updateDeviceGroupVisibility(groupWidget);
             y += groupWidget.getHeight();
         }
     }
@@ -233,20 +286,24 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         deviceGroupsScrollbar.setMaxOffset(maxOffset);
     }
 
-    private void initDetails() {
-        menu.setDetailsListener(this::updateDetails);
-        updateDetails(menu.getCurrentDetails());
+    private void onScrolledDeviceGroups(final double value) {
+        if (deviceGroupsScrollbar == null) {
+            return;
+        }
+        final int scrollOffset = deviceGroupsScrollbar.isSmoothScrolling()
+            ? (int) value
+            : (int) value * ROW_SIZE;
+        int y = getDeviceGroupWidgetY() - scrollOffset;
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            deviceGroupWidget.setY(y);
+            updateDeviceGroupVisibility(deviceGroupWidget);
+            y += deviceGroupWidget.getHeight();
+        }
     }
 
-    private void updateDetails(@Nullable final NetworkNodeDetails details) {
-        if (details != null) {
-            final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
-                .getNetworkNodeDetailsRenderer(details.getClass());
-            updateScrollbarRows(renderer.getRows(details));
-        } else {
-            updateScrollbarRows(0);
-        }
-        resetScrollbarPosition();
+    private void initDetails() {
+        menu.setListener(this);
+        onDetailsChanged(menu.getCurrentDetails());
     }
 
     @Override
@@ -297,7 +354,6 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             0, DEVICES_TOP_HEIGHT + 18 + 2,
             x - DEVICES_SPRITE_WIDTH + 4, y + DEVICES_TOP_HEIGHT + (getVisibleRows() * ROW_SIZE),
             DEVICES_SPRITE_WIDTH, DEVICES_BOTTOM_HEIGHT);
-
         extractDeviceGroupsContents(graphics, mouseX, mouseY, partialTicks);
     }
 
@@ -308,6 +364,11 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         graphics.enableScissor(x, y, x + 64, y + (getVisibleRows() * ROW_SIZE) - 2);
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        }
+        final NetworkMonitorDeviceGroup currentDeviceGroup = getMenu().getCurrentDeviceGroup();
+        if (currentDeviceGroup != null) {
+            graphics.text(font, Component.literal(currentDeviceGroup.id().toString()),
+                x, y + (getVisibleRows() * ROW_SIZE) - font.lineHeight, 0xFF808080, false);
         }
         graphics.disableScissor();
     }
@@ -323,6 +384,11 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     @Override
     protected void renderRows(final GuiGraphicsExtractor graphics, final int x, final int y, final int topHeight,
                               final int rows, final int mouseX, final int mouseY, final float partialTicks) {
+        final NetworkMonitorDevice currentDevice = menu.getCurrentDevice();
+        if (currentDevice != null) {
+            graphics.text(font, Component.literal(currentDevice.id().toString()), x + 7 + 1,
+                y + 1 + topHeight, 0xFF808080, false);
+        }
         final NetworkNodeDetails details = menu.getCurrentDetails();
         if (details == null) {
             return;

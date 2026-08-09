@@ -1,10 +1,17 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record NetworkMonitorData() {
-    public static final NetworkMonitorData INSTANCE = new NetworkMonitorData();
+public record NetworkMonitorData(List<NetworkMonitorDeviceGroup> deviceGroups) {
     public static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorData> STREAM_CODEC =
-        StreamCodec.unit(INSTANCE);
+        StreamCodec.composite(
+            ByteBufCodecs.collection(ArrayList::new, NetworkMonitorDeviceGroup.STREAM_CODEC),
+            NetworkMonitorData::deviceGroups,
+            NetworkMonitorData::new
+        );
 }

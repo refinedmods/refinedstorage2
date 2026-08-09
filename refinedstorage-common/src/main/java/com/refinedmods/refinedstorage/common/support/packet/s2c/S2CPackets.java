@@ -4,11 +4,15 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.TreePreview;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorDevice;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterData;
 
 import java.util.List;
@@ -161,5 +165,17 @@ public final class S2CPackets {
         final List<ExportingIndicatorUpdatePacket.UpdatedIndicator> indicators
     ) {
         Platform.INSTANCE.sendPacketToClient(player, new ExportingIndicatorUpdatePacket(indicators));
+    }
+
+    public static void sendNetworkMonitorNodeTracked(final ServerPlayer player,
+                                                     final MonitorNodeTypeId groupId,
+                                                     final NetworkMonitorDeviceType type,
+                                                     final NetworkMonitorDevice device) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorNodeTrackedPacket(groupId.id(), type,
+            device));
+    }
+
+    public static void sendNetworkMonitorNodeUntracked(final ServerPlayer player, final MonitorNodeId nodeId) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorNodeUntrackedPacket(nodeId.id()));
     }
 }
