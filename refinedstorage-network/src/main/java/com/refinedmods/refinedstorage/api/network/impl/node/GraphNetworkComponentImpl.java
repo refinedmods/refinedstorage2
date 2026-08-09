@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
 import com.refinedmods.refinedstorage.api.network.Network;
+import com.refinedmods.refinedstorage.api.network.node.GraphListener;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 
@@ -21,6 +22,7 @@ public class GraphNetworkComponentImpl implements GraphNetworkComponent {
     private final Set<NetworkNodeContainer> containers = new HashSet<>();
     private final Map<Class<?>, Set<NetworkNodeContainer>> byClassIndex = new HashMap<>();
     private final Map<Object, NetworkNodeContainer> byKeyIndex = new HashMap<>();
+    private final Set<GraphListener> listeners = new HashSet<>();
 
     public GraphNetworkComponentImpl(final Network network) {
         this.network = network;
@@ -44,10 +46,21 @@ public class GraphNetworkComponentImpl implements GraphNetworkComponent {
     }
 
     @Override
+    public void addListener(final GraphListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(final GraphListener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
     public void onContainerAdded(final NetworkNodeContainer container) {
         LOGGER.debug("Container {} added to network {}", container, network.hashCode());
         containers.add(container);
         addToIndex(container);
+        listeners.forEach(listener -> listener.onContainerAdded(container));
     }
 
     @Override
@@ -55,6 +68,7 @@ public class GraphNetworkComponentImpl implements GraphNetworkComponent {
         LOGGER.debug("Container {} removed from network {}", container, network.hashCode());
         containers.remove(container);
         removeFromIndex(container);
+        listeners.forEach(listener -> listener.onContainerRemoved(container));
     }
 
     private void addToIndex(final NetworkNodeContainer container) {

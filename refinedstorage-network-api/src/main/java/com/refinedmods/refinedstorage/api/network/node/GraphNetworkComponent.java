@@ -36,4 +36,8 @@ public interface GraphNetworkComponent extends NetworkComponent {
      */
     @Nullable
     NetworkNodeContainer getContainer(Object key);
+
+    void addListener(GraphListener listener);
+
+    void removeListener(GraphListener listener);
 }
