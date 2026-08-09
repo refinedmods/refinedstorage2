@@ -1023,12 +1023,13 @@ public abstract class AbstractModInitializer {
         );
     }
 
+    @SuppressWarnings("deprecation")
     protected final void registerNetworkMonitorDeviceTypes() {
         RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(
             NetworkNodeTypes.IMPORTER,
             new NetworkMonitorDeviceType(
                 ContentNames.IMPORTER,
-                Items.INSTANCE.getImporters().getFirst().get()
+                Items.INSTANCE.getImporters().getFirst().get().builtInRegistryHolder()
             )
         );
     }
