@@ -32,7 +32,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
 
     private AutocraftingPreviewStyle autocraftingPreviewStyle = AutocraftingPreviewStyle.LIST;
 
-    private boolean searchBoxAutoSelected = false;
+    private boolean searchFieldAutoSelected = false;
 
     @ConfigEntry.BoundedDiscrete(min = 3L, max = 256)
     private int maxRowsStretch = 256;
@@ -181,13 +181,13 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     @Override
-    public boolean isSearchBoxAutoSelected() {
-        return searchBoxAutoSelected;
+    public boolean isSearchFieldAutoSelected() {
+        return searchFieldAutoSelected;
     }
 
     @Override
-    public void setSearchBoxAutoSelected(final boolean searchBoxAutoSelected) {
-        this.searchBoxAutoSelected = searchBoxAutoSelected;
+    public void setSearchFieldAutoSelected(final boolean searchFieldAutoSelected) {
+        this.searchFieldAutoSelected = searchFieldAutoSelected;
         AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 

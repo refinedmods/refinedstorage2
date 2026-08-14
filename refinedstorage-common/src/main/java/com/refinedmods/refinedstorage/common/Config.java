@@ -24,9 +24,9 @@ public interface Config {
 
     boolean isSmoothScrolling();
 
-    boolean isSearchBoxAutoSelected();
+    boolean isSearchFieldAutoSelected();
 
-    void setSearchBoxAutoSelected(boolean searchBoxAutoSelected);
+    void setSearchFieldAutoSelected(boolean searchFieldAutoSelected);
 
     int getMaxRowsStretch();
 

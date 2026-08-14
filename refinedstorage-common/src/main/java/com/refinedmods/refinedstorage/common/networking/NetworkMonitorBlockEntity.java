@@ -89,7 +89,11 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
             return null;
         }
         final Block block = inWorldNetworkNodeContainer.getBlockState().getBlock();
-        return new NetworkMonitorDevice(id.id(), block.getName(), block.asItem().builtInRegistryHolder());
+        return new NetworkMonitorDevice(
+            id.id(),
+            inWorldNetworkNodeContainer.getLevelName(),
+            block.asItem().builtInRegistryHolder()
+        );
     }
 
     @Override

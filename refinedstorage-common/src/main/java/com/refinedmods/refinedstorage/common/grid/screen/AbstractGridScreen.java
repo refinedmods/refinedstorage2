@@ -88,7 +88,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     protected final int bottomHeight;
 
     @Nullable
-    GridSearchBoxWidget searchField;
+    GridSearchFieldWidget searchField;
 
     @Nullable
     private ResourceTypeSideButtonWidget resourceTypeSideButtonWidget;
@@ -124,7 +124,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         this.pinRows = calculatePinRows(rows);
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget(
+            searchField = new GridSearchFieldWidget(
                 font,
                 leftPos + 94 + 1,
                 topPos + 6 + 1,
@@ -136,7 +136,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
             searchField.setX(leftPos + 94 + 1);
             searchField.setY(topPos + 6 + 1);
         }
-        getMenu().setSearchBox(searchField);
+        getMenu().setSearchField(searchField);
         addWidget(searchField);
 
         getMenu().getRepository().setListener(this::updateScrollbar);

@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -37,6 +39,13 @@ public class InWorldNetworkNodeContainerImpl implements InWorldNetworkNodeContai
         this.priority = priority;
         this.connectionStrategy = connectionStrategy;
         this.keyProvider = keyProvider;
+    }
+
+    @Override
+    public Component getLevelName() {
+        return blockEntity instanceof Nameable nameable
+            ? nameable.getName()
+            : blockEntity.getBlockState().getBlock().getName();
     }
 
     @Override

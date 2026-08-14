@@ -85,8 +85,8 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.GridAutocrafting
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
-import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorNodeTrackedPacket;
-import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorNodeUntrackedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceAddedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceRemovedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkTransmitterStatusPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.PatternGridAllowedAlternativesUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.ResourceSlotUpdatePacket;
@@ -881,14 +881,14 @@ public class ModInitializer extends AbstractModInitializer {
             wrapHandler(GridAutocraftingTasksUpdatePacket::handle)
         );
         registrar.playToClient(
-            NetworkMonitorNodeTrackedPacket.PACKET_TYPE,
-            NetworkMonitorNodeTrackedPacket.STREAM_CODEC,
-            wrapHandler(NetworkMonitorNodeTrackedPacket::handle)
+            NetworkMonitorDeviceAddedPacket.PACKET_TYPE,
+            NetworkMonitorDeviceAddedPacket.STREAM_CODEC,
+            wrapHandler(NetworkMonitorDeviceAddedPacket::handle)
         );
         registrar.playToClient(
-            NetworkMonitorNodeUntrackedPacket.PACKET_TYPE,
-            NetworkMonitorNodeUntrackedPacket.STREAM_CODEC,
-            wrapHandler(NetworkMonitorNodeUntrackedPacket::handle)
+            NetworkMonitorDeviceRemovedPacket.PACKET_TYPE,
+            NetworkMonitorDeviceRemovedPacket.STREAM_CODEC,
+            wrapHandler(NetworkMonitorDeviceRemovedPacket::handle)
         );
     }
 

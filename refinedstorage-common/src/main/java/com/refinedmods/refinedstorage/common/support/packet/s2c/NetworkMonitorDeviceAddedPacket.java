@@ -15,22 +15,22 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-public record NetworkMonitorNodeTrackedPacket(UUID groupId, NetworkMonitorDeviceType groupType,
+public record NetworkMonitorDeviceAddedPacket(UUID groupId, NetworkMonitorDeviceType groupType,
                                               NetworkMonitorDevice device)
     implements CustomPacketPayload {
-    public static final Type<NetworkMonitorNodeTrackedPacket> PACKET_TYPE = new Type<>(
-        createIdentifier("network_monitor_node_tracked")
+    public static final Type<NetworkMonitorDeviceAddedPacket> PACKET_TYPE = new Type<>(
+        createIdentifier("network_monitor_device_added")
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorNodeTrackedPacket> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorDeviceAddedPacket> STREAM_CODEC =
         StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC, NetworkMonitorNodeTrackedPacket::groupId,
-            NetworkMonitorDeviceType.STREAM_CODEC, NetworkMonitorNodeTrackedPacket::groupType,
-            NetworkMonitorDevice.STREAM_CODEC, NetworkMonitorNodeTrackedPacket::device,
-            NetworkMonitorNodeTrackedPacket::new
+            UUIDUtil.STREAM_CODEC, NetworkMonitorDeviceAddedPacket::groupId,
+            NetworkMonitorDeviceType.STREAM_CODEC, NetworkMonitorDeviceAddedPacket::groupType,
+            NetworkMonitorDevice.STREAM_CODEC, NetworkMonitorDeviceAddedPacket::device,
+            NetworkMonitorDeviceAddedPacket::new
         );
 
-    public static void handle(final NetworkMonitorNodeTrackedPacket packet, final PacketContext ctx) {
+    public static void handle(final NetworkMonitorDeviceAddedPacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof NetworkMonitorContainerMenu networkMonitor) {
             networkMonitor.addDevice(new MonitorNodeTypeId(packet.groupId), packet.groupType(), packet.device());
         }

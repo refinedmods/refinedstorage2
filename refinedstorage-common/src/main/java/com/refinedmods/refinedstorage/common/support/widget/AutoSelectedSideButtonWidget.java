@@ -32,15 +32,15 @@ public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
 
     private static OnPress createPressAction(final SearchFieldWidget searchFieldWidget) {
         return btn -> {
-            final boolean autoSelected = !Platform.INSTANCE.getConfig().isSearchBoxAutoSelected();
-            Platform.INSTANCE.getConfig().setSearchBoxAutoSelected(autoSelected);
+            final boolean autoSelected = !Platform.INSTANCE.getConfig().isSearchFieldAutoSelected();
+            Platform.INSTANCE.getConfig().setSearchFieldAutoSelected(autoSelected);
             searchFieldWidget.setAutoSelected(autoSelected);
         };
     }
 
     @Override
     protected Identifier getSprite() {
-        return Platform.INSTANCE.getConfig().isSearchBoxAutoSelected() ? YES : NO;
+        return Platform.INSTANCE.getConfig().isSearchFieldAutoSelected() ? YES : NO;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected List<MutableComponent> getSubText() {
-        return Platform.INSTANCE.getConfig().isSearchBoxAutoSelected() ? YES_LINES : NO_LINES;
+        return Platform.INSTANCE.getConfig().isSearchFieldAutoSelected() ? YES_LINES : NO_LINES;
     }
 
     @Override

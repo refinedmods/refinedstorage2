@@ -31,7 +31,7 @@ public class ConfigImpl implements Config {
     private final ModConfigSpec.BooleanValue smoothScrolling;
     private final ModConfigSpec.BooleanValue debug;
     private final ModConfigSpec.IntValue maxRowsStretch;
-    private final ModConfigSpec.BooleanValue searchBoxAutoSelected;
+    private final ModConfigSpec.BooleanValue searchFieldAutoSelected;
     private final ModConfigSpec.BooleanValue autocraftingNotification;
     private final ModConfigSpec.EnumValue<AutocraftingPreviewStyle> autocraftingPreviewStyle;
     private final SimpleEnergyUsageEntry cable;
@@ -83,9 +83,9 @@ public class ConfigImpl implements Config {
         maxRowsStretch = builder
             .translation(translationKey("maxRowsStretch"))
             .defineInRange("maxRowsStretch", 256, 3, 256);
-        searchBoxAutoSelected = builder
-            .translation(translationKey("searchBoxAutoSelected"))
-            .define("searchBoxAutoSelected", false);
+        searchFieldAutoSelected = builder
+            .translation(translationKey("searchFieldAutoSelected"))
+            .define("searchFieldAutoSelected", false);
         autocraftingNotification = builder
             .translation(translationKey("autocraftingNotification"))
             .define("autocraftingNotification", true);
@@ -200,14 +200,14 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public boolean isSearchBoxAutoSelected() {
-        return searchBoxAutoSelected.get();
+    public boolean isSearchFieldAutoSelected() {
+        return searchFieldAutoSelected.get();
     }
 
     @Override
-    public void setSearchBoxAutoSelected(final boolean searchBoxAutoSelected) {
-        if (searchBoxAutoSelected != Boolean.TRUE.equals(this.searchBoxAutoSelected.get())) {
-            this.searchBoxAutoSelected.set(searchBoxAutoSelected);
+    public void setSearchFieldAutoSelected(final boolean searchFieldAutoSelected) {
+        if (searchFieldAutoSelected != Boolean.TRUE.equals(this.searchFieldAutoSelected.get())) {
+            this.searchFieldAutoSelected.set(searchFieldAutoSelected);
             ConfigImpl.this.spec.save();
         }
     }

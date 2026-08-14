@@ -244,14 +244,14 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         repository.sort();
     }
 
-    public void setSearchBox(final GridSearchBox searchBox) {
-        searchBox.addListener(text -> {
+    public void setSearchField(final GridSearchField searchField) {
+        searchField.addListener(text -> {
             final boolean valid = onSearchTextChanged(text);
-            searchBox.setValid(valid);
+            searchField.setValid(valid);
         });
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-            searchBox.setValue(lastSearchQuery);
-            searchBox.addListener(AbstractGridContainerMenu::updateLastSearchQuery);
+            searchField.setValue(lastSearchQuery);
+            searchField.addListener(AbstractGridContainerMenu::updateLastSearchQuery);
         }
     }
 
@@ -265,11 +265,11 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         }
     }
 
-    private ResourceRepositoryFilter<GridResource> createBaseFilter() {
+    private static ResourceRepositoryFilter<GridResource> createBaseFilter() {
         return andFilter(createResourceTypeFilter(), createViewTypeFilter());
     }
 
-    private ResourceRepositoryFilter<GridResource> createResourceTypeFilter() {
+    private static ResourceRepositoryFilter<GridResource> createResourceTypeFilter() {
         return (v, resource) -> Platform.INSTANCE.getConfig().getGrid().getResourceType().flatMap(resourceTypeId ->
             RefinedStorageApi.INSTANCE
                 .getGridResourceTypeRegistry()
@@ -278,7 +278,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         ).orElse(true);
     }
 
-    private ResourceRepositoryFilter<GridResource> createViewTypeFilter() {
+    private static ResourceRepositoryFilter<GridResource> createViewTypeFilter() {
         return (v, resource) -> Platform.INSTANCE.getConfig().getGrid().getViewType()
             .accepts(resource.isAutocraftable(v));
     }

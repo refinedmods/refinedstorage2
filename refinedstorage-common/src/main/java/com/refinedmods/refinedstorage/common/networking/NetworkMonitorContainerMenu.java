@@ -76,6 +76,18 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         return deviceGroups.getAll();
     }
 
+    void onSearchTextChanged(final String text) {
+        deviceGroups.onSearchTextChanged(text);
+    }
+
+    boolean isVisible(final NetworkMonitorDeviceGroup deviceGroup) {
+        return deviceGroups.isVisible(deviceGroup);
+    }
+
+    boolean isVisible(final NetworkMonitorDevice device) {
+        return deviceGroups.isVisible(device);
+    }
+
     @Nullable
     NetworkMonitorDeviceGroup getCurrentDeviceGroup() {
         return currentDeviceGroup;
@@ -143,7 +155,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         if (type == null) {
             return;
         }
-        S2CPackets.sendNetworkMonitorNodeTracked(serverPlayer, typeId, type, device);
+        S2CPackets.sendNetworkMonitorDeviceAdded(serverPlayer, typeId, type, device);
     }
 
     public void addDevice(final MonitorNodeTypeId groupId, final NetworkMonitorDeviceType type,
@@ -154,7 +166,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     @Override
     public void onNodeUntracked(final MonitorNodeId id) {
         if (player instanceof ServerPlayer serverPlayer) {
-            S2CPackets.sendNetworkMonitorNodeUntracked(serverPlayer, id);
+            S2CPackets.sendNetworkMonitorDeviceRemoved(serverPlayer, id);
         }
     }
 
