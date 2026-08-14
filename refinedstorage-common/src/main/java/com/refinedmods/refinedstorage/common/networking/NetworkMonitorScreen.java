@@ -85,7 +85,7 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         addWidget(searchField);
         addSideButton(new AutoSelectedSideButtonWidget(searchField));
         addRenderableWidget(new SearchIconWidget(
-            leftPos - DEVICES_SPRITE_WIDTH + 10,
+            leftPos - DEVICES_SPRITE_WIDTH + 11,
             topPos + 5,
             () -> SEARCH_HELP,
             searchField
@@ -156,12 +156,8 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
 
     @Override
     public void onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup deviceGroup) {
-        boolean needsRelayout = false;
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
-            needsRelayout |= deviceGroupWidget.onCurrentDeviceGroupChanged(deviceGroup);
-        }
-        if (needsRelayout) {
-            relayoutDeviceGroups();
+            deviceGroupWidget.onCurrentDeviceGroupChanged(deviceGroup);
         }
     }
 
@@ -262,10 +258,10 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             ? (int) deviceGroupsScrollbar.getOffset()
             : (int) deviceGroupsScrollbar.getOffset() * ROW_SIZE;
         int y = getDeviceGroupWidgetY() - scrollOffset;
-        for (final NetworkMonitorDeviceGroupWidget groupWidget : deviceGroupWidgets) {
-            groupWidget.setY(y);
-            updateDeviceGroupVisibility(groupWidget);
-            y += groupWidget.getHeight();
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            deviceGroupWidget.setY(y);
+            updateDeviceGroupVisibility(deviceGroupWidget);
+            y += deviceGroupWidget.getHeight();
         }
     }
 

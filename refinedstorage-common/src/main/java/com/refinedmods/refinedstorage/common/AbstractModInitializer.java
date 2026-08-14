@@ -146,6 +146,7 @@ import com.refinedmods.refinedstorage.common.support.SimpleItem;
 import com.refinedmods.refinedstorage.common.support.SimpleStoneBlock;
 import com.refinedmods.refinedstorage.common.support.containermenu.SingleAmountData;
 import com.refinedmods.refinedstorage.common.support.energy.EnergyLootItemFunction;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 import com.refinedmods.refinedstorage.common.support.network.component.PlatformStorageNetworkComponent;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResourceContainerInsertStrategy;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResourceFactory;
@@ -1023,15 +1024,11 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    @SuppressWarnings("deprecation")
     protected final void registerNetworkMonitorDeviceTypes() {
-        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(
-            NetworkNodeTypes.IMPORTER,
-            new NetworkMonitorDeviceType(
-                ContentNames.IMPORTER,
-                Items.INSTANCE.getImporters().getFirst().get().builtInRegistryHolder()
-            )
-        );
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(NetworkNodeTypes.IMPORTER,
+            new NetworkMonitorDeviceType(ContentNames.IMPORTER));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.STORAGE_BLOCK,
+            new NetworkMonitorDeviceType(ContentNames.STORAGE_BLOCK));
     }
 
     protected final void registerNetworkNodeDetailsFactories() {

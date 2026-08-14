@@ -33,6 +33,7 @@ public final class ContentNames {
     public static final MutableComponent STORAGE_MONITOR = name("storage_monitor");
     public static final MutableComponent INTERFACE = name("interface");
     public static final MutableComponent DISK_DRIVE = name("disk_drive");
+    public static final MutableComponent STORAGE_BLOCK = name("storage_block");
     public static final MutableComponent NETWORK_RECEIVER = name("network_receiver");
     public static final MutableComponent NETWORK_TRANSMITTER = name("network_transmitter");
     public static final MutableComponent PORTABLE_GRID = name("portable_grid");

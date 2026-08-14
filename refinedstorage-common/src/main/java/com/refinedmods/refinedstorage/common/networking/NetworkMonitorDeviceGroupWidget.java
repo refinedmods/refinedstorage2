@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -25,7 +26,9 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
@@ -259,14 +262,10 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
             && deviceButtons.stream().anyMatch(deviceButton -> deviceButton.mouseClicked(event, doubleClick));
     }
 
-    boolean onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup currentDeviceGroup) {
+    void onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup currentDeviceGroup) {
         final boolean isMyDeviceGroup = deviceGroup.id().equals(currentDeviceGroup.id());
         deviceGroupButton.active = !isMyDeviceGroup;
         deviceButtons.forEach(deviceButton -> deviceButton.active = true);
-        if (!isMyDeviceGroup) {
-            return collapse();
-        }
-        return false;
     }
 
     void onCurrentDeviceChanged(final NetworkMonitorDevice currentDevice) {
@@ -280,7 +279,6 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         if (!isMyDeviceGroup) {
             return collapse();
         }
-        expand();
         return true;
     }
 
@@ -304,8 +302,18 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         if (!deviceGroupOfAddedDevice.id().equals(deviceGroup.id())) {
             return false;
         }
+        detectIfIconHasToBeAddedToGroupIcons(addedDevice.item().value());
         addDevice(addedDevice);
         return expandCollapseState.isExpanded();
+    }
+
+    private void detectIfIconHasToBeAddedToGroupIcons(final Item addedIcon) {
+        final boolean anyOtherDeviceWithThisIcon = deviceButtons.stream()
+            .anyMatch(deviceButton -> deviceButton.device.item().value().equals(addedIcon));
+        if (!anyOtherDeviceWithThisIcon) {
+            deviceGroupButton.stacks.clear();
+            deviceGroupButton.stacks.addAll(DeviceGroupButton.createStacks(deviceGroup));
+        }
     }
 
     boolean onDeviceGroupRemoved(final NetworkMonitorDeviceGroup removedDeviceGroup) {
@@ -321,9 +329,19 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         final boolean removed = deviceButtons.removeIf(deviceButton ->
             deviceButton.device.id().equals(removedDevice.id()));
         if (removed) {
+            detectIfIconHasToBeRemovedFromGroupIcons(removedDevice.item().value());
             relayoutDeviceButtons();
         }
         return removed;
+    }
+
+    private void detectIfIconHasToBeRemovedFromGroupIcons(final Item removedIcon) {
+        final boolean anyOtherDeviceWithThisIcon = deviceButtons.stream()
+            .anyMatch(deviceButton -> deviceButton.device.item().value().equals(removedIcon));
+        if (!anyOtherDeviceWithThisIcon) {
+            deviceGroupButton.stacks.clear();
+            deviceGroupButton.stacks.addAll(DeviceGroupButton.createStacks(deviceGroup));
+        }
     }
 
     private void relayoutDeviceButtons() {
@@ -335,10 +353,15 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
     }
 
     private static class DeviceGroupButton extends AbstractButton {
+        private static final long CYCLE_MS = 1000;
+
         private final NetworkMonitorDeviceGroup deviceGroup;
         private final TextMarquee text;
         private final Runnable selected;
-        private final ItemStack stack;
+        private final List<ItemStack> stacks;
+
+        private long cycleStart = 0;
+        private int currentCycle = 0;
 
         private DeviceGroupButton(final int x, final int y, final NetworkMonitorDeviceGroup deviceGroup,
                                   final TextMarquee text, final Runnable selected) {
@@ -346,7 +369,16 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
             this.deviceGroup = deviceGroup;
             this.text = text;
             this.selected = selected;
-            this.stack = deviceGroup.type().icon().value().getDefaultInstance();
+            this.stacks = createStacks(deviceGroup);
+        }
+
+        private static List<ItemStack> createStacks(final NetworkMonitorDeviceGroup deviceGroup) {
+            return deviceGroup.devices()
+                .stream()
+                .map(NetworkMonitorDevice::item)
+                .map(Holder::value)
+                .map(Item::getDefaultInstance)
+                .collect(Collectors.toList());
         }
 
         @Override
@@ -357,6 +389,14 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         @Override
         protected void extractContents(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY,
                                        final float partialTicks) {
+            final long now = System.currentTimeMillis();
+            if (cycleStart == 0) {
+                cycleStart = now;
+            }
+            if (now - cycleStart >= CYCLE_MS) {
+                currentCycle++;
+                cycleStart = now;
+            }
             extractDefaultSprite(graphics);
             renderIcon(graphics);
             final int yOffset = SmallText.isSmall() ? 6 : 3;
@@ -366,8 +406,9 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         }
 
         private void renderIcon(final GuiGraphicsExtractor graphics) {
-            final int resourceX = getX();
-            final int resourceY = getY() - 1;
+            final int resourceX = getX() + 1;
+            final int resourceY = getY() + 1;
+            final ItemStack stack = stacks.get(currentCycle % stacks.size());
             graphics.fakeItem(stack, resourceX, resourceY);
             final boolean large = Minecraft.getInstance().isEnforceUnicode()
                 || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
@@ -385,6 +426,7 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         private final NetworkMonitorDevice device;
         private final TextMarquee text;
         private final Runnable selected;
+        private final ItemStack stack;
 
         private DeviceButton(final int x, final int y, final TextMarquee text, final NetworkMonitorDevice device,
                              final Runnable selected) {
@@ -392,6 +434,7 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
             this.text = text;
             this.device = device;
             this.selected = selected;
+            this.stack = device.item().value().getDefaultInstance();
         }
 
         @Override
@@ -411,9 +454,9 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         }
 
         private void renderIcon(final GuiGraphicsExtractor graphics) {
-            final int resourceX = getX();
-            final int resourceY = getY() - 1;
-            graphics.fakeItem(device.icon(), resourceX, resourceY);
+            final int resourceX = getX() + 1;
+            final int resourceY = getY() + 1;
+            graphics.fakeItem(stack, resourceX, resourceY);
         }
 
         @Override

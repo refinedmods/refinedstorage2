@@ -244,6 +244,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerSounds(eventBus);
         registerRecipeSerializers(eventBus);
         registerTickHandler();
+        registerNetworkMonitorDeviceTypes();
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             AbstractClientModInitializer.initializeClientPlatformApi();
@@ -662,7 +663,6 @@ public class ModInitializer extends AbstractModInitializer {
     @SubscribeEvent
     public void onCommonSetup(final FMLCommonSetupEvent e) {
         registerUpgradeMappings();
-        registerNetworkMonitorDeviceTypes();
     }
 
     @SubscribeEvent
