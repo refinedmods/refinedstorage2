@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage.common.support.widget;
 import org.jspecify.annotations.Nullable;
 
 public class ExpandCollapseState {
-    private static final long DELAY = 10;
+    private static final long DELAY = 5;
 
     private double expandedPct;
     private int elapsed;

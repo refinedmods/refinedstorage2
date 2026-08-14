@@ -58,29 +58,34 @@ class NetworkMonitorDeviceGroups {
 
     void addDevice(final MonitorNodeTypeId groupId, final NetworkMonitorDeviceType type,
                    final NetworkMonitorDevice device) {
-        final NetworkMonitorDeviceGroup deviceGroup = findOrAdd(groupId, type);
+        final NetworkMonitorDeviceGroup deviceGroup = findById(groupId);
+        if (deviceGroup == null) {
+            add(groupId, type, device);
+            return;
+        }
         deviceGroup.devices().add(device);
         if (listener != null) {
             listener.onDeviceAdded(deviceGroup, device);
         }
     }
 
-    private NetworkMonitorDeviceGroup findOrAdd(final MonitorNodeTypeId groupId, final NetworkMonitorDeviceType type) {
+    @Nullable
+    private NetworkMonitorDeviceGroup findById(final MonitorNodeTypeId groupId) {
         for (final NetworkMonitorDeviceGroup deviceGroup : deviceGroups) {
             if (deviceGroup.id().equals(groupId.id())) {
                 return deviceGroup;
             }
         }
-        return add(groupId, type);
+        return null;
     }
 
-    private NetworkMonitorDeviceGroup add(final MonitorNodeTypeId groupId, final NetworkMonitorDeviceType type) {
-        final NetworkMonitorDeviceGroup deviceGroup = NetworkMonitorDeviceGroup.create(groupId, type);
+    private void add(final MonitorNodeTypeId groupId, final NetworkMonitorDeviceType type,
+                     final NetworkMonitorDevice initialDevice) {
+        final NetworkMonitorDeviceGroup deviceGroup = NetworkMonitorDeviceGroup.create(groupId, type, initialDevice);
         deviceGroups.add(deviceGroup);
         if (listener != null) {
             listener.onDeviceGroupAdded(deviceGroup);
         }
-        return deviceGroup;
     }
 
     @Nullable

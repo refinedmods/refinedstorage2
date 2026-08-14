@@ -25,7 +25,6 @@ import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -83,17 +82,14 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     private NetworkMonitorDevice toDevice(final NetworkNode node) {
         final MonitorNodeId id = requireNonNull(mainNetworkNode.getId(node));
         if (!(mainNetworkNode.getContainer(id) instanceof InWorldNetworkNodeContainer inWorldNetworkNodeContainer)) {
             return null;
         }
         final Block block = inWorldNetworkNodeContainer.getBlockState().getBlock();
-        final ItemStack stack = block.asItem().getDefaultInstance();
-        if (stack.isEmpty()) {
-            return null;
-        }
-        return new NetworkMonitorDevice(id.id(), block.getName(), stack);
+        return new NetworkMonitorDevice(id.id(), block.getName(), block.asItem().builtInRegistryHolder());
     }
 
     @Override

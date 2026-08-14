@@ -24,8 +24,11 @@ public record NetworkMonitorDeviceGroup(UUID id, NetworkMonitorDeviceType type, 
             NetworkMonitorDeviceGroup::new
         );
 
-    static NetworkMonitorDeviceGroup create(final MonitorNodeTypeId id, final NetworkMonitorDeviceType type) {
-        return new NetworkMonitorDeviceGroup(id.id(), type, new ArrayList<>());
+    static NetworkMonitorDeviceGroup create(final MonitorNodeTypeId id, final NetworkMonitorDeviceType type,
+                                            final NetworkMonitorDevice initialDevice) {
+        final ArrayList<NetworkMonitorDevice> devices = new ArrayList<>();
+        devices.add(initialDevice);
+        return new NetworkMonitorDeviceGroup(id.id(), type, devices);
     }
 
     @Nullable
