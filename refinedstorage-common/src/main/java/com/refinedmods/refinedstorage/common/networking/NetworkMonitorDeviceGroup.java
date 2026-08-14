@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDevice
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import net.minecraft.core.UUIDUtil;
@@ -15,14 +16,13 @@ import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.Nullable;
 
 public record NetworkMonitorDeviceGroup(UUID id, NetworkMonitorDeviceType type, List<NetworkMonitorDevice> devices) {
-    public static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorDeviceGroup> STREAM_CODEC =
-        StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC, NetworkMonitorDeviceGroup::id,
-            NetworkMonitorDeviceType.STREAM_CODEC, NetworkMonitorDeviceGroup::type,
-            ByteBufCodecs.collection(ArrayList::new, NetworkMonitorDevice.STREAM_CODEC),
-            NetworkMonitorDeviceGroup::devices,
-            NetworkMonitorDeviceGroup::new
-        );
+    static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorDeviceGroup> STREAM_CODEC = StreamCodec.composite(
+        UUIDUtil.STREAM_CODEC, NetworkMonitorDeviceGroup::id,
+        NetworkMonitorDeviceType.STREAM_CODEC, NetworkMonitorDeviceGroup::type,
+        ByteBufCodecs.collection(ArrayList::new, NetworkMonitorDevice.STREAM_CODEC),
+        NetworkMonitorDeviceGroup::devices,
+        NetworkMonitorDeviceGroup::new
+    );
 
     static NetworkMonitorDeviceGroup create(final MonitorNodeTypeId id, final NetworkMonitorDeviceType type,
                                             final NetworkMonitorDevice initialDevice) {
@@ -41,5 +41,19 @@ public record NetworkMonitorDeviceGroup(UUID id, NetworkMonitorDeviceType type, 
 
     boolean hasDevice(final MonitorNodeId deviceId) {
         return findDeviceById(deviceId) != null;
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final NetworkMonitorDeviceGroup that = (NetworkMonitorDeviceGroup) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

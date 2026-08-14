@@ -167,15 +167,15 @@ public final class S2CPackets {
         Platform.INSTANCE.sendPacketToClient(player, new ExportingIndicatorUpdatePacket(indicators));
     }
 
-    public static void sendNetworkMonitorNodeTracked(final ServerPlayer player,
+    public static void sendNetworkMonitorDeviceAdded(final ServerPlayer player,
                                                      final MonitorNodeTypeId groupId,
                                                      final NetworkMonitorDeviceType type,
                                                      final NetworkMonitorDevice device) {
-        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorNodeTrackedPacket(groupId.id(), type,
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDeviceAddedPacket(groupId.id(), type,
             device));
     }
 
-    public static void sendNetworkMonitorNodeUntracked(final ServerPlayer player, final MonitorNodeId nodeId) {
-        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorNodeUntrackedPacket(nodeId.id()));
+    public static void sendNetworkMonitorDeviceRemoved(final ServerPlayer player, final MonitorNodeId nodeId) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDeviceRemovedPacket(nodeId.id()));
     }
 }

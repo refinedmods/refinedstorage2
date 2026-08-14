@@ -22,7 +22,7 @@ public class SearchFieldWidget extends EditBox {
         this.history = history;
         setBordered(false);
         setMaxLength(256);
-        setAutoSelected(Platform.INSTANCE.getConfig().isSearchBoxAutoSelected());
+        setAutoSelected(Platform.INSTANCE.getConfig().isSearchFieldAutoSelected());
     }
 
     @Override

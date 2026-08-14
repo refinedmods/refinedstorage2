@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.grid.screen;
 
-import com.refinedmods.refinedstorage.common.grid.GridSearchBox;
+import com.refinedmods.refinedstorage.common.grid.GridSearchField;
 import com.refinedmods.refinedstorage.common.support.widget.History;
 import com.refinedmods.refinedstorage.common.support.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage.query.lexer.Lexer;
@@ -20,16 +20,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
+class GridSearchFieldWidget extends SearchFieldWidget implements GridSearchField {
     private final Set<Consumer<String>> listeners = new HashSet<>();
     private boolean valid = true;
 
-    GridSearchBoxWidget(final Font textRenderer,
-                        final int x,
-                        final int y,
-                        final int width,
-                        final SyntaxHighlighter syntaxHighlighter,
-                        final History history) {
+    GridSearchFieldWidget(final Font textRenderer, final int x, final int y, final int width,
+                          final SyntaxHighlighter syntaxHighlighter, final History history) {
         super(textRenderer, x, y, width, history);
         addFormatter((text, offset) -> format(syntaxHighlighter, text, offset).getVisualOrderText());
         setResponder(text -> listeners.forEach(l -> l.accept(text)));
@@ -78,7 +74,7 @@ class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
 
     @Override
     public void addListener(final Consumer<String> listener) {
-        this.listeners.add(listener);
+        listeners.add(listener);
     }
 
     @Override

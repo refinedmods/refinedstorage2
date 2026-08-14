@@ -18,16 +18,6 @@ public class ExpandCollapseState {
         return expandedPct > 0;
     }
 
-    public boolean collapse() {
-        if (expandedPct > 0 || elapsed > 0 || animationState == ExpandCollapse.EXPAND) {
-            expandedPct = 0;
-            elapsed = 0;
-            animationState = null;
-            return true;
-        }
-        return false;
-    }
-
     public void expand() {
         expandedPct = 1;
         elapsed = 0;

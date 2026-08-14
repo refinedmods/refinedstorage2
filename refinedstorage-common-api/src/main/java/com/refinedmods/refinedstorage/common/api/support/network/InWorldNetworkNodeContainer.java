@@ -6,12 +6,17 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public interface InWorldNetworkNodeContainer extends NetworkNodeContainer, ConnectionStrategy {
     BlockState getBlockState();
+
+    default Component getLevelName() {
+        return getBlockState().getBlock().getName();
+    }
 
     boolean isRemoved();
 
