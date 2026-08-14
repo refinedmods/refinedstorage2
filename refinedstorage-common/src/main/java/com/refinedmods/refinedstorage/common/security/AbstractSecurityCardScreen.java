@@ -39,7 +39,7 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
     }
 
     @Override
-    protected void init(final int rows) {
+    protected void initStretching(final int rows, final int topHeight) {
         permissions.clear();
         final List<SecurityCardData.Permission> menuPermissions = getMenu().getPermissions();
         for (int i = 0; i < menuPermissions.size(); ++i) {

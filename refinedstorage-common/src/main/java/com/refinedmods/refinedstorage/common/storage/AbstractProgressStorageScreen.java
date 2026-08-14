@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage.common.storage;
 
-import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
+import com.refinedmods.refinedstorage.common.support.widget.ProgressBarWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public abstract class AbstractProgressStorageScreen<T extends AbstractStorageCon
     private final int progressWidgetX;
 
     @Nullable
-    private ProgressWidget progressWidget;
+    private ProgressBarWidget progressBarWidget;
 
     protected AbstractProgressStorageScreen(final T menu,
                                             final Inventory inventory,
@@ -28,20 +28,20 @@ public abstract class AbstractProgressStorageScreen<T extends AbstractStorageCon
     @Override
     protected void init() {
         super.init();
-        if (progressWidget == null) {
-            progressWidget = new ProgressWidget(
+        if (progressBarWidget == null) {
+            progressBarWidget = new ProgressBarWidget(
                 leftPos + progressWidgetX,
-                topPos + 54,
-                16,
-                70,
+                topPos + 53,
+                18,
+                72,
                 menu::getProgress,
                 this::createProgressTooltip
             );
         } else {
-            progressWidget.setX(leftPos + progressWidgetX);
-            progressWidget.setY(topPos + 54);
+            progressBarWidget.setX(leftPos + progressWidgetX);
+            progressBarWidget.setY(topPos + 53);
         }
-        addRenderableWidget(progressWidget);
+        addRenderableWidget(progressBarWidget);
     }
 
     private List<Component> createProgressTooltip() {

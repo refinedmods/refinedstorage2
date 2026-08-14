@@ -25,9 +25,10 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     private static final int ROW_PADDING = 3;
     private static final int MIN_ROWS = 3;
 
-    private int visibleRows;
     @Nullable
-    private ScrollbarWidget scrollbar;
+    protected ScrollbarWidget scrollbar;
+
+    private int visibleRows;
 
     protected AbstractStretchingScreen(final T menu,
                                        final Inventory playerInventory,
@@ -62,12 +63,13 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         this.scrollbar.setListener(offset -> scrollbarChanged(visibleRows));
         addWidget(scrollbar);
 
-        init(visibleRows);
+        final int topOffset = getTopOffset();
+        initStretching(visibleRows, TOP_HEIGHT + topOffset);
 
         addSideButton(new ScreenSizeSideButtonWidget(this));
     }
 
-    protected void init(final int rows) {
+    protected void initStretching(final int rows, final int topHeight) {
         // no op
     }
 
@@ -233,11 +235,15 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
         scrollbar.setMaxOffset(maxOffset);
     }
 
-    protected final void resetScrollbarPosition() {
+    protected final void updateScrollbarBasedOnStretchedHeight(final int height) {
         if (scrollbar == null) {
             return;
         }
-        scrollbar.setOffset(0);
+        final int stretchedHeight = modifyVisibleRows(visibleRows) * ROW_SIZE;
+        final int heightExcludingVisibleOnes = height - stretchedHeight;
+        final int maxOffset = heightExcludingVisibleOnes + getScrollPanePadding();
+        scrollbar.setEnabled(maxOffset > 0);
+        scrollbar.setMaxOffset(maxOffset);
     }
 
     protected abstract int getBottomHeight();

@@ -50,16 +50,18 @@ public final class IdentifierUtil {
         return Component.translatable(createTranslationKey(category, value), args);
     }
 
-    public static MutableComponent createStoredWithCapacityTranslation(
-        final long stored,
-        final long capacity,
-        final double pct
-    ) {
+    public static MutableComponent createStoredWithCapacityTranslation(final long stored, final long capacity,
+                                                                       final double pct) {
+        return createStoredWithCapacityTranslation(stored, capacity, pct, 0xFFFFFFFF);
+    }
+
+    public static MutableComponent createStoredWithCapacityTranslation(final long stored, final long capacity,
+                                                                       final double pct, final int numberColor) {
         return createTranslation(
             "misc",
             "stored_with_capacity",
-            Component.literal(stored == Long.MAX_VALUE ? "∞" : format(stored)).withStyle(ChatFormatting.WHITE),
-            Component.literal(capacity == Long.MAX_VALUE ? "∞" : format(capacity)).withStyle(ChatFormatting.WHITE),
+            Component.literal(stored == Long.MAX_VALUE ? "∞" : format(stored)).withColor(numberColor),
+            Component.literal(capacity == Long.MAX_VALUE ? "∞" : format(capacity)).withColor(numberColor),
             Component.literal(String.valueOf((int) (pct * 100D)))
         ).withStyle(ChatFormatting.GRAY);
     }

@@ -30,6 +30,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
 
@@ -55,6 +56,7 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
     private boolean focused;
     private boolean outOfFrame;
     private boolean allowedByFiltering;
+    private int visibleDeviceButtons;
 
     NetworkMonitorDeviceGroupWidget(final int x, final int y, final NetworkMonitorDeviceGroup deviceGroup,
                                     final Runnable selected, final Consumer<NetworkMonitorDevice> deviceSelected,
@@ -102,8 +104,7 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
     }
 
     void addDevice(final NetworkMonitorDevice device) {
-        final int visibleDevices = getVisibleDeviceButtons();
-        final int buttonY = y + (GROUP_HEIGHT * (visibleDevices + 1));
+        final int buttonY = y + (GROUP_HEIGHT * (visibleDeviceButtons + 1));
         deviceButtons.add(new DeviceButton(x + DEVICE_X_OFFSET, buttonY, new TextMarquee(
             device.name(),
             DEVICE_WIDTH - 16 - 4 - 4,
@@ -237,16 +238,11 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         if (!expandCollapseState.isExpanded()) {
             return 1;
         }
-        return 1 + getVisibleDeviceButtons();
+        return 1 + visibleDeviceButtons;
     }
 
     private int getExpandedHeight() {
-        final int visibleDevices = getVisibleDeviceButtons();
-        return (int) ((double) (DEVICE_HEIGHT * visibleDevices) * expandCollapseState.getExpandedPercentage());
-    }
-
-    private int getVisibleDeviceButtons() {
-        return (int) deviceButtons.stream().filter(deviceButton -> deviceButton.visible).count();
+        return (int) ((double) (DEVICE_HEIGHT * visibleDeviceButtons) * expandCollapseState.getExpandedPercentage());
     }
 
     @Override
@@ -285,16 +281,16 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
             && deviceButtons.stream().anyMatch(deviceButton -> deviceButton.mouseClicked(event, doubleClick));
     }
 
-    void onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup currentDeviceGroup) {
-        final boolean isMyDeviceGroup = deviceGroup.id().equals(currentDeviceGroup.id());
+    void onCurrentDeviceGroupChanged(@Nullable final NetworkMonitorDeviceGroup currentDeviceGroup) {
+        final boolean isMyDeviceGroup = currentDeviceGroup != null && deviceGroup.id().equals(currentDeviceGroup.id());
         deviceGroupButton.active = !isMyDeviceGroup;
         deviceButtons.forEach(deviceButton -> deviceButton.active = true);
     }
 
-    void onCurrentDeviceChanged(final NetworkMonitorDevice currentDevice) {
+    void onCurrentDeviceChanged(@Nullable final NetworkMonitorDevice currentDevice) {
         deviceGroupButton.active = true;
         deviceButtons.forEach(deviceButton ->
-            deviceButton.active = !deviceButton.device.id().equals(currentDevice.id()));
+            deviceButton.active = currentDevice == null || !deviceButton.device.id().equals(currentDevice.id()));
     }
 
     private void expand() {
@@ -355,11 +351,13 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
 
     private void relayoutDevices() {
         int deviceButtonY = y + GROUP_HEIGHT;
+        visibleDeviceButtons = 0;
         for (final DeviceButton deviceButton : deviceButtons) {
             deviceButton.setVisible(deviceVisible.test(deviceButton.device));
             if (!deviceButton.visible) {
                 continue;
             }
+            visibleDeviceButtons++;
             deviceButton.setY(deviceButtonY);
             deviceButtonY += GROUP_HEIGHT;
         }

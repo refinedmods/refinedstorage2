@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDevice
 import com.refinedmods.refinedstorage.common.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.networking.NetworkMonitorDevice;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorNetworkStatistics;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterData;
 
 import java.util.List;
@@ -177,5 +178,17 @@ public final class S2CPackets {
 
     public static void sendNetworkMonitorDeviceRemoved(final ServerPlayer player, final MonitorNodeId nodeId) {
         Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDeviceRemovedPacket(nodeId.id()));
+    }
+
+    public static void sendNetworkMonitorActive(final ServerPlayer player, final boolean active) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorActivePacket(active));
+    }
+
+    public static void sendNetworkMonitorNetworkStatisticsUpdate(
+        final ServerPlayer player,
+        final NetworkMonitorNetworkStatistics networkStatistics
+    ) {
+        Platform.INSTANCE.sendPacketToClient(player,
+            new NetworkMonitorNetworkStatisticsUpdatePacket(networkStatistics));
     }
 }

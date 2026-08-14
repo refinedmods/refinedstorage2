@@ -38,10 +38,6 @@ public class StorageTransferNetworkNode extends AbstractStorageContainerNetworkN
         super(type, baseEnergyUsage, energyUsagePerStorage, size);
     }
 
-    public void setBaseEnergyUsage(final long baseEnergyUsage) {
-        this.baseEnergyUsage = baseEnergyUsage;
-    }
-
     public void setMode(final StorageTransferMode mode) {
         this.mode = mode;
     }

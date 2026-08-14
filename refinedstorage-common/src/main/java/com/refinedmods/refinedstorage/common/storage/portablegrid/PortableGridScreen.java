@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.storage.portablegrid;
 
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.grid.screen.AbstractGridScreen;
-import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
+import com.refinedmods.refinedstorage.common.support.widget.ProgressBarWidget;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
@@ -22,7 +22,7 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
     private static final Identifier NO_ENERGY_TEXTURE = createIdentifier("textures/gui/grid.png");
 
     @Nullable
-    private ProgressWidget progressWidget;
+    private ProgressBarWidget progressBarWidget;
     private final Identifier texture;
 
     public PortableGridScreen(final AbstractPortableGridContainerMenu menu,
@@ -64,22 +64,22 @@ public class PortableGridScreen extends AbstractGridScreen<AbstractPortableGridC
         if (!RefinedStorageApi.INSTANCE.isEnergyRequired()) {
             return;
         }
-        final int progressX = 172;
-        final int progressY = imageHeight - 10 - 70;
-        if (progressWidget == null) {
-            progressWidget = new ProgressWidget(
+        final int progressX = 171;
+        final int progressY = imageHeight - 10 - 71;
+        if (progressBarWidget == null) {
+            progressBarWidget = new ProgressBarWidget(
                 leftPos + progressX,
                 topPos + progressY,
-                16,
-                70,
+                18,
+                72,
                 getMenu().getEnergyInfo()::getPercentageFull,
                 getMenu().getEnergyInfo()::createTooltip
             );
         } else {
-            progressWidget.setX(leftPos + progressX);
-            progressWidget.setY(topPos + progressY);
+            progressBarWidget.setX(leftPos + progressX);
+            progressBarWidget.setY(topPos + progressY);
         }
-        addRenderableWidget(progressWidget);
+        addRenderableWidget(progressBarWidget);
     }
 
     @Override

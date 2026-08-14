@@ -121,10 +121,10 @@ class NetworkMonitorDeviceGroups {
     }
 
     void onSearchTextChanged(final String text) {
-        lastSearchQuery = text;
         visibleDeviceGroups.clear();
         visibleDevices.clear();
         final String normalizedText = text.trim().toLowerCase(Locale.ROOT);
+        lastSearchQuery = normalizedText;
         if (normalizedText.isEmpty()) {
             for (final NetworkMonitorDeviceGroup deviceGroup : deviceGroups) {
                 visibleDeviceGroups.add(deviceGroup);
@@ -164,5 +164,9 @@ class NetworkMonitorDeviceGroups {
 
     boolean isVisible(final NetworkMonitorDevice device) {
         return visibleDevices.contains(device);
+    }
+
+    boolean isSearching() {
+        return !lastSearchQuery.isEmpty();
     }
 }

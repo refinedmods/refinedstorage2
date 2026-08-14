@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import org.jspecify.annotations.Nullable;
 
 interface NetworkMonitorListener {
-    void onCurrentDeviceGroupChanged(NetworkMonitorDeviceGroup deviceGroup);
+    void onCurrentDeviceGroupChanged(@Nullable NetworkMonitorDeviceGroup deviceGroup);
 
-    void onCurrentDeviceChanged(NetworkMonitorDeviceGroup deviceGroup, NetworkMonitorDevice device);
+    void onCurrentDeviceChanged(@Nullable NetworkMonitorDevice device);
 
     void onDeviceGroupAdded(NetworkMonitorDeviceGroup deviceGroup);
 
@@ -17,5 +17,9 @@ interface NetworkMonitorListener {
 
     void onDeviceRemoved(NetworkMonitorDeviceGroup deviceGroup, NetworkMonitorDevice device);
 
-    void onDetailsChanged(@Nullable NetworkNodeDetails details);
+    void onDetailsChanged(@Nullable NetworkMonitorDeviceGroup deviceGroup,
+                          @Nullable NetworkMonitorDevice device,
+                          @Nullable NetworkNodeDetails details);
+
+    void onActiveChanged(boolean newActive);
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage.common.controller;
 
 import com.refinedmods.refinedstorage.common.support.AbstractBaseScreen;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
-import com.refinedmods.refinedstorage.common.support.widget.ProgressWidget;
+import com.refinedmods.refinedstorage.common.support.widget.ProgressBarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     private static final Identifier TEXTURE = createIdentifier("textures/gui/controller.png");
 
     @Nullable
-    private ProgressWidget progressWidget;
+    private ProgressBarWidget progressBarWidget;
 
     public ControllerScreen(final ControllerContainerMenu menu,
                             final Inventory playerInventory,
@@ -33,20 +33,20 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
             getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
             createTranslation("gui", "controller.redstone_mode_help")
         ));
-        if (progressWidget == null) {
-            progressWidget = new ProgressWidget(
-                leftPos + 80,
-                topPos + 20,
-                16,
-                70,
+        if (progressBarWidget == null) {
+            progressBarWidget = new ProgressBarWidget(
+                leftPos + 79,
+                topPos + 19,
+                18,
+                72,
                 getMenu().getEnergyInfo()::getPercentageFull,
                 getMenu().getEnergyInfo()::createTooltip
             );
         } else {
-            progressWidget.setX(leftPos + 80);
-            progressWidget.setY(topPos + 20);
+            progressBarWidget.setX(leftPos + 79);
+            progressBarWidget.setY(topPos + 19);
         }
-        addRenderableWidget(progressWidget);
+        addRenderableWidget(progressBarWidget);
     }
 
     @Override

@@ -15,8 +15,7 @@ public class SecurityCardScreen extends AbstractSecurityCardScreen<SecurityCardC
     }
 
     @Override
-    protected void init(final int rows) {
-        super.init(rows);
+    protected void initStretching(final int rows, final int topHeight) {
         final Component boundToText = Component.literal(menu.getBoundTo().name());
         final Button boundPlayerButton = Button.builder(boundToText, this::toggleBoundPlayer)
             .pos(leftPos + imageWidth - BOUND_PLAYER_BUTTON_RIGHT_PADDING - BOUND_PLAYER_BUTTON_WIDTH, topPos + 4)

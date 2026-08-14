@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
 public class ResourceStorageType implements StorageType {
@@ -35,14 +36,17 @@ public class ResourceStorageType implements StorageType {
             Codec.LONG.fieldOf("at").forGetter(StorageContents.Changed::at)
         ).apply(instance, StorageContents.Changed::new));
 
+    private final Component name;
     private final MapCodec<StorageContents> codec;
     private final Predicate<ResourceKey> valid;
     private final long diskInterfaceTransferQuota;
     private final long diskInterfaceTransferQuotaWithStackUpgrade;
 
-    public ResourceStorageType(final Codec<ResourceKey> resourceCodec, final Predicate<ResourceKey> valid,
+    public ResourceStorageType(final Component name,
+                               final Codec<ResourceKey> resourceCodec, final Predicate<ResourceKey> valid,
                                final long diskInterfaceTransferQuota,
                                final long diskInterfaceTransferQuotaWithStackUpgrade) {
+        this.name = name;
         this.valid = valid;
         this.diskInterfaceTransferQuota = diskInterfaceTransferQuota;
         this.diskInterfaceTransferQuotaWithStackUpgrade = diskInterfaceTransferQuotaWithStackUpgrade;
@@ -58,6 +62,11 @@ public class ResourceStorageType implements StorageType {
             new ErrorHandlingListCodec<>(storedCodec, DESERIALIZE_ERROR_MESSAGE)
                 .fieldOf("resources").forGetter(StorageContents::stored)
         ).apply(instance, (capacity, stored) -> new StorageContents(this, capacity, stored)));
+    }
+
+    @Override
+    public Component getName() {
+        return name;
     }
 
     @Override
