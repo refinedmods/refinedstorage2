@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,6 +27,7 @@ import org.jspecify.annotations.Nullable;
 
 public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu implements ScreenSizeListener,
     MonitorListener {
+    private final RateLimiter networkStatisticsUpdateRateLimiter = RateLimiter.create(2);
     private final Predicate<Player> stillValid;
     private final NetworkMonitorDeviceGroups deviceGroups;
     @Nullable
@@ -40,12 +42,16 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     private NetworkMonitorBlockEntity networkMonitor;
     @Nullable
     private Player player;
+    private NetworkMonitorNetworkStatistics lastNetworkStatistics;
+    private boolean active;
 
     public NetworkMonitorContainerMenu(final int syncId, final NetworkMonitorData data) {
         super(Menus.INSTANCE.getNetworkMonitor(), syncId);
         this.stillValid = p -> true;
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
         this.deviceGroups = new NetworkMonitorDeviceGroups(data.deviceGroups());
+        this.active = data.active();
+        this.lastNetworkStatistics = data.networkStatistics();
     }
 
     public NetworkMonitorContainerMenu(final int syncId,
@@ -56,6 +62,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.networkMonitor = networkMonitor;
         this.deviceGroups = new NetworkMonitorDeviceGroups(Collections.emptyList());
         this.player = playerInventory.player;
+        this.lastNetworkStatistics = networkMonitor.getNetworkStatistics();
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
             networkMonitor::getRedstoneMode,
@@ -69,6 +76,20 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         super.removed(playerEntity);
         if (networkMonitor != null) {
             networkMonitor.removeListener(this);
+        }
+    }
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (networkMonitor != null
+            && player instanceof ServerPlayer serverPlayer
+            && networkStatisticsUpdateRateLimiter.tryAcquire()) {
+            final NetworkMonitorNetworkStatistics oldNetworkStatistics = lastNetworkStatistics;
+            lastNetworkStatistics = networkMonitor.getNetworkStatistics();
+            if (!lastNetworkStatistics.equals(oldNetworkStatistics)) {
+                S2CPackets.sendNetworkMonitorNetworkStatisticsUpdate(serverPlayer, lastNetworkStatistics);
+            }
         }
     }
 
@@ -88,6 +109,10 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         return deviceGroups.isVisible(device);
     }
 
+    boolean isSearching() {
+        return deviceGroups.isSearching();
+    }
+
     @Nullable
     NetworkMonitorDeviceGroup getCurrentDeviceGroup() {
         return currentDeviceGroup;
@@ -103,23 +128,24 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         return currentDetails;
     }
 
-    void setCurrentDeviceGroup(final NetworkMonitorDeviceGroup deviceGroup) {
+    void setCurrentDeviceGroup(@Nullable final NetworkMonitorDeviceGroup deviceGroup) {
         this.currentDeviceGroup = deviceGroup;
         this.currentDevice = null;
         this.currentDetails = null;
         if (listener != null) {
             listener.onCurrentDeviceGroupChanged(deviceGroup);
-            listener.onDetailsChanged(null);
+            listener.onDetailsChanged(currentDeviceGroup, currentDevice, null);
         }
     }
 
-    void setCurrentDevice(final NetworkMonitorDeviceGroup deviceGroup, final NetworkMonitorDevice device) {
+    void setCurrentDevice(@Nullable final NetworkMonitorDeviceGroup deviceGroup,
+                          @Nullable final NetworkMonitorDevice device) {
         this.currentDeviceGroup = deviceGroup;
         this.currentDevice = device;
         this.currentDetails = null;
         if (listener != null) {
-            listener.onCurrentDeviceChanged(deviceGroup, device);
-            listener.onDetailsChanged(null);
+            listener.onCurrentDeviceChanged(device);
+            listener.onDetailsChanged(currentDeviceGroup, currentDevice, null);
         }
     }
 
@@ -129,7 +155,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     }
 
     boolean isActive() {
-        return true;
+        return active;
     }
 
     @Override
@@ -175,7 +201,8 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
             currentDevice = null;
             currentDetails = null;
             if (listener != null) {
-                listener.onDetailsChanged(null);
+                listener.onCurrentDeviceChanged(null);
+                listener.onDetailsChanged(currentDeviceGroup, currentDevice, null);
             }
         }
         final NetworkMonitorDeviceGroup deviceGroup = deviceGroups.removeDevice(id);
@@ -184,6 +211,39 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         }
         if (currentDeviceGroup != null && currentDeviceGroup.id().equals(deviceGroup.id())) {
             currentDeviceGroup = null;
+            if (listener != null) {
+                listener.onCurrentDeviceGroupChanged(null);
+            }
         }
+    }
+
+    @Override
+    public void onActiveChanged(final boolean newActive) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendNetworkMonitorActive(serverPlayer, newActive);
+            return;
+        }
+        this.active = newActive;
+        if (!active) {
+            currentDevice = null;
+            currentDetails = null;
+            currentDeviceGroup = null;
+            if (listener != null) {
+                listener.onCurrentDeviceChanged(null);
+                listener.onDetailsChanged(currentDeviceGroup, currentDevice, null);
+                listener.onCurrentDeviceGroupChanged(null);
+            }
+        }
+        if (listener != null) {
+            listener.onActiveChanged(newActive);
+        }
+    }
+
+    public void onNetworkStatisticsUpdated(final NetworkMonitorNetworkStatistics networkStatistics) {
+        this.lastNetworkStatistics = networkStatistics;
+    }
+
+    NetworkMonitorNetworkStatistics getLastNetworkStatistics() {
+        return lastNetworkStatistics;
     }
 }

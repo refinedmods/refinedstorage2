@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetwo
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.GraphNetworkComponentImpl;
-import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeTypes;
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.security.SecurityNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
@@ -1025,10 +1024,30 @@ public abstract class AbstractModInitializer {
     }
 
     protected final void registerNetworkMonitorDeviceTypes() {
-        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(NetworkNodeTypes.IMPORTER,
-            new NetworkMonitorDeviceType(ContentNames.IMPORTER));
         RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.STORAGE_BLOCK,
             new NetworkMonitorDeviceType(ContentNames.STORAGE_BLOCK));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.DISK_DRIVE,
+            new NetworkMonitorDeviceType(ContentNames.DISK_DRIVE));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.DISK_INTERFACE,
+            new NetworkMonitorDeviceType(ContentNames.DISK_INTERFACE));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.AUTOCRAFTER_MANAGER,
+            new NetworkMonitorDeviceType(ContentNames.AUTOCRAFTER_MANAGER));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.WIRELESS_TRANSMITTER,
+            new NetworkMonitorDeviceType(ContentNames.WIRELESS_TRANSMITTER));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.NETWORK_RECEIVER,
+            new NetworkMonitorDeviceType(ContentNames.NETWORK_RECEIVER));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.NETWORK_TRANSMITTER,
+            new NetworkMonitorDeviceType(ContentNames.NETWORK_TRANSMITTER));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.CABLE,
+            new NetworkMonitorDeviceType(ContentNames.CABLE));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.DESTRUCTOR,
+            new NetworkMonitorDeviceType(ContentNames.DESTRUCTOR));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.CONSTRUCTOR,
+            new NetworkMonitorDeviceType(ContentNames.CONSTRUCTOR));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.AUTOCRAFTING_MONITOR,
+            new NetworkMonitorDeviceType(ContentNames.AUTOCRAFTING_MONITOR));
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.STORAGE_MONITOR,
+            new NetworkMonitorDeviceType(ContentNames.STORAGE_MONITOR));
     }
 
     protected final void registerNetworkNodeDetailsFactories() {

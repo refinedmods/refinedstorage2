@@ -118,7 +118,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
     }
 
     @Override
-    protected void init(final int rows) {
+    protected void initStretching(final int rows, final int topHeight) {
         LOGGER.debug("Initializing grid screen - this shouldn't happen too much!");
 
         this.pinRows = calculatePinRows(rows);

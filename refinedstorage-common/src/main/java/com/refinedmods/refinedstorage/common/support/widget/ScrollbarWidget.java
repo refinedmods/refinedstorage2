@@ -21,9 +21,9 @@ public class ScrollbarWidget extends AbstractWidget {
     private static final int ANIMATION_SCROLL_DURATION_IN_TICKS = 10;
     private static final double ANIMATION_SCROLL_HEIGHT_IN_PIXELS = 30;
 
-    private final boolean smoothScrolling;
     private final Type type;
 
+    private boolean smoothScrolling;
     private double offset;
     private double maxOffset;
     private boolean enabled = true;
@@ -38,12 +38,20 @@ public class ScrollbarWidget extends AbstractWidget {
 
     public ScrollbarWidget(final int x, final int y, final Type type, final int height) {
         super(x, y, type.width, height, Component.empty());
-        this.smoothScrolling = Platform.INSTANCE.getConfig().isSmoothScrolling();
         this.type = type;
+        resetSmoothScrolling();
     }
 
     public void setListener(@Nullable final DoubleConsumer listener) {
         this.listener = listener;
+    }
+
+    public void setSmoothScrolling(final boolean smoothScrolling) {
+        this.smoothScrolling = smoothScrolling;
+    }
+
+    public void resetSmoothScrolling() {
+        this.smoothScrolling = Platform.INSTANCE.getConfig().isSmoothScrolling();
     }
 
     public boolean isSmoothScrolling() {

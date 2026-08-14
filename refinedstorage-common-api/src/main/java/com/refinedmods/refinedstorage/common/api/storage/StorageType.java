@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.api.storage;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.network.chat.Component;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
@@ -17,4 +18,8 @@ public interface StorageType {
     boolean isAllowed(ResourceKey resource);
 
     long getDiskInterfaceTransferQuota(boolean stackUpgrade);
+
+    default Component getName() {
+        return Component.empty();
+    }
 }

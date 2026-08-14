@@ -3,10 +3,13 @@ package com.refinedmods.refinedstorage.common.networking;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkNodeDetailsRenderer;
+import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.stretching.AbstractStretchingScreen;
+import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 import com.refinedmods.refinedstorage.common.support.widget.AutoSelectedSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.History;
+import com.refinedmods.refinedstorage.common.support.widget.ProgressBarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage.common.support.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage.common.support.widget.SearchFieldWidget;
@@ -29,7 +32,9 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonitorContainerMenu>
@@ -37,18 +42,26 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     private static final Identifier TEXTURE = createIdentifier("textures/gui/network_monitor.png");
     private static final Identifier DEVICES = createIdentifier("network_monitor/devices");
     private static final Component SEARCH_HELP = createTranslation("gui", "network_monitor.search_help");
+    private static final Component ENERGY = createTranslation("gui",
+        "network_monitor.network.energy");
+    private static final Component STORAGE_DISKS_AND_BLOCKS = createTranslation("gui",
+        "network_monitor.network.storage_disks_and_blocks");
 
     private static final int DEVICES_TOP_HEIGHT = 19;
     private static final int DEVICES_BOTTOM_HEIGHT = 7;
     private static final int DEVICES_SPRITE_WIDTH = 91;
     private static final int DEVICES_SPRITE_HEIGHT = 46;
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
+    private static final int NETWORK_STATISTICS_PADDING = 4;
 
     @Nullable
     private ScrollbarWidget deviceGroupsScrollbar;
     @Nullable
     private SearchFieldWidget searchField;
     private List<ClientTooltipComponent> detailsTooltip = Collections.emptyList();
+    @Nullable
+    private NetworkMonitorNetworkWidget networkWidget;
+    private boolean showNetworkStatistics;
 
     private final List<NetworkMonitorDeviceGroupWidget> deviceGroupWidgets = new ArrayList<>();
 
@@ -99,13 +112,18 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             ScrollbarWidget.Type.NORMAL, (getVisibleRows() * ROW_SIZE) - 2);
         deviceGroupsScrollbar.setListener(this::onScrolledDeviceGroups);
         int y = getDeviceGroupWidgetY();
+        this.networkWidget = new NetworkMonitorNetworkWidget(getDeviceGroupWidgetX(), y,
+            () -> menu.setCurrentDeviceGroup(null), networkWidget != null && networkWidget.active);
+        addWidget(networkWidget);
+        detectWhetherNetworkWidgetIsHiddenOrOutOfFrame();
+        y += networkWidget.getHeight();
         for (int i = 0; i < menu.getDeviceGroups().size(); ++i) {
             final NetworkMonitorDeviceGroup deviceGroup = menu.getDeviceGroups().get(i);
             final boolean expanded = previouslyExpanded != null
                 && previouslyExpanded.getDeviceGroup().id().equals(deviceGroup.id());
             final NetworkMonitorDeviceGroupWidget deviceGroupWidget = addDeviceGroupWithoutRelayout(deviceGroup, y,
                 expanded);
-            updateDeviceGroupVisibility(deviceGroupWidget);
+            detectWhetherDeviceWidgetIsHiddenOrOutOfFrame(deviceGroupWidget);
             y += deviceGroupWidget.getHeight();
         }
         updateDeviceGroupsScrollbar();
@@ -113,13 +131,13 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     private void loadCurrentDeviceGroupAndDevice() {
-        final NetworkMonitorDeviceGroup currentDeviceGroup = menu.getCurrentDeviceGroup();
         final NetworkMonitorDevice currentDevice = menu.getCurrentDevice();
-        if (currentDeviceGroup != null && currentDevice != null) {
-            onCurrentDeviceChanged(currentDeviceGroup, currentDevice);
-        } else if (currentDeviceGroup != null) {
-            onCurrentDeviceGroupChanged(currentDeviceGroup);
+        if (currentDevice != null) {
+            onCurrentDeviceChanged(currentDevice);
+            return;
         }
+        final NetworkMonitorDeviceGroup currentDeviceGroup = menu.getCurrentDeviceGroup();
+        onCurrentDeviceGroupChanged(currentDeviceGroup);
     }
 
     @Nullable
@@ -132,7 +150,23 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         return expanded;
     }
 
-    private void updateDeviceGroupVisibility(final NetworkMonitorDeviceGroupWidget widget) {
+    private void detectWhetherNetworkWidgetIsHiddenOrOutOfFrame() {
+        if (networkWidget == null) {
+            return;
+        }
+        if (!menu.isActive() || menu.isSearching()) {
+            networkWidget.setOutOfFrame(false);
+            networkWidget.visible = false;
+            return;
+        }
+        final int minY = getDeviceGroupWidgetY();
+        final int y = networkWidget.getY();
+        final int height = networkWidget.getHeight();
+        networkWidget.setOutOfFrame(y < minY - height || y > minY + (getVisibleRows() * ROW_SIZE));
+        networkWidget.visible = true;
+    }
+
+    private void detectWhetherDeviceWidgetIsHiddenOrOutOfFrame(final NetworkMonitorDeviceGroupWidget widget) {
         if (!menu.isActive() || !menu.isVisible(widget.getDeviceGroup())) {
             widget.setAllowedByFiltering(false);
             widget.setOutOfFrame(true);
@@ -158,15 +192,20 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     @Override
-    public void onCurrentDeviceGroupChanged(final NetworkMonitorDeviceGroup deviceGroup) {
+    public void onCurrentDeviceGroupChanged(@Nullable final NetworkMonitorDeviceGroup deviceGroup) {
+        if (networkWidget != null) {
+            networkWidget.active = deviceGroup != null;
+        }
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.onCurrentDeviceGroupChanged(deviceGroup);
         }
     }
 
     @Override
-    public void onCurrentDeviceChanged(final NetworkMonitorDeviceGroup deviceGroup,
-                                       final NetworkMonitorDevice device) {
+    public void onCurrentDeviceChanged(@Nullable final NetworkMonitorDevice device) {
+        if (networkWidget != null) {
+            networkWidget.active = device != null;
+        }
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.onCurrentDeviceChanged(device);
         }
@@ -231,15 +270,33 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     @Override
-    public void onDetailsChanged(@Nullable final NetworkNodeDetails details) {
+    public void onDetailsChanged(@Nullable final NetworkMonitorDeviceGroup deviceGroup,
+                                 @Nullable final NetworkMonitorDevice device,
+                                 @Nullable final NetworkNodeDetails details) {
+        if (scrollbar == null) {
+            return;
+        }
         if (details != null) {
+            showNetworkStatistics = false;
             final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
                 .getNetworkNodeDetailsRenderer(details.getClass());
+            scrollbar.resetSmoothScrolling();
             updateScrollbarRows(renderer.getRows(details));
+        } else if (device == null && deviceGroup == null) {
+            showNetworkStatistics = true;
+            scrollbar.setSmoothScrolling(true);
+            updateScrollbarBasedOnStretchedHeight(getNetworkStatisticsHeight());
         } else {
+            showNetworkStatistics = false;
+            scrollbar.resetSmoothScrolling();
             updateScrollbarRows(0);
         }
-        resetScrollbarPosition();
+        scrollbar.setOffset(0);
+    }
+
+    @Override
+    public void onActiveChanged(final boolean newActive) {
+        relayoutDeviceGroups();
     }
 
     private void relayoutDeviceGroups() {
@@ -250,9 +307,14 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             ? (int) deviceGroupsScrollbar.getOffset()
             : (int) deviceGroupsScrollbar.getOffset() * ROW_SIZE;
         int y = getDeviceGroupWidgetY() - scrollOffset;
+        if (networkWidget != null) {
+            networkWidget.setY(y);
+            detectWhetherNetworkWidgetIsHiddenOrOutOfFrame();
+            y += networkWidget.getHeight();
+        }
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.setY(y);
-            updateDeviceGroupVisibility(deviceGroupWidget);
+            detectWhetherDeviceWidgetIsHiddenOrOutOfFrame(deviceGroupWidget);
             y += deviceGroupWidget.getHeight();
         }
         updateDeviceGroupsScrollbar();
@@ -267,12 +329,24 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             deviceGroupsScrollbar.setMaxOffset(0);
             return;
         }
-        final int maxOffset = deviceGroupsScrollbar.isSmoothScrolling()
-            ? (deviceGroupWidgets.stream().mapToInt(NetworkMonitorDeviceGroupWidget::getHeight).sum()
-            - (getVisibleRows() * ROW_SIZE))
-            : (deviceGroupWidgets.stream().mapToInt(NetworkMonitorDeviceGroupWidget::getRows).sum() - getVisibleRows());
+        final int maxOffset = getDeviceGroupsScrollbarMaxOffset();
         deviceGroupsScrollbar.setEnabled(maxOffset > 0);
         deviceGroupsScrollbar.setMaxOffset(maxOffset);
+    }
+
+    private int getDeviceGroupsScrollbarMaxOffset() {
+        if (deviceGroupsScrollbar == null) {
+            return 0;
+        }
+        if (deviceGroupsScrollbar.isSmoothScrolling()) {
+            final int totalHeight = deviceGroupWidgets.stream()
+                .mapToInt(NetworkMonitorDeviceGroupWidget::getHeight).sum();
+            final int networkHeight = networkWidget != null ? networkWidget.getHeight() : 0;
+            return totalHeight + networkHeight - (getVisibleRows() * ROW_SIZE);
+        }
+        final int totalRows = deviceGroupWidgets.stream().mapToInt(NetworkMonitorDeviceGroupWidget::getRows).sum();
+        final int networkRow = networkWidget != null && networkWidget.visible ? 1 : 0;
+        return totalRows + networkRow - getVisibleRows();
     }
 
     private void onScrolledDeviceGroups(final double value) {
@@ -280,19 +354,24 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             return;
         }
         final int scrollOffset = deviceGroupsScrollbar.isSmoothScrolling()
-            ? (int) deviceGroupsScrollbar.getOffset()
-            : (int) deviceGroupsScrollbar.getOffset() * ROW_SIZE;
+            ? (int) value
+            : (int) value * ROW_SIZE;
         int y = getDeviceGroupWidgetY() - scrollOffset;
+        if (networkWidget != null) {
+            networkWidget.setY(y);
+            detectWhetherNetworkWidgetIsHiddenOrOutOfFrame();
+            y += networkWidget.getHeight();
+        }
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.setY(y);
-            updateDeviceGroupVisibility(deviceGroupWidget);
+            detectWhetherDeviceWidgetIsHiddenOrOutOfFrame(deviceGroupWidget);
             y += deviceGroupWidget.getHeight();
         }
     }
 
     private void initDetails() {
         menu.setListener(this);
-        onDetailsChanged(menu.getCurrentDetails());
+        onDetailsChanged(menu.getCurrentDeviceGroup(), menu.getCurrentDevice(), menu.getCurrentDetails());
     }
 
     void onSearchTextChanged(final String text) {
@@ -356,13 +435,11 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         final int x = getDeviceGroupWidgetX();
         final int y = getDeviceGroupWidgetY();
         graphics.enableScissor(x, y, x + 64, y + (getVisibleRows() * ROW_SIZE) - 2);
+        if (networkWidget != null) {
+            networkWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        }
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
-        }
-        final NetworkMonitorDeviceGroup currentDeviceGroup = menu.getCurrentDeviceGroup();
-        if (currentDeviceGroup != null) {
-            graphics.text(font, Component.literal(currentDeviceGroup.id().toString()),
-                x, y + (getVisibleRows() * ROW_SIZE) - font.lineHeight, 0xFF808080, false);
         }
         graphics.disableScissor();
     }
@@ -378,10 +455,12 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     @Override
     protected void renderRows(final GuiGraphicsExtractor graphics, final int x, final int y, final int topHeight,
                               final int rows, final int mouseX, final int mouseY, final float partialTicks) {
-        final NetworkMonitorDevice currentDevice = menu.getCurrentDevice();
-        if (currentDevice != null) {
-            graphics.text(font, Component.literal(currentDevice.id().toString()), x + 7 + 1,
-                y + 1 + topHeight, 0xFF808080, false);
+        final int detailsY = y + topHeight - getScrollbarOffset();
+        final int detailsX = x + 7;
+        if (showNetworkStatistics) {
+            this.detailsTooltip = Collections.emptyList();
+            renderNetworkStatistics(graphics, detailsX, detailsY);
+            return;
         }
         final NetworkNodeDetails details = menu.getCurrentDetails();
         if (details == null) {
@@ -389,9 +468,106 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         }
         final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
             .getNetworkNodeDetailsRenderer(details.getClass());
-        final int detailsY = y + topHeight - getScrollbarOffset();
-        final int detailsX = x + 7;
         this.detailsTooltip = renderer.render(details, graphics, detailsX, detailsY, mouseX, mouseY);
+    }
+
+    private int getNetworkStatisticsHeight() {
+        final NetworkMonitorNetworkStatistics networkStatistics = menu.getLastNetworkStatistics();
+        final float scale = SmallText.correctScale(SmallText.DEFAULT_SCALE);
+        final int lineHeight = (int) (font.lineHeight * scale) + NETWORK_STATISTICS_PADDING;
+        return 5 // padding on top
+            + lineHeight // energy title
+            + lineHeight // energy stored and capacity
+            + lineHeight // energy usage
+            + 16 + NETWORK_STATISTICS_PADDING // energy progress bar
+            + lineHeight // devices
+            + lineHeight // empty space
+            + lineHeight // storage title
+            + (lineHeight + 16 + NETWORK_STATISTICS_PADDING) * networkStatistics.storageStatistics().size()
+            - NETWORK_STATISTICS_PADDING; // remove last padding because we don't need it after the last progress bar
+    }
+
+    private void renderNetworkStatistics(final GuiGraphicsExtractor graphics, final int x, final int startY) {
+        final NetworkMonitorNetworkStatistics networkStatistics = menu.getLastNetworkStatistics();
+        int y = startY + 5;
+        final float scale = SmallText.correctScale(SmallText.DEFAULT_SCALE);
+        final int lineHeight = (int) (font.lineHeight * scale) + NETWORK_STATISTICS_PADDING;
+        y = renderEnergyUsageAndStored(graphics, x, networkStatistics, y, scale, lineHeight);
+        y = renderAmountOfDevices(graphics, x, networkStatistics, y, scale, lineHeight);
+        y += lineHeight;
+        renderStorageStatistics(graphics, x, y, scale, lineHeight, networkStatistics);
+    }
+
+    private int renderEnergyUsageAndStored(final GuiGraphicsExtractor graphics, final int x,
+                                           final NetworkMonitorNetworkStatistics networkStatistics,
+                                           final int startY, final float scale, final int lineHeight) {
+        int y = startY;
+        SmallText.render(graphics, font, ENERGY.getVisualOrderText(), x + 4, y, 0xFF404040, false,
+            scale);
+        y += lineHeight;
+        final Component storedAndCapacity = createStoredWithCapacityTranslation(
+            networkStatistics.energyStored(), networkStatistics.energyCapacity(), networkStatistics.energyPct(),
+            0xFF404040
+        ).withColor(0xFF404040);
+        final Component energyUsage = createTranslation("gui", "network_monitor.network.energy.usage_per_tick",
+            format(networkStatistics.energyUsage()));
+        SmallText.render(graphics, font, storedAndCapacity.getVisualOrderText(), x + 4 + 4, y, 0xFF404040,
+            false, scale);
+        y += lineHeight;
+        SmallText.render(graphics, font, energyUsage.getVisualOrderText(), x + 4 + 4, y, 0xFF404040, false, scale);
+        y += lineHeight;
+        ProgressBarWidget.renderHorizontal(graphics, x + 4 + 4, y, 150, 16, networkStatistics.energyPct());
+        y += 16 + NETWORK_STATISTICS_PADDING;
+        return y;
+    }
+
+    private int renderAmountOfDevices(final GuiGraphicsExtractor graphics, final int x,
+                                      final NetworkMonitorNetworkStatistics networkStatistics, final int startY,
+                                      final float scale,
+                                      final int lineHeight) {
+        int y = startY;
+        final Component text = createTranslation("gui", "network_monitor.network.energy.amount_of_devices",
+            format(networkStatistics.amountOfDevices()));
+        SmallText.render(graphics, font, text.getVisualOrderText(), x + 4 + 4, y, 0xFF404040, false, scale);
+        y += lineHeight;
+        return y;
+    }
+
+    private void renderStorageStatistics(final GuiGraphicsExtractor graphics, final int x,
+                                         final int startY, final float scale, final int lineHeight,
+                                         final NetworkMonitorNetworkStatistics networkStatistics) {
+        int y = startY;
+        SmallText.render(graphics, font, STORAGE_DISKS_AND_BLOCKS.getVisualOrderText(), x + 4, y, 0xFF404040, false,
+            scale);
+        y += lineHeight;
+        for (final NetworkMonitorNetworkStatistics.StorageStatistics storage : networkStatistics.storageStatistics()) {
+            y = renderStorageStatistics(graphics, x, scale, lineHeight, networkStatistics, storage, y);
+        }
+    }
+
+    private int renderStorageStatistics(final GuiGraphicsExtractor graphics,
+                                        final int x, final float scale, final int lineHeight,
+                                        final NetworkMonitorNetworkStatistics networkStatistics,
+                                        final NetworkMonitorNetworkStatistics.StorageStatistics storage,
+                                        final int startY) {
+        int y = startY;
+        final StorageType storageType = storage.type();
+        SmallText.render(graphics, font, storageType.getName().getVisualOrderText(), x + 4 + 4, y, 0xFF404040,
+            false, scale);
+        final double pct = networkStatistics.storageTypePct(storageType);
+        final Component storedAndCapacity = createStoredWithCapacityTranslation(
+            networkStatistics.stored(storageType),
+            networkStatistics.capacity(storageType),
+            pct,
+            0xFF404040
+        ).withColor(0xFF404040);
+        SmallText.render(graphics, font, storedAndCapacity.getVisualOrderText(),
+            x + 4 + 153 - (int) (font.width(storedAndCapacity) * scale),
+            y, 0xFF404040, false, scale);
+        y += lineHeight;
+        ProgressBarWidget.renderHorizontal(graphics, x + 4 + 4, y, 150, 16, pct);
+        y += 16 + NETWORK_STATISTICS_PADDING;
+        return y;
     }
 
     @Override

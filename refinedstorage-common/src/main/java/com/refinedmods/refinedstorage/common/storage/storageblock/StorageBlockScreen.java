@@ -18,7 +18,7 @@ public class StorageBlockScreen extends AbstractProgressStorageScreen<StorageBlo
                               final Inventory inventory,
                               final Component title,
                               final ResourceRendering resourceRendering) {
-        super(menu, inventory, title, 80);
+        super(menu, inventory, title, 79);
         this.resourceRendering = resourceRendering;
     }
 

@@ -1,14 +1,7 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.importer;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeEventManager;
-import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeTypes;
-import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeActor;
-import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
-import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
-import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
-import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.filter.Filter;
@@ -20,10 +13,9 @@ import java.util.function.UnaryOperator;
 
 import org.jspecify.annotations.Nullable;
 
-public class ImporterNetworkNode extends AbstractNetworkNode implements NetworkNodeDetailsProvider {
+public class ImporterNetworkNode extends AbstractNetworkNode {
     private final Filter filter = new Filter();
     private final Actor actor = new NetworkNodeActor(this);
-    private final NetworkNodeEventManager eventManager = new NetworkNodeEventManager();
     private long energyUsage;
     @Nullable
     private ImporterTransferStrategy transferStrategy;
@@ -68,25 +60,5 @@ public class ImporterNetworkNode extends AbstractNetworkNode implements NetworkN
     @Override
     public long getEnergyUsage() {
         return energyUsage;
-    }
-
-    @Override
-    public NetworkNodeType getType() {
-        return NetworkNodeTypes.IMPORTER;
-    }
-
-    @Override
-    public NetworkNodeDetails createDetails() {
-        return new SimpleNetworkNodeDetails(getEnergyUsage(), isActive());
-    }
-
-    @Override
-    public void addListener(final NetworkNodeListener listener) {
-        eventManager.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(final NetworkNodeListener listener) {
-        eventManager.removeListener(listener);
     }
 }

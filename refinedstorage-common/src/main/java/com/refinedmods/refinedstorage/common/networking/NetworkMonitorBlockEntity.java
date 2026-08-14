@@ -5,10 +5,14 @@ import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNetwo
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
+import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
+import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
@@ -17,6 +21,7 @@ import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetwork
 
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -25,7 +30,8 @@ import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -49,7 +55,28 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
 
     @Override
     public NetworkMonitorData getMenuData() {
-        return new NetworkMonitorData(mainNetworkNode.getTypes().stream().map(this::toDeviceGroup).toList());
+        return new NetworkMonitorData(mainNetworkNode.isActive(), getNetworkStatistics(),
+            mainNetworkNode.getTypes().stream().map(this::toDeviceGroup).toList());
+    }
+
+    public NetworkMonitorNetworkStatistics getNetworkStatistics() {
+        final int amountOfDevices = mainNetworkNode.getNodeCount();
+        final long energyUsage = mainNetworkNode.getTotalEnergyUsage();
+        final long energyStored = mainNetworkNode.getEnergyStored();
+        final long energyCapacity = mainNetworkNode.getEnergyCapacity();
+        final List<NetworkMonitorNetworkStatistics.StorageStatistics> storageStatistics =
+            RefinedStorageApi.INSTANCE.getStorageTypeRegistry().getAll()
+                .stream()
+                .map(type -> new NetworkMonitorNetworkStatistics.StorageStatistics(
+                    type,
+                    mainNetworkNode.getStored(storage -> storage instanceof SerializableStorage serializable
+                        && serializable.getType() == type),
+                    mainNetworkNode.getCapacity(storage -> storage instanceof SerializableStorage serializable
+                        && serializable.getType() == type)
+                ))
+                .toList();
+        return new NetworkMonitorNetworkStatistics(energyUsage, energyStored, energyCapacity, amountOfDevices,
+            storageStatistics);
     }
 
     private NetworkMonitorDeviceGroup toDeviceGroup(final NetworkNodeType nodeType) {
@@ -85,14 +112,23 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     @SuppressWarnings("deprecation")
     private NetworkMonitorDevice toDevice(final NetworkNode node) {
         final MonitorNodeId id = requireNonNull(mainNetworkNode.getId(node));
-        if (!(mainNetworkNode.getContainer(id) instanceof InWorldNetworkNodeContainer inWorldNetworkNodeContainer)) {
+        if (!(mainNetworkNode.getContainer(id) instanceof InWorldNetworkNodeContainer container)) {
             return null;
         }
-        final Block block = inWorldNetworkNodeContainer.getBlockState().getBlock();
+        final Item item = container.getBlockState().getBlock().asItem();
+        if (item == Items.AIR) {
+            return null;
+        }
+        final PriorityProvider priorityProvider = node instanceof StorageNetworkNodeDetailsProvider storage
+            ? storage.getPriority()
+            : null;
         return new NetworkMonitorDevice(
             id.id(),
-            inWorldNetworkNodeContainer.getLevelName(),
-            block.asItem().builtInRegistryHolder()
+            container.getLevelName(),
+            node instanceof NetworkNodeDetailsProvider prov ? prov.getEnergyUsage() : 0,
+            priorityProvider != null ? OptionalInt.of(priorityProvider.getInsertPriority()) : OptionalInt.empty(),
+            priorityProvider != null ? OptionalInt.of(priorityProvider.getExtractPriority()) : OptionalInt.empty(),
+            item.builtInRegistryHolder()
         );
     }
 

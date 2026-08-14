@@ -60,9 +60,7 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
     }
 
     @Override
-    protected void init(final int rows) {
-        super.init(rows);
-
+    protected void initStretching(final int rows, final int topHeight) {
         getMenu().setListener(() -> {
             resize();
             updateScrollbar();

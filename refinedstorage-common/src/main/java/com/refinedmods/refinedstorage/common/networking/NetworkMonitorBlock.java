@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
@@ -33,10 +32,8 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTr
 public class NetworkMonitorBlock
     extends AbstractActiveColoredDirectionalBlock<OrientedDirection, NetworkMonitorBlock, BaseBlockItem>
     implements EntityBlock, BlockItemProvider<BaseBlockItem> {
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-
-    private static final AbstractBlockEntityTicker<NetworkReceiverBlockEntity> TICKER =
-        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getNetworkReceiver, ACTIVE);
+    private static final AbstractBlockEntityTicker<NetworkMonitorBlockEntity> TICKER =
+        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getNetworkMonitor, ACTIVE);
     private static final Component HELP = createTranslation("item", "network_monitor.help");
 
     private final Identifier id;
