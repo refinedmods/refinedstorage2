@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
@@ -200,11 +201,14 @@ public interface RefinedStorageApi {
     void usePlayerSlotReferencedItem(Player player, Item... items);
 
     void registerNetworkMonitorDeviceType(
-        NetworkNodeType type,
-        NetworkMonitorDeviceType deviceType
+        NetworkNodeType nodeType,
+        NetworkMonitorDeviceType type,
+        NetworkMonitorDeviceCategory category
     );
 
     NetworkMonitorDeviceType getNetworkMonitorDeviceType(NetworkNodeType type);
+
+    NetworkMonitorDeviceCategory getNetworkMonitorDeviceCategory(NetworkMonitorDeviceType type);
 
     void registerNetworkNodeDetailsFactory(
         Class<? extends NetworkNodeDetails> detailsClass,

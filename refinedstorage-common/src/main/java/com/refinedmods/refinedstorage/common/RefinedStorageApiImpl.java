@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
@@ -186,6 +187,8 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
         StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
         networkNodeDetailsFactories = new HashMap<>();
     private final Map<NetworkNodeType, NetworkMonitorDeviceType> networkMonitorDeviceTypes = new HashMap<>();
+    private final Map<NetworkMonitorDeviceType, NetworkMonitorDeviceCategory> networkMonitorDeviceCategories
+        = new HashMap<>();
     private final CompositePlayerSlotReferenceProvider playerSlotReferenceProvider =
         new CompositePlayerSlotReferenceProvider();
     private final PlatformRegistry<PlatformPermission> permissionRegistry = new PlatformRegistryImpl<>();
@@ -538,14 +541,21 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
     }
 
     @Override
-    public void registerNetworkMonitorDeviceType(final NetworkNodeType type,
-                                                 final NetworkMonitorDeviceType deviceType) {
-        networkMonitorDeviceTypes.put(type, deviceType);
+    public void registerNetworkMonitorDeviceType(final NetworkNodeType nodeType,
+                                                 final NetworkMonitorDeviceType type,
+                                                 final NetworkMonitorDeviceCategory category) {
+        networkMonitorDeviceTypes.put(nodeType, type);
+        networkMonitorDeviceCategories.put(type, category);
     }
 
     @Override
     public NetworkMonitorDeviceType getNetworkMonitorDeviceType(final NetworkNodeType type) {
         return requireNonNull(networkMonitorDeviceTypes.get(type));
+    }
+
+    @Override
+    public NetworkMonitorDeviceCategory getNetworkMonitorDeviceCategory(final NetworkMonitorDeviceType type) {
+        return requireNonNull(networkMonitorDeviceCategories.get(type));
     }
 
     @Override

@@ -106,7 +106,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
     private final PendingAutocraftingRequests pendingAutocraftingRequests = new PendingAutocraftingRequests();
     private Set<TaskId> subscribedAutocraftingTaskIds = Set.of();
     private final AutocraftingTasks autocraftingTasks = new AutocraftingTasks();
-    private boolean resourceTypeWarningVisible;
+    private boolean emptyResourceTypeWarningVisible;
     @Nullable
     private PendingGridUpdates pendingUpdates;
 
@@ -146,7 +146,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         this.insertionStrategy = new ClientGridInsertionStrategy();
         this.extractionStrategy = new ClientGridExtractionStrategy();
         this.scrollingStrategy = new ClientGridScrollingStrategy();
-        updateResourceTypeWarning();
+        updateEmptyResourceTypeWarning();
     }
 
     protected AbstractGridContainerMenu(
@@ -186,7 +186,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         LOGGER.debug("{} got updated with {}", resource, amount);
         repository.update(resource, amount);
         updateOrRemoveTrackedResource(resource, trackedResource);
-        updateResourceTypeWarning();
+        updateEmptyResourceTypeWarning();
     }
 
     @Override
@@ -451,7 +451,7 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         }
         this.resourceTypeFilter = newResourceType;
         this.repository.sort();
-        updateResourceTypeWarning();
+        updateEmptyResourceTypeWarning();
     }
 
     @Override
@@ -664,17 +664,17 @@ public abstract class AbstractGridContainerMenu extends AbstractResourceContaine
         return false;
     }
 
-    public boolean isResourceTypeWarningVisible() {
-        return resourceTypeWarningVisible;
+    public boolean isEmptyResourceTypeWarningVisible() {
+        return emptyResourceTypeWarningVisible;
     }
 
-    private void updateResourceTypeWarning() {
+    private void updateEmptyResourceTypeWarning() {
         final GridResourceType resourceType = getResourceType();
         if (resourceType == null) {
-            resourceTypeWarningVisible = false;
+            emptyResourceTypeWarningVisible = false;
             return;
         }
-        resourceTypeWarningVisible = repository.copyBackingList()
+        emptyResourceTypeWarningVisible = repository.copyBackingList()
             .getAll()
             .stream()
             .noneMatch(resource -> resourceType.getResourceType().equals(resource.getClass()));

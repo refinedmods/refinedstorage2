@@ -179,7 +179,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         trySynchronizeToGrid();
         trySubscribeToAutocraftingTasks();
         if (resourceTypeSideButtonWidget != null) {
-            resourceTypeSideButtonWidget.setWarningVisible(getMenu().isResourceTypeWarningVisible());
+            resourceTypeSideButtonWidget.setEmptyWarningVisible(getMenu().isEmptyResourceTypeWarningVisible());
         }
         ticks++;
     }
