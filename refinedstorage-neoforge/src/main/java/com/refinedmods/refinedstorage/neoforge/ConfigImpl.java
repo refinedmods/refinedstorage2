@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.neoforge;
 
 import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.common.Config;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerSearchMode;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerViewType;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
@@ -9,6 +10,9 @@ import com.refinedmods.refinedstorage.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage.common.grid.GridViewType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorGroupType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingDirection;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingType;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSize;
 
 import java.util.Optional;
@@ -65,7 +69,7 @@ public class ConfigImpl implements Config {
     private final AutocrafterManagerEntryImpl autocrafterManager;
     private final SimpleEnergyUsageEntry autocraftingMonitor;
     private final WirelessAutocraftingMonitorEntryImpl wirelessAutocraftingMonitor;
-    private final SimpleEnergyUsageEntry networkMonitor;
+    private final NetworkMonitorEntryImpl networkMonitor;
 
     public ConfigImpl() {
         screenSize = builder
@@ -132,7 +136,7 @@ public class ConfigImpl implements Config {
             DefaultEnergyUsage.AUTOCRAFTING_MONITOR
         );
         wirelessAutocraftingMonitor = new WirelessAutocraftingMonitorEntryImpl();
-        networkMonitor = new SimpleEnergyUsageEntryImpl("networkMonitor", DefaultEnergyUsage.NETWORK_MONITOR);
+        networkMonitor = new NetworkMonitorEntryImpl();
         spec = builder.build();
     }
 
@@ -368,7 +372,7 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public SimpleEnergyUsageEntry getNetworkMonitor() {
+    public NetworkMonitorEntry getNetworkMonitor() {
         return networkMonitor;
     }
 
@@ -1154,6 +1158,103 @@ public class ConfigImpl implements Config {
         @Override
         public long getCancelAllEnergyUsage() {
             return cancelAllEnergyUsage.get();
+        }
+    }
+
+    private class NetworkMonitorEntryImpl implements NetworkMonitorEntry {
+        private final ModConfigSpec.LongValue energyUsage;
+        private final ModConfigSpec.EnumValue<NetworkMonitorGroupType> groupType;
+        private final ModConfigSpec.ConfigValue<String> viewType;
+        private final ModConfigSpec.EnumValue<NetworkMonitorSortingType> sortingType;
+        private final ModConfigSpec.EnumValue<NetworkMonitorSortingDirection> sortingDirection;
+
+        NetworkMonitorEntryImpl() {
+            builder.translation(translationKey("networkMonitor")).push("networkMonitor");
+            energyUsage = builder
+                .translation(translationKey("networkMonitor." + ENERGY_USAGE))
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.NETWORK_MONITOR, 0, Long.MAX_VALUE);
+            groupType = builder
+                .translation(translationKey("networkMonitor.groupType"))
+                .defineEnum("groupType", NetworkMonitorGroupType.DEVICE_TYPE);
+            viewType = builder
+                .translation(translationKey("networkMonitor.viewType"))
+                .define("viewType", "");
+            sortingType = builder
+                .translation(translationKey("networkMonitor.sortingType"))
+                .defineEnum("sortingType", NetworkMonitorSortingType.ENERGY_USAGE);
+            sortingDirection = builder
+                .translation(translationKey("networkMonitor.sortingDirection"))
+                .defineEnum("sortingDirection", NetworkMonitorSortingDirection.DESCENDING);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage.get();
+        }
+
+        @Override
+        public NetworkMonitorGroupType getGroupType() {
+            return groupType.get();
+        }
+
+        @Override
+        public void setGroupType(final NetworkMonitorGroupType groupType) {
+            if (groupType != this.groupType.get()) {
+                this.groupType.set(groupType);
+                ConfigImpl.this.spec.save();
+            }
+        }
+
+        @Override
+        public Optional<NetworkMonitorDeviceCategory> getViewType() {
+            final String type = viewType.get();
+            if (type.trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(type).map(NetworkMonitorDeviceCategory::valueOf);
+        }
+
+        @Override
+        public void setViewType(final NetworkMonitorDeviceCategory viewType) {
+            if (!viewType.name().equals(this.viewType.get())) {
+                this.viewType.set(viewType.name());
+                ConfigImpl.this.spec.save();
+            }
+        }
+
+        @Override
+        public void clearViewType() {
+            if (!viewType.get().isEmpty()) {
+                this.viewType.set("");
+                ConfigImpl.this.spec.save();
+            }
+        }
+
+        @Override
+        public NetworkMonitorSortingType getSortingType() {
+            return sortingType.get();
+        }
+
+        @Override
+        public void setSortingType(final NetworkMonitorSortingType sortingType) {
+            if (sortingType != this.sortingType.get()) {
+                this.sortingType.set(sortingType);
+                ConfigImpl.this.spec.save();
+            }
+        }
+
+        @Override
+        public NetworkMonitorSortingDirection getSortingDirection() {
+            return sortingDirection.get();
+        }
+
+        @Override
+        public void setSortingDirection(final NetworkMonitorSortingDirection sortingDirection) {
+            if (sortingDirection != this.sortingDirection.get()) {
+                this.sortingDirection.set(sortingDirection);
+                ConfigImpl.this.spec.save();
+            }
         }
     }
 }

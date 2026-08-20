@@ -1,12 +1,16 @@
 package com.refinedmods.refinedstorage.common;
 
 import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerSearchMode;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerViewType;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage.common.grid.GridViewType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorGroupType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingDirection;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingType;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSize;
 
 import java.util.Optional;
@@ -100,7 +104,7 @@ public interface Config {
 
     WirelessAutocraftingMonitorEntry getWirelessAutocraftingMonitor();
 
-    SimpleEnergyUsageEntry getNetworkMonitor();
+    NetworkMonitorEntry getNetworkMonitor();
 
     interface SimpleEnergyUsageEntry {
         long getEnergyUsage();
@@ -256,5 +260,25 @@ public interface Config {
         long getCancelEnergyUsage();
 
         long getCancelAllEnergyUsage();
+    }
+
+    interface NetworkMonitorEntry extends SimpleEnergyUsageEntry {
+        NetworkMonitorGroupType getGroupType();
+
+        void setGroupType(NetworkMonitorGroupType groupType);
+
+        Optional<NetworkMonitorDeviceCategory> getViewType();
+
+        void setViewType(NetworkMonitorDeviceCategory viewType);
+
+        void clearViewType();
+
+        NetworkMonitorSortingType getSortingType();
+
+        void setSortingType(NetworkMonitorSortingType sortingType);
+
+        NetworkMonitorSortingDirection getSortingDirection();
+
+        void setSortingDirection(NetworkMonitorSortingDirection sortingDirection);
     }
 }

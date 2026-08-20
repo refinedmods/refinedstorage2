@@ -26,8 +26,7 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
     private static final int MIN_ROWS = 3;
 
     @Nullable
-    protected ScrollbarWidget scrollbar;
-
+    private ScrollbarWidget scrollbar;
     private int visibleRows;
 
     protected AbstractStretchingScreen(final T menu,
@@ -227,23 +226,32 @@ public abstract class AbstractStretchingScreen<T extends AbstractBaseContainerMe
             return;
         }
         final int actualVisibleRows = modifyVisibleRows(visibleRows);
-        scrollbar.setEnabled(totalRows > actualVisibleRows);
         final int rowsExcludingVisibleOnes = totalRows - actualVisibleRows;
         final int maxOffset = scrollbar.isSmoothScrolling()
             ? ((rowsExcludingVisibleOnes * ROW_SIZE) + getScrollPanePadding())
             : rowsExcludingVisibleOnes;
+        scrollbar.resetSmoothScrolling();
+        scrollbar.setEnabled(totalRows > actualVisibleRows);
         scrollbar.setMaxOffset(maxOffset);
     }
 
-    protected final void updateScrollbarBasedOnStretchedHeight(final int height) {
+    protected final void updateScrollbarContentHeight(final int height) {
         if (scrollbar == null) {
             return;
         }
-        final int stretchedHeight = modifyVisibleRows(visibleRows) * ROW_SIZE;
-        final int heightExcludingVisibleOnes = height - stretchedHeight;
-        final int maxOffset = heightExcludingVisibleOnes + getScrollPanePadding();
+        final int visibleHeight = modifyVisibleRows(visibleRows) * ROW_SIZE;
+        final int heightExcludingVisibleHeight = height - visibleHeight;
+        final int maxOffset = heightExcludingVisibleHeight + getScrollPanePadding();
+        scrollbar.setSmoothScrolling(true);
         scrollbar.setEnabled(maxOffset > 0);
         scrollbar.setMaxOffset(maxOffset);
+    }
+
+    protected final void resetScrollbarOffset() {
+        if (scrollbar == null) {
+            return;
+        }
+        scrollbar.setOffset(0);
     }
 
     protected abstract int getBottomHeight();

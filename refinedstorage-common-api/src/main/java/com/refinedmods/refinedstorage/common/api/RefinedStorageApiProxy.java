@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage.common.api.grid.strategy.GridScrollingStra
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResourceType;
 import com.refinedmods.refinedstorage.common.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
@@ -371,14 +372,20 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
     }
 
     @Override
-    public void registerNetworkMonitorDeviceType(final NetworkNodeType type,
-                                                 final NetworkMonitorDeviceType deviceType) {
-        ensureLoaded().registerNetworkMonitorDeviceType(type, deviceType);
+    public void registerNetworkMonitorDeviceType(final NetworkNodeType nodeType,
+                                                 final NetworkMonitorDeviceType type,
+                                                 final NetworkMonitorDeviceCategory category) {
+        ensureLoaded().registerNetworkMonitorDeviceType(nodeType, type, category);
     }
 
     @Override
     public NetworkMonitorDeviceType getNetworkMonitorDeviceType(final NetworkNodeType type) {
         return ensureLoaded().getNetworkMonitorDeviceType(type);
+    }
+
+    @Override
+    public NetworkMonitorDeviceCategory getNetworkMonitorDeviceCategory(final NetworkMonitorDeviceType type) {
+        return ensureLoaded().getNetworkMonitorDeviceCategory(type);
     }
 
     @Override

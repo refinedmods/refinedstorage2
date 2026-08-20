@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.fabric;
 
 import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerSearchMode;
 import com.refinedmods.refinedstorage.common.autocrafting.autocraftermanager.AutocrafterManagerViewType;
 import com.refinedmods.refinedstorage.common.autocrafting.preview.AutocraftingPreviewStyle;
@@ -8,6 +9,9 @@ import com.refinedmods.refinedstorage.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage.common.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage.common.grid.GridViewType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorGroupType;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingDirection;
+import com.refinedmods.refinedstorage.common.networking.NetworkMonitorSortingType;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSize;
 import com.refinedmods.refinedstorage.common.util.IdentifierUtil;
 
@@ -18,6 +22,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "CanBeFinal"})
 @Config(name = IdentifierUtil.MOD_ID)
@@ -142,9 +147,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     );
 
     @ConfigEntry.Gui.CollapsibleObject
-    private SimpleEnergyUsageEntryImpl networkMonitor = new SimpleEnergyUsageEntryImpl(
-        DefaultEnergyUsage.NETWORK_MONITOR
-    );
+    private NetworkMonitorEntryImpl networkMonitor = new NetworkMonitorEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
     private WirelessAutocraftingMonitorEntryImpl wirelessAutocraftingMonitor =
@@ -374,7 +377,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
     }
 
     @Override
-    public SimpleEnergyUsageEntry getNetworkMonitor() {
+    public NetworkMonitorEntry getNetworkMonitor() {
         return networkMonitor;
     }
 
@@ -896,6 +899,78 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage.co
         @Override
         public long getCancelAllEnergyUsage() {
             return cancelAllEnergyUsage;
+        }
+    }
+
+    private static class NetworkMonitorEntryImpl implements NetworkMonitorEntry {
+        private long energyUsage = DefaultEnergyUsage.NETWORK_MONITOR;
+
+        private NetworkMonitorGroupType groupType = NetworkMonitorGroupType.DEVICE_TYPE;
+
+        private NetworkMonitorSortingType sortingType = NetworkMonitorSortingType.ENERGY_USAGE;
+
+        private NetworkMonitorSortingDirection sortingDirection = NetworkMonitorSortingDirection.DESCENDING;
+
+        @Nullable
+        private NetworkMonitorDeviceCategory viewType = null;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
+        }
+
+        @Override
+        public NetworkMonitorGroupType getGroupType() {
+            return groupType;
+        }
+
+        @Override
+        public void setGroupType(final NetworkMonitorGroupType groupType) {
+            this.groupType = groupType;
+            save();
+        }
+
+        @Override
+        public Optional<NetworkMonitorDeviceCategory> getViewType() {
+            return Optional.ofNullable(viewType);
+        }
+
+        @Override
+        public void setViewType(final NetworkMonitorDeviceCategory viewType) {
+            this.viewType = viewType;
+            save();
+        }
+
+        @Override
+        public void clearViewType() {
+            this.viewType = null;
+            save();
+        }
+
+        @Override
+        public NetworkMonitorSortingType getSortingType() {
+            return sortingType;
+        }
+
+        @Override
+        public void setSortingType(final NetworkMonitorSortingType sortingType) {
+            this.sortingType = sortingType;
+            save();
+        }
+
+        @Override
+        public NetworkMonitorSortingDirection getSortingDirection() {
+            return sortingDirection;
+        }
+
+        @Override
+        public void setSortingDirection(final NetworkMonitorSortingDirection sortingDirection) {
+            this.sortingDirection = sortingDirection;
+            save();
+        }
+
+        private static void save() {
+            AutoConfig.getConfigHolder(ConfigImpl.class).save();
         }
     }
 }
