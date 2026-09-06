@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage.common.support.network;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.common.api.networking.PlatformNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.common.api.support.network.ConnectionSink;
 import com.refinedmods.refinedstorage.common.api.support.network.ConnectionStrategy;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -86,6 +89,20 @@ public class InWorldNetworkNodeContainerImpl implements InWorldNetworkNodeContai
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    @Nullable
+    public NetworkNodeDetails createDetails() {
+        final NetworkNodeDetails details = node instanceof NetworkNodeDetailsProvider provider
+            ? provider.createDetails()
+            : null;
+        if (details == null) {
+            return null;
+        }
+        return blockEntity instanceof PlatformNetworkNodeDetailsProvider platformProvider
+            ? platformProvider.wrap(details)
+            : details;
     }
 
     @Override

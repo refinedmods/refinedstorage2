@@ -1,13 +1,25 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorListener;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
+import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryBuilder;
+import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryBuilderImpl;
+import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.content.Menus;
+import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
+import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
@@ -43,6 +55,8 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     private NetworkMonitorDeviceCategory currentDeviceCategory;
     @Nullable
     private NetworkNodeDetails currentDetails;
+    @Nullable
+    private ResourceRepository<GridResource> detailsRepository;
     @Nullable
     private NetworkMonitorListener listener;
     @Nullable
@@ -92,7 +106,8 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         ));
         networkMonitor.addListener(this);
         updateSorters();
-        this.serverSelection = new NetworkMonitorContainerSelection(networkMonitor, this::sendDetails);
+        this.serverSelection = new NetworkMonitorContainerSelection(networkMonitor, this::sendDetails,
+            this::handleEvent);
     }
 
     @Override
@@ -252,6 +267,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.currentDeviceCategory = null;
         this.currentDevice = null;
         this.currentDetails = null;
+        this.detailsRepository = null;
         if (listener != null) {
             listener.onCurrentDeviceGroupChanged(deviceGroup);
             listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
@@ -263,6 +279,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.currentDeviceCategory = deviceCategory;
         this.currentDevice = null;
         this.currentDetails = null;
+        this.detailsRepository = null;
         if (listener != null) {
             listener.onCurrentDeviceCategoryChanged(deviceCategory);
             listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
@@ -276,6 +293,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.currentDeviceCategory = deviceCategory;
         this.currentDevice = device;
         this.currentDetails = null;
+        this.detailsRepository = null;
         if (networkMonitor == null) {
             C2SPackets.sendNetworkMonitorSelectionUpdate(device == null ? null : device.id());
         }
@@ -298,8 +316,61 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         }
     }
 
+    private void handleEvent(final Object event) {
+        if (player instanceof ServerPlayer serverPlayer
+            && event instanceof StorageContentsChangedEvent(ResourceKey resource, long change, long stored,
+            long capacity)
+            && resource instanceof PlatformResourceKey platformResource) {
+            S2CPackets.sendNetworkMonitorDetailsResourceUpdate(serverPlayer, platformResource, change, stored,
+                capacity);
+        }
+    }
+
+    public void updateDetailsResource(final ResourceKey resource,
+                                      final long change,
+                                      final long stored,
+                                      final long capacity) {
+        if (detailsRepository != null && change != 0) {
+            detailsRepository.update(resource, change);
+        }
+        if (currentDetails == null) {
+            return;
+        }
+        final StorageContentsNetworkNodeDetails storageDetails =
+            PlatformStorageContentsNetworkDetails.unwrap(currentDetails);
+        if (storageDetails != null) {
+            storageDetails.updateStored(stored, capacity);
+        }
+    }
+
+    @Nullable
+    public ResourceRepository<GridResource> getDetailsRepository() {
+        return detailsRepository;
+    }
+
+    @Nullable
+    private static ResourceRepository<GridResource> createDetailsRepository(final NetworkNodeDetails details) {
+        final StorageContentsNetworkNodeDetails storageDetails = PlatformStorageContentsNetworkDetails.unwrap(details);
+        if (storageDetails == null) {
+            return null;
+        }
+        final ResourceRepositoryBuilder<GridResource> builder = new ResourceRepositoryBuilderImpl<>(
+            RefinedStorageApi.INSTANCE.getGridResourceRepositoryMapper(),
+            GridSortingTypes.NAME.apply(resource -> null),
+            GridSortingTypes.QUANTITY.apply(resource -> null)
+        );
+        storageDetails.getContents().forEach(content -> builder.addResource(content.resource(), content.amount()));
+        final ResourceRepository<GridResource> repository = builder.build();
+        repository.setSort(
+            GridSortingTypes.QUANTITY.apply(resource -> null).apply(repository),
+            SortingDirection.DESCENDING
+        );
+        return repository;
+    }
+
     public void updateDetails(final NetworkNodeDetails details) {
         this.currentDetails = details;
+        this.detailsRepository = createDetailsRepository(details);
         if (listener != null) {
             listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, details);
         }
@@ -357,6 +428,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         if (currentDevice != null && currentDevice.id().equals(id.id())) {
             currentDevice = null;
             currentDetails = null;
+            detailsRepository = null;
             if (listener != null) {
                 listener.onCurrentDeviceChanged(null);
                 listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
@@ -394,6 +466,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
             currentDeviceCategory = null;
             currentDevice = null;
             currentDetails = null;
+            detailsRepository = null;
         }
         if (listener != null) {
             listener.onCurrentDeviceChanged(currentDevice);

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.storage;
 
+import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.impl.storage.AbstractImmutableConfiguredProxyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
@@ -15,8 +16,35 @@ import java.util.List;
 import java.util.Optional;
 
 class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeStorageImpl> implements CompositeStorage {
-    protected ExposedStorage(final StorageConfiguration config) {
+    private final ChangeListener changeListener;
+
+    protected ExposedStorage(final StorageConfiguration config, final ChangeListener changeListener) {
         super(config, new CompositeStorageImpl(MutableResourceListImpl.create()));
+        this.changeListener = changeListener;
+    }
+
+    @Override
+    public Amount compositeInsert(final ResourceKey resource,
+                                  final long amount,
+                                  final Action action,
+                                  final Actor actor) {
+        final Amount inserted = super.compositeInsert(resource, amount, action, actor);
+        if (action == Action.EXECUTE && inserted.amountForList() > 0) {
+            changeListener.onChanged(resource, inserted.amountForList());
+        }
+        return inserted;
+    }
+
+    @Override
+    public Amount compositeExtract(final ResourceKey resource,
+                                   final long amount,
+                                   final Action action,
+                                   final Actor actor) {
+        final Amount extracted = super.compositeExtract(resource, amount, action, actor);
+        if (action == Action.EXECUTE && extracted.amountForList() > 0) {
+            changeListener.onChanged(resource, -extracted.amountForList());
+        }
+        return extracted;
     }
 
     @Override
@@ -58,5 +86,10 @@ class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeSt
     @Override
     public void onRemovedFromComposite(final ParentComposite parentComposite) {
         getDelegate().onRemovedFromComposite(parentComposite);
+    }
+
+    @FunctionalInterface
+    interface ChangeListener {
+        void onChanged(ResourceKey resource, long change);
     }
 }

@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.ProviderImpl;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageConfigurationDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
@@ -840,6 +842,85 @@ class StorageNetworkNodeTest {
         // Assert
         assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
         assertThat(((StorageContentsNetworkNodeDetails) details).getContents()).isEmpty();
+    }
+
+    @Test
+    void shouldNotifyDetailsListenerWhenStorageContentsChange(
+        @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
+    ) {
+        // Arrange
+        provider.set(1, new LimitedStorageImpl(100));
+        sut.setProvider(provider);
+        sut.setActive(true);
+        final RecordingNetworkNodeListener detailsListener = new RecordingNetworkNodeListener();
+        sut.addListener(detailsListener);
+
+        // Act
+        networkStorage.insert(A, 10, Action.EXECUTE, Actor.EMPTY);
+        networkStorage.extract(A, 4, Action.EXECUTE, Actor.EMPTY);
+
+        // Assert
+        assertThat(detailsListener.events).containsExactly(
+            new StorageContentsChangedEvent(A, 10, 10, 100),
+            new StorageContentsChangedEvent(A, -4, 6, 100)
+        );
+    }
+
+    @Test
+    void shouldNotNotifyDetailsListenerWhenStorageContentsDoNotChange(
+        @InjectNetworkStorageComponent final StorageNetworkComponent networkStorage
+    ) {
+        // Arrange
+        provider.set(1, new LimitedStorageImpl(100));
+        sut.setProvider(provider);
+        sut.setActive(true);
+        final RecordingNetworkNodeListener detailsListener = new RecordingNetworkNodeListener();
+        sut.addListener(detailsListener);
+
+        // Act
+        networkStorage.insert(A, 10, Action.SIMULATE, Actor.EMPTY);
+        networkStorage.extract(B, 1, Action.EXECUTE, Actor.EMPTY);
+
+        // Assert
+        assertThat(detailsListener.events).isEmpty();
+    }
+
+    @Test
+    void shouldExposeDefaultStorageConfigurationInDetails() {
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        final StorageConfigurationDetails configuration =
+            ((StorageContentsNetworkNodeDetails) details).getConfiguration();
+        assertThat(configuration.filterMode()).isEqualTo(FilterMode.BLOCK);
+        assertThat(configuration.accessMode()).isEqualTo(AccessMode.INSERT_EXTRACT);
+        assertThat(configuration.insertPriority()).isZero();
+        assertThat(configuration.extractPriority()).isZero();
+        assertThat(configuration.voidExcess()).isFalse();
+    }
+
+    @Test
+    void shouldExposeStorageConfigurationInDetails() {
+        // Arrange
+        sut.getStorageConfiguration().setFilterMode(FilterMode.ALLOW);
+        sut.getStorageConfiguration().setFilters(Set.of(A, B));
+        sut.getStorageConfiguration().setAccessMode(AccessMode.INSERT);
+        sut.getStorageConfiguration().setInsertPriority(3);
+        sut.getStorageConfiguration().setExtractPriority(7);
+        sut.getStorageConfiguration().setVoidExcess(true);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        final StorageConfigurationDetails configuration =
+            ((StorageContentsNetworkNodeDetails) details).getConfiguration();
+        assertThat(configuration.filterMode()).isEqualTo(FilterMode.ALLOW);
+        assertThat(configuration.accessMode()).isEqualTo(AccessMode.INSERT);
+        assertThat(configuration.insertPriority()).isEqualTo(3);
+        assertThat(configuration.extractPriority()).isEqualTo(7);
+        assertThat(configuration.voidExcess()).isTrue();
     }
 
     @Test

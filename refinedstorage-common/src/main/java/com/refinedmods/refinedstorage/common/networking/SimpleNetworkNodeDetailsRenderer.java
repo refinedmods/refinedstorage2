@@ -10,19 +10,17 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 
 public class SimpleNetworkNodeDetailsRenderer extends AbstractNetworkNodeDetailsRenderer {
     @Override
-    protected List<ClientTooltipComponent> renderDetails(final NetworkNodeDetails details,
-                                                         final GuiGraphicsExtractor graphics,
-                                                         final int x,
-                                                         final int y,
-                                                         final int visibleY,
-                                                         final int visibleHeight,
-                                                         final int mouseX,
-                                                         final int mouseY) {
+    protected List<ClientTooltipComponent> renderAdditionalDetails(final NetworkNodeDetails details,
+                                                                   final GuiGraphicsExtractor graphics, final int x,
+                                                                   final int scrollY,
+                                                                   final int baseY, final int width, final int height,
+                                                                   final int mouseX,
+                                                                   final int mouseY) {
         return Collections.emptyList();
     }
 
     @Override
-    protected int getDetailsHeight(final NetworkNodeDetails details) {
+    protected int getAdditionalHeight(final NetworkNodeDetails details) {
         return 0;
     }
 }

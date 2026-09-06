@@ -1,18 +1,22 @@
 package com.refinedmods.refinedstorage.common.storage.storageblock;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageContainerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.networking.PlatformNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockData;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockEntity;
 import com.refinedmods.refinedstorage.common.api.storage.StorageBlockProvider;
 import com.refinedmods.refinedstorage.common.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
+import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.storage.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
@@ -21,6 +25,8 @@ import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNode
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<StorageNetworkNode>
     implements NetworkNodeExtendedMenuProvider<StorageBlockData>, StorageBlockEntity,
-    AbstractStorageContainerNetworkNode.Provider {
+    AbstractStorageContainerNetworkNode.Provider, PlatformNetworkNodeDetailsProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageBlockBlockEntity.class);
 
     private static final String TAG_STORAGE_ID = "sid";
@@ -152,6 +158,27 @@ public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlo
             storage -> LOGGER.debug("Storage {} successfully removed", storageId),
             () -> LOGGER.warn("Storage {} could not be removed", storageId)
         );
+    }
+
+    @Override
+    public NetworkNodeDetails wrap(final NetworkNodeDetails details) {
+        if (!(details instanceof StorageContentsNetworkNodeDetails storageDetails)) {
+            return details;
+        }
+        return new PlatformStorageContentsNetworkDetails(
+            storageDetails,
+            getFilterSlots(),
+            filter.isFuzzyMode()
+        );
+    }
+
+    private List<Optional<ResourceKey>> getFilterSlots() {
+        final ResourceContainer filterContainer = filter.getFilterContainer();
+        final List<Optional<ResourceKey>> filters = new ArrayList<>(filterContainer.size());
+        for (int i = 0; i < filterContainer.size(); ++i) {
+            filters.add(Optional.ofNullable(filterContainer.getResource(i)));
+        }
+        return filters;
     }
 
     void setFilters(final Set<ResourceKey> filters) {

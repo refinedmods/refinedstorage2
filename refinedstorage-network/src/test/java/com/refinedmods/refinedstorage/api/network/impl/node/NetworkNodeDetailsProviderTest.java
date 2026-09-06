@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage.api.network.impl.node;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
+import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
+import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.network.test.RecordingNetworkNodeListener;
 import com.refinedmods.refinedstorage.network.test.nodefactory.NetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNodeFactory;
@@ -24,6 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class NetworkNodeDetailsProviderTest {
+    private static final StorageConfigurationDetails EMPTY_STORAGE_CONFIGURATION = new StorageConfigurationDetails(
+        FilterMode.BLOCK, AccessMode.INSERT_EXTRACT, 0, 0, false
+    );
+
     private static Stream<Fixture> fixtures() {
         return Stream.of(
             new Fixture(
@@ -39,7 +45,7 @@ class NetworkNodeDetailsProviderTest {
                 new StorageNetworkNodeFactory(),
                 (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage),
                 (energyUsage, active) -> new StorageContentsNetworkNodeDetails(energyUsage, active, 0, 0, true,
-                    List.of())
+                    EMPTY_STORAGE_CONFIGURATION, List.of())
             ),
             new Fixture(
                 "StorageTransferNetworkNode",

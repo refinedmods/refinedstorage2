@@ -11,12 +11,15 @@ import org.jspecify.annotations.Nullable;
 class NetworkMonitorContainerSelection {
     private final NetworkMonitorBlockEntity networkMonitor;
     private final Consumer<NetworkNodeDetails> detailsConsumer;
+    private final Consumer<Object> nodeEventListener;
     private NetworkMonitorContainerSelection.@Nullable SelectedDevice selectedDevice;
 
     NetworkMonitorContainerSelection(final NetworkMonitorBlockEntity networkMonitor,
-                                     final Consumer<NetworkNodeDetails> detailsConsumer) {
+                                     final Consumer<NetworkNodeDetails> detailsConsumer,
+                                     final Consumer<Object> nodeEventListener) {
         this.networkMonitor = networkMonitor;
         this.detailsConsumer = detailsConsumer;
+        this.nodeEventListener = nodeEventListener;
     }
 
     void setSelectedDevice(@Nullable final MonitorNodeId deviceId) {
@@ -27,7 +30,7 @@ class NetworkMonitorContainerSelection {
         if (deviceId == null) {
             return;
         }
-        selectedDevice = new SelectedDevice(deviceId, event -> sendDetails(deviceId));
+        selectedDevice = new SelectedDevice(deviceId, nodeEventListener::accept);
         selectedDevice.attach();
         sendDetails(deviceId);
     }
