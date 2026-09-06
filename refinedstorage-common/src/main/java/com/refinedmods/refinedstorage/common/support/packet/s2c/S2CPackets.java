@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.Platform;
@@ -182,6 +183,11 @@ public final class S2CPackets {
 
     public static void sendNetworkMonitorActive(final ServerPlayer player, final boolean active) {
         Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorActivePacket(active));
+    }
+
+    public static void sendNetworkMonitorDetailsUpdate(final ServerPlayer player,
+                                                       final NetworkNodeDetails details) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDetailsUpdatePacket(details));
     }
 
     public static void sendNetworkMonitorNetworkStatisticsUpdate(

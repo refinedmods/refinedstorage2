@@ -2,21 +2,9 @@ package com.refinedmods.refinedstorage.api.network.impl.node;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 
-public class SimpleNetworkNodeDetails implements NetworkNodeDetails {
-    private final long energyUsage;
-    private final boolean active;
-
+public class SimpleNetworkNodeDetails extends AbstractNetworkNodeDetails {
     public SimpleNetworkNodeDetails(final long energyUsage, final boolean active) {
-        this.energyUsage = energyUsage;
-        this.active = active;
-    }
-
-    public long getEnergyUsage() {
-        return energyUsage;
-    }
-
-    public boolean isActive() {
-        return active;
+        super(energyUsage, active);
     }
 
     public static NetworkNodeDetails of(final AbstractNetworkNode node) {

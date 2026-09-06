@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.GraphNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.security.SecurityNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkComponent;
@@ -163,6 +164,7 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage.common.upgrade.UpgradeWithEnchantedBookRecipe;
 import com.refinedmods.refinedstorage.common.util.ServerListener;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -1053,11 +1055,26 @@ public abstract class AbstractModInitializer {
 
     protected final void registerNetworkNodeDetailsFactories() {
         RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            createIdentifier("simple"),
             SimpleNetworkNodeDetails.class,
             StreamCodec.composite(
                 ByteBufCodecs.LONG, SimpleNetworkNodeDetails::getEnergyUsage,
                 ByteBufCodecs.BOOL, SimpleNetworkNodeDetails::isActive,
                 SimpleNetworkNodeDetails::new
+            )
+        );
+        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            createIdentifier("storage_contents_network_node"),
+            StorageContentsNetworkNodeDetails.class,
+            StreamCodec.composite(
+                ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getEnergyUsage,
+                ByteBufCodecs.BOOL, StorageContentsNetworkNodeDetails::isActive,
+                ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getStored,
+                ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getCapacity,
+                ByteBufCodecs.BOOL, StorageContentsNetworkNodeDetails::hasCapacity,
+                ByteBufCodecs.collection(ArrayList::new, ResourceCodecs.AMOUNT_STREAM_CODEC),
+                StorageContentsNetworkNodeDetails::getContents,
+                StorageContentsNetworkNodeDetails::new
             )
         );
     }

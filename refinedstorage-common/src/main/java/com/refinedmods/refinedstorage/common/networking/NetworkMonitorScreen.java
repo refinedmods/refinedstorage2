@@ -560,13 +560,13 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             showNetworkStatistics = false;
             final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
                 .getNetworkNodeDetailsRenderer(details.getClass());
-            updateScrollbarRows(renderer.getRows(details));
+            updateScrollbarContentHeight(renderer.getHeight(details));
         } else if (deviceGroup == null && deviceCategory == null && device == null && menu.isActive()) {
             showNetworkStatistics = true;
             updateScrollbarContentHeight(getNetworkStatisticsHeight());
         } else {
             showNetworkStatistics = false;
-            updateScrollbarRows(0);
+            updateScrollbarContentHeight(0);
         }
         resetScrollbarOffset();
     }
@@ -817,7 +817,8 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         }
         final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
             .getNetworkNodeDetailsRenderer(details.getClass());
-        this.detailsTooltip = renderer.render(details, graphics, detailsX, detailsY, mouseX, mouseY);
+        this.detailsTooltip = renderer.render(details, graphics, detailsX, detailsY, y + topHeight,
+            rows * ROW_SIZE, mouseX, mouseY);
     }
 
     private int getNetworkStatisticsHeight() {

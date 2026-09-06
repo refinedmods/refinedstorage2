@@ -390,15 +390,22 @@ public class RefinedStorageApiProxy implements RefinedStorageApi {
 
     @Override
     public void registerNetworkNodeDetailsFactory(
+        final Identifier id,
         final Class<? extends NetworkNodeDetails> detailsClass,
         final StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory) {
-        ensureLoaded().registerNetworkNodeDetailsFactory(detailsClass, factory);
+        ensureLoaded().registerNetworkNodeDetailsFactory(id, detailsClass, factory);
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
         final Class<? extends NetworkNodeDetails> detailsClass) {
         return ensureLoaded().getNetworkNodeDetailsFactory(detailsClass);
+    }
+
+    @Override
+    public PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
+        getNetworkNodeDetailsFactories() {
+        return ensureLoaded().getNetworkNodeDetailsFactories();
     }
 
     @Override

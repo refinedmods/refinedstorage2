@@ -13,12 +13,14 @@ import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.containermenu.ServerProperty;
+import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -60,6 +62,8 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     private Comparator<NetworkMonitorDeviceCategory> deviceCategorySorter;
     private Comparator<NetworkMonitorDevice> deviceSorter;
     private boolean emptyDeviceCategoryWarningVisible;
+    @Nullable
+    private NetworkMonitorContainerSelection serverSelection;
 
     public NetworkMonitorContainerMenu(final int syncId, final NetworkMonitorData data) {
         super(Menus.INSTANCE.getNetworkMonitor(), syncId);
@@ -88,6 +92,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         ));
         networkMonitor.addListener(this);
         updateSorters();
+        this.serverSelection = new NetworkMonitorContainerSelection(networkMonitor, this::sendDetails);
     }
 
     @Override
@@ -95,6 +100,9 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         super.removed(playerEntity);
         if (networkMonitor != null) {
             networkMonitor.removeListener(this);
+        }
+        if (serverSelection != null) {
+            serverSelection.removed();
         }
     }
 
@@ -268,9 +276,32 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.currentDeviceCategory = deviceCategory;
         this.currentDevice = device;
         this.currentDetails = null;
+        if (networkMonitor == null) {
+            C2SPackets.sendNetworkMonitorSelectionUpdate(device == null ? null : device.id());
+        }
         if (listener != null) {
             listener.onCurrentDeviceChanged(device);
             listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
+        }
+    }
+
+    public void updateServerSelection(@Nullable final UUID deviceId) {
+        if (serverSelection == null) {
+            return;
+        }
+        serverSelection.setSelectedDevice(deviceId == null ? null : new MonitorNodeId(deviceId));
+    }
+
+    private void sendDetails(final NetworkNodeDetails details) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            S2CPackets.sendNetworkMonitorDetailsUpdate(serverPlayer, details);
+        }
+    }
+
+    public void updateDetails(final NetworkNodeDetails details) {
+        this.currentDetails = details;
+        if (listener != null) {
+            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, details);
         }
     }
 

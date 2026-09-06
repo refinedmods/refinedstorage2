@@ -14,12 +14,14 @@ import com.refinedmods.refinedstorage.common.support.containermenu.PropertyType;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 public final class C2SPackets {
     private C2SPackets() {
@@ -166,5 +168,11 @@ public final class C2SPackets {
 
     public static void sendGridAutocraftingTasksSubscription(final Set<TaskId> taskIds) {
         Platform.INSTANCE.sendPacketToServer(new GridAutocraftingTasksSubscriptionPacket(taskIds));
+    }
+
+    public static void sendNetworkMonitorSelectionUpdate(@Nullable final UUID deviceId) {
+        Platform.INSTANCE.sendPacketToServer(
+            new NetworkMonitorSelectionUpdatePacket(Optional.ofNullable(deviceId))
+        );
     }
 }

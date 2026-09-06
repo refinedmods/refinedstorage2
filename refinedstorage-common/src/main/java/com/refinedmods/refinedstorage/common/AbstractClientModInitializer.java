@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.common;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
@@ -31,6 +32,7 @@ import com.refinedmods.refinedstorage.common.networking.NetworkMonitorScreen;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterScreen;
 import com.refinedmods.refinedstorage.common.networking.RelayScreen;
 import com.refinedmods.refinedstorage.common.networking.SimpleNetworkNodeDetailsRenderer;
+import com.refinedmods.refinedstorage.common.networking.StorageContentsNetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.networking.WirelessTransmitterScreen;
 import com.refinedmods.refinedstorage.common.security.FallbackSecurityCardScreen;
 import com.refinedmods.refinedstorage.common.security.SecurityCardScreen;
@@ -215,6 +217,10 @@ public abstract class AbstractClientModInitializer {
         RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
             SimpleNetworkNodeDetails.class,
             new SimpleNetworkNodeDetailsRenderer()
+        );
+        RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
+            StorageContentsNetworkNodeDetails.class,
+            new StorageContentsNetworkNodeDetailsRenderer()
         );
     }
 

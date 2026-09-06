@@ -211,6 +211,7 @@ public interface RefinedStorageApi {
     NetworkMonitorDeviceCategory getNetworkMonitorDeviceCategory(NetworkMonitorDeviceType type);
 
     void registerNetworkNodeDetailsFactory(
+        Identifier id,
         Class<? extends NetworkNodeDetails> detailsClass,
         StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory
     );
@@ -218,6 +219,9 @@ public interface RefinedStorageApi {
     StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
         Class<? extends NetworkNodeDetails> detailsClass
     );
+
+    PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
+        getNetworkNodeDetailsFactories();
 
     PlatformRegistry<PlatformPermission> getPermissionRegistry();
 
