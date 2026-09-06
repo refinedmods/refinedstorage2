@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.ProviderImpl;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
@@ -756,6 +758,88 @@ class StorageNetworkNodeTest {
         assertThat(detailsListener.events).containsExactly(
             new NetworkNodeDetailsChangedEvent(BASE_USAGE + USAGE_PER_STORAGE, sut.isActive())
         );
+    }
+
+    @Test
+    void shouldExposeMergedStorageContentsInDetails() {
+        // Arrange
+        final Storage storage1 = new LimitedStorageImpl(100);
+        storage1.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        storage1.insert(B, 3, Action.EXECUTE, Actor.EMPTY);
+        final Storage storage2 = new LimitedStorageImpl(100);
+        storage2.insert(A, 7, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, storage1);
+        provider.set(2, storage2);
+        sut.setProvider(provider);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        final StorageContentsNetworkNodeDetails contentsDetails = (StorageContentsNetworkNodeDetails) details;
+        assertThat(contentsDetails.getContents()).containsExactlyInAnyOrder(
+            new ResourceAmount(A, 12),
+            new ResourceAmount(B, 3)
+        );
+        assertThat(contentsDetails.getStored()).isEqualTo(15);
+        assertThat(contentsDetails.getCapacity()).isEqualTo(200);
+        assertThat(contentsDetails.hasCapacity()).isTrue();
+        assertThat(contentsDetails.getProgress()).isEqualTo(15D / 200D);
+    }
+
+    @Test
+    void shouldNotExposeCapacityInDetailsWithUnlimitedStorage() {
+        // Arrange
+        final Storage limited = new LimitedStorageImpl(100);
+        limited.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        final Storage unlimited = new StorageImpl();
+        unlimited.insert(B, 3, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, limited);
+        provider.set(2, unlimited);
+        sut.setProvider(provider);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        final StorageContentsNetworkNodeDetails contentsDetails = (StorageContentsNetworkNodeDetails) details;
+        assertThat(contentsDetails.getStored()).isEqualTo(8);
+        assertThat(contentsDetails.getCapacity()).isEqualTo(100);
+        assertThat(contentsDetails.hasCapacity()).isFalse();
+        assertThat(contentsDetails.getProgress()).isZero();
+    }
+
+    @Test
+    void shouldStillExposeStorageContentsInDetailsWhenInactive() {
+        // Arrange
+        final Storage storage = new LimitedStorageImpl(100);
+        storage.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, storage);
+        sut.setProvider(provider);
+        sut.setActive(false);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        final StorageContentsNetworkNodeDetails contentsDetails = (StorageContentsNetworkNodeDetails) details;
+        assertThat(contentsDetails.isActive()).isFalse();
+        assertThat(contentsDetails.getContents()).containsExactly(new ResourceAmount(A, 5));
+        assertThat(contentsDetails.getStored()).isEqualTo(5);
+        assertThat(contentsDetails.getCapacity()).isEqualTo(100);
+    }
+
+    @Test
+    void shouldExposeNoStorageContentsInDetailsWithoutStorages() {
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        assertThat(((StorageContentsNetworkNodeDetails) details).getContents()).isEmpty();
     }
 
     @Test

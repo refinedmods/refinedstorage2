@@ -185,7 +185,9 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
         playerSlotReferenceFactories = new PlatformRegistryImpl<>();
     private final Map<Class<? extends NetworkNodeDetails>,
         StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
-        networkNodeDetailsFactories = new HashMap<>();
+        networkNodeDetailsFactoriesByClass = new HashMap<>();
+    private final PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
+        networkNodeDetailsFactories = new PlatformRegistryImpl<>();
     private final Map<NetworkNodeType, NetworkMonitorDeviceType> networkMonitorDeviceTypes = new HashMap<>();
     private final Map<NetworkMonitorDeviceType, NetworkMonitorDeviceCategory> networkMonitorDeviceCategories
         = new HashMap<>();
@@ -560,15 +562,23 @@ public class RefinedStorageApiImpl implements RefinedStorageApi {
 
     @Override
     public void registerNetworkNodeDetailsFactory(
+        final Identifier id,
         final Class<? extends NetworkNodeDetails> detailsClass,
         final StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> factory) {
-        networkNodeDetailsFactories.put(detailsClass, factory);
+        networkNodeDetailsFactoriesByClass.put(detailsClass, factory);
+        networkNodeDetailsFactories.register(id, factory);
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails> getNetworkNodeDetailsFactory(
         final Class<? extends NetworkNodeDetails> detailsClass) {
-        return requireNonNull(networkNodeDetailsFactories.get(detailsClass));
+        return requireNonNull(networkNodeDetailsFactoriesByClass.get(detailsClass));
+    }
+
+    @Override
+    public PlatformRegistry<StreamCodec<RegistryFriendlyByteBuf, ? extends NetworkNodeDetails>>
+        getNetworkNodeDetailsFactories() {
+        return networkNodeDetailsFactories;
     }
 
     @Override

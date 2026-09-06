@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorActivePacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDetailsUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceRemovedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorNetworkStatisticsUpdatePacket;
@@ -235,6 +236,10 @@ public class ClientModInitializerImpl extends AbstractClientModInitializer imple
         ClientPlayNetworking.registerGlobalReceiver(
             NetworkMonitorDeviceRemovedPacket.PACKET_TYPE,
             wrapHandler(NetworkMonitorDeviceRemovedPacket::handle)
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+            NetworkMonitorDetailsUpdatePacket.PACKET_TYPE,
+            wrapHandler(NetworkMonitorDetailsUpdatePacket::handle)
         );
         ClientPlayNetworking.registerGlobalReceiver(
             NetworkMonitorActivePacket.PACKET_TYPE,

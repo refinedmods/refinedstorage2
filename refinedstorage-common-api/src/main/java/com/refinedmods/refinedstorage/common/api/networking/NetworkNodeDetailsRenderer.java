@@ -11,7 +11,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "3.3.0")
 public interface NetworkNodeDetailsRenderer {
     List<ClientTooltipComponent> render(NetworkNodeDetails details, GuiGraphicsExtractor graphics, int x, int y,
-                                        int mouseX, int mouseY);
+                                        int visibleY, int visibleHeight, int mouseX, int mouseY);
 
-    int getRows(NetworkNodeDetails details);
+    int getHeight(NetworkNodeDetails details);
 }

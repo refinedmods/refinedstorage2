@@ -5,7 +5,9 @@ import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNetwo
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
@@ -142,11 +144,28 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
         return new NetworkMonitorContainerMenu(syncId, inventory, this);
     }
 
-    public void addListener(final MonitorListener monitorListener) {
+    void addListener(final MonitorListener monitorListener) {
         mainNetworkNode.addListener(monitorListener);
     }
 
-    public void removeListener(final MonitorListener monitorListener) {
+    void addNodeListener(final MonitorNodeId nodeId, final NetworkNodeListener listener) {
+        mainNetworkNode.addNodeListener(nodeId, listener);
+    }
+
+    @Nullable
+    NetworkNodeDetails createDetails(final MonitorNodeId nodeId) {
+        final NetworkNodeDetailsProvider detailsProvider = mainNetworkNode.getDetailsProvider(nodeId);
+        if (detailsProvider == null) {
+            return null;
+        }
+        return detailsProvider.createDetails();
+    }
+
+    void removeListener(final MonitorListener monitorListener) {
         mainNetworkNode.removeListener(monitorListener);
+    }
+
+    void removeNodeListener(final MonitorNodeId nodeId, final NetworkNodeListener listener) {
+        mainNetworkNode.removeNodeListener(nodeId, listener);
     }
 }

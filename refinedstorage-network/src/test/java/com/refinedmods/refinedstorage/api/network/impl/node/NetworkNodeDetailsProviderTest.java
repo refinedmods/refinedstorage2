@@ -9,8 +9,10 @@ import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNode
 import com.refinedmods.refinedstorage.network.test.nodefactory.StorageNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.StorageTransferNetworkNodeFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,19 +30,23 @@ class NetworkNodeDetailsProviderTest {
                 "SimpleNetworkNode",
                 SimpleNetworkNodeFactory.TYPE,
                 new SimpleNetworkNodeFactory(),
-                (node, energyUsage) -> ((SimpleNetworkNode) node).setEnergyUsage(energyUsage)
+                (node, energyUsage) -> ((SimpleNetworkNode) node).setEnergyUsage(energyUsage),
+                SimpleNetworkNodeDetails::new
             ),
             new Fixture(
                 "StorageNetworkNode",
                 StorageNetworkNodeFactory.TYPE,
                 new StorageNetworkNodeFactory(),
-                (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage)
+                (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage),
+                (energyUsage, active) -> new StorageContentsNetworkNodeDetails(energyUsage, active, 0, 0, true,
+                    List.of())
             ),
             new Fixture(
                 "StorageTransferNetworkNode",
                 StorageTransferNetworkNodeFactory.TYPE,
                 new StorageTransferNetworkNodeFactory(),
-                (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage)
+                (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage),
+                SimpleNetworkNodeDetails::new
             )
         );
     }
@@ -65,9 +71,9 @@ class NetworkNodeDetailsProviderTest {
         final NetworkNodeDetails details = fixture.asDetailsProvider(node).createDetails();
 
         // Assert
-        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(3, true));
-        assertThat(((SimpleNetworkNodeDetails) details).getEnergyUsage()).isEqualTo(3);
-        assertThat(((SimpleNetworkNodeDetails) details).isActive()).isTrue();
+        assertThat(details).usingRecursiveComparison().isEqualTo(fixture.expectedDetails(3, true));
+        assertThat(((AbstractNetworkNodeDetails) details).getEnergyUsage()).isEqualTo(3);
+        assertThat(((AbstractNetworkNodeDetails) details).isActive()).isTrue();
     }
 
     @ParameterizedTest
@@ -80,9 +86,9 @@ class NetworkNodeDetailsProviderTest {
         final NetworkNodeDetails details = fixture.asDetailsProvider(node).createDetails();
 
         // Assert
-        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(3, false));
-        assertThat(((SimpleNetworkNodeDetails) details).getEnergyUsage()).isEqualTo(3);
-        assertThat(((SimpleNetworkNodeDetails) details).isActive()).isFalse();
+        assertThat(details).usingRecursiveComparison().isEqualTo(fixture.expectedDetails(3, false));
+        assertThat(((AbstractNetworkNodeDetails) details).getEnergyUsage()).isEqualTo(3);
+        assertThat(((AbstractNetworkNodeDetails) details).isActive()).isFalse();
     }
 
     @ParameterizedTest
@@ -209,7 +215,8 @@ class NetworkNodeDetailsProviderTest {
         String label,
         NetworkNodeType type,
         NetworkNodeFactory factory,
-        BiConsumer<AbstractNetworkNode, Long> energyUsageChanger
+        BiConsumer<AbstractNetworkNode, Long> energyUsageChanger,
+        BiFunction<Long, Boolean, NetworkNodeDetails> expectedDetailsFactory
     ) {
         @Override
         public String toString() {
@@ -229,6 +236,10 @@ class NetworkNodeDetailsProviderTest {
 
         void changeEnergyUsage(final AbstractNetworkNode node, final long newEnergyUsage) {
             energyUsageChanger.accept(node, newEnergyUsage);
+        }
+
+        NetworkNodeDetails expectedDetails(final long energyUsage, final boolean active) {
+            return expectedDetailsFactory.apply(energyUsage, active);
         }
     }
 }

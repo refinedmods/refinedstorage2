@@ -1,16 +1,22 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageContainerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.storage.NetworkNodeStorageConfiguration;
 import com.refinedmods.refinedstorage.api.network.impl.storage.StorageConfiguration;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.storage.StorageProvider;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
+import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorage;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
@@ -123,6 +129,31 @@ public class StorageNetworkNode extends AbstractStorageContainerNetworkNode
             }
         }
         return capacity;
+    }
+
+    @Override
+    public NetworkNodeDetails createDetails() {
+        return new StorageContentsNetworkNodeDetails(getEnergyUsage(), isActive(), getStored(), getCapacity(),
+            hasCapacity(), getContents());
+    }
+
+    private boolean hasCapacity() {
+        for (final StateTrackedStorage internalStorage : storages) {
+            if (internalStorage != null && internalStorage.getCapacity() <= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<ResourceAmount> getContents() {
+        final MutableResourceList contents = MutableResourceListImpl.create();
+        for (final StateTrackedStorage internalStorage : storages) {
+            if (internalStorage != null) {
+                internalStorage.getAll().forEach(contents::add);
+            }
+        }
+        return List.copyOf(contents.copyState());
     }
 
     @Override

@@ -42,7 +42,8 @@ public enum NetworkMonitorSortingType {
     private final Comparator<NetworkMonitorDevice> deviceComparator;
 
     NetworkMonitorSortingType(final Comparator<NetworkMonitorDeviceGroup> deviceGroupComparator,
-                              final Function<NetworkMonitorDevices, Comparator<NetworkMonitorDeviceCategory>> deviceCategoryComparator,
+                              final Function<NetworkMonitorDevices, Comparator<NetworkMonitorDeviceCategory>>
+                                  deviceCategoryComparator,
                               final Comparator<NetworkMonitorDevice> deviceComparator) {
         this.deviceGroupComparator = deviceGroupComparator;
         this.deviceCategoryComparator = deviceCategoryComparator;
