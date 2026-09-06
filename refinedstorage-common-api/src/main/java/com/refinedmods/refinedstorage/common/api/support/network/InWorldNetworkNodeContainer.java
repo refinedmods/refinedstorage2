@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.api.support.network;
 
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 
 import java.util.function.Supplier;
@@ -9,6 +10,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public interface InWorldNetworkNodeContainer extends NetworkNodeContainer, ConnectionStrategy {
@@ -25,6 +27,9 @@ public interface InWorldNetworkNodeContainer extends NetworkNodeContainer, Conne
     BlockPos getLocalPosition();
 
     String getName();
+
+    @Nullable
+    NetworkNodeDetails createDetails();
 
     interface Builder {
         Builder name(String name);

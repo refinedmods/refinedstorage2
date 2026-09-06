@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvide
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
@@ -154,6 +155,10 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
 
     @Nullable
     NetworkNodeDetails createDetails(final MonitorNodeId nodeId) {
+        final NetworkNodeContainer container = mainNetworkNode.getContainer(nodeId);
+        if (container instanceof InWorldNetworkNodeContainer inWorldContainer) {
+            return inWorldContainer.createDetails();
+        }
         final NetworkNodeDetailsProvider detailsProvider = mainNetworkNode.getDetailsProvider(nodeId);
         if (detailsProvider == null) {
             return null;

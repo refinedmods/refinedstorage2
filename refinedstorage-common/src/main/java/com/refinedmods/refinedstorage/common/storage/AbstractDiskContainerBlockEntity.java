@@ -1,9 +1,13 @@
 package com.refinedmods.refinedstorage.common.storage;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageContainerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.networking.PlatformNetworkNodeDetailsProvider;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.FilteredContainer;
@@ -15,6 +19,7 @@ import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
@@ -40,7 +45,7 @@ import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorageContainerNetworkNode>
     extends AbstractBaseNetworkNodeContainerBlockEntity<T>
-    implements NetworkNodeExtendedMenuProvider<ResourceContainerData> {
+    implements NetworkNodeExtendedMenuProvider<ResourceContainerData>, PlatformNetworkNodeDetailsProvider {
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_DISKS = "disks";
 
@@ -71,6 +76,27 @@ public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorage
         // It's important to sync here as the initial update packet might have failed as the network
         // could possibly be not initialized yet.
         PlatformUtil.sendBlockUpdateToClient(level, worldPosition);
+    }
+
+    @Override
+    public NetworkNodeDetails wrap(final NetworkNodeDetails details) {
+        if (!(details instanceof StorageContentsNetworkNodeDetails storageDetails)) {
+            return details;
+        }
+        return new PlatformStorageContentsNetworkDetails(
+            storageDetails,
+            getFilterSlots(),
+            filter.isFuzzyMode()
+        );
+    }
+
+    private List<Optional<ResourceKey>> getFilterSlots() {
+        final ResourceContainer filterContainer = filter.getFilterContainer();
+        final List<Optional<ResourceKey>> filters = new ArrayList<>(filterContainer.size());
+        for (int i = 0; i < filterContainer.size(); ++i) {
+            filters.add(Optional.ofNullable(filterContainer.getResource(i)));
+        }
+        return filters;
     }
 
     protected abstract void setFilters(Set<ResourceKey> filters);

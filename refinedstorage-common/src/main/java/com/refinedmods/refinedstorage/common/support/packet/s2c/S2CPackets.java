@@ -190,6 +190,15 @@ public final class S2CPackets {
         Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDetailsUpdatePacket(details));
     }
 
+    public static void sendNetworkMonitorDetailsResourceUpdate(final ServerPlayer player,
+                                                               final PlatformResourceKey resource,
+                                                               final long change,
+                                                               final long stored,
+                                                               final long capacity) {
+        Platform.INSTANCE.sendPacketToClient(player,
+            new NetworkMonitorDetailsResourceUpdatePacket(resource, change, stored, capacity));
+    }
+
     public static void sendNetworkMonitorNetworkStatisticsUpdate(
         final ServerPlayer player,
         final NetworkMonitorNetworkStatistics networkStatistics

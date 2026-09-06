@@ -5,16 +5,19 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.GraphNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageConfigurationDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.security.SecurityNetworkComponentImpl;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApiProxy;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.security.PlatformSecurityNetworkComponent;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.upgrade.AbstractUpgradeItem;
 import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
 import com.refinedmods.refinedstorage.common.autocrafting.PatternItem;
@@ -113,8 +116,10 @@ import com.refinedmods.refinedstorage.common.security.SecurityCardData;
 import com.refinedmods.refinedstorage.common.security.SecurityCardPermissions;
 import com.refinedmods.refinedstorage.common.security.SecurityManagerBlockEntity;
 import com.refinedmods.refinedstorage.common.security.SecurityManagerContainerMenu;
+import com.refinedmods.refinedstorage.common.storage.AccessModeSettings;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
+import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.storage.StorageContainerUpgradeRecipe;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveBlock;
@@ -142,6 +147,7 @@ import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlock;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorBlockEntity;
 import com.refinedmods.refinedstorage.common.storagemonitor.StorageMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.support.BaseBlockItem;
+import com.refinedmods.refinedstorage.common.support.FilterModeSettings;
 import com.refinedmods.refinedstorage.common.support.RecoloringRecipe;
 import com.refinedmods.refinedstorage.common.support.SimpleItem;
 import com.refinedmods.refinedstorage.common.support.SimpleStoneBlock;
@@ -165,6 +171,7 @@ import com.refinedmods.refinedstorage.common.upgrade.UpgradeWithEnchantedBookRec
 import com.refinedmods.refinedstorage.common.util.ServerListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -174,6 +181,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -1053,7 +1061,25 @@ public abstract class AbstractModInitializer {
             new NetworkMonitorDeviceType(ContentNames.STORAGE_MONITOR), NetworkMonitorDeviceCategory.MONITORING);
     }
 
+
     protected final void registerNetworkNodeDetailsFactories() {
+        final StreamCodec<RegistryFriendlyByteBuf, StorageConfigurationDetails> configurationCodec =
+            StreamCodec.composite(
+                ByteBufCodecs.VAR_INT.map(FilterModeSettings::getFilterMode, FilterModeSettings::getFilterMode),
+                StorageConfigurationDetails::filterMode,
+                ByteBufCodecs.VAR_INT.map(AccessModeSettings::getAccessMode, AccessModeSettings::getAccessMode),
+                StorageConfigurationDetails::accessMode,
+                ByteBufCodecs.INT, StorageConfigurationDetails::insertPriority,
+                ByteBufCodecs.INT, StorageConfigurationDetails::extractPriority,
+                ByteBufCodecs.BOOL, StorageConfigurationDetails::voidExcess,
+                StorageConfigurationDetails::new
+            );
+        final StreamCodec<RegistryFriendlyByteBuf, List<Optional<ResourceKey>>> filtersCodec =
+            ByteBufCodecs.collection(
+                ArrayList::new,
+                ByteBufCodecs.optional(ResourceCodecs.STREAM_CODEC.map(resource -> (ResourceKey) resource,
+                    resource -> (PlatformResourceKey) resource))
+            );
         RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
             createIdentifier("simple"),
             SimpleNetworkNodeDetails.class,
@@ -1063,18 +1089,32 @@ public abstract class AbstractModInitializer {
                 SimpleNetworkNodeDetails::new
             )
         );
-        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
-            createIdentifier("storage_contents_network_node"),
-            StorageContentsNetworkNodeDetails.class,
+        final StreamCodec<RegistryFriendlyByteBuf, StorageContentsNetworkNodeDetails> storageContentsCodec =
             StreamCodec.composite(
                 ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getEnergyUsage,
                 ByteBufCodecs.BOOL, StorageContentsNetworkNodeDetails::isActive,
                 ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getStored,
                 ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getCapacity,
                 ByteBufCodecs.BOOL, StorageContentsNetworkNodeDetails::hasCapacity,
+                configurationCodec,
+                StorageContentsNetworkNodeDetails::getConfiguration,
                 ByteBufCodecs.collection(ArrayList::new, ResourceCodecs.AMOUNT_STREAM_CODEC),
                 StorageContentsNetworkNodeDetails::getContents,
                 StorageContentsNetworkNodeDetails::new
+            );
+        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            createIdentifier("storage_contents_network_node"),
+            StorageContentsNetworkNodeDetails.class,
+            storageContentsCodec
+        );
+        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            createIdentifier("platform_storage_contents_network_node"),
+            PlatformStorageContentsNetworkDetails.class,
+            StreamCodec.composite(
+                storageContentsCodec, PlatformStorageContentsNetworkDetails::getDetails,
+                filtersCodec, PlatformStorageContentsNetworkDetails::getFilters,
+                ByteBufCodecs.BOOL, PlatformStorageContentsNetworkDetails::isFuzzyMode,
+                PlatformStorageContentsNetworkDetails::new
             )
         );
     }

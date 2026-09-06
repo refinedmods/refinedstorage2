@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractStorageContainerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageConfigurationDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.storage.NetworkNodeStorageConfiguration;
 import com.refinedmods.refinedstorage.api.network.impl.storage.StorageConfiguration;
@@ -9,6 +10,7 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.storage.StorageProvider;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
@@ -34,7 +36,7 @@ public class StorageNetworkNode extends AbstractStorageContainerNetworkNode
                               final long baseEnergyUsage, final long energyUsagePerStorage, final int size) {
         super(type, baseEnergyUsage, energyUsagePerStorage, size);
         this.storageConfiguration = new NetworkNodeStorageConfiguration(this);
-        this.storage = new ExposedStorage(storageConfiguration);
+        this.storage = new ExposedStorage(storageConfiguration, this::onStorageContentsChanged);
     }
 
     @Override
@@ -131,10 +133,17 @@ public class StorageNetworkNode extends AbstractStorageContainerNetworkNode
         return capacity;
     }
 
+    private void onStorageContentsChanged(final ResourceKey resource, final long change) {
+        if (!hasDetailsListeners()) {
+            return;
+        }
+        notifyStorageContentsChanged(resource, change, getStored(), getCapacity());
+    }
+
     @Override
     public NetworkNodeDetails createDetails() {
         return new StorageContentsNetworkNodeDetails(getEnergyUsage(), isActive(), getStored(), getCapacity(),
-            hasCapacity(), getContents());
+            hasCapacity(), StorageConfigurationDetails.of(storageConfiguration), getContents());
     }
 
     private boolean hasCapacity() {

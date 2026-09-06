@@ -86,6 +86,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.GridClearPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.MessagePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorActivePacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDetailsResourceUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDetailsUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceRemovedPacket;
@@ -625,6 +626,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         PayloadTypeRegistry.clientboundPlay().register(
             NetworkMonitorDetailsUpdatePacket.PACKET_TYPE,
             NetworkMonitorDetailsUpdatePacket.STREAM_CODEC
+        );
+        PayloadTypeRegistry.clientboundPlay().register(
+            NetworkMonitorDetailsResourceUpdatePacket.PACKET_TYPE,
+            NetworkMonitorDetailsResourceUpdatePacket.STREAM_CODEC
         );
         PayloadTypeRegistry.clientboundPlay().register(
             NetworkMonitorNetworkStatisticsUpdatePacket.PACKET_TYPE,

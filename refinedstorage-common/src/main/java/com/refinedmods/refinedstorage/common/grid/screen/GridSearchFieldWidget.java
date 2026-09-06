@@ -20,12 +20,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-class GridSearchFieldWidget extends SearchFieldWidget implements GridSearchField {
+public class GridSearchFieldWidget extends SearchFieldWidget implements GridSearchField {
     private final Set<Consumer<String>> listeners = new HashSet<>();
     private boolean valid = true;
 
-    GridSearchFieldWidget(final Font textRenderer, final int x, final int y, final int width,
-                          final SyntaxHighlighter syntaxHighlighter, final History history) {
+    public GridSearchFieldWidget(final Font textRenderer, final int x, final int y, final int width,
+                                 final SyntaxHighlighter syntaxHighlighter, final History history) {
         super(textRenderer, x, y, width, history);
         addFormatter((text, offset) -> format(syntaxHighlighter, text, offset).getVisualOrderText());
         setResponder(text -> listeners.forEach(l -> l.accept(text)));

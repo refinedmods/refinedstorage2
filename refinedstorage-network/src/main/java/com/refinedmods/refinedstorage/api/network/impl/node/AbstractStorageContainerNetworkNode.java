@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.StorageState;
@@ -148,6 +149,17 @@ public abstract class AbstractStorageContainerNetworkNode extends AbstractNetwor
     @Override
     public NetworkNodeType getType() {
         return type;
+    }
+
+    protected boolean hasDetailsListeners() {
+        return eventManager.hasListeners();
+    }
+
+    protected void notifyStorageContentsChanged(final ResourceKey resource,
+                                                final long change,
+                                                final long stored,
+                                                final long capacity) {
+        eventManager.notifyStorageContentsChanged(resource, change, stored, capacity);
     }
 
     @Override

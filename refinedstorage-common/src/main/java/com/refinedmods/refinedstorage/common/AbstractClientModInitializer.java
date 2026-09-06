@@ -39,6 +39,7 @@ import com.refinedmods.refinedstorage.common.security.SecurityCardScreen;
 import com.refinedmods.refinedstorage.common.security.SecurityManagerScreen;
 import com.refinedmods.refinedstorage.common.storage.FluidStorageVariant;
 import com.refinedmods.refinedstorage.common.storage.ItemStorageVariant;
+import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.storage.diskdrive.DiskDriveScreen;
 import com.refinedmods.refinedstorage.common.storage.diskinterface.DiskInterfaceScreen;
 import com.refinedmods.refinedstorage.common.storage.externalstorage.ExternalStorageScreen;
@@ -218,9 +219,15 @@ public abstract class AbstractClientModInitializer {
             SimpleNetworkNodeDetails.class,
             new SimpleNetworkNodeDetailsRenderer()
         );
+        final StorageContentsNetworkNodeDetailsRenderer storageContentsRenderer =
+            new StorageContentsNetworkNodeDetailsRenderer();
         RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
             StorageContentsNetworkNodeDetails.class,
-            new StorageContentsNetworkNodeDetailsRenderer()
+            storageContentsRenderer
+        );
+        RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
+            PlatformStorageContentsNetworkDetails.class,
+            storageContentsRenderer
         );
     }
 

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.CharacterEvent;
@@ -44,6 +45,8 @@ import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonitorContainerMenu>
     implements NetworkMonitorListener {
+    public static final int DETAILS_WIDTH = 162;
+
     private static final Identifier TEXTURE = createIdentifier("textures/gui/network_monitor.png");
     private static final Identifier DEVICES = createIdentifier("network_monitor/devices");
     private static final Component SEARCH_HELP = createTranslation("gui", "network_monitor.search_help");
@@ -65,11 +68,16 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     private SearchFieldWidget searchField;
     private List<ClientTooltipComponent> detailsTooltip = Collections.emptyList();
     @Nullable
+    private NetworkNodeDetailsRenderer detailsRenderer;
+    @Nullable
     private NetworkMonitorNetworkWidget networkWidget;
     @Nullable
     private NetworkMonitorViewTypeSideButtonWidget viewTypeSideButtonWidget;
     private boolean showNetworkStatistics;
 
+    private int detailsHeight;
+
+    private final List<AbstractWidget> detailsWidgets = new ArrayList<>();
     private final List<NetworkMonitorDeviceGroupWidget> deviceGroupWidgets = new ArrayList<>();
     private final List<NetworkMonitorDeviceCategoryWidget> deviceCategoryWidgets = new ArrayList<>();
     private final List<NetworkMonitorDeviceWidget> deviceWidgets = new ArrayList<>();
@@ -170,9 +178,6 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         final Map<NetworkMonitorDeviceCategory, List<NetworkMonitorDevice>> deviceGroupsByCategory =
             new TreeMap<>(menu.getDeviceCategorySorter());
         final List<NetworkMonitorDevice> devices = new ArrayList<>();
-
-        // TODO: Sort type button
-        // TODO: Sorting direction
 
         final Comparator<NetworkMonitorDevice> deviceSort = menu.getDeviceSorter();
 
@@ -558,17 +563,39 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
                                  @Nullable final NetworkNodeDetails details) {
         if (details != null) {
             showNetworkStatistics = false;
-            final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
-                .getNetworkNodeDetailsRenderer(details.getClass());
-            updateScrollbarContentHeight(renderer.getHeight(details));
+            detailsRenderer = RefinedStorageClientApi.INSTANCE.getNetworkNodeDetailsRenderer(details.getClass());
+            detailsRenderer.setRepository(menu.getDetailsRepository());
+            updateDetailsWidgets();
+            updateDetailsScrollbar(detailsRenderer.getHeight(details));
         } else if (deviceGroup == null && deviceCategory == null && device == null && menu.isActive()) {
             showNetworkStatistics = true;
+            detailsRenderer = null;
+            detailsHeight = 0;
+            updateDetailsWidgets();
             updateScrollbarContentHeight(getNetworkStatisticsHeight());
         } else {
             showNetworkStatistics = false;
+            detailsRenderer = null;
+            detailsHeight = 0;
+            updateDetailsWidgets();
             updateScrollbarContentHeight(0);
         }
         resetScrollbarOffset();
+    }
+
+    private void updateDetailsWidgets() {
+        detailsWidgets.forEach(this::removeWidget);
+        detailsWidgets.clear();
+        if (detailsRenderer == null) {
+            return;
+        }
+        detailsWidgets.addAll(detailsRenderer.createWidgets(DETAILS_WIDTH));
+        detailsWidgets.forEach(this::addWidget);
+    }
+
+    private void updateDetailsScrollbar(final int newDetailsHeight) {
+        this.detailsHeight = newDetailsHeight;
+        updateScrollbarContentHeight(newDetailsHeight);
     }
 
     @Override
@@ -804,21 +831,27 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     @Override
     protected void renderRows(final GuiGraphicsExtractor graphics, final int x, final int y, final int topHeight,
                               final int rows, final int mouseX, final int mouseY, final float partialTicks) {
-        final int detailsY = y + topHeight - getScrollbarOffset();
-        final int detailsX = x + 7;
+        final int baseY = y + topHeight;
+        final int scrollY = baseY - getScrollbarOffset();
+        final int xx = x + 7;
         if (showNetworkStatistics) {
             this.detailsTooltip = Collections.emptyList();
-            renderNetworkStatistics(graphics, detailsX, detailsY);
+            renderNetworkStatistics(graphics, xx, scrollY);
             return;
         }
         final NetworkNodeDetails details = menu.getCurrentDetails();
-        if (details == null) {
+        if (details == null || detailsRenderer == null) {
             return;
         }
-        final NetworkNodeDetailsRenderer renderer = RefinedStorageClientApi.INSTANCE
-            .getNetworkNodeDetailsRenderer(details.getClass());
-        this.detailsTooltip = renderer.render(details, graphics, detailsX, detailsY, y + topHeight,
-            rows * ROW_SIZE, mouseX, mouseY);
+        final int newDetailsHeight = detailsRenderer.getHeight(details);
+        if (newDetailsHeight != detailsHeight) {
+            updateDetailsScrollbar(newDetailsHeight);
+        }
+        this.detailsTooltip = detailsRenderer.render(details, graphics, xx, scrollY, baseY,
+            DETAILS_WIDTH, rows * ROW_SIZE, mouseX, mouseY);
+        for (final AbstractWidget detailsWidget : detailsWidgets) {
+            detailsWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        }
     }
 
     private int getNetworkStatisticsHeight() {
@@ -952,18 +985,36 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         if (searchField != null && searchField.mouseClicked(e, doubleClick)) {
             return true;
         }
+        for (final AbstractWidget detailsWidget : detailsWidgets) {
+            if (detailsWidget.mouseClicked(e, doubleClick)) {
+                return true;
+            }
+        }
         return super.mouseClicked(e, doubleClick);
     }
 
     @Override
     public boolean charTyped(final CharacterEvent event) {
-        return (searchField != null && searchField.charTyped(event)) || super.charTyped(event);
+        if (searchField != null && searchField.charTyped(event)) {
+            return true;
+        }
+        for (final AbstractWidget detailsWidget : detailsWidgets) {
+            if (detailsWidget.charTyped(event)) {
+                return true;
+            }
+        }
+        return super.charTyped(event);
     }
 
     @Override
     public boolean keyPressed(final KeyEvent event) {
         if (searchField != null && searchField.keyPressed(event)) {
             return true;
+        }
+        for (final AbstractWidget detailsWidget : detailsWidgets) {
+            if (detailsWidget.keyPressed(event)) {
+                return true;
+            }
         }
         return super.keyPressed(event);
     }

@@ -5,9 +5,10 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import java.util.List;
 
 public class StorageContentsNetworkNodeDetails extends AbstractNetworkNodeDetails {
-    private final long stored;
-    private final long capacity;
+    private long stored;
+    private long capacity;
     private final boolean hasCapacity;
+    private final StorageConfigurationDetails configuration;
     private final List<ResourceAmount> contents;
 
     public StorageContentsNetworkNodeDetails(final long energyUsage,
@@ -15,12 +16,23 @@ public class StorageContentsNetworkNodeDetails extends AbstractNetworkNodeDetail
                                              final long stored,
                                              final long capacity,
                                              final boolean hasCapacity,
+                                             final StorageConfigurationDetails configuration,
                                              final List<ResourceAmount> contents) {
         super(energyUsage, active);
         this.stored = stored;
         this.capacity = capacity;
         this.hasCapacity = hasCapacity;
+        this.configuration = configuration;
         this.contents = List.copyOf(contents);
+    }
+
+    public StorageConfigurationDetails getConfiguration() {
+        return configuration;
+    }
+
+    public void updateStored(final long newStored, final long newCapacity) {
+        this.stored = newStored;
+        this.capacity = newCapacity;
     }
 
     public long getStored() {

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,5 +30,19 @@ public class NetworkNodeEventManager {
             return;
         }
         notifyListeners(new NetworkNodeDetailsChangedEvent(energyUsage, active));
+    }
+
+    public void notifyStorageContentsChanged(final ResourceKey resource,
+                                             final long change,
+                                             final long stored,
+                                             final long capacity) {
+        if (listeners.isEmpty()) {
+            return;
+        }
+        notifyListeners(new StorageContentsChangedEvent(resource, change, stored, capacity));
+    }
+
+    public boolean hasListeners() {
+        return !listeners.isEmpty();
     }
 }
