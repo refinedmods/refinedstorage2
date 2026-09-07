@@ -392,6 +392,19 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     @Override
+    public void onDeviceUpdated(final NetworkMonitorDevice device) {
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            deviceGroupWidget.onDeviceUpdated(device);
+        }
+        for (final NetworkMonitorDeviceCategoryWidget deviceCategoryWidget : deviceCategoryWidgets) {
+            deviceCategoryWidget.onDeviceUpdated(device);
+        }
+        for (final NetworkMonitorDeviceWidget deviceWidget : deviceWidgets) {
+            deviceWidget.onDeviceUpdated(device);
+        }
+    }
+
+    @Override
     public void onDeviceGroupAdded(final NetworkMonitorDeviceGroup deviceGroup) {
         addDeviceGroupWithoutRelayoutOrSort(deviceGroup, 0, false);
         sortDeviceGroups();

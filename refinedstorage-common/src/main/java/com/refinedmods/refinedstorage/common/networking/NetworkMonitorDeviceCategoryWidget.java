@@ -283,6 +283,12 @@ class NetworkMonitorDeviceCategoryWidget implements LayoutElement, Renderable, G
         deviceButtons.forEach(deviceButton -> deviceButton.active = true);
     }
 
+    void onDeviceUpdated(final NetworkMonitorDevice updatedDevice) {
+        for (final NetworkMonitorDeviceWidget deviceButton : deviceButtons) {
+            deviceButton.onDeviceUpdated(updatedDevice);
+        }
+    }
+
     void onCurrentDeviceChanged(@Nullable final NetworkMonitorDevice currentDevice) {
         deviceCategoryButton.active = true;
         deviceButtons.forEach(deviceButton -> deviceButton.onCurrentDeviceChanged(currentDevice));

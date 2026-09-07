@@ -285,6 +285,12 @@ class NetworkMonitorDeviceGroupWidget implements LayoutElement, Renderable, GuiE
         deviceButtons.forEach(deviceButton -> deviceButton.active = true);
     }
 
+    void onDeviceUpdated(final NetworkMonitorDevice updatedDevice) {
+        for (final NetworkMonitorDeviceWidget deviceButton : deviceButtons) {
+            deviceButton.onDeviceUpdated(updatedDevice);
+        }
+    }
+
     void onCurrentDeviceChanged(@Nullable final NetworkMonitorDevice currentDevice) {
         deviceGroupButton.active = true;
         deviceButtons.forEach(deviceButton -> deviceButton.onCurrentDeviceChanged(currentDevice));

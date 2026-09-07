@@ -38,11 +38,18 @@ public record NetworkMonitorDeviceGroup(UUID id, NetworkMonitorDeviceType type, 
     }
 
     @Nullable
-    private NetworkMonitorDevice findDeviceById(final MonitorNodeId deviceId) {
+    NetworkMonitorDevice findDeviceById(final MonitorNodeId deviceId) {
         return devices.stream()
             .filter(device -> device.id().equals(deviceId.id()))
             .findFirst()
             .orElse(null);
+    }
+
+    void replace(final NetworkMonitorDevice originalDevice, final NetworkMonitorDevice updatedDevice) {
+        final int index = devices.indexOf(originalDevice);
+        if (index != -1) {
+            devices.set(index, updatedDevice);
+        }
     }
 
     boolean hasDevice(final MonitorNodeId deviceId) {

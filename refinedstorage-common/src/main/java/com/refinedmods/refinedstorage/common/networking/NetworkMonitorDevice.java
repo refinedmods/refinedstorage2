@@ -26,6 +26,10 @@ public record NetworkMonitorDevice(UUID id, Component name, long energyUsage,
         NetworkMonitorDevice::new
     );
 
+    NetworkMonitorDevice withEnergyUsage(final long newEnergyUsage) {
+        return new NetworkMonitorDevice(id, name, newEnergyUsage, insertPriority, extractPriority, item);
+    }
+
     @Override
     public boolean equals(@Nullable final Object o) {
         if (o == null || getClass() != o.getClass()) {

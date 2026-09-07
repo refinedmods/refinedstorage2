@@ -177,6 +177,14 @@ public final class S2CPackets {
             device));
     }
 
+    public static void sendNetworkMonitorDeviceUpdated(final ServerPlayer player,
+                                                       final MonitorNodeId deviceId,
+                                                       final long energyUsage,
+                                                       final boolean active) {
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDeviceUpdatedPacket(deviceId.id(),
+            energyUsage, active));
+    }
+
     public static void sendNetworkMonitorDeviceRemoved(final ServerPlayer player, final MonitorNodeId nodeId) {
         Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDeviceRemovedPacket(nodeId.id()));
     }
