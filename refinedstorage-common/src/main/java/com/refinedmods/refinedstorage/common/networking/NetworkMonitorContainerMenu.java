@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage.common.networking;
 
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorListener;
@@ -316,13 +318,38 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         }
     }
 
-    private void handleEvent(final Object event) {
-        if (player instanceof ServerPlayer serverPlayer
-            && event instanceof StorageContentsChangedEvent(ResourceKey resource, long change, long stored,
-            long capacity)
-            && resource instanceof PlatformResourceKey platformResource) {
-            S2CPackets.sendNetworkMonitorDetailsResourceUpdate(serverPlayer, platformResource, change, stored,
-                capacity);
+    private void handleEvent(final MonitorNodeId deviceId, final Object event) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        switch (event) {
+            case StorageContentsChangedEvent(ResourceKey resource, long change, long stored, long capacity) -> {
+                if (resource instanceof PlatformResourceKey platformResource) {
+                    S2CPackets.sendNetworkMonitorDetailsResourceUpdate(serverPlayer, platformResource, change, stored,
+                        capacity);
+                }
+            }
+            case NetworkNodeDetailsChangedEvent(long energyUsage, boolean newActive) ->
+                S2CPackets.sendNetworkMonitorDeviceUpdated(serverPlayer, deviceId, energyUsage, newActive);
+            default -> {
+                // no other events are of interest
+            }
+        }
+    }
+
+    public void updateDevice(final MonitorNodeId deviceId, final long energyUsage, final boolean newActive) {
+        if (currentDetails instanceof AbstractNetworkNodeDetails baseDetails
+            && currentDevice != null
+            && currentDevice.id().equals(deviceId.id())) {
+            baseDetails.update(energyUsage, newActive);
+        }
+        updateEnergyUsage(deviceId, energyUsage);
+    }
+
+    private void updateEnergyUsage(final MonitorNodeId deviceId, final long energyUsage) {
+        final NetworkMonitorDevice updatedDevice = devices.updateEnergyUsage(deviceId, energyUsage);
+        if (updatedDevice != null && listener != null) {
+            listener.onDeviceUpdated(updatedDevice);
         }
     }
 
@@ -373,6 +400,10 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         this.detailsRepository = createDetailsRepository(details);
         if (listener != null) {
             listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, details);
+        }
+        // A device is only listened to while it is open, so it can be outdated by the time that it gets opened.
+        if (currentDevice != null && details instanceof AbstractNetworkNodeDetails baseDetails) {
+            updateEnergyUsage(new MonitorNodeId(currentDevice.id()), baseDetails.getEnergyUsage());
         }
     }
 

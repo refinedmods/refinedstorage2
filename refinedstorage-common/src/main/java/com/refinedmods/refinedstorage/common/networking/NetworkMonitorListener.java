@@ -24,6 +24,8 @@ interface NetworkMonitorListener {
                        NetworkMonitorDeviceCategory deviceCategory,
                        NetworkMonitorDevice device);
 
+    void onDeviceUpdated(NetworkMonitorDevice device);
+
     void onDeviceRemoved(NetworkMonitorDeviceGroup deviceGroup,
                          NetworkMonitorDeviceCategory deviceCategory,
                          NetworkMonitorDevice device);

@@ -274,6 +274,32 @@ class NetworkMonitorDevices {
         }
     }
 
+    @Nullable
+    NetworkMonitorDevice updateEnergyUsage(final MonitorNodeId deviceId, final long energyUsage) {
+        final NetworkMonitorDeviceGroup deviceGroup = findDeviceGroupContainingDeviceId(deviceId);
+        if (deviceGroup == null) {
+            return null;
+        }
+        final NetworkMonitorDevice originalDevice = deviceGroup.findDeviceById(deviceId);
+        if (originalDevice == null) {
+            return null;
+        }
+        final NetworkMonitorDevice updatedDevice = originalDevice.withEnergyUsage(energyUsage);
+        deviceGroup.replace(originalDevice, updatedDevice);
+        devicesByCategory.values().forEach(devicesInCategory ->
+            replace(devicesInCategory, originalDevice, updatedDevice));
+        replace(visibleDevices, originalDevice, updatedDevice);
+        return updatedDevice;
+    }
+
+    private static void replace(final Set<NetworkMonitorDevice> devices,
+                                final NetworkMonitorDevice originalDevice,
+                                final NetworkMonitorDevice updatedDevice) {
+        if (devices.remove(originalDevice)) {
+            devices.add(updatedDevice);
+        }
+    }
+
     void onSearchTextChanged(final String text) {
         final String normalizedText = text.trim().toLowerCase(Locale.ROOT);
         searching = !normalizedText.isEmpty();

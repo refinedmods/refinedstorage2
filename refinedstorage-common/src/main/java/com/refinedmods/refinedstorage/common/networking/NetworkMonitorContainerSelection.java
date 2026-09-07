@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeI
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
@@ -11,12 +12,12 @@ import org.jspecify.annotations.Nullable;
 class NetworkMonitorContainerSelection {
     private final NetworkMonitorBlockEntity networkMonitor;
     private final Consumer<NetworkNodeDetails> detailsConsumer;
-    private final Consumer<Object> nodeEventListener;
+    private final BiConsumer<MonitorNodeId, Object> nodeEventListener;
     private NetworkMonitorContainerSelection.@Nullable SelectedDevice selectedDevice;
 
     NetworkMonitorContainerSelection(final NetworkMonitorBlockEntity networkMonitor,
                                      final Consumer<NetworkNodeDetails> detailsConsumer,
-                                     final Consumer<Object> nodeEventListener) {
+                                     final BiConsumer<MonitorNodeId, Object> nodeEventListener) {
         this.networkMonitor = networkMonitor;
         this.detailsConsumer = detailsConsumer;
         this.nodeEventListener = nodeEventListener;
@@ -30,12 +31,12 @@ class NetworkMonitorContainerSelection {
         if (deviceId == null) {
             return;
         }
-        selectedDevice = new SelectedDevice(deviceId, nodeEventListener::accept);
+        selectedDevice = new SelectedDevice(deviceId, event -> nodeEventListener.accept(deviceId, event));
         selectedDevice.attach();
         sendDetails(deviceId);
     }
 
-    private void sendDetails(final MonitorNodeId deviceId) {
+    void sendDetails(final MonitorNodeId deviceId) {
         final NetworkNodeDetails details = networkMonitor.createDetails(deviceId);
         if (details == null) {
             return;

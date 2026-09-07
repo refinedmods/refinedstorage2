@@ -24,7 +24,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
 class NetworkMonitorDeviceWidget extends AbstractButton {
     static final int WIDTH = 64;
 
-    private final NetworkMonitorDevice device;
+    private NetworkMonitorDevice device;
     private final TextMarquee text;
     private final Runnable selected;
     private final ItemStack stack;
@@ -93,6 +93,12 @@ class NetworkMonitorDeviceWidget extends AbstractButton {
 
     boolean hasIcon(final Item icon) {
         return device.item().value().equals(icon);
+    }
+
+    void onDeviceUpdated(final NetworkMonitorDevice updatedDevice) {
+        if (is(updatedDevice)) {
+            this.device = updatedDevice;
+        }
     }
 
     boolean is(final NetworkMonitorDevice otherDevice) {

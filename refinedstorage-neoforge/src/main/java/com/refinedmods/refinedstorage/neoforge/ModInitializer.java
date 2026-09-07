@@ -91,6 +91,7 @@ import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDe
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDetailsUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceAddedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceRemovedPacket;
+import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorDeviceUpdatedPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkMonitorNetworkStatisticsUpdatePacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.NetworkTransmitterStatusPacket;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.PatternGridAllowedAlternativesUpdatePacket;
@@ -894,6 +895,11 @@ public class ModInitializer extends AbstractModInitializer {
             NetworkMonitorDeviceRemovedPacket.PACKET_TYPE,
             NetworkMonitorDeviceRemovedPacket.STREAM_CODEC,
             wrapHandler(NetworkMonitorDeviceRemovedPacket::handle)
+        );
+        registrar.playToClient(
+            NetworkMonitorDeviceUpdatedPacket.PACKET_TYPE,
+            NetworkMonitorDeviceUpdatedPacket.STREAM_CODEC,
+            wrapHandler(NetworkMonitorDeviceUpdatedPacket::handle)
         );
         registrar.playToClient(
             NetworkMonitorActivePacket.PACKET_TYPE,
