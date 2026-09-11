@@ -21,7 +21,6 @@ import com.refinedmods.refinedstorage.query.parser.node.UnaryOpNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -166,11 +165,17 @@ public class GridQueryParser {
         final Set<GridResourceAttributeKey> keys,
         final String query
     ) {
-        return (repository, resource) -> keys
-            .stream()
-            .map(resource::getAttribute)
-            .flatMap(Collection::stream)
-            .anyMatch(value -> normalize(value).contains(normalize(query)));
+        final String normalizedQuery = normalize(query);
+        return (repository, resource) -> {
+            for (final GridResourceAttributeKey key : keys) {
+                for (final String value : resource.getAttribute(key)) {
+                    if (normalize(value).contains(normalizedQuery)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
     }
 
     private static String normalize(final String value) {
@@ -178,9 +183,10 @@ public class GridQueryParser {
     }
 
     private static ResourceRepositoryFilter<GridResource> parseLiteral(final LiteralNode node) {
+        final String normalizedQuery = normalize(node.token().content());
         return (repository, resource) -> {
             for (final String name : resource.getSearchableNames()) {
-                if (normalize(name).contains(normalize(node.token().content()))) {
+                if (normalize(name).contains(normalizedQuery)) {
                     return true;
                 }
             }
