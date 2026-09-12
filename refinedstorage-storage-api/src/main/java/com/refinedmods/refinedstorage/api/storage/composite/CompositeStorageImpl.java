@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -157,12 +156,25 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
-        return insertSources
-            .stream()
-            .filter(TrackedStorage.class::isInstance)
-            .map(TrackedStorage.class::cast)
-            .flatMap(storage -> storage.findTrackedResourceByActorType(resource, actorType).stream())
-            .max(Comparator.comparingLong(TrackedResource::getTime));
+        TrackedResource newest = null;
+        for (int i = 0; i < insertSources.size(); i++) {
+            final Storage source = insertSources.get(i);
+            if (!(source instanceof TrackedStorage trackedStorage)) {
+                continue;
+            }
+            final Optional<TrackedResource> tracked = trackedStorage.findTrackedResourceByActorType(
+                resource,
+                actorType
+            );
+            if (tracked.isEmpty()) {
+                continue;
+            }
+            final TrackedResource current = tracked.get();
+            if (newest == null || current.getTime() > newest.getTime()) {
+                newest = current;
+            }
+        }
+        return Optional.ofNullable(newest);
     }
 
     @Override
