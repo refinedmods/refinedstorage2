@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Action buttons in amount screens going out of bounds in certain languages.
 -   "Craft" text in Grid going out of bounds in certain languages.
 -   Slow Grid searching on networks with many different resources.
+-   Slow tracked resource lookups and high memory allocation churn on large storage networks.
 
 ## [3.2.1] - 2026-06-07
 
