@@ -8,7 +8,7 @@ Extra Disks adds much larger item and fluid storage disks for Refined Storage.
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Compatible Addons* | xref:mekanism.adoc[]
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/extra-disks[CurseForge], link:https://modrinth.com/mod/extra-disks[Modrinth]
 |===
@@ -19,7 +19,7 @@ Adds a wireless transmitter with infinite range across dimensions.
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/interdimensional-wireless-transmitter[CurseForge], link:https://modrinth.com/mod/interdimensional-wireless-transmitter[Modrinth]
 |===
 
@@ -33,7 +33,7 @@ Adds a wireless Grid that can switch between:
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/universal-grid[CurseForge], link:https://modrinth.com/mod/universal-grid[Modrinth]
 |===
 
@@ -43,7 +43,7 @@ Adds powerful extensions to CC:Tweaked (Computercraft), with Refined Storage int
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
 | *Compatible Addons* | xref:mekanism.adoc[]
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals[CurseForge], link:https://modrinth.com/mod/advancedperipherals[Modrinth]
 |===
@@ -58,7 +58,7 @@ ExtraStorage is an addon for Refined Storage that enhances your automation and s
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/extrastorage[CurseForge], link:https://modrinth.com/mod/extrastorage[Modrinth]
 |===
 
@@ -68,17 +68,17 @@ Adds support for Forge Energy, Source (from Ars Nouveau) and Souls (from Industr
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
-| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-types[CurseForge]
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-types[CurseForge], link:https://modrinth.com/mod/refined-types[Modrinth]
 |===
 
 == Cable Tiers
 
-Cable Tiers is an addon for Refined Storage that adds new cable tiers, each with increased item transfer rates and more filter slots.
+Cable Tiers is an addon for Refined Storage that adds upgraded tiers of existing devices - Importer, Exporter, Constructor, Destructor, Disk Interface, Interface, Autocrafter and Requester - each with more filter slots and faster speeds.
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/cable-tiers[CurseForge], link:https://modrinth.com/mod/cable-tiers[Modrinth]
 |===
 
@@ -88,7 +88,7 @@ An enhanced and versatile variant of the Portable Grid with crafting capabilitie
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/omni-grid[CurseForge]
 |===
 
@@ -99,18 +99,32 @@ Ender IO adds Refined Storage conduits.
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/ender-io[CurseForge], link:https://modrinth.com/mod/enderio[Modrinth]
 |===
 
+[#rs-requestify]
 == Refined Storage: Requestify
 
 Refined Storage: Requestify adds the Requester, a block that allows you to maintain a specified stock level of resources in your Refined Storage system.
 
+NOTE: For Minecraft 26.1.2, use <<rsrequestify-reforged,RSRequestify: Reforged>> instead.
+
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-requestify[CurseForge]
+|===
+
+[#rsrequestify-reforged]
+== RSRequestify: Reforged
+
+A continuation of <<rs-requestify,Refined Storage: Requestify>> for newer Minecraft versions, adding the Requester and the Crafting Emitter.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rsrreforged[CurseForge], link:https://modrinth.com/mod/rsrreforged[Modrinth]
 |===
 
 == Pipe Connector
@@ -119,8 +133,8 @@ A tool that places pipes (including Refined Storage cables) automatically along 
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
-| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/pipe-connector[CurseForge]
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/pipe-connector[CurseForge], link:https://modrinth.com/mod/pipe-connector[Modrinth]
 |===
 
 == Step Crafter
@@ -129,7 +143,7 @@ This mod adds a Step Crafter and Step Requester which allows recursive crafting 
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/step-crafter[CurseForge], link:https://modrinth.com/mod/step-crafter[Modrinth]
 |===
 
@@ -139,8 +153,18 @@ This mod allows you to autocraft using replication matter inside Refined Storage
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/replication-rs2-bridge[CurseForge]
+|===
+
+== RS Replication Interface
+
+Adds an Interface and matter storage disks that connect Replication to Refined Storage, including autocrafting support.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-replication-interface[CurseForge]
 |===
 
 == Refined Equivalence
@@ -149,6 +173,156 @@ This mod allows you to autocraft using EMC inside Refined Storage.
 
 [cols="1,3"]
 |===
-| *Supports* | Refined Storage v2.0.0 on Minecraft 1.21.1
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
 | *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-equivalence[CurseForge]
+|===
+
+== ME Refined Interface
+
+Adds a block that bridges Applied Energistics 2 and Refined Storage, letting both networks share stored resources and autocrafting.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/me-refined-interface[CurseForge]
+|===
+
+== QIO Integrations
+
+Allows Refined Storage to access Mekanism's QIO drives through storage interfaces.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/qio-integrations[CurseForge], link:https://modrinth.com/mod/qio-integrations[Modrinth]
+|===
+
+== RefinedElite
+
+Adds Infinity Storage Cells for unlimited storage of a single resource, and elite patterns that allow autocrafting recipes up to 13x13.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refinedelite[CurseForge]
+|===
+
+== Polymorphic Refined Storage
+
+Adds a Polymorph recipe selection button to the xref:../viewing-resources/crafting-grid.adoc[] and xref:../autocrafting/pattern-grid.adoc[], letting you choose between recipes that share the same ingredients.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-polymorph[CurseForge], link:https://modrinth.com/mod/polymorphic-refined-storage[Modrinth]
+|===
+
+== Refined Fluid Substitution
+
+Adds a fluid substitution xref:../autocrafting/pattern.adoc[Pattern], allowing fluids to be used directly in autocrafting instead of buckets.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-fluid-substitution[CurseForge], link:https://modrinth.com/mod/refined-fluid-substitution[Modrinth]
+|===
+
+== RS Insert Export Upgrade
+
+Adds Insert, Export and Block Picker upgrades that move resources between your inventory and your Refined Storage network.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-insert-export-upgrade[CurseForge], link:https://modrinth.com/mod/rs-insert-export-upgrade[Modrinth]
+|===
+
+== Refined Storage Search History
+
+Adds a scrollable search history panel to xref:../viewing-resources/grid.adoc[] screens, so you can quickly reuse previous searches.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-search-history[CurseForge]
+|===
+
+== RS Storage Warnings
+
+Warns you before opening a xref:../viewing-resources/grid.adoc[] when the storage capacity on your network is running critically low.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/rs-storage-warnings[CurseForge], link:https://modrinth.com/mod/rs-storage-wanings[Modrinth]
+|===
+
+== Refined Construction Sticks
+
+Allows Construction Sticks to pull blocks from a Refined Storage network instead of from your inventory.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-construction-sticks[CurseForge], link:https://modrinth.com/mod/refined-construction-sticks[Modrinth]
+|===
+
+== Refined Cooking
+
+Allows Refined Storage and Cooking for Blockheads to work together, letting kitchens use ingredients stored in your network.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-cooking[CurseForge], link:https://modrinth.com/mod/refined-cooking[Modrinth]
+|===
+
+== Refined Delight
+
+Adds a Wireless Cooking Pot that cooks Farmer's Delight recipes using ingredients from your Refined Storage network.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-delight[CurseForge], link:https://modrinth.com/mod/refined-delight[Modrinth]
+|===
+
+== Refined Schematics
+
+Adds a Cannon Interface that connects your Refined Storage network to Create's Schematicannon.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/refined-schematics[CurseForge], link:https://modrinth.com/mod/refinedschematics[Modrinth]
+|===
+
+== Create Refined Recipes
+
+Turns Refined Storage, ExtraStorage and Extra Disks recipes into Create machine recipes.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/create-refined-recipes[CurseForge]
+|===
+
+== Sophisticated Backpacks RS Bridge
+
+Lets you deposit the contents of a Sophisticated Backpack into your network by right-clicking a xref:../viewing-resources/grid.adoc[] while holding the backpack.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1, Refined Storage v3 on Minecraft 26.1.2
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks-rs-bridge-quick-deposit[CurseForge]
+|===
+
+== More Backpack Upgrades
+
+Adds a Sophisticated Backpacks upgrade that teleports items into your Refined Storage network, across dimensions.
+
+[cols="1,3"]
+|===
+| *Supports* | Refined Storage v2 on Minecraft 1.21.1
+| *Download* | link:https://www.curseforge.com/minecraft/mc-mods/more-backpack-upgrades-neoforge[CurseForge], link:https://modrinth.com/mod/more-backpack-upgrades-neoforge[Modrinth]
 |===
