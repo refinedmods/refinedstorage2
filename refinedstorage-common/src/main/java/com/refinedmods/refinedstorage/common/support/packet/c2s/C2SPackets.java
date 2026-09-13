@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.grid.GridInsertMode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.security.PlatformPermission;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.api.support.slotreference.PlayerSlotReference;
@@ -170,9 +171,10 @@ public final class C2SPackets {
         Platform.INSTANCE.sendPacketToServer(new GridAutocraftingTasksSubscriptionPacket(taskIds));
     }
 
-    public static void sendNetworkMonitorSelectionUpdate(@Nullable final UUID deviceId) {
-        Platform.INSTANCE.sendPacketToServer(
-            new NetworkMonitorSelectionUpdatePacket(Optional.ofNullable(deviceId))
-        );
+    public static void sendNetworkMonitorSelectionUpdate(@Nullable final UUID deviceId,
+                                                         @Nullable final UUID deviceGroupId,
+                                                         @Nullable final NetworkMonitorDeviceCategory deviceCategory) {
+        Platform.INSTANCE.sendPacketToServer(new NetworkMonitorSelectionUpdatePacket(Optional.ofNullable(deviceId),
+            Optional.ofNullable(deviceGroupId), Optional.ofNullable(deviceCategory)));
     }
 }

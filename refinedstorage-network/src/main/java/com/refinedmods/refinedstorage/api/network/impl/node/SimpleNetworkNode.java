@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
@@ -34,6 +35,11 @@ public class SimpleNetworkNode extends AbstractNetworkNode implements NetworkNod
     @Override
     public NetworkNodeDetails createDetails() {
         return SimpleNetworkNodeDetails.of(this);
+    }
+
+    @Override
+    public void mergeDetails(final MergedNetworkNodeDetails details) {
+        details.getOrCreate(MergedBaseNetworkNodeDetails.ELEMENT).merge(getEnergyUsage(), isActive());
     }
 
     @Override

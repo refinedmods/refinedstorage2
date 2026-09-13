@@ -134,9 +134,12 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
         final List<Optional<ResourceKey>> filters = getFilters(details);
         final int configurationHeight = getConfigurationHeight(configuration, filters);
         List<ClientTooltipComponent> tooltip = Collections.emptyList();
-        if (configurationY + configurationHeight > baseY && configurationY < baseY + height) {
-            tooltip = renderConfiguration(graphics, x, configurationY, mouseX, mouseY, configuration, filters,
-                isFuzzyMode(details));
+        final boolean storageDetailsRepresentMultipleNodes = configuration == null;
+        if (!storageDetailsRepresentMultipleNodes
+            && configurationY + configurationHeight > baseY
+            && configurationY < baseY + height) {
+            tooltip = renderConfiguration(graphics, x, configurationY, width, mouseX, mouseY, configuration,
+                filters, isFuzzyMode(details));
         }
         final int searchY = configurationY + configurationHeight;
         if (updateSearchPosition(x, searchY, baseY, height)) {
@@ -221,13 +224,17 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
         return configuration.filterMode() == FilterMode.ALLOW || filters.stream().anyMatch(Optional::isPresent);
     }
 
-    private static int getConfigurationHeight(final StorageConfigurationDetails configuration,
+    private static int getConfigurationHeight(@Nullable final StorageConfigurationDetails configuration,
                                               final List<Optional<ResourceKey>> filters) {
-        int height = 0;
+        if (configuration == null) {
+            return 0;
+        }
+        int height = getLineHeight();
         if (shouldShowFilters(configuration, filters)) {
             height += getLineHeight() + SLOT_SIZE + PADDING;
+        } else {
+            height += getLineHeight();
         }
-        height += getLineHeight() * 2;
         height += configuration.insertPriority() == configuration.extractPriority()
             ? getLineHeight()
             : getLineHeight() * 2;
@@ -240,23 +247,27 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
     private static List<ClientTooltipComponent> renderConfiguration(final GuiGraphicsExtractor graphics,
                                                                     final int x,
                                                                     final int y,
+                                                                    final int width,
                                                                     final int mouseX,
                                                                     final int mouseY,
                                                                     final StorageConfigurationDetails configuration,
                                                                     final List<Optional<ResourceKey>> filters,
                                                                     final boolean fuzzyMode) {
         List<ClientTooltipComponent> tooltip = Collections.emptyList();
+        final Component fuzzyModeText = createTranslation("gui", "network_monitor.details.fuzzy_mode",
+            createTranslation("gui", fuzzyMode ? "fuzzy_mode.on" : "fuzzy_mode.off"));
         int lineY = y;
         if (shouldShowFilters(configuration, filters)) {
             renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.filter_mode",
                 getFilterModeText(configuration.filterMode())));
+            renderRightAlignedLine(graphics, x, lineY, width, fuzzyModeText);
             lineY += getLineHeight();
             tooltip = renderFilters(graphics, x, lineY, mouseX, mouseY, filters);
             lineY += SLOT_SIZE + PADDING;
+        } else {
+            renderLine(graphics, x, lineY, fuzzyModeText);
+            lineY += getLineHeight();
         }
-        renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.fuzzy_mode",
-            createTranslation("gui", fuzzyMode ? "fuzzy_mode.on" : "fuzzy_mode.off")));
-        lineY += getLineHeight();
         renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.access_mode",
             getAccessModeText(configuration.accessMode())));
         lineY += getLineHeight();
@@ -284,6 +295,17 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
                                    final Component text) {
         SmallText.render(graphics, Minecraft.getInstance().font, text.getVisualOrderText(), x + PADDING, y,
             0xFF404040, false, SmallText.correctScale(SmallText.DEFAULT_SCALE));
+    }
+
+    private static void renderRightAlignedLine(final GuiGraphicsExtractor graphics,
+                                               final int x,
+                                               final int y,
+                                               final int width,
+                                               final Component text) {
+        final Font font = Minecraft.getInstance().font;
+        final float scale = SmallText.correctScale(SmallText.DEFAULT_SCALE);
+        SmallText.render(graphics, font, text.getVisualOrderText(),
+            x + width - PADDING - (int) (font.width(text) * scale), y, 0xFF404040, false, scale);
     }
 
     private static Component getFilterModeText(final FilterMode filterMode) {

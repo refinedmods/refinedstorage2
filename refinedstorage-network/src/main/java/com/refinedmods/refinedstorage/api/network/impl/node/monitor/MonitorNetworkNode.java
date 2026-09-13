@@ -3,9 +3,15 @@ package com.refinedmods.refinedstorage.api.network.impl.node.monitor;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.MergedBaseNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.MergedStorageContentsNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.GraphListener;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
@@ -18,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -202,6 +209,33 @@ public class MonitorNetworkNode extends AbstractNetworkNode implements GraphList
         return tracked == null ? null : tracked.provider();
     }
 
+    // TODO: very hardcoded. :(
+    public NetworkNodeDetails createDetails(final Collection<MonitorNodeId> ids) {
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+        for (final MonitorNodeId id : ids) {
+            final TrackedNode tracked = trackedById.get(id);
+            if (tracked != null) {
+                tracked.provider().mergeDetails(merged);
+            }
+        }
+        final MergedBaseNetworkNodeDetails base = merged.getOrCreate(MergedBaseNetworkNodeDetails.ELEMENT);
+        final MergedStorageContentsNetworkNodeDetails contents = merged.get(
+            MergedStorageContentsNetworkNodeDetails.ELEMENT
+        );
+        if (contents == null) {
+            return new SimpleNetworkNodeDetails(base.getEnergyUsage(), base.isActive());
+        }
+        return new StorageContentsNetworkNodeDetails(
+            base.getEnergyUsage(),
+            base.isActive(),
+            contents.getStored(),
+            contents.getCapacity(),
+            contents.hasCapacity(),
+            null,
+            List.copyOf(contents.getContents().copyState())
+        );
+    }
+
     @Nullable
     public MonitorNodeId getId(final NetworkNode node) {
         final TrackedNode tracked = trackedByNode.get(node);
@@ -220,6 +254,17 @@ public class MonitorNetworkNode extends AbstractNetworkNode implements GraphList
         return trackedType.nodes()
             .stream()
             .map(TrackedNode::node)
+            .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public Set<MonitorNodeId> getIds(final NetworkNodeType type) {
+        final TrackedType trackedType = trackedByType.get(type);
+        if (trackedType == null) {
+            return Collections.emptySet();
+        }
+        return trackedType.nodes()
+            .stream()
+            .map(TrackedNode::id)
             .collect(Collectors.toUnmodifiableSet());
     }
 

@@ -103,6 +103,15 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     @Override
+    public void removed() {
+        super.removed();
+        // The renderer is shared between screens, don't let it keep the contents of this screen alive.
+        if (detailsRenderer != null) {
+            detailsRenderer.setRepository(null);
+        }
+    }
+
+    @Override
     protected void initStretching(final int rows, final int topHeight) {
         super.initStretching(rows, topHeight);
 
@@ -240,8 +249,8 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     private void loadCurrentDetails() {
-        onDetailsChanged(menu.getCurrentDeviceGroup(), menu.getCurrentDeviceCategory(),
-            menu.getCurrentDevice(), menu.getCurrentDetails());
+        onDetailsChanged(menu.getCurrentDeviceGroup() == null
+            && menu.getCurrentDeviceCategory() == null && menu.getCurrentDevice() == null, menu.getCurrentDetails());
     }
 
     @Nullable
@@ -363,6 +372,12 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
             deviceGroupWidget.onCurrentDeviceGroupChanged(deviceGroup);
         }
+        for (final NetworkMonitorDeviceCategoryWidget deviceCategoryWidget : deviceCategoryWidgets) {
+            deviceCategoryWidget.onCurrentDeviceCategoryChanged(null);
+        }
+        for (final NetworkMonitorDeviceWidget deviceWidget : deviceWidgets) {
+            deviceWidget.onCurrentDeviceChanged(null);
+        }
     }
 
     @Override
@@ -370,8 +385,14 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
         if (networkWidget != null) {
             networkWidget.active = deviceCategory != null;
         }
+        for (final NetworkMonitorDeviceGroupWidget deviceGroupWidget : deviceGroupWidgets) {
+            deviceGroupWidget.onCurrentDeviceGroupChanged(null);
+        }
         for (final NetworkMonitorDeviceCategoryWidget deviceCategoryWidget : deviceCategoryWidgets) {
             deviceCategoryWidget.onCurrentDeviceCategoryChanged(deviceCategory);
+        }
+        for (final NetworkMonitorDeviceWidget deviceWidget : deviceWidgets) {
+            deviceWidget.onCurrentDeviceChanged(null);
         }
     }
 
@@ -570,17 +591,14 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     }
 
     @Override
-    public void onDetailsChanged(@Nullable final NetworkMonitorDeviceGroup deviceGroup,
-                                 @Nullable final NetworkMonitorDeviceCategory deviceCategory,
-                                 @Nullable final NetworkMonitorDevice device,
-                                 @Nullable final NetworkNodeDetails details) {
+    public void onDetailsChanged(final boolean nothingSelected, @Nullable final NetworkNodeDetails details) {
         if (details != null) {
             showNetworkStatistics = false;
             detailsRenderer = RefinedStorageClientApi.INSTANCE.getNetworkNodeDetailsRenderer(details.getClass());
             detailsRenderer.setRepository(menu.getDetailsRepository());
             updateDetailsWidgets();
             updateDetailsScrollbar(detailsRenderer.getHeight(details));
-        } else if (deviceGroup == null && deviceCategory == null && device == null && menu.isActive()) {
+        } else if (nothingSelected && menu.isActive()) {
             showNetworkStatistics = true;
             detailsRenderer = null;
             detailsHeight = 0;
@@ -594,6 +612,18 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
             updateScrollbarContentHeight(0);
         }
         resetScrollbarOffset();
+    }
+
+    @Override
+    public void onDetailsRefreshed(final NetworkNodeDetails details) {
+        final NetworkNodeDetailsRenderer newDetailsRenderer = RefinedStorageClientApi.INSTANCE
+            .getNetworkNodeDetailsRenderer(details.getClass());
+        if (newDetailsRenderer != detailsRenderer) {
+            onDetailsChanged(false, details);
+            return;
+        }
+        newDetailsRenderer.setRepository(menu.getDetailsRepository());
+        updateDetailsScrollbar(newDetailsRenderer.getHeight(details));
     }
 
     private void updateDetailsWidgets() {

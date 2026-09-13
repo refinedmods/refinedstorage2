@@ -1,7 +1,11 @@
 package com.refinedmods.refinedstorage.common.support.packet.c2s;
 
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
+import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.networking.NetworkMonitorContainerMenu;
 import com.refinedmods.refinedstorage.common.support.packet.PacketContext;
+import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -14,19 +18,27 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 
-public record NetworkMonitorSelectionUpdatePacket(Optional<UUID> deviceId) implements CustomPacketPayload {
+public record NetworkMonitorSelectionUpdatePacket(Optional<UUID> deviceId,
+                                                  Optional<UUID> deviceGroupId,
+                                                  Optional<NetworkMonitorDeviceCategory> deviceCategory)
+    implements CustomPacketPayload {
     public static final Type<NetworkMonitorSelectionUpdatePacket> PACKET_TYPE = new Type<>(
         createIdentifier("network_monitor_selection_update")
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, NetworkMonitorSelectionUpdatePacket> STREAM_CODEC =
         StreamCodec.composite(
             ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC), NetworkMonitorSelectionUpdatePacket::deviceId,
+            ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC), NetworkMonitorSelectionUpdatePacket::deviceGroupId,
+            ByteBufCodecs.optional(
+                PlatformUtil.enumStreamCodec(NetworkMonitorDeviceCategory.values())
+            ), NetworkMonitorSelectionUpdatePacket::deviceCategory,
             NetworkMonitorSelectionUpdatePacket::new
         );
 
     public static void handle(final NetworkMonitorSelectionUpdatePacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof NetworkMonitorContainerMenu menu) {
-            menu.updateServerSelection(packet.deviceId.orElse(null));
+            menu.updateServerSelection(packet.deviceId.map(MonitorNodeId::new).orElse(null),
+                packet.deviceGroupId.map(MonitorNodeTypeId::new).orElse(null), packet.deviceCategory.orElse(null));
         }
     }
 

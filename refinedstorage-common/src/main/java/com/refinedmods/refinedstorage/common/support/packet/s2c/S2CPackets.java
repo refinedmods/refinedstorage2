@@ -194,8 +194,10 @@ public final class S2CPackets {
     }
 
     public static void sendNetworkMonitorDetailsUpdate(final ServerPlayer player,
+                                                       @Nullable final MonitorNodeId deviceId,
                                                        final NetworkNodeDetails details) {
-        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDetailsUpdatePacket(details));
+        Platform.INSTANCE.sendPacketToClient(player, new NetworkMonitorDetailsUpdatePacket(
+            Optional.ofNullable(deviceId).map(MonitorNodeId::id), details));
     }
 
     public static void sendNetworkMonitorDetailsResourceUpdate(final ServerPlayer player,

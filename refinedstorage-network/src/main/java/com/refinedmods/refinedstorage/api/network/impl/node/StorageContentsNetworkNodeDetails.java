@@ -4,10 +4,13 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 public class StorageContentsNetworkNodeDetails extends AbstractNetworkNodeDetails {
     private long stored;
     private long capacity;
     private final boolean hasCapacity;
+    @Nullable
     private final StorageConfigurationDetails configuration;
     private final List<ResourceAmount> contents;
 
@@ -16,7 +19,7 @@ public class StorageContentsNetworkNodeDetails extends AbstractNetworkNodeDetail
                                              final long stored,
                                              final long capacity,
                                              final boolean hasCapacity,
-                                             final StorageConfigurationDetails configuration,
+                                             @Nullable final StorageConfigurationDetails configuration,
                                              final List<ResourceAmount> contents) {
         super(energyUsage, active);
         this.stored = stored;
@@ -26,6 +29,7 @@ public class StorageContentsNetworkNodeDetails extends AbstractNetworkNodeDetail
         this.contents = List.copyOf(contents);
     }
 
+    @Nullable
     public StorageConfigurationDetails getConfiguration() {
         return configuration;
     }

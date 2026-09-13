@@ -1096,7 +1096,10 @@ public abstract class AbstractModInitializer {
                 ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getStored,
                 ByteBufCodecs.LONG, StorageContentsNetworkNodeDetails::getCapacity,
                 ByteBufCodecs.BOOL, StorageContentsNetworkNodeDetails::hasCapacity,
-                configurationCodec,
+                ByteBufCodecs.optional(configurationCodec).map(
+                    configuration -> configuration.orElse(null),
+                    Optional::ofNullable
+                ),
                 StorageContentsNetworkNodeDetails::getConfiguration,
                 ByteBufCodecs.collection(ArrayList::new, ResourceCodecs.AMOUNT_STREAM_CODEC),
                 StorageContentsNetworkNodeDetails::getContents,

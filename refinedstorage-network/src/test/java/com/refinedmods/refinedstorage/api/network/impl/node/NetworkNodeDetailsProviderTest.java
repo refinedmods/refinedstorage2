@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
@@ -95,6 +96,42 @@ class NetworkNodeDetailsProviderTest {
         assertThat(details).usingRecursiveComparison().isEqualTo(fixture.expectedDetails(3, false));
         assertThat(((AbstractNetworkNodeDetails) details).getEnergyUsage()).isEqualTo(3);
         assertThat(((AbstractNetworkNodeDetails) details).isActive()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("fixtures")
+    void shouldMergeDetails(final Fixture fixture) {
+        // Arrange
+        final AbstractNetworkNode activeNode = fixture.create(3, true);
+        final AbstractNetworkNode inactiveNode = fixture.create(4, false);
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+
+        // Act
+        fixture.asDetailsProvider(activeNode).mergeDetails(merged);
+        fixture.asDetailsProvider(inactiveNode).mergeDetails(merged);
+
+        // Assert
+        final MergedBaseNetworkNodeDetails base = merged.get(MergedBaseNetworkNodeDetails.ELEMENT);
+        assertThat(base).isNotNull();
+        assertThat(base.getEnergyUsage()).isEqualTo(7);
+        assertThat(base.isActive()).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("fixtures")
+    void shouldMergeInactiveDetails(final Fixture fixture) {
+        // Arrange
+        final AbstractNetworkNode node = fixture.create(3, false);
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+
+        // Act
+        fixture.asDetailsProvider(node).mergeDetails(merged);
+
+        // Assert
+        final MergedBaseNetworkNodeDetails base = merged.get(MergedBaseNetworkNodeDetails.ELEMENT);
+        assertThat(base).isNotNull();
+        assertThat(base.getEnergyUsage()).isEqualTo(3);
+        assertThat(base.isActive()).isFalse();
     }
 
     @ParameterizedTest

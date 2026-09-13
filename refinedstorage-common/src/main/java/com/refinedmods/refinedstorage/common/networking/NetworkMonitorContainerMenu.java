@@ -3,38 +3,29 @@ package com.refinedmods.refinedstorage.common.networking;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
-import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorListener;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
-import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryBuilder;
-import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepositoryBuilderImpl;
-import com.refinedmods.refinedstorage.api.resource.repository.SortingDirection;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.content.Menus;
-import com.refinedmods.refinedstorage.common.grid.GridSortingTypes;
-import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.support.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage.common.support.RedstoneMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.ClientProperty;
 import com.refinedmods.refinedstorage.common.support.containermenu.PropertyTypes;
 import com.refinedmods.refinedstorage.common.support.containermenu.ServerProperty;
-import com.refinedmods.refinedstorage.common.support.packet.c2s.C2SPackets;
 import com.refinedmods.refinedstorage.common.support.packet.s2c.S2CPackets;
 import com.refinedmods.refinedstorage.common.support.stretching.ScreenSizeListener;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -49,16 +40,6 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     private final RateLimiter networkStatisticsUpdateRateLimiter = RateLimiter.create(2);
     private final Predicate<Player> stillValid;
     private final NetworkMonitorDevices devices;
-    @Nullable
-    private NetworkMonitorDeviceGroup currentDeviceGroup;
-    @Nullable
-    private NetworkMonitorDevice currentDevice;
-    @Nullable
-    private NetworkMonitorDeviceCategory currentDeviceCategory;
-    @Nullable
-    private NetworkNodeDetails currentDetails;
-    @Nullable
-    private ResourceRepository<GridResource> detailsRepository;
     @Nullable
     private NetworkMonitorListener listener;
     @Nullable
@@ -78,8 +59,9 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     private Comparator<NetworkMonitorDeviceCategory> deviceCategorySorter;
     private Comparator<NetworkMonitorDevice> deviceSorter;
     private boolean emptyDeviceCategoryWarningVisible;
+    private final NetworkMonitorClientSelection clientSelection = new NetworkMonitorClientSelection();
     @Nullable
-    private NetworkMonitorContainerSelection serverSelection;
+    private NetworkMonitorServerSelection serverSelection;
 
     public NetworkMonitorContainerMenu(final int syncId, final NetworkMonitorData data) {
         super(Menus.INSTANCE.getNetworkMonitor(), syncId);
@@ -108,7 +90,7 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         ));
         networkMonitor.addListener(this);
         updateSorters();
-        this.serverSelection = new NetworkMonitorContainerSelection(networkMonitor, this::sendDetails,
+        this.serverSelection = new NetworkMonitorServerSelection(networkMonitor, this::sendDetails,
             this::handleEvent);
     }
 
@@ -126,6 +108,9 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
+        if (serverSelection != null) {
+            serverSelection.tick();
+        }
         if (networkMonitor != null
             && player instanceof ServerPlayer serverPlayer
             && networkStatisticsUpdateRateLimiter.tryAcquire()) {
@@ -246,75 +231,75 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
 
     @Nullable
     NetworkMonitorDeviceGroup getCurrentDeviceGroup() {
-        return currentDeviceGroup;
+        return clientSelection.getDeviceGroup();
     }
 
     @Nullable
     NetworkMonitorDeviceCategory getCurrentDeviceCategory() {
-        return currentDeviceCategory;
+        return clientSelection.getDeviceCategory();
     }
 
     @Nullable
     NetworkMonitorDevice getCurrentDevice() {
-        return currentDevice;
+        return clientSelection.getDevice();
     }
 
     @Nullable
     NetworkNodeDetails getCurrentDetails() {
-        return currentDetails;
+        return clientSelection.getDetails();
+    }
+
+    @Nullable
+    public ResourceRepository<GridResource> getDetailsRepository() {
+        return clientSelection.getDetailsRepository();
+    }
+
+    public void updateServerSelection(@Nullable final MonitorNodeId deviceId,
+                                      @Nullable final MonitorNodeTypeId deviceGroupId,
+                                      @Nullable final NetworkMonitorDeviceCategory deviceCategory) {
+        if (serverSelection == null) {
+            return;
+        }
+        serverSelection.setSelectedDevice(deviceId, deviceGroupId, deviceCategory);
     }
 
     void setCurrentDeviceGroup(@Nullable final NetworkMonitorDeviceGroup deviceGroup) {
-        this.currentDeviceGroup = deviceGroup;
-        this.currentDeviceCategory = null;
-        this.currentDevice = null;
-        this.currentDetails = null;
-        this.detailsRepository = null;
+        clientSelection.update(deviceGroup, null, null);
         if (listener != null) {
             listener.onCurrentDeviceGroupChanged(deviceGroup);
-            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
         }
+        notifyDetailsChanged();
     }
 
     void setCurrentDeviceCategory(@Nullable final NetworkMonitorDeviceCategory deviceCategory) {
-        this.currentDeviceGroup = null;
-        this.currentDeviceCategory = deviceCategory;
-        this.currentDevice = null;
-        this.currentDetails = null;
-        this.detailsRepository = null;
+        clientSelection.update(null, deviceCategory, null);
         if (listener != null) {
             listener.onCurrentDeviceCategoryChanged(deviceCategory);
-            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
         }
+        notifyDetailsChanged();
     }
 
     void setCurrentDevice(@Nullable final NetworkMonitorDeviceGroup deviceGroup,
                           @Nullable final NetworkMonitorDeviceCategory deviceCategory,
                           @Nullable final NetworkMonitorDevice device) {
-        this.currentDeviceGroup = deviceGroup;
-        this.currentDeviceCategory = deviceCategory;
-        this.currentDevice = device;
-        this.currentDetails = null;
-        this.detailsRepository = null;
-        if (networkMonitor == null) {
-            C2SPackets.sendNetworkMonitorSelectionUpdate(device == null ? null : device.id());
-        }
+        clientSelection.update(deviceGroup, deviceCategory, device);
         if (listener != null) {
             listener.onCurrentDeviceChanged(device);
-            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
+        }
+        notifyDetailsChanged();
+    }
+
+    private void notifyDetailsChanged() {
+        if (listener != null) {
+            listener.onDetailsChanged(clientSelection.getDeviceGroup() == null
+                    && clientSelection.getDeviceCategory() == null && clientSelection.getDevice() == null,
+                clientSelection.getDetails());
         }
     }
 
-    public void updateServerSelection(@Nullable final UUID deviceId) {
-        if (serverSelection == null) {
-            return;
-        }
-        serverSelection.setSelectedDevice(deviceId == null ? null : new MonitorNodeId(deviceId));
-    }
-
-    private void sendDetails(final NetworkNodeDetails details) {
+    private void sendDetails(@Nullable final MonitorNodeId id, final NetworkNodeDetails details) {
         if (player instanceof ServerPlayer serverPlayer) {
-            S2CPackets.sendNetworkMonitorDetailsUpdate(serverPlayer, details);
+            S2CPackets.sendNetworkMonitorDetailsUpdate(serverPlayer, id, details);
         }
     }
 
@@ -338,73 +323,38 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
     }
 
     public void updateDevice(final MonitorNodeId deviceId, final long energyUsage, final boolean newActive) {
-        if (currentDetails instanceof AbstractNetworkNodeDetails baseDetails
-            && currentDevice != null
-            && currentDevice.id().equals(deviceId.id())) {
-            baseDetails.update(energyUsage, newActive);
-        }
-        updateEnergyUsage(deviceId, energyUsage);
+        clientSelection.updateDetails(deviceId, energyUsage, newActive);
+        updateDeviceEnergyUsage(deviceId, energyUsage);
     }
 
-    private void updateEnergyUsage(final MonitorNodeId deviceId, final long energyUsage) {
+    public void updateDetails(@Nullable final MonitorNodeId deviceId, final NetworkNodeDetails details) {
+        final var result = clientSelection.updateDetails(deviceId, details);
+        if (result == NetworkMonitorClientSelection.DetailsUpdateResult.IGNORED) {
+            return;
+        }
+        // A device is only listened to while it is open, so it can be outdated by the time that it gets opened.
+        if (deviceId != null && details instanceof AbstractNetworkNodeDetails baseDetails) {
+            updateDeviceEnergyUsage(deviceId, baseDetails.getEnergyUsage());
+        }
+        if (result == NetworkMonitorClientSelection.DetailsUpdateResult.REFRESHED) {
+            if (listener != null) {
+                listener.onDetailsRefreshed(details);
+            }
+            return;
+        }
+        notifyDetailsChanged();
+    }
+
+    private void updateDeviceEnergyUsage(final MonitorNodeId deviceId, final long energyUsage) {
         final NetworkMonitorDevice updatedDevice = devices.updateEnergyUsage(deviceId, energyUsage);
         if (updatedDevice != null && listener != null) {
             listener.onDeviceUpdated(updatedDevice);
         }
     }
 
-    public void updateDetailsResource(final ResourceKey resource,
-                                      final long change,
-                                      final long stored,
-                                      final long capacity) {
-        if (detailsRepository != null && change != 0) {
-            detailsRepository.update(resource, change);
-        }
-        if (currentDetails == null) {
-            return;
-        }
-        final StorageContentsNetworkNodeDetails storageDetails =
-            PlatformStorageContentsNetworkDetails.unwrap(currentDetails);
-        if (storageDetails != null) {
-            storageDetails.updateStored(stored, capacity);
-        }
-    }
-
-    @Nullable
-    public ResourceRepository<GridResource> getDetailsRepository() {
-        return detailsRepository;
-    }
-
-    @Nullable
-    private static ResourceRepository<GridResource> createDetailsRepository(final NetworkNodeDetails details) {
-        final StorageContentsNetworkNodeDetails storageDetails = PlatformStorageContentsNetworkDetails.unwrap(details);
-        if (storageDetails == null) {
-            return null;
-        }
-        final ResourceRepositoryBuilder<GridResource> builder = new ResourceRepositoryBuilderImpl<>(
-            RefinedStorageApi.INSTANCE.getGridResourceRepositoryMapper(),
-            GridSortingTypes.NAME.apply(resource -> null),
-            GridSortingTypes.QUANTITY.apply(resource -> null)
-        );
-        storageDetails.getContents().forEach(content -> builder.addResource(content.resource(), content.amount()));
-        final ResourceRepository<GridResource> repository = builder.build();
-        repository.setSort(
-            GridSortingTypes.QUANTITY.apply(resource -> null).apply(repository),
-            SortingDirection.DESCENDING
-        );
-        return repository;
-    }
-
-    public void updateDetails(final NetworkNodeDetails details) {
-        this.currentDetails = details;
-        this.detailsRepository = createDetailsRepository(details);
-        if (listener != null) {
-            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, details);
-        }
-        // A device is only listened to while it is open, so it can be outdated by the time that it gets opened.
-        if (currentDevice != null && details instanceof AbstractNetworkNodeDetails baseDetails) {
-            updateEnergyUsage(new MonitorNodeId(currentDevice.id()), baseDetails.getEnergyUsage());
-        }
+    public void updateResource(final ResourceKey resource, final long change,
+                               final long stored, final long capacity) {
+        clientSelection.updateResource(resource, change, stored, capacity);
     }
 
     void setListener(final NetworkMonitorListener listener) {
@@ -431,6 +381,9 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         if (!(player instanceof ServerPlayer serverPlayer) || networkMonitor == null) {
             return;
         }
+        if (serverSelection != null) {
+            serverSelection.onNodeTracked(id, typeId);
+        }
         final NetworkMonitorDevice device = networkMonitor.getDevice(id);
         if (device == null) {
             return;
@@ -450,36 +403,38 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
 
     @Override
     public void onNodeUntracked(final MonitorNodeId id) {
+        if (serverSelection != null) {
+            serverSelection.onNodeUntracked(id);
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             S2CPackets.sendNetworkMonitorDeviceRemoved(serverPlayer, id);
         }
     }
 
     public void removeDevice(final MonitorNodeId id) {
-        if (currentDevice != null && currentDevice.id().equals(id.id())) {
-            currentDevice = null;
-            currentDetails = null;
-            detailsRepository = null;
+        final boolean removed = clientSelection.removeDevice(id);
+        if (removed) {
             if (listener != null) {
                 listener.onCurrentDeviceChanged(null);
-                listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
             }
+            notifyDetailsChanged();
         }
-        processDeviceRemovalSideEffects(devices.removeDevice(id));
+        final NetworkMonitorDevices.DeviceRemovalSideEffects sideEffects = devices.removeDevice(id);
+        processDeviceRemovalSideEffects(sideEffects);
         updateEmptyDeviceCategoryWarning();
     }
 
     private void processDeviceRemovalSideEffects(final NetworkMonitorDevices.DeviceRemovalSideEffects sideEffects) {
-        if (currentDeviceGroup != null
-            && sideEffects.removedDeviceGroup() != null
-            && currentDeviceGroup.id().equals(sideEffects.removedDeviceGroup().id())) {
-            currentDeviceGroup = null;
-            if (listener != null) {
+        if (sideEffects.removedDeviceGroup() != null) {
+            final boolean removed = clientSelection.removeDeviceGroup(
+                new MonitorNodeTypeId(sideEffects.removedDeviceGroup().id()));
+            if (removed && listener != null) {
                 listener.onCurrentDeviceGroupChanged(null);
             }
-        } else if (currentDeviceCategory != null && currentDeviceCategory == sideEffects.removedDeviceCategory()) {
-            currentDeviceCategory = null;
-            if (listener != null) {
+        }
+        if (sideEffects.removedDeviceCategory() != null) {
+            final boolean removed = clientSelection.removeDeviceCategory(sideEffects.removedDeviceCategory());
+            if (removed && listener != null) {
                 listener.onCurrentDeviceCategoryChanged(null);
             }
         }
@@ -493,16 +448,13 @@ public class NetworkMonitorContainerMenu extends AbstractBaseContainerMenu imple
         }
         this.active = newActive;
         if (!active) {
-            currentDeviceGroup = null;
-            currentDeviceCategory = null;
-            currentDevice = null;
-            currentDetails = null;
-            detailsRepository = null;
+            clientSelection.update(null, null, null);
         }
         if (listener != null) {
-            listener.onCurrentDeviceChanged(currentDevice);
-            listener.onDetailsChanged(currentDeviceGroup, currentDeviceCategory, currentDevice, null);
-            listener.onCurrentDeviceGroupChanged(currentDeviceGroup);
+            listener.onCurrentDeviceChanged(clientSelection.getDevice());
+            notifyDetailsChanged();
+            listener.onCurrentDeviceGroupChanged(clientSelection.getDeviceGroup());
+            listener.onCurrentDeviceCategoryChanged(clientSelection.getDeviceCategory());
             listener.onActiveChanged(newActive);
         }
     }

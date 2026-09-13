@@ -2,10 +2,14 @@ package com.refinedmods.refinedstorage.api.network.impl.node.monitor;
 
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.MergedBaseNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.MergedStorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeEventManager;
 import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
@@ -13,6 +17,7 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeListener;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.network.node.StorageNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.network.test.InjectNetwork;
@@ -23,12 +28,15 @@ import com.refinedmods.refinedstorage.network.test.SetupNetwork;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.A;
+import static com.refinedmods.refinedstorage.network.test.fixtures.ResourceFixtures.B;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -969,6 +977,154 @@ class MonitorNetworkNodeTest {
         assertThat(sut.getCapacity(storage -> true)).isEqualTo(50);
     }
 
+    @Test
+    void shouldReturnIdsByType(@InjectNetworkGraphComponent final GraphNetworkComponent graph) {
+        // Arrange
+        final NetworkNode node1 = new NetworkNodeWithDetailsAndType();
+        final NetworkNode node2 = new NetworkNodeWithDetailsAndType();
+        final NetworkNode otherNode = new NetworkNodeWithDetailsAndType(NetworkNodeWithDetailsAndType.OTHER_TYPE);
+
+        // Act
+        graph.onContainerAdded(() -> node1);
+        graph.onContainerAdded(() -> node2);
+        graph.onContainerAdded(() -> otherNode);
+
+        // Assert
+        assertThat(sut.getIds(NetworkNodeWithDetailsAndType.TYPE)).containsExactlyInAnyOrder(
+            sut.getId(node1),
+            sut.getId(node2)
+        );
+        assertThat(sut.getIds(NetworkNodeWithDetailsAndType.OTHER_TYPE)).containsExactly(sut.getId(otherNode));
+    }
+
+    @Test
+    void shouldNotReturnIdsForUnknownType() {
+        // Act & assert
+        assertThat(sut.getIds(NetworkNodeWithDetailsAndType.TYPE)).isEmpty();
+    }
+
+    @Test
+    void shouldCreateEmptyMergedDetailsWithoutNodes() {
+        // Act
+        final NetworkNodeDetails details = sut.createDetails(Set.of());
+
+        // Assert
+        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(0, false));
+    }
+
+    @Test
+    void shouldCreateMergedDetails(@InjectNetworkGraphComponent final GraphNetworkComponent graph) {
+        // Arrange
+        final NetworkNodeWithDetailsAndType node1 = new NetworkNodeWithDetailsAndType();
+        node1.setEnergyUsage(3);
+        node1.setActive(true);
+        final NetworkNodeWithDetailsAndType node2 = new NetworkNodeWithDetailsAndType();
+        node2.setEnergyUsage(4);
+        node2.setActive(false);
+        final NetworkNodeWithDetailsAndType notIncludedNode = new NetworkNodeWithDetailsAndType();
+        notIncludedNode.setEnergyUsage(100);
+        graph.onContainerAdded(() -> node1);
+        graph.onContainerAdded(() -> node2);
+        graph.onContainerAdded(() -> notIncludedNode);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails(Set.of(
+            requireId(node1),
+            requireId(node2),
+            MonitorNodeId.create()
+        ));
+
+        // Assert
+        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(7, true));
+    }
+
+    @Test
+    void shouldCreateInactiveMergedDetailsWhenAllNodesAreInactive(
+        @InjectNetworkGraphComponent final GraphNetworkComponent graph
+    ) {
+        // Arrange
+        final NetworkNodeWithDetailsAndType node1 = new NetworkNodeWithDetailsAndType();
+        node1.setActive(false);
+        final NetworkNodeWithDetailsAndType node2 = new NetworkNodeWithDetailsAndType();
+        node2.setActive(false);
+        graph.onContainerAdded(() -> node1);
+        graph.onContainerAdded(() -> node2);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails(Set.of(requireId(node1), requireId(node2)));
+
+        // Assert
+        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(0, false));
+    }
+
+    @Test
+    void shouldCreateMergedStorageContentsDetailsWhenAnyNodeHasStorage(
+        @InjectNetworkGraphComponent final GraphNetworkComponent graph
+    ) {
+        // Arrange
+        final NetworkNodeWithStorageDetails storageNode1 = new NetworkNodeWithStorageDetails();
+        storageNode1.setStored(8);
+        storageNode1.setCapacity(100);
+        storageNode1.setContents(List.of(new ResourceAmount(A, 5), new ResourceAmount(B, 3)));
+        storageNode1.setActive(true);
+        final NetworkNodeWithStorageDetails storageNode2 = new NetworkNodeWithStorageDetails();
+        storageNode2.setStored(7);
+        storageNode2.setCapacity(50);
+        storageNode2.setContents(List.of(new ResourceAmount(A, 7)));
+        final NetworkNodeWithDetailsAndType nonStorageNode = new NetworkNodeWithDetailsAndType();
+        nonStorageNode.setEnergyUsage(2);
+        graph.onContainerAdded(() -> storageNode1);
+        graph.onContainerAdded(() -> storageNode2);
+        graph.onContainerAdded(() -> nonStorageNode);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails(Set.of(
+            requireId(storageNode1),
+            requireId(storageNode2),
+            requireId(nonStorageNode)
+        ));
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        final StorageContentsNetworkNodeDetails storageDetails = (StorageContentsNetworkNodeDetails) details;
+        assertThat(storageDetails.getEnergyUsage()).isEqualTo(2);
+        assertThat(storageDetails.isActive()).isTrue();
+        assertThat(storageDetails.getStored()).isEqualTo(15);
+        assertThat(storageDetails.getCapacity()).isEqualTo(150);
+        assertThat(storageDetails.hasCapacity()).isTrue();
+        assertThat(storageDetails.getConfiguration()).isNull();
+        assertThat(storageDetails.getContents()).containsExactlyInAnyOrder(
+            new ResourceAmount(A, 12),
+            new ResourceAmount(B, 3)
+        );
+    }
+
+    @Test
+    void shouldNotHaveCapacityInMergedDetailsWhenAnyStorageHasNoCapacity(
+        @InjectNetworkGraphComponent final GraphNetworkComponent graph
+    ) {
+        // Arrange
+        final NetworkNodeWithStorageDetails storageNode1 = new NetworkNodeWithStorageDetails();
+        storageNode1.setCapacity(100);
+        final NetworkNodeWithStorageDetails storageNode2 = new NetworkNodeWithStorageDetails();
+        storageNode2.setHasCapacity(false);
+        graph.onContainerAdded(() -> storageNode1);
+        graph.onContainerAdded(() -> storageNode2);
+
+        // Act
+        final NetworkNodeDetails details = sut.createDetails(Set.of(requireId(storageNode1), requireId(storageNode2)));
+
+        // Assert
+        assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
+        assertThat(((StorageContentsNetworkNodeDetails) details).hasCapacity()).isFalse();
+    }
+
+    private MonitorNodeId requireId(final NetworkNode node) {
+        final MonitorNodeId id = sut.getId(node);
+        assertThat(id).isNotNull();
+        return id;
+    }
+
     private record TrackedNode(MonitorNodeId id, MonitorNodeTypeId typeId) {
     }
 
@@ -1046,6 +1202,11 @@ class MonitorNetworkNodeTest {
         public NetworkNodeDetails createDetails() {
             return SimpleNetworkNodeDetails.of(this);
         }
+
+        @Override
+        public void mergeDetails(final MergedNetworkNodeDetails details) {
+            details.getOrCreate(MergedBaseNetworkNodeDetails.ELEMENT).merge(energyUsage, isActive());
+        }
     }
 
     private static final class NetworkNodeWithStorageDetails extends AbstractNetworkNode
@@ -1056,9 +1217,19 @@ class MonitorNetworkNodeTest {
         private final NetworkNodeEventManager eventManager = new NetworkNodeEventManager();
         private long stored;
         private long capacity;
+        private boolean hasCapacity = true;
+        private List<ResourceAmount> contents = List.of();
 
         private void setStored(final long stored) {
             this.stored = stored;
+        }
+
+        private void setHasCapacity(final boolean hasCapacity) {
+            this.hasCapacity = hasCapacity;
+        }
+
+        private void setContents(final List<ResourceAmount> contents) {
+            this.contents = contents;
         }
 
         private void setCapacity(final long capacity) {
@@ -1104,6 +1275,16 @@ class MonitorNetworkNodeTest {
         @Override
         public NetworkNodeDetails createDetails() {
             return SimpleNetworkNodeDetails.of(this);
+        }
+
+        @Override
+        public void mergeDetails(final MergedNetworkNodeDetails details) {
+            details.getOrCreate(MergedBaseNetworkNodeDetails.ELEMENT).merge(getEnergyUsage(), isActive());
+            final MergedStorageContentsNetworkNodeDetails mergedContents = details.getOrCreate(
+                MergedStorageContentsNetworkNodeDetails.ELEMENT
+            );
+            mergedContents.merge(stored, capacity, hasCapacity);
+            this.contents.forEach(content -> mergedContents.getContents().add(content));
         }
     }
 

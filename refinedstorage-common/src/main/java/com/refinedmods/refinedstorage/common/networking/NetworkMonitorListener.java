@@ -30,10 +30,9 @@ interface NetworkMonitorListener {
                          NetworkMonitorDeviceCategory deviceCategory,
                          NetworkMonitorDevice device);
 
-    void onDetailsChanged(@Nullable NetworkMonitorDeviceGroup deviceGroup,
-                          @Nullable NetworkMonitorDeviceCategory deviceCategory,
-                          @Nullable NetworkMonitorDevice device,
-                          @Nullable NetworkNodeDetails details);
+    void onDetailsChanged(boolean nothingSelected, @Nullable NetworkNodeDetails details);
+
+    void onDetailsRefreshed(NetworkNodeDetails details);
 
     void onActiveChanged(boolean newActive);
 

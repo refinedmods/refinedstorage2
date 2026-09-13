@@ -32,7 +32,7 @@ public record NetworkMonitorDetailsResourceUpdatePacket(PlatformResourceKey reso
 
     public static void handle(final NetworkMonitorDetailsResourceUpdatePacket packet, final PacketContext ctx) {
         if (ctx.getPlayer().containerMenu instanceof NetworkMonitorContainerMenu networkMonitor) {
-            networkMonitor.updateDetailsResource(packet.resource, packet.change, packet.stored, packet.capacity);
+            networkMonitor.updateResource(packet.resource, packet.change, packet.stored, packet.capacity);
         }
     }
 

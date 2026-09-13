@@ -2,11 +2,13 @@ package com.refinedmods.refinedstorage.api.network.impl.node.storage;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
+import com.refinedmods.refinedstorage.api.network.impl.node.MergedStorageContentsNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.ProviderImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageConfigurationDetails;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -842,6 +844,65 @@ class StorageNetworkNodeTest {
         // Assert
         assertThat(details).isInstanceOf(StorageContentsNetworkNodeDetails.class);
         assertThat(((StorageContentsNetworkNodeDetails) details).getContents()).isEmpty();
+    }
+
+    @Test
+    void shouldMergeStorageContentsIntoDetails() {
+        // Arrange
+        final Storage storage1 = new LimitedStorageImpl(100);
+        storage1.insert(A, 5, Action.EXECUTE, Actor.EMPTY);
+        storage1.insert(B, 3, Action.EXECUTE, Actor.EMPTY);
+        final Storage storage2 = new LimitedStorageImpl(100);
+        storage2.insert(A, 7, Action.EXECUTE, Actor.EMPTY);
+        provider.set(1, storage1);
+        provider.set(2, storage2);
+        sut.setProvider(provider);
+
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+        final MergedStorageContentsNetworkNodeDetails otherContents = merged.getOrCreate(
+            MergedStorageContentsNetworkNodeDetails.ELEMENT
+        );
+        otherContents.merge(4, 50, true);
+        otherContents.getContents().add(A, 1);
+        otherContents.getContents().add(C, 3);
+
+        // Act
+        sut.mergeDetails(merged);
+
+        // Assert
+        final MergedStorageContentsNetworkNodeDetails contents = merged.get(
+            MergedStorageContentsNetworkNodeDetails.ELEMENT
+        );
+        assertThat(contents).isNotNull();
+        assertThat(contents.getStored()).isEqualTo(19);
+        assertThat(contents.getCapacity()).isEqualTo(250);
+        assertThat(contents.hasCapacity()).isTrue();
+        assertThat(contents.getContents().copyState())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount(A, 13),
+                new ResourceAmount(B, 3),
+                new ResourceAmount(C, 3)
+            );
+    }
+
+    @Test
+    void shouldNotHaveCapacityInMergedDetailsWithUnlimitedStorage() {
+        // Arrange
+        provider.set(1, new LimitedStorageImpl(100));
+        provider.set(2, new StorageImpl());
+        sut.setProvider(provider);
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+
+        // Act
+        sut.mergeDetails(merged);
+
+        // Assert
+        final MergedStorageContentsNetworkNodeDetails contents = merged.get(
+            MergedStorageContentsNetworkNodeDetails.ELEMENT
+        );
+        assertThat(contents).isNotNull();
+        assertThat(contents.hasCapacity()).isFalse();
     }
 
     @Test

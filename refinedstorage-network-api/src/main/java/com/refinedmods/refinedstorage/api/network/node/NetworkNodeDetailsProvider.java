@@ -17,6 +17,13 @@ public interface NetworkNodeDetailsProvider {
     NetworkNodeDetails createDetails();
 
     /**
+     * Merges the details of this node into details that are shared with other nodes.
+     *
+     * @param details the merged details
+     */
+    void mergeDetails(MergedNetworkNodeDetails details);
+
+    /**
      * @return the energy usage of this node
      */
     long getEnergyUsage();

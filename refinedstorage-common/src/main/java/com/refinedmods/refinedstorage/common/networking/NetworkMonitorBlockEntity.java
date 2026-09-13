@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeCont
 import com.refinedmods.refinedstorage.api.storage.composite.PriorityProvider;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceType;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
@@ -22,9 +23,12 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -112,6 +116,32 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     @Nullable
+    NetworkMonitorDeviceCategory getDeviceCategory(final MonitorNodeTypeId typeId) {
+        final NetworkMonitorDeviceType deviceType = getDeviceType(typeId);
+        if (deviceType == null) {
+            return null;
+        }
+        return RefinedStorageApi.INSTANCE.getNetworkMonitorDeviceCategory(deviceType);
+    }
+
+    Set<MonitorNodeId> getDeviceIds(final NetworkMonitorDeviceCategory category) {
+        return mainNetworkNode.getTypes()
+            .stream()
+            .filter(nodeType -> RefinedStorageApi.INSTANCE.getNetworkMonitorDeviceCategory(
+                RefinedStorageApi.INSTANCE.getNetworkMonitorDeviceType(nodeType)) == category)
+            .flatMap(nodeType -> mainNetworkNode.getIds(nodeType).stream())
+            .collect(Collectors.toSet());
+    }
+
+    Set<MonitorNodeId> getDeviceIds(final MonitorNodeTypeId typeId) {
+        final NetworkNodeType nodeType = mainNetworkNode.getType(typeId);
+        if (nodeType == null) {
+            return Set.of();
+        }
+        return mainNetworkNode.getIds(nodeType);
+    }
+
+    @Nullable
     @SuppressWarnings("deprecation")
     private NetworkMonitorDevice toDevice(final NetworkNode node) {
         final MonitorNodeId id = requireNonNull(mainNetworkNode.getId(node));
@@ -164,6 +194,10 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
             return null;
         }
         return detailsProvider.createDetails();
+    }
+
+    NetworkNodeDetails createDetails(final Collection<MonitorNodeId> nodeIds) {
+        return mainNetworkNode.createDetails(nodeIds);
     }
 
     void removeListener(final MonitorListener monitorListener) {
