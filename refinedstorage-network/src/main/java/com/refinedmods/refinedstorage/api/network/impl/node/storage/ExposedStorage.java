@@ -14,6 +14,8 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeStorageImpl> implements CompositeStorage {
     protected ExposedStorage(final StorageConfiguration config) {
@@ -72,5 +74,12 @@ class ExposedStorage extends AbstractImmutableConfiguredProxyStorage<CompositeSt
     @Override
     public void onRemovedFromComposite(final ParentComposite parentComposite) {
         getDelegate().onRemovedFromComposite(parentComposite);
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        getDelegate().collectTrackedResourcesByActorType(actorType, resources, consumer);
     }
 }
