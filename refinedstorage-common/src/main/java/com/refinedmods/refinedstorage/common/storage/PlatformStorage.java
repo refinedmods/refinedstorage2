@@ -16,6 +16,8 @@ import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 class PlatformStorage extends AbstractProxyStorage implements SerializableStorage, TrackedStorage {
     private final StorageType type;
@@ -93,5 +95,12 @@ class PlatformStorage extends AbstractProxyStorage implements SerializableStorag
     private Optional<StorageContents.Changed> toChanged(final ResourceKey resourceAmount) {
         return findTrackedResourceByActorType(resourceAmount, PlayerActor.class)
             .map(tracked -> new StorageContents.Changed(tracked.getSourceName(), tracked.getTime()));
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        trackingRepository.collectTrackedResourcesByActorType(actorType, resources, consumer);
     }
 }

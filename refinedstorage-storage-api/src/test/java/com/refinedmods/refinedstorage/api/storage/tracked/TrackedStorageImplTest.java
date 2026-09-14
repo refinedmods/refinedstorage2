@@ -1,11 +1,15 @@
 package com.refinedmods.refinedstorage.api.storage.tracked;
 
 import com.refinedmods.refinedstorage.api.core.Action;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.ActorFixtures;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +43,22 @@ class TrackedStorageImplTest {
 
         // Assert
         assertThat(trackedResource).isEmpty();
+    }
+
+    @Test
+    void shouldCollectTrackedResourcesWithRepositoryThatCannotEnumerate() {
+        // Arrange
+        sut = new TrackedStorageImpl(backed, new MinimalRepository(), clock::get);
+        sut.insert(A, 1, Action.EXECUTE, ActorFixtures.ActorFixture1.INSTANCE);
+
+        // Act
+        final Map<ResourceKey, TrackedResource> trackedResources = sut.getTrackedResourcesByActorType(
+            ActorFixtures.ActorFixture1.class,
+            Set.of(A, B)
+        );
+
+        // Assert
+        assertThat(trackedResources).containsOnlyKeys(A);
     }
 
     @Test
@@ -298,6 +318,23 @@ class TrackedStorageImplTest {
                 .isEqualTo(new TrackedResource("Source1", 1));
             assertThat(resourceBWithSource2).get().usingRecursiveComparison()
                 .isEqualTo(new TrackedResource("Source2", 3));
+        }
+    }
+
+    // An addon repository that only implements the required methods, so collect falls back to the default body.
+    private static class MinimalRepository implements TrackedStorageRepository {
+        private final Map<Class<? extends Actor>, Map<ResourceKey, TrackedResource>> tracked = new HashMap<>();
+
+        @Override
+        public void update(final ResourceKey resource, final Actor actor, final long time) {
+            tracked.computeIfAbsent(actor.getClass(), key -> new HashMap<>())
+                .put(resource, new TrackedResource(actor.getName(), time));
+        }
+
+        @Override
+        public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
+                                                                        final Class<? extends Actor> actorType) {
+            return Optional.ofNullable(tracked.getOrDefault(actorType, Map.of()).get(resource));
         }
     }
 }
