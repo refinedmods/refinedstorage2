@@ -2,9 +2,13 @@ package com.refinedmods.refinedstorage.api.storage;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -100,6 +104,25 @@ class StateTrackedStorageTest {
 
         // Assert
         assertThat(sut.findTrackedResourceByActorType(TestResource.A, Actor.EMPTY.getClass())).isNotEmpty();
+        assertThat(sut.getTrackedResourcesByActorType(Actor.EMPTY.getClass(), Set.of(TestResource.A)))
+            .containsOnlyKeys(TestResource.A);
+    }
+
+    @Test
+    void shouldNotCollectTrackedResourcesFromStorageWithoutTracking() {
+        // Arrange
+        final Storage underlyingStorage = new LimitedStorageImpl(100);
+        final StateTrackedStorage sut = new StateTrackedStorage(underlyingStorage, null);
+        sut.insert(TestResource.A, 75, Action.EXECUTE, Actor.EMPTY);
+
+        // Act
+        final Map<ResourceKey, TrackedResource> trackedResources = sut.getTrackedResourcesByActorType(
+            Actor.EMPTY.getClass(),
+            Set.of(TestResource.A)
+        );
+
+        // Assert
+        assertThat(trackedResources).isEmpty();
     }
 
     @ParameterizedTest

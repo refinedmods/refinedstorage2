@@ -11,6 +11,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorageImpl;
+import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -103,6 +106,43 @@ class GridWatcherManagerImplTest {
             0.0,
             Collections.emptyList()
         );
+    }
+
+    @Test
+    void shouldReplayNewestTrackedResourceAcrossSources() {
+        // Arrange
+        final GridWatcher watcher = mock(GridWatcher.class);
+        final AtomicLong clock = new AtomicLong();
+        final RootStorage trackedRootStorage = new RootStorageImpl();
+
+        final TrackedStorageImpl older = new TrackedStorageImpl(new StorageImpl(), clock::get);
+        clock.set(100);
+        older.insert(A, 10, Action.EXECUTE, ActorFixture.INSTANCE);
+
+        final TrackedStorageImpl newer = new TrackedStorageImpl(new StorageImpl(), clock::get);
+        clock.set(200);
+        newer.insert(A, 5, Action.EXECUTE, ActorFixture.INSTANCE);
+        clock.set(150);
+        newer.insert(B, 3, Action.EXECUTE, ActorFixture.INSTANCE);
+
+        trackedRootStorage.addSource(older);
+        trackedRootStorage.addSource(newer);
+
+        // Act
+        sut.addWatcher(watcher, ActorFixture.class, trackedRootStorage, null);
+        sut.detachAll(trackedRootStorage, null);
+        sut.attachAll(trackedRootStorage, null);
+
+        // Assert
+        final TrackedResource expectedA = trackedRootStorage
+            .findTrackedResourceByActorType(A, ActorFixture.class)
+            .orElseThrow();
+        final TrackedResource expectedB = trackedRootStorage
+            .findTrackedResourceByActorType(B, ActorFixture.class)
+            .orElseThrow();
+        assertThat(expectedA.getTime()).isEqualTo(200);
+        verify(watcher, times(1)).onChanged(A, 15, expectedA);
+        verify(watcher, times(1)).onChanged(B, 3, expectedB);
     }
 
     @Nested

@@ -496,9 +496,12 @@ class ExternalStorageNetworkNodeTest {
                 ActorFixture.INSTANCE.getName(),
                 0
             ));
+            assertThat(networkStorage.getTrackedResourcesByActorType(ActorFixture.class, Set.of(A)))
+                .containsOnlyKeys(A);
             assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isTrue();
         } else {
             assertThat(trackedResource).isEmpty();
+            assertThat(networkStorage.getTrackedResourcesByActorType(ActorFixture.class, Set.of(A))).isEmpty();
             assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isFalse();
         }
     }

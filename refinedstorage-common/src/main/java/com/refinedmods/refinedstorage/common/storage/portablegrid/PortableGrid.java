@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.api.network.impl.node.grid.GridWatcherMana
 import com.refinedmods.refinedstorage.api.network.node.grid.EmptyGridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridOperations;
 import com.refinedmods.refinedstorage.api.network.node.grid.GridWatcher;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.NoopStorage;
@@ -20,6 +21,7 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.StorageState;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
+import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.grid.Grid;
@@ -28,12 +30,14 @@ import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResour
 import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.storage.DiskInventory;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -119,9 +123,14 @@ class PortableGrid implements Grid {
             return Collections.emptyList();
         }
         final RootStorage rootStorage = storage.getRootStorage();
-        return rootStorage.getAll().stream().map(resource -> new TrackedResourceAmount(
+        final Collection<ResourceAmount> all = rootStorage.getAll();
+        final Map<ResourceKey, TrackedResource> trackedResources = rootStorage.getTrackedResourcesByActorType(
+            actorType,
+            all.stream().map(ResourceAmount::resource).collect(Collectors.toSet())
+        );
+        return all.stream().map(resource -> new TrackedResourceAmount(
             resource,
-            rootStorage.findTrackedResourceByActorType(resource.resource(), actorType).orElse(null)
+            trackedResources.get(resource.resource())
         )).toList();
     }
 
