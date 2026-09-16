@@ -203,6 +203,34 @@ class PatternRepositoryImplTest {
     }
 
     @Test
+    void shouldUpdatePriorityInsteadOfAddingSamePatternTwice() {
+        // Arrange
+        sut.add(PATTERN_A, 0);
+        sut.add(PATTERN_AB, 1);
+        assertThat(sut.getByOutput(A)).containsExactly(PATTERN_AB, PATTERN_A);
+
+        // Act
+        sut.add(PATTERN_A, 2);
+
+        // Assert
+        assertThat(sut.getAll()).containsExactlyInAnyOrder(PATTERN_A, PATTERN_AB);
+        assertThat(sut.getByOutput(A)).containsExactly(PATTERN_A, PATTERN_AB);
+    }
+
+    @Test
+    void shouldNotRegisterPatternWhenUpdatingPriorityOfUnknownPatternSharingAnOutput() {
+        // Arrange
+        sut.add(PATTERN_AB, 0);
+
+        // Act
+        sut.update(PATTERN_A, 5);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(PATTERN_AB);
+        assertThat(sut.getByOutput(A)).usingRecursiveFieldByFieldElementComparator().containsExactly(PATTERN_AB);
+    }
+
+    @Test
     void shouldNotSupportPatternsOrOutputsDirectly() {
         // Act
         final ThrowableAssert.ThrowingCallable action = () -> sut.getOutputs().add(A);

@@ -21,7 +21,10 @@ public class PatternRepositoryImpl implements PatternRepository {
 
     @Override
     public void add(final Pattern pattern, final int priority) {
-        patterns.add(pattern);
+        if (!patterns.add(pattern)) {
+            update(pattern, priority);
+            return;
+        }
         pattern.layout().outputs().forEach(output -> outputs.add(output.resource()));
         for (final ResourceAmount output : pattern.layout().outputs()) {
             patternsByOutput.computeIfAbsent(output.resource(), k -> new PriorityQueue<>(
@@ -32,6 +35,9 @@ public class PatternRepositoryImpl implements PatternRepository {
 
     @Override
     public void update(final Pattern pattern, final int priority) {
+        if (!patterns.contains(pattern)) {
+            return;
+        }
         for (final ResourceAmount output : pattern.layout().outputs()) {
             final PriorityQueue<PatternHolder> holders = patternsByOutput.get(output.resource());
             if (holders == null) {
