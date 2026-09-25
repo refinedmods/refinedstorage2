@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage.api.storage.composite;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceListImpl;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.ActorFixtures;
@@ -12,6 +13,8 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +27,10 @@ import static com.refinedmods.refinedstorage.api.storage.TestResource.B;
 import static com.refinedmods.refinedstorage.api.storage.TestResource.C;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class CompositeStorageImplTest {
     private CompositeStorageImpl sut;
@@ -321,6 +328,67 @@ class CompositeStorageImplTest {
         assertThat(oneTwo).isEmpty();
         assertThat(twoOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 2L));
         assertThat(twoTwo).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source2", 3L));
+
+        assertThat(sut.getTrackedResourcesByActorType(ActorFixtures.ActorFixture1.class, Set.of(A, B)))
+            .containsOnlyKeys(A, B)
+            .containsEntry(A, oneOne.get())
+            .containsEntry(B, twoOne.get());
+        assertThat(sut.getTrackedResourcesByActorType(ActorFixtures.ActorFixture2.class, Set.of(A, B)))
+            .containsOnlyKeys(B)
+            .containsEntry(B, twoTwo.get());
+    }
+
+    @Test
+    void shouldGetTrackedResourcesWithoutAskingEverySourceForEveryResource() {
+        // Arrange
+        final AtomicLong clock = new AtomicLong(0L);
+
+        final TrackedStorage a = spy(new TrackedStorageImpl(new StorageImpl(), clock::get));
+        final TrackedStorage b = spy(new TrackedStorageImpl(new StorageImpl(), clock::get));
+
+        a.insert(A, 1, Action.EXECUTE, ActorFixtures.ActorFixture1.INSTANCE);
+        b.insert(A, 1, Action.EXECUTE, ActorFixtures.ActorFixture1.INSTANCE);
+
+        sut.addSource(a);
+        sut.addSource(b);
+
+        // Act
+        final Map<ResourceKey, TrackedResource> trackedResources = sut.getTrackedResourcesByActorType(
+            ActorFixtures.ActorFixture1.class,
+            Set.of(A)
+        );
+
+        // Assert
+        assertThat(trackedResources).containsOnlyKeys(A);
+        verify(a, never()).findTrackedResourceByActorType(any(), any());
+        verify(b, never()).findTrackedResourceByActorType(any(), any());
+    }
+
+    @Test
+    void shouldGetTrackedResourceOfFirstSourceWhenChangedAtTheSameTime() {
+        // Arrange
+        final AtomicLong clock = new AtomicLong(1L);
+
+        final TrackedStorage a = new TrackedStorageImpl(new StorageImpl(), clock::get);
+        final TrackedStorage b = new TrackedStorageImpl(new StorageImpl(), clock::get);
+
+        a.insert(A, 1, Action.EXECUTE, ActorFixtures.ActorFixture1.INSTANCE);
+        b.insert(A, 1, Action.EXECUTE, ActorFixtures.ActorFixture1.INSTANCE);
+
+        sut.addSource(a);
+        sut.addSource(b);
+
+        // Act
+        final Map<ResourceKey, TrackedResource> trackedResources = sut.getTrackedResourcesByActorType(
+            ActorFixtures.ActorFixture1.class,
+            Set.of(A)
+        );
+
+        // Assert
+        final TrackedResource expected = a.findTrackedResourceByActorType(A, ActorFixtures.ActorFixture1.class)
+            .orElseThrow();
+        assertThat(sut.findTrackedResourceByActorType(A, ActorFixtures.ActorFixture1.class)).containsSame(expected);
+        assertThat(trackedResources.get(A)).isSameAs(expected);
     }
 
     @ParameterizedTest

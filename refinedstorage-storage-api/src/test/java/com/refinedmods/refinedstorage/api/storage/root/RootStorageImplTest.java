@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -566,6 +567,7 @@ class RootStorageImplTest {
             .get()
             .usingRecursiveComparison()
             .isEqualTo(new TrackedResource("Empty", 0));
+        assertThat(sut.getTrackedResourcesByActorType(Actor.EMPTY.getClass(), Set.of(A))).containsOnlyKeys(A);
     }
 
     @Test

@@ -3,13 +3,19 @@ package com.refinedmods.refinedstorage.api.network.impl.storage;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageProvider;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.resource.list.MutableResourceList;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorageImpl;
+import com.refinedmods.refinedstorage.api.storage.tracked.TrackedResource;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +47,14 @@ public class StorageNetworkComponentImpl extends RootStorageImpl implements Stor
 
     @Override
     public List<TrackedResourceAmount> getResources(final Class<? extends Actor> actorType) {
-        return getAll().stream().map(resourceAmount -> new TrackedResourceAmount(
+        final Collection<ResourceAmount> all = getAll();
+        final Map<ResourceKey, TrackedResource> trackedResources = getTrackedResourcesByActorType(
+            actorType,
+            all.stream().map(ResourceAmount::resource).collect(Collectors.toSet())
+        );
+        return all.stream().map(resourceAmount -> new TrackedResourceAmount(
             resourceAmount,
-            findTrackedResourceByActorType(resourceAmount.resource(), actorType).orElse(null)
+            trackedResources.get(resourceAmount.resource())
         )).toList();
     }
 

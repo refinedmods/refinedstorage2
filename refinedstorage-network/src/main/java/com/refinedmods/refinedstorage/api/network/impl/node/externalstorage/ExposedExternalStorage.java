@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageReposito
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
 
 import org.jspecify.annotations.Nullable;
@@ -123,5 +124,14 @@ public class ExposedExternalStorage extends AbstractConfiguredProxyStorage<Exter
             return;
         }
         trackingRepository.update(resource, actor, clock.getAsLong());
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        if (trackingRepository != null) {
+            trackingRepository.collectTrackedResourcesByActorType(actorType, resources, consumer);
+        }
     }
 }

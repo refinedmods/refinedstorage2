@@ -717,6 +717,8 @@ class StorageNetworkNodeTest {
         // Assert
         assertThat(inserted).isEqualTo(10);
         assertThat(networkStorage.findTrackedResourceByActorType(A, ActorFixture.class)).isNotEmpty();
+        assertThat(networkStorage.getTrackedResourcesByActorType(ActorFixture.class, Set.of(A)))
+            .containsOnlyKeys(A);
     }
 
     @Test
