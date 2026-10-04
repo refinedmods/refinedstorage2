@@ -562,6 +562,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getAutocrafter());
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getAutocrafterManager());
         registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getAutocraftingMonitor());
+        registerNetworkNodeContainerProvider(event, BlockEntities.INSTANCE.getNetworkMonitor());
         event.registerBlockEntity(
             Capabilities.Item.BLOCK,
             BlockEntities.INSTANCE.getDiskDrive(),

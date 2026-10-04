@@ -36,6 +36,7 @@ import static com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAG
 import static com.refinedmods.refinedstorage.common.content.Tags.FLUID_STORAGE_DISKS;
 import static com.refinedmods.refinedstorage.common.content.Tags.GRIDS;
 import static com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS;
+import static com.refinedmods.refinedstorage.common.content.Tags.NETWORK_MONITORS;
 import static com.refinedmods.refinedstorage.common.content.Tags.NETWORK_RECEIVERS;
 import static com.refinedmods.refinedstorage.common.content.Tags.NETWORK_TRANSMITTERS;
 import static com.refinedmods.refinedstorage.common.content.Tags.PATTERN_GRIDS;
@@ -149,6 +150,10 @@ public class ItemTagsProvider extends BlockTagCopyingItemTagProvider {
                 .toList());
         addAllToTag(AUTOCRAFTING_MONITORS,
             Blocks.INSTANCE.getAutocraftingMonitor().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(NETWORK_MONITORS,
+            Blocks.INSTANCE.getNetworkMonitor().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
         tag(WRENCH).add(Items.INSTANCE.getWrench()).replace(false);

@@ -1,0 +1,110 @@
+{
+  "variants": {
+    "active=false,direction=down_east": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 90,
+      "y": 270
+    },
+    "active=false,direction=down_north": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 90
+    },
+    "active=false,direction=down_south": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 90,
+      "y": 180
+    },
+    "active=false,direction=down_west": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 90,
+      "y": 90
+    },
+    "active=false,direction=east": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "refinedstorage:block/network_monitor/inactive"
+    },
+    "active=false,direction=south": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "y": 180
+    },
+    "active=false,direction=up_east": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 270,
+      "y": 270
+    },
+    "active=false,direction=up_north": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 270,
+      "y": 180
+    },
+    "active=false,direction=up_south": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 270
+    },
+    "active=false,direction=up_west": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "x": 270,
+      "y": 90
+    },
+    "active=false,direction=west": {
+      "model": "refinedstorage:block/network_monitor/inactive",
+      "y": 270
+    },
+    "active=true,direction=down_east": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 90,
+      "y": 270
+    },
+    "active=true,direction=down_north": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 90
+    },
+    "active=true,direction=down_south": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 90,
+      "y": 180
+    },
+    "active=true,direction=down_west": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 90,
+      "y": 90
+    },
+    "active=true,direction=east": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "refinedstorage:block/network_monitor/yellow"
+    },
+    "active=true,direction=south": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "y": 180
+    },
+    "active=true,direction=up_east": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 270,
+      "y": 270
+    },
+    "active=true,direction=up_north": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 270,
+      "y": 180
+    },
+    "active=true,direction=up_south": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 270
+    },
+    "active=true,direction=up_west": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "x": 270,
+      "y": 90
+    },
+    "active=true,direction=west": {
+      "model": "refinedstorage:block/network_monitor/yellow",
+      "y": 270
+    }
+  }
+}

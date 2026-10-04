@@ -1,0 +1,13 @@
+{
+  "parent": "refinedstorage:block/emissive_north_cutout",
+  "textures": {
+    "cutout": "refinedstorage:block/network_monitor/cutouts/magenta",
+    "down": "refinedstorage:block/bottom",
+    "east": "refinedstorage:block/network_monitor/right",
+    "north": "refinedstorage:block/network_monitor/front",
+    "particle": "refinedstorage:block/network_monitor/right",
+    "south": "refinedstorage:block/network_monitor/back",
+    "up": "refinedstorage:block/network_monitor/top",
+    "west": "refinedstorage:block/network_monitor/left"
+  }
+}

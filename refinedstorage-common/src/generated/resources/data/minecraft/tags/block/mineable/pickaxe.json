@@ -351,6 +351,22 @@
     "refinedstorage:brown_autocrafting_monitor",
     "refinedstorage:green_autocrafting_monitor",
     "refinedstorage:red_autocrafting_monitor",
-    "refinedstorage:black_autocrafting_monitor"
+    "refinedstorage:black_autocrafting_monitor",
+    "refinedstorage:white_network_monitor",
+    "refinedstorage:orange_network_monitor",
+    "refinedstorage:magenta_network_monitor",
+    "refinedstorage:network_monitor",
+    "refinedstorage:yellow_network_monitor",
+    "refinedstorage:lime_network_monitor",
+    "refinedstorage:pink_network_monitor",
+    "refinedstorage:gray_network_monitor",
+    "refinedstorage:light_gray_network_monitor",
+    "refinedstorage:cyan_network_monitor",
+    "refinedstorage:purple_network_monitor",
+    "refinedstorage:blue_network_monitor",
+    "refinedstorage:brown_network_monitor",
+    "refinedstorage:green_network_monitor",
+    "refinedstorage:red_network_monitor",
+    "refinedstorage:black_network_monitor"
   ]
 }

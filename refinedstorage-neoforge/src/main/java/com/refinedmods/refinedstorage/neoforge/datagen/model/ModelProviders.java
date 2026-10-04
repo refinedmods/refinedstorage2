@@ -277,6 +277,7 @@ public class ModelProviders extends ModelProvider {
             Blocks.INSTANCE.getAutocrafterManager());
         registerDirectionalBlock(itemModels, blockModels, "autocrafting_monitor",
             Blocks.INSTANCE.getAutocraftingMonitor());
+        registerDirectionalBlock(itemModels, blockModels, "network_monitor", Blocks.INSTANCE.getNetworkMonitor());
         registerPatterns(itemModels);
         registerConfigurationCard(itemModels);
         registerNetworkCard(itemModels);

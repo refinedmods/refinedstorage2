@@ -51,6 +51,7 @@ public class MainRecipeProvider extends RecipeProvider {
         constructionCore();
         destructionCore();
         autocraftingMonitor();
+        networkMonitor();
         storageDisksAndBlocks();
         storageParts();
         fluidStorageParts();
@@ -129,6 +130,20 @@ public class MainRecipeProvider extends RecipeProvider {
             .define('E', Items.INSTANCE.getQuartzEnrichedIron())
             .define('M', Blocks.INSTANCE.getMachineCasing())
             .unlockedBy("has_processor", has(Items.INSTANCE.getProcessor(ProcessorItem.Type.IMPROVED)))
+            .save(output);
+    }
+
+    private void networkMonitor() {
+        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, Blocks.INSTANCE.getNetworkMonitor().getDefault())
+            .pattern("PCG")
+            .pattern("EMG")
+            .pattern("PCG")
+            .define('P', Items.INSTANCE.getProcessor(ProcessorItem.Type.IMPROVED))
+            .define('C', net.minecraft.world.item.Items.COMPARATOR)
+            .define('G', Tags.Items.GLASS_BLOCKS)
+            .define('E', Items.INSTANCE.getQuartzEnrichedIron())
+            .define('M', Blocks.INSTANCE.getMachineCasing())
+            .unlockedBy("has_machine_casing", has(Blocks.INSTANCE.getMachineCasing()))
             .save(output);
     }
 

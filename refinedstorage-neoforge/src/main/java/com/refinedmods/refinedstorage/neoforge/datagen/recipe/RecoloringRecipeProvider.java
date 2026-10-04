@@ -85,6 +85,9 @@ public class RecoloringRecipeProvider extends RecipeProvider {
         Blocks.INSTANCE.getAutocraftingMonitor().forEach((color, id, block) ->
             output.accept(recipeId(color, "autocrafting_monitor"),
                 RecoloringRecipe.create(Tags.AUTOCRAFTING_MONITORS, color, block.get(), registries), null));
+        Blocks.INSTANCE.getNetworkMonitor().forEach((color, id, block) ->
+            output.accept(recipeId(color, "network_monitor"),
+                RecoloringRecipe.create(Tags.NETWORK_MONITORS, color, block.get(), registries), null));
     }
 
     private ResourceKey<Recipe<?>> recipeId(final DyeColor color, final String suffix) {

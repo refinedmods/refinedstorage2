@@ -57,6 +57,7 @@ public class BlockDropsProvider extends BlockLootSubProvider {
         Blocks.INSTANCE.getAutocrafter().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getAutocrafterManager().forEach((color, id, block) -> drop(block.get()));
         Blocks.INSTANCE.getAutocraftingMonitor().forEach((color, id, block) -> drop(block.get()));
+        Blocks.INSTANCE.getNetworkMonitor().forEach((color, id, block) -> drop(block.get()));
         drop(Blocks.INSTANCE.getInterface());
         drop(Blocks.INSTANCE.getDiskDrive());
         drop(Blocks.INSTANCE.getStorageMonitor());
@@ -109,6 +110,7 @@ public class BlockDropsProvider extends BlockLootSubProvider {
         blocks.addAll(Blocks.INSTANCE.getAutocrafter().values());
         blocks.addAll(Blocks.INSTANCE.getAutocrafterManager().values());
         blocks.addAll(Blocks.INSTANCE.getAutocraftingMonitor().values());
+        blocks.addAll(Blocks.INSTANCE.getNetworkMonitor().values());
         blocks.add(Blocks.INSTANCE.getInterface());
         blocks.add(Blocks.INSTANCE.getDiskDrive());
         blocks.add(Blocks.INSTANCE.getStorageMonitor());

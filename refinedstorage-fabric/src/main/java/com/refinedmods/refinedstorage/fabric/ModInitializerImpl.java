@@ -942,6 +942,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getAutocrafter());
         registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getAutocrafterManager());
         registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getAutocraftingMonitor());
+        registerNetworkNodeContainerProvider(BlockEntities.INSTANCE.getNetworkMonitor());
         registerItemStorage(
             AbstractDiskDriveBlockEntity.class::isInstance,
             AbstractDiskDriveBlockEntity.class::cast,

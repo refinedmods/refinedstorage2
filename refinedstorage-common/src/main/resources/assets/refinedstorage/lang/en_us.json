@@ -542,6 +542,7 @@
   "tag.item.refinedstorage.autocrafters": "Autocrafters",
   "tag.item.refinedstorage.autocrafter_managers": "Autocrafter Managers",
   "tag.item.refinedstorage.autocrafting_monitors": "Autocrafting Monitors",
+  "tag.item.refinedstorage.network_monitors": "Network Monitors",
   "text.autoconfig.refinedstorage.title": "Refined Storage Configuration",
   "refinedstorage.configuration.title": "Refined Storage Configuration",
   "refinedstorage.configuration.section.refinedstorage.common.toml": "Refined Storage Configuration",

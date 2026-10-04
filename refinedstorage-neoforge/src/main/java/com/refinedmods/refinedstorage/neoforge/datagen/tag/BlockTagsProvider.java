@@ -63,6 +63,7 @@ public class BlockTagsProvider extends IntrinsicHolderTagsProvider<Block> {
         markAsMineable(Blocks.INSTANCE.getAutocrafter());
         markAsMineable(Blocks.INSTANCE.getAutocrafterManager());
         markAsMineable(Blocks.INSTANCE.getAutocraftingMonitor());
+        markAsMineable(Blocks.INSTANCE.getNetworkMonitor());
     }
 
     private <T extends Block & BlockItemProvider<I>, I extends BlockItem> void markAsMineable(

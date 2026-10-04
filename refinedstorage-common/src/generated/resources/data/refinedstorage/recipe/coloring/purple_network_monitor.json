@@ -1,0 +1,6 @@
+{
+  "type": "refinedstorage:recoloring",
+  "color": "purple",
+  "ingredient": "#refinedstorage:network_monitors",
+  "result": "refinedstorage:purple_network_monitor"
+}
