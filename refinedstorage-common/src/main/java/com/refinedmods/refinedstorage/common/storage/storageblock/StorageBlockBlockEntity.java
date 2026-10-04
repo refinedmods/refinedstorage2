@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage.common.storage.StorageConfigurationContain
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerData;
 import com.refinedmods.refinedstorage.common.support.resource.ResourceContainerImpl;
 
@@ -59,7 +60,8 @@ public class StorageBlockBlockEntity extends AbstractBaseNetworkNodeContainerBlo
     public StorageBlockBlockEntity(final BlockPos pos,
                                    final BlockState state,
                                    final StorageBlockProvider provider) {
-        super(provider.getBlockEntityType(), pos, state, new StorageNetworkNode(provider.getEnergyUsage(), 0, 1));
+        super(provider.getBlockEntityType(), pos, state, new StorageNetworkNode(PlatformNetworkNodeTypes.STORAGE_BLOCK,
+            provider.getEnergyUsage(), 0, 1));
         this.filter = FilterWithFuzzyMode.createAndListenForUniqueFilters(
             ResourceContainerImpl.createForFilter(provider.getResourceFactory()),
             this::setChanged,

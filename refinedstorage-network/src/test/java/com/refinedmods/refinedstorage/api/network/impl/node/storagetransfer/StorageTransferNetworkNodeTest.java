@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage.api.network.impl.node.storagetransfer;
 
 import com.refinedmods.refinedstorage.api.core.Action;
+import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.ProviderImpl;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
@@ -14,6 +15,7 @@ import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage.network.test.InjectNetworkStorageComponent;
 import com.refinedmods.refinedstorage.network.test.NetworkTest;
+import com.refinedmods.refinedstorage.network.test.RecordingNetworkNodeListener;
 import com.refinedmods.refinedstorage.network.test.SetupNetwork;
 
 import java.util.Set;
@@ -712,5 +714,21 @@ class StorageTransferNetworkNodeTest {
             new ResourceAmount(A, 5)
         );
         verify(listener, never()).onTransferSuccess(1);
+    }
+
+    @Test
+    void shouldNotifyDetailsListenerWhenStorageCountChanges() {
+        // Arrange
+        final RecordingNetworkNodeListener detailsListener = new RecordingNetworkNodeListener();
+        sut.addListener(detailsListener);
+        provider.set(1, new StorageImpl());
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(detailsListener.events).containsExactly(
+            new NetworkNodeDetailsChangedEvent(sut.getEnergyUsage(), sut.isActive())
+        );
     }
 }

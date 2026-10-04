@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.support.network.ColoredConnectionStrategy;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.ChatFormatting;
@@ -74,6 +75,7 @@ public class NetworkTransmitterBlockEntity extends AbstractBaseNetworkNodeContai
 
     public NetworkTransmitterBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getNetworkTransmitter(), pos, state, new SimpleNetworkNode(
+            PlatformNetworkNodeTypes.NETWORK_TRANSMITTER,
             Platform.INSTANCE.getConfig().getNetworkTransmitter().getEnergyUsage()
         ));
     }

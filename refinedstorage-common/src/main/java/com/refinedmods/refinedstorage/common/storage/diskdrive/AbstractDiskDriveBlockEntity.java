@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.storage.AbstractDiskContainerBlockEntity;
 import com.refinedmods.refinedstorage.common.storage.StorageConfigurationContainerImpl;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.Set;
 import java.util.function.UnaryOperator;
@@ -30,6 +31,7 @@ public abstract class AbstractDiskDriveBlockEntity extends AbstractDiskContainer
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new StorageNetworkNode(
+            PlatformNetworkNodeTypes.DISK_DRIVE,
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
             AMOUNT_OF_DISKS
