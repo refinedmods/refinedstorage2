@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.network.test.InjectNetworkAutocraftingComp
 import com.refinedmods.refinedstorage.network.test.InjectNetworkStorageComponent;
 import com.refinedmods.refinedstorage.network.test.NetworkTest;
 import com.refinedmods.refinedstorage.network.test.SetupNetwork;
+import com.refinedmods.refinedstorage.network.test.nodefactory.PatternProviderNetworkNodeFactory;
 
 import java.util.Set;
 
@@ -418,7 +419,11 @@ class RelayAutocraftingNetworkNodeTest {
     }
 
     private static PatternProviderNetworkNode createPatternProvider() {
-        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(0, 1);
+        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(
+            PatternProviderNetworkNodeFactory.TYPE,
+            0,
+            1
+        );
         node.setId(ExternalPatternSinkId.create());
         return node;
     }

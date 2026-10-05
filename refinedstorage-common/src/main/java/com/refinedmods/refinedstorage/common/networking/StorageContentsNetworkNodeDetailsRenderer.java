@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage.api.resource.repository.ResourceRepository;
 import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.common.Platform;
-import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
 import com.refinedmods.refinedstorage.common.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage.common.grid.query.GridQueryParserException;
@@ -16,7 +15,6 @@ import com.refinedmods.refinedstorage.common.grid.screen.GridSearchFieldWidget;
 import com.refinedmods.refinedstorage.common.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage.common.storage.PlatformStorageContentsNetworkDetails;
 import com.refinedmods.refinedstorage.common.support.ResourceSlotRendering;
-import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallText;
 import com.refinedmods.refinedstorage.common.support.tooltip.SmallTextClientTooltipComponent;
 import com.refinedmods.refinedstorage.common.support.widget.History;
@@ -45,6 +43,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsBuilder.createDetailsTranslation;
+import static com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsBuilder.createFilterModeText;
+import static com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsBuilder.createFuzzyModeText;
 import static com.refinedmods.refinedstorage.common.support.Sprites.SLOT;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createStoredWithCapacityTranslation;
@@ -66,10 +67,7 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
         .append("\n")
         .append(createTranslation("gui", "grid.search_help.tooltip_search").withStyle(ChatFormatting.GRAY));
 
-    private static final int COLUMNS = 9;
     private static final int FILTER_SLOTS = 9;
-    private static final int SLOT_SIZE = 18;
-    private static final int PROGRESS_BAR_HEIGHT = 16;
     private static final Identifier SEARCH_BACKGROUND = createIdentifier("network_monitor/storage_search");
     private static final int SEARCH_HEIGHT = 12;
     private static final int SEARCH_ICON_GAP = 2;
@@ -254,65 +252,38 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
                                                                     final List<Optional<ResourceKey>> filters,
                                                                     final boolean fuzzyMode) {
         List<ClientTooltipComponent> tooltip = Collections.emptyList();
-        final Component fuzzyModeText = createTranslation("gui", "network_monitor.details.fuzzy_mode",
-            createTranslation("gui", fuzzyMode ? "fuzzy_mode.on" : "fuzzy_mode.off"));
+        final Component fuzzyModeText = createFuzzyModeText(fuzzyMode);
         int lineY = y;
         if (shouldShowFilters(configuration, filters)) {
-            renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.filter_mode",
-                getFilterModeText(configuration.filterMode())));
+            renderLine(graphics, x, lineY, createDetailsTranslation("filter_mode",
+                createFilterModeText(configuration.filterMode())));
             renderRightAlignedLine(graphics, x, lineY, width, fuzzyModeText);
             lineY += getLineHeight();
-            tooltip = renderFilters(graphics, x, lineY, mouseX, mouseY, filters);
+            tooltip = renderResourceSlots(graphics, x, lineY, mouseX, mouseY, filters, FILTER_SLOTS);
             lineY += SLOT_SIZE + PADDING;
         } else {
             renderLine(graphics, x, lineY, fuzzyModeText);
             lineY += getLineHeight();
         }
-        renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.access_mode",
+        renderLine(graphics, x, lineY, createDetailsTranslation("access_mode",
             getAccessModeText(configuration.accessMode())));
         lineY += getLineHeight();
         if (configuration.insertPriority() == configuration.extractPriority()) {
-            renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.priority",
+            renderLine(graphics, x, lineY, createDetailsTranslation("priority",
                 configuration.insertPriority()));
             lineY += getLineHeight();
         } else {
-            renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.insert_priority",
+            renderLine(graphics, x, lineY, createDetailsTranslation("insert_priority",
                 configuration.insertPriority()));
             lineY += getLineHeight();
-            renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.extract_priority",
+            renderLine(graphics, x, lineY, createDetailsTranslation("extract_priority",
                 configuration.extractPriority()));
             lineY += getLineHeight();
         }
         if (configuration.voidExcess()) {
-            renderLine(graphics, x, lineY, createTranslation("gui", "network_monitor.details.void_excess"));
+            renderLine(graphics, x, lineY, createDetailsTranslation("void_excess"));
         }
         return tooltip;
-    }
-
-    private static void renderLine(final GuiGraphicsExtractor graphics,
-                                   final int x,
-                                   final int y,
-                                   final Component text) {
-        SmallText.render(graphics, Minecraft.getInstance().font, text.getVisualOrderText(), x + PADDING, y,
-            0xFF404040, false, SmallText.correctScale(SmallText.DEFAULT_SCALE));
-    }
-
-    private static void renderRightAlignedLine(final GuiGraphicsExtractor graphics,
-                                               final int x,
-                                               final int y,
-                                               final int width,
-                                               final Component text) {
-        final Font font = Minecraft.getInstance().font;
-        final float scale = SmallText.correctScale(SmallText.DEFAULT_SCALE);
-        SmallText.render(graphics, font, text.getVisualOrderText(),
-            x + width - PADDING - (int) (font.width(text) * scale), y, 0xFF404040, false, scale);
-    }
-
-    private static Component getFilterModeText(final FilterMode filterMode) {
-        return switch (filterMode) {
-            case ALLOW -> createTranslation("gui", "filter_mode.allow");
-            case BLOCK -> createTranslation("gui", "filter_mode.block");
-        };
     }
 
     private static Component getAccessModeText(final AccessMode accessMode) {
@@ -323,52 +294,6 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
         };
     }
 
-    private static List<ClientTooltipComponent> renderFilters(final GuiGraphicsExtractor graphics,
-                                                              final int x,
-                                                              final int y,
-                                                              final int mouseX,
-                                                              final int mouseY,
-                                                              final List<Optional<ResourceKey>> filters) {
-        ResourceKey hovering = null;
-        for (int i = 0; i < FILTER_SLOTS; ++i) {
-            final int slotX = x + (i * SLOT_SIZE);
-            graphics.blitSprite(GUI_TEXTURED, SLOT, slotX, y, SLOT_SIZE, SLOT_SIZE);
-            if (i >= filters.size() || filters.get(i).isEmpty()) {
-                continue;
-            }
-            final ResourceKey filter = filters.get(i).orElseThrow();
-            final boolean interact = mouseX >= slotX
-                && mouseY >= y
-                && mouseX <= slotX + 16
-                && mouseY <= y + 16;
-            if (interact) {
-                ClientPlatformUtil.renderSlotHighlightBack(graphics, slotX + 1, y + 1);
-                hovering = filter;
-            }
-            RefinedStorageClientApi.INSTANCE.getResourceRendering(filter.getClass())
-                .render(filter, graphics, slotX + 1, y + 1);
-            if (interact) {
-                ClientPlatformUtil.renderSlotHighlightFront(graphics, slotX + 1, y + 1);
-            }
-        }
-        return hovering == null ? Collections.emptyList() : getFilterTooltip(hovering, graphics, mouseX);
-    }
-
-    private static List<ClientTooltipComponent> getFilterTooltip(final ResourceKey filter,
-                                                                 final GuiGraphicsExtractor graphics,
-                                                                 final int mouseX) {
-        final ItemStack stackContext = filter instanceof ItemResource itemResource
-            ? itemResource.toItemStack()
-            : ItemStack.EMPTY;
-        return Platform.INSTANCE.processTooltipComponents(
-            stackContext,
-            graphics,
-            mouseX,
-            Optional.empty(),
-            RefinedStorageClientApi.INSTANCE.getResourceRendering(filter.getClass()).getTooltip(filter)
-        );
-    }
-
     private static void renderStored(final GuiGraphicsExtractor graphics,
                                      final int x,
                                      final int y,
@@ -377,7 +302,7 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
         final Font font = Minecraft.getInstance().font;
         final Component stored = getStoredText(details);
         final float scale = SmallText.correctScale(SmallText.DEFAULT_SCALE);
-        SmallText.render(graphics, font, stored.getVisualOrderText(), x + PADDING, y, 0xFF404040, false,
+        SmallText.render(graphics, font, stored.getVisualOrderText(), x + PADDING, y, TEXT_COLOR, false,
             scale);
         ProgressBarWidget.renderHorizontal(graphics, x + PADDING, y + getLineHeight(),
             width - (PADDING * 2), PROGRESS_BAR_HEIGHT, details.getProgress());
@@ -386,9 +311,9 @@ public class StorageContentsNetworkNodeDetailsRenderer extends AbstractNetworkNo
     private static MutableComponent getStoredText(final StorageContentsNetworkNodeDetails details) {
         if (details.hasCapacity()) {
             return createStoredWithCapacityTranslation(details.getStored(), details.getCapacity(),
-                details.getProgress(), 0xFF404040).withColor(0xFF404040);
+                details.getProgress(), TEXT_COLOR).withColor(TEXT_COLOR);
         }
-        return createTranslation("misc", "stored", format(details.getStored())).withColor(0xFF404040);
+        return createTranslation("misc", "stored", format(details.getStored())).withColor(TEXT_COLOR);
     }
 
     private static List<ClientTooltipComponent> renderContents(final GuiGraphicsExtractor graphics,

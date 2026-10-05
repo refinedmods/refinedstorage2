@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage.api.network.impl.node;
 
+import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.security.SecurityDecisionProviderProxyNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
@@ -7,7 +10,17 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNodeType;
 import com.refinedmods.refinedstorage.api.resource.filter.FilterMode;
 import com.refinedmods.refinedstorage.api.storage.AccessMode;
 import com.refinedmods.refinedstorage.network.test.RecordingNetworkNodeListener;
+import com.refinedmods.refinedstorage.network.test.nodefactory.AbstractNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.DetectorNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ExporterNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ExternalStorageNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.GridNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ImporterNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.InterfaceNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.MonitorNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.NetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.PatternProviderNetworkNodeFactory;
+import com.refinedmods.refinedstorage.network.test.nodefactory.RelayInputNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.StorageNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.StorageTransferNetworkNodeFactory;
@@ -30,6 +43,10 @@ class NetworkNodeDetailsProviderTest {
     private static final StorageConfigurationDetails EMPTY_STORAGE_CONFIGURATION = new StorageConfigurationDetails(
         FilterMode.BLOCK, AccessMode.INSERT_EXTRACT, 0, 0, false
     );
+    private static final NetworkNodeType SECURITY_TYPE = new NetworkNodeType() {
+    };
+    private static final BiConsumer<AbstractNetworkNode, Long> SIMPLE_ENERGY_USAGE_CHANGER =
+        (node, energyUsage) -> ((SimpleNetworkNode) node).setEnergyUsage(energyUsage);
 
     private static Stream<Fixture> fixtures() {
         return Stream.of(
@@ -53,6 +70,82 @@ class NetworkNodeDetailsProviderTest {
                 StorageTransferNetworkNodeFactory.TYPE,
                 new StorageTransferNetworkNodeFactory(),
                 (node, energyUsage) -> ((AbstractStorageContainerNetworkNode) node).setBaseEnergyUsage(energyUsage),
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "ImporterNetworkNode",
+                ImporterNetworkNodeFactory.TYPE,
+                new ImporterNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "ExporterNetworkNode",
+                ExporterNetworkNodeFactory.TYPE,
+                new ExporterNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "DetectorNetworkNode",
+                DetectorNetworkNodeFactory.TYPE,
+                new DetectorNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "PatternProviderNetworkNode",
+                PatternProviderNetworkNodeFactory.TYPE,
+                new PatternProviderNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "SecurityDecisionProviderProxyNetworkNode",
+                SECURITY_TYPE,
+                new AbstractNetworkNodeFactory() {
+                    @Override
+                    protected AbstractNetworkNode innerCreate(final Map<String, Object> properties) {
+                        return new SecurityDecisionProviderProxyNetworkNode(SECURITY_TYPE, getEnergyUsage(properties));
+                    }
+                },
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "ExternalStorageNetworkNode",
+                ExternalStorageNetworkNodeFactory.TYPE,
+                new ExternalStorageNetworkNodeFactory(),
+                (node, energyUsage) -> ((ExternalStorageNetworkNode) node).setEnergyUsage(energyUsage),
+                (energyUsage, active) -> new StorageContentsNetworkNodeDetails(energyUsage, active, 0, 0, false,
+                    EMPTY_STORAGE_CONFIGURATION, List.of())
+            ),
+            new Fixture(
+                "GridNetworkNode",
+                GridNetworkNodeFactory.TYPE,
+                new GridNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "RelayInputNetworkNode",
+                RelayInputNetworkNodeFactory.TYPE,
+                new RelayInputNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "InterfaceNetworkNode",
+                InterfaceNetworkNodeFactory.TYPE,
+                new InterfaceNetworkNodeFactory(),
+                (node, energyUsage) -> ((InterfaceNetworkNode) node).setEnergyUsage(energyUsage),
+                SimpleNetworkNodeDetails::new
+            ),
+            new Fixture(
+                "MonitorNetworkNode",
+                MonitorNetworkNodeFactory.TYPE,
+                new MonitorNetworkNodeFactory(),
+                SIMPLE_ENERGY_USAGE_CHANGER,
                 SimpleNetworkNodeDetails::new
             )
         );

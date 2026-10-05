@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.api.support.network;
 
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
 
@@ -30,6 +31,8 @@ public interface InWorldNetworkNodeContainer extends NetworkNodeContainer, Conne
 
     @Nullable
     NetworkNodeDetails createDetails();
+
+    void mergeDetails(MergedNetworkNodeDetails details);
 
     interface Builder {
         Builder name(String name);

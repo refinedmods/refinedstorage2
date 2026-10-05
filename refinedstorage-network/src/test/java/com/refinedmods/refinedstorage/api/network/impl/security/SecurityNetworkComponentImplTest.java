@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkCompon
 import com.refinedmods.refinedstorage.api.network.security.SecurityPolicy;
 import com.refinedmods.refinedstorage.network.test.fixtures.PermissionFixtures;
 import com.refinedmods.refinedstorage.network.test.fixtures.SecurityActorFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.SimpleNetworkNodeFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,8 +55,11 @@ class SecurityNetworkComponentImplTest {
     @Test
     void shouldUseDefaultPolicyIfAllSecurityDecisionProvidersAreInactive() {
         // Arrange
-        sut.onContainerAdded(() -> new SecurityDecisionProviderProxyNetworkNode(0, new SecurityDecisionProviderImpl()
-            .setDefaultPolicy(SecurityPolicy.of(PermissionFixtures.OTHER))));
+        sut.onContainerAdded(() -> new SecurityDecisionProviderProxyNetworkNode(
+            SimpleNetworkNodeFactory.TYPE,
+            0,
+            new SecurityDecisionProviderImpl().setDefaultPolicy(SecurityPolicy.of(PermissionFixtures.OTHER))
+        ));
 
         // Act & assert
         assertThat(sut.isAllowed(PermissionFixtures.ALLOW_BY_DEFAULT, SecurityActorFixtures.A)).isTrue();
@@ -98,9 +102,13 @@ class SecurityNetworkComponentImplTest {
             .setPolicy(SecurityActorFixtures.B, SecurityPolicy.of(PermissionFixtures.OTHER))
         ));
 
-        sut.onContainerAdded(() -> new SecurityDecisionProviderProxyNetworkNode(0, new SecurityDecisionProviderImpl()
-            .setPolicy(SecurityActorFixtures.A, SecurityPolicy.of(PermissionFixtures.ALLOW_BY_DEFAULT))
-            .setDefaultPolicy(SecurityPolicy.of(PermissionFixtures.OTHER, PermissionFixtures.OTHER2))));
+        sut.onContainerAdded(() -> new SecurityDecisionProviderProxyNetworkNode(
+            SimpleNetworkNodeFactory.TYPE,
+            0,
+            new SecurityDecisionProviderImpl()
+                .setPolicy(SecurityActorFixtures.A, SecurityPolicy.of(PermissionFixtures.ALLOW_BY_DEFAULT))
+                .setDefaultPolicy(SecurityPolicy.of(PermissionFixtures.OTHER, PermissionFixtures.OTHER2))
+        ));
 
         // Act & assert
         assertThat(sut.isAllowed(PermissionFixtures.OTHER, SecurityActorFixtures.A)).isFalse();

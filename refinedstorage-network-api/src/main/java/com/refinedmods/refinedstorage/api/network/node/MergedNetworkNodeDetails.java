@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage.api.network.node;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
@@ -12,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  */
 @API(status = API.Status.STABLE, since = "3.3.0")
 public final class MergedNetworkNodeDetails {
-    private final Map<MergedNetworkNodeDetailsElement<?>, Object> elements = new HashMap<>();
+    private final Map<MergedNetworkNodeDetailsElement<?>, Object> elements = new LinkedHashMap<>();
 
     /**
      * Retrieves the state of an element, creating it if no node has merged into it yet.
@@ -35,5 +37,12 @@ public final class MergedNetworkNodeDetails {
     @SuppressWarnings("unchecked")
     public <T> T get(final MergedNetworkNodeDetailsElement<T> element) {
         return (T) elements.get(element);
+    }
+
+    /**
+     * @return the elements that nodes have merged into, in the order they were first merged into
+     */
+    public Set<MergedNetworkNodeDetailsElement<?>> getElements() {
+        return Collections.unmodifiableSet(elements.keySet());
     }
 }

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage.common.networking;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageClientApi;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternOutputRenderingScreen;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkMonitorDeviceCategory;
 import com.refinedmods.refinedstorage.common.api.networking.NetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.api.storage.StorageType;
@@ -35,6 +36,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -44,7 +46,7 @@ import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.format;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonitorContainerMenu>
-    implements NetworkMonitorListener {
+    implements NetworkMonitorListener, PatternOutputRenderingScreen {
     public static final int DETAILS_WIDTH = 162;
 
     private static final Identifier TEXTURE = createIdentifier("textures/gui/network_monitor.png");
@@ -1117,5 +1119,11 @@ public class NetworkMonitorScreen extends AbstractStretchingScreen<NetworkMonito
     @Override
     protected Identifier getTexture() {
         return TEXTURE;
+    }
+
+    @Override
+    public boolean canDisplayOutput(final ItemStack stack) {
+        final NetworkNodeDetails details = menu.getCurrentDetails();
+        return details != null && PlatformNetworkNodeDetailsRenderer.containsItem(details, stack);
     }
 }

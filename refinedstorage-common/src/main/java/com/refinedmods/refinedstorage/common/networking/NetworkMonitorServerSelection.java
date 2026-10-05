@@ -3,6 +3,9 @@ package com.refinedmods.refinedstorage.common.networking;
 import com.refinedmods.refinedstorage.api.network.impl.node.NetworkNodeDetailsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.StorageContentsNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.impl.node.controller.ControllerEnergyChangedEvent;
+import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceExportedResourcesChangedEvent;
+import com.refinedmods.refinedstorage.api.network.impl.node.iface.InterfaceFiltersChangedEvent;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
@@ -104,10 +107,22 @@ class NetworkMonitorServerSelection {
     private class DeviceSelection implements Selection {
         private final MonitorNodeId deviceId;
         private final NetworkNodeListener listener;
+        private boolean dirty;
 
         private DeviceSelection(final MonitorNodeId deviceId) {
             this.deviceId = deviceId;
-            this.listener = event -> nodeEventListener.accept(deviceId, event);
+            this.listener = this::onEvent;
+        }
+
+        private void onEvent(final Object event) {
+            switch (event) {
+                // The interface details show the filters and the exported resources.
+                case InterfaceFiltersChangedEvent ignored -> dirty = true;
+                case InterfaceExportedResourcesChangedEvent ignored -> dirty = true;
+                // The controller details show the stored energy.
+                case ControllerEnergyChangedEvent ignored -> dirty = true;
+                default -> nodeEventListener.accept(deviceId, event);
+            }
         }
 
         @Override
@@ -122,9 +137,17 @@ class NetworkMonitorServerSelection {
 
         @Override
         public void sendDetails() {
+            dirty = false;
             final NetworkNodeDetails details = networkMonitor.createDetails(deviceId);
             if (details != null) {
                 detailsListener.accept(deviceId, details);
+            }
+        }
+
+        @Override
+        public void tick() {
+            if (dirty) {
+                sendDetails();
             }
         }
     }
@@ -164,6 +187,7 @@ class NetworkMonitorServerSelection {
                     nodeEventListener.accept(id, detailsChangedEvent);
                     dirty = true;
                 }
+                case ControllerEnergyChangedEvent ignored -> dirty = true;
                 default -> nodeEventListener.accept(id, event);
             }
         }

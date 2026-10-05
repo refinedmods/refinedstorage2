@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.common.Platform;
 import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
 import com.refinedmods.refinedstorage.common.api.networking.PlatformNetworkNodeDetailsProvider;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceContainer;
 import com.refinedmods.refinedstorage.common.support.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage.common.support.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage.common.support.FilteredContainer;
@@ -19,7 +18,6 @@ import com.refinedmods.refinedstorage.common.util.PlatformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
@@ -42,6 +40,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
+
+import static com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsBuilder.getResources;
 
 public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorageContainerNetworkNode>
     extends AbstractBaseNetworkNodeContainerBlockEntity<T>
@@ -85,18 +85,9 @@ public abstract class AbstractDiskContainerBlockEntity<T extends AbstractStorage
         }
         return new PlatformStorageContentsNetworkDetails(
             storageDetails,
-            getFilterSlots(),
+            getResources(filter.getFilterContainer()),
             filter.isFuzzyMode()
         );
-    }
-
-    private List<Optional<ResourceKey>> getFilterSlots() {
-        final ResourceContainer filterContainer = filter.getFilterContainer();
-        final List<Optional<ResourceKey>> filters = new ArrayList<>(filterContainer.size());
-        for (int i = 0; i < filterContainer.size(); ++i) {
-            filters.add(Optional.ofNullable(filterContainer.getResource(i)));
-        }
-        return filters;
     }
 
     protected abstract void setFilters(Set<ResourceKey> filters);

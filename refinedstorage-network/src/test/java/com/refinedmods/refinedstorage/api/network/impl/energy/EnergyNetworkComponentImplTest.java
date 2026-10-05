@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ControllerNetworkNodeFactory;
 
 import org.junit.jupiter.api.Test;
 
@@ -173,7 +174,7 @@ class EnergyNetworkComponentImplTest {
     }
 
     private NetworkNodeContainer container(final EnergyStorage energyStorage) {
-        final ControllerNetworkNode controller = new ControllerNetworkNode();
+        final ControllerNetworkNode controller = new ControllerNetworkNode(ControllerNetworkNodeFactory.TYPE);
         controller.setEnergyStorage(energyStorage);
         controller.setActive(true);
         return () -> controller;

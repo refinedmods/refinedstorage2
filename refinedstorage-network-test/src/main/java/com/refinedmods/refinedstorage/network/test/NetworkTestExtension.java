@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.security.SecurityNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ControllerNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.NetworkNodeFactory;
 
 import java.lang.annotation.Annotation;
@@ -122,7 +123,7 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
         final EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
         final EnergyStorage storage = new EnergyStorageImpl(capacity);
         storage.receive(stored, Action.EXECUTE);
-        final ControllerNetworkNode controller = new ControllerNetworkNode();
+        final ControllerNetworkNode controller = new ControllerNetworkNode(ControllerNetworkNodeFactory.TYPE);
         controller.setEnergyStorage(storage);
         controller.setActive(true);
         component.onContainerAdded(() -> controller);

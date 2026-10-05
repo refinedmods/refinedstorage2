@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorListe
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeId;
 import com.refinedmods.refinedstorage.api.network.impl.node.monitor.MonitorNodeTypeId;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetailsElement;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
@@ -22,6 +24,7 @@ import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +54,10 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
             BlockEntities.INSTANCE.getNetworkMonitor(),
             pos,
             state,
-            new MonitorNetworkNode(Platform.INSTANCE.getConfig().getNetworkMonitor().getEnergyUsage())
+            new MonitorNetworkNode(
+                PlatformNetworkNodeTypes.NETWORK_MONITOR,
+                Platform.INSTANCE.getConfig().getNetworkMonitor().getEnergyUsage()
+            )
         );
     }
 
@@ -197,7 +203,39 @@ public class NetworkMonitorBlockEntity extends AbstractBaseNetworkNodeContainerB
     }
 
     NetworkNodeDetails createDetails(final Collection<MonitorNodeId> nodeIds) {
-        return mainNetworkNode.createDetails(nodeIds);
+        final MergedNetworkNodeDetails merged = new MergedNetworkNodeDetails();
+        for (final MonitorNodeId nodeId : nodeIds) {
+            mergeDetails(nodeId, merged);
+        }
+        final NetworkNodeDetails details = MonitorNetworkNode.createDetails(merged);
+        final PlatformNetworkNodeDetailsBuilder builder = new PlatformNetworkNodeDetailsBuilder();
+        for (final MergedNetworkNodeDetailsElement<?> element : merged.getElements()) {
+            if (element instanceof PlatformMergedNetworkNodeDetailsElement<?> platformElement) {
+                build(platformElement, merged, builder);
+            }
+        }
+        return builder.getElements().isEmpty() ? details : builder.build(details);
+    }
+
+    private void mergeDetails(final MonitorNodeId nodeId, final MergedNetworkNodeDetails merged) {
+        final NetworkNodeContainer container = mainNetworkNode.getContainer(nodeId);
+        if (container instanceof InWorldNetworkNodeContainer inWorldContainer) {
+            inWorldContainer.mergeDetails(merged);
+            return;
+        }
+        final NetworkNodeDetailsProvider detailsProvider = mainNetworkNode.getDetailsProvider(nodeId);
+        if (detailsProvider != null) {
+            detailsProvider.mergeDetails(merged);
+        }
+    }
+
+    private static <T> void build(final PlatformMergedNetworkNodeDetailsElement<T> element,
+                                  final MergedNetworkNodeDetails merged,
+                                  final PlatformNetworkNodeDetailsBuilder builder) {
+        final T state = merged.get(element);
+        if (state != null) {
+            element.build(state, builder);
+        }
     }
 
     void removeListener(final MonitorListener monitorListener) {

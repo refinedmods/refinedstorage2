@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.api.storage.root.RootStorage;
 import com.refinedmods.refinedstorage.network.test.fixtures.NetworkTestFixtures;
+import com.refinedmods.refinedstorage.network.test.nodefactory.PatternProviderNetworkNodeFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -559,7 +560,11 @@ class AutocraftingNetworkComponentImplTest {
     }
 
     private static PatternProviderNetworkNode createPatternProvider() {
-        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(0, 5);
+        final PatternProviderNetworkNode node = new PatternProviderNetworkNode(
+            PatternProviderNetworkNodeFactory.TYPE,
+            0,
+            5
+        );
         node.setId(ExternalPatternSinkId.create());
         return node;
     }

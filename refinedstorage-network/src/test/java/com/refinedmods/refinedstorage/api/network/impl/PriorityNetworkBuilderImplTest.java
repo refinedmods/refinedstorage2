@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.StorageImpl;
 import com.refinedmods.refinedstorage.network.test.fixtures.ActorFixture;
+import com.refinedmods.refinedstorage.network.test.nodefactory.GridNetworkNodeFactory;
 import com.refinedmods.refinedstorage.network.test.nodefactory.StorageNetworkNodeFactory;
 
 import java.util.Optional;
@@ -135,7 +136,7 @@ class PriorityNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
             0
         );
         nodeA.setActive(true);
-        final GridNetworkNode nodeB = new GridNetworkNode(0);
+        final GridNetworkNode nodeB = new GridNetworkNode(GridNetworkNodeFactory.TYPE, 0);
         final NetworkNodeContainer b = createContainerWithNetwork(
             nodeB,
             container -> a.getNode().getNetwork(),

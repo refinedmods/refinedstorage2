@@ -30,6 +30,8 @@ import com.refinedmods.refinedstorage.common.iface.InterfaceScreen;
 import com.refinedmods.refinedstorage.common.importer.ImporterScreen;
 import com.refinedmods.refinedstorage.common.networking.NetworkMonitorScreen;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterScreen;
+import com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetails;
+import com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.networking.RelayScreen;
 import com.refinedmods.refinedstorage.common.networking.SimpleNetworkNodeDetailsRenderer;
 import com.refinedmods.refinedstorage.common.networking.StorageContentsNetworkNodeDetailsRenderer;
@@ -228,6 +230,10 @@ public abstract class AbstractClientModInitializer {
         RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
             PlatformStorageContentsNetworkDetails.class,
             storageContentsRenderer
+        );
+        RefinedStorageClientApi.INSTANCE.registerNetworkNodeDetailsRenderer(
+            PlatformNetworkNodeDetails.class,
+            new PlatformNetworkNodeDetailsRenderer()
         );
     }
 

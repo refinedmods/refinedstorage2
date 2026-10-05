@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage.common.support.network;
 
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetailsProvider;
@@ -103,6 +104,17 @@ public class InWorldNetworkNodeContainerImpl implements InWorldNetworkNodeContai
         return blockEntity instanceof PlatformNetworkNodeDetailsProvider platformProvider
             ? platformProvider.wrap(details)
             : details;
+    }
+
+    @Override
+    public void mergeDetails(final MergedNetworkNodeDetails details) {
+        if (!(node instanceof NetworkNodeDetailsProvider provider)) {
+            return;
+        }
+        provider.mergeDetails(details);
+        if (blockEntity instanceof PlatformNetworkNodeDetailsProvider platformProvider) {
+            platformProvider.mergeDetails(details);
+        }
     }
 
     @Override

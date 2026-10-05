@@ -100,6 +100,7 @@ import com.refinedmods.refinedstorage.common.networking.NetworkReceiverBlockEnti
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterContainerMenu;
 import com.refinedmods.refinedstorage.common.networking.NetworkTransmitterData;
+import com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetails;
 import com.refinedmods.refinedstorage.common.networking.RangeUpgradeWirelessTransmitterRangeModifier;
 import com.refinedmods.refinedstorage.common.networking.RelayBlockEntity;
 import com.refinedmods.refinedstorage.common.networking.RelayContainerMenu;
@@ -1059,6 +1060,32 @@ public abstract class AbstractModInitializer {
             new NetworkMonitorDeviceType(ContentNames.AUTOCRAFTING_MONITOR), NetworkMonitorDeviceCategory.AUTOCRAFTING);
         RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.STORAGE_MONITOR,
             new NetworkMonitorDeviceType(ContentNames.STORAGE_MONITOR), NetworkMonitorDeviceCategory.MONITORING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.IMPORTER,
+            new NetworkMonitorDeviceType(ContentNames.IMPORTER), NetworkMonitorDeviceCategory.INPUT_AND_OUTPUT);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.EXPORTER,
+            new NetworkMonitorDeviceType(ContentNames.EXPORTER), NetworkMonitorDeviceCategory.INPUT_AND_OUTPUT);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.EXTERNAL_STORAGE,
+            new NetworkMonitorDeviceType(ContentNames.EXTERNAL_STORAGE), NetworkMonitorDeviceCategory.STORAGE);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.DETECTOR,
+            new NetworkMonitorDeviceType(ContentNames.DETECTOR), NetworkMonitorDeviceCategory.MONITORING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.SECURITY_MANAGER,
+            new NetworkMonitorDeviceType(ContentNames.SECURITY_MANAGER), NetworkMonitorDeviceCategory.SECURITY);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.AUTOCRAFTER,
+            new NetworkMonitorDeviceType(ContentNames.AUTOCRAFTER), NetworkMonitorDeviceCategory.AUTOCRAFTING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.INTERFACE,
+            new NetworkMonitorDeviceType(ContentNames.INTERFACE), NetworkMonitorDeviceCategory.INPUT_AND_OUTPUT);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.CONTROLLER,
+            new NetworkMonitorDeviceType(ContentNames.CONTROLLER), NetworkMonitorDeviceCategory.NETWORKING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.GRID,
+            new NetworkMonitorDeviceType(ContentNames.GRID), NetworkMonitorDeviceCategory.OTHER);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.CRAFTING_GRID,
+            new NetworkMonitorDeviceType(ContentNames.CRAFTING_GRID), NetworkMonitorDeviceCategory.OTHER);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.PATTERN_GRID,
+            new NetworkMonitorDeviceType(ContentNames.PATTERN_GRID), NetworkMonitorDeviceCategory.AUTOCRAFTING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.RELAY,
+            new NetworkMonitorDeviceType(ContentNames.RELAY), NetworkMonitorDeviceCategory.NETWORKING);
+        RefinedStorageApi.INSTANCE.registerNetworkMonitorDeviceType(PlatformNetworkNodeTypes.NETWORK_MONITOR,
+            new NetworkMonitorDeviceType(ContentNames.NETWORK_MONITOR), NetworkMonitorDeviceCategory.MONITORING);
     }
 
 
@@ -1109,6 +1136,11 @@ public abstract class AbstractModInitializer {
             createIdentifier("storage_contents_network_node"),
             StorageContentsNetworkNodeDetails.class,
             storageContentsCodec
+        );
+        RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
+            createIdentifier("platform"),
+            PlatformNetworkNodeDetails.class,
+            PlatformNetworkNodeDetails.STREAM_CODEC
         );
         RefinedStorageApi.INSTANCE.registerNetworkNodeDetailsFactory(
             createIdentifier("platform_storage_contents_network_node"),

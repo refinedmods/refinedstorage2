@@ -3,16 +3,23 @@ package com.refinedmods.refinedstorage.common.controller;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.MergedNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.common.Platform;
+import com.refinedmods.refinedstorage.common.api.networking.PlatformNetworkNodeDetailsProvider;
 import com.refinedmods.refinedstorage.common.api.support.energy.TransferableBlockEntityEnergy;
 import com.refinedmods.refinedstorage.common.content.BlockEntities;
 import com.refinedmods.refinedstorage.common.content.ContentNames;
+import com.refinedmods.refinedstorage.common.networking.PlatformMergedNetworkNodeDetailsElement;
+import com.refinedmods.refinedstorage.common.networking.PlatformNetworkNodeDetailsBuilder;
 import com.refinedmods.refinedstorage.common.support.containermenu.NetworkNodeExtendedMenuProvider;
 import com.refinedmods.refinedstorage.common.support.energy.BlockEntityEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.energy.ItemBlockEnergyStorage;
 import com.refinedmods.refinedstorage.common.support.network.AbstractBaseNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage.common.support.network.PlatformNetworkNodeTypes;
 
+import com.google.common.math.LongMath;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -30,8 +37,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlockEntity<ControllerNetworkNode>
-    implements NetworkNodeExtendedMenuProvider<ControllerData>, TransferableBlockEntityEnergy {
+    implements NetworkNodeExtendedMenuProvider<ControllerData>, TransferableBlockEntityEnergy,
+    PlatformNetworkNodeDetailsProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBlockEntity.class);
+
+    private static final PlatformMergedNetworkNodeDetailsElement<MergedEnergy> MERGED_ENERGY =
+        new PlatformMergedNetworkNodeDetailsElement<>() {
+            @Override
+            public MergedEnergy create() {
+                return new MergedEnergy();
+            }
+
+            @Override
+            public void build(final MergedEnergy energy, final PlatformNetworkNodeDetailsBuilder builder) {
+                builder.progress(energy.stored, energy.capacity);
+            }
+        };
 
     private static final String TAG_CAPACITY = "capacity";
 
@@ -40,7 +61,7 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
     private final RateLimiter energyStateChangeRateLimiter = RateLimiter.create(1);
 
     public ControllerBlockEntity(final ControllerType type, final BlockPos pos, final BlockState state) {
-        super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
+        super(getBlockEntityType(type), pos, state, new ControllerNetworkNode(PlatformNetworkNodeTypes.CONTROLLER));
         this.type = type;
         this.energyStorage = createEnergyStorage(type, this);
         this.mainNetworkNode.setEnergyStorage(energyStorage);
@@ -109,6 +130,18 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
     }
 
     @Override
+    public NetworkNodeDetails wrap(final NetworkNodeDetails details) {
+        return new PlatformNetworkNodeDetailsBuilder()
+            .progress(getActualStored(), getActualCapacity())
+            .build(details);
+    }
+
+    @Override
+    public void mergeDetails(final MergedNetworkNodeDetails details) {
+        details.getOrCreate(MERGED_ENERGY).merge(getActualStored(), getActualCapacity());
+    }
+
+    @Override
     public ControllerData getMenuData() {
         return new ControllerData(getActualStored(), getActualCapacity());
     }
@@ -129,5 +162,16 @@ public class ControllerBlockEntity extends AbstractBaseNetworkNodeContainerBlock
     @Override
     public EnergyStorage getEnergyStorage() {
         return energyStorage;
+    }
+
+    private static final class MergedEnergy {
+        private long stored;
+        private long capacity;
+
+        private void merge(final long nodeStored, final long nodeCapacity) {
+            // A creative controller has an "infinite" amount of energy, which would overflow when added up.
+            this.stored = LongMath.saturatedAdd(stored, nodeStored);
+            this.capacity = LongMath.saturatedAdd(capacity, nodeCapacity);
+        }
     }
 }

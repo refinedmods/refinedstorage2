@@ -2,9 +2,13 @@ package com.refinedmods.refinedstorage.api.network.impl.node.controller;
 
 import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.impl.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNodeDetails;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNodeDetails;
 import com.refinedmods.refinedstorage.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage.network.test.NetworkTest;
+import com.refinedmods.refinedstorage.network.test.RecordingNetworkNodeListener;
 import com.refinedmods.refinedstorage.network.test.SetupNetwork;
+import com.refinedmods.refinedstorage.network.test.nodefactory.ControllerNetworkNodeFactory;
 
 import java.util.stream.Stream;
 
@@ -18,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NetworkTest
 @SetupNetwork
 class ControllerNetworkNodeTest {
+    private static final int ENERGY_CHANGE_NOTIFICATION_INTERVAL = 5;
+
     @AddNetworkNode
     ControllerNetworkNode sut;
 
@@ -29,6 +35,73 @@ class ControllerNetworkNodeTest {
         assertThat(sut.getActualCapacity()).isZero();
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
+    void shouldCreateDetails() {
+        // Act
+        final NetworkNodeDetails details = sut.createDetails();
+
+        // Assert
+        assertThat(sut.getType()).isEqualTo(ControllerNetworkNodeFactory.TYPE);
+        assertThat(details).usingRecursiveComparison().isEqualTo(new SimpleNetworkNodeDetails(0, true));
+    }
+
+    @Test
+    void shouldNotifyDetailsListenerWhenEnergyChanges() {
+        // Arrange
+        final EnergyStorageImpl energyStorage = new EnergyStorageImpl(100);
+        sut.setEnergyStorage(energyStorage);
+        final RecordingNetworkNodeListener listener = new RecordingNetworkNodeListener();
+        sut.addListener(listener);
+
+        // Act
+        energyStorage.receive(10, Action.EXECUTE);
+        doWorkUntilNotified();
+
+        // Assert
+        assertThat(listener.events).containsExactly(new ControllerEnergyChangedEvent(10, 100));
+    }
+
+    @Test
+    void shouldNotNotifyDetailsListenerWhenEnergyDoesNotChange() {
+        // Arrange
+        final EnergyStorageImpl energyStorage = new EnergyStorageImpl(100);
+        energyStorage.receive(10, Action.EXECUTE);
+        sut.setEnergyStorage(energyStorage);
+        final RecordingNetworkNodeListener listener = new RecordingNetworkNodeListener();
+        sut.addListener(listener);
+        doWorkUntilNotified();
+        listener.events.clear();
+
+        // Act
+        doWorkUntilNotified();
+
+        // Assert
+        assertThat(listener.events).isEmpty();
+    }
+
+    @Test
+    void shouldNotNotifyRemovedDetailsListenerWhenEnergyChanges() {
+        // Arrange
+        final EnergyStorageImpl energyStorage = new EnergyStorageImpl(100);
+        sut.setEnergyStorage(energyStorage);
+        final RecordingNetworkNodeListener listener = new RecordingNetworkNodeListener();
+        sut.addListener(listener);
+        sut.removeListener(listener);
+
+        // Act
+        energyStorage.receive(10, Action.EXECUTE);
+        doWorkUntilNotified();
+
+        // Assert
+        assertThat(listener.events).isEmpty();
+    }
+
+    private void doWorkUntilNotified() {
+        for (int i = 0; i < ENERGY_CHANGE_NOTIFICATION_INTERVAL; ++i) {
+            sut.doWork();
+        }
     }
 
     @Test
