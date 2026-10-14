@@ -59,7 +59,7 @@ The xref:../input-and-output/exporter.adoc[] can insert chemicals from the stora
 
 == External Storage
 
-The xref:../storage/external-storage.adoc[] can connect to Mekanism chemical tanks, allowing them to act as external storage for chemicals.
+The xref:../storage/external-storage.adoc[] can connect to Mekanism chemical tanks and QIO.
 
 == Storage Monitor
 
