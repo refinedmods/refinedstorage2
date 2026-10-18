@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorageImpl;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -100,6 +101,8 @@ class StateTrackedStorageTest {
 
         // Assert
         assertThat(sut.findTrackedResourceByActorType(TestResource.A, Actor.EMPTY.getClass())).isNotEmpty();
+        assertThat(sut.getTrackedResourcesByActorType(Actor.EMPTY.getClass(), Set.of(TestResource.A)))
+            .containsOnlyKeys(TestResource.A);
     }
 
     @ParameterizedTest
@@ -120,6 +123,7 @@ class StateTrackedStorageTest {
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
         verify(listener, expectedTimes).onStorageStateChanged();
         assertThat(sut.findTrackedResourceByActorType(TestResource.A, Actor.EMPTY.getClass())).isEmpty();
+        assertThat(sut.getTrackedResourcesByActorType(Actor.EMPTY.getClass(), Set.of(TestResource.A))).isEmpty();
     }
 
     @ParameterizedTest

@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.apiguardian.api.API;
 
@@ -36,5 +38,20 @@ public class InMemoryTrackedStorageRepository implements TrackedStorageRepositor
             return Optional.ofNullable(resources.get(resource));
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                  final Set<ResourceKey> resources,
+                                                  final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        final Map<ResourceKey, TrackedResource> tracked = trackedResourcesByActorType.get(actorType);
+        if (tracked == null) {
+            return;
+        }
+        tracked.forEach((resource, trackedResource) -> {
+            if (resources.contains(resource)) {
+                consumer.accept(resource, trackedResource);
+            }
+        });
     }
 }

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.apiguardian.api.API;
 
@@ -163,6 +164,17 @@ public class CompositeStorageImpl implements CompositeStorage, CompositeAwareChi
             .map(TrackedStorage.class::cast)
             .flatMap(storage -> storage.findTrackedResourceByActorType(resource, actorType).stream())
             .max(Comparator.comparingLong(TrackedResource::getTime));
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        for (final Storage source : insertSources) {
+            if (source instanceof TrackedStorage trackedStorage) {
+                trackedStorage.collectTrackedResourcesByActorType(actorType, resources, consumer);
+            }
+        }
     }
 
     @Override

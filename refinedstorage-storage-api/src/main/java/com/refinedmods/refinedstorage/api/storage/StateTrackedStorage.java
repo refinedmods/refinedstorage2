@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage.api.storage.tracked.TrackedStorage;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.jspecify.annotations.Nullable;
 
@@ -107,6 +109,15 @@ public class StateTrackedStorage implements TrackedStorage, LimitedStorage {
         return delegate instanceof LimitedStorage limitedStorage
             ? limitedStorage.getCapacity()
             : 0;
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        if (delegate instanceof TrackedStorage trackedStorage) {
+            trackedStorage.collectTrackedResourcesByActorType(actorType, resources, consumer);
+        }
     }
 
     @FunctionalInterface

@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
 
 import org.apiguardian.api.API;
@@ -64,5 +66,12 @@ public class TrackedStorageImpl extends AbstractProxyStorage implements TrackedS
     public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
         return repository.findTrackedResourceByActorType(resource, actorType);
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                  final Set<ResourceKey> resources,
+                                                  final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        repository.collectTrackedResourcesByActorType(actorType, resources, consumer);
     }
 }

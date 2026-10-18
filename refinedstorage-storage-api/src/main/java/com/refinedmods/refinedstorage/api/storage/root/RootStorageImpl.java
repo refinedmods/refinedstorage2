@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.apiguardian.api.API;
@@ -139,5 +140,12 @@ public class RootStorageImpl implements RootStorage {
     public Optional<TrackedResource> findTrackedResourceByActorType(final ResourceKey resource,
                                                                     final Class<? extends Actor> actorType) {
         return storage.findTrackedResourceByActorType(resource, actorType);
+    }
+
+    @Override
+    public void collectTrackedResourcesByActorType(final Class<? extends Actor> actorType,
+                                                   final Set<ResourceKey> resources,
+                                                   final BiConsumer<ResourceKey, TrackedResource> consumer) {
+        storage.collectTrackedResourcesByActorType(actorType, resources, consumer);
     }
 }
