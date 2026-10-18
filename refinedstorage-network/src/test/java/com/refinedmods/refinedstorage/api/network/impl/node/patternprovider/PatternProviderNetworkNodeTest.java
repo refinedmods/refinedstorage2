@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationT
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSinkId;
 import com.refinedmods.refinedstorage.api.autocrafting.task.StepBehavior;
 import com.refinedmods.refinedstorage.api.autocrafting.task.Task;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
@@ -155,6 +156,40 @@ class PatternProviderNetworkNodeTest {
 
         // Assert
         assertThat(autocrafting.getOutputs()).containsExactly(A);
+    }
+
+    @Test
+    void shouldRegisterPatternsOnceWhenPatternsArePresentBeforeJoiningContainerAndActivating(
+        @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
+    ) {
+        // Arrange
+        final PatternProviderNetworkNode loaded = new PatternProviderNetworkNode(0, 3);
+        loaded.setId(ExternalPatternSinkId.create());
+        loaded.tryUpdatePattern(0, PATTERN_B);
+
+        // Act
+        autocrafting.onContainerAdded(() -> loaded);
+        loaded.setActive(true);
+
+        // Assert
+        assertThat(autocrafting.getOutputs()).containsExactly(B);
+        assertThat(autocrafting.getPatternsByOutput(B)).containsExactly(PATTERN_B);
+    }
+
+    @Test
+    void shouldRegisterPatternOnceWhenUpdatingPatternWhileInactiveAndActivating(
+        @InjectNetworkAutocraftingComponent final AutocraftingNetworkComponent autocrafting
+    ) {
+        // Arrange
+        sut.setActive(false);
+        sut.tryUpdatePattern(0, PATTERN_A);
+
+        // Act
+        sut.setActive(true);
+
+        // Assert
+        assertThat(autocrafting.getOutputs()).containsExactly(A);
+        assertThat(autocrafting.getPatternsByOutput(A)).containsExactly(PATTERN_A);
     }
 
     @Test
